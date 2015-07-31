@@ -106,7 +106,7 @@ std::vector < std::string > parseInput (int argc, char * const argv[], time_t ra
 			restartFileName = parsed[i+1];
 			i++;
 		} else if (parsed[i] == "help") {
-			std::cerr << "./gcmc ==N: ==L: ==T: ==muX: ==maxX: ==sweepSize: ==prodSweep: ==equilSweep: ==seed: ==restart:" << std::endl;
+			std::cerr << "./omcs ==N: ==L: ==T: ==muX: ==maxX: ==sweepSize: ==prodSweep: ==equilSweep: ==seed: ==restart:" << std::endl;
 			std::cerr << "\tParameters:" << std::endl;
 			std::cerr << "\t\t==N:\t Number of components" << std::endl;
 			std::cerr << "\t\t==L:\t Box dimensions" << std::endl;
@@ -119,8 +119,8 @@ std::vector < std::string > parseInput (int argc, char * const argv[], time_t ra
 			std::cerr << "\t\t==seed:\t (optional) RNG seed, default is -1024" << std::endl;
 			std::cerr << "\t\t==restart:\t (optional) XYZ file to read restart configuration from" << std::endl;
 			throw customException ("Failed to start");
-		} else if (parsed[i] != "./gcmc") {
-			std::string a = "Unrecognized input " + parsed[i] + ", try ./gcmc --help";
+		} else if (parsed[i] != "./omcs") {
+			std::string a = "Unrecognized input " + parsed[i] + ", try ./omcs --help";
 			throw customException ("Failed to start: "+a);
 		}
 	}

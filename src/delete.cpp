@@ -15,8 +15,6 @@
 int deleteParticle::make (simSystem &sys) {
 	// check if any exist to be deleted
     if (sys.numSpecies[typeIndex_] < 1) {
-        //std::string itype = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex_) )->str();
-        //std::cerr << "Hit lower bound for species type "+itype << std::endl;
         return MOVE_FAILURE;
     }
     
@@ -33,9 +31,9 @@ int deleteParticle::make (simSystem &sys) {
     double delEnergy = 0.0;
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
         // get positions of neighboring atoms around chosenAtom
-      std::vector< std::vector<double> > neighborPositions = sys.getNeighborPositions(spec, typeIndex_, &sys.atoms[typeIndex_][chosenAtom]);
-    	 for (unsigned int i = 0; i < neighborPositions.size(); ++i) {
-			try {
+        std::vector < std::vector< double > > neighborPositions = sys.getNeighborPositions(spec, typeIndex_, &sys.atoms[typeIndex_][chosenAtom]);
+        for (unsigned int i = 0; i < neighborPositions.size(); ++i) {
+            try {
 				delEnergy -= sys.ppot[spec][typeIndex_]->energy(neighborPositions[i], sys.atoms[typeIndex_][chosenAtom].pos, box);
 			}
 			catch (customException& ce) {
@@ -43,7 +41,8 @@ int deleteParticle::make (simSystem &sys) {
 				throw customException (a+b);
 			}
         }
-        // add tail correction to potential energy
+        // add tail correction to potential energy -- only enable for fluid phase simulations
+#ifdef FLUID_PHASE_SIMULATIONS
         if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
         	if (spec == typeIndex_) {
 				delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
@@ -52,6 +51,7 @@ int deleteParticle::make (simSystem &sys) {
 				delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
 			}
 		}
+#endif
     }
     
 	// metropolis criterion

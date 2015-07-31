@@ -19,6 +19,9 @@
 #include <fstream>
 #include <cmath>
 
+//! Only uncomment this if simulations are purely in the fluid phase.  This will enable tail corrections which are only valid assuming a converging g(r) at large r.
+//#define FLUID_PHASE_SIMULATIONS
+
 int main (int argc, char * const argv[]) {
 	// get time stamp
 	time_t rawtime;

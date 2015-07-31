@@ -11,39 +11,38 @@
 /*!
  * cellList class. 
  */
-class cellList
-{
+class cellList {
 private:
 	void initNeighbours();
+    
 public:
-	std::vector<double> cellSize;
-	std::vector<double> box;
-
-	int cellCountX, cellCountY, cellCountZ, cellCountXY, cellCount;
-	std::vector< std::vector<atom*> > cells;
-	std::vector< std::vector<unsigned int> > neighbours;
+	cellList (std::vector < double >, double, std::vector < atom* >);
+    
+	void sortIntoCells (std::vector < atom* >);
+	void sortIntoCells (std::vector < atom >*);
+	void insertParticle (atom*);
+	void swapAndDeleteParticle (atom*, atom*);
+	void translateParticle (atom*, std::vector < double >);
 	
-	cellList(std::vector<double>, double, std::vector<atom*>);
-	void sortIntoCells(std::vector<atom*>);
-	void sortIntoCells(std::vector<atom>*);
-	void insertParticle(atom*);
-	void swapAndDeleteParticle(atom*, atom*);
-	void translateParticle(atom*, std::vector<double>);
-	
-	int calcIndex(int, int, int);
-	int calcIndexS(int, int, int);
-	int calcIndex(double, double, double);
-	int calcIndexS(double, double, double);
+	int calcIndex (int, int, int);
+	int calcIndexS (int, int, int);
+	int calcIndex (double, double, double);
+	int calcIndexS (double, double, double);
+    
+    std::vector < double > cellSize;
+    std::vector < double > box;
+    
+    int cellCountX, cellCountY, cellCountZ, cellCountXY, cellCount;
+    std::vector < std::vector < atom* > > cells;
+    std::vector < std::vector < unsigned int > > neighbours;
 };
 
-inline int cellList::calcIndex(int k, int l, int m)
-{
+inline int cellList::calcIndex (int k, int l, int m) {
 	return (k + l*cellCountX + m*cellCountXY);
 }
 
 // this is the safe implementation which does not allow out of bound indices
-inline int cellList::calcIndexS(int _k, int _l, int _m)
-{
+inline int cellList::calcIndexS (int _k, int _l, int _m) {
 	int k = _k;
 	int l = _l;
 	int m = _m;
@@ -66,14 +65,12 @@ inline int cellList::calcIndexS(int _k, int _l, int _m)
 	return (k + l*cellCountX + m*cellCountXY);
 }
 
-inline int cellList::calcIndex(double _x, double _y, double _z)
-{
+inline int cellList::calcIndex (double _x, double _y, double _z) {
 	return (floor(_x/cellSize[0]) + floor(_y/cellSize[1])*cellCountX +floor(_z/cellSize[2])*cellCountXY);
 }
 
 // this is the safe implementation which does not allow out of bound positions
-inline int cellList::calcIndexS(double _x, double _y, double _z)
-{
+inline int cellList::calcIndexS (double _x, double _y, double _z) {
 	double x = _x;
 	double y = _y;
 	double z = _z;

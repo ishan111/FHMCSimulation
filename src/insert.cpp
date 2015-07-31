@@ -21,8 +21,6 @@ int insertParticle::make (simSystem &sys) {
         throw customException (a+b);
     }
     if (sys.numSpecies[typeIndex_] >= max) {
-        //std::string itype = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex_) )->str();
-        //std::cerr << "Hit upper bound for species type "+itype << std::endl;
         return MOVE_FAILURE;
     }
     
@@ -39,20 +37,21 @@ int insertParticle::make (simSystem &sys) {
     double insEnergy = 0.0;
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
     	// get positions of neighboring atoms around newAtom
-    	std::vector< std::vector<double> > neighborPositions = sys.getNeighborPositions(spec, typeIndex_, &newAtom);
+    	std::vector < std::vector < double > > neighborPositions = sys.getNeighborPositions(spec, typeIndex_, &newAtom);
         for (unsigned int i = 0; i < neighborPositions.size(); ++i) {
 			try {
 				insEnergy += sys.ppot[spec][typeIndex_]->energy(neighborPositions[i], newAtom.pos, box);	
-			}
-			catch (customException& ce) {
+			} catch (customException& ce) {
 				std::string a = "Cannot insert because of energy error: ", b = ce.what();
 				throw customException (a+b);
 			}
         }
-        // add tail correction to potential energy
+        // add tail correction to potential energy -- only enable for fluid phase simulations
+#ifdef FLUID_PHASE_SIMULATIONS
         if (sys.ppot[spec][typeIndex_]->useTailCorrection){
 			insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
 		}
+#endif
     }
     
 	// metropolis criterion
