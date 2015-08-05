@@ -5,6 +5,10 @@
 #include <string>
 #include <sys/stat.h> 
 #include <cstdio>
+#include <sstream>
+
+//! For converting to string
+#define sstr( x ) dynamic_cast< std::ostringstream & >( ( std::ostringstream() << std::dec << x ) ).str()
 
 double pbc_dist2 (const std::vector < double > &p1, const std::vector < double > &p2, const std::vector < double > &box);
 void pbc (std::vector < double > &pos, const std::vector < double > &box);
