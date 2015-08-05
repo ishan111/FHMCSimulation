@@ -228,6 +228,13 @@ wala::wala (const double lnF, const double g, const double s, const int nSpec, c
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for macrostate distribution matrix in wala");
 	}
+	
+	// initialize the visited-states histogram
+	try {
+		H_.resize(size, 0.0);
+	} catch (const std::bad_alloc &ce) {
+		throw customException ("Out of memory, cannot allocate space for visited-states histogram in wala");
+	}
 }
 
 /*!
@@ -274,4 +281,12 @@ bool wala::evaluateFlatness () {
 		return true;
 	}
 	return false;
+}
+
+/*!
+ * This should only be called when the "flatness" criterion is met. This then reset the visited-states histogram H, and decrements lnF.
+ */
+void wala::iterateForward () {
+	lnF_ = lnF_*g_;
+	std::fill(H_.begin(), H_.end(), 0);
 }

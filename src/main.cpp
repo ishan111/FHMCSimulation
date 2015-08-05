@@ -19,7 +19,9 @@
 #include <fstream>
 #include <cmath>
 
-//! Only uncomment this if simulations are purely in the fluid phase.  This will enable tail corrections which are only valid assuming a converging g(r) at large r.
+/*! Only uncomment this if simulations are purely in the fluid phase.  
+ *This will enable tail corrections which are only valid assuming a converging g(r) at large r.
+ */
 //#define FLUID_PHASE_SIMULATIONS
 
 int main (int argc, char * const argv[]) {
@@ -29,103 +31,29 @@ int main (int argc, char * const argv[]) {
 	struct tm * timeinfo;
 	timeinfo = localtime (&rawtime);
 	
-    // user input parsing
-    std::vector < std::string > args;
-    try {
-        args = parseInput (argc, argv, rawtime);
-    } catch (customException &ce) {
-		std::cerr << ce.what() << std::endl;
-        exit(SYS_FAILURE);
-    }
+    // user input parsing can be added later
+	RNG_SEED = -10;
+	const int sysN = 1;
+	const double sysBeta = 1.0;
+	const std::vector < double > sysBox (3, 6);
+	std::vector < double > sysMu (sysN, 2.5);
+	std::vector < int > sysMax (sysN, 300);
+	simSystem sys (sysN, sysBeta, sysBox, sysMu, sysMax);
 	
-    // define system & simulation parameters
-    const int sysN = boost::lexical_cast<int>(args[0]);
-    const double sysBeta = boost::lexical_cast<double>(args[2]);
-    const std::vector < double > sysBox (3, boost::lexical_cast<double>(args[1]));
-    std::vector < double > sysMu (sysN);
-    for (unsigned int i = 0; i < sysMu.size(); ++i) {
-        sysMu[i] = boost::lexical_cast<double>(args[3+i]);
-    }
-    std::vector < int > sysMax (sysN);
-    for (unsigned int i = 0; i < sysMax.size(); ++i) {
-        sysMax[i] = boost::lexical_cast<int>(args[3+sysMu.size()+i]);
-    }
-    simSystem sys (sysN, sysBeta, sysBox, sysMu, sysMax);
-	const unsigned int sweepSize = boost::lexical_cast<int>(args[3+sysMu.size()+sysMu.size()]);
-    const unsigned int prodSweep = boost::lexical_cast<int>(args[3+sysMu.size()+sysMu.size()+1]);
-	const unsigned int equilSweep = boost::lexical_cast<int>(args[3+sysMu.size()+sysMu.size()+2]);
-	RNG_SEED = boost::lexical_cast<int>(args[3+sysMu.size()+sysMu.size()+3]);
-	std::string restartFileName = args[3+sysMu.size()+sysMu.size()+4];
-	if (restartFileName != "none") {
-		sys.readRestart(restartFileName);
-	}
+	const int tmmcSweepSize = 1e6, totalTMMCSweep = 1000, wlSweepSize = 1e6;
 	
-	/* -------------------------------------- */
-	// specify pair potentials and add to system - for now this is manual
-	// Lennard Jones Potential
-	/*const double eps = 1.0, sig = 1.0, rcut = 3.5, ushift = 0;
-	std::vector < double > paramsAA (4);
-	paramsAA[0] = eps;
-	paramsAA[1] = sig;
-	paramsAA[2] = rcut;
-	paramsAA[3] = ushift;
-    lennardJones ppAA;
-	ppAA.setParameters(paramsAA);
-	ppAA.savePotential("potentialAA.dat", 0.01, 0.01);
+	// specify pair potentials and add to system
+    const double eps = 1.0, lambda = 0.3, sigma = 1.0;
+    std::vector < double > params (3);
+    params[2] = -eps;
+    params[1] = sigma+lambda;
+    params[0] = sigma;
+    squareWell sqW;
+	sqW.setParameters(params);
+    sqW.savePotential("sqW_potential.dat", 0.01, 0.01);
+    sys.addPotential (0, 0, &sqW, true);
 
-	std::vector < double > paramsBB (4);
-	paramsBB[0] = 0.5*eps;
-	paramsBB[1] = sig;
-	paramsBB[2] = rcut;
-	paramsBB[3] = ushift;
-    lennardJones ppBB;
-	ppBB.setParameters(paramsBB);
-	ppBB.savePotential("potentialBB.dat", 0.01, 0.01);
-
-	std::vector < double > paramsAB (4);
-	paramsAB[0] = sqrt(eps*0.5*eps);
-	paramsAB[1] = sig;
-	paramsAB[2] = rcut;
-	paramsAB[3] = ushift;
-    lennardJones ppAB;
-	ppAB.setParameters(paramsAB);
-	ppAB.savePotential("potentialAB.dat", 0.01, 0.01);*/
-	
-	// star-star, colloid-colloid, and star-colloid interactions
-	tabulated ppAA;
-	ppAA.loadPotential("potStarStar.dat");
-	ppAA.savePotential("potentialAA.dat", 0.00, 0.01);
-
-	std::vector < double > paramsBB (1);
-	paramsBB[0] = 8.0;
-    hardCore ppBB;
-    ppBB.setParameters(paramsBB);
-	ppBB.useTailCorrection = false;
-	ppBB.savePotential("potentialBB.dat", 0.00, 0.01);
-	
-	tabulated ppAB;
-	ppAB.loadPotential("potStarColloid.dat");
-	ppAB.savePotential("potentialAB.dat", 0.00, 0.01);
-	
-	for (unsigned int i = 0; i < sysN; ++i) {
-		for (unsigned int j = 0; j < sysN; ++j) {
-			if (i == j) {
-				if (i == 0) {
-					sys.addPotential (i, j, &ppAA, true);
-				}
-				else if (i == 1) {
-					sys.addPotential (i, j, &ppBB, true);
-				}
-			}
-			else {
-				sys.addPotential (i, j, &ppAB, true);
-			}
-		}
-	}
-	/* -------------------------------------- */
-	
-
-    // specify moves to use for a binary system
+    // specify moves to use for the system
     moves usedMovesEq, usedMovesPr;
 	std::vector < double > moveProb (sysN, 0.2);	// add these to input parser in the future
 	std::vector < insertParticle > insertions (sysN);
@@ -140,10 +68,10 @@ int main (int argc, char * const argv[]) {
 		translations[i] = newTranslate;
 		usedMovesEq.addMove (&insertions[i], moveProb[i]);
 		usedMovesEq.addMove (&deletions[i], moveProb[i]); 
-		usedMovesEq.addMove (&translations[i], moveProb[i]); // probs are symmetric in each direction
+		usedMovesEq.addMove (&translations[i], 3*moveProb[i]); // probs are symmetric in each direction
 		usedMovesPr.addMove (&insertions[i], moveProb[i]);
 		usedMovesPr.addMove (&deletions[i], moveProb[i]); 
-		usedMovesPr.addMove (&translations[i], moveProb[i]); // probs are symmetric in each direction
+		usedMovesPr.addMove (&translations[i], 3*moveProb[i]); // probs are symmetric in each direction
 	}
 
 	// check all pair potentials have been set and all r_cut < L/2
@@ -164,39 +92,79 @@ int main (int argc, char * const argv[]) {
 		}
 	}
 	
-    // equilibration
-	for (unsigned int sweep = 0; sweep < equilSweep; ++sweep) {
-        for (unsigned int move = 0; move < sweepSize; ++move) {
-            try {
-                usedMovesEq.makeMove(sys);              
-            } catch (customException &ce) {
-                std::cerr << ce.what() << std::endl;
-                exit(SYS_FAILURE);
-            }
-        }
-    }
+	// Initially do a WL simulation
+	const double g = 0.5, s = 0.8;
+	const std::vector <int> maxN (1, sys.maxSpecies(0)), minN (1, 0);
+	double lnF = 1;
+	bool flat = false;
+	sys.startWALA (lnF, g, s, sysN, maxN, minN);
 	
-	// production
-	char prodLog [80];
-	strftime (prodLog,80,"%Y_%m_%d_%H_%M_%S-thermo.log",timeinfo);
-	std::ofstream prodFile (prodLog);
-	for (unsigned int sweep = 0; sweep < prodSweep; ++sweep) {
-        for (unsigned int move = 0; move < sweepSize; ++move) {
-            try {
-                usedMovesPr.makeMove(sys);
-            } catch (customException &ce) {
-                std::cerr << ce.what() << std::endl;
-                exit(SYS_FAILURE);
-            }
-        }
-        for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-            prodFile << sys.numSpecies[i] << "\t";
-        }
-        prodFile << sys.energy() << std::endl;
-    }
-	prodFile.close();
+	while (lnF > 2.0e-18) {
+		for (unsigned int move = 0; move < wlSweepSize; ++move) {
+			try {
+				usedMovesEq.makeMove(sys);
+			} catch (customException &ce) {
+				std::cerr << ce.what() << std::endl;
+				exit(SYS_FAILURE);
+			}
+		}
+			
+		// Check if bias has flattened out
+		flat = sys.getWALABias()->evaluateFlatness();
+		if (flat) {
+			// if flat, need to reset H and reduce lnF
+			sys.getWALABias()->iterateForward();
+		}
+		lnF = sys.getWALABias()->lnF();
+		
+		// Periodically write out checkpoints
+	}
 	
-    // check total energy and number of particles in the system at the end
+	// After a while, combine to initialize TMMC collection matrix
+// have to add this to use still
+	sys.startTMMC (sysN, maxN, minN);
+	int count = 0;
+	while (count < 2) {
+		for (unsigned int move = 0; move < wlSweepSize; ++move) {
+			try {
+				usedMovesEq.makeMove(sys);
+			} catch (customException &ce) {
+				std::cerr << ce.what() << std::endl;
+				exit(SYS_FAILURE);
+			}
+		}
+				
+		// Check if bias has flattened out
+		flat = sys.getWALABias()->evaluateFlatness();
+		if (flat) {
+			// If flat, need to reset H and reduce lnF
+			sys.getWALABias()->iterateForward();
+			count++;
+		}
+		
+		// Periodically write out checkpoints
+	}
+	
+	// Print checkpoint here
+	
+	// Switch over to TMMC completely
+	sys.stopWALA();
+	for (unsigned int sweep = 0; sweep < totalTMMCSweep; ++sweep) {
+		for (unsigned int move = 0; move < tmmcSweepSize; ++move) {
+			try {
+				usedMovesPr.makeMove(sys);
+			} catch (customException &ce) {
+				std::cerr << ce.what() << std::endl;
+				exit(SYS_FAILURE);
+			}
+		}
+					
+		// Update biasing function
+		
+		// Periodically write out checkpoints
+	}
+		
+	// Sanity checks
 	if (sys.nSpecies() != sys.atoms.size()) {
         std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
         exit(SYS_FAILURE);
@@ -208,7 +176,7 @@ int main (int argc, char * const argv[]) {
         exit(SYS_FAILURE);
     }
     
-    // report move statistics
+    // Report move statistics for final TMMC ("production") stage
 	char statName [80];
 	strftime (statName,80,"%Y_%m_%d_%H_%M_%S-stats.log",timeinfo);
 	std::ofstream statFile (statName);

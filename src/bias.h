@@ -1,5 +1,5 @@
 #ifndef BIAS_H_
-#define  BIAS_H_
+#define BIAS_H_
 
 #include <vector>
 #include <string>
@@ -20,8 +20,8 @@
 //! Transition Matrix Monte Carlo biasing class
 class tmmc {
 public:
+	tmmc () {};
 	tmmc (const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin);
-	~tmmc () {};
 	
 	const __BIAS_INT_TYPE__ getAddress (const std::vector <int> &Nstart, const std::vector <int> &Nend);
 	const __BIAS_INT_TYPE__ getAddress (const std::vector <int> &Nstart, const int specId, const int addOrSubtract);
@@ -39,11 +39,14 @@ private:
 //! Wang-Landau biasing class
 class wala {
 public:
+	wala () {};
 	wala (const double lnF, const double g, const double s, const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin);
 	
 	const __BIAS_INT_TYPE__ getAddress (const std::vector <int> &Nval);
-	void update (const std::vector <int> &Nval);
+	const double lnF () { return lnF_; }
 	bool evaluateFlatness ();
+	void update (const std::vector <int> &Nval);
+	void iterateForward ();
 	
 private:
 	int nSpec_;

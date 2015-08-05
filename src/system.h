@@ -4,6 +4,7 @@
 #include "potentials.h"
 #include "atom.h"
 #include "cellList.h"
+#include "bias.h"
 #include <string>
 #include <vector>
 
@@ -38,10 +39,20 @@ public:
     std::vector < std::vector < pairPotential* > > ppot;	//!< Matrix of pair potentials for atom types i, j
 	bool potentialIsSet (const int spec1, const int spec2) { return ppotSet_[spec1][spec2]; }	//!< Boolean which returns whether or not a pair has had its potential specified by the user yet
     
+	tmmc* getTMMCBias ();
+	wala* getWALABias ();
+	void startWALA (const double lnF, const double g, const double s, const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin);
+	void stopWALA () { useWALA = false; delete[] wlBias; }
+	void startTMMC (const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin);
+	void stopTMMC () { useTMMC = false; delete[] tmmcBias; }
+	bool useTMMC, useWALA;
+	tmmc* tmmcBias; //!< TMMC biasing function
+	wala* wlBias; //!< WL biasing function
+	    
 private:
     int nSpecies_;
-    std::vector < int > maxSpecies_;
     double beta_, energy_;
+    std::vector < int > maxSpecies_;
 	std::vector < double > box_;
 	std::vector < double > mu_;
     std::vector < std::vector < bool > > ppotSet_;

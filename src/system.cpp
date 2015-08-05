@@ -98,7 +98,7 @@ void simSystem::translateAtom (const int typeIndex, const int atomIndex, std::ve
 }
 
 /*!
- * Initialize the system.
+ * Initialize the system. Sets the use of both WL and TMMC biasing to false.
  * \param [in] nSpecies Number of unqiue species types to allow in the system
  * \param [in] beta Inverse temperature (1/kT)
  * \param [in] box Box dimensions [x, y, z]
@@ -188,6 +188,9 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 	}
     
     energy_ = 0.0;
+    
+    useTMMC = false;
+    useWALA = false;
 }
 
 /*!
@@ -473,4 +476,46 @@ const int simSystem::maxSpecies (const int index) {
     } else  {
         return maxSpecies_[index];
     }
+}
+
+/*!
+ * Return a pointer to the TMMC biasing object, if using TMMC, else throws an exception.
+ */
+tmmc* simSystem::getTMMCBias () {
+	if (useTMMC == true) {
+		return tmmcBias;
+	} else {
+		throw customException ("Not using TMMC");
+	}
+}
+
+/*!
+ * Return a pointer to the TMMC biasing object, if using TMMC, else throws an exception.
+ */
+wala* simSystem::getWALABias () {
+	if (useWALA == true) {
+		return wlBias;
+	} else {
+		throw customException ("Not using WALA");
+	}
+}
+
+/*
+ * Start using a Wang-Landau bias in the simulation.
+ */
+void simSystem::startWALA (const double lnF, const double g, const double s, const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin) { 
+	useWALA = true;
+	
+	// initialize the wala object
+	
+}
+
+/*!
+ * Start using a transition-matrix in the simulation.
+ */
+void simSystem::startTMMC (const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin) { 
+	useTMMC = true; 
+	
+	// initialize the tmmc object
+	
 }
