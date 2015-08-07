@@ -23,17 +23,19 @@ public:
 	tmmc () {};
 	tmmc (const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin);
 	
-	const __BIAS_INT_TYPE__ getAddress (const std::vector <int> &Nstart, const std::vector <int> &Nend);
-	const __BIAS_INT_TYPE__ getAddress (const std::vector <int> &Nstart, const int specId, const int addOrSubtract);
+	const __BIAS_INT_TYPE__ getTransitionAddress (const std::vector <int> &Nstart, const std::vector <int> &Nend);
+	const __BIAS_INT_TYPE__ getTransitionAddress (const std::vector <int> &Nstart, const int specId, const int addOrSubtract);
+	const __BIAS_INT_TYPE__ getAddress (const std::vector <int> &Nval);
 	
 	void updateC (const std::vector <int> &Nstart, const std::vector <int> &Nend, const double pa);
-	void calculateP ();
+	void calculatePI ();
+	const double getBias (const int address) { return -lnPI_[address]; }
 	
 private:
 	void difference_ (const std::vector <int> &Nstart, const std::vector <int> &Nend, int &specId, int &addOrSubtract);
 	int nSpec_; // number of species in simulation
 	std::vector <int> Nmax_, Nmin_, W_;
-	std::vector <double> C_, P_;
+	std::vector <double> C_, P_, lnPI_;
 };
 
 //! Wang-Landau biasing class
@@ -44,6 +46,7 @@ public:
 	
 	const __BIAS_INT_TYPE__ getAddress (const std::vector <int> &Nval);
 	const double lnF () { return lnF_; }
+	const double getBias (const int address) { return -lnPI_[address]; }
 	bool evaluateFlatness ();
 	void update (const std::vector <int> &Nval);
 	void iterateForward ();

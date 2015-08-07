@@ -1,8 +1,8 @@
 /*!
- * A general purpose grand canonical Monte Carlo code
+ * Perform multicomponent GCMC in the isothermoal-isobaric ensemble.
  * 
  * \author Nathan A. Mahynski
- * \date 08/01/14
+ * \date 08/07/15
  */
 
 #include <iostream>
@@ -35,7 +35,7 @@ int main (int argc, char * const argv[]) {
 	RNG_SEED = -10;
 	const int sysN = 1;
 	const double sysBeta = 1.0;
-	const std::vector < double > sysBox (3, 6);
+	const std::vector < double > sysBox (3, 9);
 	std::vector < double > sysMu (sysN, 2.5);
 	std::vector < int > sysMax (sysN, 300);
 	simSystem sys (sysN, sysBeta, sysBox, sysMu, sysMax);
@@ -97,7 +97,7 @@ int main (int argc, char * const argv[]) {
 	const std::vector <int> maxN (1, sys.maxSpecies(0)), minN (1, 0);
 	double lnF = 1;
 	bool flat = false;
-	sys.startWALA (lnF, g, s, sysN, maxN, minN);
+	sys.startWALA (lnF, g, s, maxN, minN);
 	
 	while (lnF > 2.0e-18) {
 		for (unsigned int move = 0; move < wlSweepSize; ++move) {
@@ -121,9 +121,10 @@ int main (int argc, char * const argv[]) {
 	}
 	
 	// After a while, combine to initialize TMMC collection matrix
-// have to add this to use still
-	sys.startTMMC (sysN, maxN, minN);
+	// have to add this to use still
+	sys.startTMMC (maxN, minN);
 	int count = 0;
+	// actually this should run until all elements of the collection matrix have been populated (?)
 	while (count < 2) {
 		for (unsigned int move = 0; move < wlSweepSize; ++move) {
 			try {

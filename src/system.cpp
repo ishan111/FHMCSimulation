@@ -97,6 +97,18 @@ void simSystem::translateAtom (const int typeIndex, const int atomIndex, std::ve
     }
 }
 
+/*
+ * Destructor frees biases if used and not turned off already.
+ */
+simSystem::~simSystem () {
+	if (useTMMC) {
+		delete [] tmmcBias;
+	}
+	if (useWALA) {
+		delete [] wlBias;
+	}
+}
+
 /*!
  * Initialize the system. Sets the use of both WL and TMMC biasing to false.
  * \param [in] nSpecies Number of unqiue species types to allow in the system
@@ -501,21 +513,38 @@ wala* simSystem::getWALABias () {
 }
 
 /*
- * Start using a Wang-Landau bias in the simulation.
+ * Start using a Wang-Landau bias in the simulation. Throws an exception if input values are illegal or there is another problem (e.g. memory).
+ * 
+ * \param [in] lnF Factor by which the estimate of the density of states in updated each time it is visited.
+ * \param [in] g Factor by which lnF is reduced (multiplied) once "flatness" has been achieved.
+ * \param [in] s Factor by which the min(H) must be within the mean of H to be considered "flat", e.g. 0.8 --> min is within 20% error of mean
+ * \param [in] Nmax Vector of upper bound for number of particles of each species.
+ * \param [in] Nmin Vector of lower bound for number of particles of each species. 
  */
-void simSystem::startWALA (const double lnF, const double g, const double s, const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin) { 
-	useWALA = true;
-	
+void simSystem::startWALA (const double lnF, const double g, const double s, const std::vector <int> &Nmax, const std::vector <int> &Nmin) { 
 	// initialize the wala object
+	try {
+		wlBias = new wala (lnF, g, s, nSpecies_, Nmax, Nmin);
+	} catch (customException& ce) {
+		throw customException ("Cannot start Wang-Landau biasing in system: "+sstr(ce.what()));
+	}
 	
+	useWALA = true;
 }
 
 /*!
- * Start using a transition-matrix in the simulation.
+ * Start using a transition-matrix in the simulation. Throws an exception if input values are illegal or there is another problem (e.g. memory).
+ * 
+ * \param [in] Nmax Vector of upper bound for number of particles of each species.
+ * \param [in] Nmin Vector of lower bound for number of particles of each species.
  */
-void simSystem::startTMMC (const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin) { 
-	useTMMC = true; 
-	
+void simSystem::startTMMC (const std::vector <int> &Nmax, const std::vector <int> &Nmin) { 
 	// initialize the tmmc object
-	
+	try {
+		tmmcBias = new tmmc (nSpecies_, Nmax, Nmin);
+	} catch (customException& ce) {
+		throw customException ("Cannot start TMMC biasing in system: "+sstr(ce.what()));
+	}
+		
+	useTMMC = true; 
 }

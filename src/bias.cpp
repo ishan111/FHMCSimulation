@@ -49,6 +49,13 @@ tmmc::tmmc (const int nSpec, const std::vector <int> &Nmax, const std::vector <i
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for probability matrix in tmmc");
 	}
+	
+	// attempt to allocate memory for lnPI matrix and initializes it all to 1
+	try {
+		lnPI_.resize(size, 1.0);
+	} catch (const std::bad_alloc &ce) {
+		throw customException ("Out of memory, cannot allocate space for macrostate distribution matrix in tmmc");
+	}
 }
 
 /*!
@@ -77,7 +84,7 @@ void tmmc::difference_ (const std::vector <int> &Nstart, const std::vector <int>
  * \param [in] Nstart Vector of the number of each species (in order) initially (before MC move)
  * \param [in] Nend Vector of the number of each species (in order) after the MC move
  */
-const __BIAS_INT_TYPE__ tmmc::getAddress (const std::vector <int> &Nstart, const std::vector <int> &Nend) {
+const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const std::vector <int> &Nstart, const std::vector <int> &Nend) {
 	// Layout of y = [0, +1, -1, +1, -1, ... ] where each pair of +1/-1 is ordered from specId = 0 to N-1
 	int specId = 0, addOrSubtract = 0;
 	difference_(Nstart, Nend, specId, addOrSubtract);
@@ -109,7 +116,7 @@ const __BIAS_INT_TYPE__ tmmc::getAddress (const std::vector <int> &Nstart, const
  * \param [in] specId Index of species that was changed
  * \param [in] addOrSubtract Indicates if specId was increased (+1), decreased (-1), or no change (0)
  */
-const __BIAS_INT_TYPE__ tmmc::getAddress (const std::vector <int> &Nstart, const int specId, const int addOrSubtract) {		
+const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const std::vector <int> &Nstart, const int specId, const int addOrSubtract) {		
 	int y = 0;
 	if (addOrSubtract != 0) {
 		y += 2*(specId+1);
@@ -130,6 +137,20 @@ const __BIAS_INT_TYPE__ tmmc::getAddress (const std::vector <int> &Nstart, const
 }
 
 /*!
+ * Get the address in lnPI that corresponds to a given macrostate.
+ * 
+ * \param [in] Nval Vector of the number of each species (in order)
+ */
+const __BIAS_INT_TYPE__ tmmc::getAddress (const std::vector <int> &Nval) {		
+	__BIAS_INT_TYPE__ x = (Nval[nSpec_-1] - Nmin_[nSpec_-1]);
+	for (int i = nSpec_-2; i >= 0; --i) {
+		x *= W_[i];
+		x += (Nval[i] - Nmin_[i]);
+	}
+	return x;
+}
+
+/*!
  * Update the collection matrix.
  * 
  * \param [in] Nstart Vector of the number of each species (in order) initially (before MC move)
@@ -139,18 +160,19 @@ const __BIAS_INT_TYPE__ tmmc::getAddress (const std::vector <int> &Nstart, const
 void tmmc::updateC (const std::vector <int> &Nstart, const std::vector <int> &Nend, const double pa) {
 	int specId = 0, addOrSubtract = 0;
 	difference_ (Nstart, Nend, specId, addOrSubtract);
-	const __BIAS_INT_TYPE__ i = getAddress (Nstart, specId, addOrSubtract);
-	if (addOrSubtract == 0) {
-		C_[i] += (1-pa);
-	} else {
-		C_[i] += pa;
-	}
+	const __BIAS_INT_TYPE__ i = getTransitionAddress (Nstart, specId, addOrSubtract);
+	__BIAS_INT_TYPE__ j = i;
+	if (addOrSubtract != 0) {
+		j = getTransitionAddress (Nstart, specId, 0);
+	} 
+	C_[i] += pa;
+	C_[j] += (1-pa);
 }
 
 /*!
- * Calculate the probability matrix.
+ * Calculate the (natural logarithm of the) macrostate density matrix via the probability matrix.
  */
-void tmmc::calculateP () {
+void tmmc::calculatePI () {
 	for (__BIAS_INT_TYPE__ i = 0; i < C_.size(); i += (1+2*nSpec_)) {
 		double sum = 0.0;
 		for (unsigned int j = 0; j < 1+2*nSpec_; ++j) {
@@ -165,6 +187,23 @@ void tmmc::calculateP () {
 				P_[i+j] = 0;
 			}
 		}
+	}
+	
+	// Reset first value to unity just to start fresh. Since only ratios matter this is perfectly fair.
+	lnPI_[0] = 1.0;
+	if (nSpec_ == 1) {
+		std::vector <int> N1 (1), N2 (1);
+		__BIAS_INT_TYPE__ address1, address2;
+		for (__BIAS_INT_TYPE__ i = 0; i < lnPI_.size()-1; ++i) {
+			N1[0] = Nmin_[0] + i;
+			address1 = getTransitionAddress (N1, 0, +1);
+			N2[0] = N1[0] + 1;
+			address2 = getTransitionAddress (N2, 0, -1);
+			lnPI_[i+1] = lnPI_[i] + log(P_[address1]/P_[address2]);
+		}
+	} else {
+		// not built yet
+		exit(-1);
 	}
 }
 

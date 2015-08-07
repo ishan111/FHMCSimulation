@@ -54,8 +54,52 @@ int insertParticle::make (simSystem &sys) {
 #endif
     }
     
+    // biasing
+    const double p_u = V/(sys.numSpecies[typeIndex_]+1.0)*exp(sys.beta()*(sys.mu(typeIndex_) - insEnergy));
+    double bias = 1.0;
+    if (sys.useTMMC && !sys.useWALA) {
+    	// TMMC biasing
+    	if (sys.nSpecies() == 1) {
+    		// Single-component, standard TMMC
+    		std::vector < int > nv (1, sys.numSpecies[typeIndex_]), nv2 (1, sys.numSpecies[typeIndex_]+1);
+    		const int address1 = sys.tmmcBias->getAddress(nv), address2 = sys.tmmcBias->getAddress(nv2);
+       		const double b1 = sys.tmmcBias->getBias (address1), b2 = sys.tmmcBias->getBias (address2);
+       		bias = exp(b2-b1);
+    	} else {
+    		// Multi-component, use isothermal-isochoric method of Shen & Errington
+    		exit(-1); 
+    	}
+    } else if (!sys.useTMMC && sys.useWALA) {
+    	// Wang-Landau Biasing
+    	if (sys.nSpecies() == 1) {
+    	    // Single-component
+    	    std::vector < int > nv (1, sys.numSpecies[typeIndex_]), nv2 (1, sys.numSpecies[typeIndex_]+1);
+    	    const int address1 = sys.wlBias->getAddress(nv), address2 = sys.wlBias->getAddress(nv2);
+    	    const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
+    	    bias = exp(b2-b1);
+    	} else {
+    		// Multi-component, use isothermal-isochoric method of Shen & Errington
+    		exit(-1); 
+    	}
+    } else if (sys.useTMMC && sys.useWALA) {
+    	// Crossover phase where we use WL but update TMMC collection matrix
+    	if (sys.nSpecies() == 1) {
+    		// Single-component
+    		std::vector < int > nv (1, sys.numSpecies[typeIndex_]), nv2 (1, sys.numSpecies[typeIndex_]+1);
+    		const int address1 = sys.wlBias->getAddress(nv), address2 = sys.wlBias->getAddress(nv2);
+    		const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
+    		bias = exp(b2-b1);
+    		sys.tmmcBias->updateC (nv, nv2, std::min(1.0, p_u));    	    
+    	} else {
+    		// Multi-component, use isothermal-isochoric method of Shen & Errington
+    	    exit(-1);   		
+    	}
+    } else {
+    	// No biasing
+    	bias = 1.0;
+    }
 	// metropolis criterion
-	if (rng (&RNG_SEED) < V/(sys.numSpecies[typeIndex_]+1.0)*exp(sys.beta()*(sys.mu(typeIndex_) - insEnergy))) {
+	if (rng (&RNG_SEED) < p_u*bias) {
         try {
             sys.insertAtom(typeIndex_, &newAtom);
         } catch (customException &ce) {

@@ -4,6 +4,7 @@
 #include "system.h"
 #include "global.h"
 #include "moves.h"
+#include <cmath>
 
 class insertParticle : public mcMove {
 public:

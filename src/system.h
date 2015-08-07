@@ -14,7 +14,7 @@
 class simSystem {
 public:
 	simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies);
-	~simSystem () {};
+	~simSystem ();
     
     const int nSpecies () { return nSpecies_; }
     const int maxSpecies (const int index);
@@ -41,9 +41,9 @@ public:
     
 	tmmc* getTMMCBias ();
 	wala* getWALABias ();
-	void startWALA (const double lnF, const double g, const double s, const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin);
+	void startWALA (const double lnF, const double g, const double s, const std::vector <int> &Nmax, const std::vector <int> &Nmin);
 	void stopWALA () { useWALA = false; delete[] wlBias; }
-	void startTMMC (const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin);
+	void startTMMC (const std::vector <int> &Nmax, const std::vector <int> &Nmin);
 	void stopTMMC () { useTMMC = false; delete[] tmmcBias; }
 	bool useTMMC, useWALA;
 	tmmc* tmmcBias; //!< TMMC biasing function
