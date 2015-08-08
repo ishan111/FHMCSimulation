@@ -29,7 +29,7 @@ cellList::cellList (std::vector < double > _box, double _cellSize, std::vector< 
 	}
 	
 	if (_atoms.size() > 0) {
-		std::cout << "Sorting particles into cells." << std::endl;
+		//std::cout << "Sorting particles into cells." << std::endl;
 		sortIntoCells(_atoms);
 	}
 }

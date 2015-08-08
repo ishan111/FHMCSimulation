@@ -1,6 +1,6 @@
 #include "utilities.h"
 
-int RNG_SEED = -1024;	// default RNG seed
+int RNG_SEED = -1024;	//!< Default RNG seed
 
 // for rng
 #define IM1 2147483563
@@ -19,8 +19,10 @@ int RNG_SEED = -1024;	// default RNG seed
 #define RNMX (1.0-EPS)
 
 /*!
- * Random number generator (Numerical Recipes)
- * \param idum seed
+ * Random number generator (from Numerical Recipes)
+ * 
+ * \param [in] idum seed
+ * 
  * \return temp Pseudo-random number between [0, 1)
  */
 double rng (int *idum) {
@@ -58,6 +60,7 @@ double rng (int *idum) {
 
 /*!
  * Replace a position inside a box assuming periodic boundary conditions.
+ * 
  * \param [in, out] pos Position to be placed in box
  * \param [in] box Box dimensions
  */
@@ -100,6 +103,10 @@ double pbc_dist2 (const std::vector < double > &p1, const std::vector < double >
 
 /*!
  * Function to check whether a given file exists or not.
+ * 
+ * \param [in] fileName Name of file to check
+ * 
+ * \return If file exists
  */
 bool fileExists(std::string fileName)
 {

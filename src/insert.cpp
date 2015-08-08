@@ -1,26 +1,15 @@
-#include "system.h"
 #include "insert.h"
-#include "global.h"
-#include "moves.h"
-#include "atom.h"
-#include <sstream>
-#include <iostream>
 
 /*!
  * Insert a particle into the system.  All other information is stored in the simSystem object.
+ * 
  * \param [in] sys System object to attempt to insert a particle into.
+ * 
  * \return MOVE_SUCCESS if inserted a particle, otherwise MOVE_FAILURE if did not.  Will throw exceptions if there was an error.
  */
 int insertParticle::make (simSystem &sys) {
     // check if at upper bound
-    int max;
-    try {
-        max = sys.maxSpecies(typeIndex_);
-    } catch (customException &ce) {
-        std::string a = "Error inserting particle: ", b = ce.what();
-        throw customException (a+b);
-    }
-    if (sys.numSpecies[typeIndex_] >= max) {
+    if (sys.numSpecies[typeIndex_] >= sys.maxSpecies(typeIndex_)) {
         return MOVE_FAILURE;
     }
     
@@ -56,48 +45,10 @@ int insertParticle::make (simSystem &sys) {
     
     // biasing
     const double p_u = V/(sys.numSpecies[typeIndex_]+1.0)*exp(sys.beta()*(sys.mu(typeIndex_) - insEnergy));
-    double bias = 1.0;
-    if (sys.useTMMC && !sys.useWALA) {
-    	// TMMC biasing
-    	if (sys.nSpecies() == 1) {
-    		// Single-component, standard TMMC
-    		std::vector < int > nv (1, sys.numSpecies[typeIndex_]), nv2 (1, sys.numSpecies[typeIndex_]+1);
-    		const int address1 = sys.tmmcBias->getAddress(nv), address2 = sys.tmmcBias->getAddress(nv2);
-       		const double b1 = sys.tmmcBias->getBias (address1), b2 = sys.tmmcBias->getBias (address2);
-       		bias = exp(b2-b1);
-    	} else {
-    		// Multi-component, use isothermal-isochoric method of Shen & Errington
-    		exit(-1); 
-    	}
-    } else if (!sys.useTMMC && sys.useWALA) {
-    	// Wang-Landau Biasing
-    	if (sys.nSpecies() == 1) {
-    	    // Single-component
-    	    std::vector < int > nv (1, sys.numSpecies[typeIndex_]), nv2 (1, sys.numSpecies[typeIndex_]+1);
-    	    const int address1 = sys.wlBias->getAddress(nv), address2 = sys.wlBias->getAddress(nv2);
-    	    const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
-    	    bias = exp(b2-b1);
-    	} else {
-    		// Multi-component, use isothermal-isochoric method of Shen & Errington
-    		exit(-1); 
-    	}
-    } else if (sys.useTMMC && sys.useWALA) {
-    	// Crossover phase where we use WL but update TMMC collection matrix
-    	if (sys.nSpecies() == 1) {
-    		// Single-component
-    		std::vector < int > nv (1, sys.numSpecies[typeIndex_]), nv2 (1, sys.numSpecies[typeIndex_]+1);
-    		const int address1 = sys.wlBias->getAddress(nv), address2 = sys.wlBias->getAddress(nv2);
-    		const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
-    		bias = exp(b2-b1);
-    		sys.tmmcBias->updateC (nv, nv2, std::min(1.0, p_u));    	    
-    	} else {
-    		// Multi-component, use isothermal-isochoric method of Shen & Errington
-    	    exit(-1);   		
-    	}
-    } else {
-    	// No biasing
-    	bias = 1.0;
-    }
+    std::vector <int> Nend = sys.numSpecies;
+    Nend[typeIndex_] += 1;
+    double bias = calculateBias(sys, Nend, p_u);
+   
 	// metropolis criterion
 	if (rng (&RNG_SEED) < p_u*bias) {
         try {
@@ -107,8 +58,19 @@ int insertParticle::make (simSystem &sys) {
             throw customException (a+b);
         }
 		sys.incrementEnergy(insEnergy);
+		
+		// update Wang-Landau bias, if used
+		if (sys.useWALA) {
+			sys.getWALABias()->update(sys.numSpecies);
+		}
+		
         return MOVE_SUCCESS;
     }
     
+	// update Wang-Landau bias (even if moved failed), if used
+	if (sys.useWALA) {
+		sys.getWALABias()->update(sys.numSpecies);
+	}
+	
 	return MOVE_FAILURE;
 }

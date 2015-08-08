@@ -1,10 +1,13 @@
 #ifndef INSERT_H_
 #define INSERT_H_
 
+#include <cmath>
+#include <sstream>
+#include <iostream>
 #include "system.h"
 #include "global.h"
 #include "moves.h"
-#include <cmath>
+#include "atom.h"
 
 class insertParticle : public mcMove {
 public:

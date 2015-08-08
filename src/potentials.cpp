@@ -1,8 +1,12 @@
 #include "potentials.h"
 
 /*!
- * Function for saving arbitrary potential into textfile
-*/
+ * Function for saving arbitrary potential into ASCII file.
+ * 
+ * \param [in] filename Name of ASCII file to save potential to 
+ * \param [in] start r value to start printing U(r) from 
+ * \param [in] dr Increment to move in r between prints
+ */
 void pairPotential::savePotential(std::string filename, double start, double dr)
 {
 	if (dr <= 0.0) {
@@ -22,11 +26,12 @@ void pairPotential::savePotential(std::string filename, double start, double dr)
 
 /*!
  * Set the parameters in the Lennard-Jones equation.
- * \param [in] params Vector of inputs: {epsilon, sigma, rcut, ushift}
+ * 
+ * \param [in] params Vector of inputs: {epsilon, sigma, r_cut, u_shift}
  */
 void lennardJones::setParameters (const std::vector < double > params) {
 	if (params.size() != 4) {
-		throw customException ("For lennardJones must specify 4 parameters: epsilon, sigma, rcut, ushift");
+		throw customException ("For lennardJones must specify 4 parameters: epsilon, sigma, r_cut, u_shift");
 	} else {
 		if (params[0] < 0) {
 			throw customException ("For lennardJones, epsilon > 0");
@@ -35,7 +40,7 @@ void lennardJones::setParameters (const std::vector < double > params) {
 			throw customException ("For lennardJones, sigma > 0");
 		}
 		if (params[2] < 0) {
-			throw customException ("For lennardJones, rcut > 0");
+			throw customException ("For lennardJones, r_cut > 0");
 		}
 		
 		paramsAreSet_ = true;
@@ -46,10 +51,13 @@ void lennardJones::setParameters (const std::vector < double > params) {
 }
 
 /*!
- * Return the energy of two particles separate by a distance r.
+ * Return the energy of two particles separated by a distance r.
  * \f[ U(r) = 4 \epsilon \left( \left \frac{ \sigma }{ r } \right)^{12} - \left( \frac{ sigma }{ r } \right)^6 \right) + U_{shift} \quad r < r_{cut}
 	\f]
+ *
  * \param [in] r Scalar separation, needs to be the minimum image
+ * 
+ * \return U(r)
  */
 double lennardJones::energy (const double r) {
 	if (!paramsAreSet_) {
@@ -64,9 +72,13 @@ double lennardJones::energy (const double r) {
 }
 
 /*!
- * Calculate the tail correction with the approximation g(r) =1 for r_{cut} > 1
- * as explained in Frenkel&Smit in eq. (3.2.5)
-*/
+ * Calculate the tail correction with the approximation g(r) = 1 for r_{cut} > 1
+ * as explained in Frenkel & Smit in eq. (3.2.5)
+ * 
+ * \param [in] rhoBath NUmber density of the surrounding fluid
+ * 
+ * \return U_tail
+ */
 double lennardJones::tailCorrection(const double rhoBath) {
 	const double r3 = (params_[1]*params_[1]*params_[1])/(params_[2]*params_[2]*params_[2]);
 	const double r9 = r3*r3*r3;
@@ -76,6 +88,7 @@ double lennardJones::tailCorrection(const double rhoBath) {
 
 /*!
  * Return the value of r_{cut} for this potential.
+ * 
  * \return rcut
  */
 double lennardJones::rcut () {
@@ -89,14 +102,15 @@ double lennardJones::rcut () {
 
 /*!
  * Set the parameters in the tabulated potential
- * \param [in] params Vector of inputs: {rcut, rshift, ushift, uinfinity}
+ * 
+ * \param [in] params Vector of inputs: {r_cut, r_shift, u_shift, u_infinity}
  */
 void tabulated::setParameters (const std::vector < double > params) {
 	if (params.size() != 4) {
-		throw customException ("For tabulated must specify 4 parameters: rcut, rshift, ushift, uinfinity");
+		throw customException ("For tabulated must specify 4 parameters: r_cut, r_shift, u_shift, u_infinity");
 	} else {
 		if (params[0] < 0) {
-			throw customException ("For tabulated, rcut > 0");
+			throw customException ("For tabulated, r_cut > 0");
 		}
 		
 		paramsAreSet_ = true;
@@ -108,6 +122,8 @@ void tabulated::setParameters (const std::vector < double > params) {
 
 /*!
  * Load a tabulated potential from an external file and store it internally
+ * 
+ * \param [in] filename Name of ASCII file to read (r, U(r)) from 
  */
 void tabulated::loadPotential(std::string filename)
 {
@@ -159,6 +175,7 @@ void tabulated::loadPotential(std::string filename)
 /*!
  * Return the energy of two particles separate by a distance r.
  * Use linear interpolation to calculate energy from tabulated values
+ * 
  * \param [in] r Scalar separation, needs to be the minimum image
  */
 double tabulated::energy (const double r) {
@@ -168,11 +185,9 @@ double tabulated::energy (const double r) {
 	
 	if (r < params_[1]) {
 		std::cerr<<"distance r too small in energy calculation in tabulated potential. Returning value at r="<<start<<std::endl;
-	}
-	else if (r > params_[0]) {
+	} else if (r > params_[0]) {
 		return params_[3];
-	}
-	else {
+	} else {
 		const unsigned int lowerIndex = floor((r-params_[1])/dr);
 		const unsigned int upperIndex = ceil((r-params_[1])/dr);
 		
@@ -183,12 +198,20 @@ double tabulated::energy (const double r) {
 	}
 }
 
+/*!
+ * Tail correction for a tabulated potential always returns 0 since no information about what the potential is after its cutoff radius.
+ * 
+ * \param [in] Number density of the surrounding fluid
+ * 
+ * \return U_tail
+ */
 double tabulated::tailCorrection(const double rhoBath) {
 	return 0.0;
 }
 
 /*!
  * Return the value of r_{cut} for this potential.
+ * 
  * \return rcut
  */
 double tabulated::rcut () {
@@ -201,6 +224,7 @@ double tabulated::rcut () {
 
 /*!
  * Set the parameters in the square-well equation.
+ * 
  * \param [in] params Vector of inputs: {sigma, wellwidth, welldepth}
  */
 void squareWell::setParameters (const std::vector < double > params) {
@@ -226,7 +250,10 @@ void squareWell::setParameters (const std::vector < double > params) {
 
 /*!
  * Return the energy of two particles separate by a distance r.
+ * 
  * \param [in] r Scalar separation, needs to be the minimum image
+ * 
+ * \return U(r)
  */
 double squareWell::energy (const double r) {
 	if (!paramsAreSet_) {
@@ -242,13 +269,21 @@ double squareWell::energy (const double r) {
 	}
 }
 
+/*!
+ * Tail correction for a square well potential always returns 0.
+ * 
+ * \param [in] Number density of the surrounding fluid
+ * 
+ * \return U_tail
+ */
 double squareWell::tailCorrection(const double rhoBath) {
 	return 0.0;
 }
 
 /*!
  * Return the value of r_{cut} for this potential.
- * \return rcut
+ * 
+ * \return r_cut
  */
 double squareWell::rcut () {
 	if (!paramsAreSet_) {
@@ -260,7 +295,8 @@ double squareWell::rcut () {
 
 
 /*!
- * Set the parameters in the hard-core potential 
+ * Set the parameters in the hard-core potential.
+ * 
  * \param [in] params Vector of inputs: {sigma, infinity}
  */
 void hardCore::setParameters (const std::vector < double > params) {
@@ -280,7 +316,10 @@ void hardCore::setParameters (const std::vector < double > params) {
 
 /*!
  * Return the energy of two particles separate by a distance r.
- * \param [in] r Scalar separation, needs to be the minimum image
+ * 
+ * \param [in] r Scalar separation, needs to be the minimum image.
+ * 
+ * \return U(r)
  */
 double hardCore::energy (const double r) {
 	if (!paramsAreSet_) {
@@ -294,13 +333,21 @@ double hardCore::energy (const double r) {
 	}
 }
 
+/*!
+ * Tail correction for a hard core potential always returns 0 radius.
+ * 
+ * \param [in] Number density of the surrounding fluid
+ * 
+ * \return U_tail
+ */
 double hardCore::tailCorrection(const double rhoBath) {
 	return 0.0;
 }
 
 /*!
  * Return the value of r_{cut} for this potential.
- * \return rcut
+ * 
+ * \return r_cut
  */
 double hardCore::rcut () {
 	if (!paramsAreSet_) {

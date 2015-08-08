@@ -4,10 +4,12 @@
 #define MOVE_SUCCESS 1 //!< Returned by mcMove if move was successful
 #define MOVE_FAILURE 0 //!< Returned by mcMove if move was not successful
 
-#include "system.h"
 #include <vector>
 #include <string>
 #include <boost/lexical_cast.hpp>
+#include "system.h"
+#include "utilities.h"
+#include "global.h"
 
 /*!
  * Virtual base class for all Monte Carlo moves.
@@ -18,7 +20,7 @@ public:
 	mcMove (const int typeIndex, const std::string tag) { typeIndex_ = typeIndex; name_ = tag + boost::lexical_cast<std::string>(typeIndex); }  
     virtual ~mcMove () = 0;
     virtual int make (simSystem &sys) = 0; //!< Make a MC move, return MOVE_SUCCESS or MOVE_FAILURE
-	const int whatType () { return typeIndex_; }
+	const int whatType () { return typeIndex_; } //!< Returns the index referring to the atom type this move operates on
 	const std::string myName () { return name_; }	//!< Return the name of this move
 	
 protected:
@@ -27,7 +29,7 @@ protected:
 };
 
 /*!
- * Class that tracks and decides which moves whould be made.
+ * Class that tracks and decides which moves whould be made.  However, it does NOT store the moves themselves so they should be fixed in memory elsewhere.
  */
 class moves {
 public:
@@ -38,11 +40,14 @@ public:
     void addMove (mcMove *newMove, const double probability);
     std::vector < double > reportMoveStatistics ();
     std::vector < double > reportProbabilities () { return normProbabilities_; } //!< Echo the normalized probabilities of each move in the object
-	const std::vector < mcMove* > includedMoves () { return moves_; }
+	const std::vector < mcMove* > includedMoves () { return moves_; } //!< Returns a vector of pointers to move objects currently being used
 	
 private:
-    std::vector < double > normProbabilities_, rawProbabilities_, succeeded_, attempted_;
-    std::vector < mcMove* > moves_;
+    std::vector < double > normProbabilities_; //!< Sum of un-normalized probability of each move included
+    std::vector < double > rawProbabilities_; //!< Un-normalized probabilty of each move
+    std::vector < double > succeeded_; //!< Number of times each move was successful
+    std::vector < double > attempted_; //!< Number of times each move was attempted
+    std::vector < mcMove* > moves_; //!< Vector of pointers to all moves used
 };
 
 #endif

@@ -1,26 +1,21 @@
-#include <string>
-#include <vector>
-#include <boost/algorithm/string.hpp>
-#include <boost/algorithm/string/split.hpp>
 #include "input.h"
-#include "global.h"
-#include <utility>
-#include <sstream>
-#include <stdio.h>      
-#include <time.h>
-#include <fstream>
-#include "utilities.h"
 
 using namespace boost;
 
 /*!
  * Parse the input string from the command line.
+ * 
  * \param [in] argc Command line
  * \param [in] argv Command line
  * \param [in] rawtime Time stamp from the time the binary was invoked
+ * 
  * \return ans Vector of strings with parsed information, see ==help option from command line
  */
 std::vector < std::string > parseInput (int argc, char * const argv[], time_t rawtime) {
+	
+	std::cout << "THIS NEEDS TO BE UPDATED" << std::endl;
+	exit(-1);
+	
 	// report in time-stamped log file 
 	struct tm * timeinfo;
 	char buffer [80];

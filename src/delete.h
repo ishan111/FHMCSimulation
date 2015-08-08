@@ -1,10 +1,13 @@
 #ifndef DELETE_H_
 #define DELETE_H_
 
+#include <iostream>
+#include <sstream>
+#include <string>
 #include "system.h"
 #include "global.h"
 #include "moves.h"
-#include <string>
+#include "atom.h"
 
 class deleteParticle : public mcMove {
 public:

@@ -1,9 +1,4 @@
-#include "system.h"
-#include "global.h"
 #include "moves.h"
-#include <string.h>
-#include "utilities.h"
-#include <vector>
 
 mcMove::~mcMove () {
     ;
@@ -77,7 +72,7 @@ void moves::makeMove (simSystem &sys) {
 
 /*!
  * Report the statistics on the success/failure of each move made so far.
- * \param ans Number of Success / Total Attempts for each move
+ * \return ans Number of Success / Total Attempts for each move
  */
 std::vector < double > moves::reportMoveStatistics () {
     std::vector < double > ans = succeeded_;

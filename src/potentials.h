@@ -1,13 +1,13 @@
 #ifndef POTENTIALS_H_
 #define POTENTIALS_H_
 
-#include "global.h"
-#include "utilities.h"
 #include <cmath>
 #include <vector>
 #include <string>
 #include <iostream>
 #include <fstream> 
+#include "global.h"
+#include "utilities.h"
 
 /*!
  * Abstract base class which defines all pair potentials.
@@ -24,13 +24,13 @@ public:
 	inline double energy (const std::vector < double > &p1, const std::vector < double > &p2, const std::vector < double > &box) { return energy(sqrt(pbc_dist2(p1, p2, box))); } //!< Calculates the minimum image distance and invokes the energy call 
 	void savePotential(std::string filename, double start, double dr);
 //protected:
-	std::vector < double > params_;
-	bool paramsAreSet_;
+	std::vector < double > params_; //!< Parameters (constants) that are needed to calculate U(r)
+	bool paramsAreSet_; //!< Logical check if the paramters for this potential have been specified by the user
 };
 
 /*!
  * Lennard-Jones Potential
- * Parameters should be specified in the following order: { epsilon, sigma, rcut, ushift }
+ * Parameters should be specified in the following order: { epsilon, sigma, r_cut, u_shift }
  */
 class lennardJones : public pairPotential {
 public:
@@ -42,13 +42,13 @@ public:
 
 /*!
  * Tabulated Potential
- * Parameters should be specified in the following order: { rcut, rshift, ushift, uinfinity }
+ * Parameters should be specified in the following order: { r_cut, r_shift, u_shift, u_infinity }
  */
 class tabulated : public pairPotential {
 private:
-	std::vector<double> table;
-	double start;
-	double dr;
+	std::vector <double> table;
+	double start; //!< r To start from
+	double dr; //!< Increment for r
 public:
 	void setParameters (const std::vector < double > params);
 	void loadPotential(std::string filename);

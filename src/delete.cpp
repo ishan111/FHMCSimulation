@@ -1,26 +1,21 @@
-#include "system.h"
 #include "delete.h"
-#include "global.h"
-#include "moves.h"
-#include "atom.h"
-#include <iostream>
-#include <sstream>
-#include <string>
 
 /*!
  * Delete a particle from the system.  All other information is stored in the simSystem object.
+ * 
  * \param [in] sys System object to attempt to remove a particle from.
+ * 
  * \return MOVE_SUCCESS if deleted a particle, otherwise MOVE_FAILURE if did not.  Will throw exceptions if there was an error.
  */
 int deleteParticle::make (simSystem &sys) {
-	// check if any exist to be deleted
-    if (sys.numSpecies[typeIndex_] < 1) {
+	// check if any can be deleted
+    if (sys.numSpecies[typeIndex_] <= sys.minSpecies(typeIndex_)) {
         return MOVE_FAILURE;
     }
     
-	// choose a random particle of that type
+	// choose a random particle (index) of that type
 	const int chosenAtom = (int) floor(rng (&RNG_SEED) * sys.numSpecies[typeIndex_]);
- 
+
 	// attempt to delete that one
 	const std::vector < double > box = sys.box();
     double V = 1.0;
@@ -54,8 +49,14 @@ int deleteParticle::make (simSystem &sys) {
 #endif
     }
     
+    // biasing
+    const double p_u = sys.numSpecies[typeIndex_]/V*exp(sys.beta()*(-sys.mu(typeIndex_) - delEnergy));
+    std::vector <int> Nend = sys.numSpecies;
+    Nend[typeIndex_] -= 1;
+    double bias = calculateBias(sys, Nend, p_u);
+    
 	// metropolis criterion
-	if (rng (&RNG_SEED) < sys.numSpecies[typeIndex_]/V*exp(sys.beta()*(-sys.mu(typeIndex_) - delEnergy))) {
+	if (rng (&RNG_SEED) < p_u*bias) {
 	    try {
             sys.deleteAtom(typeIndex_, chosenAtom);
         } catch (customException &ce) {
@@ -63,8 +64,19 @@ int deleteParticle::make (simSystem &sys) {
             throw customException (a+b);
         }
 		sys.incrementEnergy(delEnergy);	
+		
+		// update Wang-Landau bias, if used
+		if (sys.useWALA) {
+			sys.getWALABias()->update(sys.numSpecies);
+		}
+				
         return MOVE_SUCCESS;
     }
     
+	// update Wang-Landau bias (even if moved failed), if used
+	if (sys.useWALA) {
+		sys.getWALABias()->update(sys.numSpecies);
+	}
+		
 	return MOVE_FAILURE;
 }

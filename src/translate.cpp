@@ -1,15 +1,10 @@
-#include "system.h"
 #include "translate.h"
-#include "global.h"
-#include "moves.h"
-#include "atom.h"
-#include <iostream>
-#include <sstream>
-#include <string>
 
 /*!
- * translate a particle in the system.  All other information is stored in the simSystem object.
+ * Translate a particle in the system.  All other information is stored in the simSystem object.
+ * 
  * \param [in] sys System object to attempt to remove a particle from.
+ * 
  * \return MOVE_SUCCESS if translated a particle, otherwise MOVE_FAILURE if did not.  Will throw exceptions if there was an error.
  */
 int translateParticle::make (simSystem &sys) {
@@ -42,22 +37,22 @@ int translateParticle::make (simSystem &sys) {
 			}
         }
         // add tail correction to potential energy
+#ifdef FLUID_PHASE_SIMULATIONS
         if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
 			oldEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
 		}
+#endif
     }
     
     // store old position and move particle along random direction in interval [-0.1:0.1]
-    //std::cout<<"Moving: "<<chosenAtom<<": "<<std::endl;
     std::vector<double> oldPos = sys.atoms[typeIndex_][chosenAtom].pos;
-    for (unsigned int i=0; i<sys.atoms[typeIndex_][chosenAtom].pos.size(); i++) {
+    for (unsigned int i = 0; i< sys.atoms[typeIndex_][chosenAtom].pos.size(); ++i) {
     	sys.atoms[typeIndex_][chosenAtom].pos[i] += 0.2*(0.5-rng (&RNG_SEED));
     	
     	// apply periodic boundary conditions
     	if (sys.atoms[typeIndex_][chosenAtom].pos[i] >= box[i]) {
     		sys.atoms[typeIndex_][chosenAtom].pos[i] -= box[i];
-    	}
-    	else if (sys.atoms[typeIndex_][chosenAtom].pos[i] < 0) {
+    	} else if (sys.atoms[typeIndex_][chosenAtom].pos[i] < 0) {
     		sys.atoms[typeIndex_][chosenAtom].pos[i] += box[i];
     	}
     }
@@ -77,22 +72,31 @@ int translateParticle::make (simSystem &sys) {
 			}
         }
         // add tail correction to potential energy
+#ifdef FLUID_PHASE_SIMULATIONS
         if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
 			newEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
 		}
+#endif
     }
     
-	// metropolis criterion
-	double dEnergy = newEnergy - oldEnergy;
-	
-	if (rng (&RNG_SEED) < exp(-sys.beta()*dEnergy)) {
+	// biasing
+	const double p_u = exp(-sys.beta()*(newEnergy - oldEnergy));
+    double bias = calculateBias(sys, sys.numSpecies, p_u);
+	    
+	if (rng (&RNG_SEED) < p_u*bias) {
 	    try {
             sys.translateAtom(typeIndex_, chosenAtom, oldPos);
         } catch (customException &ce) {
             std::string a = "Failed to translate atom: ", b = ce.what();
             throw customException (a+b);
         }
-		sys.incrementEnergy(dEnergy);	
+		sys.incrementEnergy(newEnergy - oldEnergy);	
+		
+		// update Wang-Landau bias, if used
+		if (sys.useWALA) {
+			sys.getWALABias()->update(sys.numSpecies);
+		}
+			
         return MOVE_SUCCESS;
     }
     
@@ -101,5 +105,29 @@ int translateParticle::make (simSystem &sys) {
     	sys.atoms[typeIndex_][chosenAtom].pos[i] = oldPos[i];
     }
     
+    // update Wang-Landau bias (even if moved failed), if used
+    if (sys.useWALA) {
+   		sys.getWALABias()->update(sys.numSpecies);
+    }
+    	
 	return MOVE_FAILURE;
+}
+
+/*!
+ * Set the maximum displacement in any single move. Should be postive number lss than half the box size.
+ * 
+ * \param [in] maxD Maximium displacement
+ * \param [in] box Box dimensions
+ */
+void translateParticle::setMaxDisplacement (const double maxD, const std::vector < double > &box) {
+	for (unsigned int i = 0; i < box.size(); ++i) {
+		if (maxD >= box[i]/2.) {
+			throw customException ("Max displacement too large");
+		}
+	}
+	if (maxD > 0) {
+		maxD_ = maxD;
+	} else {
+		throw customException ("Max displacement must be positive");
+	}
 }

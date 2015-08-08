@@ -1,21 +1,20 @@
 #include "system.h"
-#include "global.h"
-#include <stdlib.h>
-#include <exception>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <map>
+
+// netCDF if enable
+#ifdef NETCDF_CAPABLE
+#include <netcdf>
+using namespace netCDF;
+using namespace netCDF::exceptions;
+#endif
 
 /*!
  * Insert an atom into the system. Does all the bookkeepping behind the scenes.
+ * 
  * \param [in] typeIndex What type the atom is (>= 0)
  * \param [in] newAtom Pointer to new atom.  A copy is stored in the system so the original may be destroyed.
  */
 void simSystem::insertAtom (const int typeIndex, atom *newAtom) {
-    if (typeIndex < nSpecies_) {
+    if (typeIndex < nSpecies_ && typeIndex >= 0) {
         if (numSpecies[typeIndex] < maxSpecies_[typeIndex]) {
             atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
             numSpecies[typeIndex]++;
@@ -26,7 +25,7 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom) {
            		if (useCellList_[typeIndex][i])
             	{
             		cellList* cl = cellListsByPairType_[typeIndex][i];
-            		cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex]-1]);
+            		cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex]- 1]);
             	}
             }
             
@@ -41,24 +40,24 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom) {
 
 /*!
  * Delete an atom from the system. Does all the bookkeepping behind the scenes.
+ * 
  * \param [in] typeIndex What type the atom is (>= 0)
- * \param [in] atomIndex Which atom index of type typeIndex to destroy (>= 0)
+ * \param [in] atomIndex Which atom *index* of type typeIndex to destroy (>= 0)
  */
 void simSystem::deleteAtom (const int typeIndex, const int atomIndex) {
-    if (typeIndex < nSpecies_) {
-        if (numSpecies[typeIndex] > 0) {
-        
+    if (typeIndex < nSpecies_ && typeIndex >= 0) {
+        if (numSpecies[typeIndex] > minSpecies_[typeIndex]) {
         	// delete particle from appropriate cell list
             for (unsigned int i=0; i<nSpecies_; i++)
             {
             	if (useCellList_[typeIndex][i])
             	{
             		cellList* cl = cellListsByPairType_[typeIndex][i];
-            		cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][numSpecies[typeIndex]-1]);
+            		cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][numSpecies[typeIndex] - 1]);
             	}
             }
         
-            atoms[typeIndex][atomIndex] = atoms[typeIndex][numSpecies[typeIndex]-1];    // "replacement" operation
+            atoms[typeIndex][atomIndex] = atoms[typeIndex][numSpecies[typeIndex] - 1];    // "replacement" operation
             numSpecies[typeIndex]--;
         } else {
             std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
@@ -70,16 +69,18 @@ void simSystem::deleteAtom (const int typeIndex, const int atomIndex) {
 }
 
 /*!
- * Translate an atom in the system. Does all the bookkeepping behind the scenes.
+ * Translate an atom in the system. Does all the bookkeeping behind the scenes.
  * Do nothing if there is no cell list defined for the type
+ * 
  * \param [in] typeIndex What type the atom is (>= 0)
- * \param [in] atomIndex Which atom index of type typeIndex to translate (>= 0)
+ * \param [in] atomIndex Which atom *index* of type typeIndex to translate (>= 0)
+ * \param [in] oldPos Old position of the atom.  The current/new position should already be stored in the atom at sys.atoms[typeIndex][atomIndex]
  */
 void simSystem::translateAtom (const int typeIndex, const int atomIndex, std::vector<double> oldPos) {
-    if (typeIndex < nSpecies_) {
-        if (numSpecies[typeIndex] > 0) {
+    if (typeIndex < nSpecies_ && typeIndex >= 0) {
+        if (atomIndex > 0) { 
         
-        	// delete particle from appropriate cell list
+        	// delete particle from appropriate cell list, move to new one
             for (unsigned int i=0; i<nSpecies_; i++)
             {
             	if (useCellList_[typeIndex][i])
@@ -90,7 +91,7 @@ void simSystem::translateAtom (const int typeIndex, const int atomIndex, std::ve
             }        
         } else {
             std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
-            throw customException ("No atoms left in system, cannot translate an atom of type index "+index);
+            throw customException ("Number of those atoms in system is out of bounds, cannot translate an atom of type index "+index);
         }
     } else {
         throw customException ("That species index does not exist, cannot translate the atom");
@@ -111,19 +112,21 @@ simSystem::~simSystem () {
 
 /*!
  * Initialize the system. Sets the use of both WL and TMMC biasing to false.
+ * 
  * \param [in] nSpecies Number of unqiue species types to allow in the system
  * \param [in] beta Inverse temperature (1/kT)
  * \param [in] box Box dimensions [x, y, z]
  * \param [in] mu Chemical potential of each species
  * \param [in] maxSpecies Maximum number of each species to allow in the system
  */
-simSystem::simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies) {
+simSystem::simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies) {
 	if ((box.size() != 3) || (nSpecies != mu.size()) || (maxSpecies.size() != nSpecies)) {
 		throw customException ("Invalid system initialization parameters");
 		exit(SYS_FAILURE);
 	} else {
 		nSpecies_ = nSpecies;
         maxSpecies_ = maxSpecies;
+        minSpecies_ = minSpecies;
 		box_ = box;
 		mu_ = mu;
 		beta_ = beta;
@@ -189,8 +192,11 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
         throw customException (e.what());
     }
     for (unsigned int i = 0; i < nSpecies; ++i) {
-        if (maxSpecies_[i] <= 0) {
-            throw customException ("Max species <= 0");
+        if (minSpecies_[i] < 0) {
+            throw customException ("Min species < 0");
+        }
+        if (maxSpecies_[i] < minSpecies_[i]) {
+            throw customException ("Max species < Min species");
         }
 		try {
 			atoms[i].resize(maxSpecies_[i]);
@@ -203,13 +209,102 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
     
     useTMMC = false;
     useWALA = false;
+    
+    // allocate space for average U storage matrix
+    long long int size = 1;
+    for (unsigned int i = 0; i < nSpecies; ++i) {
+    	size *= (maxSpecies_[i] - minSpecies_[i] + 1);
+    }
+    try {
+    	numLnAverageU_.resize(size, 0);
+    } catch (std::bad_alloc &ba) {
+    	throw customException ("Out of memory for energy record");
+    }
+    try {
+    	lnAverageU_.resize(size, -DBL_MAX);
+    } catch (std::bad_alloc &ba) {
+        throw customException ("Out of memory for energy record");
+    }
+    
+}
+
+/*!
+ * Save the instantaneous energy of the system as a function of the number of particles in the system.
+ * Only records values when in range of [min, max] for each species.
+ */
+void simSystem::recordU () {
+	// check if in range
+	for (int i = 0; i < nSpecies_; ++i) {
+		if (numSpecies[i] < minSpecies_[i] || numSpecies[i] > maxSpecies_[i]) {
+			return;
+		}
+	}
+	
+	// get the address
+	long long int address = (numSpecies[nSpecies_-1] - minSpecies_[nSpecies_-1]);
+	for (int i = nSpecies_-2; i >= 0; --i) {
+		address *= (maxSpecies_[i] - minSpecies_[i] + 1);
+		address += (numSpecies[i] - minSpecies_[i]);
+	}
+	
+	// record
+	lnAverageU_[address] = specExp( log(energy_), lnAverageU_[address] );
+	numLnAverageU_[address] += 1.0;
+}
+
+/*!
+ * Print the average energy to file.  Will overwrite the file if another with that name exists. Prints in netCDF format if enabled.
+ * 
+ * \param [in] fileName Name of the file to print to
+ */
+void simSystem::printU (const std::string fileName) {
+	for (long long int i = 0; i < lnAverageU_.size(); ++i) {
+		lnAverageU_[i] = exp(lnAverageU_[i] - log(numLnAverageU_[i])); // no longer in log-space when printed
+	}
+	
+#ifdef NETCDF_CAPABLE
+    // If netCDF libs are enabled, write to this format
+    const std::string name = fileName + ".nc";
+  	NcFile outFile(name.c_str(), NcFile::replace);
+	NcDim probDim = outFile.addDim("vectorized_position", lnAverageU_.size());
+	NcVar probVar = outFile.addVar("<U>", ncDouble, probDim);
+	const std::string dummyName = "number_species:";
+	probVar.putAtt(dummyName.c_str(), sstr(nSpecies_).c_str());
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+   	    const std::string attName = "species_"+sstr(i+1)+"_upper_bound:";
+    	probVar.putAtt(attName.c_str(), sstr(maxSpecies_[i]).c_str());
+	}
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+	    const std::string attName = "species_"+sstr(i+1)+"_lower_bound:";
+     	probVar.putAtt(attName.c_str(), sstr(minSpecies_[i]).c_str());
+	}
+	probVar.putVar(&lnAverageU_[0]);
+#else
+	// Without netCDF capabilities, just print to ASCII file
+	std::ofstream of;
+	of.open(fileName+".dat", 'w');
+	of << "# <U> as a function of N1, N2, ... in single row (vectorized) notation." << std::endl;
+	of << "# Number of species:" << nSpecies_ << std::endl;
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		of << "# species_"+sstr(i+1)+"_upper_bound:" << maxSpecies_[i] << std::endl;
+	}
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		of << "# species_"+sstr(i+1)+"_lower_bound:" << minSpecies_[i] << std::endl;
+	}
+	for (long long int i = 0; i < lnAverageU_.size(); ++i) {
+		of << lnAverageU_[i] << std::endl;
+	}
+	of.close();
+#endif
 }
 
 /*!
  * Add a pair potential to the system which governs the pair (spec1, spec2).
+ * 
  * \param [in] spec1 Species index 1 (>= 0)
  * \param [in] spec2 Species index 2 (>= 0)
  * \param [in] pp Pointer to the pair potential to add.  Will be stored as a pointer, so original cannot be destroyed in memory.
+ * \param [in] bool Optional argument of whether or not to build and maintain a cell list for this pair (spec1, spec2)
  */
 void simSystem::addPotential (const int spec1, const int spec2, pairPotential *pp, bool useCellList) {
 	if (spec1 >= nSpecies_) {
@@ -264,6 +359,7 @@ void simSystem::addPotential (const int spec1, const int spec2, pairPotential *p
 
 /*!
  * Print an XYZ file of the instantaneous system configuration.
+ * 
  * \param [in] filename File to store XYZ coordinates to
  * \param [in] comment Comment line for the file
  */
@@ -290,6 +386,7 @@ void simSystem::printSnapshot (std::string filename, std::string comment) {
 
 /*!
  * Read an XYZ file as the system's initial configuration.  Note that the number of species, etc. must already be specified in the constructor.
+ * 
  * \param [in] filename File to read XYZ coordinates from
  */
 void simSystem::readRestart (std::string filename) {
@@ -354,7 +451,12 @@ void simSystem::readRestart (std::string filename) {
 
 /*!
  * Return the list of neighbors of type A, for a particle of type B at position pos
- * \returns neighbors list
+ * 
+ * \param [in] typeIndexA Index of first atom type
+ * \param [in] typeIndexB Index of second atom type
+ * \param [in] atom Pointer to atom to find neighbors around
+ * 
+ * \return neighbor_list
  */
 std::vector< std::vector<double> > simSystem::getNeighborPositions(const unsigned int typeIndexA, const unsigned int typeIndexB, atom* _atom)
 {
@@ -405,6 +507,7 @@ std::vector< std::vector<double> > simSystem::getNeighborPositions(const unsigne
 
 /*!
  * Recalculate the energy of the system from scratch.
+ * 
  * \returns totU Total energy of the system
  */
 const double simSystem::scratchEnergy () {
@@ -437,10 +540,11 @@ const double simSystem::scratchEnergy () {
         }
         
         // add tail correction to potential energy
+#ifdef FLUID_PHASE_SIMULATIONS
         if ((ppot[spec1][spec1]->useTailCorrection) && (num1 > 1)) {
         	totU += (num1)*0.5*ppot[spec1][spec1]->tailCorrection((num1-1)/V);
         }
-        
+#endif        
         // interactions with other types
         for (unsigned int spec2 = 0; spec2 < nSpecies_; ++spec2) {
             if (spec2 > spec1) { // only compute unique interactions
@@ -463,10 +567,11 @@ const double simSystem::scratchEnergy () {
                     }
                 }
                 // add tail correction to potential energy
+#ifdef FLUID_PHASE_SIMULATIONS
                 if ((ppot[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) {
                 	totU += (num1)*ppot[spec1][spec2]->tailCorrection(num2/V);
         		}
-
+#endif
             }
         }
     }
@@ -476,7 +581,9 @@ const double simSystem::scratchEnergy () {
 
 /*!
  * Returns the absolute maximum number of a given species type allowed in the system.
+ * 
  * \param [in] index  Species index to query
+ * 
  * \return maxSpecies Maximum number of them allowed
  */
 const int simSystem::maxSpecies (const int index) {
@@ -491,7 +598,27 @@ const int simSystem::maxSpecies (const int index) {
 }
 
 /*!
+ * Returns the absolute minimum number of a given species type allowed in the system.
+ * 
+ * \param [in] index  Species index to query
+ * 
+ * \return minSpecies Minimum number of them allowed
+ */
+const int simSystem::minSpecies (const int index) {
+    if (minSpecies_.begin() == minSpecies_.end()) {
+        throw customException ("No species in the system, cannot report a minimum");
+    }
+    if (minSpecies_.size() <= index) {
+        throw customException ("System does not contain that species, cannot report a minimum");
+    } else  {
+        return minSpecies_[index];
+    }
+}
+
+/*!
  * Return a pointer to the TMMC biasing object, if using TMMC, else throws an exception.
+ * 
+ * \return tmmc Pointer to TMMC biasing object being used.
  */
 tmmc* simSystem::getTMMCBias () {
 	if (useTMMC == true) {
@@ -503,6 +630,8 @@ tmmc* simSystem::getTMMCBias () {
 
 /*!
  * Return a pointer to the TMMC biasing object, if using TMMC, else throws an exception.
+ * 
+ * \return wala Pointer to WALA biasing object being used.
  */
 wala* simSystem::getWALABias () {
 	if (useWALA == true) {
@@ -547,4 +676,59 @@ void simSystem::startTMMC (const std::vector <int> &Nmax, const std::vector <int
 	}
 		
 	useTMMC = true; 
+}
+
+/*!
+ * Calculate the bias based on a systems current state and the next state being proposed.
+ * 
+ * \param [in] sys System object containing the current state of the system
+ * \param [in] Nend Vector of particle numbers in the proposed final state
+ * \param [in] p_u Ratio of the system's partition in the final and initial state (e.g. unbiased p_acc = min(1, p_u))
+ * 
+ * \return rel_bias The value of the relative bias to apply in the metropolis criteria during sampling
+ */
+const double calculateBias (simSystem &sys, const std::vector <int> &Nend, const double p_u) {
+	double rel_bias = 1.0;
+	
+	if (sys.useTMMC && !sys.useWALA) {
+		// TMMC biasing
+    	if (sys.nSpecies() == 1) {
+    		// Single-component, standard TMMC
+    		const int address1 = sys.tmmcBias->getAddress(sys.numSpecies), address2 = sys.tmmcBias->getAddress(Nend);
+       		const double b1 = sys.tmmcBias->getBias (address1), b2 = sys.tmmcBias->getBias (address2);
+       		rel_bias = exp(b2-b1);
+       		sys.tmmcBias->updateC (sys.numSpecies, Nend, std::min(1.0, p_u)); 
+    	} else {
+    		// Multi-component, use isothermal-isochoric method of Shen & Errington
+    		exit(-1); 
+    	}
+    } else if (!sys.useTMMC && sys.useWALA) {
+    	// Wang-Landau Biasing
+    	if (sys.nSpecies() == 1) {
+    	    // Single-component
+    	    const int address1 = sys.wlBias->getAddress(sys.numSpecies), address2 = sys.wlBias->getAddress(Nend);
+    	    const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
+    	    rel_bias = exp(b2-b1);
+    	} else {
+    		// Multi-component, use isothermal-isochoric method of Shen & Errington
+    		exit(-1); 
+    	}
+    } else if (sys.useTMMC && sys.useWALA) {
+    	// Crossover phase where we use WL but update TMMC collection matrix
+    	if (sys.nSpecies() == 1) {
+    		// Single-component
+    		const int address1 = sys.wlBias->getAddress(sys.numSpecies), address2 = sys.wlBias->getAddress(Nend);
+    		const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
+    		rel_bias = exp(b2-b1);
+    		sys.tmmcBias->updateC (sys.numSpecies, Nend, std::min(1.0, p_u));    	    
+    	} else {
+    		// Multi-component, use isothermal-isochoric method of Shen & Errington
+    	    exit(-1);   		
+    	}
+    } else {
+    	// No biasing
+    	rel_bias = 1.0;
+    }
+	
+	return rel_bias;
 }
