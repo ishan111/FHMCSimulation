@@ -44,10 +44,10 @@ int translateParticle::make (simSystem &sys) {
 #endif
     }
     
-    // store old position and move particle along random direction in interval [-0.1:0.1]
+    // store old position and move particle along random direction in interval [-maxD_:maxD_]
     std::vector<double> oldPos = sys.atoms[typeIndex_][chosenAtom].pos;
     for (unsigned int i = 0; i< sys.atoms[typeIndex_][chosenAtom].pos.size(); ++i) {
-    	sys.atoms[typeIndex_][chosenAtom].pos[i] += 0.2*(0.5-rng (&RNG_SEED));
+    	sys.atoms[typeIndex_][chosenAtom].pos[i] += 2.0*maxD_*(0.5-rng (&RNG_SEED));
     	
     	// apply periodic boundary conditions
     	if (sys.atoms[typeIndex_][chosenAtom].pos[i] >= box[i]) {

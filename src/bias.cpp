@@ -50,9 +50,9 @@ tmmc::tmmc (const int nSpec, const std::vector <int> &Nmax, const std::vector <i
 		throw customException ("Out of memory, cannot allocate space for probability matrix in tmmc");
 	}
 	
-	// attempt to allocate memory for lnPI matrix and initializes it all to 1
+	// attempt to allocate memory for lnPI matrix and initializes it all to 0
 	try {
-		lnPI_.resize(size, 1.0);
+		lnPI_.resize(size, 0.0);
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for macrostate distribution matrix in tmmc");
 	}
@@ -194,8 +194,8 @@ void tmmc::calculatePI () {
 		}
 	}
 	
-	// Reset first value to unity just to start fresh. Since only ratios matter this is perfectly fair.
-	lnPI_[0] = 1.0;
+	// Reset first value to zero just to start fresh. Since only ratios matter this is perfectly fair.
+	lnPI_[0] = 0.0;
 	if (nSpec_ == 1) {
 		std::vector <int> N1 (1), N2 (1);
 		__BIAS_INT_TYPE__ address1, address2;
@@ -418,9 +418,9 @@ wala::wala (const double lnF, const double g, const double s, const int nSpec, c
 	Nmin_ = Nmin;
 	Nmax_ = Nmax;
 	
-	// attempt to allocate memory for macrostate distribution matrix and initializes it all to 1
+	// attempt to allocate memory for macrostate distribution matrix and initializes it all to 0
 	try {
-		lnPI_.resize(size, 1.0);
+		lnPI_.resize(size, 0.0);
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for macrostate distribution matrix in wala");
 	}
