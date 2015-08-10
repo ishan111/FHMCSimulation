@@ -224,7 +224,7 @@ double tabulated::rcut () {
 /*!
  * Set the parameters in the square-well equation.
  * 
- * \param [in] params Vector of inputs: {sigma, wellwidth, welldepth}
+ * \param [in] params Vector of inputs: {sigma, wellwidth, welldepth (magnitude)}
  */
 void squareWell::setParameters (const std::vector < double > params) {
 	if (params.size() != 3) {

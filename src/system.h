@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <exception>
 #include <map>
+#include <cmath>
 #include "potentials.h"
 #include "atom.h"
 #include "cellList.h"
@@ -27,15 +28,15 @@ public:
 	void addPotential (const int spec1, const int spec2, pairPotential *pp, bool useCellList=false);
 	void printSnapshot (std::string filename, std::string comment);
 	void insertAtom (const int typeIndex, atom *newAtom);
-    void deleteAtom (const int typeIndex, const int atomIndex);
+    void deleteAtom (const int typeIndex, const int atomIndex, bool override=false);
     void translateAtom (const int typeIndex, const int atomIndex, std::vector<double> oldPos);
     void readRestart (std::string filename);
     void recordU ();
     void printU (const std::string fileName);
     void startWALA (const double lnF, const double g, const double s, const int Nmax, const int Nmin); //!< Start using Wang-Landau and instantiate the bias object
-   	void stopWALA () { useWALA = false; delete[] wlBias; } //!< Stop using Wang-Landau and free the bias object
+   	void stopWALA () { useWALA = false; delete wlBias; } //!< Stop using Wang-Landau and free the bias object
    	void startTMMC (const int Nmax, const int Nmin); //!< Start using TMMC and instantiate the bias object
-   	void stopTMMC () { useTMMC = false; delete[] tmmcBias; } //!< Stop using TMMC and free the bias object
+   	void stopTMMC () { useTMMC = false; delete tmmcBias; } //!< Stop using TMMC and free the bias object
     void setTotNBounds (const std::vector < int > &bounds);
    	bool potentialIsSet (const int spec1, const int spec2) { return ppotSet_[spec1][spec2]; }	//!< Boolean which returns whether or not a pair has had its potential specified by the user yet
     const int nSpecies () { return nSpecies_; } //!< Return the number of different species in the system
@@ -71,8 +72,8 @@ private:
     std::vector < int > minSpecies_; //!< Minimum number of each species allowed in the simulation
 	std::vector < double > box_; //!< System box size
 	std::vector < double > mu_; //!< Chemical potential of each species
-	std::vector < double > lnAverageU_; //!< Vectorized set of ln(U) for each <N1, N2, ... > macrostate observed between the [min, max] ranges specified
-	std::vector < long double > numLnAverageU_; //!< Number of times the average lnU has been recorded at each macrostate
+	std::vector < long double > AverageU_; //!< Accumulator for U for each N_tot macrostate observed between the [min, max] ranges specified
+	std::vector < long double > numAverageU_; //!< Number of times U has been recorded at each macrostate
 	std::vector < std::vector < bool > > ppotSet_; //!< Matrix of pair potentials between type i and j
     std::vector < std::vector < bool > > useCellList_;  //!< Matrix of whether or not to use cell lists to calculate potentials for pair type (i,j)
     std::vector <cellList> cellLists_; // this vector stores the actual cell lists for the inserted potentials

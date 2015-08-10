@@ -66,19 +66,17 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
 		tmpTot += numSpecies[i];
 	}
     totN_ = tmpTot;
-    
-    // allocate space for average U storage matrix
-    long long int size = 1;
-    for (unsigned int i = 0; i < nSpecies_; ++i) {
-    	size *= (maxSpecies_[i] - minSpecies_[i] + 1);
-    }
+  
+    // Allocate space for energy matrix - this will only be recorded when the system is within the specific window we are looking for
+    // Because of implementation of Shen and Errington method, this syntax is the same for single and multicomponent systems
+    long long int size = totNBounds_[1] - totNBounds_[0] + 1;
     try {
-    	numLnAverageU_.resize(size, 0);
+    	AverageU_.resize(size, 0); 
     } catch (std::bad_alloc &ba) {
     	throw customException ("Out of memory for energy record");
     }
     try {
-    	lnAverageU_.resize(size, -DBL_MAX);
+    	numAverageU_.resize(size, 0);
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory for energy record");
     }
@@ -120,10 +118,11 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom) {
  * 
  * \param [in] typeIndex What type the atom is (>= 0)
  * \param [in] atomIndex Which atom *index* of type typeIndex to destroy (>= 0)
+ * \param [in] Optional override command which allows the system to delete a particle even it goes below the minimum allowed. E.g. during a swap move.
  */
-void simSystem::deleteAtom (const int typeIndex, const int atomIndex) {
+void simSystem::deleteAtom (const int typeIndex, const int atomIndex, bool override) {
     if (typeIndex < nSpecies_ && typeIndex >= 0) {
-        if (numSpecies[typeIndex] > minSpecies_[typeIndex]) {
+        if ((numSpecies[typeIndex] > minSpecies_[typeIndex]) || override) {
         	// delete particle from appropriate cell list
             for (unsigned int i=0; i<nSpecies_; i++)
             {
@@ -139,7 +138,7 @@ void simSystem::deleteAtom (const int typeIndex, const int atomIndex) {
             totN_--;
         } else {
             std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
-            throw customException ("No atoms left in system, cannot delete an atom of type index "+index);
+            throw customException ("System going below minimum allowable number of atoms, cannot delete an atom of type index "+index);
         }
     } else {
         throw customException ("That species index does not exist, cannot delete an atom");
@@ -156,7 +155,7 @@ void simSystem::deleteAtom (const int typeIndex, const int atomIndex) {
  */
 void simSystem::translateAtom (const int typeIndex, const int atomIndex, std::vector<double> oldPos) {
     if (typeIndex < nSpecies_ && typeIndex >= 0) {
-        if (atomIndex > 0) { 
+        if (atomIndex >= 0) { 
         
         	// delete particle from appropriate cell list, move to new one
             for (unsigned int i=0; i<nSpecies_; i++)
@@ -181,10 +180,10 @@ void simSystem::translateAtom (const int typeIndex, const int atomIndex, std::ve
  */
 simSystem::~simSystem () {
 	if (useTMMC) {
-		delete [] tmmcBias;
+		delete tmmcBias;
 	}
 	if (useWALA) {
-		delete [] wlBias;
+		delete wlBias;
 	}
 }
 
@@ -288,95 +287,75 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
     
     useTMMC = false;
     useWALA = false;
-    
-    // allocate space for average U storage matrix
-    long long int size = 1;
-    for (unsigned int i = 0; i < nSpecies; ++i) {
-    	size *= (maxSpecies_[i] - minSpecies_[i] + 1);
-    }
-    try {
-    	numLnAverageU_.resize(size, 0);
-    } catch (std::bad_alloc &ba) {
-    	throw customException ("Out of memory for energy record");
-    }
-    try {
-    	lnAverageU_.resize(size, -DBL_MAX);
-    } catch (std::bad_alloc &ba) {
-        throw customException ("Out of memory for energy record");
-    }
      
     totNBounds_.resize(2, 0);
     for (unsigned int i = 0; i < nSpecies_; ++i) {
     	totNBounds_[0] += minSpecies_[i];
     	totNBounds_[1] += maxSpecies_[i];
     }
+    
+    // allocate space for average U storage matrix - Shen and Errington method implies this size is always the same for
+    // both single and multicomponent mixtures
+    long long int size = totNBounds_[1] - totNBounds_[0] + 1;
+    try {
+        numAverageU_.resize(size, 0);
+    } catch (std::bad_alloc &ba) {
+     	throw customException ("Out of memory for energy record");
+    }
+    try {
+        AverageU_.resize(size, 0);
+    } catch (std::bad_alloc &ba) {
+        throw customException ("Out of memory for energy record");
+    }
 }
 
 /*!
  * Save the instantaneous energy of the system as a function of the number of particles in the system.
- * Only records values when in range of [min, max] for each species.
+ * Only records values when N_tot in range of [min, max].
  */
 void simSystem::recordU () {
-	// check if in range
-	for (int i = 0; i < nSpecies_; ++i) {
-		if (numSpecies[i] < minSpecies_[i] || numSpecies[i] > maxSpecies_[i]) {
-			return;
-		}
+	// only record if in range (removes equilibration stage to get in this range, if there was any)
+	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+		const int address = totN_-totNBounds_[0];
+		AverageU_[address] += energy_;
+		numAverageU_[address] += 1.0;
 	}
-	
-	// get the address
-	long long int address = (numSpecies[nSpecies_-1] - minSpecies_[nSpecies_-1]);
-	for (int i = nSpecies_-2; i >= 0; --i) {
-		address *= (maxSpecies_[i] - minSpecies_[i] + 1);
-		address += (numSpecies[i] - minSpecies_[i]);
-	}
-	
-	// record
-	lnAverageU_[address] = specExp( log(energy_), lnAverageU_[address] );
-	numLnAverageU_[address] += 1.0;
 }
 
 /*!
- * Print the average energy to file.  Will overwrite the file if another with that name exists. Prints in netCDF format if enabled.
+ * Print the average energy to file, <U> for every N_tot within range is recorded.  Will overwrite the file if another with that name exists. Prints in netCDF format if enabled.
  * 
  * \param [in] fileName Name of the file to print to
  */
 void simSystem::printU (const std::string fileName) {
-	for (long long int i = 0; i < lnAverageU_.size(); ++i) {
-		lnAverageU_[i] = exp(lnAverageU_[i] - log(numLnAverageU_[i])); // no longer in log-space when printed
+	std::vector < double > aveU (AverageU_.size(), 0);
+	for (long long int i = 0; i < AverageU_.size(); ++i) {
+		aveU[i] = AverageU_[i]/numAverageU_[i]; 
 	}
 	
 #ifdef NETCDF_CAPABLE
     // If netCDF libs are enabled, write to this format
     const std::string name = fileName + ".nc";
   	NcFile outFile(name.c_str(), NcFile::replace);
-	NcDim probDim = outFile.addDim("vectorized_position", lnAverageU_.size());
+	NcDim probDim = outFile.addDim("vectorized_position", aveU.size());
 	NcVar probVar = outFile.addVar("<U>", ncDouble, probDim);
 	const std::string dummyName = "number_species:";
 	probVar.putAtt(dummyName.c_str(), sstr(nSpecies_).c_str());
-	for (unsigned int i = 0; i < nSpecies_; ++i) {
-   	    const std::string attName = "species_"+sstr(i+1)+"_upper_bound:";
-    	probVar.putAtt(attName.c_str(), sstr(maxSpecies_[i]).c_str());
-	}
-	for (unsigned int i = 0; i < nSpecies_; ++i) {
-	    const std::string attName = "species_"+sstr(i+1)+"_lower_bound:";
-     	probVar.putAtt(attName.c_str(), sstr(minSpecies_[i]).c_str());
-	}
-	probVar.putVar(&lnAverageU_[0]);
+	const std::string attName = "species_total_upper_bound:";
+	probVar.putAtt(attName.c_str(), sstr(totNBounds_[1]).c_str());
+	const std::string attName = "species_total_lower_bound:";
+	probVar.putAtt(attName.c_str(), sstr(totNBounds_[0]).c_str());
+	probVar.putVar(&aveU[0]);
 #else
 	// Without netCDF capabilities, just print to ASCII file
 	std::ofstream of;
-	of.open(fileName+".dat", 'w');
-	of << "# <U> as a function of N1, N2, ... in single row (vectorized) notation." << std::endl;
+	of.open(fileName+".dat", std::ofstream::out);
+	of << "# <U> as a function of N_tot." << std::endl;
 	of << "# Number of species:" << nSpecies_ << std::endl;
-	for (unsigned int i = 0; i < nSpecies_; ++i) {
-		of << "# species_"+sstr(i+1)+"_upper_bound:" << maxSpecies_[i] << std::endl;
-	}
-	for (unsigned int i = 0; i < nSpecies_; ++i) {
-		of << "# species_"+sstr(i+1)+"_lower_bound:" << minSpecies_[i] << std::endl;
-	}
-	for (long long int i = 0; i < lnAverageU_.size(); ++i) {
-		of << lnAverageU_[i] << std::endl;
+	of << "# species_total_upper_bound:" << totNBounds_[1] << std::endl;
+	of << "# species_total_lower_bound:" << totNBounds_[0] << std::endl;
+	for (long long int i = 0; i < aveU.size(); ++i) {
+		of << aveU[i] << std::endl;
 	}
 	of.close();
 #endif

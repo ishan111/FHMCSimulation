@@ -6,6 +6,7 @@
 #include <climits>
 #include <cfloat>
 #include <cmath>
+#include <iostream>
 #include <fstream>
 #include "global.h"
 #include "utilities.h"
@@ -23,12 +24,14 @@ class tmmc {
 public:
 	tmmc () {};
 	tmmc (const int Nmax, const int Nmin);
-
+	
 	void updateC (const int Nstart, const int Nend, const double pa);
 	void calculatePI ();
 	void print (const std::string fileName, bool printC = false);
 	void readC (const std::string fileName);
 	void readlnPI (const std::string fileName);
+	void setLnPI (const std::vector < double > &lnPIguess) { if (lnPIguess.size() == lnPI_.size()) lnPI_ = lnPIguess; } //!< Blindly assign a guess of the macrostate distribution
+	bool checkFullyVisited ();
 	const __BIAS_INT_TYPE__ getTransitionAddress (const int Nstart, const int Nend);
 	const __BIAS_INT_TYPE__ getAddress (const int Nval);	
 	const double getBias (const int address) { return -lnPI_[address]; }
@@ -55,6 +58,7 @@ public:
 	const __BIAS_INT_TYPE__ getAddress (const int Nval);
 	const double lnF () { return lnF_; }
 	const double getBias (const int address) { return -lnPI_[address]; }
+	const std::vector <double> getlnPI () { return lnPI_; } //!< Return the current estimate of the macrostate distribution
 	
 private:
 	double lnF_; //!< Factor to add to the macrostate density matrix each time a state is visited

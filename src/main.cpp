@@ -18,7 +18,6 @@
 #include "translate.h"
 #include "swap.h"
 #include "moves.h"
-#include "input.h"
 
 // JSON interface from local distro of rapidjson
 #include "rapidjson/include/rapidjson/document.h"
@@ -48,6 +47,9 @@ int main (int argc, char * const argv[]) {
 	time (&rawtime);
 	struct tm * timeinfo;
 	timeinfo = localtime (&rawtime);
+	char timestamp [80];
+	strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+	std::cout << "Beginning simulation at " << timestamp << std::endl;
 	
 	/* -------------------- BEGIN INPUT -------------------- */
 	
@@ -66,30 +68,30 @@ int main (int argc, char * const argv[]) {
 	assert(doc.HasMember("num_species"));
 	assert(doc["num_species"].IsInt());
 	assert(doc.HasMember("beta"));
-	assert(doc["beta"].IsDouble());
+	assert(doc["beta"].IsNumber());
 	
 	assert(doc.HasMember("box"));
 	assert(doc["box"].IsArray());
 	assert(doc["box"].Size() == 3);
 	std::vector < double > sysBox (3, 0);
 	for (rapidjson::SizeType i = 0; i < doc["box"].Size(); ++i) {
-		assert(doc["box"][i].IsDouble());
-		sysBox[i] = doc["dimensionNames"][i].GetDouble();
+		assert(doc["box"][i].IsNumber());
+		sysBox[i] = doc["box"][i].GetDouble();
 	}
-	
+
 	assert(doc.HasMember("mu"));
 	assert(doc["mu"].IsArray());
 	assert(doc["mu"].Size() == doc["num_species"].GetInt());
 	std::vector < double > sysMu (doc["mu"].Size(), 0);
 	for (rapidjson::SizeType i = 0; i < doc["mu"].Size(); ++i) {
-		assert(doc["mu"][i].IsDouble());
+		assert(doc["mu"][i].IsNumber());
 		sysMu[i] = doc["mu"][i].GetDouble();
 	}
-	
+
 	assert(doc.HasMember("seed"));
-	assert(doc["seed"].IsDouble());
-	RNG_SEED = doc["seed"].GetDouble();
-			
+	assert(doc["seed"].IsInt());
+	RNG_SEED = doc["seed"].GetInt();
+	
 	assert(doc.HasMember("max_N"));
 	assert(doc["max_N"].IsArray());
 	assert(doc["max_N"].Size() == doc["num_species"].GetInt());
@@ -98,7 +100,7 @@ int main (int argc, char * const argv[]) {
 		assert(doc["max_N"][i].IsInt());
 		sysMax[i] = doc["max_N"][i].GetInt();
 	}
-	
+
 	assert(doc.HasMember("min_N"));
 	assert(doc["min_N"].IsArray());
 	assert(doc["min_N"].Size() == doc["num_species"].GetInt());
@@ -107,9 +109,9 @@ int main (int argc, char * const argv[]) {
 		assert(doc["min_N"][i].IsInt());
 		sysMin[i] = doc["min_N"][i].GetInt();
 	}	
-	
+
 	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin);
-		
+	
 	std::vector < int > sysWindow;
 	if (doc.HasMember("window")) {
 		assert(doc["window"].IsArray());
@@ -118,7 +120,7 @@ int main (int argc, char * const argv[]) {
 		sysWindow[0] = doc["window"][0].GetInt();
 		sysWindow[1] = doc["window"][1].GetInt();
 	}
-	
+
 	if (sysWindow.begin() != sysWindow.end()) {
 		sys.setTotNBounds(sysWindow);
 	}
@@ -126,27 +128,30 @@ int main (int argc, char * const argv[]) {
 	assert(doc.HasMember("restart_file"));
 	assert(doc["restart_file"].IsString());
 	const std::string restart_file = doc["restart_file"].GetString();
-	
+
 	assert(doc.HasMember("tmmc_sweep_size"));
-	assert(doc["tmmc_sweep_size"].IsInt());
-	const int tmmcSweepSize = doc["tmmc_sweep_size"].GetInt();
-	
+	assert(doc["tmmc_sweep_size"].IsNumber());
+	double tmpT = doc["tmmc_sweep_size"].GetDouble(); // possibly in scientific notation
+	const long long int tmmcSweepSize = tmpT; // convert
+
 	assert(doc.HasMember("total_tmmc_sweeps"));
-	assert(doc["total_tmmc_sweeps"].IsInt());
-	const int totalTMMCSweeps = doc["total_tmmc_sweeps"].GetInt();
-	
+	assert(doc["total_tmmc_sweeps"].IsNumber());
+	double tmpS = doc["total_tmmc_sweeps"].GetDouble(); // possibly in scientific notation
+	const long long int totalTMMCSweeps = tmpS; // convert
+
 	assert(doc.HasMember("wala_sweep_size"));
-	assert(doc["wala_sweep_size"].IsInt());
-	const int wlSweepSize = doc["wala_sweep_size"].GetInt();
+	assert(doc["wala_sweep_size"].IsNumber());
+	double tmpW = doc["wala_sweep_size"].GetDouble(); // possibly in scientific notation
+	const long long int wlSweepSize = tmpW; // convert
 
 	assert(doc.HasMember("wala_g"));
-	assert(doc["wala_g"].IsDouble());
+	assert(doc["wala_g"].IsNumber());
 	const double g = doc["wala_g"].GetDouble();
-	
-	assert(doc.HasMember("wala_s"));
-	assert(doc["wala_s"].IsDouble());
-	const double s = doc["wala_s"].GetDouble();
 
+	assert(doc.HasMember("wala_s"));
+	assert(doc["wala_s"].IsNumber());
+	const double s = doc["wala_s"].GetDouble();
+	
 	std::vector < double > ref (sys.nSpecies(), 0);
 	std::vector < std::vector < double > > probEqSwap (sys.nSpecies(), ref), probPrSwap (sys.nSpecies(), ref);
 	std::vector < double > probPrInsDel (sys.nSpecies(), 0), probPrDisp (sys.nSpecies(), 0);
@@ -155,39 +160,39 @@ int main (int argc, char * const argv[]) {
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		std::string dummy = "prob_pr_ins_del_" + sstr(i+1);
 		assert(doc.HasMember(dummy.c_str()));
-		assert(doc[dummy.c_str()].IsDouble());
+		assert(doc[dummy.c_str()].IsNumber());
 		probPrInsDel[i] = doc[dummy.c_str()].GetDouble();
 	}
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		std::string dummy = "prob_pr_displace" + sstr(i+1);
+		std::string dummy = "prob_pr_displace_" + sstr(i+1);
 		assert(doc.HasMember(dummy.c_str()));
-		assert(doc[dummy.c_str()].IsDouble());
+		assert(doc[dummy.c_str()].IsNumber());
 		probPrDisp[i] = doc[dummy.c_str()].GetDouble();
 		dummy = "max_pr_displacement_" + sstr(i+1);
 		assert(doc.HasMember(dummy.c_str()));
-		assert(doc[dummy.c_str()].IsDouble());
+		assert(doc[dummy.c_str()].IsNumber());
 		maxPrD[i] = doc[dummy.c_str()].GetDouble();
 	}
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		std::string dummy = "prob_eq_ins_del_" + sstr(i+1);
 		assert(doc.HasMember(dummy.c_str()));
-		assert(doc[dummy.c_str()].IsDouble());
+		assert(doc[dummy.c_str()].IsNumber());
 		probEqInsDel[i] = doc[dummy.c_str()].GetDouble();
 	}
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		std::string dummy = "prob_eq_displace" + sstr(i+1);
+		std::string dummy = "prob_eq_displace_" + sstr(i+1);
 		assert(doc.HasMember(dummy.c_str()));
-		assert(doc[dummy.c_str()].IsDouble());
+		assert(doc[dummy.c_str()].IsNumber());
 		probEqDisp[i] = doc[dummy.c_str()].GetDouble();
 		dummy = "max_eq_displacement_" + sstr(i+1);
 		assert(doc.HasMember(dummy.c_str()));
-		assert(doc[dummy.c_str()].IsDouble());
+		assert(doc[dummy.c_str()].IsNumber());
 		maxEqD[i] = doc[dummy.c_str()].GetDouble();
 	}
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
-			std::string name1 = "prob_pr_swap"+sstr(i+1)+"_"+sstr(j+1);
-			std::string name2 = "prob_pr_swap"+sstr(j+1)+"_"+sstr(i+1);
+			std::string name1 = "prob_pr_swap_"+sstr(i+1)+"_"+sstr(j+1);
+			std::string name2 = "prob_pr_swap_"+sstr(j+1)+"_"+sstr(i+1);
 			std::string moveName = "";
 			bool foundIJ = false;
 			if (doc.HasMember(name1.c_str())) {
@@ -203,15 +208,15 @@ int main (int argc, char * const argv[]) {
 				std::cerr << "Input file does not specify production swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
 				exit(SYS_FAILURE);
 			}
-			assert(doc[moveName.c_str()].IsDouble());
+			assert(doc[moveName.c_str()].IsNumber());
 			probPrSwap[i][j] = doc[moveName.c_str()].GetDouble();
 			probPrSwap[j][i] = doc[moveName.c_str()].GetDouble();
 		}
 	}
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
-			std::string name1 = "prob_eq_swap"+sstr(i+1)+"_"+sstr(j+1);
-			std::string name2 = "prob_eq_swap"+sstr(j+1)+"_"+sstr(i+1);
+			std::string name1 = "prob_eq_swap_"+sstr(i+1)+"_"+sstr(j+1);
+			std::string name2 = "prob_eq_swap_"+sstr(j+1)+"_"+sstr(i+1);
 			std::string moveName = "";
 			bool foundIJ = false;
 			if (doc.HasMember(name1.c_str())) {
@@ -227,17 +232,16 @@ int main (int argc, char * const argv[]) {
 				std::cerr << "Input file does not specify equilibration swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
 				exit(SYS_FAILURE);
 			}
-			assert(doc[moveName.c_str()].IsDouble());
+			assert(doc[moveName.c_str()].IsNumber());
 			probEqSwap[i][j] = doc[moveName.c_str()].GetDouble();
 			probEqSwap[j][i] = doc[moveName.c_str()].GetDouble();
 		}
 	}	
-
 	std::vector < pairPotential* > ppotArray (sys.nSpecies()*(sys.nSpecies()-1)/2);
-	std::vector < std::string > ppotType (sys.nSpecies()*(sys.nSpecies()-1)/2, "");
+	std::vector < std::string > ppotType (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
 	int ppotIndex = 0, ppotTypeIndex = 0;
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		for (unsigned int j = i; j < doc["num_species"].GetInt(); ++j) {
+		for (unsigned int j = i; j < sys.nSpecies(); ++j) {
 			std::string name1 = "ppot_"+sstr(i+1)+"_"+sstr(j+1);
 			std::string name2 = "ppot_"+sstr(j+1)+"_"+sstr(i+1);
 			std::string ppotName = "", dummy = "";
@@ -262,6 +266,7 @@ int main (int argc, char * const argv[]) {
 			assert(doc[dummy.c_str()].IsArray());
 			std::vector < double > params (doc[dummy.c_str()].Size(), 0);
 			for (unsigned int k = 0; k < params.size(); ++k) {
+				assert(doc[dummy.c_str()][k].IsNumber());
 				params[k] = doc[dummy.c_str()][k].GetDouble();
 			}
 			bool useCellList = false; // default
@@ -311,14 +316,14 @@ int main (int argc, char * const argv[]) {
 				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
 				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);
 			} else {
-				std::cerr << "Unrecognized pair potential name "<< ppotName << std::endl;
+				std::cerr << "Unrecognized pair potential name for species "<< ppotTypeIndex << std::endl;
 				exit(SYS_FAILURE);
 			}
 			ppotTypeIndex++;
 			ppotIndex++;
 		}
 	}
-	
+
 	// check all pair potentials have been set and all r_cut < L/2
 	double minL = sys.box()[0];
 	for (unsigned int i = 1; i < 2; ++i) {
@@ -384,7 +389,9 @@ int main (int argc, char * const argv[]) {
 	}
 	
 	/* -------------------- END INPUT -------------------- */
-		
+	
+	std::cout << "Beginning Wang-Landau portion" << std::endl;
+	
 	// Initially do a WL simulation
 	double lnF = 1;
 	bool flat = false;
@@ -409,17 +416,33 @@ int main (int argc, char * const argv[]) {
 			sys.getWALABias()->iterateForward();
 			lnF = sys.getWALABias()->lnF();
 			flat = false;
+			
+			time_t rawtime_tmp;
+			time (&rawtime_tmp);
+			struct tm * timeinfo_tmp;
+			timeinfo_tmp = localtime (&rawtime_tmp);
+			char dummy_tmp [80];
+			strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+			std::cout << "lnF = " << lnF << " at " << dummy_tmp << std::endl;
+			
+			// Periodically write out checkpoints
+			sys.getWALABias()->print("wl-Checkpoint", true);
 		}
-		
-		// Periodically write out checkpoints
-		sys.getWALABias()->print("wl-Checkpoint", true);
 	}
+	
+	std::cout << "Crossing over to build TMMC matrix" << std::endl;
 	
 	// After a while, combine to initialize TMMC collection matrix
 	sys.startTMMC (sys.totNMax(), sys.totNMin());
-	int count = 0;
-	// actually this should run until all elements of the collection matrix have been populated (?)
-	while (count < 2) {
+	
+	std::cout << "Assigning initial macrostate density guess from Wang-Landau portion" << std::endl;
+	
+	// Initial guess from Wang-Landau density of states
+	sys.getTMMCBias()->setLnPI(sys.getWALABias()->getlnPI());
+	
+	// actually this should run until all elements of the collection matrix have been populated
+	bool fullyVisited = false;
+	while (!fullyVisited) {
 		for (unsigned int move = 0; move < wlSweepSize; ++move) {
 			try {
 				usedMovesEq.makeMove(sys);
@@ -437,15 +460,32 @@ int main (int argc, char * const argv[]) {
 		if (flat) {
 			// If flat, need to reset H and reduce lnF
 			sys.getWALABias()->iterateForward();
-			count++;
+			
+			time_t rawtime_tmp;
+			time (&rawtime_tmp);
+			struct tm * timeinfo_tmp;
+			timeinfo_tmp = localtime (&rawtime_tmp);
+			char dummy_tmp [80];
+			strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
+			std::cout << "lnF = " << sys.getWALABias()->lnF() << " at " << dummy_tmp << std::endl;	
+			
+			// Periodically write out checkpoints
+			sys.getWALABias()->print("wl-crossover-Checkpoint", true);
+			sys.getTMMCBias()->print("tmmc-crossover-Checkpoint", true);
 		}
-		
-		// Periodically write out checkpoints
-		sys.getWALABias()->print("wl-tmmc-Checkpoint", true);
+
+		// Check if collection matrix is ready to take over, not necessarily at points where WL is flat
+		fullyVisited = sys.getTMMCBias()->checkFullyVisited();
 	}
 
+	std::cout << "Switching over to TMMC completely, ending Wang-Landau" << std::endl;
+	sys.getTMMCBias()->print("tmmc-beginning-Checkpoint", true);
+	
 	// Switch over to TMMC completely
 	sys.stopWALA();
+	
+	std::cout << "Beginning TMMC" << std::endl;
+	
 	for (unsigned int sweep = 0; sweep < totalTMMCSweeps; ++sweep) {
 		for (unsigned int move = 0; move < tmmcSweepSize; ++move) {
 			try {
@@ -458,7 +498,17 @@ int main (int argc, char * const argv[]) {
 			// record U
 			sys.recordU();
 		}
-					
+		
+		if (sweep%(totalTMMCSweeps/100) == 0) {
+			time_t rawtime_tmp;
+			time (&rawtime_tmp);
+			struct tm * timeinfo_tmp;
+			timeinfo_tmp = localtime (&rawtime_tmp);
+			char dummy_tmp [80];
+			strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
+			std::cout << "Finished " << sweep << "/" << totalTMMCSweeps << " total TMMC sweeps at " << dummy_tmp << std::endl;
+		}
+		
 		// Update biasing function from collection matrix
 		sys.getTMMCBias()->calculatePI();
 		
@@ -497,7 +547,7 @@ int main (int argc, char * const argv[]) {
     sys.printU("energyHistogram");
     
     // Print out final macrostate distribution
-    sys.getTMMCBias()->print("lnPI", false);
+    sys.getTMMCBias()->print("final", false);
 	
 	// Free pair potential pointers
 	for (unsigned int i = 0; i < ppotArray.size(); ++i) {
@@ -505,5 +555,10 @@ int main (int argc, char * const argv[]) {
 	}
     ppotArray.clear();
     
+    // Finished
+    time (&rawtime);
+    timeinfo = localtime (&rawtime);
+    strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+    std::cout << "Finished simulation at " << timestamp << std::endl;
 	return SAFE_EXIT;
 }

@@ -53,7 +53,7 @@ int swapParticles::make (simSystem &sys) {
     
     // Remove a1 from cell lists, etc.
     try {
-    	sys.deleteAtom(typeIndex_, a1);
+    	sys.deleteAtom(typeIndex_, a1, true);
     } catch (customException &ce) {
     	std::string a = "Failed to delete atom during swapping: ", b = ce.what();
     	throw customException (a+b);
@@ -87,7 +87,7 @@ int swapParticles::make (simSystem &sys) {
 
     // Remove a2 from cell lists, etc.
     try {
-    	sys.deleteAtom(typeIndex2_, a2);
+    	sys.deleteAtom(typeIndex2_, a2, true);
     } catch (customException &ce) {
     	std::string a = "Failed to delete atom during swapping: ", b = ce.what();
     	throw customException (a+b);

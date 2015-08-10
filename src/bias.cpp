@@ -39,6 +39,33 @@ tmmc::tmmc (const int Nmax, const int Nmin) {
 }
 
 /*!
+ * Check if the the collection matrix has been filled (i.e. contains no zeros, except when crossing imposed bounds).
+ * Technically, if in an ideal gas state, dU ~ 0 so pacc = 1.0, therefore probability of remaining in same state is 0.
+ * However, this matrix should be considered filled, if transitions to N+1 and N-1 for each N are found (except at bounds).
+ */
+bool tmmc::checkFullyVisited () {
+	for (__BIAS_INT_TYPE__ i = 0; i < C_.size(); i += 3) {
+		if (i == 0) {
+			// lower bound, so only +1 move must be sampled
+			if (!(C_[i+1] > 0)) {
+				return false;
+			}			
+		} else if (i == C_.size()-3) {
+			// upper bound, so only -1 move must be sampled
+			if (!(C_[i+2] > 0)) {
+				return false;
+			}
+		} else {
+			// midpoints, both +1 and -1 moves must be sampled
+			if (!(C_[i+1] > 0) || !(C_[i+2] > 0)) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+/*!
  * For a given multidimensional array which has been cast into 1D, find the address that refers to a given transition.
  * 
  * \param [in] Nstart Number of total species initially (before MC move)
@@ -94,13 +121,14 @@ void tmmc::calculatePI () {
 		}
 		if (sum > 0) {
 			for (unsigned int j = 0; j < 3; ++j) {
-				if (C_[i+j] == 0) {
-					// check if equal to integer zero (so can still be a very small, but finite number)
-					throw customException ("Cannot compute TMMC macrostate distribution because collection matrix contains zeros");
-				}
 				P_[i+j] = C_[i+j] / sum;
 			}
 		} else {
+			// This state has not been visited at all if sum = 0.  However, at high system densities this could be the "correct"
+			// result so this error may need to be discarded later in favor of:
+			// P_[i+j] = 0;
+			// However, having this throw an exception is also a good way to find that upper bound where the system is completely packed
+			// so I will keep it this way for now.
 			throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros");
 		}
 	}
@@ -111,6 +139,9 @@ void tmmc::calculatePI () {
 	for (__BIAS_INT_TYPE__ i = 0; i < lnPI_.size()-1; ++i) {
 		address1 = getTransitionAddress(Nmin_+i, Nmin_+i+1);
 		address2 = getTransitionAddress(Nmin_+i+1, Nmin_+i);
+		if (!(P_[address1] > 0) || !(P_[address2] > 0)) {
+			throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros at address: P["+sstr(address1)+"] = "+sstr(P_[address1])+", P["+sstr(address2)+"] = "+sstr(P_[address2]));
+		}
 		lnPI_[i+1] = lnPI_[i] + log(P_[address1]/P_[address2]); // this is why P_ cannot be zero
 	}
 }
@@ -154,7 +185,7 @@ void tmmc::print (const std::string fileName, bool printC) {
 	// Print collection matrix
 	if (printC) {
 		std::ofstream of;
-		of.open(fileName+"_C.dat", 'w');
+		of.open(fileName+"_C.dat", std::ofstream::out);
 		of << "# Collection matrix in single row (vectorized) notation." << std::endl;
 		of << "# species_total_upper_bound: " << Nmax_ << std::endl;
 		of << "# species_total_lower_bound: " << Nmin_ << std::endl;
@@ -166,7 +197,7 @@ void tmmc::print (const std::string fileName, bool printC) {
 	
 	// Print lnPI (bias) matrix
 	std::ofstream of;
-	of.open(fileName+"_lnPI.dat", 'w');
+	of.open(fileName+"_lnPI.dat", std::ofstream::out);
 	of << "# lnPI (bias) matrix in single row (vectorized) notation." << std::endl;
 	of << "# species_total_upper_bound: " << Nmax_ << std::endl;
 	of << "# species_total_lower_bound: " << Nmin_ << std::endl;
@@ -391,7 +422,7 @@ void wala::print (const std::string fileName, bool printH) {
 	// Print visited-states histogram
 	if (printH) {
 		std::ofstream of;
-		of.open(fileName+"_H.dat", 'w');
+		of.open(fileName+"_H.dat", std::ofstream::out);
 		of << "# Visited-states histogram in single row (vectorized) notation." << std::endl;
 		of << "# species_total_upper_bound:" << Nmax_ << std::endl;
 		of << "# species_total_lower_bound:" << Nmin_ << std::endl;
@@ -403,7 +434,7 @@ void wala::print (const std::string fileName, bool printH) {
 	
 	// Print lnPI (bias) matrix
 	std::ofstream of;
-	of.open(fileName+"_lnPI.dat", 'w');
+	of.open(fileName+"_lnPI.dat", std::ofstream::out);
 	of << "# lnPI (bias) matrix in single row (vectorized) notation." << std::endl;
 	of << "# species_total_upper_bound:" << Nmax_ << std::endl;
 	of << "# species_total_lower_bound:" << Nmin_ << std::endl;
