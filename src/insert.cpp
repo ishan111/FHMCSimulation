@@ -8,9 +8,13 @@
  * \return MOVE_SUCCESS if inserted a particle, otherwise MOVE_FAILURE if did not.  Will throw exceptions if there was an error.
  */
 int insertParticle::make (simSystem &sys) {
-    // check if at upper bound
+    // check if at upper bound for this specific species type
     if (sys.numSpecies[typeIndex_] >= sys.maxSpecies(typeIndex_)) {
         return MOVE_FAILURE;
+    }
+    // also check if at upper bound for total number of atoms
+    if (sys.getTotN() >= sys.totNMax()) {
+    	return MOVE_FAILURE;
     }
     
 	// attempt to insert a new one
@@ -45,9 +49,8 @@ int insertParticle::make (simSystem &sys) {
     
     // biasing
     const double p_u = V/(sys.numSpecies[typeIndex_]+1.0)*exp(sys.beta()*(sys.mu(typeIndex_) - insEnergy));
-    std::vector <int> Nend = sys.numSpecies;
-    Nend[typeIndex_] += 1;
-    double bias = calculateBias(sys, Nend, p_u);
+    int nTotFinal = sys.getTotN() + 1;
+    double bias = calculateBias(sys, nTotFinal, p_u);
    
 	// metropolis criterion
 	if (rng (&RNG_SEED) < p_u*bias) {
@@ -61,7 +64,7 @@ int insertParticle::make (simSystem &sys) {
 		
 		// update Wang-Landau bias, if used
 		if (sys.useWALA) {
-			sys.getWALABias()->update(sys.numSpecies);
+			sys.getWALABias()->update(sys.getTotN());
 		}
 		
         return MOVE_SUCCESS;
@@ -69,7 +72,7 @@ int insertParticle::make (simSystem &sys) {
     
 	// update Wang-Landau bias (even if moved failed), if used
 	if (sys.useWALA) {
-		sys.getWALABias()->update(sys.numSpecies);
+		sys.getWALABias()->update(sys.getTotN());
 	}
 	
 	return MOVE_FAILURE;

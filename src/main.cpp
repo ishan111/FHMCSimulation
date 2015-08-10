@@ -16,8 +16,16 @@
 #include "insert.h"
 #include "delete.h"
 #include "translate.h"
+#include "swap.h"
 #include "moves.h"
 #include "input.h"
+
+// JSON interface from local distro of rapidjson
+#include "rapidjson/include/rapidjson/document.h"
+#include "rapidjson/include/rapidjson/writer.h"
+#include "rapidjson/include/rapidjson/stringbuffer.h"
+#include "rapidjson/include/rapidjson/filereadstream.h"
+#include "rapidjson/include/rapidjson/prettywriter.h"
 
 /*! 
  * Only uncomment this if simulations are purely in the fluid phase.  
@@ -31,42 +39,293 @@
  */
 //#define NETCDF_CAPABLE
 
+/*!
+ * Usage: ./binary_name inputFile.json
+ */
 int main (int argc, char * const argv[]) {
-	// get time stamp
+	// Get time stamp
 	time_t rawtime;
 	time (&rawtime);
 	struct tm * timeinfo;
 	timeinfo = localtime (&rawtime);
 	
-    // user input parsing can be added later
-	RNG_SEED = -10;
-	const int sysN = 1;
-	const double sysBeta = 1.0;
-	const std::vector < double > sysBox (3, 9);
-	std::vector < double > sysMu (sysN, 2.5);
-	std::vector < int > sysMax (sysN, 300), sysMin (sysN, 0);
-	simSystem sys (sysN, sysBeta, sysBox, sysMu, sysMax, sysMin);
+	/* -------------------- BEGIN INPUT -------------------- */
 	
-	const int tmmcSweepSize = 1e6, totalTMMCSweep = 1000, wlSweepSize = 1e6;
+	// Parse input JSON file
+	FILE* fp = fopen(argv[1], "r");
+	char readBuffer[65536];
+	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+	rapidjson::Document doc;
+	doc.ParseStream(is);	
+	fclose(fp);
+		
+	// Assert that this is a JSON document
+	assert(doc.IsObject());
 	
-	// specify pair potentials and add to system
-    const double eps = 1.0, lambda = 0.3, sigma = 1.0;
-    std::vector < double > params (3);
-    params[2] = -eps;
-    params[1] = sigma+lambda;
-    params[0] = sigma;
-    squareWell sqW;
-	sqW.setParameters(params);
-    sqW.savePotential("sqW_potential.dat", 0.01, 0.01);
-    sys.addPotential (0, 0, &sqW, true);
+	// Check each member exists and is in the correct format
+	assert(doc.HasMember("num_species"));
+	assert(doc["num_species"].IsInt());
+	assert(doc.HasMember("beta"));
+	assert(doc["beta"].IsDouble());
+	
+	assert(doc.HasMember("box"));
+	assert(doc["box"].IsArray());
+	assert(doc["box"].Size() == 3);
+	std::vector < double > sysBox (3, 0);
+	for (rapidjson::SizeType i = 0; i < doc["box"].Size(); ++i) {
+		assert(doc["box"][i].IsDouble());
+		sysBox[i] = doc["dimensionNames"][i].GetDouble();
+	}
+	
+	assert(doc.HasMember("mu"));
+	assert(doc["mu"].IsArray());
+	assert(doc["mu"].Size() == doc["num_species"].GetInt());
+	std::vector < double > sysMu (doc["mu"].Size(), 0);
+	for (rapidjson::SizeType i = 0; i < doc["mu"].Size(); ++i) {
+		assert(doc["mu"][i].IsDouble());
+		sysMu[i] = doc["mu"][i].GetDouble();
+	}
+	
+	assert(doc.HasMember("seed"));
+	assert(doc["seed"].IsDouble());
+	RNG_SEED = doc["seed"].GetDouble();
+			
+	assert(doc.HasMember("max_N"));
+	assert(doc["max_N"].IsArray());
+	assert(doc["max_N"].Size() == doc["num_species"].GetInt());
+	std::vector < int > sysMax (doc["max_N"].Size(), 0);
+	for (rapidjson::SizeType i = 0; i < doc["max_N"].Size(); ++i) {
+		assert(doc["max_N"][i].IsInt());
+		sysMax[i] = doc["max_N"][i].GetInt();
+	}
+	
+	assert(doc.HasMember("min_N"));
+	assert(doc["min_N"].IsArray());
+	assert(doc["min_N"].Size() == doc["num_species"].GetInt());
+	std::vector < int > sysMin (doc["min_N"].Size(), 0);
+	for (rapidjson::SizeType i = 0; i < doc["min_N"].Size(); ++i) {
+		assert(doc["min_N"][i].IsInt());
+		sysMin[i] = doc["min_N"][i].GetInt();
+	}	
+	
+	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin);
+		
+	std::vector < int > sysWindow;
+	if (doc.HasMember("window")) {
+		assert(doc["window"].IsArray());
+		assert(doc["window"].Size() == 2);
+		sysWindow.resize(2, 0);
+		sysWindow[0] = doc["window"][0].GetInt();
+		sysWindow[1] = doc["window"][1].GetInt();
+	}
+	
+	if (sysWindow.begin() != sysWindow.end()) {
+		sys.setTotNBounds(sysWindow);
+	}
+	
+	assert(doc.HasMember("restart_file"));
+	assert(doc["restart_file"].IsString());
+	const std::string restart_file = doc["restart_file"].GetString();
+	
+	assert(doc.HasMember("tmmc_sweep_size"));
+	assert(doc["tmmc_sweep_size"].IsInt());
+	const int tmmcSweepSize = doc["tmmc_sweep_size"].GetInt();
+	
+	assert(doc.HasMember("total_tmmc_sweeps"));
+	assert(doc["total_tmmc_sweeps"].IsInt());
+	const int totalTMMCSweeps = doc["total_tmmc_sweeps"].GetInt();
+	
+	assert(doc.HasMember("wala_sweep_size"));
+	assert(doc["wala_sweep_size"].IsInt());
+	const int wlSweepSize = doc["wala_sweep_size"].GetInt();
 
+	assert(doc.HasMember("wala_g"));
+	assert(doc["wala_g"].IsDouble());
+	const double g = doc["wala_g"].GetDouble();
+	
+	assert(doc.HasMember("wala_s"));
+	assert(doc["wala_s"].IsDouble());
+	const double s = doc["wala_s"].GetDouble();
+
+	std::vector < double > ref (sys.nSpecies(), 0);
+	std::vector < std::vector < double > > probEqSwap (sys.nSpecies(), ref), probPrSwap (sys.nSpecies(), ref);
+	std::vector < double > probPrInsDel (sys.nSpecies(), 0), probPrDisp (sys.nSpecies(), 0);
+	std::vector < double > probEqInsDel (sys.nSpecies(), 0), probEqDisp (sys.nSpecies(), 0);
+	std::vector < double > maxPrD (sys.nSpecies(), 0), maxEqD (sys.nSpecies(), 0);
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		std::string dummy = "prob_pr_ins_del_" + sstr(i+1);
+		assert(doc.HasMember(dummy.c_str()));
+		assert(doc[dummy.c_str()].IsDouble());
+		probPrInsDel[i] = doc[dummy.c_str()].GetDouble();
+	}
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		std::string dummy = "prob_pr_displace" + sstr(i+1);
+		assert(doc.HasMember(dummy.c_str()));
+		assert(doc[dummy.c_str()].IsDouble());
+		probPrDisp[i] = doc[dummy.c_str()].GetDouble();
+		dummy = "max_pr_displacement_" + sstr(i+1);
+		assert(doc.HasMember(dummy.c_str()));
+		assert(doc[dummy.c_str()].IsDouble());
+		maxPrD[i] = doc[dummy.c_str()].GetDouble();
+	}
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		std::string dummy = "prob_eq_ins_del_" + sstr(i+1);
+		assert(doc.HasMember(dummy.c_str()));
+		assert(doc[dummy.c_str()].IsDouble());
+		probEqInsDel[i] = doc[dummy.c_str()].GetDouble();
+	}
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		std::string dummy = "prob_eq_displace" + sstr(i+1);
+		assert(doc.HasMember(dummy.c_str()));
+		assert(doc[dummy.c_str()].IsDouble());
+		probEqDisp[i] = doc[dummy.c_str()].GetDouble();
+		dummy = "max_eq_displacement_" + sstr(i+1);
+		assert(doc.HasMember(dummy.c_str()));
+		assert(doc[dummy.c_str()].IsDouble());
+		maxEqD[i] = doc[dummy.c_str()].GetDouble();
+	}
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
+			std::string name1 = "prob_pr_swap"+sstr(i+1)+"_"+sstr(j+1);
+			std::string name2 = "prob_pr_swap"+sstr(j+1)+"_"+sstr(i+1);
+			std::string moveName = "";
+			bool foundIJ = false;
+			if (doc.HasMember(name1.c_str())) {
+				moveName = name1;
+				foundIJ = true;
+			} else if (doc.HasMember(name2.c_str()) && !foundIJ) {
+				moveName = name2;
+				foundIJ = true;
+			} else if (doc.HasMember(name2.c_str()) && foundIJ) {
+				std::cerr << "Input file doubly specifies production swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+				exit(SYS_FAILURE);
+			} else {
+				std::cerr << "Input file does not specify production swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+				exit(SYS_FAILURE);
+			}
+			assert(doc[moveName.c_str()].IsDouble());
+			probPrSwap[i][j] = doc[moveName.c_str()].GetDouble();
+			probPrSwap[j][i] = doc[moveName.c_str()].GetDouble();
+		}
+	}
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
+			std::string name1 = "prob_eq_swap"+sstr(i+1)+"_"+sstr(j+1);
+			std::string name2 = "prob_eq_swap"+sstr(j+1)+"_"+sstr(i+1);
+			std::string moveName = "";
+			bool foundIJ = false;
+			if (doc.HasMember(name1.c_str())) {
+				moveName = name1;
+				foundIJ = true;
+			} else if (doc.HasMember(name2.c_str()) && !foundIJ) {
+				moveName = name2;
+				foundIJ = true;
+			} else if (doc.HasMember(name2.c_str()) && foundIJ) {
+				std::cerr << "Input file doubly specifies equilibration swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+				exit(SYS_FAILURE);
+			} else {
+				std::cerr << "Input file does not specify equilibration swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+				exit(SYS_FAILURE);
+			}
+			assert(doc[moveName.c_str()].IsDouble());
+			probEqSwap[i][j] = doc[moveName.c_str()].GetDouble();
+			probEqSwap[j][i] = doc[moveName.c_str()].GetDouble();
+		}
+	}	
+
+	std::vector < pairPotential* > ppotArray (sys.nSpecies()*(sys.nSpecies()-1)/2);
+	std::vector < std::string > ppotType (sys.nSpecies()*(sys.nSpecies()-1)/2, "");
+	int ppotIndex = 0, ppotTypeIndex = 0;
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		for (unsigned int j = i; j < doc["num_species"].GetInt(); ++j) {
+			std::string name1 = "ppot_"+sstr(i+1)+"_"+sstr(j+1);
+			std::string name2 = "ppot_"+sstr(j+1)+"_"+sstr(i+1);
+			std::string ppotName = "", dummy = "";
+			bool foundIJ = false;
+			if (doc.HasMember(name1.c_str())) {
+				ppotName = name1;
+				foundIJ = true;
+			} else if (doc.HasMember(name2.c_str()) && !foundIJ) {
+				ppotName = name2;
+				foundIJ = true;
+			} else if (doc.HasMember(name2.c_str()) && foundIJ) {
+				std::cerr << "Input file doubly specifies pair potential for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+				exit(SYS_FAILURE);
+			} else {
+				std::cerr << "Input file does not specify pair potential for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+				exit(SYS_FAILURE);
+			} 
+			assert(doc[ppotName.c_str()].IsString());
+			ppotType[ppotTypeIndex] = doc[ppotName.c_str()].GetString();
+			dummy = ppotName+"_params";
+			assert(doc.HasMember(dummy.c_str()));
+			assert(doc[dummy.c_str()].IsArray());
+			std::vector < double > params (doc[dummy.c_str()].Size(), 0);
+			for (unsigned int k = 0; k < params.size(); ++k) {
+				params[k] = doc[dummy.c_str()][k].GetDouble();
+			}
+			bool useCellList = false; // default
+			dummy = ppotName+"_use_cell_list";
+			if (doc.HasMember(dummy.c_str())) {
+				assert(doc[dummy.c_str()].IsBool());
+				useCellList = doc[dummy.c_str()].GetBool();
+			}
+			if (ppotType[ppotTypeIndex] == "square_well") {
+				try {
+					ppotArray[ppotIndex] = new squareWell;
+					ppotArray[ppotIndex]->setParameters(params);
+				} catch (customException &ce) {
+					std::cerr << ce.what() << std::endl;
+					exit(SYS_FAILURE);
+				}
+				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
+				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);
+			} else if (ppotType[ppotTypeIndex] == "lennard_jones") {
+				try {
+					ppotArray[ppotIndex] = new lennardJones;
+					ppotArray[ppotIndex]->setParameters(params);
+				} catch (customException &ce) {
+					std::cerr << ce.what() << std::endl;
+					exit(SYS_FAILURE);
+				}
+				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
+				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);				
+			} else if (ppotType[ppotTypeIndex] == "hard_sphere") {
+				try {
+					ppotArray[ppotIndex] = new hardCore;
+					ppotArray[ppotIndex]->setParameters(params);
+				} catch (customException &ce) {
+					std::cerr << ce.what() << std::endl;
+					exit(SYS_FAILURE);
+				}
+				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
+				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);
+			} else if (ppotType[ppotTypeIndex] == "tabulated") {
+				try {
+					ppotArray[ppotIndex] = new tabulated;
+					ppotArray[ppotIndex]->setParameters(params);
+				} catch (customException &ce) {
+					std::cerr << ce.what() << std::endl;
+					exit(SYS_FAILURE);
+				}
+				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
+				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);
+			} else {
+				std::cerr << "Unrecognized pair potential name "<< ppotName << std::endl;
+				exit(SYS_FAILURE);
+			}
+			ppotTypeIndex++;
+			ppotIndex++;
+		}
+	}
+	
 	// check all pair potentials have been set and all r_cut < L/2
 	double minL = sys.box()[0];
 	for (unsigned int i = 1; i < 2; ++i) {
 		minL = std::min(minL, sys.box()[i]);
 	}
-	for (unsigned int i = 0; i < sysN; ++i) {
-		for (unsigned int j = 0; j < sysN; ++j) {
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		for (unsigned int j = 0; j < sys.nSpecies(); ++j) {
 			if (!sys.potentialIsSet(i, j)) {
 				std::cerr << "Not all pair potentials are set" << std::endl;
 				exit(SYS_FAILURE);
@@ -80,33 +339,56 @@ int main (int argc, char * const argv[]) {
 	
 	// specify moves to use for the system
     moves usedMovesEq, usedMovesPr;
-	std::vector < double > moveProb (sysN, 0.2);	// add these to input parser in the future
-	std::vector < insertParticle > insertions (sysN);
-	std::vector < deleteParticle > deletions (sysN);
-	std::vector < translateParticle > translations (sysN);
-	for (unsigned int i = 0; i < sysN; ++i) {
+	std::vector < insertParticle > eqInsertions (sys.nSpecies()), prInsertions (sys.nSpecies());
+	std::vector < deleteParticle > eqDeletions (sys.nSpecies()), prDeletions (sys.nSpecies());
+	std::vector < translateParticle > eqTranslations (sys.nSpecies()), prTranslations (sys.nSpecies());
+	std::vector < swapParticles > eqSwaps (sys.nSpecies()*(sys.nSpecies()-1)/2), prSwaps (sys.nSpecies()*(sys.nSpecies()-1)/2);
+	
+	int swapCounter = 0;
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		insertParticle newIns (i, "insert");
-		deleteParticle newDel (i, "delete");	
-		translateParticle newTranslate(i, "translate");
-		newTranslate.setMaxDisplacement (minL/20.0, sys.box());
-		insertions[i] = newIns;
-		deletions[i] = newDel;
-		translations[i] = newTranslate;
-		usedMovesEq.addMove (&insertions[i], moveProb[i]);
-		usedMovesEq.addMove (&deletions[i], moveProb[i]); 
-		usedMovesEq.addMove (&translations[i], 3*moveProb[i]); // probs are symmetric in each direction
-		usedMovesPr.addMove (&insertions[i], moveProb[i]);
-		usedMovesPr.addMove (&deletions[i], moveProb[i]); 
-		usedMovesPr.addMove (&translations[i], 3*moveProb[i]); // probs are symmetric in each direction
+		eqInsertions[i] = newIns;
+		usedMovesEq.addMove (&eqInsertions[i], probEqInsDel[i]);
+		
+		deleteParticle newDel (i, "delete");
+		eqDeletions[i] = newDel;
+		usedMovesEq.addMove (&eqDeletions[i], probEqInsDel[i]);
+		
+		translateParticle newTranslate (i, "translate");
+		eqTranslations[i] = newTranslate;
+		usedMovesEq.addMove (&eqTranslations[i], probEqDisp[i]);
+		
+		insertParticle newIns2 (i, "insert");
+		prInsertions[i] = newIns2;
+		usedMovesPr.addMove (&prInsertions[i], probPrInsDel[i]);
+		
+		deleteParticle newDel2 (i, "delete");
+		prDeletions[i] = newDel2;
+		usedMovesPr.addMove (&prDeletions[i], probPrInsDel[i]);		
+		
+		translateParticle newTranslate2 (i, "translate");
+		prTranslations[i] = newTranslate2;
+		usedMovesPr.addMove (&prTranslations[i], probPrDisp[i]);
+		
+		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
+			swapParticles newSwap (i, j, "swap");
+			eqSwaps[swapCounter] = newSwap;
+			usedMovesEq.addMove (&eqSwaps[swapCounter], probEqSwap[i][j]);
+			
+			swapParticles newSwap2 (i, j, "swap");
+			prSwaps[swapCounter] = newSwap2;
+			usedMovesPr.addMove (&prSwaps[swapCounter], probPrSwap[i][j]);
+			
+			swapCounter++;
+		}
 	}
+	
+	/* -------------------- END INPUT -------------------- */
 		
 	// Initially do a WL simulation
-	const double g = 0.5, s = 0.8;
-	const std::vector <int> maxN (1, sys.maxSpecies(0)), minN (1, sys.minSpecies(0));
 	double lnF = 1;
 	bool flat = false;
-	sys.startWALA (lnF, g, s, maxN, minN);
-	
+	sys.startWALA (lnF, g, s, sys.totNMax(), sys.totNMin()); //!< Using Shen and Errington method this syntax is same for single and multicomponent
 	while (lnF > 2.0e-18) {
 		for (unsigned int move = 0; move < wlSweepSize; ++move) {
 			try {
@@ -126,6 +408,7 @@ int main (int argc, char * const argv[]) {
 			// if flat, need to reset H and reduce lnF
 			sys.getWALABias()->iterateForward();
 			lnF = sys.getWALABias()->lnF();
+			flat = false;
 		}
 		
 		// Periodically write out checkpoints
@@ -133,7 +416,7 @@ int main (int argc, char * const argv[]) {
 	}
 	
 	// After a while, combine to initialize TMMC collection matrix
-	sys.startTMMC (maxN, minN);
+	sys.startTMMC (sys.totNMax(), sys.totNMin());
 	int count = 0;
 	// actually this should run until all elements of the collection matrix have been populated (?)
 	while (count < 2) {
@@ -163,7 +446,7 @@ int main (int argc, char * const argv[]) {
 
 	// Switch over to TMMC completely
 	sys.stopWALA();
-	for (unsigned int sweep = 0; sweep < totalTMMCSweep; ++sweep) {
+	for (unsigned int sweep = 0; sweep < totalTMMCSweeps; ++sweep) {
 		for (unsigned int move = 0; move < tmmcSweepSize; ++move) {
 			try {
 				usedMovesPr.makeMove(sys);
@@ -208,13 +491,19 @@ int main (int argc, char * const argv[]) {
     statFile.close();
 	
     // print out restart file (xyz)
-    sys.printSnapshot("final.xyz", "last configuration");
+    sys.printSnapshot(restart_file+".xyz", "last configuration");
     
     // Print out energy histogram
     sys.printU("energyHistogram");
     
     // Print out final macrostate distribution
     sys.getTMMCBias()->print("lnPI", false);
+	
+	// Free pair potential pointers
+	for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+		delete ppotArray[i];
+	}
+    ppotArray.clear();
     
 	return SAFE_EXIT;
 }

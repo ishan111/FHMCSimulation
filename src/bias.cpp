@@ -4,48 +4,28 @@
  * Initialize the tmmc object.
  * 
  * \param [in] nSpec Number of species in the simulation.
- * \param [in] Nmax Vector of upper bound for number of particles of each species.
- * \param [in] Nmin Vector of lower bound for number of particles of each species.
+ * \param [in] Nmax Upper bound for total number of particles.
+ * \param [in] Nmin Lower bound for total number of particles.
  */
-tmmc::tmmc (const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin) {
-	if (nSpec > 0) {
-		nSpec_ = nSpec;
-	} else {
-		throw customException ("Number of species in simulation must be > 0, cannot initialize tmmc");
+//tmmc::tmmc (const int nSpec, const int Nmax, const int Nmin) {
+tmmc::tmmc (const int Nmax, const int Nmin) {	
+	if (Nmin > Nmax) {
+		throw customException ("Nmin > Nmax in TMMC bias");
 	}
-	
-	if (Nmax.size() != Nmin.size()) {
-		throw customException ("Nmin and Nmax vectors have unequal sizes, cannot initialize tmmc");
-	}
-	
-	if (Nmax.size() != nSpec_) {
-		throw customException ("Nmin and Nmax must specify bounds for all species, cannot initialize tmmc");
-	}
-	
-	W_.resize(nSpec_, 0);
-	
-	__BIAS_INT_TYPE__ size = 1;
-	for (unsigned int i = 0; i < nSpec_; ++i) {
-		if (Nmin[i] > Nmax[i]) {
-			throw customException ("Nmin > Nmax for species "+sstr(i+1));
-		}
-		W_[i] = (Nmax[i] - Nmin[i] +1);
-		size *= W_[i];
-	}
-	
+	__BIAS_INT_TYPE__ size = (Nmax - Nmin + 1);
 	Nmin_ = Nmin;
 	Nmax_ = Nmax;
 	
 	// attempt to allocate memory for collection matrix and initializes it all to 0
 	try {
-		C_.resize((1+2*nSpec_)*size, 0);
+		C_.resize(3*size, 0);
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for collection matrix in tmmc");
 	}
 
 	// attempt to allocate memory for probability matrix and initializes it all to 0
 	try {
-		P_.resize((1+2*nSpec_)*size, 0);
+		P_.resize(3*size, 0);
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for probability matrix in tmmc");
 	}
@@ -59,117 +39,46 @@ tmmc::tmmc (const int nSpec, const std::vector <int> &Nmax, const std::vector <i
 }
 
 /*!
- * Get the difference offset between two states of the simulation. 
- * This assumes ONLY one species has been modified and by a value of 1.  
- * Multiple changes, or those > 1, WILL result in unexpected behavior.
- * Default resets specId and addOrSubtract to 0 when called.
- * 
- * \param [in] Nstart Vector of the initial number of atoms of each type (in order) in the system
- * \param [in] Nend Vector of the final number of atoms of each type (in order) in the system
- * \param [out] specId Index of the first species which has changed between Nstart and Nend
- * \param [out] addOrSubtract +1 if specId has increased, -1 if it has decreased, and 0 if it has not changed
- */
-void tmmc::difference_ (const std::vector <int> &Nstart, const std::vector <int> &Nend, int &specId, int &addOrSubtract) {
-	specId = 0;
-	addOrSubtract = 0;
-	for (unsigned int i = 0; i < Nend.size(); ++i) {
-		addOrSubtract = Nend[i] - Nstart[i];
-		specId = i;
-		if (addOrSubtract != 0) {
-			// break once the (first) difference has been found
-			break;
-		}
-	}
-	return;
-}
-
-/*!
  * For a given multidimensional array which has been cast into 1D, find the address that refers to a given transition.
  * 
- * \param [in] Nstart Vector of the number of each species (in order) initially (before MC move)
- * \param [in] Nend Vector of the number of each species (in order) after the MC move
+ * \param [in] Nstart Number of total species initially (before MC move)
+ * \param [in] Nend Number of total species (in order) after the MC move
  */
-const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const std::vector <int> &Nstart, const std::vector <int> &Nend) {
-	// Layout of y = [0, +1, -1, +1, -1, ... ] where each pair of +1/-1 is ordered from specId = 0 to N-1
-	int specId = 0, addOrSubtract = 0;
-	difference_(Nstart, Nend, specId, addOrSubtract);
-			
-	int y = 0;
-	if (addOrSubtract != 0) {
-		y += 2*(specId+1);
-		if (addOrSubtract == 1) {
-			y -= 1;
-		} else {
-			throw customException ("Bad addOrSubtract value: "+sstr(addOrSubtract));
-		}
+const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const int Nstart, const int Nend) {
+	// Layout of y = [0, +1, -1] 
+	int addOrSubtract = (Nend - Nstart), y = 0;
+	if (addOrSubtract == 0) {
+		y = 0;
+	} else if (addOrSubtract == 1) {
+		y = 1;
+	} else if (addOrSubtract == -1) {
+		y = 2;
+	} else {
+		throw customException ("Illegal addOrSubtract value");
 	}
-	
-	__BIAS_INT_TYPE__ x = (Nstart[nSpec_-1] - Nmin_[nSpec_-1]);
-	for (int i = nSpec_-2; i >= 0; --i) {
-		x *= W_[i];
-		x += (Nstart[i] - Nmin_[i]);
-	}
-	
-	return x*(1+2*nSpec_) + y;
-}
-
-/*!
- * For a given multidimensional array which has been cast into 1D, find the address that refers to a given transition. 
- * This is overloaded to allow for the calculation of the differences between initial and final states previously without repeating the calculation.
- * 
- * \param [in] Nstart Vector of the number of each species (in order) initially (before MC move)
- * \param [in] specId Index of species that was changed
- * \param [in] addOrSubtract Indicates if specId was increased (+1), decreased (-1), or no change (0)
- */
-const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const std::vector <int> &Nstart, const int specId, const int addOrSubtract) {		
-	int y = 0;
-	if (addOrSubtract != 0) {
-		y += 2*(specId+1);
-		if (addOrSubtract == 1) {
-			y -= 1;
-		} else {
-			throw customException ("Bad addOrSubtract value: "+sstr(addOrSubtract));
-		}
-	}
-	
-	__BIAS_INT_TYPE__ x = (Nstart[nSpec_-1] - Nmin_[nSpec_-1]);
-	for (int i = nSpec_-2; i >= 0; --i) {
-		x *= W_[i];
-		x += (Nstart[i] - Nmin_[i]);
-	}
-	
-	return x*(1+2*nSpec_) + y;
+	__BIAS_INT_TYPE__ x = Nstart - Nmin_;
+	return x*3 + y;
 }
 
 /*!
  * Get the address in lnPI that corresponds to a given macrostate.
  * 
- * \param [in] Nval Vector of the number of each species (in order)
+ * \param [in] Nval Number of total atoms
  */
-const __BIAS_INT_TYPE__ tmmc::getAddress (const std::vector <int> &Nval) {		
-	__BIAS_INT_TYPE__ x = (Nval[nSpec_-1] - Nmin_[nSpec_-1]);
-	for (int i = nSpec_-2; i >= 0; --i) {
-		x *= W_[i];
-		x += (Nval[i] - Nmin_[i]);
-	}
+const __BIAS_INT_TYPE__ tmmc::getAddress (const int Nval) {
+	__BIAS_INT_TYPE__ x = Nval - Nmin_;
 	return x;
 }
 
 /*!
  * Update the collection matrix.
  * 
- * \param [in] Nstart Vector of the number of each species (in order) initially (before MC move)
- * \param [in] Nend Vector of the number of each species (in order) after the MC move
+ * \param [in] Nstart Total number of atoms initially (before MC move)
+ * \param [in] Nend Total number of atoms after the MC move
  * \param [in] pa Unbiased Metropolis criterion for making a MC move (i.e. pa = min(1, exp(...)))
  */
-void tmmc::updateC (const std::vector <int> &Nstart, const std::vector <int> &Nend, const double pa) {
-	int specId = 0, addOrSubtract = 0;
-	difference_ (Nstart, Nend, specId, addOrSubtract);
-	const __BIAS_INT_TYPE__ i = getTransitionAddress (Nstart, specId, addOrSubtract);
-	__BIAS_INT_TYPE__ j = i;
-	if (addOrSubtract != 0) {
-		j = getTransitionAddress (Nstart, specId, 0);
-	} 
+void tmmc::updateC (const int Nstart, const int Nend, const double pa) {
+	const int i = getTransitionAddress(Nstart, Nend), j = getTransitionAddress(Nstart, Nstart);
 	C_[i] += pa;
 	C_[j] += (1-pa);
 }
@@ -178,37 +87,31 @@ void tmmc::updateC (const std::vector <int> &Nstart, const std::vector <int> &Ne
  * Calculate the (natural logarithm of the) macrostate density matrix via the probability matrix.
  */
 void tmmc::calculatePI () {
-	for (__BIAS_INT_TYPE__ i = 0; i < C_.size(); i += (1+2*nSpec_)) {
+	for (__BIAS_INT_TYPE__ i = 0; i < C_.size(); i += 3) {
 		double sum = 0.0;
-		for (unsigned int j = 0; j < 1+2*nSpec_; ++j) {
+		for (unsigned int j = 0; j < 3; ++j) {
 			sum += C_[i+j];
 		}
 		if (sum > 0) {
-			for (unsigned int j = 0; j < 1+2*nSpec_; ++j) {
+			for (unsigned int j = 0; j < 3; ++j) {
+				if (C_[i+j] == 0) {
+					// check if equal to integer zero (so can still be a very small, but finite number)
+					throw customException ("Cannot compute TMMC macrostate distribution because collection matrix contains zeros");
+				}
 				P_[i+j] = C_[i+j] / sum;
 			}
 		} else {
-			for (unsigned int j = 0; j < 1+2*nSpec_; ++j) {
-				P_[i+j] = 0;
-			}
+			throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros");
 		}
 	}
 	
 	// Reset first value to zero just to start fresh. Since only ratios matter this is perfectly fair.
 	lnPI_[0] = 0.0;
-	if (nSpec_ == 1) {
-		std::vector <int> N1 (1), N2 (1);
-		__BIAS_INT_TYPE__ address1, address2;
-		for (__BIAS_INT_TYPE__ i = 0; i < lnPI_.size()-1; ++i) {
-			N1[0] = Nmin_[0] + i;
-			address1 = getTransitionAddress (N1, 0, +1);
-			N2[0] = N1[0] + 1;
-			address2 = getTransitionAddress (N2, 0, -1);
-			lnPI_[i+1] = lnPI_[i] + log(P_[address1]/P_[address2]);
-		}
-	} else {
-		// not built yet
-		exit(-1);
+	__BIAS_INT_TYPE__ address1, address2;
+	for (__BIAS_INT_TYPE__ i = 0; i < lnPI_.size()-1; ++i) {
+		address1 = getTransitionAddress(Nmin_+i, Nmin_+i+1);
+		address2 = getTransitionAddress(Nmin_+i+1, Nmin_+i);
+		lnPI_[i+1] = lnPI_[i] + log(P_[address1]/P_[address2]); // this is why P_ cannot be zero
 	}
 }
 
@@ -230,14 +133,10 @@ void tmmc::print (const std::string fileName, bool printC) {
 		NcVar probVar = outFile.addVar("C", ncDouble, probDim);
 		const std::string dummyName = "number_species:";
 		probVar.putAtt(dummyName.c_str(), sstr(nSpec_).c_str());
-		for (unsigned int i = 0; i < nSpec_; ++i) {
-	  	    const std::string attName = "species_"+sstr(i+1)+"_upper_bound:";
-	    	probVar.putAtt(attName.c_str(), sstr(Nmax_[i]).c_str());
-		}
-		for (unsigned int i = 0; i < nSpec_; ++i) {
-		    const std::string attName = "species_"+sstr(i+1)+"_lower_bound:";
-	     	probVar.putAtt(attName.c_str(), sstr(Nmin_[i]).c_str());
-		}
+		const std::string attName = "species_total_upper_bound:";
+		probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
+		const std::string attName = "species_total_lower_bound:";
+		probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
 		probVar.putVar(&C_[0]);
 	}
 	
@@ -246,16 +145,10 @@ void tmmc::print (const std::string fileName, bool printC) {
 	NcFile outFile(name.c_str(), NcFile::replace);
 	NcDim probDim = outFile.addDim("vectorized_position", lnPI_.size());
 	NcVar probVar = outFile.addVar("lnPI", ncDouble, probDim);
-	const std::string dummyName = "number_species:";
-	probVar.putAtt(dummyName.c_str(), sstr(nSpec_).c_str());
-	for (unsigned int i = 0; i < nSpec_; ++i) {
-  	    const std::string attName = "species_"+sstr(i+1)+"_upper_bound:";
-    	probVar.putAtt(attName.c_str(), sstr(Nmax_[i]).c_str());
-	}
-	for (unsigned int i = 0; i < nSpec_; ++i) {
-	    const std::string attName = "species_"+sstr(i+1)+"_lower_bound:";
-     	probVar.putAtt(attName.c_str(), sstr(Nmin_[i]).c_str());
-	}
+	const std::string attName = "species_total_upper_bound:";
+	probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
+	const std::string attName = "species_total_lower_bound:";
+	probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
 	probVar.putVar(&lnPI_[0]);
 #else
 	// Print collection matrix
@@ -263,13 +156,8 @@ void tmmc::print (const std::string fileName, bool printC) {
 		std::ofstream of;
 		of.open(fileName+"_C.dat", 'w');
 		of << "# Collection matrix in single row (vectorized) notation." << std::endl;
-		of << "# Number of species:" << nSpec_ << std::endl;
-		for (unsigned int i = 0; i < nSpec_; ++i) {
-			of << "# species_"+sstr(i+1)+"_upper_bound: " << Nmax_[i] << std::endl;
-		}
-		for (unsigned int i = 0; i < nSpec_; ++i) {
-			of << "# species_"+sstr(i+1)+"_lower_bound: " << Nmin_[i] << std::endl;
-		}
+		of << "# species_total_upper_bound: " << Nmax_ << std::endl;
+		of << "# species_total_lower_bound: " << Nmin_ << std::endl;
 		for (long long int i = 0; i < C_.size(); ++i) {
 			of << C_[i] << std::endl;
 		}
@@ -280,13 +168,8 @@ void tmmc::print (const std::string fileName, bool printC) {
 	std::ofstream of;
 	of.open(fileName+"_lnPI.dat", 'w');
 	of << "# lnPI (bias) matrix in single row (vectorized) notation." << std::endl;
-	of << "# Number of species:" << nSpec_ << std::endl;
-	for (unsigned int i = 0; i < nSpec_; ++i) {
-		of << "# species_"+sstr(i+1)+"_upper_bound: " << Nmax_[i] << std::endl;
-	}
-	for (unsigned int i = 0; i < nSpec_; ++i) {
-		of << "# species_"+sstr(i+1)+"_lower_bound: " << Nmin_[i] << std::endl;
-	}
+	of << "# species_total_upper_bound: " << Nmax_ << std::endl;
+	of << "# species_total_lower_bound: " << Nmin_ << std::endl;
 	for (long long int i = 0; i < lnPI_.size(); ++i) {
 		of << lnPI_[i] << std::endl;
 	}
@@ -322,7 +205,7 @@ void tmmc::readC (const std::string fileName) {
 	
 	// Read line by line, parsing based on token
 	C_[0] = atof(line.c_str());
-	long long int index = 1;
+	__BIAS_INT_TYPE__ index = 1;
 	while (inF >> C_[index]) {
 		index++;
 	}
@@ -371,10 +254,11 @@ void tmmc::readlnPI (const std::string fileName) {
  * \param [in] g Factor by which lnF is reduced (multiplied) once "flatness" has been achieved.
  * \param [in] s Factor by which the min(H) must be within the mean of H to be considered "flat", e.g. 0.8 --> min is within 20% error of mean
  * \param [in] nSpec Number of species in the simulation.
- * \param [in] Nmax Vector of upper bound for number of particles of each species.
- * \param [in] Nmin Vector of lower bound for number of particles of each species. 
+ * \param [in] Nmax Upper bound for total number of particles.
+ * \param [in] Nmin Lower bound for total number of particles. 
  */
-wala::wala (const double lnF, const double g, const double s, const int nSpec, const std::vector <int> &Nmax, const std::vector <int> &Nmin) {
+//wala::wala (const double lnF, const double g, const double s, const int nSpec, const int Nmax, const int Nmin) {
+wala::wala (const double lnF, const double g, const double s, const int Nmax, const int Nmin) {
 	if (lnF < 0) {
 		throw customException ("lnF in Wang-Landau cannot be < 0");
 	}
@@ -389,32 +273,13 @@ wala::wala (const double lnF, const double g, const double s, const int nSpec, c
 		throw customException ("In Wang-Landau 0 < s < 1");
 	}
 	s_ = s;
+		
+	if (Nmin > Nmax) {
+		throw customException ("Nmin > Nmax in Wang-Landau object");
+	}
 	
-	if (nSpec > 0) {
-		nSpec_ = nSpec;
-	} else {
-		throw customException ("Number of species in simulation must be > 0, cannot initialize wala");
-	}
-		
-	if (Nmax.size() != Nmin.size()) {
-		throw customException ("Nmin and Nmax vectors have unequal sizes, cannot initialize wala");
-	}
-		
-	if (Nmax.size() != nSpec_) {
-		throw customException ("Nmin and Nmax must specify bounds for all species, cannot initialize wala");
-	}
-		
-	W_.resize(nSpec_, 0);
-		
-	__BIAS_INT_TYPE__ size = 1;
-	for (unsigned int i = 0; i < nSpec_; ++i) {
-		if (Nmin[i] > Nmax[i]) {
-			throw customException ("Nmin > Nmax for species "+sstr(i+1));
-		}
-		W_[i] = (Nmax[i] - Nmin[i] +1);
-		size *= W_[i];
-	}
-		
+	__BIAS_INT_TYPE__ size = (Nmax - Nmin + 1);
+	
 	Nmin_ = Nmin;
 	Nmax_ = Nmax;
 	
@@ -434,25 +299,21 @@ wala::wala (const double lnF, const double g, const double s, const int nSpec, c
 }
 
 /*!
- * For multidimensional Wang-Landau biasing, get the 1D coordinate of the bias for multidimensional data.
+ * For multidimensional Wang-Landau biasing, get the 1D coordinate of the macrostate distribution estimate (bias) for multidimensional data.
  * 
- * \param [in] Nval Vector of the number of each species (in order) 
+ * \param [in] Nval Total number of atoms in the system
  */
-const __BIAS_INT_TYPE__ wala::getAddress (const std::vector <int> &Nval) {
-	__BIAS_INT_TYPE__ x = (Nval[nSpec_-1] - Nmin_[nSpec_-1]);
-	for (int i = nSpec_-2; i >= 0; --i) {
-		x *= W_[i];
-		x += (Nval[i] - Nmin_[i]);
-	}
+const __BIAS_INT_TYPE__ wala::getAddress (const int Nval) {
+	__BIAS_INT_TYPE__ x = Nval - Nmin_;
 	return x;
 }
 
 /*!
  * Update the estimate of the macrostate distribution.
  * 
- * \param [in] Nval Vector of current number of particles in the system
+ * \param [in] Nval Total current number of atoms in the system
  */
-void wala::update (const std::vector <int> &Nval) {
+void wala::update (const int Nval) {
 	__BIAS_INT_TYPE__ address = getAddress (Nval);
 	lnPI_[address] += lnF_;
 	H_[address] += 1.0;
@@ -507,14 +368,10 @@ void wala::print (const std::string fileName, bool printH) {
 		NcVar probVar = outFile.addVar("H", ncDouble, probDim);
 		const std::string dummyName = "number_species:";
 		probVar.putAtt(dummyName.c_str(), sstr(nSpec_).c_str());
-		for (unsigned int i = 0; i < nSpec_; ++i) {
-	  	    const std::string attName = "species_"+sstr(i+1)+"_upper_bound:";
-	    	probVar.putAtt(attName.c_str(), sstr(Nmax_[i]).c_str());
-		}
-		for (unsigned int i = 0; i < nSpec_; ++i) {
-		    const std::string attName = "species_"+sstr(i+1)+"_lower_bound:";
-	     	probVar.putAtt(attName.c_str(), sstr(Nmin_[i]).c_str());
-		}
+		const std::string attName = "species_total_upper_bound:";
+		probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
+		const std::string attName = "species_upper_lower_bound:";
+		probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
 		probVar.putVar(&H_[0]);
 	}
 	
@@ -525,14 +382,10 @@ void wala::print (const std::string fileName, bool printH) {
 	NcVar probVar = outFile.addVar("lnPI", ncDouble, probDim);
 	const std::string dummyName = "number_species:";
 	probVar.putAtt(dummyName.c_str(), sstr(nSpec_).c_str());
-	for (unsigned int i = 0; i < nSpec_; ++i) {
-  	    const std::string attName = "species_"+sstr(i+1)+"_upper_bound:";
-    	probVar.putAtt(attName.c_str(), sstr(Nmax_[i]).c_str());
-	}
-	for (unsigned int i = 0; i < nSpec_; ++i) {
-	    const std::string attName = "species_"+sstr(i+1)+"_lower_bound:";
-     	probVar.putAtt(attName.c_str(), sstr(Nmin_[i]).c_str());
-	}
+	const std::string attName = "species_total_upper_bound:";
+	probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
+	const std::string attName = "species_total_lower_bound:";
+	probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
 	probVar.putVar(&lnPI_[0]);
 #else
 	// Print visited-states histogram
@@ -540,13 +393,8 @@ void wala::print (const std::string fileName, bool printH) {
 		std::ofstream of;
 		of.open(fileName+"_H.dat", 'w');
 		of << "# Visited-states histogram in single row (vectorized) notation." << std::endl;
-		of << "# Number of species:" << nSpec_ << std::endl;
-		for (unsigned int i = 0; i < nSpec_; ++i) {
-			of << "# species_"+sstr(i+1)+"_upper_bound: " << Nmax_[i] << std::endl;
-		}
-		for (unsigned int i = 0; i < nSpec_; ++i) {
-			of << "# species_"+sstr(i+1)+"_lower_bound: " << Nmin_[i] << std::endl;
-		}
+		of << "# species_total_upper_bound:" << Nmax_ << std::endl;
+		of << "# species_total_lower_bound:" << Nmin_ << std::endl;
 		for (long long int i = 0; i < H_.size(); ++i) {
 			of << H_[i] << std::endl;
 		}
@@ -557,13 +405,8 @@ void wala::print (const std::string fileName, bool printH) {
 	std::ofstream of;
 	of.open(fileName+"_lnPI.dat", 'w');
 	of << "# lnPI (bias) matrix in single row (vectorized) notation." << std::endl;
-	of << "# Number of species:" << nSpec_ << std::endl;
-	for (unsigned int i = 0; i < nSpec_; ++i) {
-		of << "# species_"+sstr(i+1)+"_upper_bound: " << Nmax_[i] << std::endl;
-	}
-	for (unsigned int i = 0; i < nSpec_; ++i) {
-		of << "# species_"+sstr(i+1)+"_lower_bound: " << Nmin_[i] << std::endl;
-	}
+	of << "# species_total_upper_bound:" << Nmax_ << std::endl;
+	of << "# species_total_lower_bound:" << Nmin_ << std::endl;
 	for (long long int i = 0; i < lnPI_.size(); ++i) {
 		of << lnPI_[i] << std::endl;
 	}
@@ -599,7 +442,7 @@ void wala::readlnPI (const std::string fileName) {
 	
 	// Read line by line, parsing based on token
 	lnPI_[0] = atof(line.c_str());
-	long long int index = 1;
+	__BIAS_INT_TYPE__ index = 1;
 	while (inF >> lnPI_[index]) {
 		index++;
 	}

@@ -32,14 +32,18 @@ public:
     void readRestart (std::string filename);
     void recordU ();
     void printU (const std::string fileName);
-    void startWALA (const double lnF, const double g, const double s, const std::vector <int> &Nmax, const std::vector <int> &Nmin); //!< Start using Wang-Landau and instantiate the bias object
+    void startWALA (const double lnF, const double g, const double s, const int Nmax, const int Nmin); //!< Start using Wang-Landau and instantiate the bias object
    	void stopWALA () { useWALA = false; delete[] wlBias; } //!< Stop using Wang-Landau and free the bias object
-   	void startTMMC (const std::vector <int> &Nmax, const std::vector <int> &Nmin); //!< Start using TMMC and instantiate the bias object
+   	void startTMMC (const int Nmax, const int Nmin); //!< Start using TMMC and instantiate the bias object
    	void stopTMMC () { useTMMC = false; delete[] tmmcBias; } //!< Stop using TMMC and free the bias object
-    bool potentialIsSet (const int spec1, const int spec2) { return ppotSet_[spec1][spec2]; }	//!< Boolean which returns whether or not a pair has had its potential specified by the user yet
+    void setTotNBounds (const std::vector < int > &bounds);
+   	bool potentialIsSet (const int spec1, const int spec2) { return ppotSet_[spec1][spec2]; }	//!< Boolean which returns whether or not a pair has had its potential specified by the user yet
     const int nSpecies () { return nSpecies_; } //!< Return the number of different species in the system
     const int maxSpecies (const int index);
     const int minSpecies (const int index);
+    const int totNMax () { return totNBounds_[1]; } //!< Return upper bound on the total number of atoms in the system
+    const int totNMin () { return totNBounds_[0]; } //!< Return lower bound on the total number of atoms in the system
+    const int getTotN () { return totN_; } //!< Return a sum of the total number of atoms currently in the system
     const double energy () { return energy_; } //!< Return the system's instantaneous energy
     const double scratchEnergy ();
     const double beta () { return beta_; } //!< Return 1/kT
@@ -59,8 +63,10 @@ public:
 
 private:
     int nSpecies_; //!< Number of species types allowed in the simulation (single component = 1, multicomponent > 1)
+    int totN_; //!< Sum total of all atoms in the system
     double beta_; //!< Inverse temperature, really 1/kT
     double energy_; //!< Instantaneous energy of the system
+    std::vector < int > totNBounds_; //!< For multicomponent mixtures, biases use Shen and Errington method which uses bounds on the total number of particles in the system
     std::vector < int > maxSpecies_; //!< Maximum number of each species allowed in the simulation
     std::vector < int > minSpecies_; //!< Minimum number of each species allowed in the simulation
 	std::vector < double > box_; //!< System box size
@@ -73,6 +79,6 @@ private:
     std::vector < std::vector <cellList*> > cellListsByPairType_; // this matrix stores pointers to the actual cell lists for all pair types
 };
 
-const double calculateBias (simSystem &sys, const std::vector <int> &Nend, const double p_u);
+const double calculateBias (simSystem &sys, const int nTotFinal, const double p_u);
 
 #endif

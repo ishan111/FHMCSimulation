@@ -152,14 +152,14 @@ int swapParticles::make (simSystem &sys) {
        
     // Biasing
     const double p_u = exp(-sys.beta()*(insEnergy - delEnergy));
-    double bias = calculateBias(sys, sys.numSpecies, p_u);
+    double bias = calculateBias(sys, sys.getTotN(), p_u); // sys.numSpecies already contains the currently proposed modifications
     
 	if (rng (&RNG_SEED) < p_u*bias) {
 	   sys.incrementEnergy(insEnergy - delEnergy);	
 		
 		// update Wang-Landau bias, if used
 		if (sys.useWALA) {
-			sys.getWALABias()->update(sys.numSpecies);
+			sys.getWALABias()->update(sys.getTotN());
 		}
 			
         return MOVE_SUCCESS;
@@ -194,7 +194,7 @@ int swapParticles::make (simSystem &sys) {
         
 	// update Wang-Landau bias (even if moved failed), if used
 	if (sys.useWALA) {
-		sys.getWALABias()->update(sys.numSpecies);
+		sys.getWALABias()->update(sys.getTotN());
 	}
 	
 	return MOVE_FAILURE;

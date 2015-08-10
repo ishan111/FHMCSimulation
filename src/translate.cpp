@@ -81,7 +81,7 @@ int translateParticle::make (simSystem &sys) {
     
 	// biasing
 	const double p_u = exp(-sys.beta()*(newEnergy - oldEnergy));
-    double bias = calculateBias(sys, sys.numSpecies, p_u);
+	double bias = calculateBias(sys, sys.getTotN(), p_u);
 	    
 	if (rng (&RNG_SEED) < p_u*bias) {
 	    try {
@@ -94,20 +94,20 @@ int translateParticle::make (simSystem &sys) {
 		
 		// update Wang-Landau bias, if used
 		if (sys.useWALA) {
-			sys.getWALABias()->update(sys.numSpecies);
+			sys.getWALABias()->update(sys.getTotN());
 		}
 			
         return MOVE_SUCCESS;
     }
     
     // if move failed, reset position
-    for (unsigned int i=0; i<sys.atoms[typeIndex_][chosenAtom].pos.size(); i++) {
+    for (unsigned int i = 0; i < sys.atoms[typeIndex_][chosenAtom].pos.size(); ++i) {
     	sys.atoms[typeIndex_][chosenAtom].pos[i] = oldPos[i];
     }
     
     // update Wang-Landau bias (even if moved failed), if used
     if (sys.useWALA) {
-   		sys.getWALABias()->update(sys.numSpecies);
+   		sys.getWALABias()->update(sys.getTotN());
     }
     	
 	return MOVE_FAILURE;

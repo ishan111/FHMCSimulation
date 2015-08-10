@@ -15,6 +15,8 @@
 class pairPotential {
 public:
 	pairPotential () { paramsAreSet_ = false; }
+	virtual ~pairPotential () {;}
+	
 	bool useTailCorrection;
 	virtual double energy (const double r) = 0;	
 	virtual double tailCorrection (const double rhoBath) = 0;
@@ -34,6 +36,7 @@ public:
  */
 class lennardJones : public pairPotential {
 public:
+	~lennardJones () {;}
 	void setParameters (const std::vector < double > params);
 	double energy (const double r);
 	double tailCorrection (const double rhoBath);
@@ -50,6 +53,7 @@ private:
 	double start; //!< r To start from
 	double dr; //!< Increment for r
 public:
+	~tabulated () {;}
 	void setParameters (const std::vector < double > params);
 	void loadPotential(std::string filename);
 	double energy (const double r);
@@ -63,6 +67,7 @@ public:
  */
 class squareWell : public pairPotential {
 public:
+	~squareWell () {;}
 	void setParameters (const std::vector < double > params);
 	double energy (const double r);
 	double tailCorrection (const double rhoBath);
@@ -75,6 +80,7 @@ public:
  */
 class hardCore : public pairPotential {
 public:
+	~hardCore () {;}
 	void setParameters (const std::vector <double> params);
 	double energy (const double r);
 	double tailCorrection (const double rhoBath);

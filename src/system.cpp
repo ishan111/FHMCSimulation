@@ -8,6 +8,83 @@ using namespace netCDF::exceptions;
 #endif
 
 /*!
+ * Set the bounds on the total number of particles in a system.  If not set manually, this defaults to the sum of the bounds given for
+ * each individual species in the system.  Therefore, for single component simulations, this is identical to [minSpecies(0), maxSpecies(0)] 
+ * unless otherwise set.  These bounds are intended to be used to create "windows" so that specific simulations can sample subregions
+ * of [minSpecies(0), maxSpecies(0)] and be stitched together with histogram reweighting later.
+ * 
+ * However, this routine will ALSO cause the system to reevaluate its bounds.  If these total bounds are outside any individual 
+ * bound for each atom type, nothing will change.  However, if the upper bound for total atoms is less than an upper bound for
+ * a specific species, that species will have its bounds changed to match the total maximum.  As a result sys.atoms can change so this 
+ * routine should be called at the beginning of a simulation, never during. The total minimum will also be checked.
+ * That is, if the sum of the minimum for all species is still higher than this, an exception will be throw since the system will never
+ * reach such a low density anyway.  Most likely the user has made a mistake.  
+ * 
+ * Be sure to initialize other objects, such as biases, AFTER this routine has been called since it will adjust the allowable number of
+ * particles in the system.
+ * 
+ * \param [in] bounds Vector of [min, max]
+ */
+void simSystem::setTotNBounds (const std::vector < int > &bounds) {
+	if (bounds.size() != 2) {
+		throw customException ("Bounds on total N must supplied as vector of <minN, maxN>");
+	}
+	if (bounds[0] < 0) {
+		throw customException ("Lower bound on total particles must be > 0");
+	}
+	if (bounds[0] > bounds[1]) {
+		throw customException ("Upper bound must be greater than lower bound for total number of particles in the system");
+	}
+	totNBounds_ = bounds;
+
+	int totMin = 0;
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		if (maxSpecies_[i] > totNBounds_[1]) {
+			maxSpecies_[i] = totNBounds_[1];
+		}
+		totMin += minSpecies_[i];
+	}
+	if (totMin > totNBounds_[0]) {
+		// this isn't the end of the world, but for now, alert the user in case something is wrong
+		throw customException ("Lower total N bound is lower than the sum of all individual lower bounds, region cannot be completely sampled");
+	}
+	
+	// recheck bounds and possibly resize
+	int tmpTot = 0;
+    for (unsigned int i = 0; i < nSpecies_; ++i) {
+        if (maxSpecies_[i] < minSpecies_[i]) {
+            throw customException ("Max species < Min species");
+        }
+		try {
+			atoms[i].resize(maxSpecies_[i]);
+		} catch (std::exception &e) {
+			throw customException (e.what());
+		}
+		if (numSpecies[i] > atoms[i].size()) {
+			numSpecies[i] = atoms.size();
+		}
+		tmpTot += numSpecies[i];
+	}
+    totN_ = tmpTot;
+    
+    // allocate space for average U storage matrix
+    long long int size = 1;
+    for (unsigned int i = 0; i < nSpecies_; ++i) {
+    	size *= (maxSpecies_[i] - minSpecies_[i] + 1);
+    }
+    try {
+    	numLnAverageU_.resize(size, 0);
+    } catch (std::bad_alloc &ba) {
+    	throw customException ("Out of memory for energy record");
+    }
+    try {
+    	lnAverageU_.resize(size, -DBL_MAX);
+    } catch (std::bad_alloc &ba) {
+        throw customException ("Out of memory for energy record");
+    }
+}
+
+/*!
  * Insert an atom into the system. Does all the bookkeepping behind the scenes.
  * 
  * \param [in] typeIndex What type the atom is (>= 0)
@@ -18,7 +95,7 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom) {
         if (numSpecies[typeIndex] < maxSpecies_[typeIndex]) {
             atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
             numSpecies[typeIndex]++;
-            
+            totN_++;
            // add particle into appropriate cell list
            for (unsigned int i=0; i<nSpecies_; i++)
            {
@@ -59,6 +136,7 @@ void simSystem::deleteAtom (const int typeIndex, const int atomIndex) {
         
             atoms[typeIndex][atomIndex] = atoms[typeIndex][numSpecies[typeIndex] - 1];    // "replacement" operation
             numSpecies[typeIndex]--;
+            totN_--;
         } else {
             std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
             throw customException ("No atoms left in system, cannot delete an atom of type index "+index);
@@ -180,6 +258,7 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		}
 	}
     
+	totN_ = 0;
     try {
 		numSpecies.resize(nSpecies, 0);
 	} catch (std::exception &e) {
@@ -225,7 +304,12 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory for energy record");
     }
-    
+     
+    totNBounds_.resize(2, 0);
+    for (unsigned int i = 0; i < nSpecies_; ++i) {
+    	totNBounds_[0] += minSpecies_[i];
+    	totNBounds_[1] += maxSpecies_[i];
+    }
 }
 
 /*!
@@ -299,7 +383,8 @@ void simSystem::printU (const std::string fileName) {
 }
 
 /*!
- * Add a pair potential to the system which governs the pair (spec1, spec2).
+ * Add a pair potential to the system which governs the pair (spec1, spec2). However, it only stores the pointer so the object must be 
+ * fixed in memory somewhere else throughout the simulation.
  * 
  * \param [in] spec1 Species index 1 (>= 0)
  * \param [in] spec2 Species index 2 (>= 0)
@@ -647,13 +732,13 @@ wala* simSystem::getWALABias () {
  * \param [in] lnF Factor by which the estimate of the density of states in updated each time it is visited.
  * \param [in] g Factor by which lnF is reduced (multiplied) once "flatness" has been achieved.
  * \param [in] s Factor by which the min(H) must be within the mean of H to be considered "flat", e.g. 0.8 --> min is within 20% error of mean
- * \param [in] Nmax Vector of upper bound for number of particles of each species.
- * \param [in] Nmin Vector of lower bound for number of particles of each species. 
+ * \param [in] Nmax Upper bound for total number of particles in the system.
+ * \param [in] Nmin Lower bound for total number of particles in the system. 
  */
-void simSystem::startWALA (const double lnF, const double g, const double s, const std::vector <int> &Nmax, const std::vector <int> &Nmin) { 
+void simSystem::startWALA (const double lnF, const double g, const double s, const int Nmax, const int Nmin) { 
 	// initialize the wala object
 	try {
-		wlBias = new wala (lnF, g, s, nSpecies_, Nmax, Nmin);
+		wlBias = new wala (lnF, g, s, Nmax, Nmin);
 	} catch (customException& ce) {
 		throw customException ("Cannot start Wang-Landau biasing in system: "+sstr(ce.what()));
 	}
@@ -664,13 +749,13 @@ void simSystem::startWALA (const double lnF, const double g, const double s, con
 /*!
  * Start using a transition-matrix in the simulation. Throws an exception if input values are illegal or there is another problem (e.g. memory).
  * 
- * \param [in] Nmax Vector of upper bound for number of particles of each species.
- * \param [in] Nmin Vector of lower bound for number of particles of each species.
+ * \param [in] Nmax Upper bound for total number of particles in the system.
+ * \param [in] Nmin Lower bound for total number of particles in the system.
  */
-void simSystem::startTMMC (const std::vector <int> &Nmax, const std::vector <int> &Nmin) { 
+void simSystem::startTMMC (const int Nmax, const int Nmin) { 
 	// initialize the tmmc object
 	try {
-		tmmcBias = new tmmc (nSpecies_, Nmax, Nmin);
+		tmmcBias = new tmmc (Nmax, Nmin);
 	} catch (customException& ce) {
 		throw customException ("Cannot start TMMC biasing in system: "+sstr(ce.what()));
 	}
@@ -681,50 +766,32 @@ void simSystem::startTMMC (const std::vector <int> &Nmax, const std::vector <int
 /*!
  * Calculate the bias based on a systems current state and the next state being proposed.
  * 
- * \param [in] sys System object containing the current state of the system
- * \param [in] Nend Vector of particle numbers in the proposed final state
- * \param [in] p_u Ratio of the system's partition in the final and initial state (e.g. unbiased p_acc = min(1, p_u))
+ * \param [in] sys System object containing the current state of the system.
+ * \param [in] nTotFinal Total atoms in the proposed final state.
+ * \param [in] p_u Ratio of the system's partition in the final and initial state (e.g. unbiased p_acc = min(1, p_u)).
  * 
  * \return rel_bias The value of the relative bias to apply in the metropolis criteria during sampling
  */
-const double calculateBias (simSystem &sys, const std::vector <int> &Nend, const double p_u) {
+const double calculateBias (simSystem &sys, const int nTotFinal, const double p_u) {
 	double rel_bias = 1.0;
 	
 	if (sys.useTMMC && !sys.useWALA) {
 		// TMMC biasing
-    	if (sys.nSpecies() == 1) {
-    		// Single-component, standard TMMC
-    		const int address1 = sys.tmmcBias->getAddress(sys.numSpecies), address2 = sys.tmmcBias->getAddress(Nend);
-       		const double b1 = sys.tmmcBias->getBias (address1), b2 = sys.tmmcBias->getBias (address2);
-       		rel_bias = exp(b2-b1);
-       		sys.tmmcBias->updateC (sys.numSpecies, Nend, std::min(1.0, p_u)); 
-    	} else {
-    		// Multi-component, use isothermal-isochoric method of Shen & Errington
-    		exit(-1); 
-    	}
+		const __BIAS_INT_TYPE__ address1 = sys.tmmcBias->getAddress(sys.getTotN()), address2 = sys.tmmcBias->getAddress(nTotFinal);
+		const double b1 = sys.tmmcBias->getBias (address1), b2 = sys.tmmcBias->getBias (address2);
+		rel_bias = exp(b2-b1);
+		sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, std::min(1.0, p_u)); 
     } else if (!sys.useTMMC && sys.useWALA) {
     	// Wang-Landau Biasing
-    	if (sys.nSpecies() == 1) {
-    	    // Single-component
-    	    const int address1 = sys.wlBias->getAddress(sys.numSpecies), address2 = sys.wlBias->getAddress(Nend);
-    	    const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
-    	    rel_bias = exp(b2-b1);
-    	} else {
-    		// Multi-component, use isothermal-isochoric method of Shen & Errington
-    		exit(-1); 
-    	}
+    	const __BIAS_INT_TYPE__ address1 = sys.wlBias->getAddress(sys.getTotN()), address2 = sys.wlBias->getAddress(nTotFinal);    	    
+    	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
+    	rel_bias = exp(b2-b1);
     } else if (sys.useTMMC && sys.useWALA) {
     	// Crossover phase where we use WL but update TMMC collection matrix
-    	if (sys.nSpecies() == 1) {
-    		// Single-component
-    		const int address1 = sys.wlBias->getAddress(sys.numSpecies), address2 = sys.wlBias->getAddress(Nend);
-    		const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
-    		rel_bias = exp(b2-b1);
-    		sys.tmmcBias->updateC (sys.numSpecies, Nend, std::min(1.0, p_u));    	    
-    	} else {
-    		// Multi-component, use isothermal-isochoric method of Shen & Errington
-    	    exit(-1);   		
-    	}
+    	const int address1 = sys.wlBias->getAddress(sys.getTotN()), address2 = sys.wlBias->getAddress(nTotFinal);
+    	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
+    	rel_bias = exp(b2-b1);
+    	sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, std::min(1.0, p_u)); 
     } else {
     	// No biasing
     	rel_bias = 1.0;

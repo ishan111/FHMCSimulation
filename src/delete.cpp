@@ -8,9 +8,13 @@
  * \return MOVE_SUCCESS if deleted a particle, otherwise MOVE_FAILURE if did not.  Will throw exceptions if there was an error.
  */
 int deleteParticle::make (simSystem &sys) {
-	// check if any can be deleted
+	// check if any can be deleted from this species
     if (sys.numSpecies[typeIndex_] <= sys.minSpecies(typeIndex_)) {
         return MOVE_FAILURE;
+    }
+    // also check if at global bound on total number of particles
+    if (sys.getTotN() <= sys.totNMin()) {
+       	return MOVE_FAILURE;
     }
     
 	// choose a random particle (index) of that type
@@ -51,9 +55,8 @@ int deleteParticle::make (simSystem &sys) {
     
     // biasing
     const double p_u = sys.numSpecies[typeIndex_]/V*exp(sys.beta()*(-sys.mu(typeIndex_) - delEnergy));
-    std::vector <int> Nend = sys.numSpecies;
-    Nend[typeIndex_] -= 1;
-    double bias = calculateBias(sys, Nend, p_u);
+    int nTotFinal = sys.getTotN() - 1;
+    double bias = calculateBias(sys, nTotFinal, p_u);
     
 	// metropolis criterion
 	if (rng (&RNG_SEED) < p_u*bias) {
@@ -67,7 +70,7 @@ int deleteParticle::make (simSystem &sys) {
 		
 		// update Wang-Landau bias, if used
 		if (sys.useWALA) {
-			sys.getWALABias()->update(sys.numSpecies);
+			sys.getWALABias()->update(sys.getTotN());
 		}
 				
         return MOVE_SUCCESS;
@@ -75,7 +78,7 @@ int deleteParticle::make (simSystem &sys) {
     
 	// update Wang-Landau bias (even if moved failed), if used
 	if (sys.useWALA) {
-		sys.getWALABias()->update(sys.numSpecies);
+		sys.getWALABias()->update(sys.getTotN());
 	}
 		
 	return MOVE_FAILURE;

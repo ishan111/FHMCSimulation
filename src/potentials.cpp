@@ -99,7 +99,6 @@ double lennardJones::rcut () {
 	}
 }
 
-
 /*!
  * Set the parameters in the tabulated potential
  * 
@@ -292,7 +291,6 @@ double squareWell::rcut () {
 		return (params_[1]);
 	}
 }
-
 
 /*!
  * Set the parameters in the hard-core potential.
