@@ -1,0 +1,262 @@
+\hypertarget{classmoves}{}\section{moves Class Reference}
+\label{classmoves}\index{moves@{moves}}
+
+
+Class that tracks and decides which moves whould be made.  
+
+
+
+
+{\ttfamily \#include $<$moves.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classmoves_ac0af4672a995044ebba99f4a5865b28b}{moves} ()
+\item 
+\hyperlink{classmoves_a00dfff19abe056adceb0ccf41778ee0f}{$\sim$moves} ()
+\item 
+void \hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{make\+Move} (\hyperlink{classsim_system}{sim\+System} \&sys)
+\begin{DoxyCompactList}\small\item\em Choose a move to make. \end{DoxyCompactList}\item 
+void \hyperlink{classmoves_a8ff3fea6241c0708ed08651c0b8c0c32}{add\+Move} (\hyperlink{classmc_move}{mc\+Move} $\ast$new\+Move, const double probability)
+\begin{DoxyCompactList}\small\item\em Add a new move to the object. \end{DoxyCompactList}\item 
+std\+::vector$<$ double $>$ \hyperlink{classmoves_a755de4c749706cd096327e1af9e676c3}{report\+Move\+Statistics} ()
+\begin{DoxyCompactList}\small\item\em Report the statistics on the success/failure of each move made so far. \end{DoxyCompactList}\item 
+std\+::vector$<$ double $>$ \hyperlink{classmoves_a84f8198bd43c0f6b8b52dce3abdfa6a4}{report\+Probabilities} ()
+\begin{DoxyCompactList}\small\item\em Echo the normalized probabilities of each move in the object. \end{DoxyCompactList}\item 
+const std\+::vector$<$ \hyperlink{classmc_move}{mc\+Move} $\ast$ $>$ \hyperlink{classmoves_a7371027cb97187cbf6e7dd6b5ca8345e}{included\+Moves} ()
+\begin{DoxyCompactList}\small\item\em Returns a vector of pointers to move objects currently being used. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class that tracks and decides which moves whould be made. 
+
+However, it does N\+O\+T store the moves themselves so they should be fixed in memory elsewhere. 
+
+Definition at line 34 of file moves.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classmoves_ac0af4672a995044ebba99f4a5865b28b}{}\index{moves@{moves}!moves@{moves}}
+\index{moves@{moves}!moves@{moves}}
+\subsubsection[{moves()}]{\setlength{\rightskip}{0pt plus 5cm}moves\+::moves (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmoves_ac0af4672a995044ebba99f4a5865b28b}
+
+
+Definition at line 7 of file moves.\+cpp.
+
+
+\begin{DoxyCode}
+7               \{
+8                 ;
+9 \}
+\end{DoxyCode}
+\hypertarget{classmoves_a00dfff19abe056adceb0ccf41778ee0f}{}\index{moves@{moves}!````~moves@{$\sim$moves}}
+\index{````~moves@{$\sim$moves}!moves@{moves}}
+\subsubsection[{$\sim$moves()}]{\setlength{\rightskip}{0pt plus 5cm}moves\+::$\sim$moves (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmoves_a00dfff19abe056adceb0ccf41778ee0f}
+
+
+Definition at line 11 of file moves.\+cpp.
+
+
+\begin{DoxyCode}
+11                \{
+12                 ;
+13 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classmoves_a8ff3fea6241c0708ed08651c0b8c0c32}{}\index{moves@{moves}!add\+Move@{add\+Move}}
+\index{add\+Move@{add\+Move}!moves@{moves}}
+\subsubsection[{add\+Move(mc\+Move $\ast$new\+Move, const double probability)}]{\setlength{\rightskip}{0pt plus 5cm}void moves\+::add\+Move (
+\begin{DoxyParamCaption}
+\item[{{\bf mc\+Move} $\ast$}]{new\+Move, }
+\item[{const double}]{probability}
+\end{DoxyParamCaption}
+)}\label{classmoves_a8ff3fea6241c0708ed08651c0b8c0c32}
+
+
+Add a new move to the object. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em new\+Move} & Pointer to a newly instantiated move. This is stored as a pointer, so the move cannot be moved in memory later. \\
+\hline
+\mbox{\tt in}  & {\em probability} & Unnormalized probability of making this move. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 20 of file moves.\+cpp.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+20                                                               \{
+21                 \textcolor{comment}{// add new move to the class}
+22                 moves\_.push\_back(newMove);
+23                 rawProbabilities\_.push\_back(probability);
+24                 normProbabilities\_.resize(rawProbabilities\_.size());
+25                 succeeded\_.resize(rawProbabilities\_.size(), 0.0);
+26     attempted\_.resize(rawProbabilities\_.size(), 0.0);
+27     
+28                 \textcolor{comment}{// update move probabilities}
+29                 \textcolor{keywordtype}{double} sum = 0.0;
+30                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < rawProbabilities\_.size(); ++i) \{
+31                                 sum += rawProbabilities\_[i];
+32                 \}
+33                 
+34                 normProbabilities\_[0] = rawProbabilities\_[0]/sum;
+35                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 1; i < rawProbabilities\_.size(); ++i) \{
+36                                 normProbabilities\_[i] = rawProbabilities\_[i]/sum + normProbabilities\_[i-1];
+37                 \}
+38                 
+39                 \textcolor{comment}{// for exactness, specify the upper bound}
+40                 normProbabilities\_[normProbabilities\_.size()-1] = 1.0;
+41 \}
+\end{DoxyCode}
+\hypertarget{classmoves_a7371027cb97187cbf6e7dd6b5ca8345e}{}\index{moves@{moves}!included\+Moves@{included\+Moves}}
+\index{included\+Moves@{included\+Moves}!moves@{moves}}
+\subsubsection[{included\+Moves()}]{\setlength{\rightskip}{0pt plus 5cm}const std\+::vector$<$ {\bf mc\+Move}$\ast$ $>$ moves\+::included\+Moves (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmoves_a7371027cb97187cbf6e7dd6b5ca8345e}
+
+
+Returns a vector of pointers to move objects currently being used. 
+
+
+
+Definition at line 43 of file moves.\+h.
+
+
+
+Referenced by main().
+
+\hypertarget{classmoves_a7f023913b80bb62604b99f4dbf005c37}{}\index{moves@{moves}!make\+Move@{make\+Move}}
+\index{make\+Move@{make\+Move}!moves@{moves}}
+\subsubsection[{make\+Move(sim\+System \&sys)}]{\setlength{\rightskip}{0pt plus 5cm}void moves\+::make\+Move (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\+System} \&}]{sys}
+\end{DoxyParamCaption}
+)}\label{classmoves_a7f023913b80bb62604b99f4dbf005c37}
+
+
+Choose a move to make. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em sys} & \hyperlink{classsim_system}{sim\+System} object to make a move in. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 47 of file moves.\+cpp.
+
+
+
+References rng(), R\+N\+G\+\_\+\+S\+E\+E\+D, and custom\+Exception\+::what().
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+47                                     \{
+48                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} ran = \hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED});
+49                 \textcolor{keywordtype}{int} moveChosen = -1, succ = 0;
+50     
+51                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < normProbabilities\_.size(); ++i) \{
+52                                 \textcolor{keywordflow}{if} (ran < normProbabilities\_[i]) \{
+53                                                 \textcolor{keywordflow}{try} \{
+54                                                                 succ = moves\_[i]->make(sys);
+55                                                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+56                                                                 std::string a = \textcolor{stringliteral}{"Failed to make a move
+       properly"};
+57                                                                 std::string b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+58                                                                 \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException}(a+b);
+59                                                 \}
+60             moveChosen = i;
+61             \textcolor{keywordflow}{break};
+62                                 \}
+63                 \}
+64                 
+65                 \textcolor{keywordflow}{if} (moveChosen < 0) \{
+66                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Failed to choose a move properly"});
+67                 \}
+68                 
+69     attempted\_[moveChosen] += 1.0;
+70     succeeded\_[moveChosen] += succ;
+71 \}
+\end{DoxyCode}
+\hypertarget{classmoves_a755de4c749706cd096327e1af9e676c3}{}\index{moves@{moves}!report\+Move\+Statistics@{report\+Move\+Statistics}}
+\index{report\+Move\+Statistics@{report\+Move\+Statistics}!moves@{moves}}
+\subsubsection[{report\+Move\+Statistics()}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ double $>$ moves\+::report\+Move\+Statistics (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmoves_a755de4c749706cd096327e1af9e676c3}
+
+
+Report the statistics on the success/failure of each move made so far. 
+
+\begin{DoxyReturn}{Returns}
+ans Number of Success / Total Attempts for each move 
+\end{DoxyReturn}
+
+
+Definition at line 77 of file moves.\+cpp.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+77                                                   \{
+78     std::vector < double > ans = succeeded\_;
+79     \textcolor{keywordflow}{if} (attempted\_.begin() == attempted\_.end()) \{
+80         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"No moves added to system"});
+81     \}
+82     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < attempted\_.size(); ++i) \{
+83         ans[i] /= attempted\_[i];
+84     \}
+85     \textcolor{keywordflow}{return} ans;
+86 \}\end{DoxyCode}
+\hypertarget{classmoves_a84f8198bd43c0f6b8b52dce3abdfa6a4}{}\index{moves@{moves}!report\+Probabilities@{report\+Probabilities}}
+\index{report\+Probabilities@{report\+Probabilities}!moves@{moves}}
+\subsubsection[{report\+Probabilities()}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ double $>$ moves\+::report\+Probabilities (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmoves_a84f8198bd43c0f6b8b52dce3abdfa6a4}
+
+
+Echo the normalized probabilities of each move in the object. 
+
+
+
+Definition at line 42 of file moves.\+h.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{moves_8h}{moves.\+h}\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{moves_8cpp}{moves.\+cpp}\end{DoxyCompactItemize}

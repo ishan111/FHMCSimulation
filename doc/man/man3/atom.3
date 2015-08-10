@@ -1,0 +1,68 @@
+.TH "atom" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+atom \- Atom class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <atom\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBatom\fP ()"
+.br
+.ti -1c
+.RI "\fB~atom\fP ()"
+.br
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "std::vector< double > \fBpos\fP"
+.br
+.RI "\fI3D position \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Atom class\&. 
+.PP
+Definition at line 9 of file atom\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "atom::atom ()\fC [inline]\fP"
+
+.PP
+Definition at line 11 of file atom\&.h\&.
+.PP
+References pos\&.
+.PP
+.nf
+11 { pos\&.resize(3, 0); }
+.fi
+.SS "atom::~atom ()\fC [inline]\fP"
+
+.PP
+Definition at line 12 of file atom\&.h\&.
+.PP
+.nf
+12 {};
+.fi
+.SH "Member Data Documentation"
+.PP 
+.SS "std::vector< double > atom::pos"
+
+.PP
+3D position 
+.PP
+Definition at line 12 of file atom\&.h\&.
+.PP
+Referenced by atom(), simSystem::getNeighborPositions(), cellList::insertParticle(), insertParticle::make(), swapParticles::make(), cellList::swapAndDeleteParticle(), and cellList::translateParticle()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

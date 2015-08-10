@@ -1,0 +1,85 @@
+\hypertarget{global_8h}{}\section{/\+Users/nam4/\+Desktop/omcs/src/global.h File Reference}
+\label{global_8h}\index{/\+Users/nam4/\+Desktop/omcs/src/global.\+h@{/\+Users/nam4/\+Desktop/omcs/src/global.\+h}}
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$exception$>$}\\*
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classcustom_exception}{custom\+Exception}
+\begin{DoxyCompactList}\small\item\em Error handling via custom exceptions. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{S\+Y\+S\+\_\+\+F\+A\+I\+L\+U\+R\+E}~-\/1
+\begin{DoxyCompactList}\small\item\em Returned from main the simualtion encountered a major error. \end{DoxyCompactList}\item 
+\#define \hyperlink{global_8h_aee0da692ad91bbe61c65dc91c965b19d}{S\+A\+F\+E\+\_\+\+E\+X\+I\+T}~0
+\begin{DoxyCompactList}\small\item\em Returned from main the simulation ran without error. \end{DoxyCompactList}\item 
+\#define \hyperlink{global_8h_a598a3330b3c21701223ee0ca14316eca}{P\+I}~3.\+14159265359
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{R\+N\+G\+\_\+\+S\+E\+E\+D}
+\begin{DoxyCompactList}\small\item\em Default R\+N\+G seed. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\hypertarget{global_8h_a598a3330b3c21701223ee0ca14316eca}{}\index{global.\+h@{global.\+h}!P\+I@{P\+I}}
+\index{P\+I@{P\+I}!global.\+h@{global.\+h}}
+\subsubsection[{P\+I}]{\setlength{\rightskip}{0pt plus 5cm}\#define P\+I~3.\+14159265359}\label{global_8h_a598a3330b3c21701223ee0ca14316eca}
+
+
+Definition at line 9 of file global.\+h.
+
+
+
+Referenced by lennard\+Jones\+::tail\+Correction().
+
+\hypertarget{global_8h_aee0da692ad91bbe61c65dc91c965b19d}{}\index{global.\+h@{global.\+h}!S\+A\+F\+E\+\_\+\+E\+X\+I\+T@{S\+A\+F\+E\+\_\+\+E\+X\+I\+T}}
+\index{S\+A\+F\+E\+\_\+\+E\+X\+I\+T@{S\+A\+F\+E\+\_\+\+E\+X\+I\+T}!global.\+h@{global.\+h}}
+\subsubsection[{S\+A\+F\+E\+\_\+\+E\+X\+I\+T}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+A\+F\+E\+\_\+\+E\+X\+I\+T~0}\label{global_8h_aee0da692ad91bbe61c65dc91c965b19d}
+
+
+Returned from main the simulation ran without error. 
+
+
+
+Definition at line 8 of file global.\+h.
+
+
+
+Referenced by main().
+
+\hypertarget{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{}\index{global.\+h@{global.\+h}!S\+Y\+S\+\_\+\+F\+A\+I\+L\+U\+R\+E@{S\+Y\+S\+\_\+\+F\+A\+I\+L\+U\+R\+E}}
+\index{S\+Y\+S\+\_\+\+F\+A\+I\+L\+U\+R\+E@{S\+Y\+S\+\_\+\+F\+A\+I\+L\+U\+R\+E}!global.\+h@{global.\+h}}
+\subsubsection[{S\+Y\+S\+\_\+\+F\+A\+I\+L\+U\+R\+E}]{\setlength{\rightskip}{0pt plus 5cm}\#define S\+Y\+S\+\_\+\+F\+A\+I\+L\+U\+R\+E~-\/1}\label{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}
+
+
+Returned from main the simualtion encountered a major error. 
+
+
+
+Definition at line 7 of file global.\+h.
+
+
+
+Referenced by main(), and sim\+System\+::sim\+System().
+
+
+
+\subsection{Variable Documentation}
+\hypertarget{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{}\index{global.\+h@{global.\+h}!R\+N\+G\+\_\+\+S\+E\+E\+D@{R\+N\+G\+\_\+\+S\+E\+E\+D}}
+\index{R\+N\+G\+\_\+\+S\+E\+E\+D@{R\+N\+G\+\_\+\+S\+E\+E\+D}!global.\+h@{global.\+h}}
+\subsubsection[{R\+N\+G\+\_\+\+S\+E\+E\+D}]{\setlength{\rightskip}{0pt plus 5cm}int R\+N\+G\+\_\+\+S\+E\+E\+D}\label{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}
+
+
+Default R\+N\+G seed. 
+
+
+
+Definition at line 3 of file utilities.\+cpp.
+
+
+
+Referenced by main(), translate\+Particle\+::make(), swap\+Particles\+::make(), insert\+Particle\+::make(), delete\+Particle\+::make(), and moves\+::make\+Move().
+

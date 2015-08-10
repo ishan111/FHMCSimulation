@@ -1,0 +1,191 @@
+\hypertarget{classinsert_particle}{}\section{insert\+Particle Class Reference}
+\label{classinsert_particle}\index{insert\+Particle@{insert\+Particle}}
+
+
+{\ttfamily \#include $<$insert.\+h$>$}
+
+Inheritance diagram for insert\+Particle\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classinsert_particle}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classinsert_particle_adc56d982ad9d43537aea2744d13c3471}{insert\+Particle} ()
+\item 
+\hyperlink{classinsert_particle_af528d2c24fff7bea0701b014ae2fa5e4}{insert\+Particle} (const int type\+Index, const std\+::string tag)
+\begin{DoxyCompactList}\small\item\em Instantiate a new move, also give a name which is the combination of auser-\/defined tag + the particle index it operates on. \end{DoxyCompactList}\item 
+int \hyperlink{classinsert_particle_ad81c09b735d1acea65758242d5c5d595}{make} (\hyperlink{classsim_system}{sim\+System} \&sys)
+\begin{DoxyCompactList}\small\item\em Insert a particle into the system. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 12 of file insert.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classinsert_particle_adc56d982ad9d43537aea2744d13c3471}{}\index{insert\+Particle@{insert\+Particle}!insert\+Particle@{insert\+Particle}}
+\index{insert\+Particle@{insert\+Particle}!insert\+Particle@{insert\+Particle}}
+\subsubsection[{insert\+Particle()}]{\setlength{\rightskip}{0pt plus 5cm}insert\+Particle\+::insert\+Particle (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classinsert_particle_adc56d982ad9d43537aea2744d13c3471}
+
+
+Definition at line 14 of file insert.\+h.
+
+
+\begin{DoxyCode}
+14 \{\};
+\end{DoxyCode}
+\hypertarget{classinsert_particle_af528d2c24fff7bea0701b014ae2fa5e4}{}\index{insert\+Particle@{insert\+Particle}!insert\+Particle@{insert\+Particle}}
+\index{insert\+Particle@{insert\+Particle}!insert\+Particle@{insert\+Particle}}
+\subsubsection[{insert\+Particle(const int type\+Index, const std\+::string tag)}]{\setlength{\rightskip}{0pt plus 5cm}insert\+Particle\+::insert\+Particle (
+\begin{DoxyParamCaption}
+\item[{const int}]{type\+Index, }
+\item[{const std\+::string}]{tag}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classinsert_particle_af528d2c24fff7bea0701b014ae2fa5e4}
+
+
+Instantiate a new move, also give a name which is the combination of auser-\/defined tag + the particle index it operates on. 
+
+
+
+Definition at line 15 of file insert.\+h.
+
+
+
+References mc\+Move\+::name\+\_\+, and mc\+Move\+::type\+Index\+\_\+.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classinsert_particle_ad81c09b735d1acea65758242d5c5d595}{}\index{insert\+Particle@{insert\+Particle}!make@{make}}
+\index{make@{make}!insert\+Particle@{insert\+Particle}}
+\subsubsection[{make(sim\+System \&sys)}]{\setlength{\rightskip}{0pt plus 5cm}int insert\+Particle\+::make (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\+System} \&}]{sys}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classinsert_particle_ad81c09b735d1acea65758242d5c5d595}
+
+
+Insert a particle into the system. 
+
+All other information is stored in the \hyperlink{classsim_system}{sim\+System} object.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em sys} & System object to attempt to insert a particle into.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+M\+O\+V\+E\+\_\+\+S\+U\+C\+C\+E\+S\+S if inserted a particle, otherwise M\+O\+V\+E\+\_\+\+F\+A\+I\+L\+U\+R\+E if did not. Will throw exceptions if there was an error. 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classmc_move_a2e377a628f9ecee5422fc8967d4924eb}{mc\+Move}.
+
+
+
+Definition at line 10 of file insert.\+cpp.
+
+
+
+References sim\+System\+::beta(), sim\+System\+::box(), calculate\+Bias(), sim\+System\+::get\+Neighbor\+Positions(), sim\+System\+::get\+Tot\+N(), sim\+System\+::get\+W\+A\+L\+A\+Bias(), sim\+System\+::increment\+Energy(), sim\+System\+::insert\+Atom(), sim\+System\+::max\+Species(), M\+O\+V\+E\+\_\+\+F\+A\+I\+L\+U\+R\+E, M\+O\+V\+E\+\_\+\+S\+U\+C\+C\+E\+S\+S, sim\+System\+::mu(), sim\+System\+::n\+Species(), sim\+System\+::num\+Species, atom\+::pos, sim\+System\+::ppot, rng(), R\+N\+G\+\_\+\+S\+E\+E\+D, sim\+System\+::tot\+N\+Max(), mc\+Move\+::type\+Index\+\_\+, wala\+::update(), sim\+System\+::use\+W\+A\+L\+A, and custom\+Exception\+::what().
+
+
+\begin{DoxyCode}
+10                                         \{
+11     \textcolor{comment}{// check if at upper bound for this specific species type}
+12     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}] >= sys.\hyperlink{classsim_system_a93259b517f449f1ac610d132ac66b551}{maxSpecies}(
+      \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_})) \{
+13         \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
+14     \}
+15     \textcolor{comment}{// also check if at upper bound for total number of atoms}
+16     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}() >= sys.\hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}()) \{
+17                 \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
+18     \}
+19     
+20                 \textcolor{comment}{// attempt to insert a new one}
+21     \hyperlink{classatom}{atom} newAtom;
+22     \textcolor{keyword}{const} std::vector < double > box = sys.\hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}();
+23     \textcolor{keywordtype}{double} V = 1.0;
+24     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box.size(); ++i) \{
+25         newAtom.\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[i] = \hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) * box[i];
+26         V *= box[i];
+27     \}
+28     
+29     \textcolor{comment}{// compute energy to insert}
+30     \textcolor{keywordtype}{double} insEnergy = 0.0;
+31     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
+32                 \textcolor{comment}{// get positions of neighboring atoms around newAtom}
+33                 std::vector < std::vector < double > > neighborPositions = sys.
+      \hyperlink{classsim_system_a7ac49b2311cd8230df8d078a9d897b35}{getNeighborPositions}(spec, \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}, &newAtom);
+34         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborPositions.size(); ++i) \{
+35                                                 \textcolor{keywordflow}{try} \{
+36                                                                 insEnergy += sys.
+      \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->energy(neighborPositions[i], newAtom.\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, box);        
+37                                                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+38                                                                 std::string a = \textcolor{stringliteral}{"Cannot insert because of
+       energy error: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+39                                                                 \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (a+b);
+40                                                 \}
+41         \}
+42         \textcolor{comment}{// add tail correction to potential energy -- only enable for fluid phase simulations}
+43 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+44         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->useTailCorrection)\{
+45                                                 insEnergy += sys.\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][
+      \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection(sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]/V);
+46                                 \}
+47 \textcolor{preprocessor}{#endif}
+48     \}
+49     
+50     \textcolor{comment}{// biasing}
+51     \textcolor{keyword}{const} \textcolor{keywordtype}{double} p\_u = V/(sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]+1.0)*exp(sys.
+      \hyperlink{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{beta}()*(sys.\hyperlink{classsim_system_af1e3f5320aff976a448647244d5950d1}{mu}(typeIndex\_) - insEnergy));
+52     \textcolor{keywordtype}{int} nTotFinal = sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}() + 1;
+53     \textcolor{keywordtype}{double} bias = \hyperlink{system_8cpp_ab912bbb9fc9045954cf1b3ccb286a55c}{calculateBias}(sys, nTotFinal, p\_u);
+54    
+55                 \textcolor{comment}{// metropolis criterion}
+56                 \textcolor{keywordflow}{if} (\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) < p\_u*bias) \{
+57         \textcolor{keywordflow}{try} \{
+58             sys.\hyperlink{classsim_system_a6c1e86f585f3a52aa82b6394ffbf1c6a}{insertAtom}(typeIndex\_, &newAtom);
+59         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+60             std::string a = \textcolor{stringliteral}{"Failed to insert atom: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+61             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+62         \}
+63                                 sys.\hyperlink{classsim_system_a6ad31c08955b80873f865b3069618dcb}{incrementEnergy}(insEnergy);
+64                                 
+65                                 \textcolor{comment}{// update Wang-Landau bias, if used}
+66                                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+67                                                 sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->
+      \hyperlink{classwala_a5eb2622be6a9e89f5e59ba0b15aca4bd}{update}(sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}());
+68                                 \}
+69                                 
+70         \textcolor{keywordflow}{return} \hyperlink{moves_8h_ae8285cbddc5d21f73f49dcbad82a775a}{MOVE\_SUCCESS};
+71     \}
+72     
+73                 \textcolor{comment}{// update Wang-Landau bias (even if moved failed), if used}
+74                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+75                                 sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_a5eb2622be6a9e89f5e59ba0b15aca4bd}{update}(sys.
+      \hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}());
+76                 \}
+77                 
+78                 \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
+79 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{insert_8h}{insert.\+h}\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{insert_8cpp}{insert.\+cpp}\end{DoxyCompactItemize}

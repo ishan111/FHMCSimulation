@@ -1,0 +1,594 @@
+.TH "/Users/nam4/Desktop/omcs/src/main.cpp" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/Users/nam4/Desktop/omcs/src/main.cpp \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <iostream>\fP
+.br
+\fC#include <time\&.h>\fP
+.br
+\fC#include <fstream>\fP
+.br
+\fC#include <cmath>\fP
+.br
+\fC#include <boost/lexical_cast\&.hpp>\fP
+.br
+\fC#include 'system\&.h'\fP
+.br
+\fC#include 'utilities\&.h'\fP
+.br
+\fC#include 'global\&.h'\fP
+.br
+\fC#include 'insert\&.h'\fP
+.br
+\fC#include 'delete\&.h'\fP
+.br
+\fC#include 'translate\&.h'\fP
+.br
+\fC#include 'swap\&.h'\fP
+.br
+\fC#include 'moves\&.h'\fP
+.br
+\fC#include 'rapidjson/include/rapidjson/document\&.h'\fP
+.br
+\fC#include 'rapidjson/include/rapidjson/writer\&.h'\fP
+.br
+\fC#include 'rapidjson/include/rapidjson/stringbuffer\&.h'\fP
+.br
+\fC#include 'rapidjson/include/rapidjson/filereadstream\&.h'\fP
+.br
+\fC#include 'rapidjson/include/rapidjson/prettywriter\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "int \fBmain\fP (int argc, char *const argv[])"
+.br
+.RI "\fIOnly uncomment this if simulations are purely in the fluid phase\&. \fP"
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "int main (int argc, char *const argv[])"
+
+.PP
+Only uncomment this if simulations are purely in the fluid phase\&. This will allow tail corrections to be enabled which are only valid assuming a converging g(r) at large r\&.
+.PP
+Uncomment this if netCDF libraries are installed and can be compiled against\&. Data will be output to these arrays instead of ASCII files if so\&.
+.PP
+Usage: \&./binary_name inputFile\&.json < Using Shen and Errington method this syntax is same for single and multicomponent 
+.PP
+Definition at line 54 of file main\&.cpp\&.
+.PP
+References moves::addMove(), simSystem::addPotential(), simSystem::atoms, simSystem::box(), tmmc::calculatePI(), tmmc::checkFullyVisited(), simSystem::energy(), wala::evaluateFlatness(), wala::getlnPI(), simSystem::getTMMCBias(), simSystem::getWALABias(), moves::includedMoves(), wala::iterateForward(), wala::lnF(), moves::makeMove(), simSystem::nSpecies(), simSystem::potentialIsSet(), simSystem::ppot, tmmc::print(), wala::print(), simSystem::printSnapshot(), simSystem::printU(), simSystem::recordU(), moves::reportMoveStatistics(), RNG_SEED, SAFE_EXIT, simSystem::scratchEnergy(), tmmc::setLnPI(), lennardJones::setParameters(), tabulated::setParameters(), squareWell::setParameters(), hardCore::setParameters(), simSystem::setTotNBounds(), sstr, simSystem::startTMMC(), simSystem::startWALA(), simSystem::stopWALA(), SYS_FAILURE, simSystem::totNMax(), simSystem::totNMin(), and customException::what()\&.
+.PP
+.nf
+54                                          {
+55                 // Get time stamp
+56                 time_t rawtime;
+57                 time (&rawtime);
+58                 struct tm * timeinfo;
+59                 timeinfo = localtime (&rawtime);
+60                 char timestamp [80];
+61                 strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+62                 std::cout << "Beginning simulation at " << timestamp << std::endl;
+63                 
+64                 /* -------------------- BEGIN INPUT -------------------- */
+65                 
+66                 // Parse input JSON file
+67                 FILE* fp = fopen(argv[1], "r");
+68                 char readBuffer[65536];
+69                 rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+70                 rapidjson::Document doc;
+71                 doc\&.ParseStream(is);             
+72                 fclose(fp);
+73                                 
+74                 // Assert that this is a JSON document
+75                 assert(doc\&.IsObject());
+76                 
+77                 // Check each member exists and is in the correct format
+78                 assert(doc\&.HasMember("num_species"));
+79                 assert(doc["num_species"]\&.IsInt());
+80                 assert(doc\&.HasMember("beta"));
+81                 assert(doc["beta"]\&.IsNumber());
+82                 
+83                 assert(doc\&.HasMember("box"));
+84                 assert(doc["box"]\&.IsArray());
+85                 assert(doc["box"]\&.Size() == 3);
+86                 std::vector < double > sysBox (3, 0);
+87                 for (rapidjson::SizeType i = 0; i < doc["box"]\&.Size(); ++i) {
+88                                 assert(doc["box"][i]\&.IsNumber());
+89                                 sysBox[i] = doc["box"][i]\&.GetDouble();
+90                 }
+91 
+92                 assert(doc\&.HasMember("mu"));
+93                 assert(doc["mu"]\&.IsArray());
+94                 assert(doc["mu"]\&.Size() == doc["num_species"]\&.GetInt());
+95                 std::vector < double > sysMu (doc["mu"]\&.Size(), 0);
+96                 for (rapidjson::SizeType i = 0; i < doc["mu"]\&.Size(); ++i) {
+97                                 assert(doc["mu"][i]\&.IsNumber());
+98                                 sysMu[i] = doc["mu"][i]\&.GetDouble();
+99                 }
+100 
+101                 assert(doc\&.HasMember("seed"));
+102                 assert(doc["seed"]\&.IsInt());
+103                 RNG_SEED = doc["seed"]\&.GetInt();
+104                 
+105                 assert(doc\&.HasMember("max_N"));
+106                 assert(doc["max_N"]\&.IsArray());
+107                 assert(doc["max_N"]\&.Size() == doc["num_species"]\&.GetInt());
+108                 std::vector < int > sysMax (doc["max_N"]\&.Size(), 0);
+109                 for (rapidjson::SizeType i = 0; i < doc["max_N"]\&.Size(); ++i) {
+110                                 assert(doc["max_N"][i]\&.IsInt());
+111                                 sysMax[i] = doc["max_N"][i]\&.GetInt();
+112                 }
+113 
+114                 assert(doc\&.HasMember("min_N"));
+115                 assert(doc["min_N"]\&.IsArray());
+116                 assert(doc["min_N"]\&.Size() == doc["num_species"]\&.GetInt());
+117                 std::vector < int > sysMin (doc["min_N"]\&.Size(), 0);
+118                 for (rapidjson::SizeType i = 0; i < doc["min_N"]\&.Size(); ++i) {
+119                                 assert(doc["min_N"][i]\&.IsInt());
+120                                 sysMin[i] = doc["min_N"][i]\&.GetInt();
+121                 }               
+122 
+123                 simSystem sys (doc["num_species"]\&.GetInt(), doc["beta"]\&.GetDouble(), sysBox, sysMu, sysMax, sysMin);
+124                 
+125                 std::vector < int > sysWindow;
+126                 if (doc\&.HasMember("window")) {
+127                                 assert(doc["window"]\&.IsArray());
+128                                 assert(doc["window"]\&.Size() == 2);
+129                                 sysWindow\&.resize(2, 0);
+130                                 sysWindow[0] = doc["window"][0]\&.GetInt();
+131                                 sysWindow[1] = doc["window"][1]\&.GetInt();
+132                 }
+133 
+134                 if (sysWindow\&.begin() != sysWindow\&.end()) {
+135                                 sys\&.setTotNBounds(sysWindow);
+136                 }
+137                 
+138                 assert(doc\&.HasMember("restart_file"));
+139                 assert(doc["restart_file"]\&.IsString());
+140                 const std::string restart_file = doc["restart_file"]\&.GetString();
+141 
+142                 assert(doc\&.HasMember("tmmc_sweep_size"));
+143                 assert(doc["tmmc_sweep_size"]\&.IsNumber());
+144                 double tmpT = doc["tmmc_sweep_size"]\&.GetDouble(); // possibly in scientific notation
+145                 const long long int tmmcSweepSize = tmpT; // convert
+146 
+147                 assert(doc\&.HasMember("total_tmmc_sweeps"));
+148                 assert(doc["total_tmmc_sweeps"]\&.IsNumber());
+149                 double tmpS = doc["total_tmmc_sweeps"]\&.GetDouble(); // possibly in scientific notation
+150                 const long long int totalTMMCSweeps = tmpS; // convert
+151 
+152                 assert(doc\&.HasMember("wala_sweep_size"));
+153                 assert(doc["wala_sweep_size"]\&.IsNumber());
+154                 double tmpW = doc["wala_sweep_size"]\&.GetDouble(); // possibly in scientific notation
+155                 const long long int wlSweepSize = tmpW; // convert
+156 
+157                 assert(doc\&.HasMember("wala_g"));
+158                 assert(doc["wala_g"]\&.IsNumber());
+159                 const double g = doc["wala_g"]\&.GetDouble();
+160 
+161                 assert(doc\&.HasMember("wala_s"));
+162                 assert(doc["wala_s"]\&.IsNumber());
+163                 const double s = doc["wala_s"]\&.GetDouble();
+164                 
+165                 std::vector < double > ref (sys\&.nSpecies(), 0);
+166                 std::vector < std::vector < double > > probEqSwap (sys\&.nSpecies(), ref), probPrSwap (sys\&.nSpecies(), ref);
+167                 std::vector < double > probPrInsDel (sys\&.nSpecies(), 0), probPrDisp (sys\&.nSpecies(), 0);
+168                 std::vector < double > probEqInsDel (sys\&.nSpecies(), 0), probEqDisp (sys\&.nSpecies(), 0);
+169                 std::vector < double > maxPrD (sys\&.nSpecies(), 0), maxEqD (sys\&.nSpecies(), 0);
+170                 for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+171                                 std::string dummy = "prob_pr_ins_del_" + sstr(i+1);
+172                                 assert(doc\&.HasMember(dummy\&.c_str()));
+173                                 assert(doc[dummy\&.c_str()]\&.IsNumber());
+174                                 probPrInsDel[i] = doc[dummy\&.c_str()]\&.GetDouble();
+175                 }
+176                 for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+177                                 std::string dummy = "prob_pr_displace_" + sstr(i+1);
+178                                 assert(doc\&.HasMember(dummy\&.c_str()));
+179                                 assert(doc[dummy\&.c_str()]\&.IsNumber());
+180                                 probPrDisp[i] = doc[dummy\&.c_str()]\&.GetDouble();
+181                                 dummy = "max_pr_displacement_" + sstr(i+1);
+182                                 assert(doc\&.HasMember(dummy\&.c_str()));
+183                                 assert(doc[dummy\&.c_str()]\&.IsNumber());
+184                                 maxPrD[i] = doc[dummy\&.c_str()]\&.GetDouble();
+185                 }
+186                 for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+187                                 std::string dummy = "prob_eq_ins_del_" + sstr(i+1);
+188                                 assert(doc\&.HasMember(dummy\&.c_str()));
+189                                 assert(doc[dummy\&.c_str()]\&.IsNumber());
+190                                 probEqInsDel[i] = doc[dummy\&.c_str()]\&.GetDouble();
+191                 }
+192                 for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+193                                 std::string dummy = "prob_eq_displace_" + sstr(i+1);
+194                                 assert(doc\&.HasMember(dummy\&.c_str()));
+195                                 assert(doc[dummy\&.c_str()]\&.IsNumber());
+196                                 probEqDisp[i] = doc[dummy\&.c_str()]\&.GetDouble();
+197                                 dummy = "max_eq_displacement_" + sstr(i+1);
+198                                 assert(doc\&.HasMember(dummy\&.c_str()));
+199                                 assert(doc[dummy\&.c_str()]\&.IsNumber());
+200                                 maxEqD[i] = doc[dummy\&.c_str()]\&.GetDouble();
+201                 }
+202                 for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+203                                 for (unsigned int j = i+1; j < sys\&.nSpecies(); ++j) {
+204                                                 std::string name1 = "prob_pr_swap_"+sstr(i+1)+"_"+sstr(j+1);
+205                                                 std::string name2 = "prob_pr_swap_"+sstr(j+1)+"_"+sstr(i+1);
+206                                                 std::string moveName = "";
+207                                                 bool foundIJ = false;
+208                                                 if (doc\&.HasMember(name1\&.c_str())) {
+209                                                                 moveName = name1;
+210                                                                 foundIJ = true;
+211                                                 } else if (doc\&.HasMember(name2\&.c_str()) && !foundIJ) {
+212                                                                 moveName = name2;
+213                                                                 foundIJ = true;
+214                                                 } else if (doc\&.HasMember(name2\&.c_str()) && foundIJ) {
+215                                                                 std::cerr << "Input file doubly specifies production swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+216                                                                 exit(SYS_FAILURE);
+217                                                 } else {
+218                                                                 std::cerr << "Input file does not specify production swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+219                                                                 exit(SYS_FAILURE);
+220                                                 }
+221                                                 assert(doc[moveName\&.c_str()]\&.IsNumber());
+222                                                 probPrSwap[i][j] = doc[moveName\&.c_str()]\&.GetDouble();
+223                                                 probPrSwap[j][i] = doc[moveName\&.c_str()]\&.GetDouble();
+224                                 }
+225                 }
+226                 for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+227                                 for (unsigned int j = i+1; j < sys\&.nSpecies(); ++j) {
+228                                                 std::string name1 = "prob_eq_swap_"+sstr(i+1)+"_"+sstr(j+1);
+229                                                 std::string name2 = "prob_eq_swap_"+sstr(j+1)+"_"+sstr(i+1);
+230                                                 std::string moveName = "";
+231                                                 bool foundIJ = false;
+232                                                 if (doc\&.HasMember(name1\&.c_str())) {
+233                                                                 moveName = name1;
+234                                                                 foundIJ = true;
+235                                                 } else if (doc\&.HasMember(name2\&.c_str()) && !foundIJ) {
+236                                                                 moveName = name2;
+237                                                                 foundIJ = true;
+238                                                 } else if (doc\&.HasMember(name2\&.c_str()) && foundIJ) {
+239                                                                 std::cerr << "Input file doubly specifies equilibration swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+240                                                                 exit(SYS_FAILURE);
+241                                                 } else {
+242                                                                 std::cerr << "Input file does not specify equilibration swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+243                                                                 exit(SYS_FAILURE);
+244                                                 }
+245                                                 assert(doc[moveName\&.c_str()]\&.IsNumber());
+246                                                 probEqSwap[i][j] = doc[moveName\&.c_str()]\&.GetDouble();
+247                                                 probEqSwap[j][i] = doc[moveName\&.c_str()]\&.GetDouble();
+248                                 }
+249                 }               
+250                 std::vector < pairPotential* > ppotArray (sys\&.nSpecies()*(sys\&.nSpecies()-1)/2);
+251                 std::vector < std::string > ppotType (sys\&.nSpecies()*(sys\&.nSpecies()-1)/2 + sys\&.nSpecies());
+252                 int ppotIndex = 0, ppotTypeIndex = 0;
+253                 for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+254                                 for (unsigned int j = i; j < sys\&.nSpecies(); ++j) {
+255                                                 std::string name1 = "ppot_"+sstr(i+1)+"_"+sstr(j+1);
+256                                                 std::string name2 = "ppot_"+sstr(j+1)+"_"+sstr(i+1);
+257                                                 std::string ppotName = "", dummy = "";
+258                                                 bool foundIJ = false;
+259                                                 if (doc\&.HasMember(name1\&.c_str())) {
+260                                                                 ppotName = name1;
+261                                                                 foundIJ = true;
+262                                                 } else if (doc\&.HasMember(name2\&.c_str()) && !foundIJ) {
+263                                                                 ppotName = name2;
+264                                                                 foundIJ = true;
+265                                                 } else if (doc\&.HasMember(name2\&.c_str()) && foundIJ) {
+266                                                                 std::cerr << "Input file doubly specifies pair potential for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+267                                                                 exit(SYS_FAILURE);
+268                                                 } else {
+269                                                                 std::cerr << "Input file does not specify pair potential for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+270                                                                 exit(SYS_FAILURE);
+271                                                 } 
+272                                                 assert(doc[ppotName\&.c_str()]\&.IsString());
+273                                                 ppotType[ppotTypeIndex] = doc[ppotName\&.c_str()]\&.GetString();
+274                                                 dummy = ppotName+"_params";
+275                                                 assert(doc\&.HasMember(dummy\&.c_str()));
+276                                                 assert(doc[dummy\&.c_str()]\&.IsArray());
+277                                                 std::vector < double > params (doc[dummy\&.c_str()]\&.Size(), 0);
+278                                                 for (unsigned int k = 0; k < params\&.size(); ++k) {
+279                                                                 assert(doc[dummy\&.c_str()][k]\&.IsNumber());
+280                                                                 params[k] = doc[dummy\&.c_str()][k]\&.GetDouble();
+281                                                 }
+282                                                 bool useCellList = false; // default
+283                                                 dummy = ppotName+"_use_cell_list";
+284                                                 if (doc\&.HasMember(dummy\&.c_str())) {
+285                                                                 assert(doc[dummy\&.c_str()]\&.IsBool());
+286                                                                 useCellList = doc[dummy\&.c_str()]\&.GetBool();
+287                                                 }
+288                                                 if (ppotType[ppotTypeIndex] == "square_well") {
+289                                                                 try {
+290                                                                                 ppotArray[ppotIndex] = new squareWell;
+291                                                                                 ppotArray[ppotIndex]->setParameters(params);
+292                                                                 } catch (customException &ce) {
+293                                                                                 std::cerr << ce\&.what() << std::endl;
+294                                                                                 exit(SYS_FAILURE);
+295                                                                 }
+296                                                                 ppotArray[ppotIndex]->savePotential(ppotName+"\&.dat", 0\&.01, 0\&.01);
+297                                                                 sys\&.addPotential (i, j, ppotArray[ppotIndex], useCellList);
+298                                                 } else if (ppotType[ppotTypeIndex] == "lennard_jones") {
+299                                                                 try {
+300                                                                                 ppotArray[ppotIndex] = new lennardJones;
+301                                                                                 ppotArray[ppotIndex]->setParameters(params);
+302                                                                 } catch (customException &ce) {
+303                                                                                 std::cerr << ce\&.what() << std::endl;
+304                                                                                 exit(SYS_FAILURE);
+305                                                                 }
+306                                                                 ppotArray[ppotIndex]->savePotential(ppotName+"\&.dat", 0\&.01, 0\&.01);
+307                                                                 sys\&.addPotential (i, j, ppotArray[ppotIndex], useCellList);                                                      
+308                                                 } else if (ppotType[ppotTypeIndex] == "hard_sphere") {
+309                                                                 try {
+310                                                                                 ppotArray[ppotIndex] = new hardCore;
+311                                                                                 ppotArray[ppotIndex]->setParameters(params);
+312                                                                 } catch (customException &ce) {
+313                                                                                 std::cerr << ce\&.what() << std::endl;
+314                                                                                 exit(SYS_FAILURE);
+315                                                                 }
+316                                                                 ppotArray[ppotIndex]->savePotential(ppotName+"\&.dat", 0\&.01, 0\&.01);
+317                                                                 sys\&.addPotential (i, j, ppotArray[ppotIndex], useCellList);
+318                                                 } else if (ppotType[ppotTypeIndex] == "tabulated") {
+319                                                                 try {
+320                                                                                 ppotArray[ppotIndex] = new tabulated;
+321                                                                                 ppotArray[ppotIndex]->setParameters(params);
+322                                                                 } catch (customException &ce) {
+323                                                                                 std::cerr << ce\&.what() << std::endl;
+324                                                                                 exit(SYS_FAILURE);
+325                                                                 }
+326                                                                 ppotArray[ppotIndex]->savePotential(ppotName+"\&.dat", 0\&.01, 0\&.01);
+327                                                                 sys\&.addPotential (i, j, ppotArray[ppotIndex], useCellList);
+328                                                 } else {
+329                                                                 std::cerr << "Unrecognized pair potential name for species "<< ppotTypeIndex << std::endl;
+330                                                                 exit(SYS_FAILURE);
+331                                                 }
+332                                                 ppotTypeIndex++;
+333                                                 ppotIndex++;
+334                                 }
+335                 }
+336 
+337                 // check all pair potentials have been set and all r_cut < L/2
+338                 double minL = sys\&.box()[0];
+339                 for (unsigned int i = 1; i < 2; ++i) {
+340                                 minL = std::min(minL, sys\&.box()[i]);
+341                 }
+342                 for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+343                                 for (unsigned int j = 0; j < sys\&.nSpecies(); ++j) {
+344                                                 if (!sys\&.potentialIsSet(i, j)) {
+345                                                                 std::cerr << "Not all pair potentials are set" << std::endl;
+346                                                                 exit(SYS_FAILURE);
+347                                                 }
+348                                                 if (!(sys\&.ppot[i][j]->rcut() < minL/2\&.0)) {
+349                                                                 std::cerr << "Pair potential r_cut for species " << i << ", " << j << " is > L/2" << std::endl;
+350                                                                 exit(SYS_FAILURE);
+351                                                 }
+352                                 }
+353                 }
+354                 
+355                 // specify moves to use for the system
+356     moves usedMovesEq, usedMovesPr;
+357                 std::vector < insertParticle > eqInsertions (sys\&.nSpecies()), prInsertions (sys\&.nSpecies());
+358                 std::vector < deleteParticle > eqDeletions (sys\&.nSpecies()), prDeletions (sys\&.nSpecies());
+359                 std::vector < translateParticle > eqTranslations (sys\&.nSpecies()), prTranslations (sys\&.nSpecies());
+360                 std::vector < swapParticles > eqSwaps (sys\&.nSpecies()*(sys\&.nSpecies()-1)/2), prSwaps (sys\&.nSpecies()*(sys\&.nSpecies()-1)/2);
+361                 
+362                 int swapCounter = 0;
+363                 for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+364                                 insertParticle newIns (i, "insert");
+365                                 eqInsertions[i] = newIns;
+366                                 usedMovesEq\&.addMove (&eqInsertions[i], probEqInsDel[i]);
+367                                 
+368                                 deleteParticle newDel (i, "delete");
+369                                 eqDeletions[i] = newDel;
+370                                 usedMovesEq\&.addMove (&eqDeletions[i], probEqInsDel[i]);
+371                                 
+372                                 translateParticle newTranslate (i, "translate");
+373                                 eqTranslations[i] = newTranslate;
+374                                 usedMovesEq\&.addMove (&eqTranslations[i], probEqDisp[i]);
+375                                 
+376                                 insertParticle newIns2 (i, "insert");
+377                                 prInsertions[i] = newIns2;
+378                                 usedMovesPr\&.addMove (&prInsertions[i], probPrInsDel[i]);
+379                                 
+380                                 deleteParticle newDel2 (i, "delete");
+381                                 prDeletions[i] = newDel2;
+382                                 usedMovesPr\&.addMove (&prDeletions[i], probPrInsDel[i]);                          
+383                                 
+384                                 translateParticle newTranslate2 (i, "translate");
+385                                 prTranslations[i] = newTranslate2;
+386                                 usedMovesPr\&.addMove (&prTranslations[i], probPrDisp[i]);
+387                                 
+388                                 for (unsigned int j = i+1; j < sys\&.nSpecies(); ++j) {
+389                                                 swapParticles newSwap (i, j, "swap");
+390                                                 eqSwaps[swapCounter] = newSwap;
+391                                                 usedMovesEq\&.addMove (&eqSwaps[swapCounter], probEqSwap[i][j]);
+392                                                 
+393                                                 swapParticles newSwap2 (i, j, "swap");
+394                                                 prSwaps[swapCounter] = newSwap2;
+395                                                 usedMovesPr\&.addMove (&prSwaps[swapCounter], probPrSwap[i][j]);
+396                                                 
+397                                                 swapCounter++;
+398                                 }
+399                 }
+400                 
+401                 /* -------------------- END INPUT -------------------- */
+402                 
+403                 std::cout << "Beginning Wang-Landau portion" << std::endl;
+404                 
+405                 // Initially do a WL simulation
+406                 double lnF = 1;
+407                 bool flat = false;
+408                 sys\&.startWALA (lnF, g, s, sys\&.totNMax(), sys\&.totNMin()); 
+409                 while (lnF > 2\&.0e-18) {
+410                                 for (unsigned int move = 0; move < wlSweepSize; ++move) {
+411                                                 try {
+412                                                                 usedMovesEq\&.makeMove(sys);
+413                                                 } catch (customException &ce) {
+414                                                                 std::cerr << ce\&.what() << std::endl;
+415                                                                 exit(SYS_FAILURE);
+416                                                 }
+417                                                 
+418                                                 // record U
+419                                                 sys\&.recordU();
+420                                 }
+421                                                 
+422                                 // Check if bias has flattened out
+423                                 flat = sys\&.getWALABias()->evaluateFlatness();
+424                                 if (flat) {
+425                                                 // if flat, need to reset H and reduce lnF
+426                                                 sys\&.getWALABias()->iterateForward();
+427                                                 lnF = sys\&.getWALABias()->lnF();
+428                                                 flat = false;
+429                                                 
+430                                                 time_t rawtime_tmp;
+431                                                 time (&rawtime_tmp);
+432                                                 struct tm * timeinfo_tmp;
+433                                                 timeinfo_tmp = localtime (&rawtime_tmp);
+434                                                 char dummy_tmp [80];
+435                                                 strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+436                                                 std::cout << "lnF = " << lnF << " at " << dummy_tmp << std::endl;
+437                                                 
+438                                                 // Periodically write out checkpoints
+439                                                 sys\&.getWALABias()->print("wl-Checkpoint", true);
+440                                 }
+441                 }
+442                 
+443                 std::cout << "Crossing over to build TMMC matrix" << std::endl;
+444                 
+445                 // After a while, combine to initialize TMMC collection matrix
+446                 sys\&.startTMMC (sys\&.totNMax(), sys\&.totNMin());
+447                 
+448                 std::cout << "Assigning initial macrostate density guess from Wang-Landau portion" << std::endl;
+449                 
+450                 // Initial guess from Wang-Landau density of states
+451                 sys\&.getTMMCBias()->setLnPI(sys\&.getWALABias()->getlnPI());
+452                 
+453                 // actually this should run until all elements of the collection matrix have been populated
+454                 bool fullyVisited = false;
+455                 while (!fullyVisited) {
+456                                 for (unsigned int move = 0; move < wlSweepSize; ++move) {
+457                                                 try {
+458                                                                 usedMovesEq\&.makeMove(sys);
+459                                                 } catch (customException &ce) {
+460                                                                 std::cerr << ce\&.what() << std::endl;
+461                                                                 exit(SYS_FAILURE);
+462                                                 }
+463                                                 
+464                                                 // record U
+465                                                 sys\&.recordU();
+466                                 }
+467                                                                 
+468                                 // Check if bias has flattened out
+469                                 flat = sys\&.getWALABias()->evaluateFlatness();
+470                                 if (flat) {
+471                                                 // If flat, need to reset H and reduce lnF
+472                                                 sys\&.getWALABias()->iterateForward();
+473                                                 
+474                                                 time_t rawtime_tmp;
+475                                                 time (&rawtime_tmp);
+476                                                 struct tm * timeinfo_tmp;
+477                                                 timeinfo_tmp = localtime (&rawtime_tmp);
+478                                                 char dummy_tmp [80];
+479                                                 strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
+480                                                 std::cout << "lnF = " << sys\&.getWALABias()->lnF() << " at " << dummy_tmp << std::endl;           
+481                                                 
+482                                                 // Periodically write out checkpoints
+483                                                 sys\&.getWALABias()->print("wl-crossover-Checkpoint", true);
+484                                                 sys\&.getTMMCBias()->print("tmmc-crossover-Checkpoint", true);
+485                                 }
+486 
+487                                 // Check if collection matrix is ready to take over, not necessarily at points where WL is flat
+488                                 fullyVisited = sys\&.getTMMCBias()->checkFullyVisited();
+489                 }
+490 
+491                 std::cout << "Switching over to TMMC completely, ending Wang-Landau" << std::endl;
+492                 sys\&.getTMMCBias()->print("tmmc-beginning-Checkpoint", true);
+493                 
+494                 // Switch over to TMMC completely
+495                 sys\&.stopWALA();
+496                 
+497                 std::cout << "Beginning TMMC" << std::endl;
+498                 
+499                 for (unsigned int sweep = 0; sweep < totalTMMCSweeps; ++sweep) {
+500                                 for (unsigned int move = 0; move < tmmcSweepSize; ++move) {
+501                                                 try {
+502                                                                 usedMovesPr\&.makeMove(sys);
+503                                                 } catch (customException &ce) {
+504                                                                 std::cerr << ce\&.what() << std::endl;
+505                                                                 exit(SYS_FAILURE);
+506                                                 }
+507                                                 
+508                                                 // record U
+509                                                 sys\&.recordU();
+510                                 }
+511                                 
+512                                 if (sweep%(totalTMMCSweeps/100) == 0) {
+513                                                 time_t rawtime_tmp;
+514                                                 time (&rawtime_tmp);
+515                                                 struct tm * timeinfo_tmp;
+516                                                 timeinfo_tmp = localtime (&rawtime_tmp);
+517                                                 char dummy_tmp [80];
+518                                                 strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
+519                                                 std::cout << "Finished " << sweep << "/" << totalTMMCSweeps << " total TMMC sweeps at " << dummy_tmp << std::endl;
+520                                 }
+521                                 
+522                                 // Update biasing function from collection matrix
+523                                 sys\&.getTMMCBias()->calculatePI();
+524                                 
+525                                 // Periodically write out checkpoints
+526                                 sys\&.getTMMCBias()->print("tmmc-Checkpoint", true);
+527                 }
+528                                 
+529                 // Sanity checks
+530                 if (sys\&.nSpecies() != sys\&.atoms\&.size()) {
+531         std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
+532         exit(SYS_FAILURE);
+533     }
+534     const double tol = 1\&.0e-9;
+535     const double scratchEnergy = sys\&.scratchEnergy(), incrEnergy = sys\&.energy();
+536     if (fabs(scratchEnergy - incrEnergy) > tol) {
+537         std::cerr << "Error: scratch energy calculation = " << scratchEnergy << ", but incremental = " << incrEnergy << ", |diff| = " << fabs(scratchEnergy - incrEnergy) << std::endl;
+538         exit(SYS_FAILURE);
+539     }
+540     
+541     // Report move statistics for final TMMC ("production") stage
+542                 char statName [80];
+543                 strftime (statName,80,"%Y_%m_%d_%H_%M_%S-stats\&.log",timeinfo);
+544                 std::ofstream statFile (statName);
+545     std::vector < double > stats = usedMovesPr\&.reportMoveStatistics();
+546     statFile << " ----- Move Statistics ----- " << std::endl << " Move\t\% Success" << std::endl;
+547     for (unsigned int i = 0; i < stats\&.size(); ++i) {
+548         statFile << usedMovesPr\&.includedMoves()[i]->myName() << "\t" << stats[i]*100\&.0 << std::endl;
+549     }
+550     statFile << std::endl;
+551     statFile\&.close();
+552                 
+553     // print out restart file (xyz)
+554     sys\&.printSnapshot(restart_file+"\&.xyz", "last configuration");
+555     
+556     // Print out energy histogram
+557     sys\&.printU("energyHistogram");
+558     
+559     // Print out final macrostate distribution
+560     sys\&.getTMMCBias()->print("final", false);
+561                 
+562                 // Free pair potential pointers
+563                 for (unsigned int i = 0; i < ppotArray\&.size(); ++i) {
+564                                 delete ppotArray[i];
+565                 }
+566     ppotArray\&.clear();
+567     
+568     // Finished
+569     time (&rawtime);
+570     timeinfo = localtime (&rawtime);
+571     strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+572     std::cout << "Finished simulation at " << timestamp << std::endl;
+573                 return SAFE_EXIT;
+574 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

@@ -1,0 +1,81 @@
+.TH "/Users/nam4/Desktop/omcs/src/global.h" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/Users/nam4/Desktop/omcs/src/global.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <string>\fP
+.br
+\fC#include <exception>\fP
+.br
+
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBcustomException\fP"
+.br
+.RI "\fIError handling via custom exceptions\&. \fP"
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBSYS_FAILURE\fP   \-1"
+.br
+.RI "\fIReturned from main the simualtion encountered a major error\&. \fP"
+.ti -1c
+.RI "#define \fBSAFE_EXIT\fP   0"
+.br
+.RI "\fIReturned from main the simulation ran without error\&. \fP"
+.ti -1c
+.RI "#define \fBPI\fP   3\&.14159265359"
+.br
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "int \fBRNG_SEED\fP"
+.br
+.RI "\fIDefault RNG seed\&. \fP"
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define PI   3\&.14159265359"
+
+.PP
+Definition at line 9 of file global\&.h\&.
+.PP
+Referenced by lennardJones::tailCorrection()\&.
+.SS "#define SAFE_EXIT   0"
+
+.PP
+Returned from main the simulation ran without error\&. 
+.PP
+Definition at line 8 of file global\&.h\&.
+.PP
+Referenced by main()\&.
+.SS "#define SYS_FAILURE   \-1"
+
+.PP
+Returned from main the simualtion encountered a major error\&. 
+.PP
+Definition at line 7 of file global\&.h\&.
+.PP
+Referenced by main(), and simSystem::simSystem()\&.
+.SH "Variable Documentation"
+.PP 
+.SS "int RNG_SEED"
+
+.PP
+Default RNG seed\&. 
+.PP
+Definition at line 3 of file utilities\&.cpp\&.
+.PP
+Referenced by main(), translateParticle::make(), swapParticles::make(), insertParticle::make(), deleteParticle::make(), and moves::makeMove()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

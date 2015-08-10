@@ -1,0 +1,230 @@
+\hypertarget{classhard_core}{}\section{hard\+Core Class Reference}
+\label{classhard_core}\index{hard\+Core@{hard\+Core}}
+
+
+Hard-\/core potential Parameters should be specified in the following order\+: \{ sigma \}.  
+
+
+
+
+{\ttfamily \#include $<$potentials.\+h$>$}
+
+Inheritance diagram for hard\+Core\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classhard_core}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classhard_core_aea5b04b2f9271269d6365ff7ed633151}{$\sim$hard\+Core} ()
+\item 
+void \hyperlink{classhard_core_a2bbf6a77445f5cb5fc1a3c37ba0e6566}{set\+Parameters} (const std\+::vector$<$ double $>$ params)
+\begin{DoxyCompactList}\small\item\em Set the parameters in the hard-\/core potential. \end{DoxyCompactList}\item 
+double \hyperlink{classhard_core_a5be8073d4b94045473352c9b56af69e5}{energy} (const double r)
+\begin{DoxyCompactList}\small\item\em Return the energy of two particles separate by a distance r. \end{DoxyCompactList}\item 
+double \hyperlink{classhard_core_a90c73dbda39a9c48f1f26474474183e4}{tail\+Correction} (const double rho\+Bath)
+\begin{DoxyCompactList}\small\item\em Tail correction for a hard core potential always returns 0 radius. \end{DoxyCompactList}\item 
+double \hyperlink{classhard_core_a3cbf5ecde18b2f2798a4b1aba1801ca5}{rcut} ()
+\begin{DoxyCompactList}\small\item\em Return the value of r\+\_\+\{cut\} for this potential. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Hard-\/core potential Parameters should be specified in the following order\+: \{ sigma \}. 
+
+Definition at line 81 of file potentials.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classhard_core_aea5b04b2f9271269d6365ff7ed633151}{}\index{hard\+Core@{hard\+Core}!````~hard\+Core@{$\sim$hard\+Core}}
+\index{````~hard\+Core@{$\sim$hard\+Core}!hard\+Core@{hard\+Core}}
+\subsubsection[{$\sim$hard\+Core()}]{\setlength{\rightskip}{0pt plus 5cm}hard\+Core\+::$\sim$hard\+Core (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classhard_core_aea5b04b2f9271269d6365ff7ed633151}
+
+
+Definition at line 83 of file potentials.\+h.
+
+
+\begin{DoxyCode}
+83 \{;\}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classhard_core_a5be8073d4b94045473352c9b56af69e5}{}\index{hard\+Core@{hard\+Core}!energy@{energy}}
+\index{energy@{energy}!hard\+Core@{hard\+Core}}
+\subsubsection[{energy(const double r)}]{\setlength{\rightskip}{0pt plus 5cm}double hard\+Core\+::energy (
+\begin{DoxyParamCaption}
+\item[{const double}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classhard_core_a5be8073d4b94045473352c9b56af69e5}
+
+
+Return the energy of two particles separate by a distance r. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em r} & Scalar separation, needs to be the minimum image.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+U(r) 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_a43dc9c840e25dc76e76d6ad7947c165d}{pair\+Potential}.
+
+
+
+Definition at line 322 of file potentials.\+cpp.
+
+
+
+References pair\+Potential\+::params\+\_\+, and pair\+Potential\+::params\+Are\+Set\+\_\+.
+
+
+\begin{DoxyCode}
+322                                        \{
+323                 \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+324                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore parameters not set"});
+325                 \}
+326                 \textcolor{keywordflow}{if} (r < \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0]) \{
+327                                 \textcolor{keywordflow}{return} 1.0E12;
+328                 \}
+329                 \textcolor{keywordflow}{else} \{
+330                                 \textcolor{keywordflow}{return} 0.0;
+331                 \}
+332 \}
+\end{DoxyCode}
+\hypertarget{classhard_core_a3cbf5ecde18b2f2798a4b1aba1801ca5}{}\index{hard\+Core@{hard\+Core}!rcut@{rcut}}
+\index{rcut@{rcut}!hard\+Core@{hard\+Core}}
+\subsubsection[{rcut()}]{\setlength{\rightskip}{0pt plus 5cm}double hard\+Core\+::rcut (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classhard_core_a3cbf5ecde18b2f2798a4b1aba1801ca5}
+
+
+Return the value of r\+\_\+\{cut\} for this potential. 
+
+\begin{DoxyReturn}{Returns}
+r\+\_\+cut 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{pair\+Potential}.
+
+
+
+Definition at line 350 of file potentials.\+cpp.
+
+
+
+References pair\+Potential\+::params\+\_\+, and pair\+Potential\+::params\+Are\+Set\+\_\+.
+
+
+\begin{DoxyCode}
+350                        \{
+351                 \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+352                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore parameters not set"});
+353                 \} \textcolor{keywordflow}{else} \{
+354                                 \textcolor{keywordflow}{return} (\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0]);
+355                 \}
+356 \}
+\end{DoxyCode}
+\hypertarget{classhard_core_a2bbf6a77445f5cb5fc1a3c37ba0e6566}{}\index{hard\+Core@{hard\+Core}!set\+Parameters@{set\+Parameters}}
+\index{set\+Parameters@{set\+Parameters}!hard\+Core@{hard\+Core}}
+\subsubsection[{set\+Parameters(const std\+::vector$<$ double $>$ params)}]{\setlength{\rightskip}{0pt plus 5cm}void hard\+Core\+::set\+Parameters (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ double $>$}]{params}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classhard_core_a2bbf6a77445f5cb5fc1a3c37ba0e6566}
+
+
+Set the parameters in the hard-\/core potential. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em params} & Vector of inputs\+: \{sigma, infinity\} \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classpair_potential_ad4b237646f9de2ae9f95cc9350564bc5}{pair\+Potential}.
+
+
+
+Definition at line 300 of file potentials.\+cpp.
+
+
+
+References pair\+Potential\+::params\+\_\+, pair\+Potential\+::params\+Are\+Set\+\_\+, and pair\+Potential\+::use\+Tail\+Correction.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+300                                                                \{
+301                 \textcolor{keywordflow}{if} (params.size() != 1) \{
+302                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore must specify 1
+       parameter: sigma"});
+303                 \} \textcolor{keywordflow}{else} \{
+304                                 \textcolor{keywordflow}{if} (params[0] < 0) \{
+305                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore, sigma
+       > 0"});
+306                                 \}
+307                                 
+308                                 \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_} = params;
+309                                 \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{true};
+310                                 
+311                                 \hyperlink{classpair_potential_ab4b4538a7e13771f50a29aaac2443037}{useTailCorrection} = \textcolor{keyword}{false};
+312                 \}
+313 \}
+\end{DoxyCode}
+\hypertarget{classhard_core_a90c73dbda39a9c48f1f26474474183e4}{}\index{hard\+Core@{hard\+Core}!tail\+Correction@{tail\+Correction}}
+\index{tail\+Correction@{tail\+Correction}!hard\+Core@{hard\+Core}}
+\subsubsection[{tail\+Correction(const double rho\+Bath)}]{\setlength{\rightskip}{0pt plus 5cm}double hard\+Core\+::tail\+Correction (
+\begin{DoxyParamCaption}
+\item[{const double}]{rho\+Bath}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classhard_core_a90c73dbda39a9c48f1f26474474183e4}
+
+
+Tail correction for a hard core potential always returns 0 radius. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Number} & density of the surrounding fluid\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+U\+\_\+tail 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_a5387d21d8d487d1d42e9eaf7cae9175b}{pair\+Potential}.
+
+
+
+Definition at line 341 of file potentials.\+cpp.
+
+
+\begin{DoxyCode}
+341                                                     \{
+342                 \textcolor{keywordflow}{return} 0.0;
+343 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{potentials_8h}{potentials.\+h}\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{potentials_8cpp}{potentials.\+cpp}\end{DoxyCompactItemize}

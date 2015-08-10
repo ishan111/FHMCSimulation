@@ -1,0 +1,205 @@
+.TH "moves" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+moves \- Class that tracks and decides which moves whould be made\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <moves\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBmoves\fP ()"
+.br
+.ti -1c
+.RI "\fB~moves\fP ()"
+.br
+.ti -1c
+.RI "void \fBmakeMove\fP (\fBsimSystem\fP &sys)"
+.br
+.RI "\fIChoose a move to make\&. \fP"
+.ti -1c
+.RI "void \fBaddMove\fP (\fBmcMove\fP *newMove, const double probability)"
+.br
+.RI "\fIAdd a new move to the object\&. \fP"
+.ti -1c
+.RI "std::vector< double > \fBreportMoveStatistics\fP ()"
+.br
+.RI "\fIReport the statistics on the success/failure of each move made so far\&. \fP"
+.ti -1c
+.RI "std::vector< double > \fBreportProbabilities\fP ()"
+.br
+.RI "\fIEcho the normalized probabilities of each move in the object\&. \fP"
+.ti -1c
+.RI "const std::vector< \fBmcMove\fP * > \fBincludedMoves\fP ()"
+.br
+.RI "\fIReturns a vector of pointers to move objects currently being used\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Class that tracks and decides which moves whould be made\&. 
+
+However, it does NOT store the moves themselves so they should be fixed in memory elsewhere\&. 
+.PP
+Definition at line 34 of file moves\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "moves::moves ()"
+
+.PP
+Definition at line 7 of file moves\&.cpp\&.
+.PP
+.nf
+7               {
+8                 ;
+9 }
+.fi
+.SS "moves::~moves ()"
+
+.PP
+Definition at line 11 of file moves\&.cpp\&.
+.PP
+.nf
+11                {
+12                 ;
+13 }
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "void moves::addMove (\fBmcMove\fP * newMove, const double probability)"
+
+.PP
+Add a new move to the object\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fInewMove\fP Pointer to a newly instantiated move\&. This is stored as a pointer, so the move cannot be moved in memory later\&. 
+.br
+\fIprobability\fP Unnormalized probability of making this move\&. 
+.RE
+.PP
+
+.PP
+Definition at line 20 of file moves\&.cpp\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+20                                                               {
+21                 // add new move to the class
+22                 moves_\&.push_back(newMove);
+23                 rawProbabilities_\&.push_back(probability);
+24                 normProbabilities_\&.resize(rawProbabilities_\&.size());
+25                 succeeded_\&.resize(rawProbabilities_\&.size(), 0\&.0);
+26     attempted_\&.resize(rawProbabilities_\&.size(), 0\&.0);
+27     
+28                 // update move probabilities
+29                 double sum = 0\&.0;
+30                 for (unsigned int i = 0; i < rawProbabilities_\&.size(); ++i) {
+31                                 sum += rawProbabilities_[i];
+32                 }
+33                 
+34                 normProbabilities_[0] = rawProbabilities_[0]/sum;
+35                 for (unsigned int i = 1; i < rawProbabilities_\&.size(); ++i) {
+36                                 normProbabilities_[i] = rawProbabilities_[i]/sum + normProbabilities_[i-1];
+37                 }
+38                 
+39                 // for exactness, specify the upper bound
+40                 normProbabilities_[normProbabilities_\&.size()-1] = 1\&.0;
+41 }
+.fi
+.SS "const std::vector< \fBmcMove\fP* > moves::includedMoves ()\fC [inline]\fP"
+
+.PP
+Returns a vector of pointers to move objects currently being used\&. 
+.PP
+Definition at line 43 of file moves\&.h\&.
+.PP
+Referenced by main()\&.
+.SS "void moves::makeMove (\fBsimSystem\fP & sys)"
+
+.PP
+Choose a move to make\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsys\fP \fBsimSystem\fP object to make a move in\&. 
+.RE
+.PP
+
+.PP
+Definition at line 47 of file moves\&.cpp\&.
+.PP
+References rng(), RNG_SEED, and customException::what()\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+47                                     {
+48                 const double ran = rng (&RNG_SEED);
+49                 int moveChosen = -1, succ = 0;
+50     
+51                 for (unsigned int i = 0; i < normProbabilities_\&.size(); ++i) {
+52                                 if (ran < normProbabilities_[i]) {
+53                                                 try {
+54                                                                 succ = moves_[i]->make(sys);
+55                                                 } catch (customException &ce) {
+56                                                                 std::string a = "Failed to make a move properly";
+57                                                                 std::string b = ce\&.what();
+58                                                                 throw customException(a+b);
+59                                                 }
+60             moveChosen = i;
+61             break;
+62                                 }
+63                 }
+64                 
+65                 if (moveChosen < 0) {
+66                                 throw customException("Failed to choose a move properly");
+67                 }
+68                 
+69     attempted_[moveChosen] += 1\&.0;
+70     succeeded_[moveChosen] += succ;
+71 }
+.fi
+.SS "std::vector< double > moves::reportMoveStatistics ()"
+
+.PP
+Report the statistics on the success/failure of each move made so far\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+ans Number of Success / Total Attempts for each move 
+.RE
+.PP
+
+.PP
+Definition at line 77 of file moves\&.cpp\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+77                                                   {
+78     std::vector < double > ans = succeeded_;
+79     if (attempted_\&.begin() == attempted_\&.end()) {
+80         throw customException ("No moves added to system");
+81     }
+82     for (unsigned int i = 0; i < attempted_\&.size(); ++i) {
+83         ans[i] /= attempted_[i];
+84     }
+85     return ans;
+86 }
+.fi
+.SS "std::vector< double > moves::reportProbabilities ()\fC [inline]\fP"
+
+.PP
+Echo the normalized probabilities of each move in the object\&. 
+.PP
+Definition at line 42 of file moves\&.h\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

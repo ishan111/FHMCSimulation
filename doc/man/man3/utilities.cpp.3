@@ -1,0 +1,333 @@
+.TH "/Users/nam4/Desktop/omcs/src/utilities.cpp" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/Users/nam4/Desktop/omcs/src/utilities.cpp \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'utilities\&.h'\fP
+.br
+
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBIM1\fP   2147483563"
+.br
+.ti -1c
+.RI "#define \fBIM2\fP   2147483399"
+.br
+.ti -1c
+.RI "#define \fBAM\fP   (1\&.0/\fBIM1\fP)"
+.br
+.ti -1c
+.RI "#define \fBIMM1\fP   (\fBIM1\fP\-1)"
+.br
+.ti -1c
+.RI "#define \fBIA1\fP   40014"
+.br
+.ti -1c
+.RI "#define \fBIA2\fP   40692"
+.br
+.ti -1c
+.RI "#define \fBIQ1\fP   53668"
+.br
+.ti -1c
+.RI "#define \fBIQ2\fP   52774"
+.br
+.ti -1c
+.RI "#define \fBIR1\fP   12211"
+.br
+.ti -1c
+.RI "#define \fBIR2\fP   3791"
+.br
+.ti -1c
+.RI "#define \fBNTAB\fP   32"
+.br
+.ti -1c
+.RI "#define \fBNDIV\fP   (1+\fBIMM1\fP/\fBNTAB\fP)"
+.br
+.ti -1c
+.RI "#define \fBEPS\fP   1\&.2e\-7"
+.br
+.ti -1c
+.RI "#define \fBRNMX\fP   (1\&.0\-\fBEPS\fP)"
+.br
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "double \fBrng\fP (int *idum)"
+.br
+.RI "\fIRandom number generator (from Numerical Recipes) \fP"
+.ti -1c
+.RI "void \fBpbc\fP (std::vector< double > &pos, const std::vector< double > &box)"
+.br
+.RI "\fIReplace a position inside a box assuming periodic boundary conditions\&. \fP"
+.ti -1c
+.RI "double \fBpbc_dist2\fP (const std::vector< double > &p1, const std::vector< double > &p2, const std::vector< double > &box)"
+.br
+.RI "\fICalculate the minimum image distance squared between two coordinates assuming periodic boundary conditions\&. \fP"
+.ti -1c
+.RI "bool \fBfileExists\fP (std::string fileName)"
+.br
+.RI "\fIFunction to check whether a given file exists or not\&. \fP"
+.in -1c
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "int \fBRNG_SEED\fP = \-1024"
+.br
+.RI "\fIDefault RNG seed\&. \fP"
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define AM   (1\&.0/\fBIM1\fP)"
+
+.PP
+Definition at line 8 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SS "#define EPS   1\&.2e\-7"
+
+.PP
+Definition at line 18 of file utilities\&.cpp\&.
+.SS "#define IA1   40014"
+
+.PP
+Definition at line 10 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SS "#define IA2   40692"
+
+.PP
+Definition at line 11 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SS "#define IM1   2147483563"
+
+.PP
+Definition at line 6 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SS "#define IM2   2147483399"
+
+.PP
+Definition at line 7 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SS "#define IMM1   (\fBIM1\fP\-1)"
+
+.PP
+Definition at line 9 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SS "#define IQ1   53668"
+
+.PP
+Definition at line 12 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SS "#define IQ2   52774"
+
+.PP
+Definition at line 13 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SS "#define IR1   12211"
+
+.PP
+Definition at line 14 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SS "#define IR2   3791"
+
+.PP
+Definition at line 15 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SS "#define NDIV   (1+\fBIMM1\fP/\fBNTAB\fP)"
+
+.PP
+Definition at line 17 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SS "#define NTAB   32"
+
+.PP
+Definition at line 16 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SS "#define RNMX   (1\&.0\-\fBEPS\fP)"
+
+.PP
+Definition at line 19 of file utilities\&.cpp\&.
+.PP
+Referenced by rng()\&.
+.SH "Function Documentation"
+.PP 
+.SS "bool fileExists (std::string fileName)"
+
+.PP
+Function to check whether a given file exists or not\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfileName\fP Name of file to check
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+If file exists 
+.RE
+.PP
+
+.PP
+Definition at line 111 of file utilities\&.cpp\&.
+.PP
+Referenced by tabulated::loadPotential()\&.
+.PP
+.nf
+112 {
+113                 struct stat stFileInfo;
+114                 
+115                 if (stat(fileName\&.c_str(),&stFileInfo) == 0)
+116                                 return true;
+117                 else 
+118                                 return false;
+119 }
+.fi
+.SS "void pbc (std::vector< double > & pos, const std::vector< double > & box)"
+
+.PP
+Replace a position inside a box assuming periodic boundary conditions\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIpos\fP Position to be placed in box 
+.br
+\fIbox\fP Box dimensions 
+.RE
+.PP
+
+.PP
+Definition at line 67 of file utilities\&.cpp\&.
+.PP
+.nf
+67                                                                       {
+68                 // generally while loops are faster than round statements
+69                 for (unsigned int i = 0; i < pos\&.size(); ++i) {
+70                                 while (pos[i] < 0\&.0) {
+71                                                 pos[i] += box[i];
+72                                 }
+73                                 while (pos[i] >= box[i]) {
+74                                                 pos[i] -= box[i];
+75                                 }
+76                 }
+77 }
+.fi
+.SS "double pbc_dist2 (const std::vector< double > & p1, const std::vector< double > & p2, const std::vector< double > & box)"
+
+.PP
+Calculate the minimum image distance squared between two coordinates assuming periodic boundary conditions\&. Coordinates do not have to be in the box to begin with\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fI\fP .RE
+.PP
+
+.PP
+Definition at line 88 of file utilities\&.cpp\&.
+.PP
+Referenced by pairPotential::energy()\&.
+.PP
+.nf
+88                                                                                                                    {
+89     double d2 = 0\&.0;
+90     for (unsigned int i = 0; i < p2\&.size(); ++i) {
+91                 double dr = p2[i] - p1[i];
+92                                 while (dr < -box[i]/2\&.0) {
+93                                                 dr += box[i];
+94                                 }
+95                                 while (dr > box[i]/2\&.0) {
+96                                                 dr -= box[i];
+97                                 }
+98                                 d2 += dr*dr;
+99                 }
+100     
+101     return d2;
+102 }
+.fi
+.SS "double rng (int * idum)"
+
+.PP
+Random number generator (from Numerical Recipes) 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIidum\fP seed
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+temp Pseudo-random number between [0, 1) 
+.RE
+.PP
+
+.PP
+Definition at line 28 of file utilities\&.cpp\&.
+.PP
+References AM, IA1, IA2, IM1, IM2, IMM1, IQ1, IQ2, IR1, IR2, NDIV, NTAB, and RNMX\&.
+.PP
+Referenced by deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), and moves::makeMove()\&.
+.PP
+.nf
+28                        {
+29                 int j;
+30                 long k;
+31                 static long idum2=123456789;
+32                 static long iy=0;
+33                 static long iv[NTAB];
+34                 double temp;
+35 
+36                 if (*idum <= 0) {
+37                                 if (-(*idum) < 1) *idum=1;
+38                                 else *idum = -(*idum);
+39                                 idum2=(*idum);
+40                                 for (j=NTAB+7;j>=0;j--) {
+41                                                 k=(*idum)/IQ1;
+42                                                 *idum=IA1*(*idum-k*IQ1)-k*IR1;
+43                                                 if (*idum < 0) *idum += IM1;
+44                                                 if (j < NTAB) iv[j] = *idum;
+45                                 } iy=iv[0];
+46                 }
+47                 k=(*idum)/IQ1;
+48                 *idum=IA1*(*idum-k*IQ1)-k*IR1;
+49                 if (*idum < 0) *idum += IM1;
+50                 k=idum2/IQ2;
+51                 idum2=IA2*(idum2-k*IQ2)-k*IR2;
+52                 if (idum2 < 0) idum2 += IM2;
+53                 j=iy/NDIV;
+54                 iy=iv[j]-idum2;
+55                 iv[j] = *idum;
+56                 if (iy < 1) iy += IMM1;
+57                 if ((temp=AM*iy) > RNMX) return RNMX;
+58                 else return temp;
+59 }
+.fi
+.SH "Variable Documentation"
+.PP 
+.SS "int RNG_SEED = \-1024"
+
+.PP
+Default RNG seed\&. 
+.PP
+Definition at line 3 of file utilities\&.cpp\&.
+.PP
+Referenced by main(), translateParticle::make(), swapParticles::make(), insertParticle::make(), deleteParticle::make(), and moves::makeMove()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

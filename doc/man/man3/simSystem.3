@@ -1,0 +1,1313 @@
+.TH "simSystem" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+simSystem \- System information for the simulation\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <system\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBsimSystem\fP (const unsigned int \fBnSpecies\fP, const double \fBbeta\fP, const std::vector< double > \fBbox\fP, const std::vector< double > \fBmu\fP, const std::vector< int > \fBmaxSpecies\fP, const std::vector< int > \fBminSpecies\fP)"
+.br
+.RI "\fIInitialize the system\&. \fP"
+.ti -1c
+.RI "\fB~simSystem\fP ()"
+.br
+.ti -1c
+.RI "void \fBincrementEnergy\fP (const double dU)"
+.br
+.RI "\fIIncrement the system's energy\&. \fP"
+.ti -1c
+.RI "void \fBaddPotential\fP (const int spec1, const int spec2, \fBpairPotential\fP *pp, bool useCellList=false)"
+.br
+.RI "\fIAdd a pair potential to the system which governs the pair (spec1, spec2)\&. \fP"
+.ti -1c
+.RI "void \fBprintSnapshot\fP (std::string filename, std::string comment)"
+.br
+.RI "\fIPrint an XYZ file of the instantaneous system configuration\&. \fP"
+.ti -1c
+.RI "void \fBinsertAtom\fP (const int typeIndex, \fBatom\fP *newAtom)"
+.br
+.RI "\fIInsert an atom into the system\&. \fP"
+.ti -1c
+.RI "void \fBdeleteAtom\fP (const int typeIndex, const int atomIndex, bool override=false)"
+.br
+.RI "\fIDelete an atom from the system\&. \fP"
+.ti -1c
+.RI "void \fBtranslateAtom\fP (const int typeIndex, const int atomIndex, std::vector< double > oldPos)"
+.br
+.RI "\fITranslate an atom in the system\&. \fP"
+.ti -1c
+.RI "void \fBreadRestart\fP (std::string filename)"
+.br
+.RI "\fIRead an XYZ file as the system's initial configuration\&. \fP"
+.ti -1c
+.RI "void \fBrecordU\fP ()"
+.br
+.RI "\fISave the instantaneous energy of the system as a function of the number of particles in the system\&. \fP"
+.ti -1c
+.RI "void \fBprintU\fP (const std::string fileName)"
+.br
+.RI "\fIPrint the average energy to file, <U> for every N_tot within range is recorded\&. \fP"
+.ti -1c
+.RI "void \fBstartWALA\fP (const double lnF, const double g, const double s, const int Nmax, const int Nmin)"
+.br
+.RI "\fIStart using Wang-Landau and instantiate the bias object\&. \fP"
+.ti -1c
+.RI "void \fBstopWALA\fP ()"
+.br
+.RI "\fIStop using Wang-Landau and free the bias object\&. \fP"
+.ti -1c
+.RI "void \fBstartTMMC\fP (const int Nmax, const int Nmin)"
+.br
+.RI "\fIStart using TMMC and instantiate the bias object\&. \fP"
+.ti -1c
+.RI "void \fBstopTMMC\fP ()"
+.br
+.RI "\fIStop using TMMC and free the bias object\&. \fP"
+.ti -1c
+.RI "void \fBsetTotNBounds\fP (const std::vector< int > &bounds)"
+.br
+.RI "\fISet the bounds on the total number of particles in a system\&. \fP"
+.ti -1c
+.RI "bool \fBpotentialIsSet\fP (const int spec1, const int spec2)"
+.br
+.RI "\fIBoolean which returns whether or not a pair has had its potential specified by the user yet\&. \fP"
+.ti -1c
+.RI "const int \fBnSpecies\fP ()"
+.br
+.RI "\fIReturn the number of different species in the system\&. \fP"
+.ti -1c
+.RI "const int \fBmaxSpecies\fP (const int index)"
+.br
+.RI "\fIReturns the absolute maximum number of a given species type allowed in the system\&. \fP"
+.ti -1c
+.RI "const int \fBminSpecies\fP (const int index)"
+.br
+.RI "\fIReturns the absolute minimum number of a given species type allowed in the system\&. \fP"
+.ti -1c
+.RI "const int \fBtotNMax\fP ()"
+.br
+.RI "\fIReturn upper bound on the total number of atoms in the system\&. \fP"
+.ti -1c
+.RI "const int \fBtotNMin\fP ()"
+.br
+.RI "\fIReturn lower bound on the total number of atoms in the system\&. \fP"
+.ti -1c
+.RI "const int \fBgetTotN\fP ()"
+.br
+.RI "\fIReturn a sum of the total number of atoms currently in the system\&. \fP"
+.ti -1c
+.RI "const double \fBenergy\fP ()"
+.br
+.RI "\fIReturn the system's instantaneous energy\&. \fP"
+.ti -1c
+.RI "const double \fBscratchEnergy\fP ()"
+.br
+.RI "\fIRecalculate the energy of the system from scratch\&. \fP"
+.ti -1c
+.RI "const double \fBbeta\fP ()"
+.br
+.RI "\fIReturn 1/kT\&. \fP"
+.ti -1c
+.RI "const double \fBmu\fP (const int index)"
+.br
+.RI "\fIReturn the chemical potential for a given species' index\&. \fP"
+.ti -1c
+.RI "const std::vector< double > \fBbox\fP ()"
+.br
+.RI "\fIReturn the system box dimensions\&. \fP"
+.ti -1c
+.RI "std::vector< std::vector< double > > \fBgetNeighborPositions\fP (const unsigned int typeIndexA, const unsigned int typeIndexB, \fBatom\fP *_atom)"
+.br
+.RI "\fIReturn the list of neighbors of type A, for a particle of type B at position pos\&. \fP"
+.ti -1c
+.RI "\fBtmmc\fP * \fBgetTMMCBias\fP ()"
+.br
+.RI "\fIReturn pointer to the TMMC bias\&. \fP"
+.ti -1c
+.RI "\fBwala\fP * \fBgetWALABias\fP ()"
+.br
+.RI "\fIReturn pointer to the Wang-Landau bias\&. \fP"
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "bool \fBuseTMMC\fP"
+.br
+.RI "\fILogical stating whether or not to use TMMC biasing\&. \fP"
+.ti -1c
+.RI "bool \fBuseWALA\fP"
+.br
+.RI "\fILogical stating whether or not to use Wang-Landau biasing\&. \fP"
+.ti -1c
+.RI "\fBtmmc\fP * \fBtmmcBias\fP"
+.br
+.RI "\fITMMC biasing function\&. \fP"
+.ti -1c
+.RI "\fBwala\fP * \fBwlBias\fP"
+.br
+.RI "\fIWL biasing function\&. \fP"
+.ti -1c
+.RI "std::vector< int > \fBnumSpecies\fP"
+.br
+.RI "\fITotal number of each type of atom the system contains\&. \fP"
+.ti -1c
+.RI "std::vector< std::vector< \fBatom\fP > > \fBatoms\fP"
+.br
+.RI "\fIAtoms in a matrix by type, and particle index, respectively that a system CAN hold but not all are actually 'in' the system\&. \fP"
+.ti -1c
+.RI "std::vector< std::vector< \fBpairPotential\fP * > > \fBppot\fP"
+.br
+.RI "\fIMatrix of pair potentials for atom types i, j\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+System information for the simulation\&. 
+.PP
+Definition at line 22 of file system\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "simSystem::simSystem (const unsigned int nSpecies, const double beta, const std::vector< double > box, const std::vector< double > mu, const std::vector< int > maxSpecies, const std::vector< int > minSpecies)"
+
+.PP
+Initialize the system\&. Sets the use of both WL and TMMC biasing to false\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fInSpecies\fP Number of unqiue species types to allow in the system 
+.br
+\fIbeta\fP Inverse temperature (1/kT) 
+.br
+\fIbox\fP Box dimensions [x, y, z] 
+.br
+\fImu\fP Chemical potential of each species 
+.br
+\fImaxSpecies\fP Maximum number of each species to allow in the system 
+.RE
+.PP
+
+.PP
+Definition at line 199 of file system\&.cpp\&.
+.PP
+References SYS_FAILURE\&.
+.PP
+.nf
+199                                                                                                                                                                                                            {
+200                 if ((box\&.size() != 3) || (nSpecies != mu\&.size()) || (maxSpecies\&.size() != nSpecies)) {
+201                                 throw customException ("Invalid system initialization parameters");
+202                                 exit(SYS_FAILURE);
+203                 } else {
+204                                 nSpecies_ = nSpecies;
+205         maxSpecies_ = maxSpecies;
+206         minSpecies_ = minSpecies;
+207                                 box_ = box;
+208                                 mu_ = mu;
+209                                 beta_ = beta;
+210                 }
+211                 
+212                 try {
+213                                 ppot\&.resize(nSpecies);
+214                 } catch (std::exception &e) {
+215                                 throw customException (e\&.what());
+216                 }
+217                 for (unsigned int i = 0; i < nSpecies; ++i) {
+218                                 try {
+219                                                 ppot[i]\&.resize(nSpecies);
+220                                 } catch (std::exception &e) {
+221                                                 throw customException (e\&.what());
+222                                 }
+223                 }
+224                 
+225                 try {
+226                                 ppotSet_\&.resize(nSpecies);
+227                 } catch (std::exception &e) {
+228                                 throw customException (e\&.what());
+229                 }
+230                 for (unsigned int i = 0; i < nSpecies; ++i) {
+231                                 try {
+232                                                 ppotSet_[i]\&.resize(nSpecies, false);
+233                                 } catch (std::exception &e) {
+234                                                 throw customException (e\&.what());
+235                                 }
+236                 }
+237                 
+238                 // Prepare vectors and matrices for cell lists\&.
+239                 // It is crucial to reserve the correct number of cellLists in advance
+240                 // since cellListsByPairType uses the addresses of cellLists\&. Otherwise,
+241                 // if dynamic memory reallocation takes place, the pointers do not
+242                 // correspond to initial values anymore, causing the simulation to crash\&.
+243                 cellLists_\&.reserve(nSpecies_*nSpecies_); 
+244                 
+245                 try {
+246                                 useCellList_\&.resize(nSpecies);
+247                                 cellListsByPairType_\&.resize(nSpecies);
+248                 } catch (std::exception &e) {
+249                                 throw customException (e\&.what());
+250                 }
+251                 for (unsigned int i = 0; i < nSpecies; ++i) {
+252                                 try {
+253                                                 useCellList_[i]\&.resize(nSpecies);
+254                                                 cellListsByPairType_[i]\&.assign(nSpecies, NULL);
+255                                 } catch (std::exception &e) {
+256                                                 throw customException (e\&.what());
+257                                 }
+258                 }
+259     
+260                 totN_ = 0;
+261     try {
+262                                 numSpecies\&.resize(nSpecies, 0);
+263                 } catch (std::exception &e) {
+264                                 throw customException (e\&.what());
+265                 }
+266     
+267     try {
+268         atoms\&.resize(nSpecies);
+269     } catch (std::exception &e) {
+270         throw customException (e\&.what());
+271     }
+272     for (unsigned int i = 0; i < nSpecies; ++i) {
+273         if (minSpecies_[i] < 0) {
+274             throw customException ("Min species < 0");
+275         }
+276         if (maxSpecies_[i] < minSpecies_[i]) {
+277             throw customException ("Max species < Min species");
+278         }
+279                                 try {
+280                                                 atoms[i]\&.resize(maxSpecies_[i]);
+281                                 } catch (std::exception &e) {
+282                                                 throw customException (e\&.what());
+283                                 }
+284                 }
+285     
+286     energy_ = 0\&.0;
+287     
+288     useTMMC = false;
+289     useWALA = false;
+290      
+291     totNBounds_\&.resize(2, 0);
+292     for (unsigned int i = 0; i < nSpecies_; ++i) {
+293                 totNBounds_[0] += minSpecies_[i];
+294                 totNBounds_[1] += maxSpecies_[i];
+295     }
+296     
+297     // allocate space for average U storage matrix - Shen and Errington method implies this size is always the same for
+298     // both single and multicomponent mixtures
+299     long long int size = totNBounds_[1] - totNBounds_[0] + 1;
+300     try {
+301         numAverageU_\&.resize(size, 0);
+302     } catch (std::bad_alloc &ba) {
+303                 throw customException ("Out of memory for energy record");
+304     }
+305     try {
+306         AverageU_\&.resize(size, 0);
+307     } catch (std::bad_alloc &ba) {
+308         throw customException ("Out of memory for energy record");
+309     }
+310 }
+.fi
+.SS "simSystem::~simSystem ()"
+
+.PP
+Definition at line 181 of file system\&.cpp\&.
+.PP
+.nf
+181                        {
+182                 if (useTMMC) {
+183                                 delete tmmcBias;
+184                 }
+185                 if (useWALA) {
+186                                 delete wlBias;
+187                 }
+188 }
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "void simSystem::addPotential (const int spec1, const int spec2, \fBpairPotential\fP * pp, bool useCellList = \fCfalse\fP)"
+
+.PP
+Add a pair potential to the system which governs the pair (spec1, spec2)\&. However, it only stores the pointer so the object must be fixed in memory somewhere else throughout the simulation\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIspec1\fP Species index 1 (>= 0) 
+.br
+\fIspec2\fP Species index 2 (>= 0) 
+.br
+\fIpp\fP Pointer to the pair potential to add\&. Will be stored as a pointer, so original cannot be destroyed in memory\&. 
+.br
+\fIbool\fP Optional argument of whether or not to build and maintain a cell list for this pair (spec1, spec2) 
+.RE
+.PP
+
+.PP
+Definition at line 373 of file system\&.cpp\&.
+.PP
+References pairPotential::rcut()\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+373                                                                                                    {
+374                 if (spec1 >= nSpecies_) {
+375                                 throw customException ("Trying to define pair potential for species (1) that does not exist yet");
+376                                 return;
+377                 }
+378                 if (spec2 >= nSpecies_) {
+379                                 throw customException ("Trying to define pair potential for species (2) that does not exist yet");
+380                                 return;
+381                 }
+382                 ppot[spec1][spec2] = pp;
+383                 ppot[spec2][spec1] = pp;
+384                 ppotSet_[spec1][spec2] = true;
+385                 ppotSet_[spec2][spec1] = true;
+386                 
+387                 if (useCellList)
+388                 {
+389                                 std::cout<<"Setting up cell list for interactions between type "<<spec1<<" and "<<spec2<<std::endl;
+390                                 // add creation of cell lists
+391                                 if ((pp->rcut() > box_[0]/3\&.0) || (pp->rcut() > box_[1]/3\&.0) || (pp->rcut() > box_[2]/3\&.0))
+392                                 {
+393                                                 std::cerr<<"Cutoff ("<<pp->rcut()<<") larger than 1\&.0/3\&.0 boxsize, disabling cell lists for this interaction\&."<<std::endl;
+394                                                 useCellList_[spec1][spec2] = false;
+395                                                 useCellList_[spec2][spec1] = false;
+396                                 }
+397                                 else
+398                                 {
+399                                                 std::cout<<"Creating Cell list with rcut="<<pp->rcut()<<std::endl;
+400                                                 useCellList_[spec1][spec2] = true;
+401                                                 useCellList_[spec2][spec1] = true;
+402                                                 
+403                                                 std::vector<atom*> dummyList(0);
+404                                                 
+405                                                 if (cellListsByPairType_[spec1][spec2] == NULL)
+406                                                 {
+407                                                                 cellLists_\&.push_back(cellList(box_, pp->rcut(), dummyList));
+408                                                                 cellListsByPairType_[spec1][spec2] = &cellLists_[cellLists_\&.size()-1];
+409                                                 }
+410                                                 if (cellListsByPairType_[spec2][spec1] == NULL)
+411                                                 {
+412                                                                 cellLists_\&.push_back(cellList(box_, pp->rcut(), dummyList));
+413                                                                 cellListsByPairType_[spec2][spec1] = &cellLists_[cellLists_\&.size()-1];
+414                                                 }
+415                                 }
+416                 }
+417                 else
+418                 {
+419                                 useCellList_[spec1][spec2] = false;
+420                                 useCellList_[spec2][spec1] = false;
+421                 }
+422 }
+.fi
+.SS "const double simSystem::beta ()\fC [inline]\fP"
+
+.PP
+Return 1/kT\&. 
+.PP
+Definition at line 50 of file system\&.h\&.
+.PP
+Referenced by deleteParticle::make(), translateParticle::make(), swapParticles::make(), and insertParticle::make()\&.
+.SS "const std::vector< double > simSystem::box ()\fC [inline]\fP"
+
+.PP
+Return the system box dimensions\&. 
+.PP
+Definition at line 52 of file system\&.h\&.
+.PP
+Referenced by main(), translateParticle::make(), swapParticles::make(), deleteParticle::make(), and insertParticle::make()\&.
+.SS "void simSystem::deleteAtom (const int typeIndex, const int atomIndex, bool override = \fCfalse\fP)"
+
+.PP
+Delete an atom from the system\&. Does all the bookkeepping behind the scenes\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fItypeIndex\fP What type the atom is (>= 0) 
+.br
+\fIatomIndex\fP Which atom \fIindex\fP of type typeIndex to destroy (>= 0) 
+.br
+\fIOptional\fP override command which allows the system to delete a particle even it goes below the minimum allowed\&. E\&.g\&. during a swap move\&. 
+.RE
+.PP
+
+.PP
+Definition at line 123 of file system\&.cpp\&.
+.PP
+References cellList::swapAndDeleteParticle()\&.
+.PP
+Referenced by deleteParticle::make(), and swapParticles::make()\&.
+.PP
+.nf
+123                                                                                    {
+124     if (typeIndex < nSpecies_ && typeIndex >= 0) {
+125         if ((numSpecies[typeIndex] > minSpecies_[typeIndex]) || override) {
+126                 // delete particle from appropriate cell list
+127             for (unsigned int i=0; i<nSpecies_; i++)
+128             {
+129                 if (useCellList_[typeIndex][i])
+130                 {
+131                                 cellList* cl = cellListsByPairType_[typeIndex][i];
+132                                 cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][numSpecies[typeIndex] - 1]);
+133                 }
+134             }
+135         
+136             atoms[typeIndex][atomIndex] = atoms[typeIndex][numSpecies[typeIndex] - 1];    // "replacement" operation
+137             numSpecies[typeIndex]--;
+138             totN_--;
+139         } else {
+140             std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
+141             throw customException ("System going below minimum allowable number of atoms, cannot delete an atom of type index "+index);
+142         }
+143     } else {
+144         throw customException ("That species index does not exist, cannot delete an atom");
+145     }
+146 }
+.fi
+.SS "const double simSystem::energy ()\fC [inline]\fP"
+
+.PP
+Return the system's instantaneous energy\&. 
+.PP
+Definition at line 48 of file system\&.h\&.
+.PP
+Referenced by main()\&.
+.SS "std::vector< std::vector< double > > simSystem::getNeighborPositions (const unsigned int typeIndexA, const unsigned int typeIndexB, \fBatom\fP * _atom)"
+
+.PP
+Return the list of neighbors of type A, for a particle of type B at position pos\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fItypeIndexA\fP Index of first atom type 
+.br
+\fItypeIndexB\fP Index of second atom type 
+.br
+\fIatom\fP Pointer to atom to find neighbors around
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+neighbor_list 
+.RE
+.PP
+
+.PP
+Definition at line 530 of file system\&.cpp\&.
+.PP
+References cellList::calcIndex(), cellList::cells, cellList::neighbours, and atom::pos\&.
+.PP
+Referenced by deleteParticle::make(), translateParticle::make(), swapParticles::make(), and insertParticle::make()\&.
+.PP
+.nf
+531 {
+532                 std::vector< std::vector<double> > neighbors;
+533                 neighbors\&.reserve(numSpecies[typeIndexA]);
+534                 
+535                 // if no cell lists are defined for this interaction, return all particles
+536                 if (!useCellList_[typeIndexA][typeIndexB])
+537                 {
+538                                 for (unsigned int i=0; i<numSpecies[typeIndexA]; i++)
+539                                 {
+540                                                 if (_atom != &atoms[typeIndexA][i])
+541                                                 {
+542                                                                 neighbors\&.push_back(atoms[typeIndexA][i]\&.pos);
+543                                                 }
+544                                 }
+545                 }
+546                 else if (useCellList_[typeIndexA][typeIndexB])
+547                 {
+548                                 cellList* cl = cellListsByPairType_[typeIndexA][typeIndexB];
+549                                 const unsigned int cellIndex = cl->calcIndex(_atom->pos[0], _atom->pos[1], _atom->pos[2]);
+550 
+551                                 // loop over own cell
+552                                 for (unsigned int i=0; i<cl->cells[cellIndex]\&.size(); i++)
+553                                 {
+554                                                 if (_atom != cl->cells[cellIndex][i])
+555                                                 {
+556                                                                 neighbors\&.push_back(cl->cells[cellIndex][i]->pos);
+557                                                 }
+558                                 }
+559                                 // loop over neighboring cells
+560                                 for (unsigned int i=0; i<cl->neighbours[cellIndex]\&.size(); i++)
+561                                 {
+562                                                 const unsigned int neighborCellIndex = cl->neighbours[cellIndex][i];
+563                                                 
+564                                                 for (unsigned int j=0; j<cl->cells[neighborCellIndex]\&.size(); j++)
+565                                                 {
+566                                                                 if (_atom != cl->cells[neighborCellIndex][j])
+567                                                                 {
+568                                                                                 neighbors\&.push_back(cl->cells[neighborCellIndex][j]->pos);
+569                                                                 }
+570                                                 }
+571                                 }
+572                 }
+573                 
+574                 return neighbors;
+575 }
+.fi
+.SS "\fBtmmc\fP * simSystem::getTMMCBias ()"
+
+.PP
+Return pointer to the TMMC bias\&. Return a pointer to the TMMC biasing object, if using TMMC, else throws an exception\&.
+.PP
+\fBReturns:\fP
+.RS 4
+tmmc Pointer to TMMC biasing object being used\&. 
+.RE
+.PP
+
+.PP
+Definition at line 692 of file system\&.cpp\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+692                               {
+693                 if (useTMMC == true) {
+694                                 return tmmcBias;
+695                 } else {
+696                                 throw customException ("Not using TMMC");
+697                 }
+698 }
+.fi
+.SS "const int simSystem::getTotN ()\fC [inline]\fP"
+
+.PP
+Return a sum of the total number of atoms currently in the system\&. 
+.PP
+Definition at line 47 of file system\&.h\&.
+.PP
+Referenced by calculateBias(), translateParticle::make(), insertParticle::make(), swapParticles::make(), and deleteParticle::make()\&.
+.SS "\fBwala\fP * simSystem::getWALABias ()"
+
+.PP
+Return pointer to the Wang-Landau bias\&. Return a pointer to the TMMC biasing object, if using TMMC, else throws an exception\&.
+.PP
+\fBReturns:\fP
+.RS 4
+wala Pointer to WALA biasing object being used\&. 
+.RE
+.PP
+
+.PP
+Definition at line 705 of file system\&.cpp\&.
+.PP
+Referenced by main(), translateParticle::make(), swapParticles::make(), deleteParticle::make(), and insertParticle::make()\&.
+.PP
+.nf
+705                               {
+706                 if (useWALA == true) {
+707                                 return wlBias;
+708                 } else {
+709                                 throw customException ("Not using WALA");
+710                 }
+711 }
+.fi
+.SS "void simSystem::incrementEnergy (const double dU)\fC [inline]\fP"
+
+.PP
+Increment the system's energy\&. 
+.PP
+Definition at line 27 of file system\&.h\&.
+.PP
+Referenced by deleteParticle::make(), translateParticle::make(), swapParticles::make(), and insertParticle::make()\&.
+.SS "void simSystem::insertAtom (const int typeIndex, \fBatom\fP * newAtom)"
+
+.PP
+Insert an atom into the system\&. Does all the bookkeepping behind the scenes\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fItypeIndex\fP What type the atom is (>= 0) 
+.br
+\fInewAtom\fP Pointer to new atom\&. A copy is stored in the system so the original may be destroyed\&. 
+.RE
+.PP
+
+.PP
+Definition at line 91 of file system\&.cpp\&.
+.PP
+References cellList::insertParticle()\&.
+.PP
+Referenced by insertParticle::make(), and swapParticles::make()\&.
+.PP
+.nf
+91                                                               {
+92     if (typeIndex < nSpecies_ && typeIndex >= 0) {
+93         if (numSpecies[typeIndex] < maxSpecies_[typeIndex]) {
+94             atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
+95             numSpecies[typeIndex]++;
+96             totN_++;
+97            // add particle into appropriate cell list
+98            for (unsigned int i=0; i<nSpecies_; i++)
+99            {
+100                                 if (useCellList_[typeIndex][i])
+101                 {
+102                                 cellList* cl = cellListsByPairType_[typeIndex][i];
+103                                 cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex]- 1]);
+104                 }
+105             }
+106             
+107         } else {
+108             std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
+109             throw customException ("Reached upper bound, cannot insert an atom of type index "+index);
+110         }
+111     } else {
+112         throw customException ("That species index does not exist, cannot insert an atom");
+113     }
+114 }
+.fi
+.SS "const int simSystem::maxSpecies (const int index)"
+
+.PP
+Returns the absolute maximum number of a given species type allowed in the system\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIindex\fP Species index to query
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+maxSpecies Maximum number of them allowed 
+.RE
+.PP
+
+.PP
+Definition at line 658 of file system\&.cpp\&.
+.PP
+Referenced by insertParticle::make()\&.
+.PP
+.nf
+658                                                 {
+659     if (maxSpecies_\&.begin() == maxSpecies_\&.end()) {
+660         throw customException ("No species in the system, cannot report a maximum");
+661     }
+662     if (maxSpecies_\&.size() <= index) {
+663          throw customException ("System does not contain that species, cannot report a maximum");
+664     } else  {
+665         return maxSpecies_[index];
+666     }
+667 }
+.fi
+.SS "const int simSystem::minSpecies (const int index)"
+
+.PP
+Returns the absolute minimum number of a given species type allowed in the system\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIindex\fP Species index to query
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+minSpecies Minimum number of them allowed 
+.RE
+.PP
+
+.PP
+Definition at line 676 of file system\&.cpp\&.
+.PP
+Referenced by deleteParticle::make()\&.
+.PP
+.nf
+676                                                 {
+677     if (minSpecies_\&.begin() == minSpecies_\&.end()) {
+678         throw customException ("No species in the system, cannot report a minimum");
+679     }
+680     if (minSpecies_\&.size() <= index) {
+681         throw customException ("System does not contain that species, cannot report a minimum");
+682     } else  {
+683         return minSpecies_[index];
+684     }
+685 }
+.fi
+.SS "const double simSystem::mu (const int index)\fC [inline]\fP"
+
+.PP
+Return the chemical potential for a given species' index\&. 
+.PP
+Definition at line 51 of file system\&.h\&.
+.PP
+Referenced by deleteParticle::make(), and insertParticle::make()\&.
+.SS "const int simSystem::nSpecies ()\fC [inline]\fP"
+
+.PP
+Return the number of different species in the system\&. 
+.PP
+Definition at line 42 of file system\&.h\&.
+.PP
+Referenced by main(), translateParticle::make(), swapParticles::make(), deleteParticle::make(), and insertParticle::make()\&.
+.SS "bool simSystem::potentialIsSet (const int spec1, const int spec2)\fC [inline]\fP"
+
+.PP
+Boolean which returns whether or not a pair has had its potential specified by the user yet\&. 
+.PP
+Definition at line 41 of file system\&.h\&.
+.PP
+Referenced by main()\&.
+.SS "void simSystem::printSnapshot (std::string filename, std::string comment)"
+
+.PP
+Print an XYZ file of the instantaneous system configuration\&. This can be read in at a later time via \fBreadRestart()\fP function\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP File to store XYZ coordinates to 
+.br
+\fIcomment\fP Comment line for the file 
+.RE
+.PP
+
+.PP
+Definition at line 430 of file system\&.cpp\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+430                                                                     {
+431     std::ofstream outfile (filename\&.c_str());
+432     
+433     int tot = 0;
+434     for (unsigned int j = 0; j < nSpecies_; ++j) {
+435         tot += numSpecies[j];
+436     }
+437     
+438     outfile << tot << std::endl;
+439     outfile << comment << std::endl;
+440     
+441     for (unsigned int j = 0; j < nSpecies_; ++j) {
+442         const int num = numSpecies[j];
+443         for (unsigned int i = 0; i < num; ++i) {
+444             outfile << j << "\t" << atoms[j][i]\&.pos[0] << "\t" << atoms[j][i]\&.pos[1] << "\t" << atoms[j][i]\&.pos[2] << std::endl;
+445         }
+446     }
+447     
+448     outfile\&.close();
+449 }
+.fi
+.SS "void simSystem::printU (const std::string fileName)"
+
+.PP
+Print the average energy to file, <U> for every N_tot within range is recorded\&. Will overwrite the file if another with that name exists\&. Prints in netCDF format if enabled\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfileName\fP Name of the file to print to 
+.RE
+.PP
+
+.PP
+Definition at line 330 of file system\&.cpp\&.
+.PP
+References sstr\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+330                                                 {
+331                 std::vector < double > aveU (AverageU_\&.size(), 0);
+332                 for (long long int i = 0; i < AverageU_\&.size(); ++i) {
+333                                 aveU[i] = AverageU_[i]/numAverageU_[i]; 
+334                 }
+335                 
+336 #ifdef NETCDF_CAPABLE
+337     // If netCDF libs are enabled, write to this format
+338     const std::string name = fileName + "\&.nc";
+339                 NcFile outFile(name\&.c_str(), NcFile::replace);
+340                 NcDim probDim = outFile\&.addDim("vectorized_position", aveU\&.size());
+341                 NcVar probVar = outFile\&.addVar("<U>", ncDouble, probDim);
+342                 const std::string dummyName = "number_species:";
+343                 probVar\&.putAtt(dummyName\&.c_str(), sstr(nSpecies_)\&.c_str());
+344                 const std::string attName = "species_total_upper_bound:";
+345                 probVar\&.putAtt(attName\&.c_str(), sstr(totNBounds_[1])\&.c_str());
+346                 const std::string attName = "species_total_lower_bound:";
+347                 probVar\&.putAtt(attName\&.c_str(), sstr(totNBounds_[0])\&.c_str());
+348                 probVar\&.putVar(&aveU[0]);
+349 #else
+350                 // Without netCDF capabilities, just print to ASCII file
+351                 std::ofstream of;
+352                 of\&.open(fileName+"\&.dat", std::ofstream::out);
+353                 of << "# <U> as a function of N_tot\&." << std::endl;
+354                 of << "# Number of species:" << nSpecies_ << std::endl;
+355                 of << "# species_total_upper_bound:" << totNBounds_[1] << std::endl;
+356                 of << "# species_total_lower_bound:" << totNBounds_[0] << std::endl;
+357                 for (long long int i = 0; i < aveU\&.size(); ++i) {
+358                                 of << aveU[i] << std::endl;
+359                 }
+360                 of\&.close();
+361 #endif
+362 }
+.fi
+.SS "void simSystem::readRestart (std::string filename)"
+
+.PP
+Read an XYZ file as the system's initial configuration\&. Note that the number of species, etc\&. must already be specified in the constructor\&. Will also reset and calculate the energy from scratch so these potentials should be set before reading in a restart file\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfilename\fP File to read XYZ coordinates from 
+.RE
+.PP
+
+.PP
+Definition at line 457 of file system\&.cpp\&.
+.PP
+References customException::what()\&.
+.PP
+.nf
+457                                                {
+458                 std::ifstream infile (filename\&.c_str());
+459                 std::string line;
+460                 int natoms = 0;
+461                 infile >> natoms;
+462                 std::getline(infile, line); // comment line 
+463                 
+464                 std::vector < atom > sysatoms (natoms);
+465                 std::vector < int > index (natoms);
+466                 std::map < int, int > types;
+467                 for (unsigned int j = 0; j < natoms; ++j) {
+468         infile >> index[j] >> sysatoms[j]\&.pos[0] >> sysatoms[j]\&.pos[1] >> sysatoms[j]\&.pos[2];
+469     }
+470                 infile\&.close();
+471                 
+472                 // sort by type
+473                 for (unsigned int j = 0; j < natoms; ++j) {
+474                                 if (types\&.find(index[j]) != types\&.end()) {
+475                                                 types[index[j]] += 1;
+476                                 } else {
+477                                                 types[index[j]] = 1;
+478                                 }
+479                 }
+480                 int maxType = -1;
+481                 for (std::map<int,int>::iterator it=types\&.begin(); it != types\&.end(); ++it) {
+482                                 maxType = std::max(maxType, it->first);
+483                                 if (it->first < 0 || it->first >= nSpecies_) {
+484                                                 throw customException ("Restart file corrupted, types out of range");
+485                                 }
+486                 }
+487                 
+488                 // ensure system is empty
+489                 for (unsigned int j = 0; j < nSpecies_; ++j) {
+490                                 atoms[j]\&.resize(0);
+491                 }
+492                 
+493                 energy_ = 0\&.0;
+494                 
+495                 for (unsigned int j = 0; j < sysatoms\&.size(); ++j) {
+496                                 try {
+497                                                 insertAtom (index[j], &sysatoms[j]);
+498                                 }
+499                                 catch (customException &ce) {
+500                                                 std::string a = "Could not initialize system from restart file, ", b = ce\&.what();
+501                                                 throw customException (a+b);
+502                                 }
+503                 }
+504                 
+505                 // double check
+506                 for (unsigned int j = 0; j < nSpecies_; ++j) {
+507                                 if (atoms[j]\&.begin() != atoms[j]\&.end()) {
+508                                                 if (atoms[j]\&.size() != types[j]) {
+509                                                                 throw customException ("Failed to properly insert old atoms into system");
+510                                                 }
+511                                 } else {
+512                                                 if (0 != types[j]) {
+513                                                                 throw customException ("Failed to properly insert old atoms into system");
+514                                                 }
+515                                 }
+516                 }
+517 
+518                 energy_ = scratchEnergy();
+519 }
+.fi
+.SS "void simSystem::recordU ()"
+
+.PP
+Save the instantaneous energy of the system as a function of the number of particles in the system\&. Only records values when N_tot in range of [min, max]\&. 
+.PP
+Definition at line 316 of file system\&.cpp\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+316                          {
+317                 // only record if in range (removes equilibration stage to get in this range, if there was any)
+318                 if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+319                                 const int address = totN_-totNBounds_[0];
+320                                 AverageU_[address] += energy_;
+321                                 numAverageU_[address] += 1\&.0;
+322                 }
+323 }
+.fi
+.SS "const double simSystem::scratchEnergy ()"
+
+.PP
+Recalculate the energy of the system from scratch\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+totU Total energy of the system 
+.RE
+.PP
+
+.PP
+Definition at line 582 of file system\&.cpp\&.
+.PP
+References customException::what()\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+582                                        {
+583     double totU = 0\&.0;
+584     double V = 1\&.0;
+585     
+586     for (unsigned int i = 0; i < box_\&.size(); ++i) {
+587                 V *= box_[i];
+588     }
+589     
+590     for (unsigned int spec1 = 0; spec1 < nSpecies_; ++spec1) {
+591         int num1;
+592         try {
+593             num1 = numSpecies[spec1];
+594         } catch (customException &ce) {
+595             std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
+596             throw customException (a+b);
+597         }
+598                                 
+599         // interactions with same type
+600         for (unsigned int j = 0; j < num1; ++j) {
+601             for (unsigned int k = j+1; k < num1; ++k) {
+602                 try {
+603                     totU += ppot[spec1][spec1]->energy(atoms[spec1][j]\&.pos, atoms[spec1][k]\&.pos, box_);                
+604                 } catch (customException &ce) {
+605                     std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
+606                     throw customException (a+b);
+607                 }
+608             }
+609         }
+610         
+611         // add tail correction to potential energy
+612 #ifdef FLUID_PHASE_SIMULATIONS
+613         if ((ppot[spec1][spec1]->useTailCorrection) && (num1 > 1)) {
+614                 totU += (num1)*0\&.5*ppot[spec1][spec1]->tailCorrection((num1-1)/V);
+615         }
+616 #endif        
+617         // interactions with other types
+618         for (unsigned int spec2 = 0; spec2 < nSpecies_; ++spec2) {
+619             if (spec2 > spec1) { // only compute unique interactions
+620                 int num2;
+621                 try {
+622                     num2 = numSpecies[spec2];
+623                 } catch (customException &ce) {
+624                     std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
+625                     throw customException (a+b);
+626                 }
+627                 
+628                 for (unsigned int j = 0; j < num1; ++j) {
+629                     for (unsigned int k = 0; k < num2; ++k) {
+630                         try {
+631                             totU += ppot[spec1][spec2]->energy(atoms[spec1][j]\&.pos, atoms[spec2][k]\&.pos, box_);
+632                         } catch (customException &ce) {
+633                             std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
+634                             throw customException (a+b);
+635                         }
+636                     }
+637                 }
+638                 // add tail correction to potential energy
+639 #ifdef FLUID_PHASE_SIMULATIONS
+640                 if ((ppot[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) {
+641                                 totU += (num1)*ppot[spec1][spec2]->tailCorrection(num2/V);
+642                                 }
+643 #endif
+644             }
+645         }
+646     }
+647     
+648     return totU;
+649 }
+.fi
+.SS "void simSystem::setTotNBounds (const std::vector< int > & bounds)"
+
+.PP
+Set the bounds on the total number of particles in a system\&. If not set manually, this defaults to the sum of the bounds given for each individual species in the system\&. Therefore, for single component simulations, this is identical to [minSpecies(0), maxSpecies(0)] unless otherwise set\&. These bounds are intended to be used to create 'windows' so that specific simulations can sample subregions of [minSpecies(0), maxSpecies(0)] and be stitched together with histogram reweighting later\&.
+.PP
+However, this routine will ALSO cause the system to reevaluate its bounds\&. If these total bounds are outside any individual bound for each atom type, nothing will change\&. However, if the upper bound for total atoms is less than an upper bound for a specific species, that species will have its bounds changed to match the total maximum\&. As a result sys\&.atoms can change so this routine should be called at the beginning of a simulation, never during\&. The total minimum will also be checked\&. That is, if the sum of the minimum for all species is still higher than this, an exception will be throw since the system will never reach such a low density anyway\&. Most likely the user has made a mistake\&.
+.PP
+Be sure to initialize other objects, such as biases, AFTER this routine has been called since it will adjust the allowable number of particles in the system\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIbounds\fP Vector of [min, max] 
+.RE
+.PP
+
+.PP
+Definition at line 28 of file system\&.cpp\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+28                                                               {
+29                 if (bounds\&.size() != 2) {
+30                                 throw customException ("Bounds on total N must supplied as vector of <minN, maxN>");
+31                 }
+32                 if (bounds[0] < 0) {
+33                                 throw customException ("Lower bound on total particles must be > 0");
+34                 }
+35                 if (bounds[0] > bounds[1]) {
+36                                 throw customException ("Upper bound must be greater than lower bound for total number of particles in the system");
+37                 }
+38                 totNBounds_ = bounds;
+39 
+40                 int totMin = 0;
+41                 for (unsigned int i = 0; i < nSpecies_; ++i) {
+42                                 if (maxSpecies_[i] > totNBounds_[1]) {
+43                                                 maxSpecies_[i] = totNBounds_[1];
+44                                 }
+45                                 totMin += minSpecies_[i];
+46                 }
+47                 if (totMin > totNBounds_[0]) {
+48                                 // this isn't the end of the world, but for now, alert the user in case something is wrong
+49                                 throw customException ("Lower total N bound is lower than the sum of all individual lower bounds, region cannot be completely sampled");
+50                 }
+51                 
+52                 // recheck bounds and possibly resize
+53                 int tmpTot = 0;
+54     for (unsigned int i = 0; i < nSpecies_; ++i) {
+55         if (maxSpecies_[i] < minSpecies_[i]) {
+56             throw customException ("Max species < Min species");
+57         }
+58                                 try {
+59                                                 atoms[i]\&.resize(maxSpecies_[i]);
+60                                 } catch (std::exception &e) {
+61                                                 throw customException (e\&.what());
+62                                 }
+63                                 if (numSpecies[i] > atoms[i]\&.size()) {
+64                                                 numSpecies[i] = atoms\&.size();
+65                                 }
+66                                 tmpTot += numSpecies[i];
+67                 }
+68     totN_ = tmpTot;
+69   
+70     // Allocate space for energy matrix - this will only be recorded when the system is within the specific window we are looking for
+71     // Because of implementation of Shen and Errington method, this syntax is the same for single and multicomponent systems
+72     long long int size = totNBounds_[1] - totNBounds_[0] + 1;
+73     try {
+74                 AverageU_\&.resize(size, 0); 
+75     } catch (std::bad_alloc &ba) {
+76                 throw customException ("Out of memory for energy record");
+77     }
+78     try {
+79                 numAverageU_\&.resize(size, 0);
+80     } catch (std::bad_alloc &ba) {
+81         throw customException ("Out of memory for energy record");
+82     }
+83 }
+.fi
+.SS "void simSystem::startTMMC (const int Nmax, const int Nmin)"
+
+.PP
+Start using TMMC and instantiate the bias object\&. Start using a transition-matrix in the simulation\&.
+.PP
+Throws an exception if input values are illegal or there is another problem (e\&.g\&. memory)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fINmax\fP Upper bound for total number of particles in the system\&. 
+.br
+\fINmin\fP Lower bound for total number of particles in the system\&. 
+.RE
+.PP
+
+.PP
+Definition at line 739 of file system\&.cpp\&.
+.PP
+References sstr, and customException::what()\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+739                                                          { 
+740                 // initialize the tmmc object
+741                 try {
+742                                 tmmcBias = new tmmc (Nmax, Nmin);
+743                 } catch (customException& ce) {
+744                                 throw customException ("Cannot start TMMC biasing in system: "+sstr(ce\&.what()));
+745                 }
+746                                 
+747                 useTMMC = true; 
+748 }
+.fi
+.SS "void simSystem::startWALA (const double lnF, const double g, const double s, const int Nmax, const int Nmin)"
+
+.PP
+Start using Wang-Landau and instantiate the bias object\&. 
+.PP
+Definition at line 722 of file system\&.cpp\&.
+.PP
+References sstr, and customException::what()\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+722                                                                                                            { 
+723                 // initialize the wala object
+724                 try {
+725                                 wlBias = new wala (lnF, g, s, Nmax, Nmin);
+726                 } catch (customException& ce) {
+727                                 throw customException ("Cannot start Wang-Landau biasing in system: "+sstr(ce\&.what()));
+728                 }
+729                 
+730                 useWALA = true;
+731 }
+.fi
+.SS "void simSystem::stopTMMC ()\fC [inline]\fP"
+
+.PP
+Stop using TMMC and free the bias object\&. 
+.PP
+Definition at line 39 of file system\&.h\&.
+.PP
+References tmmcBias, and useTMMC\&.
+.SS "void simSystem::stopWALA ()\fC [inline]\fP"
+
+.PP
+Stop using Wang-Landau and free the bias object\&. 
+.PP
+Definition at line 37 of file system\&.h\&.
+.PP
+References useWALA, and wlBias\&.
+.PP
+Referenced by main()\&.
+.SS "const int simSystem::totNMax ()\fC [inline]\fP"
+
+.PP
+Return upper bound on the total number of atoms in the system\&. 
+.PP
+Definition at line 45 of file system\&.h\&.
+.PP
+Referenced by main(), and insertParticle::make()\&.
+.SS "const int simSystem::totNMin ()\fC [inline]\fP"
+
+.PP
+Return lower bound on the total number of atoms in the system\&. 
+.PP
+Definition at line 46 of file system\&.h\&.
+.PP
+Referenced by main(), and deleteParticle::make()\&.
+.SS "void simSystem::translateAtom (const int typeIndex, const int atomIndex, std::vector< double > oldPos)"
+
+.PP
+Translate an atom in the system\&. Does all the bookkeeping behind the scenes\&. Do nothing if there is no cell list defined for the type
+.PP
+\fBParameters:\fP
+.RS 4
+\fItypeIndex\fP What type the atom is (>= 0) 
+.br
+\fIatomIndex\fP Which atom \fIindex\fP of type typeIndex to translate (>= 0) 
+.br
+\fIoldPos\fP Old position of the atom\&. The current/new position should already be stored in the atom at sys\&.atoms[typeIndex][atomIndex] 
+.RE
+.PP
+
+.PP
+Definition at line 156 of file system\&.cpp\&.
+.PP
+References cellList::translateParticle()\&.
+.PP
+Referenced by translateParticle::make()\&.
+.PP
+.nf
+156                                                                                                  {
+157     if (typeIndex < nSpecies_ && typeIndex >= 0) {
+158         if (atomIndex >= 0) { 
+159         
+160                 // delete particle from appropriate cell list, move to new one
+161             for (unsigned int i=0; i<nSpecies_; i++)
+162             {
+163                 if (useCellList_[typeIndex][i])
+164                 {
+165                                 cellList* cl = cellListsByPairType_[typeIndex][i];
+166                                 cl->translateParticle(&atoms[typeIndex][atomIndex], oldPos);
+167                 }
+168             }        
+169         } else {
+170             std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
+171             throw customException ("Number of those atoms in system is out of bounds, cannot translate an atom of type index "+index);
+172         }
+173     } else {
+174         throw customException ("That species index does not exist, cannot translate the atom");
+175     }
+176 }
+.fi
+.SH "Member Data Documentation"
+.PP 
+.SS "std::vector< std::vector < \fBatom\fP > > simSystem::atoms"
+
+.PP
+Atoms in a matrix by type, and particle index, respectively that a system CAN hold but not all are actually 'in' the system\&. 
+.PP
+Definition at line 62 of file system\&.h\&.
+.PP
+Referenced by main(), translateParticle::make(), swapParticles::make(), and deleteParticle::make()\&.
+.SS "std::vector< int > simSystem::numSpecies"
+
+.PP
+Total number of each type of atom the system contains\&. 
+.PP
+Definition at line 61 of file system\&.h\&.
+.PP
+Referenced by deleteParticle::make(), translateParticle::make(), swapParticles::make(), and insertParticle::make()\&.
+.SS "std::vector< std::vector < \fBpairPotential\fP* > > simSystem::ppot"
+
+.PP
+Matrix of pair potentials for atom types i, j\&. 
+.PP
+Definition at line 63 of file system\&.h\&.
+.PP
+Referenced by main(), translateParticle::make(), swapParticles::make(), deleteParticle::make(), and insertParticle::make()\&.
+.SS "\fBtmmc\fP* simSystem::tmmcBias"
+
+.PP
+TMMC biasing function\&. 
+.PP
+Definition at line 59 of file system\&.h\&.
+.PP
+Referenced by calculateBias(), and stopTMMC()\&.
+.SS "bool simSystem::useTMMC"
+
+.PP
+Logical stating whether or not to use TMMC biasing\&. 
+.PP
+Definition at line 57 of file system\&.h\&.
+.PP
+Referenced by calculateBias(), and stopTMMC()\&.
+.SS "bool simSystem::useWALA"
+
+.PP
+Logical stating whether or not to use Wang-Landau biasing\&. 
+.PP
+Definition at line 58 of file system\&.h\&.
+.PP
+Referenced by calculateBias(), translateParticle::make(), deleteParticle::make(), insertParticle::make(), swapParticles::make(), and stopWALA()\&.
+.SS "\fBwala\fP* simSystem::wlBias"
+
+.PP
+WL biasing function\&. 
+.PP
+Definition at line 60 of file system\&.h\&.
+.PP
+Referenced by calculateBias(), and stopWALA()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

@@ -1,0 +1,151 @@
+.TH "insertParticle" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+insertParticle \- 
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <insert\&.h>\fP
+.PP
+Inherits \fBmcMove\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBinsertParticle\fP ()"
+.br
+.ti -1c
+.RI "\fBinsertParticle\fP (const int typeIndex, const std::string tag)"
+.br
+.RI "\fIInstantiate a new move, also give a name which is the combination of auser-defined tag + the particle index it operates on\&. \fP"
+.ti -1c
+.RI "int \fBmake\fP (\fBsimSystem\fP &sys)"
+.br
+.RI "\fIInsert a particle into the system\&. \fP"
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Definition at line 12 of file insert\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "insertParticle::insertParticle ()\fC [inline]\fP"
+
+.PP
+Definition at line 14 of file insert\&.h\&.
+.PP
+.nf
+14 {};
+.fi
+.SS "insertParticle::insertParticle (const int typeIndex, const std::string tag)\fC [inline]\fP"
+
+.PP
+Instantiate a new move, also give a name which is the combination of auser-defined tag + the particle index it operates on\&. 
+.PP
+Definition at line 15 of file insert\&.h\&.
+.PP
+References mcMove::name_, and mcMove::typeIndex_\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "int insertParticle::make (\fBsimSystem\fP & sys)\fC [virtual]\fP"
+
+.PP
+Insert a particle into the system\&. All other information is stored in the \fBsimSystem\fP object\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsys\fP System object to attempt to insert a particle into\&.
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+MOVE_SUCCESS if inserted a particle, otherwise MOVE_FAILURE if did not\&. Will throw exceptions if there was an error\&. 
+.RE
+.PP
+
+.PP
+Implements \fBmcMove\fP\&.
+.PP
+Definition at line 10 of file insert\&.cpp\&.
+.PP
+References simSystem::beta(), simSystem::box(), calculateBias(), simSystem::getNeighborPositions(), simSystem::getTotN(), simSystem::getWALABias(), simSystem::incrementEnergy(), simSystem::insertAtom(), simSystem::maxSpecies(), MOVE_FAILURE, MOVE_SUCCESS, simSystem::mu(), simSystem::nSpecies(), simSystem::numSpecies, atom::pos, simSystem::ppot, rng(), RNG_SEED, simSystem::totNMax(), mcMove::typeIndex_, wala::update(), simSystem::useWALA, and customException::what()\&.
+.PP
+.nf
+10                                         {
+11     // check if at upper bound for this specific species type
+12     if (sys\&.numSpecies[typeIndex_] >= sys\&.maxSpecies(typeIndex_)) {
+13         return MOVE_FAILURE;
+14     }
+15     // also check if at upper bound for total number of atoms
+16     if (sys\&.getTotN() >= sys\&.totNMax()) {
+17                 return MOVE_FAILURE;
+18     }
+19     
+20                 // attempt to insert a new one
+21     atom newAtom;
+22     const std::vector < double > box = sys\&.box();
+23     double V = 1\&.0;
+24     for (unsigned int i = 0; i < box\&.size(); ++i) {
+25         newAtom\&.pos[i] = rng (&RNG_SEED) * box[i];
+26         V *= box[i];
+27     }
+28     
+29     // compute energy to insert
+30     double insEnergy = 0\&.0;
+31     for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
+32                 // get positions of neighboring atoms around newAtom
+33                 std::vector < std::vector < double > > neighborPositions = sys\&.getNeighborPositions(spec, typeIndex_, &newAtom);
+34         for (unsigned int i = 0; i < neighborPositions\&.size(); ++i) {
+35                                                 try {
+36                                                                 insEnergy += sys\&.ppot[spec][typeIndex_]->energy(neighborPositions[i], newAtom\&.pos, box);          
+37                                                 } catch (customException& ce) {
+38                                                                 std::string a = "Cannot insert because of energy error: ", b = ce\&.what();
+39                                                                 throw customException (a+b);
+40                                                 }
+41         }
+42         // add tail correction to potential energy -- only enable for fluid phase simulations
+43 #ifdef FLUID_PHASE_SIMULATIONS
+44         if (sys\&.ppot[spec][typeIndex_]->useTailCorrection){
+45                                                 insEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection(sys\&.numSpecies[spec]/V);
+46                                 }
+47 #endif
+48     }
+49     
+50     // biasing
+51     const double p_u = V/(sys\&.numSpecies[typeIndex_]+1\&.0)*exp(sys\&.beta()*(sys\&.mu(typeIndex_) - insEnergy));
+52     int nTotFinal = sys\&.getTotN() + 1;
+53     double bias = calculateBias(sys, nTotFinal, p_u);
+54    
+55                 // metropolis criterion
+56                 if (rng (&RNG_SEED) < p_u*bias) {
+57         try {
+58             sys\&.insertAtom(typeIndex_, &newAtom);
+59         } catch (customException &ce) {
+60             std::string a = "Failed to insert atom: ", b = ce\&.what();
+61             throw customException (a+b);
+62         }
+63                                 sys\&.incrementEnergy(insEnergy);
+64                                 
+65                                 // update Wang-Landau bias, if used
+66                                 if (sys\&.useWALA) {
+67                                                 sys\&.getWALABias()->update(sys\&.getTotN());
+68                                 }
+69                                 
+70         return MOVE_SUCCESS;
+71     }
+72     
+73                 // update Wang-Landau bias (even if moved failed), if used
+74                 if (sys\&.useWALA) {
+75                                 sys\&.getWALABias()->update(sys\&.getTotN());
+76                 }
+77                 
+78                 return MOVE_FAILURE;
+79 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

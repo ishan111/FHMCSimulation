@@ -1,0 +1,342 @@
+\hypertarget{classswap_particles}{}\section{swap\+Particles Class Reference}
+\label{classswap_particles}\index{swap\+Particles@{swap\+Particles}}
+
+
+{\ttfamily \#include $<$swap.\+h$>$}
+
+Inheritance diagram for swap\+Particles\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classswap_particles}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classswap_particles_a1c476913d5b129db6daf5a1a1a5dd209}{swap\+Particles} ()
+\item 
+\hyperlink{classswap_particles_aac7a7fb48c4ffd3809221fac7a7800a5}{swap\+Particles} (const int type\+Index1, const int type\+Index2, const std\+::string tag)
+\begin{DoxyCompactList}\small\item\em Instantiate a new move, also give a name which is the combination of a user-\/defined tag + the particle indices it operates on. \end{DoxyCompactList}\item 
+int \hyperlink{classswap_particles_ad8ca574f8e5308b6f0a5f3c7c2799209}{make} (\hyperlink{classsim_system}{sim\+System} \&sys)
+\begin{DoxyCompactList}\small\item\em Swap two particles of different types in the system. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 12 of file swap.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classswap_particles_a1c476913d5b129db6daf5a1a1a5dd209}{}\index{swap\+Particles@{swap\+Particles}!swap\+Particles@{swap\+Particles}}
+\index{swap\+Particles@{swap\+Particles}!swap\+Particles@{swap\+Particles}}
+\subsubsection[{swap\+Particles()}]{\setlength{\rightskip}{0pt plus 5cm}swap\+Particles\+::swap\+Particles (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classswap_particles_a1c476913d5b129db6daf5a1a1a5dd209}
+
+
+Definition at line 14 of file swap.\+h.
+
+
+\begin{DoxyCode}
+14 \{\};
+\end{DoxyCode}
+\hypertarget{classswap_particles_aac7a7fb48c4ffd3809221fac7a7800a5}{}\index{swap\+Particles@{swap\+Particles}!swap\+Particles@{swap\+Particles}}
+\index{swap\+Particles@{swap\+Particles}!swap\+Particles@{swap\+Particles}}
+\subsubsection[{swap\+Particles(const int type\+Index1, const int type\+Index2, const std\+::string tag)}]{\setlength{\rightskip}{0pt plus 5cm}swap\+Particles\+::swap\+Particles (
+\begin{DoxyParamCaption}
+\item[{const int}]{type\+Index1, }
+\item[{const int}]{type\+Index2, }
+\item[{const std\+::string}]{tag}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classswap_particles_aac7a7fb48c4ffd3809221fac7a7800a5}
+
+
+Instantiate a new move, also give a name which is the combination of a user-\/defined tag + the particle indices it operates on. 
+
+
+
+Definition at line 15 of file swap.\+h.
+
+
+
+References mc\+Move\+::name\+\_\+, and mc\+Move\+::type\+Index\+\_\+.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classswap_particles_ad8ca574f8e5308b6f0a5f3c7c2799209}{}\index{swap\+Particles@{swap\+Particles}!make@{make}}
+\index{make@{make}!swap\+Particles@{swap\+Particles}}
+\subsubsection[{make(sim\+System \&sys)}]{\setlength{\rightskip}{0pt plus 5cm}int swap\+Particles\+::make (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\+System} \&}]{sys}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classswap_particles_ad8ca574f8e5308b6f0a5f3c7c2799209}
+
+
+Swap two particles of different types in the system. 
+
+All other information is stored in the \hyperlink{classsim_system}{sim\+System} object.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em sys} & System object to attempt to swap particles in.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+M\+O\+V\+E\+\_\+\+S\+U\+C\+C\+E\+S\+S if particles are swapped, otherwise M\+O\+V\+E\+\_\+\+F\+A\+I\+L\+U\+R\+E if not. Will throw exceptions if there was an error. 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classmc_move_a2e377a628f9ecee5422fc8967d4924eb}{mc\+Move}.
+
+
+
+Definition at line 10 of file swap.\+cpp.
+
+
+
+References sim\+System\+::atoms, sim\+System\+::beta(), sim\+System\+::box(), calculate\+Bias(), sim\+System\+::delete\+Atom(), sim\+System\+::get\+Neighbor\+Positions(), sim\+System\+::get\+Tot\+N(), sim\+System\+::get\+W\+A\+L\+A\+Bias(), sim\+System\+::increment\+Energy(), sim\+System\+::insert\+Atom(), M\+O\+V\+E\+\_\+\+F\+A\+I\+L\+U\+R\+E, M\+O\+V\+E\+\_\+\+S\+U\+C\+C\+E\+S\+S, sim\+System\+::n\+Species(), sim\+System\+::num\+Species, atom\+::pos, sim\+System\+::ppot, rng(), R\+N\+G\+\_\+\+S\+E\+E\+D, mc\+Move\+::type\+Index\+\_\+, wala\+::update(), sim\+System\+::use\+W\+A\+L\+A, and custom\+Exception\+::what().
+
+
+\begin{DoxyCode}
+10                                        \{
+11                 \textcolor{comment}{// Choose an atom of each type to try to exchange}
+12                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}] < 1 || sys.
+      \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndex2\_] < 1) \{
+13                                 \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
+14                 \}
+15                 \textcolor{keyword}{const} \textcolor{keywordtype}{int} a1 = (int) floor(\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) * sys.
+      \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]);
+16                 \textcolor{keyword}{const} \textcolor{keywordtype}{int} a2 = (int) floor(\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) * sys.
+      \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndex2\_]);
+17                 \hyperlink{classatom}{atom} a1\_orig = sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][a1];
+18                 \hyperlink{classatom}{atom} a2\_orig = sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex2\_][a2];
+19 
+20                 \textcolor{keyword}{const} std::vector < double > box = sys.\hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}();
+21                 \textcolor{keywordtype}{double} V = 1.0;
+22                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box.size(); ++i) \{
+23         V *= box[i];
+24     \}
+25                     
+26                 \textcolor{comment}{// Swapping = delete both, one at a time, then add both at opposite positions, one at a
+       time}
+27                 \textcolor{comment}{// Delete a1}
+28     \textcolor{keywordtype}{double} delEnergy = 0.0;
+29     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
+30         \textcolor{comment}{// get positions of neighboring atoms around a1}
+31         std::vector < std::vector< double > > neighborPositions = sys.
+      \hyperlink{classsim_system_a7ac49b2311cd8230df8d078a9d897b35}{getNeighborPositions}(spec, \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}, &sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[
+      \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][a1]);
+32         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborPositions.size(); ++i) \{
+33             \textcolor{keywordflow}{try} \{
+34                                                                 delEnergy += sys.
+      \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->energy(neighborPositions[i], sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[
+      \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][a1].pos, box);
+35                                                 \}
+36                                                 \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+37                                                                 std::string a = \textcolor{stringliteral}{"Cannot delete because of
+       energy error: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+38                                                                 \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (a+b);
+39                                                 \}
+40         \}
+41         \textcolor{comment}{// add tail correction to potential energy -- only enable for fluid phase simulations}
+42 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+43         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->useTailCorrection) \{
+44                 \textcolor{keywordflow}{if} (spec == typeIndex\_) \{
+45                                                                 delEnergy += sys.
+      \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection((sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]-1)/V);
+46                                                 \}
+47                                                 \textcolor{keywordflow}{else} \{
+48                                                                 delEnergy += sys.
+      \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection((sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec])/V);
+49                                                 \}
+50                                 \}
+51 \textcolor{preprocessor}{#endif}
+52     \}
+53     
+54     \textcolor{comment}{// Remove a1 from cell lists, etc.}
+55     \textcolor{keywordflow}{try} \{
+56                 sys.\hyperlink{classsim_system_acabf4fc5b5b90bba62e1449ddb3646c6}{deleteAtom}(typeIndex\_, a1, \textcolor{keyword}{true});
+57     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+58                 std::string a = \textcolor{stringliteral}{"Failed to delete atom during swapping: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+59                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+60     \}
+61     
+62                 \textcolor{comment}{// Delete a2}
+63     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
+64         \textcolor{comment}{// get positions of neighboring atoms around a2}
+65         std::vector < std::vector< double > > neighborPositions = sys.
+      \hyperlink{classsim_system_a7ac49b2311cd8230df8d078a9d897b35}{getNeighborPositions}(spec, typeIndex2\_, &sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex2\_][a2]);
+66         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborPositions.size(); ++i) \{
+67             \textcolor{keywordflow}{try} \{
+68                                                                 delEnergy += sys.
+      \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][typeIndex2\_]->energy(neighborPositions[i], sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex2\_][a2].pos, box);
+69                                                 \}
+70                                                 \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+71                                                                 std::string a = \textcolor{stringliteral}{"Cannot delete because of
+       energy error: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+72                                                                 \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (a+b);
+73                                                 \}
+74         \}
+75         \textcolor{comment}{// add tail correction to potential energy -- only enable for fluid phase simulations}
+76 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+77         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][typeIndex2\_]->useTailCorrection) \{
+78                 \textcolor{keywordflow}{if} (spec == typeIndex2\_) \{
+79                                                                 delEnergy += sys.
+      \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][typeIndex2\_]->tailCorrection((sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]-1)/V);
+80                                                 \}
+81                                                 \textcolor{keywordflow}{else} \{
+82                                                                 delEnergy += sys.
+      \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][typeIndex2\_]->tailCorrection((sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec])/V);
+83                                                 \}
+84                                 \}
+85 \textcolor{preprocessor}{#endif}
+86     \}
+87 
+88     \textcolor{comment}{// Remove a2 from cell lists, etc.}
+89     \textcolor{keywordflow}{try} \{
+90                 sys.\hyperlink{classsim_system_acabf4fc5b5b90bba62e1449ddb3646c6}{deleteAtom}(typeIndex2\_, a2, \textcolor{keyword}{true});
+91     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+92                 std::string a = \textcolor{stringliteral}{"Failed to delete atom during swapping: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+93                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+94     \}
+95 
+96                 \textcolor{comment}{// Insert a1 at a2's original location}
+97     \textcolor{keywordtype}{double} insEnergy = 0.0;
+98     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
+99                 \textcolor{comment}{// get positions of neighboring atoms around a1's (a2's) new (old) location}
+100                 std::vector < std::vector < double > > neighborPositions = sys.
+      \hyperlink{classsim_system_a7ac49b2311cd8230df8d078a9d897b35}{getNeighborPositions}(spec, typeIndex\_, &a2\_orig);
+101         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborPositions.size(); ++i) \{
+102                                                 \textcolor{keywordflow}{try} \{
+103                                                                 insEnergy += sys.
+      \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->energy(neighborPositions[i], a2\_orig.\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, box);        
+104                                                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+105                                                                 std::string a = \textcolor{stringliteral}{"Cannot insert because of
+       energy error: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+106                                                                 \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (a+b);
+107                                                 \}
+108         \}
+109         \textcolor{comment}{// add tail correction to potential energy -- only enable for fluid phase simulations}
+110 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+111         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][typeIndex\_]->useTailCorrection)\{
+112                                                 insEnergy += sys.\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][
+      \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection(sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]/V);
+113                                 \}
+114 \textcolor{preprocessor}{#endif}
+115     \}
+116     
+117     \textcolor{comment}{// Add a1 to the system}
+118     \textcolor{keywordflow}{try} \{
+119                 sys.\hyperlink{classsim_system_a6c1e86f585f3a52aa82b6394ffbf1c6a}{insertAtom}(typeIndex\_, &a2\_orig);
+120     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+121                 std::string a = \textcolor{stringliteral}{"Failed to insert atom during swapping: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+122                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+123     \}
+124 
+125                 \textcolor{comment}{// Insert a2 at a1's original location}
+126     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
+127                 \textcolor{comment}{// get positions of neighboring atoms around a2's (a1's) new (old) location}
+128                 std::vector < std::vector < double > > neighborPositions = sys.
+      \hyperlink{classsim_system_a7ac49b2311cd8230df8d078a9d897b35}{getNeighborPositions}(spec, typeIndex2\_, &a1\_orig);
+129         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborPositions.size(); ++i) \{
+130                                                 \textcolor{keywordflow}{try} \{
+131                                                                 insEnergy += sys.
+      \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][typeIndex2\_]->energy(neighborPositions[i], a1\_orig.\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, box); 
+132                                                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+133                                                                 std::string a = \textcolor{stringliteral}{"Cannot insert because of
+       energy error: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+134                                                                 \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (a+b);
+135                                                 \}
+136         \}
+137         \textcolor{comment}{// add tail correction to potential energy -- only enable for fluid phase simulations}
+138 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+139         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][typeIndex2\_]->useTailCorrection)\{
+140                                                 insEnergy += sys.\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][typeIndex2\_]->
+      tailCorrection(sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]/V);
+141                                 \}
+142 \textcolor{preprocessor}{#endif}
+143     \}
+144 
+145     \textcolor{comment}{// Add a2 to the system}
+146     \textcolor{keywordflow}{try} \{
+147                 sys.\hyperlink{classsim_system_a6c1e86f585f3a52aa82b6394ffbf1c6a}{insertAtom}(typeIndex2\_, &a1\_orig);
+148     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+149                 std::string a = \textcolor{stringliteral}{"Failed to insert atom during swapping: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+150                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+151     \}
+152        
+153     \textcolor{comment}{// Biasing}
+154     \textcolor{keyword}{const} \textcolor{keywordtype}{double} p\_u = exp(-sys.\hyperlink{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{beta}()*(insEnergy - delEnergy));
+155     \textcolor{keywordtype}{double} bias = \hyperlink{system_8cpp_ab912bbb9fc9045954cf1b3ccb286a55c}{calculateBias}(sys, sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), p\_u); \textcolor{comment}{// sys.numSpecies already
+       contains the currently proposed modifications}
+156     
+157                 \textcolor{keywordflow}{if} (\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) < p\_u*bias) \{
+158                    sys.\hyperlink{classsim_system_a6ad31c08955b80873f865b3069618dcb}{incrementEnergy}(insEnergy - delEnergy);   
+159                                 
+160                                 \textcolor{comment}{// update Wang-Landau bias, if used}
+161                                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+162                                                 sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->
+      \hyperlink{classwala_a5eb2622be6a9e89f5e59ba0b15aca4bd}{update}(sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}());
+163                                 \}
+164                                                 
+165         \textcolor{keywordflow}{return} \hyperlink{moves_8h_ae8285cbddc5d21f73f49dcbad82a775a}{MOVE\_SUCCESS};
+166     \}
+167                 
+168                 \textcolor{comment}{// Undo to the swap if move was rejected}
+169                 \textcolor{comment}{// The "new" atoms are now at the ends of each of the vector for each type}
+170                 \textcolor{keywordflow}{try} \{
+171                 sys.\hyperlink{classsim_system_acabf4fc5b5b90bba62e1449ddb3646c6}{deleteAtom}(typeIndex\_, sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndex\_]-1);
+172     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+173                 std::string a = \textcolor{stringliteral}{"Failed to delete atom during swapping: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+174                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+175     \}
+176     \textcolor{keywordflow}{try} \{
+177         sys.\hyperlink{classsim_system_acabf4fc5b5b90bba62e1449ddb3646c6}{deleteAtom}(typeIndex2\_, sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndex2\_]-1);
+178     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+179                 std::string a = \textcolor{stringliteral}{"Failed to delete atom during swapping: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+180         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+181     \}
+182     \textcolor{keywordflow}{try} \{
+183                 sys.\hyperlink{classsim_system_a6c1e86f585f3a52aa82b6394ffbf1c6a}{insertAtom}(typeIndex\_, &a1\_orig);
+184     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+185         std::string a = \textcolor{stringliteral}{"Failed to insert atom during swapping: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+186         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+187     \}
+188     \textcolor{keywordflow}{try} \{
+189                 sys.\hyperlink{classsim_system_a6c1e86f585f3a52aa82b6394ffbf1c6a}{insertAtom}(typeIndex2\_, &a2\_orig);
+190     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+191         std::string a = \textcolor{stringliteral}{"Failed to insert atom during swapping: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+192         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+193     \}
+194         
+195                 \textcolor{comment}{// update Wang-Landau bias (even if moved failed), if used}
+196                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+197                                 sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_a5eb2622be6a9e89f5e59ba0b15aca4bd}{update}(sys.
+      \hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}());
+198                 \}
+199                 
+200                 \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
+201 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{swap_8h}{swap.\+h}\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{swap_8cpp}{swap.\+cpp}\end{DoxyCompactItemize}

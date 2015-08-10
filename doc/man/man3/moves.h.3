@@ -1,0 +1,66 @@
+.TH "/Users/nam4/Desktop/omcs/src/moves.h" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/Users/nam4/Desktop/omcs/src/moves.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <vector>\fP
+.br
+\fC#include <string>\fP
+.br
+\fC#include <boost/lexical_cast\&.hpp>\fP
+.br
+\fC#include 'system\&.h'\fP
+.br
+\fC#include 'utilities\&.h'\fP
+.br
+\fC#include 'global\&.h'\fP
+.br
+
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBmcMove\fP"
+.br
+.RI "\fIVirtual base class for all Monte Carlo moves\&. \fP"
+.ti -1c
+.RI "class \fBmoves\fP"
+.br
+.RI "\fIClass that tracks and decides which moves whould be made\&. \fP"
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBMOVE_SUCCESS\fP   1"
+.br
+.RI "\fIReturned by \fBmcMove\fP if move was successful\&. \fP"
+.ti -1c
+.RI "#define \fBMOVE_FAILURE\fP   0"
+.br
+.RI "\fIReturned by \fBmcMove\fP if move was not successful\&. \fP"
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define MOVE_FAILURE   0"
+
+.PP
+Returned by \fBmcMove\fP if move was not successful\&. 
+.PP
+Definition at line 5 of file moves\&.h\&.
+.PP
+Referenced by deleteParticle::make(), translateParticle::make(), swapParticles::make(), and insertParticle::make()\&.
+.SS "#define MOVE_SUCCESS   1"
+
+.PP
+Returned by \fBmcMove\fP if move was successful\&. 
+.PP
+Definition at line 4 of file moves\&.h\&.
+.PP
+Referenced by deleteParticle::make(), translateParticle::make(), swapParticles::make(), and insertParticle::make()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

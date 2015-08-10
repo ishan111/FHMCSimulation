@@ -1,0 +1,90 @@
+\hypertarget{classatom}{}\section{atom Class Reference}
+\label{classatom}\index{atom@{atom}}
+
+
+Atom class.  
+
+
+
+
+{\ttfamily \#include $<$atom.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classatom_a2b63fdf85f714880c6af65b849bdb325}{atom} ()
+\item 
+\hyperlink{classatom_a92f7ce8ce0c3e896e9455a7ceb5e7f85}{$\sim$atom} ()
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ double $>$ \hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}
+\begin{DoxyCompactList}\small\item\em 3\+D position \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Atom class. 
+
+Definition at line 9 of file atom.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classatom_a2b63fdf85f714880c6af65b849bdb325}{}\index{atom@{atom}!atom@{atom}}
+\index{atom@{atom}!atom@{atom}}
+\subsubsection[{atom()}]{\setlength{\rightskip}{0pt plus 5cm}atom\+::atom (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classatom_a2b63fdf85f714880c6af65b849bdb325}
+
+
+Definition at line 11 of file atom.\+h.
+
+
+
+References pos.
+
+
+\begin{DoxyCode}
+11 \{ \hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}.resize(3, 0); \}
+\end{DoxyCode}
+\hypertarget{classatom_a92f7ce8ce0c3e896e9455a7ceb5e7f85}{}\index{atom@{atom}!````~atom@{$\sim$atom}}
+\index{````~atom@{$\sim$atom}!atom@{atom}}
+\subsubsection[{$\sim$atom()}]{\setlength{\rightskip}{0pt plus 5cm}atom\+::$\sim$atom (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classatom_a92f7ce8ce0c3e896e9455a7ceb5e7f85}
+
+
+Definition at line 12 of file atom.\+h.
+
+
+\begin{DoxyCode}
+12 \{\};
+\end{DoxyCode}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{}\index{atom@{atom}!pos@{pos}}
+\index{pos@{pos}!atom@{atom}}
+\subsubsection[{pos}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ double $>$ atom\+::pos}\label{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}
+
+
+3\+D position 
+
+
+
+Definition at line 12 of file atom.\+h.
+
+
+
+Referenced by atom(), sim\+System\+::get\+Neighbor\+Positions(), cell\+List\+::insert\+Particle(), insert\+Particle\+::make(), swap\+Particles\+::make(), cell\+List\+::swap\+And\+Delete\+Particle(), and cell\+List\+::translate\+Particle().
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{atom_8h}{atom.\+h}\end{DoxyCompactItemize}

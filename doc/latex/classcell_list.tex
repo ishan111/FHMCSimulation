@@ -1,0 +1,568 @@
+\hypertarget{classcell_list}{}\section{cell\+List Class Reference}
+\label{classcell_list}\index{cell\+List@{cell\+List}}
+
+
+\hyperlink{classcell_list}{cell\+List} class.  
+
+
+
+
+{\ttfamily \#include $<$cell\+List.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcell_list_abae34854b8fcdeaaf2dc8de2ee47de94}{cell\+List} (std\+::vector$<$ double $>$, double, std\+::vector$<$ \hyperlink{classatom}{atom} $\ast$ $>$)
+\item 
+void \hyperlink{classcell_list_a58c091eb874dd1b88558bb92424e5ef2}{sort\+Into\+Cells} (std\+::vector$<$ \hyperlink{classatom}{atom} $\ast$ $>$)
+\item 
+void \hyperlink{classcell_list_ac4400cd9b80c3199e6482e8bcb1990c6}{sort\+Into\+Cells} (std\+::vector$<$ \hyperlink{classatom}{atom} $>$ $\ast$)
+\item 
+void \hyperlink{classcell_list_a56c0012eed483e47248f9065bfc70fce}{insert\+Particle} (\hyperlink{classatom}{atom} $\ast$)
+\item 
+void \hyperlink{classcell_list_a31caca1e8dd05c33215ac7495d55aeea}{swap\+And\+Delete\+Particle} (\hyperlink{classatom}{atom} $\ast$, \hyperlink{classatom}{atom} $\ast$)
+\item 
+void \hyperlink{classcell_list_a0d77368abdd5a4665ca2302b9a20509b}{translate\+Particle} (\hyperlink{classatom}{atom} $\ast$, std\+::vector$<$ double $>$)
+\item 
+int \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calc\+Index} (int, int, int)
+\item 
+int \hyperlink{classcell_list_a9a5f8f84d17a8f0f7d3791aa64b75803}{calc\+Index\+S} (int, int, int)
+\item 
+int \hyperlink{classcell_list_a01dbd9a86ec24293d369be8d67b9df70}{calc\+Index} (double, double, double)
+\item 
+int \hyperlink{classcell_list_a7df926ebf382f281d15935550ffcba64}{calc\+Index\+S} (double, double, double)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ double $>$ \hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cell\+Size}
+\item 
+std\+::vector$<$ double $>$ \hyperlink{classcell_list_ae65748b80d5e06edfa22daaf569f2757}{box}
+\item 
+int \hyperlink{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}{cell\+Count\+X}
+\item 
+int \hyperlink{classcell_list_aa0c942e7b0b61cda1d688ffc96e8f1c8}{cell\+Count\+Y}
+\item 
+int \hyperlink{classcell_list_a2b506715c6ded7cb9fadf994f4f01785}{cell\+Count\+Z}
+\item 
+int \hyperlink{classcell_list_a619d607f8569876cead1bdfad239d4b2}{cell\+Count\+X\+Y}
+\item 
+int \hyperlink{classcell_list_a6a695015c180229cd491db58c6e18ff4}{cell\+Count}
+\item 
+std\+::vector$<$ std\+::vector$<$ \hyperlink{classatom}{atom} $\ast$ $>$ $>$ \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}
+\item 
+std\+::vector$<$ std\+::vector$<$ unsigned int $>$ $>$ \hyperlink{classcell_list_ada607886d0e5a20d710dde694d6d989f}{neighbours}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classcell_list}{cell\+List} class. 
+
+Definition at line 15 of file cell\+List.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classcell_list_abae34854b8fcdeaaf2dc8de2ee47de94}{}\index{cell\+List@{cell\+List}!cell\+List@{cell\+List}}
+\index{cell\+List@{cell\+List}!cell\+List@{cell\+List}}
+\subsubsection[{cell\+List(std\+::vector$<$ double $>$, double, std\+::vector$<$ atom $\ast$ $>$)}]{\setlength{\rightskip}{0pt plus 5cm}cell\+List\+::cell\+List (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ double $>$}]{\+\_\+box, }
+\item[{double}]{\+\_\+cell\+Size, }
+\item[{std\+::vector$<$ {\bf atom} $\ast$ $>$}]{\+\_\+atoms}
+\end{DoxyParamCaption}
+)}\label{classcell_list_abae34854b8fcdeaaf2dc8de2ee47de94}
+
+
+Definition at line 3 of file cell\+List.\+cpp.
+
+
+
+References box, cell\+Count, cell\+Count\+X, cell\+Count\+X\+Y, cell\+Count\+Y, cell\+Count\+Z, cells, cell\+Size, neighbours, and sort\+Into\+Cells().
+
+
+\begin{DoxyCode}
+3                                                                                           \{
+4                 \hyperlink{classcell_list_ae65748b80d5e06edfa22daaf569f2757}{box} = \_box;
+5                                 
+6                 \hyperlink{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}{cellCountX} = floor(\_box[0]/\_cellSize);
+7                 \hyperlink{classcell_list_aa0c942e7b0b61cda1d688ffc96e8f1c8}{cellCountY} = floor(\_box[1]/\_cellSize);
+8                 \hyperlink{classcell_list_a2b506715c6ded7cb9fadf994f4f01785}{cellCountZ} = floor(\_box[2]/\_cellSize);
+9                 \hyperlink{classcell_list_a619d607f8569876cead1bdfad239d4b2}{cellCountXY} = \hyperlink{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}{cellCountX}*\hyperlink{classcell_list_aa0c942e7b0b61cda1d688ffc96e8f1c8}{cellCountY};
+10                 \hyperlink{classcell_list_a6a695015c180229cd491db58c6e18ff4}{cellCount} = \hyperlink{classcell_list_a619d607f8569876cead1bdfad239d4b2}{cellCountXY}*\hyperlink{classcell_list_a2b506715c6ded7cb9fadf994f4f01785}{cellCountZ};
+11                 
+12                 \hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}.resize(3);
+13                 \hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}[0] = \_box[0]/\hyperlink{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}{cellCountX};
+14                 \hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}[1] = \_box[1]/\hyperlink{classcell_list_aa0c942e7b0b61cda1d688ffc96e8f1c8}{cellCountY};
+15                 \hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}[2] = \_box[2]/\hyperlink{classcell_list_a2b506715c6ded7cb9fadf994f4f01785}{cellCountZ};
+16 
+17                 \textcolor{comment}{// init neighbour list}
+18                 \hyperlink{classcell_list_ada607886d0e5a20d710dde694d6d989f}{neighbours}.assign(\hyperlink{classcell_list_a6a695015c180229cd491db58c6e18ff4}{cellCount}, std::vector < unsigned int > (26));
+19                 initNeighbours();
+20                 
+21                 \textcolor{comment}{// init cell list}
+22                 \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}.assign(\hyperlink{classcell_list_a6a695015c180229cd491db58c6e18ff4}{cellCount}, std::vector < atom* > (0));
+23                 
+24                 \textcolor{comment}{// clear all cells}
+25                 \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} reserveCount = ceil(\hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}[0]*
+      \hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}[1]*\hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}[2]);
+26                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}.size(); i++) \{
+27                                 \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[i].reserve(reserveCount);
+28                                 \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[i].clear();
+29                 \}
+30                 
+31                 \textcolor{keywordflow}{if} (\_atoms.size() > 0) \{
+32                                 \textcolor{comment}{//std::cout << "Sorting particles into cells." << std::endl;}
+33                                 \hyperlink{classcell_list_a58c091eb874dd1b88558bb92424e5ef2}{sortIntoCells}(\_atoms);
+34                 \}
+35 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classcell_list_aa6b843131cd487164a137571c7343cab}{}\index{cell\+List@{cell\+List}!calc\+Index@{calc\+Index}}
+\index{calc\+Index@{calc\+Index}!cell\+List@{cell\+List}}
+\subsubsection[{calc\+Index(int, int, int)}]{\setlength{\rightskip}{0pt plus 5cm}int cell\+List\+::calc\+Index (
+\begin{DoxyParamCaption}
+\item[{int}]{k, }
+\item[{int}]{l, }
+\item[{int}]{m}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classcell_list_aa6b843131cd487164a137571c7343cab}
+
+
+Definition at line 41 of file cell\+List.\+h.
+
+
+
+References cell\+Count\+X, and cell\+Count\+X\+Y.
+
+
+
+Referenced by sim\+System\+::get\+Neighbor\+Positions(), insert\+Particle(), sort\+Into\+Cells(), swap\+And\+Delete\+Particle(), and translate\+Particle().
+
+
+\begin{DoxyCode}
+41                                                    \{
+42                 \textcolor{keywordflow}{return} (k + l*\hyperlink{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}{cellCountX} + m*\hyperlink{classcell_list_a619d607f8569876cead1bdfad239d4b2}{cellCountXY});
+43 \}
+\end{DoxyCode}
+\hypertarget{classcell_list_a01dbd9a86ec24293d369be8d67b9df70}{}\index{cell\+List@{cell\+List}!calc\+Index@{calc\+Index}}
+\index{calc\+Index@{calc\+Index}!cell\+List@{cell\+List}}
+\subsubsection[{calc\+Index(double, double, double)}]{\setlength{\rightskip}{0pt plus 5cm}int cell\+List\+::calc\+Index (
+\begin{DoxyParamCaption}
+\item[{double}]{\+\_\+x, }
+\item[{double}]{\+\_\+y, }
+\item[{double}]{\+\_\+z}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classcell_list_a01dbd9a86ec24293d369be8d67b9df70}
+
+
+Definition at line 69 of file cell\+List.\+h.
+
+
+
+References cell\+Count\+X, cell\+Count\+X\+Y, and cell\+Size.
+
+
+\begin{DoxyCode}
+69                                                                \{
+70                 \textcolor{keywordflow}{return} (floor(\_x/\hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}[0]) + floor(\_y/\hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}[1])*
+      \hyperlink{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}{cellCountX} +floor(\_z/\hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}[2])*\hyperlink{classcell_list_a619d607f8569876cead1bdfad239d4b2}{cellCountXY});
+71 \}
+\end{DoxyCode}
+\hypertarget{classcell_list_a9a5f8f84d17a8f0f7d3791aa64b75803}{}\index{cell\+List@{cell\+List}!calc\+Index\+S@{calc\+Index\+S}}
+\index{calc\+Index\+S@{calc\+Index\+S}!cell\+List@{cell\+List}}
+\subsubsection[{calc\+Index\+S(int, int, int)}]{\setlength{\rightskip}{0pt plus 5cm}int cell\+List\+::calc\+Index\+S (
+\begin{DoxyParamCaption}
+\item[{int}]{\+\_\+k, }
+\item[{int}]{\+\_\+l, }
+\item[{int}]{\+\_\+m}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classcell_list_a9a5f8f84d17a8f0f7d3791aa64b75803}
+
+
+Definition at line 46 of file cell\+List.\+h.
+
+
+
+References cell\+Count\+X, cell\+Count\+X\+Y, cell\+Count\+Y, and cell\+Count\+Z.
+
+
+\begin{DoxyCode}
+46                                                        \{
+47                 \textcolor{keywordtype}{int} k = \_k;
+48                 \textcolor{keywordtype}{int} l = \_l;
+49                 \textcolor{keywordtype}{int} m = \_m;
+50 
+51                 \textcolor{keywordflow}{if} (k >= \hyperlink{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}{cellCountX})
+52                                 k -= \hyperlink{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}{cellCountX};
+53                 \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (k < 0)
+54                                 k += \hyperlink{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}{cellCountX};                      
+55                                 
+56                 \textcolor{keywordflow}{if} (l >= \hyperlink{classcell_list_aa0c942e7b0b61cda1d688ffc96e8f1c8}{cellCountY})
+57                                 l -= \hyperlink{classcell_list_aa0c942e7b0b61cda1d688ffc96e8f1c8}{cellCountY};
+58                 \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (l < 0)
+59                                 l += \hyperlink{classcell_list_aa0c942e7b0b61cda1d688ffc96e8f1c8}{cellCountY};                      
+60 
+61                 \textcolor{keywordflow}{if} (m >= \hyperlink{classcell_list_a2b506715c6ded7cb9fadf994f4f01785}{cellCountZ})
+62                                 m -= \hyperlink{classcell_list_a2b506715c6ded7cb9fadf994f4f01785}{cellCountZ};
+63                 \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (m < 0)
+64                                 m += \hyperlink{classcell_list_a2b506715c6ded7cb9fadf994f4f01785}{cellCountZ};
+65                                 
+66                 \textcolor{keywordflow}{return} (k + l*\hyperlink{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}{cellCountX} + m*\hyperlink{classcell_list_a619d607f8569876cead1bdfad239d4b2}{cellCountXY});
+67 \}
+\end{DoxyCode}
+\hypertarget{classcell_list_a7df926ebf382f281d15935550ffcba64}{}\index{cell\+List@{cell\+List}!calc\+Index\+S@{calc\+Index\+S}}
+\index{calc\+Index\+S@{calc\+Index\+S}!cell\+List@{cell\+List}}
+\subsubsection[{calc\+Index\+S(double, double, double)}]{\setlength{\rightskip}{0pt plus 5cm}int cell\+List\+::calc\+Index\+S (
+\begin{DoxyParamCaption}
+\item[{double}]{\+\_\+x, }
+\item[{double}]{\+\_\+y, }
+\item[{double}]{\+\_\+z}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classcell_list_a7df926ebf382f281d15935550ffcba64}
+
+
+Definition at line 74 of file cell\+List.\+h.
+
+
+
+References box, cell\+Count\+X, cell\+Count\+X\+Y, and cell\+Size.
+
+
+\begin{DoxyCode}
+74                                                                 \{
+75                 \textcolor{keywordtype}{double} x = \_x;
+76                 \textcolor{keywordtype}{double} y = \_y;
+77                 \textcolor{keywordtype}{double} z = \_z;
+78 
+79                 \textcolor{keywordflow}{if} (x >= \hyperlink{classcell_list_ae65748b80d5e06edfa22daaf569f2757}{box}[0])
+80                                 x -= \hyperlink{classcell_list_ae65748b80d5e06edfa22daaf569f2757}{box}[0];
+81                 \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (x < 0.0)
+82                                 x += \hyperlink{classcell_list_ae65748b80d5e06edfa22daaf569f2757}{box}[0];                 
+83                                 
+84                 \textcolor{keywordflow}{if} (y >= \hyperlink{classcell_list_ae65748b80d5e06edfa22daaf569f2757}{box}[1])
+85                                 y -= \hyperlink{classcell_list_ae65748b80d5e06edfa22daaf569f2757}{box}[1];
+86                 \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (y < 0.0)
+87                                 y += \hyperlink{classcell_list_ae65748b80d5e06edfa22daaf569f2757}{box}[1];                                 
+88 
+89                 \textcolor{keywordflow}{if} (z >= \hyperlink{classcell_list_ae65748b80d5e06edfa22daaf569f2757}{box}[2])
+90                                 z -= \hyperlink{classcell_list_ae65748b80d5e06edfa22daaf569f2757}{box}[2];
+91                 \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (z < 0.0)
+92                                 z += \hyperlink{classcell_list_ae65748b80d5e06edfa22daaf569f2757}{box}[2]; 
+93                 
+94                 \textcolor{keywordflow}{return} (floor(x/\hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}[0]) + floor(y/\hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}[1])*
+      \hyperlink{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}{cellCountX} +floor(z/\hyperlink{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{cellSize}[2])*\hyperlink{classcell_list_a619d607f8569876cead1bdfad239d4b2}{cellCountXY});
+95 \}
+\end{DoxyCode}
+\hypertarget{classcell_list_a56c0012eed483e47248f9065bfc70fce}{}\index{cell\+List@{cell\+List}!insert\+Particle@{insert\+Particle}}
+\index{insert\+Particle@{insert\+Particle}!cell\+List@{cell\+List}}
+\subsubsection[{insert\+Particle(atom $\ast$)}]{\setlength{\rightskip}{0pt plus 5cm}void cell\+List\+::insert\+Particle (
+\begin{DoxyParamCaption}
+\item[{{\bf atom} $\ast$}]{\+\_\+a}
+\end{DoxyParamCaption}
+)}\label{classcell_list_a56c0012eed483e47248f9065bfc70fce}
+
+
+Definition at line 95 of file cell\+List.\+cpp.
+
+
+
+References calc\+Index(), cells, and atom\+::pos.
+
+
+
+Referenced by sim\+System\+::insert\+Atom().
+
+
+\begin{DoxyCode}
+95                                        \{
+96                 \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} index = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_a->
+      \hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]);
+97                 \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[index].push\_back(\_a);
+98 \}
+\end{DoxyCode}
+\hypertarget{classcell_list_a58c091eb874dd1b88558bb92424e5ef2}{}\index{cell\+List@{cell\+List}!sort\+Into\+Cells@{sort\+Into\+Cells}}
+\index{sort\+Into\+Cells@{sort\+Into\+Cells}!cell\+List@{cell\+List}}
+\subsubsection[{sort\+Into\+Cells(std\+::vector$<$ atom $\ast$ $>$)}]{\setlength{\rightskip}{0pt plus 5cm}void cell\+List\+::sort\+Into\+Cells (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ {\bf atom} $\ast$ $>$}]{\+\_\+atoms}
+\end{DoxyParamCaption}
+)}\label{classcell_list_a58c091eb874dd1b88558bb92424e5ef2}
+
+
+Definition at line 73 of file cell\+List.\+cpp.
+
+
+
+References calc\+Index(), and cells.
+
+
+
+Referenced by cell\+List().
+
+
+\begin{DoxyCode}
+73                                                         \{
+74                 \textcolor{comment}{// clear all cells}
+75                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}.size(); i++)
+76                                 \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[i].clear();
+77 
+78                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i=0; i<\_atoms.size(); i++) \{
+79                                 \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} index = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_atoms[i]->pos[0], \_atoms[i]->pos
+      [1], \_atoms[i]->pos[2]);
+80                                 \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[index].push\_back(\_atoms[i]);
+81                 \}
+82 \}
+\end{DoxyCode}
+\hypertarget{classcell_list_ac4400cd9b80c3199e6482e8bcb1990c6}{}\index{cell\+List@{cell\+List}!sort\+Into\+Cells@{sort\+Into\+Cells}}
+\index{sort\+Into\+Cells@{sort\+Into\+Cells}!cell\+List@{cell\+List}}
+\subsubsection[{sort\+Into\+Cells(std\+::vector$<$ atom $>$ $\ast$)}]{\setlength{\rightskip}{0pt plus 5cm}void cell\+List\+::sort\+Into\+Cells (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ {\bf atom} $>$ $\ast$}]{\+\_\+atoms}
+\end{DoxyParamCaption}
+)}\label{classcell_list_ac4400cd9b80c3199e6482e8bcb1990c6}
+
+
+Definition at line 84 of file cell\+List.\+cpp.
+
+
+
+References calc\+Index(), and cells.
+
+
+\begin{DoxyCode}
+84                                                         \{
+85                 \textcolor{comment}{// clear all cells}
+86                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}.size(); i++)
+87                                 \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[i].clear();
+88 
+89                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \_atoms->size(); i++) \{
+90                                 \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} index = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_atoms->at(i).pos[0], \_atoms->at(
+      i).pos[1], \_atoms->at(i).pos[2]);
+91                                 \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[index].push\_back(&\_atoms->at(i));
+92                 \}
+93 \}
+\end{DoxyCode}
+\hypertarget{classcell_list_a31caca1e8dd05c33215ac7495d55aeea}{}\index{cell\+List@{cell\+List}!swap\+And\+Delete\+Particle@{swap\+And\+Delete\+Particle}}
+\index{swap\+And\+Delete\+Particle@{swap\+And\+Delete\+Particle}!cell\+List@{cell\+List}}
+\subsubsection[{swap\+And\+Delete\+Particle(atom $\ast$, atom $\ast$)}]{\setlength{\rightskip}{0pt plus 5cm}void cell\+List\+::swap\+And\+Delete\+Particle (
+\begin{DoxyParamCaption}
+\item[{{\bf atom} $\ast$}]{\+\_\+a, }
+\item[{{\bf atom} $\ast$}]{\+\_\+b}
+\end{DoxyParamCaption}
+)}\label{classcell_list_a31caca1e8dd05c33215ac7495d55aeea}
+
+
+Definition at line 102 of file cell\+List.\+cpp.
+
+
+
+References calc\+Index(), cells, and atom\+::pos.
+
+
+
+Referenced by sim\+System\+::delete\+Atom().
+
+
+\begin{DoxyCode}
+102                                                         \{
+103                 \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} indexA = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_a->
+      \hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]);
+104                 \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} indexB = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_b->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_b->
+      \hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_b->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]);
+105                 
+106                 \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} cellIndexA = 0, cellIndexB = 0;
+107                 \textcolor{keywordtype}{bool} foundCellIndexA = \textcolor{keyword}{false}, foundCellIndexB = \textcolor{keyword}{false};
+108                 
+109                 \textcolor{comment}{// locate position of atom \_a in its cell}
+110                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA].size(); i++) \{ \textcolor{comment}{// error?}
+111                                 \textcolor{keywordflow}{if} (\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA][i] == \_a) \{
+112                                                 cellIndexA = i;
+113                                                 foundCellIndexA = \textcolor{keyword}{true};
+114                                                 \textcolor{keywordflow}{break};
+115                                 \}
+116                 \}
+117                 
+118                 \textcolor{comment}{// locate position of atom \_b in its cell}
+119                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexB].size(); i++) \{ \textcolor{comment}{// error ?}
+120                                 \textcolor{keywordflow}{if} (\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexB][i] == \_b) \{
+121                                                 cellIndexB = i;
+122                                                 foundCellIndexB = \textcolor{keyword}{true};
+123                                                 \textcolor{keywordflow}{break};
+124                                 \}
+125                 \}
+126                 
+127                 \textcolor{keywordflow}{if} (!foundCellIndexA || !foundCellIndexB) \{
+128                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Failed to locate index in cell list
+       properly"});
+129                 \}
+130                 
+131                 \textcolor{comment}{// swap addresses}
+132                 \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexB][cellIndexB] = \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA][cellIndexA];
+133                 
+134                 \textcolor{comment}{// remove \_a from its cell}
+135                 \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA].erase(\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA].begin()+cellIndexA);
+136 \}
+\end{DoxyCode}
+\hypertarget{classcell_list_a0d77368abdd5a4665ca2302b9a20509b}{}\index{cell\+List@{cell\+List}!translate\+Particle@{translate\+Particle}}
+\index{translate\+Particle@{translate\+Particle}!cell\+List@{cell\+List}}
+\subsubsection[{translate\+Particle(atom $\ast$, std\+::vector$<$ double $>$)}]{\setlength{\rightskip}{0pt plus 5cm}void cell\+List\+::translate\+Particle (
+\begin{DoxyParamCaption}
+\item[{{\bf atom} $\ast$}]{\+\_\+a, }
+\item[{std\+::vector$<$ double $>$}]{\+\_\+old\+Pos}
+\end{DoxyParamCaption}
+)}\label{classcell_list_a0d77368abdd5a4665ca2302b9a20509b}
+
+
+Definition at line 139 of file cell\+List.\+cpp.
+
+
+
+References calc\+Index(), cells, and atom\+::pos.
+
+
+
+Referenced by sim\+System\+::translate\+Atom().
+
+
+\begin{DoxyCode}
+139                                                                         \{
+140                 \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} indexOld = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_oldPos[0], \_oldPos[1], \_oldPos[2]);
+141                 \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} indexNew = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_a->
+      \hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]);
+142                 
+143                 \textcolor{keywordflow}{if} (indexOld != indexNew) \{
+144                                 \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} cellIndexOld = 0;
+145                                 \textcolor{keywordtype}{bool} foundCellIndexOld = \textcolor{keyword}{false};
+146                 
+147                                 \textcolor{comment}{// locate position of atom \_a in its cell}
+148                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexOld].size(); i++) \{ \textcolor{comment}{//error?}
+149                                                 \textcolor{keywordflow}{if} (\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexOld][i] == \_a) \{
+150                                                                 cellIndexOld = i;
+151                                                                 foundCellIndexOld = \textcolor{keyword}{true};
+152                                                                 \textcolor{keywordflow}{break};
+153                                                 \}
+154                                 \}
+155                                 
+156                                 \textcolor{keywordflow}{if} (!foundCellIndexOld) \{
+157                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Failed to locate
+       cell index properly"});
+158                                 \}
+159                                 
+160                                 \textcolor{comment}{// remove \_a from its cell}
+161                                 \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexOld].erase(\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexOld].begin()+cellIndexOld);
+162                                 
+163                                 \textcolor{comment}{// insert \_a into new cell}
+164                                 \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexNew].push\_back(\_a);
+165                 \}
+166 \}\end{DoxyCode}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classcell_list_ae65748b80d5e06edfa22daaf569f2757}{}\index{cell\+List@{cell\+List}!box@{box}}
+\index{box@{box}!cell\+List@{cell\+List}}
+\subsubsection[{box}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ double $>$ cell\+List\+::box}\label{classcell_list_ae65748b80d5e06edfa22daaf569f2757}
+
+
+Definition at line 34 of file cell\+List.\+h.
+
+
+
+Referenced by calc\+Index\+S(), and cell\+List().
+
+\hypertarget{classcell_list_a6a695015c180229cd491db58c6e18ff4}{}\index{cell\+List@{cell\+List}!cell\+Count@{cell\+Count}}
+\index{cell\+Count@{cell\+Count}!cell\+List@{cell\+List}}
+\subsubsection[{cell\+Count}]{\setlength{\rightskip}{0pt plus 5cm}int cell\+List\+::cell\+Count}\label{classcell_list_a6a695015c180229cd491db58c6e18ff4}
+
+
+Definition at line 36 of file cell\+List.\+h.
+
+
+
+Referenced by cell\+List().
+
+\hypertarget{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}{}\index{cell\+List@{cell\+List}!cell\+Count\+X@{cell\+Count\+X}}
+\index{cell\+Count\+X@{cell\+Count\+X}!cell\+List@{cell\+List}}
+\subsubsection[{cell\+Count\+X}]{\setlength{\rightskip}{0pt plus 5cm}int cell\+List\+::cell\+Count\+X}\label{classcell_list_a342f802c342f51f3c1aa4dab7d7a4d84}
+
+
+Definition at line 36 of file cell\+List.\+h.
+
+
+
+Referenced by calc\+Index(), calc\+Index\+S(), and cell\+List().
+
+\hypertarget{classcell_list_a619d607f8569876cead1bdfad239d4b2}{}\index{cell\+List@{cell\+List}!cell\+Count\+X\+Y@{cell\+Count\+X\+Y}}
+\index{cell\+Count\+X\+Y@{cell\+Count\+X\+Y}!cell\+List@{cell\+List}}
+\subsubsection[{cell\+Count\+X\+Y}]{\setlength{\rightskip}{0pt plus 5cm}int cell\+List\+::cell\+Count\+X\+Y}\label{classcell_list_a619d607f8569876cead1bdfad239d4b2}
+
+
+Definition at line 36 of file cell\+List.\+h.
+
+
+
+Referenced by calc\+Index(), calc\+Index\+S(), and cell\+List().
+
+\hypertarget{classcell_list_aa0c942e7b0b61cda1d688ffc96e8f1c8}{}\index{cell\+List@{cell\+List}!cell\+Count\+Y@{cell\+Count\+Y}}
+\index{cell\+Count\+Y@{cell\+Count\+Y}!cell\+List@{cell\+List}}
+\subsubsection[{cell\+Count\+Y}]{\setlength{\rightskip}{0pt plus 5cm}int cell\+List\+::cell\+Count\+Y}\label{classcell_list_aa0c942e7b0b61cda1d688ffc96e8f1c8}
+
+
+Definition at line 36 of file cell\+List.\+h.
+
+
+
+Referenced by calc\+Index\+S(), and cell\+List().
+
+\hypertarget{classcell_list_a2b506715c6ded7cb9fadf994f4f01785}{}\index{cell\+List@{cell\+List}!cell\+Count\+Z@{cell\+Count\+Z}}
+\index{cell\+Count\+Z@{cell\+Count\+Z}!cell\+List@{cell\+List}}
+\subsubsection[{cell\+Count\+Z}]{\setlength{\rightskip}{0pt plus 5cm}int cell\+List\+::cell\+Count\+Z}\label{classcell_list_a2b506715c6ded7cb9fadf994f4f01785}
+
+
+Definition at line 36 of file cell\+List.\+h.
+
+
+
+Referenced by calc\+Index\+S(), and cell\+List().
+
+\hypertarget{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{}\index{cell\+List@{cell\+List}!cells@{cells}}
+\index{cells@{cells}!cell\+List@{cell\+List}}
+\subsubsection[{cells}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ std\+::vector $<$ {\bf atom}$\ast$ $>$ $>$ cell\+List\+::cells}\label{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}
+
+
+Definition at line 37 of file cell\+List.\+h.
+
+
+
+Referenced by cell\+List(), sim\+System\+::get\+Neighbor\+Positions(), insert\+Particle(), sort\+Into\+Cells(), swap\+And\+Delete\+Particle(), and translate\+Particle().
+
+\hypertarget{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}{}\index{cell\+List@{cell\+List}!cell\+Size@{cell\+Size}}
+\index{cell\+Size@{cell\+Size}!cell\+List@{cell\+List}}
+\subsubsection[{cell\+Size}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ double $>$ cell\+List\+::cell\+Size}\label{classcell_list_ac920f36bcf43f79ab853921bb0b7c2f4}
+
+
+Definition at line 33 of file cell\+List.\+h.
+
+
+
+Referenced by calc\+Index(), calc\+Index\+S(), and cell\+List().
+
+\hypertarget{classcell_list_ada607886d0e5a20d710dde694d6d989f}{}\index{cell\+List@{cell\+List}!neighbours@{neighbours}}
+\index{neighbours@{neighbours}!cell\+List@{cell\+List}}
+\subsubsection[{neighbours}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ std\+::vector $<$ unsigned int $>$ $>$ cell\+List\+::neighbours}\label{classcell_list_ada607886d0e5a20d710dde694d6d989f}
+
+
+Definition at line 38 of file cell\+List.\+h.
+
+
+
+Referenced by cell\+List(), and sim\+System\+::get\+Neighbor\+Positions().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{cell_list_8h}{cell\+List.\+h}\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{cell_list_8cpp}{cell\+List.\+cpp}\end{DoxyCompactItemize}

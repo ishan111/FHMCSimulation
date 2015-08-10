@@ -1,0 +1,230 @@
+.TH "translateParticle" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+translateParticle \- 
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <translate\&.h>\fP
+.PP
+Inherits \fBmcMove\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBtranslateParticle\fP ()"
+.br
+.ti -1c
+.RI "\fBtranslateParticle\fP (const int typeIndex, const std::string tag)"
+.br
+.RI "\fIInstantiate a new move, also give a name which is the combination of auser-defined tag + the particle index it operates on\&. \fP"
+.ti -1c
+.RI "int \fBmake\fP (\fBsimSystem\fP &sys)"
+.br
+.RI "\fITranslate a particle in the system\&. \fP"
+.ti -1c
+.RI "void \fBsetMaxDisplacement\fP (const double maxD, const std::vector< double > &box)"
+.br
+.RI "\fISet the maximum displacement in any single move\&. \fP"
+.ti -1c
+.RI "const double \fBgetMaxDisplacement\fP ()"
+.br
+.RI "\fIReturn the max displacement allowed in a single move\&. \fP"
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Definition at line 12 of file translate\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "translateParticle::translateParticle ()\fC [inline]\fP"
+
+.PP
+Definition at line 14 of file translate\&.h\&.
+.PP
+.nf
+14 {};
+.fi
+.SS "translateParticle::translateParticle (const int typeIndex, const std::string tag)\fC [inline]\fP"
+
+.PP
+Instantiate a new move, also give a name which is the combination of auser-defined tag + the particle index it operates on\&. 
+.PP
+Definition at line 15 of file translate\&.h\&.
+.PP
+References mcMove::name_, and mcMove::typeIndex_\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "const double translateParticle::getMaxDisplacement ()\fC [inline]\fP"
+
+.PP
+Return the max displacement allowed in a single move\&. 
+.PP
+Definition at line 18 of file translate\&.h\&.
+.SS "int translateParticle::make (\fBsimSystem\fP & sys)\fC [virtual]\fP"
+
+.PP
+Translate a particle in the system\&. All other information is stored in the \fBsimSystem\fP object\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsys\fP System object to attempt to remove a particle from\&.
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+MOVE_SUCCESS if translated a particle, otherwise MOVE_FAILURE if did not\&. Will throw exceptions if there was an error\&. 
+.RE
+.PP
+
+.PP
+Implements \fBmcMove\fP\&.
+.PP
+Definition at line 10 of file translate\&.cpp\&.
+.PP
+References simSystem::atoms, simSystem::beta(), simSystem::box(), calculateBias(), simSystem::getNeighborPositions(), simSystem::getTotN(), simSystem::getWALABias(), simSystem::incrementEnergy(), MOVE_FAILURE, MOVE_SUCCESS, simSystem::nSpecies(), simSystem::numSpecies, simSystem::ppot, rng(), RNG_SEED, simSystem::translateAtom(), mcMove::typeIndex_, wala::update(), simSystem::useWALA, and customException::what()\&.
+.PP
+.nf
+10                                            {
+11                 // check if any exist to be translated
+12     if (sys\&.numSpecies[typeIndex_] < 1) {
+13         return MOVE_FAILURE;
+14     }
+15     
+16                 // choose a random particle of that type
+17                 const int chosenAtom = (int) floor(rng (&RNG_SEED) * sys\&.numSpecies[typeIndex_]);
+18  
+19                 // attempt to translate that one
+20                 const std::vector < double > box = sys\&.box();
+21     double V = 1\&.0;
+22     for (unsigned int i = 0; i < box\&.size(); ++i) {
+23         V *= box[i];
+24     }
+25         
+26     double oldEnergy = 0\&.0;
+27     for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
+28         // get positions of neighboring atoms around chosenAtom
+29         std::vector< std::vector<double> > neighborPositions = sys\&.getNeighborPositions(spec, typeIndex_, &sys\&.atoms[typeIndex_][chosenAtom]);
+30                 for (unsigned int i = 0; i < neighborPositions\&.size(); ++i) {
+31                                                 try {
+32                                                                 oldEnergy += sys\&.ppot[spec][typeIndex_]->energy(neighborPositions[i], sys\&.atoms[typeIndex_][chosenAtom]\&.pos, box);
+33                                                 }
+34                                                 catch (customException& ce) {
+35                                                                 std::string a = "Cannot translate because of energy error: ", b = ce\&.what();
+36                                                                 throw customException (a+b);
+37                                                 }
+38         }
+39         // add tail correction to potential energy
+40 #ifdef FLUID_PHASE_SIMULATIONS
+41         if (sys\&.ppot[spec][typeIndex_]->useTailCorrection) {
+42                                                 oldEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection((sys\&.numSpecies[spec])/V);
+43                                 }
+44 #endif
+45     }
+46     
+47     // store old position and move particle along random direction in interval [-maxD_:maxD_]
+48     std::vector<double> oldPos = sys\&.atoms[typeIndex_][chosenAtom]\&.pos;
+49     for (unsigned int i = 0; i< sys\&.atoms[typeIndex_][chosenAtom]\&.pos\&.size(); ++i) {
+50                 sys\&.atoms[typeIndex_][chosenAtom]\&.pos[i] += 2\&.0*maxD_*(0\&.5-rng (&RNG_SEED));
+51                 
+52                 // apply periodic boundary conditions
+53                 if (sys\&.atoms[typeIndex_][chosenAtom]\&.pos[i] >= box[i]) {
+54                                 sys\&.atoms[typeIndex_][chosenAtom]\&.pos[i] -= box[i];
+55                 } else if (sys\&.atoms[typeIndex_][chosenAtom]\&.pos[i] < 0) {
+56                                 sys\&.atoms[typeIndex_][chosenAtom]\&.pos[i] += box[i];
+57                 }
+58     }
+59     
+60     // calculate energy at new position
+61     double newEnergy = 0\&.0;
+62     for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
+63         // get positions of neighboring atoms around chosenAtom
+64         std::vector< std::vector<double> > neighborPositions = sys\&.getNeighborPositions(spec, typeIndex_, &sys\&.atoms[typeIndex_][chosenAtom]);
+65                 for (unsigned int i = 0; i < neighborPositions\&.size(); ++i) {
+66                                                 try {
+67                                                                 newEnergy += sys\&.ppot[spec][typeIndex_]->energy(neighborPositions[i], sys\&.atoms[typeIndex_][chosenAtom]\&.pos, box);
+68                                                 }
+69                                                 catch (customException& ce) {
+70                                                                 std::string a = "Cannot delete because of energy error: ", b = ce\&.what();
+71                                                                 throw customException (a+b);
+72                                                 }
+73         }
+74         // add tail correction to potential energy
+75 #ifdef FLUID_PHASE_SIMULATIONS
+76         if (sys\&.ppot[spec][typeIndex_]->useTailCorrection) {
+77                                                 newEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection((sys\&.numSpecies[spec])/V);
+78                                 }
+79 #endif
+80     }
+81     
+82                 // biasing
+83                 const double p_u = exp(-sys\&.beta()*(newEnergy - oldEnergy));
+84                 double bias = calculateBias(sys, sys\&.getTotN(), p_u);
+85                     
+86                 if (rng (&RNG_SEED) < p_u*bias) {
+87                     try {
+88             sys\&.translateAtom(typeIndex_, chosenAtom, oldPos);
+89         } catch (customException &ce) {
+90             std::string a = "Failed to translate atom: ", b = ce\&.what();
+91             throw customException (a+b);
+92         }
+93                                 sys\&.incrementEnergy(newEnergy - oldEnergy);      
+94                                 
+95                                 // update Wang-Landau bias, if used
+96                                 if (sys\&.useWALA) {
+97                                                 sys\&.getWALABias()->update(sys\&.getTotN());
+98                                 }
+99                                                 
+100         return MOVE_SUCCESS;
+101     }
+102     
+103     // if move failed, reset position
+104     for (unsigned int i = 0; i < sys\&.atoms[typeIndex_][chosenAtom]\&.pos\&.size(); ++i) {
+105                 sys\&.atoms[typeIndex_][chosenAtom]\&.pos[i] = oldPos[i];
+106     }
+107     
+108     // update Wang-Landau bias (even if moved failed), if used
+109     if (sys\&.useWALA) {
+110                                 sys\&.getWALABias()->update(sys\&.getTotN());
+111     }
+112                 
+113                 return MOVE_FAILURE;
+114 }
+.fi
+.SS "void translateParticle::setMaxDisplacement (const double maxD, const std::vector< double > & box)"
+
+.PP
+Set the maximum displacement in any single move\&. Should be postive number lss than half the box size\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxD\fP Maximium displacement 
+.br
+\fIbox\fP Box dimensions 
+.RE
+.PP
+
+.PP
+Definition at line 122 of file translate\&.cpp\&.
+.PP
+.nf
+122                                                                                               {
+123                 for (unsigned int i = 0; i < box\&.size(); ++i) {
+124                                 if (maxD >= box[i]/2\&.) {
+125                                                 throw customException ("Max displacement too large");
+126                                 }
+127                 }
+128                 if (maxD > 0) {
+129                                 maxD_ = maxD;
+130                 } else {
+131                                 throw customException ("Max displacement must be positive");
+132                 }
+133 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

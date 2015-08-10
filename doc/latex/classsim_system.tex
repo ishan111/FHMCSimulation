@@ -1,0 +1,1707 @@
+\hypertarget{classsim_system}{}\section{sim\+System Class Reference}
+\label{classsim_system}\index{sim\+System@{sim\+System}}
+
+
+System information for the simulation.  
+
+
+
+
+{\ttfamily \#include $<$system.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classsim_system_a6f55deb52fbdaf440603726c942aa6c7}{sim\+System} (const unsigned int \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{n\+Species}, const double \hyperlink{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{beta}, const std\+::vector$<$ double $>$ \hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}, const std\+::vector$<$ double $>$ \hyperlink{classsim_system_af1e3f5320aff976a448647244d5950d1}{mu}, const std\+::vector$<$ int $>$ \hyperlink{classsim_system_a93259b517f449f1ac610d132ac66b551}{max\+Species}, const std\+::vector$<$ int $>$ \hyperlink{classsim_system_afafda4a09ed180ee9c5580d196d8ca9f}{min\+Species})
+\begin{DoxyCompactList}\small\item\em Initialize the system. \end{DoxyCompactList}\item 
+\hyperlink{classsim_system_abaa6ad6ea00aa437cf0b9ac8034af327}{$\sim$sim\+System} ()
+\item 
+void \hyperlink{classsim_system_a6ad31c08955b80873f865b3069618dcb}{increment\+Energy} (const double d\+U)
+\begin{DoxyCompactList}\small\item\em Increment the system\textquotesingle{}s energy. \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_a37263732f36d1467d2dca67fa4f89100}{add\+Potential} (const int spec1, const int spec2, \hyperlink{classpair_potential}{pair\+Potential} $\ast$pp, bool use\+Cell\+List=false)
+\begin{DoxyCompactList}\small\item\em Add a pair potential to the system which governs the pair (spec1, spec2). \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_ac5096ab2cf643bc5c4f9e6ca0612b13b}{print\+Snapshot} (std\+::string filename, std\+::string comment)
+\begin{DoxyCompactList}\small\item\em Print an X\+Y\+Z file of the instantaneous system configuration. \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_a6c1e86f585f3a52aa82b6394ffbf1c6a}{insert\+Atom} (const int type\+Index, \hyperlink{classatom}{atom} $\ast$new\+Atom)
+\begin{DoxyCompactList}\small\item\em Insert an atom into the system. \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_acabf4fc5b5b90bba62e1449ddb3646c6}{delete\+Atom} (const int type\+Index, const int atom\+Index, bool override=false)
+\begin{DoxyCompactList}\small\item\em Delete an atom from the system. \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_a22fdaceea44abd6cd021bac1ecd11890}{translate\+Atom} (const int type\+Index, const int atom\+Index, std\+::vector$<$ double $>$ old\+Pos)
+\begin{DoxyCompactList}\small\item\em Translate an atom in the system. \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_afcd8467fd7611184ad32138fc410813c}{read\+Restart} (std\+::string filename)
+\begin{DoxyCompactList}\small\item\em Read an X\+Y\+Z file as the system\textquotesingle{}s initial configuration. \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_a11a8994c279ba6f643420f4be57a9b2d}{record\+U} ()
+\begin{DoxyCompactList}\small\item\em Save the instantaneous energy of the system as a function of the number of particles in the system. \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_a6cfe3d83219a4886991ba0135d46faa7}{print\+U} (const std\+::string file\+Name)
+\begin{DoxyCompactList}\small\item\em Print the average energy to file, $<$\+U$>$ for every N\+\_\+tot within range is recorded. \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_a0abac060c326c4d82952737e55814351}{start\+W\+A\+L\+A} (const double ln\+F, const double g, const double s, const int Nmax, const int Nmin)
+\begin{DoxyCompactList}\small\item\em Start using Wang-\/\+Landau and instantiate the bias object. \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_ad6febde00f19ae0787771f2d1d9e391b}{stop\+W\+A\+L\+A} ()
+\begin{DoxyCompactList}\small\item\em Stop using Wang-\/\+Landau and free the bias object. \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_a0d910b833afccdd57e86cc45787e43a1}{start\+T\+M\+M\+C} (const int Nmax, const int Nmin)
+\begin{DoxyCompactList}\small\item\em Start using T\+M\+M\+C and instantiate the bias object. \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_a69edcc2c27db3d4e94002ac5635e9030}{stop\+T\+M\+M\+C} ()
+\begin{DoxyCompactList}\small\item\em Stop using T\+M\+M\+C and free the bias object. \end{DoxyCompactList}\item 
+void \hyperlink{classsim_system_a76b5dc3e179e275e40726c660d8e669b}{set\+Tot\+N\+Bounds} (const std\+::vector$<$ int $>$ \&bounds)
+\begin{DoxyCompactList}\small\item\em Set the bounds on the total number of particles in a system. \end{DoxyCompactList}\item 
+bool \hyperlink{classsim_system_a40af191fae6091e26413ee06ae188ae9}{potential\+Is\+Set} (const int spec1, const int spec2)
+\begin{DoxyCompactList}\small\item\em Boolean which returns whether or not a pair has had its potential specified by the user yet. \end{DoxyCompactList}\item 
+const int \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{n\+Species} ()
+\begin{DoxyCompactList}\small\item\em Return the number of different species in the system. \end{DoxyCompactList}\item 
+const int \hyperlink{classsim_system_a93259b517f449f1ac610d132ac66b551}{max\+Species} (const int index)
+\begin{DoxyCompactList}\small\item\em Returns the absolute maximum number of a given species type allowed in the system. \end{DoxyCompactList}\item 
+const int \hyperlink{classsim_system_afafda4a09ed180ee9c5580d196d8ca9f}{min\+Species} (const int index)
+\begin{DoxyCompactList}\small\item\em Returns the absolute minimum number of a given species type allowed in the system. \end{DoxyCompactList}\item 
+const int \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{tot\+N\+Max} ()
+\begin{DoxyCompactList}\small\item\em Return upper bound on the total number of atoms in the system. \end{DoxyCompactList}\item 
+const int \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{tot\+N\+Min} ()
+\begin{DoxyCompactList}\small\item\em Return lower bound on the total number of atoms in the system. \end{DoxyCompactList}\item 
+const int \hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{get\+Tot\+N} ()
+\begin{DoxyCompactList}\small\item\em Return a sum of the total number of atoms currently in the system. \end{DoxyCompactList}\item 
+const double \hyperlink{classsim_system_a37b3d15faf56bf31349f5c2aaf02f858}{energy} ()
+\begin{DoxyCompactList}\small\item\em Return the system\textquotesingle{}s instantaneous energy. \end{DoxyCompactList}\item 
+const double \hyperlink{classsim_system_a51539ed4c3bb4905b32ce428c1c537fe}{scratch\+Energy} ()
+\begin{DoxyCompactList}\small\item\em Recalculate the energy of the system from scratch. \end{DoxyCompactList}\item 
+const double \hyperlink{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{beta} ()
+\begin{DoxyCompactList}\small\item\em Return 1/k\+T. \end{DoxyCompactList}\item 
+const double \hyperlink{classsim_system_af1e3f5320aff976a448647244d5950d1}{mu} (const int index)
+\begin{DoxyCompactList}\small\item\em Return the chemical potential for a given species\textquotesingle{} index. \end{DoxyCompactList}\item 
+const std\+::vector$<$ double $>$ \hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box} ()
+\begin{DoxyCompactList}\small\item\em Return the system box dimensions. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::vector$<$ double $>$ $>$ \hyperlink{classsim_system_a7ac49b2311cd8230df8d078a9d897b35}{get\+Neighbor\+Positions} (const unsigned int type\+Index\+A, const unsigned int type\+Index\+B, \hyperlink{classatom}{atom} $\ast$\+\_\+atom)
+\begin{DoxyCompactList}\small\item\em Return the list of neighbors of type A, for a particle of type B at position pos. \end{DoxyCompactList}\item 
+\hyperlink{classtmmc}{tmmc} $\ast$ \hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{get\+T\+M\+M\+C\+Bias} ()
+\begin{DoxyCompactList}\small\item\em Return pointer to the T\+M\+M\+C bias. \end{DoxyCompactList}\item 
+\hyperlink{classwala}{wala} $\ast$ \hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{get\+W\+A\+L\+A\+Bias} ()
+\begin{DoxyCompactList}\small\item\em Return pointer to the Wang-\/\+Landau bias. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{use\+T\+M\+M\+C}
+\begin{DoxyCompactList}\small\item\em Logical stating whether or not to use T\+M\+M\+C biasing. \end{DoxyCompactList}\item 
+bool \hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{use\+W\+A\+L\+A}
+\begin{DoxyCompactList}\small\item\em Logical stating whether or not to use Wang-\/\+Landau biasing. \end{DoxyCompactList}\item 
+\hyperlink{classtmmc}{tmmc} $\ast$ \hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmc\+Bias}
+\begin{DoxyCompactList}\small\item\em T\+M\+M\+C biasing function. \end{DoxyCompactList}\item 
+\hyperlink{classwala}{wala} $\ast$ \hyperlink{classsim_system_a6dc8d9f89dfcfa247a59bc50889c49e7}{wl\+Bias}
+\begin{DoxyCompactList}\small\item\em W\+L biasing function. \end{DoxyCompactList}\item 
+std\+::vector$<$ int $>$ \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{num\+Species}
+\begin{DoxyCompactList}\small\item\em Total number of each type of atom the system contains. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::vector$<$ \hyperlink{classatom}{atom} $>$ $>$ \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}
+\begin{DoxyCompactList}\small\item\em Atoms in a matrix by type, and particle index, respectively that a system C\+A\+N hold but not all are actually \char`\"{}in\char`\"{} the system. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::vector$<$ \hyperlink{classpair_potential}{pair\+Potential} $\ast$ $>$ $>$ \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}
+\begin{DoxyCompactList}\small\item\em Matrix of pair potentials for atom types i, j. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+System information for the simulation. 
+
+Definition at line 22 of file system.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classsim_system_a6f55deb52fbdaf440603726c942aa6c7}{}\index{sim\+System@{sim\+System}!sim\+System@{sim\+System}}
+\index{sim\+System@{sim\+System}!sim\+System@{sim\+System}}
+\subsubsection[{sim\+System(const unsigned int n\+Species, const double beta, const std\+::vector$<$ double $>$ box, const std\+::vector$<$ double $>$ mu, const std\+::vector$<$ int $>$ max\+Species, const std\+::vector$<$ int $>$ min\+Species)}]{\setlength{\rightskip}{0pt plus 5cm}sim\+System\+::sim\+System (
+\begin{DoxyParamCaption}
+\item[{const unsigned int}]{n\+Species, }
+\item[{const double}]{beta, }
+\item[{const std\+::vector$<$ double $>$}]{box, }
+\item[{const std\+::vector$<$ double $>$}]{mu, }
+\item[{const std\+::vector$<$ int $>$}]{max\+Species, }
+\item[{const std\+::vector$<$ int $>$}]{min\+Species}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a6f55deb52fbdaf440603726c942aa6c7}
+
+
+Initialize the system. 
+
+Sets the use of both W\+L and T\+M\+M\+C biasing to false.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em n\+Species} & Number of unqiue species types to allow in the system \\
+\hline
+\mbox{\tt in}  & {\em beta} & Inverse temperature (1/k\+T) \\
+\hline
+\mbox{\tt in}  & {\em box} & Box dimensions \mbox{[}x, y, z\mbox{]} \\
+\hline
+\mbox{\tt in}  & {\em mu} & Chemical potential of each species \\
+\hline
+\mbox{\tt in}  & {\em max\+Species} & Maximum number of each species to allow in the system \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 199 of file system.\+cpp.
+
+
+
+References S\+Y\+S\+\_\+\+F\+A\+I\+L\+U\+R\+E.
+
+
+\begin{DoxyCode}
+199                                                                                                            
+                                                                                                      \{
+200                 \textcolor{keywordflow}{if} ((\hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}.size() != 3) || (\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies} != \hyperlink{classsim_system_af1e3f5320aff976a448647244d5950d1}{mu}.size()) || (
+      \hyperlink{classsim_system_a93259b517f449f1ac610d132ac66b551}{maxSpecies}.size() != \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies})) \{
+201                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Invalid system initialization
+       parameters"});
+202                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+203                 \} \textcolor{keywordflow}{else} \{
+204                                 nSpecies\_ = \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies};
+205         maxSpecies\_ = \hyperlink{classsim_system_a93259b517f449f1ac610d132ac66b551}{maxSpecies};
+206         minSpecies\_ = \hyperlink{classsim_system_afafda4a09ed180ee9c5580d196d8ca9f}{minSpecies};
+207                                 box\_ = \hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box};
+208                                 mu\_ = \hyperlink{classsim_system_af1e3f5320aff976a448647244d5950d1}{mu};
+209                                 beta\_ = \hyperlink{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{beta};
+210                 \}
+211                 
+212                 \textcolor{keywordflow}{try} \{
+213                                 \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}.resize(\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies});
+214                 \} \textcolor{keywordflow}{catch} (std::exception &e) \{
+215                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (e.what());
+216                 \}
+217                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}; ++i) \{
+218                                 \textcolor{keywordflow}{try} \{
+219                                                 \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[i].resize(nSpecies);
+220                                 \} \textcolor{keywordflow}{catch} (std::exception &e) \{
+221                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (e.what());
+222                                 \}
+223                 \}
+224                 
+225                 \textcolor{keywordflow}{try} \{
+226                                 ppotSet\_.resize(nSpecies);
+227                 \} \textcolor{keywordflow}{catch} (std::exception &e) \{
+228                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (e.what());
+229                 \}
+230                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}; ++i) \{
+231                                 \textcolor{keywordflow}{try} \{
+232                                                 ppotSet\_[i].resize(nSpecies, \textcolor{keyword}{false});
+233                                 \} \textcolor{keywordflow}{catch} (std::exception &e) \{
+234                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (e.what());
+235                                 \}
+236                 \}
+237                 
+238                 \textcolor{comment}{// Prepare vectors and matrices for cell lists.}
+239                 \textcolor{comment}{// It is crucial to reserve the correct number of cellLists in advance}
+240                 \textcolor{comment}{// since cellListsByPairType uses the addresses of cellLists. Otherwise,}
+241                 \textcolor{comment}{// if dynamic memory reallocation takes place, the pointers do not}
+242                 \textcolor{comment}{// correspond to initial values anymore, causing the simulation to crash.}
+243                 cellLists\_.reserve(nSpecies\_*nSpecies\_); 
+244                 
+245                 \textcolor{keywordflow}{try} \{
+246                                 useCellList\_.resize(nSpecies);
+247                                 cellListsByPairType\_.resize(nSpecies);
+248                 \} \textcolor{keywordflow}{catch} (std::exception &e) \{
+249                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (e.what());
+250                 \}
+251                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}; ++i) \{
+252                                 \textcolor{keywordflow}{try} \{
+253                                                 useCellList\_[i].resize(nSpecies);
+254                                                 cellListsByPairType\_[i].assign(nSpecies, NULL);
+255                                 \} \textcolor{keywordflow}{catch} (std::exception &e) \{
+256                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (e.what());
+257                                 \}
+258                 \}
+259     
+260                 totN\_ = 0;
+261     \textcolor{keywordflow}{try} \{
+262                                 \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}.resize(nSpecies, 0);
+263                 \} \textcolor{keywordflow}{catch} (std::exception &e) \{
+264                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (e.what());
+265                 \}
+266     
+267     \textcolor{keywordflow}{try} \{
+268         \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}.resize(nSpecies);
+269     \} \textcolor{keywordflow}{catch} (std::exception &e) \{
+270         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (e.what());
+271     \}
+272     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}; ++i) \{
+273         \textcolor{keywordflow}{if} (minSpecies\_[i] < 0) \{
+274             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Min species < 0"});
+275         \}
+276         \textcolor{keywordflow}{if} (maxSpecies\_[i] < minSpecies\_[i]) \{
+277             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max species < Min species"});
+278         \}
+279                                 \textcolor{keywordflow}{try} \{
+280                                                 \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i].resize(maxSpecies\_[i]);
+281                                 \} \textcolor{keywordflow}{catch} (std::exception &e) \{
+282                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (e.what());
+283                                 \}
+284                 \}
+285     
+286     energy\_ = 0.0;
+287     
+288     \hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC} = \textcolor{keyword}{false};
+289     \hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA} = \textcolor{keyword}{false};
+290      
+291     totNBounds\_.resize(2, 0);
+292     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+293                 totNBounds\_[0] += minSpecies\_[i];
+294                 totNBounds\_[1] += maxSpecies\_[i];
+295     \}
+296     
+297     \textcolor{comment}{// allocate space for average U storage matrix - Shen and Errington method implies this size is always
+       the same for}
+298     \textcolor{comment}{// both single and multicomponent mixtures}
+299     \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} size = totNBounds\_[1] - totNBounds\_[0] + 1;
+300     \textcolor{keywordflow}{try} \{
+301         numAverageU\_.resize(size, 0);
+302     \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+303                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory for energy record"});
+304     \}
+305     \textcolor{keywordflow}{try} \{
+306         AverageU\_.resize(size, 0);
+307     \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+308         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory for energy record"});
+309     \}
+310 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_abaa6ad6ea00aa437cf0b9ac8034af327}{}\index{sim\+System@{sim\+System}!````~sim\+System@{$\sim$sim\+System}}
+\index{````~sim\+System@{$\sim$sim\+System}!sim\+System@{sim\+System}}
+\subsubsection[{$\sim$sim\+System()}]{\setlength{\rightskip}{0pt plus 5cm}sim\+System\+::$\sim$sim\+System (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classsim_system_abaa6ad6ea00aa437cf0b9ac8034af327}
+
+
+Definition at line 181 of file system.\+cpp.
+
+
+\begin{DoxyCode}
+181                        \{
+182                 \textcolor{keywordflow}{if} (\hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC}) \{
+183                                 \textcolor{keyword}{delete} \hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias};
+184                 \}
+185                 \textcolor{keywordflow}{if} (\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+186                                 \textcolor{keyword}{delete} \hyperlink{classsim_system_a6dc8d9f89dfcfa247a59bc50889c49e7}{wlBias};
+187                 \}
+188 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classsim_system_a37263732f36d1467d2dca67fa4f89100}{}\index{sim\+System@{sim\+System}!add\+Potential@{add\+Potential}}
+\index{add\+Potential@{add\+Potential}!sim\+System@{sim\+System}}
+\subsubsection[{add\+Potential(const int spec1, const int spec2, pair\+Potential $\ast$pp, bool use\+Cell\+List=false)}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::add\+Potential (
+\begin{DoxyParamCaption}
+\item[{const int}]{spec1, }
+\item[{const int}]{spec2, }
+\item[{{\bf pair\+Potential} $\ast$}]{pp, }
+\item[{bool}]{use\+Cell\+List = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a37263732f36d1467d2dca67fa4f89100}
+
+
+Add a pair potential to the system which governs the pair (spec1, spec2). 
+
+However, it only stores the pointer so the object must be fixed in memory somewhere else throughout the simulation.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em spec1} & Species index 1 ($>$= 0) \\
+\hline
+\mbox{\tt in}  & {\em spec2} & Species index 2 ($>$= 0) \\
+\hline
+\mbox{\tt in}  & {\em pp} & Pointer to the pair potential to add. Will be stored as a pointer, so original cannot be destroyed in memory. \\
+\hline
+\mbox{\tt in}  & {\em bool} & Optional argument of whether or not to build and maintain a cell list for this pair (spec1, spec2) \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 373 of file system.\+cpp.
+
+
+
+References pair\+Potential\+::rcut().
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+373                                                                                                    \{
+374                 \textcolor{keywordflow}{if} (spec1 >= nSpecies\_) \{
+375                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Trying to define pair potential for
+       species (1) that does not exist yet"});
+376                                 \textcolor{keywordflow}{return};
+377                 \}
+378                 \textcolor{keywordflow}{if} (spec2 >= nSpecies\_) \{
+379                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Trying to define pair potential for
+       species (2) that does not exist yet"});
+380                                 \textcolor{keywordflow}{return};
+381                 \}
+382                 \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec1][spec2] = pp;
+383                 \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec2][spec1] = pp;
+384                 ppotSet\_[spec1][spec2] = \textcolor{keyword}{true};
+385                 ppotSet\_[spec2][spec1] = \textcolor{keyword}{true};
+386                 
+387                 \textcolor{keywordflow}{if} (useCellList)
+388                 \{
+389                                 std::cout<<\textcolor{stringliteral}{"Setting up cell list for interactions between type "}<<spec1<<\textcolor{stringliteral}{"
+       and "}<<spec2<<std::endl;
+390                                 \textcolor{comment}{// add creation of cell lists}
+391                                 \textcolor{keywordflow}{if} ((pp->\hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{rcut}() > box\_[0]/3.0) || (pp->\hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{rcut}() > box\_[1]/3.0) || (pp
+      ->\hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{rcut}() > box\_[2]/3.0))
+392                                 \{
+393                                                 std::cerr<<\textcolor{stringliteral}{"Cutoff ("}<<pp->\hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{rcut}()<<\textcolor{stringliteral}{") larger than
+       1.0/3.0 boxsize, disabling cell lists for this interaction."}<<std::endl;
+394                                                 useCellList\_[spec1][spec2] = \textcolor{keyword}{false};
+395                                                 useCellList\_[spec2][spec1] = \textcolor{keyword}{false};
+396                                 \}
+397                                 \textcolor{keywordflow}{else}
+398                                 \{
+399                                                 std::cout<<\textcolor{stringliteral}{"Creating Cell list with rcut="}<<pp->
+      \hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{rcut}()<<std::endl;
+400                                                 useCellList\_[spec1][spec2] = \textcolor{keyword}{true};
+401                                                 useCellList\_[spec2][spec1] = \textcolor{keyword}{true};
+402                                                 
+403                                                 std::vector<atom*> dummyList(0);
+404                                                 
+405                                                 \textcolor{keywordflow}{if} (cellListsByPairType\_[spec1][spec2] == NULL)
+406                                                 \{
+407                                                                 cellLists\_.push\_back(
+      \hyperlink{classcell_list}{cellList}(box\_, pp->\hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{rcut}(), dummyList));
+408                                                                 cellListsByPairType\_[spec1][spec2] = &
+      cellLists\_[cellLists\_.size()-1];
+409                                                 \}
+410                                                 \textcolor{keywordflow}{if} (cellListsByPairType\_[spec2][spec1] == NULL)
+411                                                 \{
+412                                                                 cellLists\_.push\_back(
+      \hyperlink{classcell_list}{cellList}(box\_, pp->\hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{rcut}(), dummyList));
+413                                                                 cellListsByPairType\_[spec2][spec1] = &
+      cellLists\_[cellLists\_.size()-1];
+414                                                 \}
+415                                 \}
+416                 \}
+417                 \textcolor{keywordflow}{else}
+418                 \{
+419                                 useCellList\_[spec1][spec2] = \textcolor{keyword}{false};
+420                                 useCellList\_[spec2][spec1] = \textcolor{keyword}{false};
+421                 \}
+422 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{}\index{sim\+System@{sim\+System}!beta@{beta}}
+\index{beta@{beta}!sim\+System@{sim\+System}}
+\subsubsection[{beta()}]{\setlength{\rightskip}{0pt plus 5cm}const double sim\+System\+::beta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}
+
+
+Return 1/k\+T. 
+
+
+
+Definition at line 50 of file system.\+h.
+
+
+
+Referenced by delete\+Particle\+::make(), translate\+Particle\+::make(), swap\+Particles\+::make(), and insert\+Particle\+::make().
+
+\hypertarget{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{}\index{sim\+System@{sim\+System}!box@{box}}
+\index{box@{box}!sim\+System@{sim\+System}}
+\subsubsection[{box()}]{\setlength{\rightskip}{0pt plus 5cm}const std\+::vector$<$ double $>$ sim\+System\+::box (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}
+
+
+Return the system box dimensions. 
+
+
+
+Definition at line 52 of file system.\+h.
+
+
+
+Referenced by main(), translate\+Particle\+::make(), swap\+Particles\+::make(), delete\+Particle\+::make(), and insert\+Particle\+::make().
+
+\hypertarget{classsim_system_acabf4fc5b5b90bba62e1449ddb3646c6}{}\index{sim\+System@{sim\+System}!delete\+Atom@{delete\+Atom}}
+\index{delete\+Atom@{delete\+Atom}!sim\+System@{sim\+System}}
+\subsubsection[{delete\+Atom(const int type\+Index, const int atom\+Index, bool override=false)}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::delete\+Atom (
+\begin{DoxyParamCaption}
+\item[{const int}]{type\+Index, }
+\item[{const int}]{atom\+Index, }
+\item[{bool}]{override = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classsim_system_acabf4fc5b5b90bba62e1449ddb3646c6}
+
+
+Delete an atom from the system. 
+
+Does all the bookkeepping behind the scenes.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em type\+Index} & What type the atom is ($>$= 0) \\
+\hline
+\mbox{\tt in}  & {\em atom\+Index} & Which atom {\itshape index} of type type\+Index to destroy ($>$= 0) \\
+\hline
+\mbox{\tt in}  & {\em Optional} & override command which allows the system to delete a particle even it goes below the minimum allowed. E.\+g. during a swap move. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 123 of file system.\+cpp.
+
+
+
+References cell\+List\+::swap\+And\+Delete\+Particle().
+
+
+
+Referenced by delete\+Particle\+::make(), and swap\+Particles\+::make().
+
+
+\begin{DoxyCode}
+123                                                                                    \{
+124     \textcolor{keywordflow}{if} (typeIndex < nSpecies\_ && typeIndex >= 0) \{
+125         \textcolor{keywordflow}{if} ((\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndex] > minSpecies\_[typeIndex]) || \textcolor{keyword}{override}) \{
+126                 \textcolor{comment}{// delete particle from appropriate cell list}
+127             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i=0; i<nSpecies\_; i++)
+128             \{
+129                 \textcolor{keywordflow}{if} (useCellList\_[typeIndex][i])
+130                 \{
+131                                 \hyperlink{classcell_list}{cellList}* cl = cellListsByPairType\_[typeIndex][i];
+132                                 cl->\hyperlink{classcell_list_a31caca1e8dd05c33215ac7495d55aeea}{swapAndDeleteParticle}(&
+      \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex][atomIndex], &\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex][\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndex] - 1]);
+133                 \}
+134             \}
+135         
+136             \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex][atomIndex] = \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex][\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndex] - 1]; 
+         \textcolor{comment}{// "replacement" operation}
+137             numSpecies[typeIndex]--;
+138             totN\_--;
+139         \} \textcolor{keywordflow}{else} \{
+140             std::string index = \textcolor{keyword}{static\_cast<}std::ostringstream*\textcolor{keyword}{>}( &(std::ostringstream() << typeIndex) )->
+      str();
+141             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"System going below minimum allowable number of atoms,
+       cannot delete an atom of type index "}+index);
+142         \}
+143     \} \textcolor{keywordflow}{else} \{
+144         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"That species index does not exist, cannot delete an atom"});
+145     \}
+146 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_a37b3d15faf56bf31349f5c2aaf02f858}{}\index{sim\+System@{sim\+System}!energy@{energy}}
+\index{energy@{energy}!sim\+System@{sim\+System}}
+\subsubsection[{energy()}]{\setlength{\rightskip}{0pt plus 5cm}const double sim\+System\+::energy (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsim_system_a37b3d15faf56bf31349f5c2aaf02f858}
+
+
+Return the system\textquotesingle{}s instantaneous energy. 
+
+
+
+Definition at line 48 of file system.\+h.
+
+
+
+Referenced by main().
+
+\hypertarget{classsim_system_a7ac49b2311cd8230df8d078a9d897b35}{}\index{sim\+System@{sim\+System}!get\+Neighbor\+Positions@{get\+Neighbor\+Positions}}
+\index{get\+Neighbor\+Positions@{get\+Neighbor\+Positions}!sim\+System@{sim\+System}}
+\subsubsection[{get\+Neighbor\+Positions(const unsigned int type\+Index\+A, const unsigned int type\+Index\+B, atom $\ast$\+\_\+atom)}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ std\+::vector$<$ double $>$ $>$ sim\+System\+::get\+Neighbor\+Positions (
+\begin{DoxyParamCaption}
+\item[{const unsigned int}]{type\+Index\+A, }
+\item[{const unsigned int}]{type\+Index\+B, }
+\item[{{\bf atom} $\ast$}]{\+\_\+atom}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a7ac49b2311cd8230df8d078a9d897b35}
+
+
+Return the list of neighbors of type A, for a particle of type B at position pos. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em type\+Index\+A} & Index of first atom type \\
+\hline
+\mbox{\tt in}  & {\em type\+Index\+B} & Index of second atom type \\
+\hline
+\mbox{\tt in}  & {\em atom} & Pointer to atom to find neighbors around\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+neighbor\+\_\+list 
+\end{DoxyReturn}
+
+
+Definition at line 530 of file system.\+cpp.
+
+
+
+References cell\+List\+::calc\+Index(), cell\+List\+::cells, cell\+List\+::neighbours, and atom\+::pos.
+
+
+
+Referenced by delete\+Particle\+::make(), translate\+Particle\+::make(), swap\+Particles\+::make(), and insert\+Particle\+::make().
+
+
+\begin{DoxyCode}
+531 \{
+532                 std::vector< std::vector<double> > neighbors;
+533                 neighbors.reserve(\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndexA]);
+534                 
+535                 \textcolor{comment}{// if no cell lists are defined for this interaction, return all particles}
+536                 \textcolor{keywordflow}{if} (!useCellList\_[typeIndexA][typeIndexB])
+537                 \{
+538                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i=0; i<\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndexA]; i++)
+539                                 \{
+540                                                 \textcolor{keywordflow}{if} (\_atom != &\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndexA][i])
+541                                                 \{
+542                                                                 neighbors.push\_back(
+      \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndexA][i].pos);
+543                                                 \}
+544                                 \}
+545                 \}
+546                 \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (useCellList\_[typeIndexA][typeIndexB])
+547                 \{
+548                                 \hyperlink{classcell_list}{cellList}* cl = cellListsByPairType\_[typeIndexA][typeIndexB];
+549                                 \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} cellIndex = cl->\hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_atom->
+      \hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_atom->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_atom->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]);
+550 
+551                                 \textcolor{comment}{// loop over own cell}
+552                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i=0; i<cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[cellIndex].size(); i++)
+553                                 \{
+554                                                 \textcolor{keywordflow}{if} (\_atom != cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[cellIndex][i])
+555                                                 \{
+556                                                                 neighbors.push\_back(cl->
+      \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[cellIndex][i]->pos);
+557                                                 \}
+558                                 \}
+559                                 \textcolor{comment}{// loop over neighboring cells}
+560                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i=0; i<cl->\hyperlink{classcell_list_ada607886d0e5a20d710dde694d6d989f}{neighbours}[cellIndex].size(); i++)
+561                                 \{
+562                                                 \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} neighborCellIndex = cl->
+      \hyperlink{classcell_list_ada607886d0e5a20d710dde694d6d989f}{neighbours}[cellIndex][i];
+563                                                 
+564                                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j=0; j<cl->
+      \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[neighborCellIndex].size(); j++)
+565                                                 \{
+566                                                                 \textcolor{keywordflow}{if} (\_atom != cl->
+      \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[neighborCellIndex][j])
+567                                                                 \{
+568                                                                                 neighbors.push\_back(cl->
+      \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[neighborCellIndex][j]->pos);
+569                                                                 \}
+570                                                 \}
+571                                 \}
+572                 \}
+573                 
+574                 \textcolor{keywordflow}{return} neighbors;
+575 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_aa31d40c91cb50f143a9613d362798887}{}\index{sim\+System@{sim\+System}!get\+T\+M\+M\+C\+Bias@{get\+T\+M\+M\+C\+Bias}}
+\index{get\+T\+M\+M\+C\+Bias@{get\+T\+M\+M\+C\+Bias}!sim\+System@{sim\+System}}
+\subsubsection[{get\+T\+M\+M\+C\+Bias()}]{\setlength{\rightskip}{0pt plus 5cm}{\bf tmmc} $\ast$ sim\+System\+::get\+T\+M\+M\+C\+Bias (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classsim_system_aa31d40c91cb50f143a9613d362798887}
+
+
+Return pointer to the T\+M\+M\+C bias. 
+
+Return a pointer to the T\+M\+M\+C biasing object, if using T\+M\+M\+C, else throws an exception.
+
+\begin{DoxyReturn}{Returns}
+tmmc Pointer to T\+M\+M\+C biasing object being used. 
+\end{DoxyReturn}
+
+
+Definition at line 692 of file system.\+cpp.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+692                               \{
+693                 \textcolor{keywordflow}{if} (\hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC} == \textcolor{keyword}{true}) \{
+694                                 \textcolor{keywordflow}{return} \hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias};
+695                 \} \textcolor{keywordflow}{else} \{
+696                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Not using TMMC"});
+697                 \}
+698 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_a37dd827f4057049763351510147b9f1d}{}\index{sim\+System@{sim\+System}!get\+Tot\+N@{get\+Tot\+N}}
+\index{get\+Tot\+N@{get\+Tot\+N}!sim\+System@{sim\+System}}
+\subsubsection[{get\+Tot\+N()}]{\setlength{\rightskip}{0pt plus 5cm}const int sim\+System\+::get\+Tot\+N (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsim_system_a37dd827f4057049763351510147b9f1d}
+
+
+Return a sum of the total number of atoms currently in the system. 
+
+
+
+Definition at line 47 of file system.\+h.
+
+
+
+Referenced by calculate\+Bias(), translate\+Particle\+::make(), insert\+Particle\+::make(), swap\+Particles\+::make(), and delete\+Particle\+::make().
+
+\hypertarget{classsim_system_a7cb5049de8b0988349e89e30e4000407}{}\index{sim\+System@{sim\+System}!get\+W\+A\+L\+A\+Bias@{get\+W\+A\+L\+A\+Bias}}
+\index{get\+W\+A\+L\+A\+Bias@{get\+W\+A\+L\+A\+Bias}!sim\+System@{sim\+System}}
+\subsubsection[{get\+W\+A\+L\+A\+Bias()}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wala} $\ast$ sim\+System\+::get\+W\+A\+L\+A\+Bias (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a7cb5049de8b0988349e89e30e4000407}
+
+
+Return pointer to the Wang-\/\+Landau bias. 
+
+Return a pointer to the T\+M\+M\+C biasing object, if using T\+M\+M\+C, else throws an exception.
+
+\begin{DoxyReturn}{Returns}
+wala Pointer to W\+A\+L\+A biasing object being used. 
+\end{DoxyReturn}
+
+
+Definition at line 705 of file system.\+cpp.
+
+
+
+Referenced by main(), translate\+Particle\+::make(), swap\+Particles\+::make(), delete\+Particle\+::make(), and insert\+Particle\+::make().
+
+
+\begin{DoxyCode}
+705                               \{
+706                 \textcolor{keywordflow}{if} (\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA} == \textcolor{keyword}{true}) \{
+707                                 \textcolor{keywordflow}{return} \hyperlink{classsim_system_a6dc8d9f89dfcfa247a59bc50889c49e7}{wlBias};
+708                 \} \textcolor{keywordflow}{else} \{
+709                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Not using WALA"});
+710                 \}
+711 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_a6ad31c08955b80873f865b3069618dcb}{}\index{sim\+System@{sim\+System}!increment\+Energy@{increment\+Energy}}
+\index{increment\+Energy@{increment\+Energy}!sim\+System@{sim\+System}}
+\subsubsection[{increment\+Energy(const double d\+U)}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::increment\+Energy (
+\begin{DoxyParamCaption}
+\item[{const double}]{d\+U}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsim_system_a6ad31c08955b80873f865b3069618dcb}
+
+
+Increment the system\textquotesingle{}s energy. 
+
+
+
+Definition at line 27 of file system.\+h.
+
+
+
+Referenced by delete\+Particle\+::make(), translate\+Particle\+::make(), swap\+Particles\+::make(), and insert\+Particle\+::make().
+
+\hypertarget{classsim_system_a6c1e86f585f3a52aa82b6394ffbf1c6a}{}\index{sim\+System@{sim\+System}!insert\+Atom@{insert\+Atom}}
+\index{insert\+Atom@{insert\+Atom}!sim\+System@{sim\+System}}
+\subsubsection[{insert\+Atom(const int type\+Index, atom $\ast$new\+Atom)}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::insert\+Atom (
+\begin{DoxyParamCaption}
+\item[{const int}]{type\+Index, }
+\item[{{\bf atom} $\ast$}]{new\+Atom}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a6c1e86f585f3a52aa82b6394ffbf1c6a}
+
+
+Insert an atom into the system. 
+
+Does all the bookkeepping behind the scenes.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em type\+Index} & What type the atom is ($>$= 0) \\
+\hline
+\mbox{\tt in}  & {\em new\+Atom} & Pointer to new atom. A copy is stored in the system so the original may be destroyed. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 91 of file system.\+cpp.
+
+
+
+References cell\+List\+::insert\+Particle().
+
+
+
+Referenced by insert\+Particle\+::make(), and swap\+Particles\+::make().
+
+
+\begin{DoxyCode}
+91                                                               \{
+92     \textcolor{keywordflow}{if} (typeIndex < nSpecies\_ && typeIndex >= 0) \{
+93         \textcolor{keywordflow}{if} (\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndex] < maxSpecies\_[typeIndex]) \{
+94             \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex][\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndex]] = (*newAtom);
+95             numSpecies[typeIndex]++;
+96             totN\_++;
+97            \textcolor{comment}{// add particle into appropriate cell list}
+98            \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i=0; i<nSpecies\_; i++)
+99            \{
+100                                 \textcolor{keywordflow}{if} (useCellList\_[typeIndex][i])
+101                 \{
+102                                 \hyperlink{classcell_list}{cellList}* cl = cellListsByPairType\_[typeIndex][i];
+103                                 cl->\hyperlink{classcell_list_a56c0012eed483e47248f9065bfc70fce}{insertParticle}(&\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex][numSpecies[
+      typeIndex]- 1]);
+104                 \}
+105             \}
+106             
+107         \} \textcolor{keywordflow}{else} \{
+108             std::string index = \textcolor{keyword}{static\_cast<}std::ostringstream*\textcolor{keyword}{>}( &(std::ostringstream() << typeIndex) )->
+      str();
+109             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Reached upper bound, cannot insert an atom of type index
+       "}+index);
+110         \}
+111     \} \textcolor{keywordflow}{else} \{
+112         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"That species index does not exist, cannot insert an atom"});
+113     \}
+114 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_a93259b517f449f1ac610d132ac66b551}{}\index{sim\+System@{sim\+System}!max\+Species@{max\+Species}}
+\index{max\+Species@{max\+Species}!sim\+System@{sim\+System}}
+\subsubsection[{max\+Species(const int index)}]{\setlength{\rightskip}{0pt plus 5cm}const int sim\+System\+::max\+Species (
+\begin{DoxyParamCaption}
+\item[{const int}]{index}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a93259b517f449f1ac610d132ac66b551}
+
+
+Returns the absolute maximum number of a given species type allowed in the system. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em index} & Species index to query\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+max\+Species Maximum number of them allowed 
+\end{DoxyReturn}
+
+
+Definition at line 658 of file system.\+cpp.
+
+
+
+Referenced by insert\+Particle\+::make().
+
+
+\begin{DoxyCode}
+658                                                 \{
+659     \textcolor{keywordflow}{if} (maxSpecies\_.begin() == maxSpecies\_.end()) \{
+660         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"No species in the system, cannot report a maximum"});
+661     \}
+662     \textcolor{keywordflow}{if} (maxSpecies\_.size() <= index) \{
+663          \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"System does not contain that species, cannot report a
+       maximum"});
+664     \} \textcolor{keywordflow}{else}  \{
+665         \textcolor{keywordflow}{return} maxSpecies\_[index];
+666     \}
+667 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_afafda4a09ed180ee9c5580d196d8ca9f}{}\index{sim\+System@{sim\+System}!min\+Species@{min\+Species}}
+\index{min\+Species@{min\+Species}!sim\+System@{sim\+System}}
+\subsubsection[{min\+Species(const int index)}]{\setlength{\rightskip}{0pt plus 5cm}const int sim\+System\+::min\+Species (
+\begin{DoxyParamCaption}
+\item[{const int}]{index}
+\end{DoxyParamCaption}
+)}\label{classsim_system_afafda4a09ed180ee9c5580d196d8ca9f}
+
+
+Returns the absolute minimum number of a given species type allowed in the system. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em index} & Species index to query\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+min\+Species Minimum number of them allowed 
+\end{DoxyReturn}
+
+
+Definition at line 676 of file system.\+cpp.
+
+
+
+Referenced by delete\+Particle\+::make().
+
+
+\begin{DoxyCode}
+676                                                 \{
+677     \textcolor{keywordflow}{if} (minSpecies\_.begin() == minSpecies\_.end()) \{
+678         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"No species in the system, cannot report a minimum"});
+679     \}
+680     \textcolor{keywordflow}{if} (minSpecies\_.size() <= index) \{
+681         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"System does not contain that species, cannot report a
+       minimum"});
+682     \} \textcolor{keywordflow}{else}  \{
+683         \textcolor{keywordflow}{return} minSpecies\_[index];
+684     \}
+685 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_af1e3f5320aff976a448647244d5950d1}{}\index{sim\+System@{sim\+System}!mu@{mu}}
+\index{mu@{mu}!sim\+System@{sim\+System}}
+\subsubsection[{mu(const int index)}]{\setlength{\rightskip}{0pt plus 5cm}const double sim\+System\+::mu (
+\begin{DoxyParamCaption}
+\item[{const int}]{index}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsim_system_af1e3f5320aff976a448647244d5950d1}
+
+
+Return the chemical potential for a given species\textquotesingle{} index. 
+
+
+
+Definition at line 51 of file system.\+h.
+
+
+
+Referenced by delete\+Particle\+::make(), and insert\+Particle\+::make().
+
+\hypertarget{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{}\index{sim\+System@{sim\+System}!n\+Species@{n\+Species}}
+\index{n\+Species@{n\+Species}!sim\+System@{sim\+System}}
+\subsubsection[{n\+Species()}]{\setlength{\rightskip}{0pt plus 5cm}const int sim\+System\+::n\+Species (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}
+
+
+Return the number of different species in the system. 
+
+
+
+Definition at line 42 of file system.\+h.
+
+
+
+Referenced by main(), translate\+Particle\+::make(), swap\+Particles\+::make(), delete\+Particle\+::make(), and insert\+Particle\+::make().
+
+\hypertarget{classsim_system_a40af191fae6091e26413ee06ae188ae9}{}\index{sim\+System@{sim\+System}!potential\+Is\+Set@{potential\+Is\+Set}}
+\index{potential\+Is\+Set@{potential\+Is\+Set}!sim\+System@{sim\+System}}
+\subsubsection[{potential\+Is\+Set(const int spec1, const int spec2)}]{\setlength{\rightskip}{0pt plus 5cm}bool sim\+System\+::potential\+Is\+Set (
+\begin{DoxyParamCaption}
+\item[{const int}]{spec1, }
+\item[{const int}]{spec2}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsim_system_a40af191fae6091e26413ee06ae188ae9}
+
+
+Boolean which returns whether or not a pair has had its potential specified by the user yet. 
+
+
+
+Definition at line 41 of file system.\+h.
+
+
+
+Referenced by main().
+
+\hypertarget{classsim_system_ac5096ab2cf643bc5c4f9e6ca0612b13b}{}\index{sim\+System@{sim\+System}!print\+Snapshot@{print\+Snapshot}}
+\index{print\+Snapshot@{print\+Snapshot}!sim\+System@{sim\+System}}
+\subsubsection[{print\+Snapshot(std\+::string filename, std\+::string comment)}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::print\+Snapshot (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{filename, }
+\item[{std\+::string}]{comment}
+\end{DoxyParamCaption}
+)}\label{classsim_system_ac5096ab2cf643bc5c4f9e6ca0612b13b}
+
+
+Print an X\+Y\+Z file of the instantaneous system configuration. 
+
+This can be read in at a later time via \hyperlink{classsim_system_afcd8467fd7611184ad32138fc410813c}{read\+Restart()} function.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em filename} & File to store X\+Y\+Z coordinates to \\
+\hline
+\mbox{\tt in}  & {\em comment} & Comment line for the file \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 430 of file system.\+cpp.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+430                                                                     \{
+431     std::ofstream outfile (filename.c\_str());
+432     
+433     \textcolor{keywordtype}{int} tot = 0;
+434     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
+435         tot += \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[j];
+436     \}
+437     
+438     outfile << tot << std::endl;
+439     outfile << comment << std::endl;
+440     
+441     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
+442         \textcolor{keyword}{const} \textcolor{keywordtype}{int} num = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[j];
+443         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < num; ++i) \{
+444             outfile << j << \textcolor{stringliteral}{"\(\backslash\)t"} << \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].pos[0] << \textcolor{stringliteral}{"\(\backslash\)t"} << \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].pos[1] << \textcolor{stringliteral}{"\(\backslash\)t"} << 
+      \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].pos[2] << std::endl;
+445         \}
+446     \}
+447     
+448     outfile.close();
+449 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_a6cfe3d83219a4886991ba0135d46faa7}{}\index{sim\+System@{sim\+System}!print\+U@{print\+U}}
+\index{print\+U@{print\+U}!sim\+System@{sim\+System}}
+\subsubsection[{print\+U(const std\+::string file\+Name)}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::print\+U (
+\begin{DoxyParamCaption}
+\item[{const std\+::string}]{file\+Name}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a6cfe3d83219a4886991ba0135d46faa7}
+
+
+Print the average energy to file, $<$\+U$>$ for every N\+\_\+tot within range is recorded. 
+
+Will overwrite the file if another with that name exists. Prints in net\+C\+D\+F format if enabled.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em file\+Name} & Name of the file to print to \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 330 of file system.\+cpp.
+
+
+
+References sstr.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+330                                                 \{
+331                 std::vector < double > aveU (AverageU\_.size(), 0);
+332                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < AverageU\_.size(); ++i) \{
+333                                 aveU[i] = AverageU\_[i]/numAverageU\_[i]; 
+334                 \}
+335                 
+336 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
+337     \textcolor{comment}{// If netCDF libs are enabled, write to this format}
+338     \textcolor{keyword}{const} std::string name = fileName + \textcolor{stringliteral}{".nc"};
+339                 NcFile outFile(name.c\_str(), NcFile::replace);
+340                 NcDim probDim = outFile.addDim(\textcolor{stringliteral}{"vectorized\_position"}, aveU.size());
+341                 NcVar probVar = outFile.addVar(\textcolor{stringliteral}{"<U>"}, ncDouble, probDim);
+342                 \textcolor{keyword}{const} std::string dummyName = \textcolor{stringliteral}{"number\_species:"};
+343                 probVar.putAtt(dummyName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(nSpecies\_).c\_str());
+344                 \textcolor{keyword}{const} std::string attName = \textcolor{stringliteral}{"species\_total\_upper\_bound:"};
+345                 probVar.putAtt(attName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(totNBounds\_[1]).c\_str());
+346                 \textcolor{keyword}{const} std::string attName = \textcolor{stringliteral}{"species\_total\_lower\_bound:"};
+347                 probVar.putAtt(attName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(totNBounds\_[0]).c\_str());
+348                 probVar.putVar(&aveU[0]);
+349 \textcolor{preprocessor}{#else}
+350                 \textcolor{comment}{// Without netCDF capabilities, just print to ASCII file}
+351                 std::ofstream of;
+352                 of.open(fileName+\textcolor{stringliteral}{".dat"}, std::ofstream::out);
+353                 of << \textcolor{stringliteral}{"# <U> as a function of N\_tot."} << std::endl;
+354                 of << \textcolor{stringliteral}{"# Number of species:"} << nSpecies\_ << std::endl;
+355                 of << \textcolor{stringliteral}{"# species\_total\_upper\_bound:"} << totNBounds\_[1] << std::endl;
+356                 of << \textcolor{stringliteral}{"# species\_total\_lower\_bound:"} << totNBounds\_[0] << std::endl;
+357                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < aveU.size(); ++i) \{
+358                                 of << aveU[i] << std::endl;
+359                 \}
+360                 of.close();
+361 \textcolor{preprocessor}{#endif}
+362 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_afcd8467fd7611184ad32138fc410813c}{}\index{sim\+System@{sim\+System}!read\+Restart@{read\+Restart}}
+\index{read\+Restart@{read\+Restart}!sim\+System@{sim\+System}}
+\subsubsection[{read\+Restart(std\+::string filename)}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::read\+Restart (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{filename}
+\end{DoxyParamCaption}
+)}\label{classsim_system_afcd8467fd7611184ad32138fc410813c}
+
+
+Read an X\+Y\+Z file as the system\textquotesingle{}s initial configuration. 
+
+Note that the number of species, etc. must already be specified in the constructor. Will also reset and calculate the energy from scratch so these potentials should be set before reading in a restart file.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em filename} & File to read X\+Y\+Z coordinates from \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 457 of file system.\+cpp.
+
+
+
+References custom\+Exception\+::what().
+
+
+\begin{DoxyCode}
+457                                                \{
+458                 std::ifstream infile (filename.c\_str());
+459                 std::string line;
+460                 \textcolor{keywordtype}{int} natoms = 0;
+461                 infile >> natoms;
+462                 std::getline(infile, line); \textcolor{comment}{// comment line }
+463                 
+464                 std::vector < atom > sysatoms (natoms);
+465                 std::vector < int > index (natoms);
+466                 std::map < int, int > types;
+467                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < natoms; ++j) \{
+468         infile >> index[j] >> sysatoms[j].pos[0] >> sysatoms[j].pos[1] >> sysatoms[j].pos[2];
+469     \}
+470                 infile.close();
+471                 
+472                 \textcolor{comment}{// sort by type}
+473                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < natoms; ++j) \{
+474                                 \textcolor{keywordflow}{if} (types.find(index[j]) != types.end()) \{
+475                                                 types[index[j]] += 1;
+476                                 \} \textcolor{keywordflow}{else} \{
+477                                                 types[index[j]] = 1;
+478                                 \}
+479                 \}
+480                 \textcolor{keywordtype}{int} maxType = -1;
+481                 \textcolor{keywordflow}{for} (std::map<int,int>::iterator it=types.begin(); it != types.end(); ++it) \{
+482                                 maxType = std::max(maxType, it->first);
+483                                 \textcolor{keywordflow}{if} (it->first < 0 || it->first >= nSpecies\_) \{
+484                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Restart file
+       corrupted, types out of range"});
+485                                 \}
+486                 \}
+487                 
+488                 \textcolor{comment}{// ensure system is empty}
+489                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
+490                                 \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j].resize(0);
+491                 \}
+492                 
+493                 energy\_ = 0.0;
+494                 
+495                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < sysatoms.size(); ++j) \{
+496                                 \textcolor{keywordflow}{try} \{
+497                                                 \hyperlink{classsim_system_a6c1e86f585f3a52aa82b6394ffbf1c6a}{insertAtom} (index[j], &sysatoms[j]);
+498                                 \}
+499                                 \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+500                                                 std::string a = \textcolor{stringliteral}{"Could not initialize system from restart
+       file, "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+501                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+502                                 \}
+503                 \}
+504                 
+505                 \textcolor{comment}{// double check}
+506                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
+507                                 \textcolor{keywordflow}{if} (\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j].begin() != \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j].end()) \{
+508                                                 \textcolor{keywordflow}{if} (\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j].size() != types[j]) \{
+509                                                                 \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Failed to properly insert old atoms into system"});
+510                                                 \}
+511                                 \} \textcolor{keywordflow}{else} \{
+512                                                 \textcolor{keywordflow}{if} (0 != types[j]) \{
+513                                                                 \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Failed to properly insert old atoms into system"});
+514                                                 \}
+515                                 \}
+516                 \}
+517 
+518                 energy\_ = \hyperlink{classsim_system_a51539ed4c3bb4905b32ce428c1c537fe}{scratchEnergy}();
+519 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_a11a8994c279ba6f643420f4be57a9b2d}{}\index{sim\+System@{sim\+System}!record\+U@{record\+U}}
+\index{record\+U@{record\+U}!sim\+System@{sim\+System}}
+\subsubsection[{record\+U()}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::record\+U (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a11a8994c279ba6f643420f4be57a9b2d}
+
+
+Save the instantaneous energy of the system as a function of the number of particles in the system. 
+
+Only records values when N\+\_\+tot in range of \mbox{[}min, max\mbox{]}. 
+
+Definition at line 316 of file system.\+cpp.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+316                          \{
+317                 \textcolor{comment}{// only record if in range (removes equilibration stage to get in this range, if there was
+       any)}
+318                 \textcolor{keywordflow}{if} (totN\_ >= totNBounds\_[0] && totN\_ <= totNBounds\_[1]) \{
+319                                 \textcolor{keyword}{const} \textcolor{keywordtype}{int} address = totN\_-totNBounds\_[0];
+320                                 AverageU\_[address] += energy\_;
+321                                 numAverageU\_[address] += 1.0;
+322                 \}
+323 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_a51539ed4c3bb4905b32ce428c1c537fe}{}\index{sim\+System@{sim\+System}!scratch\+Energy@{scratch\+Energy}}
+\index{scratch\+Energy@{scratch\+Energy}!sim\+System@{sim\+System}}
+\subsubsection[{scratch\+Energy()}]{\setlength{\rightskip}{0pt plus 5cm}const double sim\+System\+::scratch\+Energy (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a51539ed4c3bb4905b32ce428c1c537fe}
+
+
+Recalculate the energy of the system from scratch. 
+
+\begin{DoxyReturn}{Returns}
+tot\+U Total energy of the system 
+\end{DoxyReturn}
+
+
+Definition at line 582 of file system.\+cpp.
+
+
+
+References custom\+Exception\+::what().
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+582                                        \{
+583     \textcolor{keywordtype}{double} totU = 0.0;
+584     \textcolor{keywordtype}{double} V = 1.0;
+585     
+586     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box\_.size(); ++i) \{
+587                 V *= box\_[i];
+588     \}
+589     
+590     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec1 = 0; spec1 < nSpecies\_; ++spec1) \{
+591         \textcolor{keywordtype}{int} num1;
+592         \textcolor{keywordflow}{try} \{
+593             num1 = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec1];
+594         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+595             std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+596             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+597         \}
+598                                 
+599         \textcolor{comment}{// interactions with same type}
+600         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < num1; ++j) \{
+601             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = j+1; k < num1; ++k) \{
+602                 \textcolor{keywordflow}{try} \{
+603                     totU += \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec1][spec1]->energy(\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[spec1][j].pos, 
+      \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[spec1][k].pos, box\_);                
+604                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+605                     std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+606                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+607                 \}
+608             \}
+609         \}
+610         
+611         \textcolor{comment}{// add tail correction to potential energy}
+612 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+613         \textcolor{keywordflow}{if} ((\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec1][spec1]->useTailCorrection) && (num1 > 1)) \{
+614                 totU += (num1)*0.5*\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec1][spec1]->tailCorrection((num1-1)/V);
+615         \}
+616 \textcolor{preprocessor}{#endif        }
+617         \textcolor{comment}{// interactions with other types}
+618         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec2 = 0; spec2 < nSpecies\_; ++spec2) \{
+619             \textcolor{keywordflow}{if} (spec2 > spec1) \{ \textcolor{comment}{// only compute unique interactions}
+620                 \textcolor{keywordtype}{int} num2;
+621                 \textcolor{keywordflow}{try} \{
+622                     num2 = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec2];
+623                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+624                     std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+625                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+626                 \}
+627                 
+628                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < num1; ++j) \{
+629                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < num2; ++k) \{
+630                         \textcolor{keywordflow}{try} \{
+631                             totU += \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec1][spec2]->energy(\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[spec1][j].pos, 
+      \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[spec2][k].pos, box\_);
+632                         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+633                             std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+634                             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+635                         \}
+636                     \}
+637                 \}
+638                 \textcolor{comment}{// add tail correction to potential energy}
+639 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+640                 \textcolor{keywordflow}{if} ((\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) \{
+641                                 totU += (num1)*\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec1][spec2]->tailCorrection(num2/V);
+642                                 \}
+643 \textcolor{preprocessor}{#endif}
+644             \}
+645         \}
+646     \}
+647     
+648     \textcolor{keywordflow}{return} totU;
+649 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_a76b5dc3e179e275e40726c660d8e669b}{}\index{sim\+System@{sim\+System}!set\+Tot\+N\+Bounds@{set\+Tot\+N\+Bounds}}
+\index{set\+Tot\+N\+Bounds@{set\+Tot\+N\+Bounds}!sim\+System@{sim\+System}}
+\subsubsection[{set\+Tot\+N\+Bounds(const std\+::vector$<$ int $>$ \&bounds)}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::set\+Tot\+N\+Bounds (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ int $>$ \&}]{bounds}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a76b5dc3e179e275e40726c660d8e669b}
+
+
+Set the bounds on the total number of particles in a system. 
+
+If not set manually, this defaults to the sum of the bounds given for each individual species in the system. Therefore, for single component simulations, this is identical to \mbox{[}min\+Species(0), max\+Species(0)\mbox{]} unless otherwise set. These bounds are intended to be used to create \char`\"{}windows\char`\"{} so that specific simulations can sample subregions of \mbox{[}min\+Species(0), max\+Species(0)\mbox{]} and be stitched together with histogram reweighting later.
+
+However, this routine will A\+L\+S\+O cause the system to reevaluate its bounds. If these total bounds are outside any individual bound for each atom type, nothing will change. However, if the upper bound for total atoms is less than an upper bound for a specific species, that species will have its bounds changed to match the total maximum. As a result sys.\+atoms can change so this routine should be called at the beginning of a simulation, never during. The total minimum will also be checked. That is, if the sum of the minimum for all species is still higher than this, an exception will be throw since the system will never reach such a low density anyway. Most likely the user has made a mistake.
+
+Be sure to initialize other objects, such as biases, A\+F\+T\+E\+R this routine has been called since it will adjust the allowable number of particles in the system.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em bounds} & Vector of \mbox{[}min, max\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 28 of file system.\+cpp.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+28                                                               \{
+29                 \textcolor{keywordflow}{if} (bounds.size() != 2) \{
+30                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Bounds on total N must supplied as
+       vector of <minN, maxN>"});
+31                 \}
+32                 \textcolor{keywordflow}{if} (bounds[0] < 0) \{
+33                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Lower bound on total particles must
+       be > 0"});
+34                 \}
+35                 \textcolor{keywordflow}{if} (bounds[0] > bounds[1]) \{
+36                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Upper bound must be greater than
+       lower bound for total number of particles in the system"});
+37                 \}
+38                 totNBounds\_ = bounds;
+39 
+40                 \textcolor{keywordtype}{int} totMin = 0;
+41                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+42                                 \textcolor{keywordflow}{if} (maxSpecies\_[i] > totNBounds\_[1]) \{
+43                                                 maxSpecies\_[i] = totNBounds\_[1];
+44                                 \}
+45                                 totMin += minSpecies\_[i];
+46                 \}
+47                 \textcolor{keywordflow}{if} (totMin > totNBounds\_[0]) \{
+48                                 \textcolor{comment}{// this isn't the end of the world, but for now, alert the user in case
+       something is wrong}
+49                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Lower total N bound is lower than
+       the sum of all individual lower bounds, region cannot be completely sampled"});
+50                 \}
+51                 
+52                 \textcolor{comment}{// recheck bounds and possibly resize}
+53                 \textcolor{keywordtype}{int} tmpTot = 0;
+54     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+55         \textcolor{keywordflow}{if} (maxSpecies\_[i] < minSpecies\_[i]) \{
+56             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max species < Min species"});
+57         \}
+58                                 \textcolor{keywordflow}{try} \{
+59                                                 \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i].resize(maxSpecies\_[i]);
+60                                 \} \textcolor{keywordflow}{catch} (std::exception &e) \{
+61                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (e.what());
+62                                 \}
+63                                 \textcolor{keywordflow}{if} (\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i] > \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i].size()) \{
+64                                                 \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i] = \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}.size();
+65                                 \}
+66                                 tmpTot += \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i];
+67                 \}
+68     totN\_ = tmpTot;
+69   
+70     \textcolor{comment}{// Allocate space for energy matrix - this will only be recorded when the system is within the specific
+       window we are looking for}
+71     \textcolor{comment}{// Because of implementation of Shen and Errington method, this syntax is the same for single and
+       multicomponent systems}
+72     \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} size = totNBounds\_[1] - totNBounds\_[0] + 1;
+73     \textcolor{keywordflow}{try} \{
+74                 AverageU\_.resize(size, 0); 
+75     \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+76                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory for energy record"});
+77     \}
+78     \textcolor{keywordflow}{try} \{
+79                 numAverageU\_.resize(size, 0);
+80     \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+81         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory for energy record"});
+82     \}
+83 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_a0d910b833afccdd57e86cc45787e43a1}{}\index{sim\+System@{sim\+System}!start\+T\+M\+M\+C@{start\+T\+M\+M\+C}}
+\index{start\+T\+M\+M\+C@{start\+T\+M\+M\+C}!sim\+System@{sim\+System}}
+\subsubsection[{start\+T\+M\+M\+C(const int Nmax, const int Nmin)}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::start\+T\+M\+M\+C (
+\begin{DoxyParamCaption}
+\item[{const int}]{Nmax, }
+\item[{const int}]{Nmin}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a0d910b833afccdd57e86cc45787e43a1}
+
+
+Start using T\+M\+M\+C and instantiate the bias object. 
+
+Start using a transition-\/matrix in the simulation.
+
+Throws an exception if input values are illegal or there is another problem (e.\+g. memory).
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Nmax} & Upper bound for total number of particles in the system. \\
+\hline
+\mbox{\tt in}  & {\em Nmin} & Lower bound for total number of particles in the system. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 739 of file system.\+cpp.
+
+
+
+References sstr, and custom\+Exception\+::what().
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+739                                                          \{ 
+740                 \textcolor{comment}{// initialize the tmmc object}
+741                 \textcolor{keywordflow}{try} \{
+742                                 \hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias} = \textcolor{keyword}{new} \hyperlink{classtmmc}{tmmc} (Nmax, Nmin);
+743                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+744                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot start TMMC biasing in system:
+       "}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}()));
+745                 \}
+746                                 
+747                 \hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC} = \textcolor{keyword}{true}; 
+748 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_a0abac060c326c4d82952737e55814351}{}\index{sim\+System@{sim\+System}!start\+W\+A\+L\+A@{start\+W\+A\+L\+A}}
+\index{start\+W\+A\+L\+A@{start\+W\+A\+L\+A}!sim\+System@{sim\+System}}
+\subsubsection[{start\+W\+A\+L\+A(const double ln\+F, const double g, const double s, const int Nmax, const int Nmin)}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::start\+W\+A\+L\+A (
+\begin{DoxyParamCaption}
+\item[{const double}]{ln\+F, }
+\item[{const double}]{g, }
+\item[{const double}]{s, }
+\item[{const int}]{Nmax, }
+\item[{const int}]{Nmin}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a0abac060c326c4d82952737e55814351}
+
+
+Start using Wang-\/\+Landau and instantiate the bias object. 
+
+
+
+Definition at line 722 of file system.\+cpp.
+
+
+
+References sstr, and custom\+Exception\+::what().
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+722                                                                                                            
+      \{ 
+723                 \textcolor{comment}{// initialize the wala object}
+724                 \textcolor{keywordflow}{try} \{
+725                                 \hyperlink{classsim_system_a6dc8d9f89dfcfa247a59bc50889c49e7}{wlBias} = \textcolor{keyword}{new} \hyperlink{classwala}{wala} (lnF, g, s, Nmax, Nmin);
+726                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+727                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot start Wang-Landau biasing in
+       system: "}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}()));
+728                 \}
+729                 
+730                 \hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA} = \textcolor{keyword}{true};
+731 \}
+\end{DoxyCode}
+\hypertarget{classsim_system_a69edcc2c27db3d4e94002ac5635e9030}{}\index{sim\+System@{sim\+System}!stop\+T\+M\+M\+C@{stop\+T\+M\+M\+C}}
+\index{stop\+T\+M\+M\+C@{stop\+T\+M\+M\+C}!sim\+System@{sim\+System}}
+\subsubsection[{stop\+T\+M\+M\+C()}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::stop\+T\+M\+M\+C (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsim_system_a69edcc2c27db3d4e94002ac5635e9030}
+
+
+Stop using T\+M\+M\+C and free the bias object. 
+
+
+
+Definition at line 39 of file system.\+h.
+
+
+
+References tmmc\+Bias, and use\+T\+M\+M\+C.
+
+\hypertarget{classsim_system_ad6febde00f19ae0787771f2d1d9e391b}{}\index{sim\+System@{sim\+System}!stop\+W\+A\+L\+A@{stop\+W\+A\+L\+A}}
+\index{stop\+W\+A\+L\+A@{stop\+W\+A\+L\+A}!sim\+System@{sim\+System}}
+\subsubsection[{stop\+W\+A\+L\+A()}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::stop\+W\+A\+L\+A (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsim_system_ad6febde00f19ae0787771f2d1d9e391b}
+
+
+Stop using Wang-\/\+Landau and free the bias object. 
+
+
+
+Definition at line 37 of file system.\+h.
+
+
+
+References use\+W\+A\+L\+A, and wl\+Bias.
+
+
+
+Referenced by main().
+
+\hypertarget{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{}\index{sim\+System@{sim\+System}!tot\+N\+Max@{tot\+N\+Max}}
+\index{tot\+N\+Max@{tot\+N\+Max}!sim\+System@{sim\+System}}
+\subsubsection[{tot\+N\+Max()}]{\setlength{\rightskip}{0pt plus 5cm}const int sim\+System\+::tot\+N\+Max (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}
+
+
+Return upper bound on the total number of atoms in the system. 
+
+
+
+Definition at line 45 of file system.\+h.
+
+
+
+Referenced by main(), and insert\+Particle\+::make().
+
+\hypertarget{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{}\index{sim\+System@{sim\+System}!tot\+N\+Min@{tot\+N\+Min}}
+\index{tot\+N\+Min@{tot\+N\+Min}!sim\+System@{sim\+System}}
+\subsubsection[{tot\+N\+Min()}]{\setlength{\rightskip}{0pt plus 5cm}const int sim\+System\+::tot\+N\+Min (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsim_system_af10842e0eaa638373b8717c87b47e6bc}
+
+
+Return lower bound on the total number of atoms in the system. 
+
+
+
+Definition at line 46 of file system.\+h.
+
+
+
+Referenced by main(), and delete\+Particle\+::make().
+
+\hypertarget{classsim_system_a22fdaceea44abd6cd021bac1ecd11890}{}\index{sim\+System@{sim\+System}!translate\+Atom@{translate\+Atom}}
+\index{translate\+Atom@{translate\+Atom}!sim\+System@{sim\+System}}
+\subsubsection[{translate\+Atom(const int type\+Index, const int atom\+Index, std\+::vector$<$ double $>$ old\+Pos)}]{\setlength{\rightskip}{0pt plus 5cm}void sim\+System\+::translate\+Atom (
+\begin{DoxyParamCaption}
+\item[{const int}]{type\+Index, }
+\item[{const int}]{atom\+Index, }
+\item[{std\+::vector$<$ double $>$}]{old\+Pos}
+\end{DoxyParamCaption}
+)}\label{classsim_system_a22fdaceea44abd6cd021bac1ecd11890}
+
+
+Translate an atom in the system. 
+
+Does all the bookkeeping behind the scenes. Do nothing if there is no cell list defined for the type
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em type\+Index} & What type the atom is ($>$= 0) \\
+\hline
+\mbox{\tt in}  & {\em atom\+Index} & Which atom {\itshape index} of type type\+Index to translate ($>$= 0) \\
+\hline
+\mbox{\tt in}  & {\em old\+Pos} & Old position of the atom. The current/new position should already be stored in the atom at sys.\+atoms\mbox{[}type\+Index\mbox{]}\mbox{[}atom\+Index\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 156 of file system.\+cpp.
+
+
+
+References cell\+List\+::translate\+Particle().
+
+
+
+Referenced by translate\+Particle\+::make().
+
+
+\begin{DoxyCode}
+156                                                                                                  \{
+157     \textcolor{keywordflow}{if} (typeIndex < nSpecies\_ && typeIndex >= 0) \{
+158         \textcolor{keywordflow}{if} (atomIndex >= 0) \{ 
+159         
+160                 \textcolor{comment}{// delete particle from appropriate cell list, move to new one}
+161             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i=0; i<nSpecies\_; i++)
+162             \{
+163                 \textcolor{keywordflow}{if} (useCellList\_[typeIndex][i])
+164                 \{
+165                                 \hyperlink{classcell_list}{cellList}* cl = cellListsByPairType\_[typeIndex][i];
+166                                 cl->\hyperlink{classcell_list_a0d77368abdd5a4665ca2302b9a20509b}{translateParticle}(&\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex][atomIndex], 
+      oldPos);
+167                 \}
+168             \}        
+169         \} \textcolor{keywordflow}{else} \{
+170             std::string index = \textcolor{keyword}{static\_cast<}std::ostringstream*\textcolor{keyword}{>}( &(std::ostringstream() << typeIndex) )->
+      str();
+171             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Number of those atoms in system is out of bounds, cannot
+       translate an atom of type index "}+index);
+172         \}
+173     \} \textcolor{keywordflow}{else} \{
+174         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"That species index does not exist, cannot translate the atom
+      "});
+175     \}
+176 \}
+\end{DoxyCode}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{}\index{sim\+System@{sim\+System}!atoms@{atoms}}
+\index{atoms@{atoms}!sim\+System@{sim\+System}}
+\subsubsection[{atoms}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ std\+::vector $<$ {\bf atom} $>$ $>$ sim\+System\+::atoms}\label{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}
+
+
+Atoms in a matrix by type, and particle index, respectively that a system C\+A\+N hold but not all are actually \char`\"{}in\char`\"{} the system. 
+
+
+
+Definition at line 62 of file system.\+h.
+
+
+
+Referenced by main(), translate\+Particle\+::make(), swap\+Particles\+::make(), and delete\+Particle\+::make().
+
+\hypertarget{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{}\index{sim\+System@{sim\+System}!num\+Species@{num\+Species}}
+\index{num\+Species@{num\+Species}!sim\+System@{sim\+System}}
+\subsubsection[{num\+Species}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ int $>$ sim\+System\+::num\+Species}\label{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}
+
+
+Total number of each type of atom the system contains. 
+
+
+
+Definition at line 61 of file system.\+h.
+
+
+
+Referenced by delete\+Particle\+::make(), translate\+Particle\+::make(), swap\+Particles\+::make(), and insert\+Particle\+::make().
+
+\hypertarget{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{}\index{sim\+System@{sim\+System}!ppot@{ppot}}
+\index{ppot@{ppot}!sim\+System@{sim\+System}}
+\subsubsection[{ppot}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ std\+::vector $<$ {\bf pair\+Potential}$\ast$ $>$ $>$ sim\+System\+::ppot}\label{classsim_system_a8d6271751a62f61edcf57f773540a4a3}
+
+
+Matrix of pair potentials for atom types i, j. 
+
+
+
+Definition at line 63 of file system.\+h.
+
+
+
+Referenced by main(), translate\+Particle\+::make(), swap\+Particles\+::make(), delete\+Particle\+::make(), and insert\+Particle\+::make().
+
+\hypertarget{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{}\index{sim\+System@{sim\+System}!tmmc\+Bias@{tmmc\+Bias}}
+\index{tmmc\+Bias@{tmmc\+Bias}!sim\+System@{sim\+System}}
+\subsubsection[{tmmc\+Bias}]{\setlength{\rightskip}{0pt plus 5cm}{\bf tmmc}$\ast$ sim\+System\+::tmmc\+Bias}\label{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}
+
+
+T\+M\+M\+C biasing function. 
+
+
+
+Definition at line 59 of file system.\+h.
+
+
+
+Referenced by calculate\+Bias(), and stop\+T\+M\+M\+C().
+
+\hypertarget{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{}\index{sim\+System@{sim\+System}!use\+T\+M\+M\+C@{use\+T\+M\+M\+C}}
+\index{use\+T\+M\+M\+C@{use\+T\+M\+M\+C}!sim\+System@{sim\+System}}
+\subsubsection[{use\+T\+M\+M\+C}]{\setlength{\rightskip}{0pt plus 5cm}bool sim\+System\+::use\+T\+M\+M\+C}\label{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}
+
+
+Logical stating whether or not to use T\+M\+M\+C biasing. 
+
+
+
+Definition at line 57 of file system.\+h.
+
+
+
+Referenced by calculate\+Bias(), and stop\+T\+M\+M\+C().
+
+\hypertarget{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{}\index{sim\+System@{sim\+System}!use\+W\+A\+L\+A@{use\+W\+A\+L\+A}}
+\index{use\+W\+A\+L\+A@{use\+W\+A\+L\+A}!sim\+System@{sim\+System}}
+\subsubsection[{use\+W\+A\+L\+A}]{\setlength{\rightskip}{0pt plus 5cm}bool sim\+System\+::use\+W\+A\+L\+A}\label{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}
+
+
+Logical stating whether or not to use Wang-\/\+Landau biasing. 
+
+
+
+Definition at line 58 of file system.\+h.
+
+
+
+Referenced by calculate\+Bias(), translate\+Particle\+::make(), delete\+Particle\+::make(), insert\+Particle\+::make(), swap\+Particles\+::make(), and stop\+W\+A\+L\+A().
+
+\hypertarget{classsim_system_a6dc8d9f89dfcfa247a59bc50889c49e7}{}\index{sim\+System@{sim\+System}!wl\+Bias@{wl\+Bias}}
+\index{wl\+Bias@{wl\+Bias}!sim\+System@{sim\+System}}
+\subsubsection[{wl\+Bias}]{\setlength{\rightskip}{0pt plus 5cm}{\bf wala}$\ast$ sim\+System\+::wl\+Bias}\label{classsim_system_a6dc8d9f89dfcfa247a59bc50889c49e7}
+
+
+W\+L biasing function. 
+
+
+
+Definition at line 60 of file system.\+h.
+
+
+
+Referenced by calculate\+Bias(), and stop\+W\+A\+L\+A().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{system_8h}{system.\+h}\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{system_8cpp}{system.\+cpp}\end{DoxyCompactItemize}

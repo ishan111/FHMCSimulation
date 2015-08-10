@@ -1,0 +1,50 @@
+.TH "/Users/nam4/Desktop/omcs/src/potentials.h" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/Users/nam4/Desktop/omcs/src/potentials.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <cmath>\fP
+.br
+\fC#include <vector>\fP
+.br
+\fC#include <string>\fP
+.br
+\fC#include <iostream>\fP
+.br
+\fC#include <fstream>\fP
+.br
+\fC#include 'global\&.h'\fP
+.br
+\fC#include 'utilities\&.h'\fP
+.br
+
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBpairPotential\fP"
+.br
+.RI "\fIAbstract base class which defines all pair potentials\&. \fP"
+.ti -1c
+.RI "class \fBlennardJones\fP"
+.br
+.RI "\fILennard-Jones Potential Parameters should be specified in the following order: { epsilon, sigma, r_cut, u_shift }\&. \fP"
+.ti -1c
+.RI "class \fBtabulated\fP"
+.br
+.RI "\fITabulated Potential Parameters should be specified in the following order: { r_cut, r_shift, u_shift, u_infinity }\&. \fP"
+.ti -1c
+.RI "class \fBsquareWell\fP"
+.br
+.RI "\fISquare-well potential Parameters should be specified in the following order: { sigma, wellwidth, welldepth }\&. \fP"
+.ti -1c
+.RI "class \fBhardCore\fP"
+.br
+.RI "\fIHard-core potential Parameters should be specified in the following order: { sigma }\&. \fP"
+.in -1c
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

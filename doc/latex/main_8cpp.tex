@@ -1,0 +1,644 @@
+\hypertarget{main_8cpp}{}\section{/\+Users/nam4/\+Desktop/omcs/src/main.cpp File Reference}
+\label{main_8cpp}\index{/\+Users/nam4/\+Desktop/omcs/src/main.\+cpp@{/\+Users/nam4/\+Desktop/omcs/src/main.\+cpp}}
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$time.\+h$>$}\\*
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include $<$cmath$>$}\\*
+{\ttfamily \#include $<$boost/lexical\+\_\+cast.\+hpp$>$}\\*
+{\ttfamily \#include \char`\"{}system.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}utilities.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}global.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}insert.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}delete.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}translate.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}swap.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}moves.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}rapidjson/include/rapidjson/document.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}rapidjson/include/rapidjson/writer.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}rapidjson/include/rapidjson/stringbuffer.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}rapidjson/include/rapidjson/filereadstream.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}rapidjson/include/rapidjson/prettywriter.\+h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{main_8cpp_af3ed9c200de85b53c94cd18764b246a2}{main} (int argc, char $\ast$const argv\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em Only uncomment this if simulations are purely in the fluid phase. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{main_8cpp_af3ed9c200de85b53c94cd18764b246a2}{}\index{main.\+cpp@{main.\+cpp}!main@{main}}
+\index{main@{main}!main.\+cpp@{main.\+cpp}}
+\subsubsection[{main(int argc, char $\ast$const argv[])}]{\setlength{\rightskip}{0pt plus 5cm}int main (
+\begin{DoxyParamCaption}
+\item[{int}]{argc, }
+\item[{char $\ast$const}]{argv\mbox{[}$\,$\mbox{]}}
+\end{DoxyParamCaption}
+)}\label{main_8cpp_af3ed9c200de85b53c94cd18764b246a2}
+
+
+Only uncomment this if simulations are purely in the fluid phase. 
+
+This will allow tail corrections to be enabled which are only valid assuming a converging g(r) at large r.
+
+Uncomment this if net\+C\+D\+F libraries are installed and can be compiled against. Data will be output to these arrays instead of A\+S\+C\+I\+I files if so.
+
+Usage\+: ./binary\+\_\+name input\+File.\+json $<$ Using Shen and Errington method this syntax is same for single and multicomponent 
+
+Definition at line 54 of file main.\+cpp.
+
+
+
+References moves\+::add\+Move(), sim\+System\+::add\+Potential(), sim\+System\+::atoms, sim\+System\+::box(), tmmc\+::calculate\+P\+I(), tmmc\+::check\+Fully\+Visited(), sim\+System\+::energy(), wala\+::evaluate\+Flatness(), wala\+::getln\+P\+I(), sim\+System\+::get\+T\+M\+M\+C\+Bias(), sim\+System\+::get\+W\+A\+L\+A\+Bias(), moves\+::included\+Moves(), wala\+::iterate\+Forward(), wala\+::ln\+F(), moves\+::make\+Move(), sim\+System\+::n\+Species(), sim\+System\+::potential\+Is\+Set(), sim\+System\+::ppot, tmmc\+::print(), wala\+::print(), sim\+System\+::print\+Snapshot(), sim\+System\+::print\+U(), sim\+System\+::record\+U(), moves\+::report\+Move\+Statistics(), R\+N\+G\+\_\+\+S\+E\+E\+D, S\+A\+F\+E\+\_\+\+E\+X\+I\+T, sim\+System\+::scratch\+Energy(), tmmc\+::set\+Ln\+P\+I(), lennard\+Jones\+::set\+Parameters(), tabulated\+::set\+Parameters(), square\+Well\+::set\+Parameters(), hard\+Core\+::set\+Parameters(), sim\+System\+::set\+Tot\+N\+Bounds(), sstr, sim\+System\+::start\+T\+M\+M\+C(), sim\+System\+::start\+W\+A\+L\+A(), sim\+System\+::stop\+W\+A\+L\+A(), S\+Y\+S\+\_\+\+F\+A\+I\+L\+U\+R\+E, sim\+System\+::tot\+N\+Max(), sim\+System\+::tot\+N\+Min(), and custom\+Exception\+::what().
+
+
+\begin{DoxyCode}
+54                                          \{
+55                 \textcolor{comment}{// Get time stamp}
+56                 time\_t rawtime;
+57                 time (&rawtime);
+58                 \textcolor{keyword}{struct }tm * timeinfo;
+59                 timeinfo = localtime (&rawtime);
+60                 \textcolor{keywordtype}{char} timestamp [80];
+61                 strftime (timestamp,80,\textcolor{stringliteral}{"%d/%m/%Y %H:%M:%S"},timeinfo);
+62                 std::cout << \textcolor{stringliteral}{"Beginning simulation at "} << timestamp << std::endl;
+63                 
+64                 \textcolor{comment}{/* -------------------- BEGIN INPUT -------------------- */}
+65                 
+66                 \textcolor{comment}{// Parse input JSON file}
+67                 FILE* fp = fopen(argv[1], \textcolor{stringliteral}{"r"});
+68                 \textcolor{keywordtype}{char} readBuffer[65536];
+69                 rapidjson::FileReadStream is(fp, readBuffer, \textcolor{keyword}{sizeof}(readBuffer));
+70                 rapidjson::Document doc;
+71                 doc.ParseStream(is);            
+72                 fclose(fp);
+73                                 
+74                 \textcolor{comment}{// Assert that this is a JSON document}
+75                 assert(doc.IsObject());
+76                 
+77                 \textcolor{comment}{// Check each member exists and is in the correct format}
+78                 assert(doc.HasMember(\textcolor{stringliteral}{"num\_species"}));
+79                 assert(doc[\textcolor{stringliteral}{"num\_species"}].IsInt());
+80                 assert(doc.HasMember(\textcolor{stringliteral}{"beta"}));
+81                 assert(doc[\textcolor{stringliteral}{"beta"}].IsNumber());
+82                 
+83                 assert(doc.HasMember(\textcolor{stringliteral}{"box"}));
+84                 assert(doc[\textcolor{stringliteral}{"box"}].IsArray());
+85                 assert(doc[\textcolor{stringliteral}{"box"}].Size() == 3);
+86                 std::vector < double > sysBox (3, 0);
+87                 \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"box"}].Size(); ++i) \{
+88                                 assert(doc[\textcolor{stringliteral}{"box"}][i].IsNumber());
+89                                 sysBox[i] = doc[\textcolor{stringliteral}{"box"}][i].GetDouble();
+90                 \}
+91 
+92                 assert(doc.HasMember(\textcolor{stringliteral}{"mu"}));
+93                 assert(doc[\textcolor{stringliteral}{"mu"}].IsArray());
+94                 assert(doc[\textcolor{stringliteral}{"mu"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
+95                 std::vector < double > sysMu (doc[\textcolor{stringliteral}{"mu"}].Size(), 0);
+96                 \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"mu"}].Size(); ++i) \{
+97                                 assert(doc[\textcolor{stringliteral}{"mu"}][i].IsNumber());
+98                                 sysMu[i] = doc[\textcolor{stringliteral}{"mu"}][i].GetDouble();
+99                 \}
+100 
+101                 assert(doc.HasMember(\textcolor{stringliteral}{"seed"}));
+102                 assert(doc[\textcolor{stringliteral}{"seed"}].IsInt());
+103                 \hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED} = doc[\textcolor{stringliteral}{"seed"}].GetInt();
+104                 
+105                 assert(doc.HasMember(\textcolor{stringliteral}{"max\_N"}));
+106                 assert(doc[\textcolor{stringliteral}{"max\_N"}].IsArray());
+107                 assert(doc[\textcolor{stringliteral}{"max\_N"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
+108                 std::vector < int > sysMax (doc[\textcolor{stringliteral}{"max\_N"}].Size(), 0);
+109                 \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"max\_N"}].Size(); ++i) \{
+110                                 assert(doc[\textcolor{stringliteral}{"max\_N"}][i].IsInt());
+111                                 sysMax[i] = doc[\textcolor{stringliteral}{"max\_N"}][i].GetInt();
+112                 \}
+113 
+114                 assert(doc.HasMember(\textcolor{stringliteral}{"min\_N"}));
+115                 assert(doc[\textcolor{stringliteral}{"min\_N"}].IsArray());
+116                 assert(doc[\textcolor{stringliteral}{"min\_N"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
+117                 std::vector < int > sysMin (doc[\textcolor{stringliteral}{"min\_N"}].Size(), 0);
+118                 \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"min\_N"}].Size(); ++i) \{
+119                                 assert(doc[\textcolor{stringliteral}{"min\_N"}][i].IsInt());
+120                                 sysMin[i] = doc[\textcolor{stringliteral}{"min\_N"}][i].GetInt();
+121                 \}               
+122 
+123                 \hyperlink{classsim_system}{simSystem} sys (doc[\textcolor{stringliteral}{"num\_species"}].GetInt(), doc[\textcolor{stringliteral}{"beta"}].GetDouble(), sysBox, sysMu
+      , sysMax, sysMin);
+124                 
+125                 std::vector < int > sysWindow;
+126                 \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"window"})) \{
+127                                 assert(doc[\textcolor{stringliteral}{"window"}].IsArray());
+128                                 assert(doc[\textcolor{stringliteral}{"window"}].Size() == 2);
+129                                 sysWindow.resize(2, 0);
+130                                 sysWindow[0] = doc[\textcolor{stringliteral}{"window"}][0].GetInt();
+131                                 sysWindow[1] = doc[\textcolor{stringliteral}{"window"}][1].GetInt();
+132                 \}
+133 
+134                 \textcolor{keywordflow}{if} (sysWindow.begin() != sysWindow.end()) \{
+135                                 sys.setTotNBounds(sysWindow);
+136                 \}
+137                 
+138                 assert(doc.HasMember(\textcolor{stringliteral}{"restart\_file"}));
+139                 assert(doc[\textcolor{stringliteral}{"restart\_file"}].IsString());
+140                 \textcolor{keyword}{const} std::string restart\_file = doc[\textcolor{stringliteral}{"restart\_file"}].GetString();
+141 
+142                 assert(doc.HasMember(\textcolor{stringliteral}{"tmmc\_sweep\_size"}));
+143                 assert(doc[\textcolor{stringliteral}{"tmmc\_sweep\_size"}].IsNumber());
+144                 \textcolor{keywordtype}{double} tmpT = doc[\textcolor{stringliteral}{"tmmc\_sweep\_size"}].GetDouble(); \textcolor{comment}{// possibly in scientific notation}
+145                 \textcolor{keyword}{const} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} tmmcSweepSize = tmpT; \textcolor{comment}{// convert}
+146 
+147                 assert(doc.HasMember(\textcolor{stringliteral}{"total\_tmmc\_sweeps"}));
+148                 assert(doc[\textcolor{stringliteral}{"total\_tmmc\_sweeps"}].IsNumber());
+149                 \textcolor{keywordtype}{double} tmpS = doc[\textcolor{stringliteral}{"total\_tmmc\_sweeps"}].GetDouble(); \textcolor{comment}{// possibly in scientific notation}
+150                 \textcolor{keyword}{const} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} totalTMMCSweeps = tmpS; \textcolor{comment}{// convert}
+151 
+152                 assert(doc.HasMember(\textcolor{stringliteral}{"wala\_sweep\_size"}));
+153                 assert(doc[\textcolor{stringliteral}{"wala\_sweep\_size"}].IsNumber());
+154                 \textcolor{keywordtype}{double} tmpW = doc[\textcolor{stringliteral}{"wala\_sweep\_size"}].GetDouble(); \textcolor{comment}{// possibly in scientific notation}
+155                 \textcolor{keyword}{const} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} wlSweepSize = tmpW; \textcolor{comment}{// convert}
+156 
+157                 assert(doc.HasMember(\textcolor{stringliteral}{"wala\_g"}));
+158                 assert(doc[\textcolor{stringliteral}{"wala\_g"}].IsNumber());
+159                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} g = doc[\textcolor{stringliteral}{"wala\_g"}].GetDouble();
+160 
+161                 assert(doc.HasMember(\textcolor{stringliteral}{"wala\_s"}));
+162                 assert(doc[\textcolor{stringliteral}{"wala\_s"}].IsNumber());
+163                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} s = doc[\textcolor{stringliteral}{"wala\_s"}].GetDouble();
+164                 
+165                 std::vector < double > ref (sys.nSpecies(), 0);
+166                 std::vector < std::vector < double > > probEqSwap (sys.nSpecies(), ref), probPrSwap (sys.
+      nSpecies(), ref);
+167                 std::vector < double > probPrInsDel (sys.nSpecies(), 0), probPrDisp (sys.nSpecies(), 0);
+168                 std::vector < double > probEqInsDel (sys.nSpecies(), 0), probEqDisp (sys.nSpecies(), 0);
+169                 std::vector < double > maxPrD (sys.nSpecies(), 0), maxEqD (sys.nSpecies(), 0);
+170                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+171                                 std::string dummy = \textcolor{stringliteral}{"prob\_pr\_ins\_del\_"} + \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1);
+172                                 assert(doc.HasMember(dummy.c\_str()));
+173                                 assert(doc[dummy.c\_str()].IsNumber());
+174                                 probPrInsDel[i] = doc[dummy.c\_str()].GetDouble();
+175                 \}
+176                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+177                                 std::string dummy = \textcolor{stringliteral}{"prob\_pr\_displace\_"} + \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1);
+178                                 assert(doc.HasMember(dummy.c\_str()));
+179                                 assert(doc[dummy.c\_str()].IsNumber());
+180                                 probPrDisp[i] = doc[dummy.c\_str()].GetDouble();
+181                                 dummy = \textcolor{stringliteral}{"max\_pr\_displacement\_"} + \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1);
+182                                 assert(doc.HasMember(dummy.c\_str()));
+183                                 assert(doc[dummy.c\_str()].IsNumber());
+184                                 maxPrD[i] = doc[dummy.c\_str()].GetDouble();
+185                 \}
+186                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+187                                 std::string dummy = \textcolor{stringliteral}{"prob\_eq\_ins\_del\_"} + \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1);
+188                                 assert(doc.HasMember(dummy.c\_str()));
+189                                 assert(doc[dummy.c\_str()].IsNumber());
+190                                 probEqInsDel[i] = doc[dummy.c\_str()].GetDouble();
+191                 \}
+192                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+193                                 std::string dummy = \textcolor{stringliteral}{"prob\_eq\_displace\_"} + \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1);
+194                                 assert(doc.HasMember(dummy.c\_str()));
+195                                 assert(doc[dummy.c\_str()].IsNumber());
+196                                 probEqDisp[i] = doc[dummy.c\_str()].GetDouble();
+197                                 dummy = \textcolor{stringliteral}{"max\_eq\_displacement\_"} + \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1);
+198                                 assert(doc.HasMember(dummy.c\_str()));
+199                                 assert(doc[dummy.c\_str()].IsNumber());
+200                                 maxEqD[i] = doc[dummy.c\_str()].GetDouble();
+201                 \}
+202                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+203                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i+1; j < sys.nSpecies(); ++j) \{
+204                                                 std::string name1 = \textcolor{stringliteral}{"prob\_pr\_swap\_"}+
+      \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1)+\textcolor{stringliteral}{"\_"}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(j+1);
+205                                                 std::string name2 = \textcolor{stringliteral}{"prob\_pr\_swap\_"}+
+      \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(j+1)+\textcolor{stringliteral}{"\_"}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1);
+206                                                 std::string moveName = \textcolor{stringliteral}{""};
+207                                                 \textcolor{keywordtype}{bool} foundIJ = \textcolor{keyword}{false};
+208                                                 \textcolor{keywordflow}{if} (doc.HasMember(name1.c\_str())) \{
+209                                                                 moveName = name1;
+210                                                                 foundIJ = \textcolor{keyword}{true};
+211                                                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && !foundIJ) \{
+212                                                                 moveName = name2;
+213                                                                 foundIJ = \textcolor{keyword}{true};
+214                                                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && foundIJ) \{
+215                                                                 std::cerr << \textcolor{stringliteral}{"Input file doubly specifies
+       production swap move probability for species pair ("}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(j+1)+\textcolor{stringliteral}{")"} << std::endl;
+216                                                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+217                                                 \} \textcolor{keywordflow}{else} \{
+218                                                                 std::cerr << \textcolor{stringliteral}{"Input file does not specify
+       production swap move probability for species pair ("}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(j+1)+\textcolor{stringliteral}{")"} << std::endl;
+219                                                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+220                                                 \}
+221                                                 assert(doc[moveName.c\_str()].IsNumber());
+222                                                 probPrSwap[i][j] = doc[moveName.c\_str()].GetDouble();
+223                                                 probPrSwap[j][i] = doc[moveName.c\_str()].GetDouble();
+224                                 \}
+225                 \}
+226                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+227                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i+1; j < sys.nSpecies(); ++j) \{
+228                                                 std::string name1 = \textcolor{stringliteral}{"prob\_eq\_swap\_"}+
+      \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1)+\textcolor{stringliteral}{"\_"}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(j+1);
+229                                                 std::string name2 = \textcolor{stringliteral}{"prob\_eq\_swap\_"}+
+      \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(j+1)+\textcolor{stringliteral}{"\_"}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1);
+230                                                 std::string moveName = \textcolor{stringliteral}{""};
+231                                                 \textcolor{keywordtype}{bool} foundIJ = \textcolor{keyword}{false};
+232                                                 \textcolor{keywordflow}{if} (doc.HasMember(name1.c\_str())) \{
+233                                                                 moveName = name1;
+234                                                                 foundIJ = \textcolor{keyword}{true};
+235                                                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && !foundIJ) \{
+236                                                                 moveName = name2;
+237                                                                 foundIJ = \textcolor{keyword}{true};
+238                                                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && foundIJ) \{
+239                                                                 std::cerr << \textcolor{stringliteral}{"Input file doubly specifies
+       equilibration swap move probability for species pair ("}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(j+1)+\textcolor{stringliteral}{")"} << std::endl;
+240                                                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+241                                                 \} \textcolor{keywordflow}{else} \{
+242                                                                 std::cerr << \textcolor{stringliteral}{"Input file does not specify
+       equilibration swap move probability for species pair ("}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(j+1)+\textcolor{stringliteral}{")"} << std::endl;
+243                                                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+244                                                 \}
+245                                                 assert(doc[moveName.c\_str()].IsNumber());
+246                                                 probEqSwap[i][j] = doc[moveName.c\_str()].GetDouble();
+247                                                 probEqSwap[j][i] = doc[moveName.c\_str()].GetDouble();
+248                                 \}
+249                 \}               
+250                 std::vector < pairPotential* > ppotArray (sys.nSpecies()*(sys.nSpecies()-1)/2);
+251                 std::vector < std::string > ppotType (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies())
+      ;
+252                 \textcolor{keywordtype}{int} ppotIndex = 0, ppotTypeIndex = 0;
+253                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+254                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i; j < sys.nSpecies(); ++j) \{
+255                                                 std::string name1 = \textcolor{stringliteral}{"ppot\_"}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1)+\textcolor{stringliteral}{"\_"}+
+      \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(j+1);
+256                                                 std::string name2 = \textcolor{stringliteral}{"ppot\_"}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(j+1)+\textcolor{stringliteral}{"\_"}+
+      \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1);
+257                                                 std::string ppotName = \textcolor{stringliteral}{""}, dummy = \textcolor{stringliteral}{""};
+258                                                 \textcolor{keywordtype}{bool} foundIJ = \textcolor{keyword}{false};
+259                                                 \textcolor{keywordflow}{if} (doc.HasMember(name1.c\_str())) \{
+260                                                                 ppotName = name1;
+261                                                                 foundIJ = \textcolor{keyword}{true};
+262                                                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && !foundIJ) \{
+263                                                                 ppotName = name2;
+264                                                                 foundIJ = \textcolor{keyword}{true};
+265                                                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && foundIJ) \{
+266                                                                 std::cerr << \textcolor{stringliteral}{"Input file doubly specifies
+       pair potential for species pair ("}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(j+1)+\textcolor{stringliteral}{")"} << std::endl;
+267                                                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+268                                                 \} \textcolor{keywordflow}{else} \{
+269                                                                 std::cerr << \textcolor{stringliteral}{"Input file does not specify
+       pair potential for species pair ("}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(j+1)+\textcolor{stringliteral}{")"} << std::endl;
+270                                                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+271                                                 \} 
+272                                                 assert(doc[ppotName.c\_str()].IsString());
+273                                                 ppotType[ppotTypeIndex] = doc[ppotName.c\_str()].GetString()
+      ;
+274                                                 dummy = ppotName+\textcolor{stringliteral}{"\_params"};
+275                                                 assert(doc.HasMember(dummy.c\_str()));
+276                                                 assert(doc[dummy.c\_str()].IsArray());
+277                                                 std::vector < double > params (doc[dummy.c\_str()].Size(), 0
+      );
+278                                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < params.size(); ++k) \{
+279                                                                 assert(doc[dummy.c\_str()][k].IsNumber());
+280                                                                 params[k] = doc[dummy.c\_str()][k].GetDouble
+      ();
+281                                                 \}
+282                                                 \textcolor{keywordtype}{bool} useCellList = \textcolor{keyword}{false}; \textcolor{comment}{// default}
+283                                                 dummy = ppotName+\textcolor{stringliteral}{"\_use\_cell\_list"};
+284                                                 \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+285                                                                 assert(doc[dummy.c\_str()].IsBool());
+286                                                                 useCellList = doc[dummy.c\_str()].GetBool();
+287                                                 \}
+288                                                 \textcolor{keywordflow}{if} (ppotType[ppotTypeIndex] == \textcolor{stringliteral}{"square\_well"}) \{
+289                                                                 \textcolor{keywordflow}{try} \{
+290                                                                                 ppotArray[ppotIndex] = \textcolor{keyword}{new} 
+      \hyperlink{classsquare_well}{squareWell};
+291                                                                                 ppotArray[ppotIndex]->
+      \hyperlink{classsquare_well_aa8770429044914778c2f343e025e09cc}{setParameters}(params);
+292                                                                 \} \textcolor{keywordflow}{catch} (
+      \hyperlink{classcustom_exception}{customException} &ce) \{
+293                                                                                 std::cerr << ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+294                                                                                 exit(
+      \hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+295                                                                 \}
+296                                                                 ppotArray[ppotIndex]->savePotential(
+      ppotName+\textcolor{stringliteral}{".dat"}, 0.01, 0.01);
+297                                                                 sys.addPotential (i, j, ppotArray[ppotIndex
+      ], useCellList);
+298                                                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppotType[ppotTypeIndex] == \textcolor{stringliteral}{"lennard\_jones"}) \{
+299                                                                 \textcolor{keywordflow}{try} \{
+300                                                                                 ppotArray[ppotIndex] = \textcolor{keyword}{new} 
+      \hyperlink{classlennard_jones}{lennardJones};
+301                                                                                 ppotArray[ppotIndex]->
+      \hyperlink{classlennard_jones_a5b4c41df05048ce99bffb9f27733100a}{setParameters}(params);
+302                                                                 \} \textcolor{keywordflow}{catch} (
+      \hyperlink{classcustom_exception}{customException} &ce) \{
+303                                                                                 std::cerr << ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+304                                                                                 exit(
+      \hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+305                                                                 \}
+306                                                                 ppotArray[ppotIndex]->savePotential(
+      ppotName+\textcolor{stringliteral}{".dat"}, 0.01, 0.01);
+307                                                                 sys.addPotential (i, j, ppotArray[ppotIndex
+      ], useCellList);                                                 
+308                                                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppotType[ppotTypeIndex] == \textcolor{stringliteral}{"hard\_sphere"}) \{
+309                                                                 \textcolor{keywordflow}{try} \{
+310                                                                                 ppotArray[ppotIndex] = \textcolor{keyword}{new} 
+      \hyperlink{classhard_core}{hardCore};
+311                                                                                 ppotArray[ppotIndex]->
+      \hyperlink{classhard_core_a2bbf6a77445f5cb5fc1a3c37ba0e6566}{setParameters}(params);
+312                                                                 \} \textcolor{keywordflow}{catch} (
+      \hyperlink{classcustom_exception}{customException} &ce) \{
+313                                                                                 std::cerr << ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+314                                                                                 exit(
+      \hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+315                                                                 \}
+316                                                                 ppotArray[ppotIndex]->savePotential(
+      ppotName+\textcolor{stringliteral}{".dat"}, 0.01, 0.01);
+317                                                                 sys.addPotential (i, j, ppotArray[ppotIndex
+      ], useCellList);
+318                                                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppotType[ppotTypeIndex] == \textcolor{stringliteral}{"tabulated"}) \{
+319                                                                 \textcolor{keywordflow}{try} \{
+320                                                                                 ppotArray[ppotIndex] = \textcolor{keyword}{new} 
+      \hyperlink{classtabulated}{tabulated};
+321                                                                                 ppotArray[ppotIndex]->
+      \hyperlink{classtabulated_a6a52e8a5b99ddd16fcbd3e404c90f559}{setParameters}(params);
+322                                                                 \} \textcolor{keywordflow}{catch} (
+      \hyperlink{classcustom_exception}{customException} &ce) \{
+323                                                                                 std::cerr << ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+324                                                                                 exit(
+      \hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+325                                                                 \}
+326                                                                 ppotArray[ppotIndex]->savePotential(
+      ppotName+\textcolor{stringliteral}{".dat"}, 0.01, 0.01);
+327                                                                 sys.addPotential (i, j, ppotArray[ppotIndex
+      ], useCellList);
+328                                                 \} \textcolor{keywordflow}{else} \{
+329                                                                 std::cerr << \textcolor{stringliteral}{"Unrecognized pair potential
+       name for species "}<< ppotTypeIndex << std::endl;
+330                                                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+331                                                 \}
+332                                                 ppotTypeIndex++;
+333                                                 ppotIndex++;
+334                                 \}
+335                 \}
+336 
+337                 \textcolor{comment}{// check all pair potentials have been set and all r\_cut < L/2}
+338                 \textcolor{keywordtype}{double} minL = sys.box()[0];
+339                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 1; i < 2; ++i) \{
+340                                 minL = std::min(minL, sys.box()[i]);
+341                 \}
+342                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+343                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < sys.nSpecies(); ++j) \{
+344                                                 \textcolor{keywordflow}{if} (!sys.potentialIsSet(i, j)) \{
+345                                                                 std::cerr << \textcolor{stringliteral}{"Not all pair potentials are
+       set"} << std::endl;
+346                                                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+347                                                 \}
+348                                                 \textcolor{keywordflow}{if} (!(sys.ppot[i][j]->rcut() < minL/2.0)) \{
+349                                                                 std::cerr << \textcolor{stringliteral}{"Pair potential r\_cut for
+       species "} << i << \textcolor{stringliteral}{", "} << j << \textcolor{stringliteral}{" is > L/2"} << std::endl;
+350                                                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+351                                                 \}
+352                                 \}
+353                 \}
+354                 
+355                 \textcolor{comment}{// specify moves to use for the system}
+356     \hyperlink{classmoves}{moves} usedMovesEq, usedMovesPr;
+357                 std::vector < insertParticle > eqInsertions (sys.nSpecies()), prInsertions (sys.nSpecies())
+      ;
+358                 std::vector < deleteParticle > eqDeletions (sys.nSpecies()), prDeletions (sys.nSpecies());
+359                 std::vector < translateParticle > eqTranslations (sys.nSpecies()), prTranslations (sys.
+      nSpecies());
+360                 std::vector < swapParticles > eqSwaps (sys.nSpecies()*(sys.nSpecies()-1)/2), prSwaps (sys.
+      nSpecies()*(sys.nSpecies()-1)/2);
+361                 
+362                 \textcolor{keywordtype}{int} swapCounter = 0;
+363                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+364                                 \hyperlink{classinsert_particle}{insertParticle} newIns (i, \textcolor{stringliteral}{"insert"});
+365                                 eqInsertions[i] = newIns;
+366                                 usedMovesEq.\hyperlink{classmoves_a8ff3fea6241c0708ed08651c0b8c0c32}{addMove} (&eqInsertions[i], probEqInsDel[i]);
+367                                 
+368                                 \hyperlink{classdelete_particle}{deleteParticle} newDel (i, \textcolor{stringliteral}{"delete"});
+369                                 eqDeletions[i] = newDel;
+370                                 usedMovesEq.\hyperlink{classmoves_a8ff3fea6241c0708ed08651c0b8c0c32}{addMove} (&eqDeletions[i], probEqInsDel[i]);
+371                                 
+372                                 \hyperlink{classtranslate_particle}{translateParticle} newTranslate (i, \textcolor{stringliteral}{"translate"});
+373                                 eqTranslations[i] = newTranslate;
+374                                 usedMovesEq.\hyperlink{classmoves_a8ff3fea6241c0708ed08651c0b8c0c32}{addMove} (&eqTranslations[i], probEqDisp[i]);
+375                                 
+376                                 \hyperlink{classinsert_particle}{insertParticle} newIns2 (i, \textcolor{stringliteral}{"insert"});
+377                                 prInsertions[i] = newIns2;
+378                                 usedMovesPr.\hyperlink{classmoves_a8ff3fea6241c0708ed08651c0b8c0c32}{addMove} (&prInsertions[i], probPrInsDel[i]);
+379                                 
+380                                 \hyperlink{classdelete_particle}{deleteParticle} newDel2 (i, \textcolor{stringliteral}{"delete"});
+381                                 prDeletions[i] = newDel2;
+382                                 usedMovesPr.\hyperlink{classmoves_a8ff3fea6241c0708ed08651c0b8c0c32}{addMove} (&prDeletions[i], probPrInsDel[i]);                  
+383                                 
+384                                 \hyperlink{classtranslate_particle}{translateParticle} newTranslate2 (i, \textcolor{stringliteral}{"translate"});
+385                                 prTranslations[i] = newTranslate2;
+386                                 usedMovesPr.\hyperlink{classmoves_a8ff3fea6241c0708ed08651c0b8c0c32}{addMove} (&prTranslations[i], probPrDisp[i]);
+387                                 
+388                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i+1; j < sys.nSpecies(); ++j) \{
+389                                                 \hyperlink{classswap_particles}{swapParticles} newSwap (i, j, \textcolor{stringliteral}{"swap"});
+390                                                 eqSwaps[swapCounter] = newSwap;
+391                                                 usedMovesEq.\hyperlink{classmoves_a8ff3fea6241c0708ed08651c0b8c0c32}{addMove} (&eqSwaps[swapCounter], 
+      probEqSwap[i][j]);
+392                                                 
+393                                                 \hyperlink{classswap_particles}{swapParticles} newSwap2 (i, j, \textcolor{stringliteral}{"swap"});
+394                                                 prSwaps[swapCounter] = newSwap2;
+395                                                 usedMovesPr.\hyperlink{classmoves_a8ff3fea6241c0708ed08651c0b8c0c32}{addMove} (&prSwaps[swapCounter], 
+      probPrSwap[i][j]);
+396                                                 
+397                                                 swapCounter++;
+398                                 \}
+399                 \}
+400                 
+401                 \textcolor{comment}{/* -------------------- END INPUT -------------------- */}
+402                 
+403                 std::cout << \textcolor{stringliteral}{"Beginning Wang-Landau portion"} << std::endl;
+404                 
+405                 \textcolor{comment}{// Initially do a WL simulation}
+406                 \textcolor{keywordtype}{double} lnF = 1;
+407                 \textcolor{keywordtype}{bool} flat = \textcolor{keyword}{false};
+408                 sys.startWALA (lnF, g, s, sys.totNMax(), sys.totNMin()); 
+409                 \textcolor{keywordflow}{while} (lnF > 2.0e-18) \{
+410                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} move = 0; move < wlSweepSize; ++move) \{
+411                                                 \textcolor{keywordflow}{try} \{
+412                                                                 usedMovesEq.
+      \hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{makeMove}(sys);
+413                                                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+414                                                                 std::cerr << ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+415                                                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+416                                                 \}
+417                                                 
+418                                                 \textcolor{comment}{// record U}
+419                                                 sys.recordU();
+420                                 \}
+421                                                 
+422                                 \textcolor{comment}{// Check if bias has flattened out}
+423                                 flat = sys.getWALABias()->evaluateFlatness();
+424                                 \textcolor{keywordflow}{if} (flat) \{
+425                                                 \textcolor{comment}{// if flat, need to reset H and reduce lnF}
+426                                                 sys.getWALABias()->iterateForward();
+427                                                 lnF = sys.getWALABias()->lnF();
+428                                                 flat = \textcolor{keyword}{false};
+429                                                 
+430                                                 time\_t rawtime\_tmp;
+431                                                 time (&rawtime\_tmp);
+432                                                 \textcolor{keyword}{struct }tm * timeinfo\_tmp;
+433                                                 timeinfo\_tmp = localtime (&rawtime\_tmp);
+434                                                 \textcolor{keywordtype}{char} dummy\_tmp [80];
+435                                                 strftime (dummy\_tmp,80,\textcolor{stringliteral}{"%d/%m/%Y %H:%M:%S"},timeinfo);
+436                                                 std::cout << \textcolor{stringliteral}{"lnF = "} << lnF << \textcolor{stringliteral}{" at "} << dummy\_tmp << 
+      std::endl;
+437                                                 
+438                                                 \textcolor{comment}{// Periodically write out checkpoints}
+439                                                 sys.getWALABias()->print(\textcolor{stringliteral}{"wl-Checkpoint"}, \textcolor{keyword}{true});
+440                                 \}
+441                 \}
+442                 
+443                 std::cout << \textcolor{stringliteral}{"Crossing over to build TMMC matrix"} << std::endl;
+444                 
+445                 \textcolor{comment}{// After a while, combine to initialize TMMC collection matrix}
+446                 sys.startTMMC (sys.totNMax(), sys.totNMin());
+447                 
+448                 std::cout << \textcolor{stringliteral}{"Assigning initial macrostate density guess from Wang-Landau portion"} << 
+      std::endl;
+449                 
+450                 \textcolor{comment}{// Initial guess from Wang-Landau density of states}
+451                 sys.getTMMCBias()->setLnPI(sys.getWALABias()->getlnPI());
+452                 
+453                 \textcolor{comment}{// actually this should run until all elements of the collection matrix have been populated}
+454                 \textcolor{keywordtype}{bool} fullyVisited = \textcolor{keyword}{false};
+455                 \textcolor{keywordflow}{while} (!fullyVisited) \{
+456                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} move = 0; move < wlSweepSize; ++move) \{
+457                                                 \textcolor{keywordflow}{try} \{
+458                                                                 usedMovesEq.
+      \hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{makeMove}(sys);
+459                                                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+460                                                                 std::cerr << ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+461                                                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+462                                                 \}
+463                                                 
+464                                                 \textcolor{comment}{// record U}
+465                                                 sys.recordU();
+466                                 \}
+467                                                                 
+468                                 \textcolor{comment}{// Check if bias has flattened out}
+469                                 flat = sys.getWALABias()->evaluateFlatness();
+470                                 \textcolor{keywordflow}{if} (flat) \{
+471                                                 \textcolor{comment}{// If flat, need to reset H and reduce lnF}
+472                                                 sys.getWALABias()->iterateForward();
+473                                                 
+474                                                 time\_t rawtime\_tmp;
+475                                                 time (&rawtime\_tmp);
+476                                                 \textcolor{keyword}{struct }tm * timeinfo\_tmp;
+477                                                 timeinfo\_tmp = localtime (&rawtime\_tmp);
+478                                                 \textcolor{keywordtype}{char} dummy\_tmp [80];
+479                                                 strftime (dummy\_tmp,80,\textcolor{stringliteral}{"%d/%m/%Y %H:%M:%S"},timeinfo\_tmp);
+480                                                 std::cout << \textcolor{stringliteral}{"lnF = "} << sys.getWALABias()->lnF() << \textcolor{stringliteral}{" at "}
+       << dummy\_tmp << std::endl;      
+481                                                 
+482                                                 \textcolor{comment}{// Periodically write out checkpoints}
+483                                                 sys.getWALABias()->print(\textcolor{stringliteral}{"wl-crossover-Checkpoint"}, \textcolor{keyword}{true});
+484                                                 sys.getTMMCBias()->print(\textcolor{stringliteral}{"tmmc-crossover-Checkpoint"}, \textcolor{keyword}{true})
+      ;
+485                                 \}
+486 
+487                                 \textcolor{comment}{// Check if collection matrix is ready to take over, not necessarily at
+       points where WL is flat}
+488                                 fullyVisited = sys.getTMMCBias()->checkFullyVisited();
+489                 \}
+490 
+491                 std::cout << \textcolor{stringliteral}{"Switching over to TMMC completely, ending Wang-Landau"} << std::endl;
+492                 sys.getTMMCBias()->print(\textcolor{stringliteral}{"tmmc-beginning-Checkpoint"}, \textcolor{keyword}{true});
+493                 
+494                 \textcolor{comment}{// Switch over to TMMC completely}
+495                 sys.stopWALA();
+496                 
+497                 std::cout << \textcolor{stringliteral}{"Beginning TMMC"} << std::endl;
+498                 
+499                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} sweep = 0; sweep < totalTMMCSweeps; ++sweep) \{
+500                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} move = 0; move < tmmcSweepSize; ++move) \{
+501                                                 \textcolor{keywordflow}{try} \{
+502                                                                 usedMovesPr.
+      \hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{makeMove}(sys);
+503                                                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+504                                                                 std::cerr << ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+505                                                                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+506                                                 \}
+507                                                 
+508                                                 \textcolor{comment}{// record U}
+509                                                 sys.recordU();
+510                                 \}
+511                                 
+512                                 \textcolor{keywordflow}{if} (sweep%(totalTMMCSweeps/100) == 0) \{
+513                                                 time\_t rawtime\_tmp;
+514                                                 time (&rawtime\_tmp);
+515                                                 \textcolor{keyword}{struct }tm * timeinfo\_tmp;
+516                                                 timeinfo\_tmp = localtime (&rawtime\_tmp);
+517                                                 \textcolor{keywordtype}{char} dummy\_tmp [80];
+518                                                 strftime (dummy\_tmp,80,\textcolor{stringliteral}{"%d/%m/%Y %H:%M:%S"},timeinfo\_tmp);
+519                                                 std::cout << \textcolor{stringliteral}{"Finished "} << sweep << \textcolor{stringliteral}{"/"} << totalTMMCSweeps
+       << \textcolor{stringliteral}{" total TMMC sweeps at "} << dummy\_tmp << std::endl;
+520                                 \}
+521                                 
+522                                 \textcolor{comment}{// Update biasing function from collection matrix}
+523                                 sys.getTMMCBias()->calculatePI();
+524                                 
+525                                 \textcolor{comment}{// Periodically write out checkpoints}
+526                                 sys.getTMMCBias()->print(\textcolor{stringliteral}{"tmmc-Checkpoint"}, \textcolor{keyword}{true});
+527                 \}
+528                                 
+529                 \textcolor{comment}{// Sanity checks}
+530                 \textcolor{keywordflow}{if} (sys.nSpecies() != sys.atoms.size()) \{
+531         std::cerr << \textcolor{stringliteral}{"Error: Number of components changed throughout simulation"} << std::endl;
+532         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+533     \}
+534     \textcolor{keyword}{const} \textcolor{keywordtype}{double} tol = 1.0e-9;
+535     \textcolor{keyword}{const} \textcolor{keywordtype}{double} scratchEnergy = sys.scratchEnergy(), incrEnergy = sys.energy();
+536     \textcolor{keywordflow}{if} (fabs(scratchEnergy - incrEnergy) > tol) \{
+537         std::cerr << \textcolor{stringliteral}{"Error: scratch energy calculation = "} << scratchEnergy << \textcolor{stringliteral}{", but incremental = "} << 
+      incrEnergy << \textcolor{stringliteral}{", |diff| = "} << fabs(scratchEnergy - incrEnergy) << std::endl;
+538         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+539     \}
+540     
+541     \textcolor{comment}{// Report move statistics for final TMMC ("production") stage}
+542                 \textcolor{keywordtype}{char} statName [80];
+543                 strftime (statName,80,\textcolor{stringliteral}{"%Y\_%m\_%d\_%H\_%M\_%S-stats.log"},timeinfo);
+544                 std::ofstream statFile (statName);
+545     std::vector < double > stats = usedMovesPr.\hyperlink{classmoves_a755de4c749706cd096327e1af9e676c3}{reportMoveStatistics}();
+546     statFile << \textcolor{stringliteral}{" ----- Move Statistics ----- "} << std::endl << \textcolor{stringliteral}{" Move\(\backslash\)t\(\backslash\)% Success"} << std::endl;
+547     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < stats.size(); ++i) \{
+548         statFile << usedMovesPr.\hyperlink{classmoves_a7371027cb97187cbf6e7dd6b5ca8345e}{includedMoves}()[i]->myName() << \textcolor{stringliteral}{"\(\backslash\)t"} << stats[i]*100.0 << 
+      std::endl;
+549     \}
+550     statFile << std::endl;
+551     statFile.close();
+552                 
+553     \textcolor{comment}{// print out restart file (xyz)}
+554     sys.printSnapshot(restart\_file+\textcolor{stringliteral}{".xyz"}, \textcolor{stringliteral}{"last configuration"});
+555     
+556     \textcolor{comment}{// Print out energy histogram}
+557     sys.printU(\textcolor{stringliteral}{"energyHistogram"});
+558     
+559     \textcolor{comment}{// Print out final macrostate distribution}
+560     sys.getTMMCBias()->print(\textcolor{stringliteral}{"final"}, \textcolor{keyword}{false});
+561                 
+562                 \textcolor{comment}{// Free pair potential pointers}
+563                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < ppotArray.size(); ++i) \{
+564                                 \textcolor{keyword}{delete} ppotArray[i];
+565                 \}
+566     ppotArray.clear();
+567     
+568     \textcolor{comment}{// Finished}
+569     time (&rawtime);
+570     timeinfo = localtime (&rawtime);
+571     strftime (timestamp,80,\textcolor{stringliteral}{"%d/%m/%Y %H:%M:%S"},timeinfo);
+572     std::cout << \textcolor{stringliteral}{"Finished simulation at "} << timestamp << std::endl;
+573                 \textcolor{keywordflow}{return} \hyperlink{global_8h_aee0da692ad91bbe61c65dc91c965b19d}{SAFE\_EXIT};
+574 \}
+\end{DoxyCode}

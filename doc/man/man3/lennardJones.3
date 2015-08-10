@@ -1,0 +1,195 @@
+.TH "lennardJones" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+lennardJones \- Lennard-Jones Potential Parameters should be specified in the following order: { epsilon, sigma, r_cut, u_shift }\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <potentials\&.h>\fP
+.PP
+Inherits \fBpairPotential\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB~lennardJones\fP ()"
+.br
+.ti -1c
+.RI "void \fBsetParameters\fP (const std::vector< double > params)"
+.br
+.RI "\fISet the parameters in the Lennard-Jones equation\&. \fP"
+.ti -1c
+.RI "double \fBenergy\fP (const double r)"
+.br
+.RI "\fIReturn the energy of two particles separated by a distance r\&. \fP"
+.ti -1c
+.RI "double \fBtailCorrection\fP (const double rhoBath)"
+.br
+.RI "\fICalculate the tail correction with the approximation g(r) = 1 for r_{cut} > 1 as explained in Frenkel & Smit in eq\&. \fP"
+.ti -1c
+.RI "double \fBrcut\fP ()"
+.br
+.RI "\fIReturn the value of r_{cut} for this potential\&. \fP"
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Lennard-Jones Potential Parameters should be specified in the following order: { epsilon, sigma, r_cut, u_shift }\&. 
+.PP
+Definition at line 37 of file potentials\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "lennardJones::~lennardJones ()\fC [inline]\fP"
+
+.PP
+Definition at line 39 of file potentials\&.h\&.
+.PP
+.nf
+39 {;}
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "double lennardJones::energy (const double r)\fC [virtual]\fP"
+
+.PP
+Return the energy of two particles separated by a distance r\&. \[ U(r) = 4 \epsilon \left( \left \frac{ \sigma }{ r } \right)^{12} - \left( \frac{ sigma }{ r } \right)^6 \right) + U_{shift} \quad r < r_{cut} \]
+.PP
+\fBParameters:\fP
+.RS 4
+\fIr\fP Scalar separation, needs to be the minimum image
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+U(r) 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 62 of file potentials\&.cpp\&.
+.PP
+References pairPotential::params_, and pairPotential::paramsAreSet_\&.
+.PP
+.nf
+62                                            {
+63                 if (!paramsAreSet_) {
+64                                 throw customException ("For lennardJones parameters not set");
+65                 }
+66                 double r1 = (params_[1]/r), r3 = r1*r1*r1, r6 = r3*r3, r12 = r6*r6;
+67                 if (r < params_[2]) {
+68                                 return 4\&.0*params_[0]*(r12 - r6) + params_[3];
+69                 } else {
+70                                 return 0\&.0;
+71                 }
+72 }
+.fi
+.SS "double lennardJones::rcut ()\fC [virtual]\fP"
+
+.PP
+Return the value of r_{cut} for this potential\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+rcut 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 94 of file potentials\&.cpp\&.
+.PP
+References pairPotential::params_, and pairPotential::paramsAreSet_\&.
+.PP
+.nf
+94                            {
+95                 if (!paramsAreSet_) {
+96                                 throw customException ("For lennardJones parameters not set");
+97                 } else {
+98                                 return params_[2];
+99                 }
+100 }
+.fi
+.SS "void lennardJones::setParameters (const std::vector< double > params)\fC [virtual]\fP"
+
+.PP
+Set the parameters in the Lennard-Jones equation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparams\fP Vector of inputs: {epsilon, sigma, r_cut, u_shift} 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 32 of file potentials\&.cpp\&.
+.PP
+References pairPotential::params_, pairPotential::paramsAreSet_, and pairPotential::useTailCorrection\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+32                                                                    {
+33                 if (params\&.size() != 4) {
+34                                 throw customException ("For lennardJones must specify 4 parameters: epsilon, sigma, r_cut, u_shift");
+35                 } else {
+36                                 if (params[0] < 0) {
+37                                                 throw customException ("For lennardJones, epsilon > 0");
+38                                 }
+39                                 if (params[1] < 0) {
+40                                                 throw customException ("For lennardJones, sigma > 0");
+41                                 }
+42                                 if (params[2] < 0) {
+43                                                 throw customException ("For lennardJones, r_cut > 0");
+44                                 }
+45                                 
+46                                 paramsAreSet_ = true;
+47                                 params_ = params;
+48                                 
+49                                 useTailCorrection = true;
+50                 }
+51 }
+.fi
+.SS "double lennardJones::tailCorrection (const double rhoBath)\fC [virtual]\fP"
+
+.PP
+Calculate the tail correction with the approximation g(r) = 1 for r_{cut} > 1 as explained in Frenkel & Smit in eq\&. (3\&.2\&.5)
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrhoBath\fP NUmber density of the surrounding fluid
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+U_tail 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 82 of file potentials\&.cpp\&.
+.PP
+References pairPotential::params_, and PI\&.
+.PP
+.nf
+82                                                         {
+83                 const double r3 = (params_[1]*params_[1]*params_[1])/(params_[2]*params_[2]*params_[2]);
+84                 const double r9 = r3*r3*r3;
+85                 
+86                 return (8\&.0/3\&.0*PI*rhoBath*params_[0]*params_[1]*params_[1]*params_[1]*(r9/3\&.0 - r3));
+87 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

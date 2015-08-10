@@ -1,0 +1,615 @@
+\hypertarget{classtmmc}{}\section{tmmc Class Reference}
+\label{classtmmc}\index{tmmc@{tmmc}}
+
+
+Transition Matrix Monte Carlo biasing class.  
+
+
+
+
+{\ttfamily \#include $<$bias.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtmmc_a2dd6a666daae3a9b7c3978d8ecff887e}{tmmc} ()
+\item 
+\hyperlink{classtmmc_a643b39f7bd100470c9c632bc9ea7e45e}{tmmc} (const int Nmax, const int Nmin)
+\begin{DoxyCompactList}\small\item\em Initialize the tmmc object. \end{DoxyCompactList}\item 
+void \hyperlink{classtmmc_ab648f1ba2767c07fdccf9ac0e2eec8f6}{update\+C} (const int Nstart, const int Nend, const double pa)
+\begin{DoxyCompactList}\small\item\em Update the collection matrix. \end{DoxyCompactList}\item 
+void \hyperlink{classtmmc_a8e065523e9cc3c9628f91d3804cd201e}{calculate\+P\+I} ()
+\begin{DoxyCompactList}\small\item\em Calculate the (natural logarithm of the) macrostate density matrix via the probability matrix. \end{DoxyCompactList}\item 
+void \hyperlink{classtmmc_a059a91f0f2ebe78671b5f4fb8e1ab853}{print} (const std\+::string file\+Name, bool print\+C=false)
+\begin{DoxyCompactList}\small\item\em Print the U\+N-\/\+N\+O\+R\+M\+A\+L\+I\+Z\+E\+D biasing function (ln\+P\+I) and possibly collection matrix to files. \end{DoxyCompactList}\item 
+void \hyperlink{classtmmc_a7d9ee0505dc801cbff55bc35c3654a61}{read\+C} (const std\+::string file\+Name)
+\begin{DoxyCompactList}\small\item\em Read the collection matrix from a file. \end{DoxyCompactList}\item 
+void \hyperlink{classtmmc_a0c6c9f978b2093d1f4f6da7842093f3f}{readln\+P\+I} (const std\+::string file\+Name)
+\begin{DoxyCompactList}\small\item\em Read the macrostate distribution (biasing function) from a file. \end{DoxyCompactList}\item 
+void \hyperlink{classtmmc_a4bd3a47406bf765234e1cb3a391c79d5}{set\+Ln\+P\+I} (const std\+::vector$<$ double $>$ \&ln\+P\+Iguess)
+\begin{DoxyCompactList}\small\item\em Blindly assign a guess of the macrostate distribution. \end{DoxyCompactList}\item 
+bool \hyperlink{classtmmc_aa51f03f958dabefcff97be4a7c3b336c}{check\+Fully\+Visited} ()
+\begin{DoxyCompactList}\small\item\em Check if the the collection matrix has been filled (i.\+e. \end{DoxyCompactList}\item 
+const \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+} \hyperlink{classtmmc_a7c006c0107ba4c1d52e75fc80d8581d6}{get\+Transition\+Address} (const int Nstart, const int Nend)
+\begin{DoxyCompactList}\small\item\em For a given multidimensional array which has been cast into 1\+D, find the address that refers to a given transition. \end{DoxyCompactList}\item 
+const \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+} \hyperlink{classtmmc_aa93ae04c2712ef208ed4cb01b9dd1905}{get\+Address} (const int Nval)
+\begin{DoxyCompactList}\small\item\em Get the address in ln\+P\+I that corresponds to a given macrostate. \end{DoxyCompactList}\item 
+const double \hyperlink{classtmmc_afbcaaf974280aad6d78ca7e112438641}{get\+Bias} (const int address)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Transition Matrix Monte Carlo biasing class. 
+
+Definition at line 23 of file bias.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classtmmc_a2dd6a666daae3a9b7c3978d8ecff887e}{}\index{tmmc@{tmmc}!tmmc@{tmmc}}
+\index{tmmc@{tmmc}!tmmc@{tmmc}}
+\subsubsection[{tmmc()}]{\setlength{\rightskip}{0pt plus 5cm}tmmc\+::tmmc (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classtmmc_a2dd6a666daae3a9b7c3978d8ecff887e}
+
+
+Definition at line 25 of file bias.\+h.
+
+
+\begin{DoxyCode}
+25 \{\};
+\end{DoxyCode}
+\hypertarget{classtmmc_a643b39f7bd100470c9c632bc9ea7e45e}{}\index{tmmc@{tmmc}!tmmc@{tmmc}}
+\index{tmmc@{tmmc}!tmmc@{tmmc}}
+\subsubsection[{tmmc(const int Nmax, const int Nmin)}]{\setlength{\rightskip}{0pt plus 5cm}tmmc\+::tmmc (
+\begin{DoxyParamCaption}
+\item[{const int}]{Nmax, }
+\item[{const int}]{Nmin}
+\end{DoxyParamCaption}
+)}\label{classtmmc_a643b39f7bd100470c9c632bc9ea7e45e}
+
+
+Initialize the tmmc object. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em n\+Spec} & Number of species in the simulation. \\
+\hline
+\mbox{\tt in}  & {\em Nmax} & Upper bound for total number of particles. \\
+\hline
+\mbox{\tt in}  & {\em Nmin} & Lower bound for total number of particles. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 11 of file bias.\+cpp.
+
+
+
+References \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+.
+
+
+\begin{DoxyCode}
+11                                           \{     
+12                 \textcolor{keywordflow}{if} (Nmin > Nmax) \{
+13                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Nmin > Nmax in TMMC bias"});
+14                 \}
+15                 \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} size = (Nmax - Nmin + 1);
+16                 Nmin\_ = Nmin;
+17                 Nmax\_ = Nmax;
+18                 
+19                 \textcolor{comment}{// attempt to allocate memory for collection matrix and initializes it all to 0}
+20                 \textcolor{keywordflow}{try} \{
+21                                 C\_.resize(3*size, 0);
+22                 \} \textcolor{keywordflow}{catch} (\textcolor{keyword}{const} std::bad\_alloc &ce) \{
+23                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory, cannot allocate space
+       for collection matrix in tmmc"});
+24                 \}
+25 
+26                 \textcolor{comment}{// attempt to allocate memory for probability matrix and initializes it all to 0}
+27                 \textcolor{keywordflow}{try} \{
+28                                 P\_.resize(3*size, 0);
+29                 \} \textcolor{keywordflow}{catch} (\textcolor{keyword}{const} std::bad\_alloc &ce) \{
+30                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory, cannot allocate space
+       for probability matrix in tmmc"});
+31                 \}
+32                 
+33                 \textcolor{comment}{// attempt to allocate memory for lnPI matrix and initializes it all to 0}
+34                 \textcolor{keywordflow}{try} \{
+35                                 lnPI\_.resize(size, 0.0);
+36                 \} \textcolor{keywordflow}{catch} (\textcolor{keyword}{const} std::bad\_alloc &ce) \{
+37                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory, cannot allocate space
+       for macrostate distribution matrix in tmmc"});
+38                 \}
+39 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classtmmc_a8e065523e9cc3c9628f91d3804cd201e}{}\index{tmmc@{tmmc}!calculate\+P\+I@{calculate\+P\+I}}
+\index{calculate\+P\+I@{calculate\+P\+I}!tmmc@{tmmc}}
+\subsubsection[{calculate\+P\+I()}]{\setlength{\rightskip}{0pt plus 5cm}void tmmc\+::calculate\+P\+I (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classtmmc_a8e065523e9cc3c9628f91d3804cd201e}
+
+
+Calculate the (natural logarithm of the) macrostate density matrix via the probability matrix. 
+
+
+
+Definition at line 116 of file bias.\+cpp.
+
+
+
+References \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+, get\+Transition\+Address(), and sstr.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+116                         \{
+117                 \textcolor{keywordflow}{for} (\hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} i = 0; i < C\_.size(); i += 3) \{
+118                                 \textcolor{keywordtype}{double} sum = 0.0;
+119                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 3; ++j) \{
+120                                                 sum += C\_[i+j];
+121                                 \}
+122                                 \textcolor{keywordflow}{if} (sum > 0) \{
+123                                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 3; ++j) \{
+124                                                                 P\_[i+j] = C\_[i+j] / sum;
+125                                                 \}
+126                                 \} \textcolor{keywordflow}{else} \{
+127                                                 \textcolor{comment}{// This state has not been visited at all if sum = 0. 
+       However, at high system densities this could be the "correct"}
+128                                                 \textcolor{comment}{// result so this error may need to be discarded later in
+       favor of:}
+129                                                 \textcolor{comment}{// P\_[i+j] = 0;}
+130                                                 \textcolor{comment}{// However, having this throw an exception is also a good
+       way to find that upper bound where the system is completely packed}
+131                                                 \textcolor{comment}{// so I will keep it this way for now.}
+132                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot compute TMMC
+       macrostate distribution because probability matrix contains zeros"});
+133                                 \}
+134                 \}
+135                 
+136                 \textcolor{comment}{// Reset first value to zero just to start fresh. Since only ratios matter this is
+       perfectly fair.}
+137                 lnPI\_[0] = 0.0;
+138                 \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} address1, address2;
+139                 \textcolor{keywordflow}{for} (\hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} i = 0; i < lnPI\_.size()-1; ++i) \{
+140                                 address1 = \hyperlink{classtmmc_a7c006c0107ba4c1d52e75fc80d8581d6}{getTransitionAddress}(Nmin\_+i, Nmin\_+i+1);
+141                                 address2 = \hyperlink{classtmmc_a7c006c0107ba4c1d52e75fc80d8581d6}{getTransitionAddress}(Nmin\_+i+1, Nmin\_+i);
+142                                 \textcolor{keywordflow}{if} (!(P\_[address1] > 0) || !(P\_[address2] > 0)) \{
+143                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot compute TMMC
+       macrostate distribution because probability matrix contains zeros at address: P["}+
+      \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(address1)+\textcolor{stringliteral}{"] = "}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(P\_[address1])+\textcolor{stringliteral}{", P["}+\hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(address2)+\textcolor{stringliteral}{"] = "}+
+      \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(P\_[address2]));
+144                                 \}
+145                                 lnPI\_[i+1] = lnPI\_[i] + log(P\_[address1]/P\_[address2]); \textcolor{comment}{// this is why P\_
+       cannot be zero}
+146                 \}
+147 \}
+\end{DoxyCode}
+\hypertarget{classtmmc_aa51f03f958dabefcff97be4a7c3b336c}{}\index{tmmc@{tmmc}!check\+Fully\+Visited@{check\+Fully\+Visited}}
+\index{check\+Fully\+Visited@{check\+Fully\+Visited}!tmmc@{tmmc}}
+\subsubsection[{check\+Fully\+Visited()}]{\setlength{\rightskip}{0pt plus 5cm}bool tmmc\+::check\+Fully\+Visited (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classtmmc_aa51f03f958dabefcff97be4a7c3b336c}
+
+
+Check if the the collection matrix has been filled (i.\+e. 
+
+contains no zeros, except when crossing imposed bounds). Technically, if in an ideal gas state, d\+U $\sim$ 0 so pacc = 1.\+0, therefore probability of remaining in same state is 0. However, this matrix should be considered filled, if transitions to N+1 and N-\/1 for each N are found (except at bounds). 
+
+Definition at line 46 of file bias.\+cpp.
+
+
+
+References \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+46                               \{
+47                 \textcolor{keywordflow}{for} (\hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} i = 0; i < C\_.size(); i += 3) \{
+48                                 \textcolor{keywordflow}{if} (i == 0) \{
+49                                                 \textcolor{comment}{// lower bound, so only +1 move must be sampled}
+50                                                 \textcolor{keywordflow}{if} (!(C\_[i+1] > 0)) \{
+51                                                                 \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+52                                                 \}                                               
+53                                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (i == C\_.size()-3) \{
+54                                                 \textcolor{comment}{// upper bound, so only -1 move must be sampled}
+55                                                 \textcolor{keywordflow}{if} (!(C\_[i+2] > 0)) \{
+56                                                                 \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+57                                                 \}
+58                                 \} \textcolor{keywordflow}{else} \{
+59                                                 \textcolor{comment}{// midpoints, both +1 and -1 moves must be sampled}
+60                                                 \textcolor{keywordflow}{if} (!(C\_[i+1] > 0) || !(C\_[i+2] > 0)) \{
+61                                                                 \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+62                                                 \}
+63                                 \}
+64                 \}
+65                 \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+66 \}
+\end{DoxyCode}
+\hypertarget{classtmmc_aa93ae04c2712ef208ed4cb01b9dd1905}{}\index{tmmc@{tmmc}!get\+Address@{get\+Address}}
+\index{get\+Address@{get\+Address}!tmmc@{tmmc}}
+\subsubsection[{get\+Address(const int Nval)}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+} tmmc\+::get\+Address (
+\begin{DoxyParamCaption}
+\item[{const int}]{Nval}
+\end{DoxyParamCaption}
+)}\label{classtmmc_aa93ae04c2712ef208ed4cb01b9dd1905}
+
+
+Get the address in ln\+P\+I that corresponds to a given macrostate. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Nval} & Number of total atoms \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 95 of file bias.\+cpp.
+
+
+
+References \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+.
+
+
+
+Referenced by calculate\+Bias().
+
+
+\begin{DoxyCode}
+95                                                         \{
+96                 \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} x = Nval - Nmin\_;
+97                 \textcolor{keywordflow}{return} x;
+98 \}
+\end{DoxyCode}
+\hypertarget{classtmmc_afbcaaf974280aad6d78ca7e112438641}{}\index{tmmc@{tmmc}!get\+Bias@{get\+Bias}}
+\index{get\+Bias@{get\+Bias}!tmmc@{tmmc}}
+\subsubsection[{get\+Bias(const int address)}]{\setlength{\rightskip}{0pt plus 5cm}const double tmmc\+::get\+Bias (
+\begin{DoxyParamCaption}
+\item[{const int}]{address}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classtmmc_afbcaaf974280aad6d78ca7e112438641}
+
+
+Definition at line 37 of file bias.\+h.
+
+
+
+Referenced by calculate\+Bias().
+
+
+\begin{DoxyCode}
+37 \{ \textcolor{keywordflow}{return} -lnPI\_[address]; \}
+\end{DoxyCode}
+\hypertarget{classtmmc_a7c006c0107ba4c1d52e75fc80d8581d6}{}\index{tmmc@{tmmc}!get\+Transition\+Address@{get\+Transition\+Address}}
+\index{get\+Transition\+Address@{get\+Transition\+Address}!tmmc@{tmmc}}
+\subsubsection[{get\+Transition\+Address(const int Nstart, const int Nend)}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+} tmmc\+::get\+Transition\+Address (
+\begin{DoxyParamCaption}
+\item[{const int}]{Nstart, }
+\item[{const int}]{Nend}
+\end{DoxyParamCaption}
+)}\label{classtmmc_a7c006c0107ba4c1d52e75fc80d8581d6}
+
+
+For a given multidimensional array which has been cast into 1\+D, find the address that refers to a given transition. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Nstart} & Number of total species initially (before M\+C move) \\
+\hline
+\mbox{\tt in}  & {\em Nend} & Number of total species (in order) after the M\+C move \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 74 of file bias.\+cpp.
+
+
+
+References \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+.
+
+
+
+Referenced by calculate\+P\+I(), and update\+C().
+
+
+\begin{DoxyCode}
+74                                                                                     \{
+75                 \textcolor{comment}{// Layout of y = [0, +1, -1] }
+76                 \textcolor{keywordtype}{int} addOrSubtract = (Nend - Nstart), y = 0;
+77                 \textcolor{keywordflow}{if} (addOrSubtract == 0) \{
+78                                 y = 0;
+79                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (addOrSubtract == 1) \{
+80                                 y = 1;
+81                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (addOrSubtract == -1) \{
+82                                 y = 2;
+83                 \} \textcolor{keywordflow}{else} \{
+84                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Illegal addOrSubtract value"});
+85                 \}
+86                 \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} x = Nstart - Nmin\_;
+87                 \textcolor{keywordflow}{return} x*3 + y;
+88 \}
+\end{DoxyCode}
+\hypertarget{classtmmc_a059a91f0f2ebe78671b5f4fb8e1ab853}{}\index{tmmc@{tmmc}!print@{print}}
+\index{print@{print}!tmmc@{tmmc}}
+\subsubsection[{print(const std\+::string file\+Name, bool print\+C=false)}]{\setlength{\rightskip}{0pt plus 5cm}void tmmc\+::print (
+\begin{DoxyParamCaption}
+\item[{const std\+::string}]{file\+Name, }
+\item[{bool}]{print\+C = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classtmmc_a059a91f0f2ebe78671b5f4fb8e1ab853}
+
+
+Print the U\+N-\/\+N\+O\+R\+M\+A\+L\+I\+Z\+E\+D biasing function (ln\+P\+I) and possibly collection matrix to files. 
+
+Will overwrite the files if another with that name exists. Prints in net\+C\+D\+F format if enabled.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em file\+Name} & Name of the file to print to. Will append with \char`\"{}\+\_\+ln\+P\+I\char`\"{} and \char`\"{}\+\_\+\+C\char`\"{} for biasing function and collection matrix, respectively. \\
+\hline
+\mbox{\tt in}  & {\em print\+C} & Defaults to false, but if true will also print the collection matrix. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 157 of file bias.\+cpp.
+
+
+
+References sstr.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+157                                                        \{
+158 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
+159                 \textcolor{comment}{// Print collection matrix}
+160                 \textcolor{keywordflow}{if} (printC) \{
+161                                 \textcolor{keyword}{const} std::string name = fileName + \textcolor{stringliteral}{"\_C.nc"}
+162                                 NcFile outFile(name.c\_str(), NcFile::replace);
+163                                 NcDim probDim = outFile.addDim(\textcolor{stringliteral}{"vectorized\_position"}, C\_.size());
+164                                 NcVar probVar = outFile.addVar(\textcolor{stringliteral}{"C"}, ncDouble, probDim);
+165                                 \textcolor{keyword}{const} std::string dummyName = \textcolor{stringliteral}{"number\_species:"};
+166                                 probVar.putAtt(dummyName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(nSpec\_).c\_str());
+167                                 \textcolor{keyword}{const} std::string attName = \textcolor{stringliteral}{"species\_total\_upper\_bound:"};
+168                                 probVar.putAtt(attName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(Nmax\_).c\_str());
+169                                 \textcolor{keyword}{const} std::string attName = \textcolor{stringliteral}{"species\_total\_lower\_bound:"};
+170                                 probVar.putAtt(attName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(Nmin\_).c\_str());
+171                                 probVar.putVar(&C\_[0]);
+172                 \}
+173                 
+174                 \textcolor{comment}{// Print lnPI (bias) matrix}
+175                 \textcolor{keyword}{const} std::string name = fileName + \textcolor{stringliteral}{"\_lnPI.nc"}
+176                 NcFile outFile(name.c\_str(), NcFile::replace);
+177                 NcDim probDim = outFile.addDim(\textcolor{stringliteral}{"vectorized\_position"}, lnPI\_.size());
+178                 NcVar probVar = outFile.addVar(\textcolor{stringliteral}{"lnPI"}, ncDouble, probDim);
+179                 \textcolor{keyword}{const} std::string attName = \textcolor{stringliteral}{"species\_total\_upper\_bound:"};
+180                 probVar.putAtt(attName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(Nmax\_).c\_str());
+181                 \textcolor{keyword}{const} std::string attName = \textcolor{stringliteral}{"species\_total\_lower\_bound:"};
+182                 probVar.putAtt(attName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(Nmin\_).c\_str());
+183                 probVar.putVar(&lnPI\_[0]);
+184 \textcolor{preprocessor}{#else}
+185                 \textcolor{comment}{// Print collection matrix}
+186                 \textcolor{keywordflow}{if} (printC) \{
+187                                 std::ofstream of;
+188                                 of.open(fileName+\textcolor{stringliteral}{"\_C.dat"}, std::ofstream::out);
+189                                 of << \textcolor{stringliteral}{"# Collection matrix in single row (vectorized) notation."} << 
+      std::endl;
+190                                 of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
+191                                 of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
+192                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < C\_.size(); ++i) \{
+193                                                 of << C\_[i] << std::endl;
+194                                 \}
+195                                 of.close();
+196                 \}
+197                 
+198                 \textcolor{comment}{// Print lnPI (bias) matrix}
+199                 std::ofstream of;
+200                 of.open(fileName+\textcolor{stringliteral}{"\_lnPI.dat"}, std::ofstream::out);
+201                 of << \textcolor{stringliteral}{"# lnPI (bias) matrix in single row (vectorized) notation."} << std::endl;
+202                 of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
+203                 of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
+204                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < lnPI\_.size(); ++i) \{
+205                                 of << lnPI\_[i] << std::endl;
+206                 \}
+207                 of.close();
+208 \textcolor{preprocessor}{#endif}
+209 \}
+\end{DoxyCode}
+\hypertarget{classtmmc_a7d9ee0505dc801cbff55bc35c3654a61}{}\index{tmmc@{tmmc}!read\+C@{read\+C}}
+\index{read\+C@{read\+C}!tmmc@{tmmc}}
+\subsubsection[{read\+C(const std\+::string file\+Name)}]{\setlength{\rightskip}{0pt plus 5cm}void tmmc\+::read\+C (
+\begin{DoxyParamCaption}
+\item[{const std\+::string}]{file\+Name}
+\end{DoxyParamCaption}
+)}\label{classtmmc_a7d9ee0505dc801cbff55bc35c3654a61}
+
+
+Read the collection matrix from a file. 
+
+This assumes the user has already guaranteed that the bounds are consistent, e.\+g. Nmin and Nmax, as it will not check this automatically. Also assumes file was generated by this code. \char`\"{}\+Hand made\char`\"{} ones might have formatting issues since parsing is done based on tokens.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em file\+Name} & Name of file containing the collection matrix. Must include file extension. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 218 of file bias.\+cpp.
+
+
+
+References \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+.
+
+
+\begin{DoxyCode}
+218                                           \{
+219 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
+220                 NcFile dataFile (fileName.c\_str(), NcFile::read);
+221                 NcVar C\_data = dataFile.getVar(\textcolor{stringliteral}{"C"});
+222                 \textcolor{keywordflow}{if} (C\_data.isNull()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Collection matrix was empty,
+       cannot read"});
+223                 C\_data.getVar(&C\_[0]);
+224 \textcolor{preprocessor}{#else}
+225                 std::string line;
+226                 std::ifstream inF (fileName);
+227                 
+228                 \textcolor{comment}{// Skip file header}
+229                 \textcolor{keywordtype}{bool} header = \textcolor{keyword}{true};
+230                 \textcolor{keywordflow}{while} (header) \{
+231                                 std::getline (inF, line);
+232                                 \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
+233                                                 header = \textcolor{keyword}{false};
+234                                 \}
+235                 \}
+236                 
+237                 \textcolor{comment}{// Read line by line, parsing based on token}
+238                 C\_[0] = atof(line.c\_str());
+239                 \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} index = 1;
+240                 \textcolor{keywordflow}{while} (inF >> C\_[index]) \{
+241                                 index++;
+242                 \}
+243 \textcolor{preprocessor}{#endif}
+244 \}
+\end{DoxyCode}
+\hypertarget{classtmmc_a0c6c9f978b2093d1f4f6da7842093f3f}{}\index{tmmc@{tmmc}!readln\+P\+I@{readln\+P\+I}}
+\index{readln\+P\+I@{readln\+P\+I}!tmmc@{tmmc}}
+\subsubsection[{readln\+P\+I(const std\+::string file\+Name)}]{\setlength{\rightskip}{0pt plus 5cm}void tmmc\+::readln\+P\+I (
+\begin{DoxyParamCaption}
+\item[{const std\+::string}]{file\+Name}
+\end{DoxyParamCaption}
+)}\label{classtmmc_a0c6c9f978b2093d1f4f6da7842093f3f}
+
+
+Read the macrostate distribution (biasing function) from a file. 
+
+This assumes the user has already guaranteed that the bounds are consistent, e.\+g. Nmin and Nmax, as it will not check this automatically. Also assumes file was generated by this code. \char`\"{}\+Hand made\char`\"{} ones might have formatting issues since parsing is done based on tokens.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em file\+Name} & Name of file containing ln\+P\+I. Must include file extension. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 253 of file bias.\+cpp.
+
+
+\begin{DoxyCode}
+253                                              \{
+254 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
+255                 NcFile dataFile (fileName.c\_str(), NcFile::read);
+256                 NcVar lnPI\_data = dataFile.getVar(\textcolor{stringliteral}{"lnPI"});
+257                 \textcolor{keywordflow}{if} (lnPI\_data.isNull()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Macrostate distribution
+       matrix (biasing function) was empty, cannot read"});
+258                 lnPI\_data.getVar(&lnPI\_[0]);
+259 \textcolor{preprocessor}{#else}
+260                 std::string line;
+261                 std::ifstream inF (fileName);
+262                 
+263                 \textcolor{comment}{// Skip file header}
+264                 \textcolor{keywordtype}{bool} header = \textcolor{keyword}{true};
+265                 \textcolor{keywordflow}{while} (header) \{
+266                                 std::getline (inF, line);
+267                                 \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
+268                                                 header = \textcolor{keyword}{false};
+269                                 \}
+270                 \}
+271                 
+272                 \textcolor{comment}{// Read line by line, parsing based on token}
+273                 lnPI\_[0] = atof(line.c\_str());
+274                 \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} index = 1;
+275                 \textcolor{keywordflow}{while} (inF >> lnPI\_[index]) \{
+276                                 index++;
+277                 \}
+278 \textcolor{preprocessor}{#endif}
+279 \}
+\end{DoxyCode}
+\hypertarget{classtmmc_a4bd3a47406bf765234e1cb3a391c79d5}{}\index{tmmc@{tmmc}!set\+Ln\+P\+I@{set\+Ln\+P\+I}}
+\index{set\+Ln\+P\+I@{set\+Ln\+P\+I}!tmmc@{tmmc}}
+\subsubsection[{set\+Ln\+P\+I(const std\+::vector$<$ double $>$ \&ln\+P\+Iguess)}]{\setlength{\rightskip}{0pt plus 5cm}void tmmc\+::set\+Ln\+P\+I (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ double $>$ \&}]{ln\+P\+Iguess}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classtmmc_a4bd3a47406bf765234e1cb3a391c79d5}
+
+
+Blindly assign a guess of the macrostate distribution. 
+
+
+
+Definition at line 33 of file bias.\+h.
+
+
+
+Referenced by main().
+
+\hypertarget{classtmmc_ab648f1ba2767c07fdccf9ac0e2eec8f6}{}\index{tmmc@{tmmc}!update\+C@{update\+C}}
+\index{update\+C@{update\+C}!tmmc@{tmmc}}
+\subsubsection[{update\+C(const int Nstart, const int Nend, const double pa)}]{\setlength{\rightskip}{0pt plus 5cm}void tmmc\+::update\+C (
+\begin{DoxyParamCaption}
+\item[{const int}]{Nstart, }
+\item[{const int}]{Nend, }
+\item[{const double}]{pa}
+\end{DoxyParamCaption}
+)}\label{classtmmc_ab648f1ba2767c07fdccf9ac0e2eec8f6}
+
+
+Update the collection matrix. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Nstart} & Total number of atoms initially (before M\+C move) \\
+\hline
+\mbox{\tt in}  & {\em Nend} & Total number of atoms after the M\+C move \\
+\hline
+\mbox{\tt in}  & {\em pa} & Unbiased Metropolis criterion for making a M\+C move (i.\+e. pa = min(1, exp(...))) \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 107 of file bias.\+cpp.
+
+
+
+References get\+Transition\+Address().
+
+
+
+Referenced by calculate\+Bias().
+
+
+\begin{DoxyCode}
+107                                                                      \{
+108                 \textcolor{keyword}{const} \textcolor{keywordtype}{int} i = \hyperlink{classtmmc_a7c006c0107ba4c1d52e75fc80d8581d6}{getTransitionAddress}(Nstart, Nend), j = 
+      \hyperlink{classtmmc_a7c006c0107ba4c1d52e75fc80d8581d6}{getTransitionAddress}(Nstart, Nstart);
+109                 C\_[i] += pa;
+110                 C\_[j] += (1-pa);
+111 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{bias_8h}{bias.\+h}\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{bias_8cpp}{bias.\+cpp}\end{DoxyCompactItemize}

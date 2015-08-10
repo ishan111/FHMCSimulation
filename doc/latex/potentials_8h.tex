@@ -1,0 +1,22 @@
+\hypertarget{potentials_8h}{}\section{/\+Users/nam4/\+Desktop/omcs/src/potentials.h File Reference}
+\label{potentials_8h}\index{/\+Users/nam4/\+Desktop/omcs/src/potentials.\+h@{/\+Users/nam4/\+Desktop/omcs/src/potentials.\+h}}
+{\ttfamily \#include $<$cmath$>$}\\*
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include \char`\"{}global.\+h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}utilities.\+h\char`\"{}}\\*
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classpair_potential}{pair\+Potential}
+\begin{DoxyCompactList}\small\item\em Abstract base class which defines all pair potentials. \end{DoxyCompactList}\item 
+class \hyperlink{classlennard_jones}{lennard\+Jones}
+\begin{DoxyCompactList}\small\item\em Lennard-\/\+Jones Potential Parameters should be specified in the following order\+: \{ epsilon, sigma, r\+\_\+cut, u\+\_\+shift \}. \end{DoxyCompactList}\item 
+class \hyperlink{classtabulated}{tabulated}
+\begin{DoxyCompactList}\small\item\em Tabulated Potential Parameters should be specified in the following order\+: \{ r\+\_\+cut, r\+\_\+shift, u\+\_\+shift, u\+\_\+infinity \}. \end{DoxyCompactList}\item 
+class \hyperlink{classsquare_well}{square\+Well}
+\begin{DoxyCompactList}\small\item\em Square-\/well potential Parameters should be specified in the following order\+: \{ sigma, wellwidth, welldepth \}. \end{DoxyCompactList}\item 
+class \hyperlink{classhard_core}{hard\+Core}
+\begin{DoxyCompactList}\small\item\em Hard-\/core potential Parameters should be specified in the following order\+: \{ sigma \}. \end{DoxyCompactList}\end{DoxyCompactItemize}

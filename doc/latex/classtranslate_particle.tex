@@ -1,0 +1,293 @@
+\hypertarget{classtranslate_particle}{}\section{translate\+Particle Class Reference}
+\label{classtranslate_particle}\index{translate\+Particle@{translate\+Particle}}
+
+
+{\ttfamily \#include $<$translate.\+h$>$}
+
+Inheritance diagram for translate\+Particle\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classtranslate_particle}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtranslate_particle_ac16b682a2119d7ebd6c7df75fa224ab4}{translate\+Particle} ()
+\item 
+\hyperlink{classtranslate_particle_aa9ffcde3ec4cbd82e939c7cb9ee85094}{translate\+Particle} (const int type\+Index, const std\+::string tag)
+\begin{DoxyCompactList}\small\item\em Instantiate a new move, also give a name which is the combination of auser-\/defined tag + the particle index it operates on. \end{DoxyCompactList}\item 
+int \hyperlink{classtranslate_particle_a7ec5c9259f1aae3f7aefdb4db3ee5468}{make} (\hyperlink{classsim_system}{sim\+System} \&sys)
+\begin{DoxyCompactList}\small\item\em Translate a particle in the system. \end{DoxyCompactList}\item 
+void \hyperlink{classtranslate_particle_a65beec2511e79198e6241ad2bc18b02c}{set\+Max\+Displacement} (const double max\+D, const std\+::vector$<$ double $>$ \&box)
+\begin{DoxyCompactList}\small\item\em Set the maximum displacement in any single move. \end{DoxyCompactList}\item 
+const double \hyperlink{classtranslate_particle_a5f1e76a0e8f20978b1c1069f698f89e6}{get\+Max\+Displacement} ()
+\begin{DoxyCompactList}\small\item\em Return the max displacement allowed in a single move. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 12 of file translate.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classtranslate_particle_ac16b682a2119d7ebd6c7df75fa224ab4}{}\index{translate\+Particle@{translate\+Particle}!translate\+Particle@{translate\+Particle}}
+\index{translate\+Particle@{translate\+Particle}!translate\+Particle@{translate\+Particle}}
+\subsubsection[{translate\+Particle()}]{\setlength{\rightskip}{0pt plus 5cm}translate\+Particle\+::translate\+Particle (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classtranslate_particle_ac16b682a2119d7ebd6c7df75fa224ab4}
+
+
+Definition at line 14 of file translate.\+h.
+
+
+\begin{DoxyCode}
+14 \{\};
+\end{DoxyCode}
+\hypertarget{classtranslate_particle_aa9ffcde3ec4cbd82e939c7cb9ee85094}{}\index{translate\+Particle@{translate\+Particle}!translate\+Particle@{translate\+Particle}}
+\index{translate\+Particle@{translate\+Particle}!translate\+Particle@{translate\+Particle}}
+\subsubsection[{translate\+Particle(const int type\+Index, const std\+::string tag)}]{\setlength{\rightskip}{0pt plus 5cm}translate\+Particle\+::translate\+Particle (
+\begin{DoxyParamCaption}
+\item[{const int}]{type\+Index, }
+\item[{const std\+::string}]{tag}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classtranslate_particle_aa9ffcde3ec4cbd82e939c7cb9ee85094}
+
+
+Instantiate a new move, also give a name which is the combination of auser-\/defined tag + the particle index it operates on. 
+
+
+
+Definition at line 15 of file translate.\+h.
+
+
+
+References mc\+Move\+::name\+\_\+, and mc\+Move\+::type\+Index\+\_\+.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classtranslate_particle_a5f1e76a0e8f20978b1c1069f698f89e6}{}\index{translate\+Particle@{translate\+Particle}!get\+Max\+Displacement@{get\+Max\+Displacement}}
+\index{get\+Max\+Displacement@{get\+Max\+Displacement}!translate\+Particle@{translate\+Particle}}
+\subsubsection[{get\+Max\+Displacement()}]{\setlength{\rightskip}{0pt plus 5cm}const double translate\+Particle\+::get\+Max\+Displacement (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classtranslate_particle_a5f1e76a0e8f20978b1c1069f698f89e6}
+
+
+Return the max displacement allowed in a single move. 
+
+
+
+Definition at line 18 of file translate.\+h.
+
+\hypertarget{classtranslate_particle_a7ec5c9259f1aae3f7aefdb4db3ee5468}{}\index{translate\+Particle@{translate\+Particle}!make@{make}}
+\index{make@{make}!translate\+Particle@{translate\+Particle}}
+\subsubsection[{make(sim\+System \&sys)}]{\setlength{\rightskip}{0pt plus 5cm}int translate\+Particle\+::make (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\+System} \&}]{sys}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classtranslate_particle_a7ec5c9259f1aae3f7aefdb4db3ee5468}
+
+
+Translate a particle in the system. 
+
+All other information is stored in the \hyperlink{classsim_system}{sim\+System} object.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em sys} & System object to attempt to remove a particle from.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+M\+O\+V\+E\+\_\+\+S\+U\+C\+C\+E\+S\+S if translated a particle, otherwise M\+O\+V\+E\+\_\+\+F\+A\+I\+L\+U\+R\+E if did not. Will throw exceptions if there was an error. 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classmc_move_a2e377a628f9ecee5422fc8967d4924eb}{mc\+Move}.
+
+
+
+Definition at line 10 of file translate.\+cpp.
+
+
+
+References sim\+System\+::atoms, sim\+System\+::beta(), sim\+System\+::box(), calculate\+Bias(), sim\+System\+::get\+Neighbor\+Positions(), sim\+System\+::get\+Tot\+N(), sim\+System\+::get\+W\+A\+L\+A\+Bias(), sim\+System\+::increment\+Energy(), M\+O\+V\+E\+\_\+\+F\+A\+I\+L\+U\+R\+E, M\+O\+V\+E\+\_\+\+S\+U\+C\+C\+E\+S\+S, sim\+System\+::n\+Species(), sim\+System\+::num\+Species, sim\+System\+::ppot, rng(), R\+N\+G\+\_\+\+S\+E\+E\+D, sim\+System\+::translate\+Atom(), mc\+Move\+::type\+Index\+\_\+, wala\+::update(), sim\+System\+::use\+W\+A\+L\+A, and custom\+Exception\+::what().
+
+
+\begin{DoxyCode}
+10                                            \{
+11                 \textcolor{comment}{// check if any exist to be translated}
+12     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}] < 1) \{
+13         \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
+14     \}
+15     
+16                 \textcolor{comment}{// choose a random particle of that type}
+17                 \textcolor{keyword}{const} \textcolor{keywordtype}{int} chosenAtom = (int) floor(\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) * sys.
+      \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]);
+18  
+19                 \textcolor{comment}{// attempt to translate that one}
+20                 \textcolor{keyword}{const} std::vector < double > box = sys.\hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}();
+21     \textcolor{keywordtype}{double} V = 1.0;
+22     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box.size(); ++i) \{
+23         V *= box[i];
+24     \}
+25         
+26     \textcolor{keywordtype}{double} oldEnergy = 0.0;
+27     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
+28         \textcolor{comment}{// get positions of neighboring atoms around chosenAtom}
+29         std::vector< std::vector<double> > neighborPositions = sys.
+      \hyperlink{classsim_system_a7ac49b2311cd8230df8d078a9d897b35}{getNeighborPositions}(spec, \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}, &sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[
+      \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom]);
+30                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborPositions.size(); ++i) \{
+31                                                 \textcolor{keywordflow}{try} \{
+32                                                                 oldEnergy += sys.
+      \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->energy(neighborPositions[i], sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[
+      \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos, box);
+33                                                 \}
+34                                                 \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+35                                                                 std::string a = \textcolor{stringliteral}{"Cannot translate because
+       of energy error: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+36                                                                 \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (a+b);
+37                                                 \}
+38         \}
+39         \textcolor{comment}{// add tail correction to potential energy}
+40 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+41         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->useTailCorrection) \{
+42                                                 oldEnergy += sys.\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][
+      \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection((sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec])/V);
+43                                 \}
+44 \textcolor{preprocessor}{#endif}
+45     \}
+46     
+47     \textcolor{comment}{// store old position and move particle along random direction in interval [-maxD\_:maxD\_]}
+48     std::vector<double> oldPos = sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos;
+49     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i< sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos.size(); ++i) \{
+50                 sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos[i] += 2.0*maxD\_*(0.5-
+      \hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}));
+51                 
+52                 \textcolor{comment}{// apply periodic boundary conditions}
+53                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom].pos[i] >= box[i]) \{
+54                                 sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos[i] -= box[i];
+55                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom].pos[i] < 0) \{
+56                                 sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos[i] += box[i];
+57                 \}
+58     \}
+59     
+60     \textcolor{comment}{// calculate energy at new position}
+61     \textcolor{keywordtype}{double} newEnergy = 0.0;
+62     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
+63         \textcolor{comment}{// get positions of neighboring atoms around chosenAtom}
+64         std::vector< std::vector<double> > neighborPositions = sys.
+      \hyperlink{classsim_system_a7ac49b2311cd8230df8d078a9d897b35}{getNeighborPositions}(spec, typeIndex\_, &sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom]);
+65                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborPositions.size(); ++i) \{
+66                                                 \textcolor{keywordflow}{try} \{
+67                                                                 newEnergy += sys.
+      \hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->energy(neighborPositions[i], sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom].
+      pos, box);
+68                                                 \}
+69                                                 \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+70                                                                 std::string a = \textcolor{stringliteral}{"Cannot delete because of
+       energy error: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+71                                                                 \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (a+b);
+72                                                 \}
+73         \}
+74         \textcolor{comment}{// add tail correction to potential energy}
+75 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+76         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][typeIndex\_]->useTailCorrection) \{
+77                                                 newEnergy += sys.\hyperlink{classsim_system_a8d6271751a62f61edcf57f773540a4a3}{ppot}[spec][
+      \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection((sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec])/V);
+78                                 \}
+79 \textcolor{preprocessor}{#endif}
+80     \}
+81     
+82                 \textcolor{comment}{// biasing}
+83                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} p\_u = exp(-sys.\hyperlink{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{beta}()*(newEnergy - oldEnergy));
+84                 \textcolor{keywordtype}{double} bias = \hyperlink{system_8cpp_ab912bbb9fc9045954cf1b3ccb286a55c}{calculateBias}(sys, sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), p\_u);
+85                     
+86                 \textcolor{keywordflow}{if} (\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) < p\_u*bias) \{
+87                     \textcolor{keywordflow}{try} \{
+88             sys.\hyperlink{classsim_system_a22fdaceea44abd6cd021bac1ecd11890}{translateAtom}(typeIndex\_, chosenAtom, oldPos);
+89         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+90             std::string a = \textcolor{stringliteral}{"Failed to translate atom: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+91             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+92         \}
+93                                 sys.\hyperlink{classsim_system_a6ad31c08955b80873f865b3069618dcb}{incrementEnergy}(newEnergy - oldEnergy);      
+94                                 
+95                                 \textcolor{comment}{// update Wang-Landau bias, if used}
+96                                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+97                                                 sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->
+      \hyperlink{classwala_a5eb2622be6a9e89f5e59ba0b15aca4bd}{update}(sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}());
+98                                 \}
+99                                                 
+100         \textcolor{keywordflow}{return} \hyperlink{moves_8h_ae8285cbddc5d21f73f49dcbad82a775a}{MOVE\_SUCCESS};
+101     \}
+102     
+103     \textcolor{comment}{// if move failed, reset position}
+104     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos.size(); ++i) \{
+105                 sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos[i] = oldPos[i];
+106     \}
+107     
+108     \textcolor{comment}{// update Wang-Landau bias (even if moved failed), if used}
+109     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+110                                 sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_a5eb2622be6a9e89f5e59ba0b15aca4bd}{update}(sys.
+      \hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}());
+111     \}
+112                 
+113                 \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
+114 \}
+\end{DoxyCode}
+\hypertarget{classtranslate_particle_a65beec2511e79198e6241ad2bc18b02c}{}\index{translate\+Particle@{translate\+Particle}!set\+Max\+Displacement@{set\+Max\+Displacement}}
+\index{set\+Max\+Displacement@{set\+Max\+Displacement}!translate\+Particle@{translate\+Particle}}
+\subsubsection[{set\+Max\+Displacement(const double max\+D, const std\+::vector$<$ double $>$ \&box)}]{\setlength{\rightskip}{0pt plus 5cm}void translate\+Particle\+::set\+Max\+Displacement (
+\begin{DoxyParamCaption}
+\item[{const double}]{max\+D, }
+\item[{const std\+::vector$<$ double $>$ \&}]{box}
+\end{DoxyParamCaption}
+)}\label{classtranslate_particle_a65beec2511e79198e6241ad2bc18b02c}
+
+
+Set the maximum displacement in any single move. 
+
+Should be postive number lss than half the box size.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em max\+D} & Maximium displacement \\
+\hline
+\mbox{\tt in}  & {\em box} & Box dimensions \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 122 of file translate.\+cpp.
+
+
+\begin{DoxyCode}
+122                                                                                               \{
+123                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box.size(); ++i) \{
+124                                 \textcolor{keywordflow}{if} (maxD >= box[i]/2.) \{
+125                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max displacement too
+       large"});
+126                                 \}
+127                 \}
+128                 \textcolor{keywordflow}{if} (maxD > 0) \{
+129                                 maxD\_ = maxD;
+130                 \} \textcolor{keywordflow}{else} \{
+131                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max displacement must be positive"});
+132                 \}
+133 \}\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{translate_8h}{translate.\+h}\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{translate_8cpp}{translate.\+cpp}\end{DoxyCompactItemize}

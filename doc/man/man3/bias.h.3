@@ -1,0 +1,72 @@
+.TH "/Users/nam4/Desktop/omcs/src/bias.h" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/Users/nam4/Desktop/omcs/src/bias.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <vector>\fP
+.br
+\fC#include <string>\fP
+.br
+\fC#include <climits>\fP
+.br
+\fC#include <cfloat>\fP
+.br
+\fC#include <cmath>\fP
+.br
+\fC#include <iostream>\fP
+.br
+\fC#include <fstream>\fP
+.br
+\fC#include 'global\&.h'\fP
+.br
+\fC#include 'utilities\&.h'\fP
+.br
+
+.SS "Classes"
+
+.in +1c
+.ti -1c
+.RI "class \fBtmmc\fP"
+.br
+.RI "\fITransition Matrix Monte Carlo biasing class\&. \fP"
+.ti -1c
+.RI "class \fBwala\fP"
+.br
+.RI "\fIWang-Landau biasing class\&. \fP"
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fB__BIAS_INT_TYPE__\fP   long long int"
+.br
+.RI "\fIFor biasing, need to address things with large indices\&. \fP"
+.ti -1c
+.RI "#define \fBspecExp\fP(a,  b)   std::max(a, b) + log(1\&.0 + exp(\-std::abs(a\-b)))"
+.br
+.RI "\fIJacobi method for evaluating natural logarithm of a sum of exponentials E\&.g\&. \fP"
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define __BIAS_INT_TYPE__   long long int"
+
+.PP
+For biasing, need to address things with large indices\&. 
+.PP
+Definition at line 15 of file bias\&.h\&.
+.PP
+Referenced by calculateBias(), tmmc::calculatePI(), tmmc::checkFullyVisited(), tmmc::getAddress(), wala::getAddress(), tmmc::getTransitionAddress(), tmmc::readC(), wala::readlnPI(), tmmc::tmmc(), wala::update(), and wala::wala()\&.
+.SS "#define specExp(a, b)   std::max(a, b) + log(1\&.0 + exp(\-std::abs(a\-b)))"
+
+.PP
+Jacobi method for evaluating natural logarithm of a sum of exponentials E\&.g\&. ln( exp(a) + exp(b) ) = \fBspecExp(a, b)\fP 
+.PP
+Definition at line 20 of file bias\&.h\&.
+.PP
+Referenced by wala::evaluateFlatness()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

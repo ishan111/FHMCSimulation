@@ -1,0 +1,157 @@
+.TH "deleteParticle" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+deleteParticle \- 
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <delete\&.h>\fP
+.PP
+Inherits \fBmcMove\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBdeleteParticle\fP ()"
+.br
+.ti -1c
+.RI "\fBdeleteParticle\fP (const int typeIndex, const std::string tag)"
+.br
+.RI "\fIInstantiate a new move, also give a name which is the combination of auser-defined tag + the particle index it operates on\&. \fP"
+.ti -1c
+.RI "int \fBmake\fP (\fBsimSystem\fP &sys)"
+.br
+.RI "\fIDelete a particle from the system\&. \fP"
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Definition at line 12 of file delete\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "deleteParticle::deleteParticle ()\fC [inline]\fP"
+
+.PP
+Definition at line 14 of file delete\&.h\&.
+.PP
+.nf
+14 {};
+.fi
+.SS "deleteParticle::deleteParticle (const int typeIndex, const std::string tag)\fC [inline]\fP"
+
+.PP
+Instantiate a new move, also give a name which is the combination of auser-defined tag + the particle index it operates on\&. 
+.PP
+Definition at line 15 of file delete\&.h\&.
+.PP
+References mcMove::name_, and mcMove::typeIndex_\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "int deleteParticle::make (\fBsimSystem\fP & sys)\fC [virtual]\fP"
+
+.PP
+Delete a particle from the system\&. All other information is stored in the \fBsimSystem\fP object\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsys\fP System object to attempt to remove a particle from\&.
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+MOVE_SUCCESS if deleted a particle, otherwise MOVE_FAILURE if did not\&. Will throw exceptions if there was an error\&. 
+.RE
+.PP
+
+.PP
+Implements \fBmcMove\fP\&.
+.PP
+Definition at line 10 of file delete\&.cpp\&.
+.PP
+References simSystem::atoms, simSystem::beta(), simSystem::box(), calculateBias(), simSystem::deleteAtom(), simSystem::getNeighborPositions(), simSystem::getTotN(), simSystem::getWALABias(), simSystem::incrementEnergy(), simSystem::minSpecies(), MOVE_FAILURE, MOVE_SUCCESS, simSystem::mu(), simSystem::nSpecies(), simSystem::numSpecies, simSystem::ppot, rng(), RNG_SEED, simSystem::totNMin(), mcMove::typeIndex_, wala::update(), simSystem::useWALA, and customException::what()\&.
+.PP
+.nf
+10                                         {
+11                 // check if any can be deleted from this species
+12     if (sys\&.numSpecies[typeIndex_] <= sys\&.minSpecies(typeIndex_)) {
+13         return MOVE_FAILURE;
+14     }
+15     // also check if at global bound on total number of particles
+16     if (sys\&.getTotN() <= sys\&.totNMin()) {
+17                 return MOVE_FAILURE;
+18     }
+19     
+20                 // choose a random particle (index) of that type
+21                 const int chosenAtom = (int) floor(rng (&RNG_SEED) * sys\&.numSpecies[typeIndex_]);
+22 
+23                 // attempt to delete that one
+24                 const std::vector < double > box = sys\&.box();
+25     double V = 1\&.0;
+26     for (unsigned int i = 0; i < box\&.size(); ++i) {
+27         V *= box[i];
+28     }
+29         
+30     double delEnergy = 0\&.0;
+31     for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
+32         // get positions of neighboring atoms around chosenAtom
+33         std::vector < std::vector< double > > neighborPositions = sys\&.getNeighborPositions(spec, typeIndex_, &sys\&.atoms[typeIndex_][chosenAtom]);
+34         for (unsigned int i = 0; i < neighborPositions\&.size(); ++i) {
+35             try {
+36                                                                 delEnergy -= sys\&.ppot[spec][typeIndex_]->energy(neighborPositions[i], sys\&.atoms[typeIndex_][chosenAtom]\&.pos, box);
+37                                                 }
+38                                                 catch (customException& ce) {
+39                                                                 std::string a = "Cannot delete because of energy error: ", b = ce\&.what();
+40                                                                 throw customException (a+b);
+41                                                 }
+42         }
+43         // add tail correction to potential energy -- only enable for fluid phase simulations
+44 #ifdef FLUID_PHASE_SIMULATIONS
+45         if (sys\&.ppot[spec][typeIndex_]->useTailCorrection) {
+46                 if (spec == typeIndex_) {
+47                                                                 delEnergy -= sys\&.ppot[spec][typeIndex_]->tailCorrection((sys\&.numSpecies[spec]-1)/V);
+48                                                 }
+49                                                 else {
+50                                                                 delEnergy -= sys\&.ppot[spec][typeIndex_]->tailCorrection((sys\&.numSpecies[spec])/V);
+51                                                 }
+52                                 }
+53 #endif
+54     }
+55     
+56     // biasing
+57     const double p_u = sys\&.numSpecies[typeIndex_]/V*exp(sys\&.beta()*(-sys\&.mu(typeIndex_) - delEnergy));
+58     int nTotFinal = sys\&.getTotN() - 1;
+59     double bias = calculateBias(sys, nTotFinal, p_u);
+60     
+61                 // metropolis criterion
+62                 if (rng (&RNG_SEED) < p_u*bias) {
+63                     try {
+64             sys\&.deleteAtom(typeIndex_, chosenAtom);
+65         } catch (customException &ce) {
+66             std::string a = "Failed to delete atom: ", b = ce\&.what();
+67             throw customException (a+b);
+68         }
+69                                 sys\&.incrementEnergy(delEnergy);  
+70                                 
+71                                 // update Wang-Landau bias, if used
+72                                 if (sys\&.useWALA) {
+73                                                 sys\&.getWALABias()->update(sys\&.getTotN());
+74                                 }
+75                                                                 
+76         return MOVE_SUCCESS;
+77     }
+78     
+79                 // update Wang-Landau bias (even if moved failed), if used
+80                 if (sys\&.useWALA) {
+81                                 sys\&.getWALABias()->update(sys\&.getTotN());
+82                 }
+83                                 
+84                 return MOVE_FAILURE;
+85 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

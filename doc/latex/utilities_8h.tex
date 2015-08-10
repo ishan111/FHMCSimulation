@@ -1,0 +1,237 @@
+\hypertarget{utilities_8h}{}\section{/\+Users/nam4/\+Desktop/omcs/src/utilities.h File Reference}
+\label{utilities_8h}\index{/\+Users/nam4/\+Desktop/omcs/src/utilities.\+h@{/\+Users/nam4/\+Desktop/omcs/src/utilities.\+h}}
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$sys/stat.\+h$>$}\\*
+{\ttfamily \#include $<$cstdio$>$}\\*
+{\ttfamily \#include $<$sstream$>$}\\*
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(x)~dynamic\+\_\+cast$<$ std\+::ostringstream \& $>$( ( std\+::ostringstream() $<$$<$ std\+::dec $<$$<$ x ) ).str()
+\begin{DoxyCompactList}\small\item\em For converting to string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \hyperlink{utilities_8h_a5a95fd6e0238fdca5cb75cee0b4d521c}{pbc\+\_\+dist2} (const std\+::vector$<$ double $>$ \&p1, const std\+::vector$<$ double $>$ \&p2, const std\+::vector$<$ double $>$ \&box)
+\begin{DoxyCompactList}\small\item\em Calculate the minimum image distance squared between two coordinates assuming periodic boundary conditions. \end{DoxyCompactList}\item 
+void \hyperlink{utilities_8h_ad858a38f435e9a0ee890aa0f526714d2}{pbc} (std\+::vector$<$ double $>$ \&pos, const std\+::vector$<$ double $>$ \&box)
+\begin{DoxyCompactList}\small\item\em Replace a position inside a box assuming periodic boundary conditions. \end{DoxyCompactList}\item 
+double \hyperlink{utilities_8h_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (int $\ast$idum)
+\begin{DoxyCompactList}\small\item\em Random number generator (from Numerical Recipes) \end{DoxyCompactList}\item 
+bool \hyperlink{utilities_8h_aad44b88578279ae801ba2cfb23a9e6a3}{file\+Exists} (std\+::string)
+\begin{DoxyCompactList}\small\item\em Function to check whether a given file exists or not. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\hypertarget{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{}\index{utilities.\+h@{utilities.\+h}!sstr@{sstr}}
+\index{sstr@{sstr}!utilities.\+h@{utilities.\+h}}
+\subsubsection[{sstr}]{\setlength{\rightskip}{0pt plus 5cm}\#define sstr(
+\begin{DoxyParamCaption}
+\item[{}]{x}
+\end{DoxyParamCaption}
+)~dynamic\+\_\+cast$<$ std\+::ostringstream \& $>$( ( std\+::ostringstream() $<$$<$ std\+::dec $<$$<$ x ) ).str()}\label{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}
+
+
+For converting to string. 
+
+
+
+Definition at line 11 of file utilities.\+h.
+
+
+
+Referenced by tmmc\+::calculate\+P\+I(), main(), tmmc\+::print(), wala\+::print(), sim\+System\+::print\+U(), sim\+System\+::start\+T\+M\+M\+C(), and sim\+System\+::start\+W\+A\+L\+A().
+
+
+
+\subsection{Function Documentation}
+\hypertarget{utilities_8h_aad44b88578279ae801ba2cfb23a9e6a3}{}\index{utilities.\+h@{utilities.\+h}!file\+Exists@{file\+Exists}}
+\index{file\+Exists@{file\+Exists}!utilities.\+h@{utilities.\+h}}
+\subsubsection[{file\+Exists(std\+::string)}]{\setlength{\rightskip}{0pt plus 5cm}bool file\+Exists (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{file\+Name}
+\end{DoxyParamCaption}
+)}\label{utilities_8h_aad44b88578279ae801ba2cfb23a9e6a3}
+
+
+Function to check whether a given file exists or not. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em file\+Name} & Name of file to check\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+If file exists 
+\end{DoxyReturn}
+
+
+Definition at line 111 of file utilities.\+cpp.
+
+
+
+Referenced by tabulated\+::load\+Potential().
+
+
+\begin{DoxyCode}
+112 \{
+113                 \textcolor{keyword}{struct }stat stFileInfo;
+114                 
+115                 \textcolor{keywordflow}{if} (stat(fileName.c\_str(),&stFileInfo) == 0)
+116                                 \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+117                 \textcolor{keywordflow}{else} 
+118                                 \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+119 \}
+\end{DoxyCode}
+\hypertarget{utilities_8h_ad858a38f435e9a0ee890aa0f526714d2}{}\index{utilities.\+h@{utilities.\+h}!pbc@{pbc}}
+\index{pbc@{pbc}!utilities.\+h@{utilities.\+h}}
+\subsubsection[{pbc(std\+::vector$<$ double $>$ \&pos, const std\+::vector$<$ double $>$ \&box)}]{\setlength{\rightskip}{0pt plus 5cm}void pbc (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ double $>$ \&}]{pos, }
+\item[{const std\+::vector$<$ double $>$ \&}]{box}
+\end{DoxyParamCaption}
+)}\label{utilities_8h_ad858a38f435e9a0ee890aa0f526714d2}
+
+
+Replace a position inside a box assuming periodic boundary conditions. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em pos} & Position to be placed in box \\
+\hline
+\mbox{\tt in}  & {\em box} & Box dimensions \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 67 of file utilities.\+cpp.
+
+
+\begin{DoxyCode}
+67                                                                       \{
+68                 \textcolor{comment}{// generally while loops are faster than round statements}
+69                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < pos.size(); ++i) \{
+70                                 \textcolor{keywordflow}{while} (pos[i] < 0.0) \{
+71                                                 pos[i] += box[i];
+72                                 \}
+73                                 \textcolor{keywordflow}{while} (pos[i] >= box[i]) \{
+74                                                 pos[i] -= box[i];
+75                                 \}
+76                 \}
+77 \}
+\end{DoxyCode}
+\hypertarget{utilities_8h_a5a95fd6e0238fdca5cb75cee0b4d521c}{}\index{utilities.\+h@{utilities.\+h}!pbc\+\_\+dist2@{pbc\+\_\+dist2}}
+\index{pbc\+\_\+dist2@{pbc\+\_\+dist2}!utilities.\+h@{utilities.\+h}}
+\subsubsection[{pbc\+\_\+dist2(const std\+::vector$<$ double $>$ \&p1, const std\+::vector$<$ double $>$ \&p2, const std\+::vector$<$ double $>$ \&box)}]{\setlength{\rightskip}{0pt plus 5cm}double pbc\+\_\+dist2 (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ double $>$ \&}]{p1, }
+\item[{const std\+::vector$<$ double $>$ \&}]{p2, }
+\item[{const std\+::vector$<$ double $>$ \&}]{box}
+\end{DoxyParamCaption}
+)}\label{utilities_8h_a5a95fd6e0238fdca5cb75cee0b4d521c}
+
+
+Calculate the minimum image distance squared between two coordinates assuming periodic boundary conditions. 
+
+Coordinates do not have to be in the box to begin with.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em } & \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 88 of file utilities.\+cpp.
+
+
+
+Referenced by pair\+Potential\+::energy().
+
+
+\begin{DoxyCode}
+88                                                                                                            
+              \{
+89     \textcolor{keywordtype}{double} d2 = 0.0;
+90     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < p2.size(); ++i) \{
+91                 \textcolor{keywordtype}{double} dr = p2[i] - p1[i];
+92                                 \textcolor{keywordflow}{while} (dr < -box[i]/2.0) \{
+93                                                 dr += box[i];
+94                                 \}
+95                                 \textcolor{keywordflow}{while} (dr > box[i]/2.0) \{
+96                                                 dr -= box[i];
+97                                 \}
+98                                 d2 += dr*dr;
+99                 \}
+100     
+101     \textcolor{keywordflow}{return} d2;
+102 \}
+\end{DoxyCode}
+\hypertarget{utilities_8h_a0f9542af4b475ac79cb679d7a8d14db0}{}\index{utilities.\+h@{utilities.\+h}!rng@{rng}}
+\index{rng@{rng}!utilities.\+h@{utilities.\+h}}
+\subsubsection[{rng(int $\ast$idum)}]{\setlength{\rightskip}{0pt plus 5cm}double rng (
+\begin{DoxyParamCaption}
+\item[{int $\ast$}]{idum}
+\end{DoxyParamCaption}
+)}\label{utilities_8h_a0f9542af4b475ac79cb679d7a8d14db0}
+
+
+Random number generator (from Numerical Recipes) 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em idum} & seed\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+temp Pseudo-\/random number between \mbox{[}0, 1) 
+\end{DoxyReturn}
+
+
+Definition at line 28 of file utilities.\+cpp.
+
+
+
+References A\+M, I\+A1, I\+A2, I\+M1, I\+M2, I\+M\+M1, I\+Q1, I\+Q2, I\+R1, I\+R2, N\+D\+I\+V, N\+T\+A\+B, and R\+N\+M\+X.
+
+
+
+Referenced by delete\+Particle\+::make(), translate\+Particle\+::make(), swap\+Particles\+::make(), insert\+Particle\+::make(), and moves\+::make\+Move().
+
+
+\begin{DoxyCode}
+28                        \{
+29                 \textcolor{keywordtype}{int} j;
+30                 \textcolor{keywordtype}{long} k;
+31                 \textcolor{keyword}{static} \textcolor{keywordtype}{long} idum2=123456789;
+32                 \textcolor{keyword}{static} \textcolor{keywordtype}{long} iy=0;
+33                 \textcolor{keyword}{static} \textcolor{keywordtype}{long} iv[\hyperlink{utilities_8cpp_a0e93cfb2d62849853fd34957ba6e6fdc}{NTAB}];
+34                 \textcolor{keywordtype}{double} temp;
+35 
+36                 \textcolor{keywordflow}{if} (*idum <= 0) \{
+37                                 \textcolor{keywordflow}{if} (-(*idum) < 1) *idum=1;
+38                                 \textcolor{keywordflow}{else} *idum = -(*idum);
+39                                 idum2=(*idum);
+40                                 \textcolor{keywordflow}{for} (j=\hyperlink{utilities_8cpp_a0e93cfb2d62849853fd34957ba6e6fdc}{NTAB}+7;j>=0;j--) \{
+41                                                 k=(*idum)/\hyperlink{utilities_8cpp_a9afa86ff22da69bda72fe271ae71ad46}{IQ1};
+42                                                 *idum=\hyperlink{utilities_8cpp_a6ef2749dca39c605c3d033f788afe6e3}{IA1}*(*idum-k*\hyperlink{utilities_8cpp_a9afa86ff22da69bda72fe271ae71ad46}{IQ1})-k*
+      \hyperlink{utilities_8cpp_a7b2b32709f9770a283701ffcf3723497}{IR1};
+43                                                 \textcolor{keywordflow}{if} (*idum < 0) *idum += \hyperlink{utilities_8cpp_a78325bdf48423acef7c012567628b391}{IM1};
+44                                                 \textcolor{keywordflow}{if} (j < \hyperlink{utilities_8cpp_a0e93cfb2d62849853fd34957ba6e6fdc}{NTAB}) iv[j] = *idum;
+45                                 \} iy=iv[0];
+46                 \}
+47                 k=(*idum)/\hyperlink{utilities_8cpp_a9afa86ff22da69bda72fe271ae71ad46}{IQ1};
+48                 *idum=\hyperlink{utilities_8cpp_a6ef2749dca39c605c3d033f788afe6e3}{IA1}*(*idum-k*\hyperlink{utilities_8cpp_a9afa86ff22da69bda72fe271ae71ad46}{IQ1})-k*\hyperlink{utilities_8cpp_a7b2b32709f9770a283701ffcf3723497}{IR1};
+49                 \textcolor{keywordflow}{if} (*idum < 0) *idum += \hyperlink{utilities_8cpp_a78325bdf48423acef7c012567628b391}{IM1};
+50                 k=idum2/\hyperlink{utilities_8cpp_abae040385946a6acdf5e10d2efd86f3d}{IQ2};
+51                 idum2=\hyperlink{utilities_8cpp_a372a58d7e9e25912fd79e7afaa06cc7a}{IA2}*(idum2-k*\hyperlink{utilities_8cpp_abae040385946a6acdf5e10d2efd86f3d}{IQ2})-k*\hyperlink{utilities_8cpp_a5a08e4f5cb3582e623cc14a6c92d48de}{IR2};
+52                 \textcolor{keywordflow}{if} (idum2 < 0) idum2 += \hyperlink{utilities_8cpp_ad8c519de7e5de4ae35344ddcf21fd062}{IM2};
+53                 j=iy/\hyperlink{utilities_8cpp_a62339d74dd5d9d00480e1a288cf88fe8}{NDIV};
+54                 iy=iv[j]-idum2;
+55                 iv[j] = *idum;
+56                 \textcolor{keywordflow}{if} (iy < 1) iy += \hyperlink{utilities_8cpp_a87a6e0054f9d827c979c43aa0d5e621a}{IMM1};
+57                 \textcolor{keywordflow}{if} ((temp=\hyperlink{utilities_8cpp_ad301e6a88b1c01108f4867f2ea6f683c}{AM}*iy) > \hyperlink{utilities_8cpp_aa7436c9270ffb06f8c1eae8d2e605cec}{RNMX}) \textcolor{keywordflow}{return} \hyperlink{utilities_8cpp_aa7436c9270ffb06f8c1eae8d2e605cec}{RNMX};
+58                 \textcolor{keywordflow}{else} \textcolor{keywordflow}{return} temp;
+59 \}
+\end{DoxyCode}

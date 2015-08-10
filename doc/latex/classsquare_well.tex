@@ -1,0 +1,240 @@
+\hypertarget{classsquare_well}{}\section{square\+Well Class Reference}
+\label{classsquare_well}\index{square\+Well@{square\+Well}}
+
+
+Square-\/well potential Parameters should be specified in the following order\+: \{ sigma, wellwidth, welldepth \}.  
+
+
+
+
+{\ttfamily \#include $<$potentials.\+h$>$}
+
+Inheritance diagram for square\+Well\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsquare_well}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classsquare_well_aee8080c488f394e2157648849e0e4b43}{$\sim$square\+Well} ()
+\item 
+void \hyperlink{classsquare_well_aa8770429044914778c2f343e025e09cc}{set\+Parameters} (const std\+::vector$<$ double $>$ params)
+\begin{DoxyCompactList}\small\item\em Set the parameters in the square-\/well equation. \end{DoxyCompactList}\item 
+double \hyperlink{classsquare_well_a318e7456943ad7c7f36cce0c9e2b2688}{energy} (const double r)
+\begin{DoxyCompactList}\small\item\em Return the energy of two particles separate by a distance r. \end{DoxyCompactList}\item 
+double \hyperlink{classsquare_well_a3a81297ea3a06f8a354c824a7ac5dc94}{tail\+Correction} (const double rho\+Bath)
+\begin{DoxyCompactList}\small\item\em Tail correction for a square well potential always returns 0. \end{DoxyCompactList}\item 
+double \hyperlink{classsquare_well_a82e1cc1009bd8e42e79e3c5f856f1b3b}{rcut} ()
+\begin{DoxyCompactList}\small\item\em Return the value of r\+\_\+\{cut\} for this potential. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Square-\/well potential Parameters should be specified in the following order\+: \{ sigma, wellwidth, welldepth \}. 
+
+Definition at line 68 of file potentials.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classsquare_well_aee8080c488f394e2157648849e0e4b43}{}\index{square\+Well@{square\+Well}!````~square\+Well@{$\sim$square\+Well}}
+\index{````~square\+Well@{$\sim$square\+Well}!square\+Well@{square\+Well}}
+\subsubsection[{$\sim$square\+Well()}]{\setlength{\rightskip}{0pt plus 5cm}square\+Well\+::$\sim$square\+Well (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classsquare_well_aee8080c488f394e2157648849e0e4b43}
+
+
+Definition at line 70 of file potentials.\+h.
+
+
+\begin{DoxyCode}
+70 \{;\}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classsquare_well_a318e7456943ad7c7f36cce0c9e2b2688}{}\index{square\+Well@{square\+Well}!energy@{energy}}
+\index{energy@{energy}!square\+Well@{square\+Well}}
+\subsubsection[{energy(const double r)}]{\setlength{\rightskip}{0pt plus 5cm}double square\+Well\+::energy (
+\begin{DoxyParamCaption}
+\item[{const double}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classsquare_well_a318e7456943ad7c7f36cce0c9e2b2688}
+
+
+Return the energy of two particles separate by a distance r. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em r} & Scalar separation, needs to be the minimum image\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+U(r) 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_a43dc9c840e25dc76e76d6ad7947c165d}{pair\+Potential}.
+
+
+
+Definition at line 257 of file potentials.\+cpp.
+
+
+
+References pair\+Potential\+::params\+\_\+, and pair\+Potential\+::params\+Are\+Set\+\_\+.
+
+
+\begin{DoxyCode}
+257                                          \{
+258                 \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+259                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell parameters not set"});
+260                 \}
+261                 \textcolor{keywordflow}{if} (r < \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0]) \{
+262                                 \textcolor{keywordflow}{return} 1.0E12;
+263                 \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (r < \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1]) \{
+264                                 \textcolor{keywordflow}{return} \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2];
+265                 \}
+266                 \textcolor{keywordflow}{else} \{
+267                                 \textcolor{keywordflow}{return} 0.0;
+268                 \}
+269 \}
+\end{DoxyCode}
+\hypertarget{classsquare_well_a82e1cc1009bd8e42e79e3c5f856f1b3b}{}\index{square\+Well@{square\+Well}!rcut@{rcut}}
+\index{rcut@{rcut}!square\+Well@{square\+Well}}
+\subsubsection[{rcut()}]{\setlength{\rightskip}{0pt plus 5cm}double square\+Well\+::rcut (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classsquare_well_a82e1cc1009bd8e42e79e3c5f856f1b3b}
+
+
+Return the value of r\+\_\+\{cut\} for this potential. 
+
+\begin{DoxyReturn}{Returns}
+r\+\_\+cut 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{pair\+Potential}.
+
+
+
+Definition at line 287 of file potentials.\+cpp.
+
+
+
+References pair\+Potential\+::params\+\_\+, and pair\+Potential\+::params\+Are\+Set\+\_\+.
+
+
+\begin{DoxyCode}
+287                          \{
+288                 \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+289                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell parameters not set"});
+290                 \} \textcolor{keywordflow}{else} \{
+291                                 \textcolor{keywordflow}{return} (\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1]);
+292                 \}
+293 \}
+\end{DoxyCode}
+\hypertarget{classsquare_well_aa8770429044914778c2f343e025e09cc}{}\index{square\+Well@{square\+Well}!set\+Parameters@{set\+Parameters}}
+\index{set\+Parameters@{set\+Parameters}!square\+Well@{square\+Well}}
+\subsubsection[{set\+Parameters(const std\+::vector$<$ double $>$ params)}]{\setlength{\rightskip}{0pt plus 5cm}void square\+Well\+::set\+Parameters (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ double $>$}]{params}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classsquare_well_aa8770429044914778c2f343e025e09cc}
+
+
+Set the parameters in the square-\/well equation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em params} & Vector of inputs\+: \{sigma, wellwidth, welldepth (magnitude)\} \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classpair_potential_ad4b237646f9de2ae9f95cc9350564bc5}{pair\+Potential}.
+
+
+
+Definition at line 229 of file potentials.\+cpp.
+
+
+
+References pair\+Potential\+::params\+\_\+, pair\+Potential\+::params\+Are\+Set\+\_\+, and pair\+Potential\+::use\+Tail\+Correction.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+229                                                                  \{
+230                 \textcolor{keywordflow}{if} (params.size() != 3) \{
+231                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell must specify 3
+       parameters: sigma, wellwidth, welldepth"});
+232                 \} \textcolor{keywordflow}{else} \{
+233                                 \textcolor{keywordflow}{if} (params[0] < 0) \{
+234                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell,
+       sigma > 0"});
+235                                 \}
+236                                 \textcolor{keywordflow}{if} (params[1] < 0) \{
+237                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell,
+       wellwidth > 0"});
+238                                 \}
+239                                 
+240                                 \textcolor{comment}{// save parameters as sigma, (sigma+wellWidth), -wellDepth to speed up
+       energy calculation}
+241                                 \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_} = params;
+242                                 \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1] = params[0] + params[1];
+243                                 \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2] = -params[2];
+244                                 \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{true};
+245                                 
+246                                 \hyperlink{classpair_potential_ab4b4538a7e13771f50a29aaac2443037}{useTailCorrection} = \textcolor{keyword}{false};
+247                 \}
+248 \}
+\end{DoxyCode}
+\hypertarget{classsquare_well_a3a81297ea3a06f8a354c824a7ac5dc94}{}\index{square\+Well@{square\+Well}!tail\+Correction@{tail\+Correction}}
+\index{tail\+Correction@{tail\+Correction}!square\+Well@{square\+Well}}
+\subsubsection[{tail\+Correction(const double rho\+Bath)}]{\setlength{\rightskip}{0pt plus 5cm}double square\+Well\+::tail\+Correction (
+\begin{DoxyParamCaption}
+\item[{const double}]{rho\+Bath}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classsquare_well_a3a81297ea3a06f8a354c824a7ac5dc94}
+
+
+Tail correction for a square well potential always returns 0. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Number} & density of the surrounding fluid\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+U\+\_\+tail 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_a5387d21d8d487d1d42e9eaf7cae9175b}{pair\+Potential}.
+
+
+
+Definition at line 278 of file potentials.\+cpp.
+
+
+\begin{DoxyCode}
+278                                                       \{
+279                 \textcolor{keywordflow}{return} 0.0;
+280 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{potentials_8h}{potentials.\+h}\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{potentials_8cpp}{potentials.\+cpp}\end{DoxyCompactItemize}

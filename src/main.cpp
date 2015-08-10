@@ -3,6 +3,16 @@
  * 
  * \author Nathan A. Mahynski
  * \date 08/07/15
+ * 
+ * \mainpage
+ * 
+ * \section Dependencies
+ * 
+ * \section Compiling
+ * Run tests and run main
+ * 
+ * \section Input
+ * 
  */
 
 #include <iostream>

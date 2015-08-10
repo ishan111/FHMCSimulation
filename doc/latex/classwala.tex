@@ -1,0 +1,501 @@
+\hypertarget{classwala}{}\section{wala Class Reference}
+\label{classwala}\index{wala@{wala}}
+
+
+Wang-\/\+Landau biasing class.  
+
+
+
+
+{\ttfamily \#include $<$bias.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classwala_a1a4483327eb3527ecc114c075b0b0598}{wala} ()
+\item 
+\hyperlink{classwala_a6f8890a10284e1551b1603ecc45433e8}{wala} (const double \hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{ln\+F}, const double g, const double s, const int Nmax, const int Nmin)
+\begin{DoxyCompactList}\small\item\em Wang-\/\+Landau biasing constructor. \end{DoxyCompactList}\item 
+void \hyperlink{classwala_a5eb2622be6a9e89f5e59ba0b15aca4bd}{update} (const int Nval)
+\begin{DoxyCompactList}\small\item\em Update the estimate of the macrostate distribution. \end{DoxyCompactList}\item 
+void \hyperlink{classwala_ae06c2f1475702ec9d1b0a243b7f34e4b}{iterate\+Forward} ()
+\begin{DoxyCompactList}\small\item\em This should only be called when the \char`\"{}flatness\char`\"{} criterion is met. \end{DoxyCompactList}\item 
+void \hyperlink{classwala_a65569289fac85d0da9c336e17c9d809a}{print} (const std\+::string file\+Name, const bool print\+H=false)
+\begin{DoxyCompactList}\small\item\em Print the U\+N-\/\+N\+O\+R\+M\+A\+L\+I\+Z\+E\+D biasing function (ln\+P\+I) and possible the visted-\/states histogram to files. \end{DoxyCompactList}\item 
+void \hyperlink{classwala_ae04916f49c11b0636e813787a3906570}{readln\+P\+I} (const std\+::string file\+Name)
+\begin{DoxyCompactList}\small\item\em Read the macrostate distribution (biasing function) from a file. \end{DoxyCompactList}\item 
+bool \hyperlink{classwala_add6302db96fcc45811b2944de2936525}{evaluate\+Flatness} ()
+\begin{DoxyCompactList}\small\item\em Evaluate if the visited states histogram is approxiamtely \char`\"{}flat\char`\"{}. \end{DoxyCompactList}\item 
+const \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+} \hyperlink{classwala_a01a9bf2af8eaf65c719745ad1b12d238}{get\+Address} (const int Nval)
+\begin{DoxyCompactList}\small\item\em For multidimensional Wang-\/\+Landau biasing, get the 1\+D coordinate of the macrostate distribution estimate (bias) for multidimensional data. \end{DoxyCompactList}\item 
+const double \hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{ln\+F} ()
+\item 
+const double \hyperlink{classwala_a03f7b333aa0a280e78060bd9af7ec318}{get\+Bias} (const int address)
+\item 
+const std\+::vector$<$ double $>$ \hyperlink{classwala_a80b00e34135eb6da4e81cd0935622fc5}{getln\+P\+I} ()
+\begin{DoxyCompactList}\small\item\em Return the current estimate of the macrostate distribution. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Wang-\/\+Landau biasing class. 
+
+Definition at line 48 of file bias.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classwala_a1a4483327eb3527ecc114c075b0b0598}{}\index{wala@{wala}!wala@{wala}}
+\index{wala@{wala}!wala@{wala}}
+\subsubsection[{wala()}]{\setlength{\rightskip}{0pt plus 5cm}wala\+::wala (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classwala_a1a4483327eb3527ecc114c075b0b0598}
+
+
+Definition at line 50 of file bias.\+h.
+
+
+\begin{DoxyCode}
+50 \{\};
+\end{DoxyCode}
+\hypertarget{classwala_a6f8890a10284e1551b1603ecc45433e8}{}\index{wala@{wala}!wala@{wala}}
+\index{wala@{wala}!wala@{wala}}
+\subsubsection[{wala(const double ln\+F, const double g, const double s, const int Nmax, const int Nmin)}]{\setlength{\rightskip}{0pt plus 5cm}wala\+::wala (
+\begin{DoxyParamCaption}
+\item[{const double}]{ln\+F, }
+\item[{const double}]{g, }
+\item[{const double}]{s, }
+\item[{const int}]{Nmax, }
+\item[{const int}]{Nmin}
+\end{DoxyParamCaption}
+)}\label{classwala_a6f8890a10284e1551b1603ecc45433e8}
+
+
+Wang-\/\+Landau biasing constructor. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em ln\+F} & Factor by which the estimate of the density of states in updated each time it is visited. \\
+\hline
+\mbox{\tt in}  & {\em g} & Factor by which ln\+F is reduced (multiplied) once \char`\"{}flatness\char`\"{} has been achieved. \\
+\hline
+\mbox{\tt in}  & {\em s} & Factor by which the min(\+H) must be within the mean of H to be considered \char`\"{}flat\char`\"{}, e.\+g. 0.\+8 --$>$ min is within 20\% error of mean \\
+\hline
+\mbox{\tt in}  & {\em n\+Spec} & Number of species in the simulation. \\
+\hline
+\mbox{\tt in}  & {\em Nmax} & Upper bound for total number of particles. \\
+\hline
+\mbox{\tt in}  & {\em Nmin} & Lower bound for total number of particles. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 292 of file bias.\+cpp.
+
+
+
+References \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+, and ln\+F().
+
+
+\begin{DoxyCode}
+292                                                                                             \{
+293                 \textcolor{keywordflow}{if} (\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF} < 0) \{
+294                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"lnF in Wang-Landau cannot be < 0"});
+295                 \}
+296                 lnF\_ = \hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF};
+297                 
+298                 \textcolor{keywordflow}{if} (g <= 0 || g >= 1) \{
+299                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"In Wang-Landau 0 < g < 1"});
+300                 \}
+301                 g\_ = g;
+302                 
+303                 \textcolor{keywordflow}{if} (s <= 0 || s >= 1) \{
+304                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"In Wang-Landau 0 < s < 1"});
+305                 \}
+306                 s\_ = s;
+307                                 
+308                 \textcolor{keywordflow}{if} (Nmin > Nmax) \{
+309                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Nmin > Nmax in Wang-Landau object"});
+310                 \}
+311                 
+312                 \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} size = (Nmax - Nmin + 1);
+313                 
+314                 Nmin\_ = Nmin;
+315                 Nmax\_ = Nmax;
+316                 
+317                 \textcolor{comment}{// attempt to allocate memory for macrostate distribution matrix and initializes it all to
+       0}
+318                 \textcolor{keywordflow}{try} \{
+319                                 lnPI\_.resize(size, 0.0);
+320                 \} \textcolor{keywordflow}{catch} (\textcolor{keyword}{const} std::bad\_alloc &ce) \{
+321                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory, cannot allocate space
+       for macrostate distribution matrix in wala"});
+322                 \}
+323                 
+324                 \textcolor{comment}{// initialize the visited-states histogram}
+325                 \textcolor{keywordflow}{try} \{
+326                                 H\_.resize(size, 0.0);
+327                 \} \textcolor{keywordflow}{catch} (\textcolor{keyword}{const} std::bad\_alloc &ce) \{
+328                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory, cannot allocate space
+       for visited-states histogram in wala"});
+329                 \}
+330 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classwala_add6302db96fcc45811b2944de2936525}{}\index{wala@{wala}!evaluate\+Flatness@{evaluate\+Flatness}}
+\index{evaluate\+Flatness@{evaluate\+Flatness}!wala@{wala}}
+\subsubsection[{evaluate\+Flatness()}]{\setlength{\rightskip}{0pt plus 5cm}bool wala\+::evaluate\+Flatness (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classwala_add6302db96fcc45811b2944de2936525}
+
+
+Evaluate if the visited states histogram is approxiamtely \char`\"{}flat\char`\"{}. 
+
+\begin{DoxyReturn}{Returns}
+Returns whether the histogram is flat or not. 
+\end{DoxyReturn}
+
+
+Definition at line 358 of file bias.\+cpp.
+
+
+
+References spec\+Exp.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+358                              \{
+359                 \textcolor{keywordtype}{double} min = H\_[0], lnMean = -DBL\_MAX;
+360                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < H\_.size(); ++i) \{
+361                                 \textcolor{keywordflow}{if} (H\_[i] < min) \{
+362                                                 min = H\_[i];
+363                                 \}
+364                                 
+365                                 \textcolor{comment}{// summing so many doubles may overrun DBL\_MAX, so instead track the lnMean}
+366                                 lnMean = \hyperlink{bias_8h_a9f1e113b6454173bd61677519ec34c3a}{specExp}(lnMean, log(H\_[i]));
+367                 \}
+368                 lnMean -= log(H\_.size());
+369                 
+370                 \textcolor{keywordflow}{if} (log(min) - lnMean > log(s\_)) \{
+371                                 \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+372                 \}
+373                 \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+374 \}
+\end{DoxyCode}
+\hypertarget{classwala_a01a9bf2af8eaf65c719745ad1b12d238}{}\index{wala@{wala}!get\+Address@{get\+Address}}
+\index{get\+Address@{get\+Address}!wala@{wala}}
+\subsubsection[{get\+Address(const int Nval)}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+} wala\+::get\+Address (
+\begin{DoxyParamCaption}
+\item[{const int}]{Nval}
+\end{DoxyParamCaption}
+)}\label{classwala_a01a9bf2af8eaf65c719745ad1b12d238}
+
+
+For multidimensional Wang-\/\+Landau biasing, get the 1\+D coordinate of the macrostate distribution estimate (bias) for multidimensional data. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Nval} & Total number of atoms in the system \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 337 of file bias.\+cpp.
+
+
+
+References \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+.
+
+
+
+Referenced by calculate\+Bias(), and update().
+
+
+\begin{DoxyCode}
+337                                                         \{
+338                 \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} x = Nval - Nmin\_;
+339                 \textcolor{keywordflow}{return} x;
+340 \}
+\end{DoxyCode}
+\hypertarget{classwala_a03f7b333aa0a280e78060bd9af7ec318}{}\index{wala@{wala}!get\+Bias@{get\+Bias}}
+\index{get\+Bias@{get\+Bias}!wala@{wala}}
+\subsubsection[{get\+Bias(const int address)}]{\setlength{\rightskip}{0pt plus 5cm}const double wala\+::get\+Bias (
+\begin{DoxyParamCaption}
+\item[{const int}]{address}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classwala_a03f7b333aa0a280e78060bd9af7ec318}
+
+
+Definition at line 60 of file bias.\+h.
+
+
+
+Referenced by calculate\+Bias().
+
+
+\begin{DoxyCode}
+60 \{ \textcolor{keywordflow}{return} -lnPI\_[address]; \}
+\end{DoxyCode}
+\hypertarget{classwala_a80b00e34135eb6da4e81cd0935622fc5}{}\index{wala@{wala}!getln\+P\+I@{getln\+P\+I}}
+\index{getln\+P\+I@{getln\+P\+I}!wala@{wala}}
+\subsubsection[{getln\+P\+I()}]{\setlength{\rightskip}{0pt plus 5cm}const std\+::vector$<$double$>$ wala\+::getln\+P\+I (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classwala_a80b00e34135eb6da4e81cd0935622fc5}
+
+
+Return the current estimate of the macrostate distribution. 
+
+
+
+Definition at line 61 of file bias.\+h.
+
+
+
+Referenced by main().
+
+\hypertarget{classwala_ae06c2f1475702ec9d1b0a243b7f34e4b}{}\index{wala@{wala}!iterate\+Forward@{iterate\+Forward}}
+\index{iterate\+Forward@{iterate\+Forward}!wala@{wala}}
+\subsubsection[{iterate\+Forward()}]{\setlength{\rightskip}{0pt plus 5cm}void wala\+::iterate\+Forward (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classwala_ae06c2f1475702ec9d1b0a243b7f34e4b}
+
+
+This should only be called when the \char`\"{}flatness\char`\"{} criterion is met. 
+
+This then resets the visited-\/states histogram H, and decrements ln\+F. 
+
+Definition at line 379 of file bias.\+cpp.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+379                            \{
+380                 lnF\_ = lnF\_*g\_;
+381                 std::fill(H\_.begin(), H\_.end(), 0);
+382 \}
+\end{DoxyCode}
+\hypertarget{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{}\index{wala@{wala}!ln\+F@{ln\+F}}
+\index{ln\+F@{ln\+F}!wala@{wala}}
+\subsubsection[{ln\+F()}]{\setlength{\rightskip}{0pt plus 5cm}const double wala\+::ln\+F (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}
+
+
+Definition at line 59 of file bias.\+h.
+
+
+
+Referenced by main(), and wala().
+
+
+\begin{DoxyCode}
+59 \{ \textcolor{keywordflow}{return} lnF\_; \}
+\end{DoxyCode}
+\hypertarget{classwala_a65569289fac85d0da9c336e17c9d809a}{}\index{wala@{wala}!print@{print}}
+\index{print@{print}!wala@{wala}}
+\subsubsection[{print(const std\+::string file\+Name, const bool print\+H=false)}]{\setlength{\rightskip}{0pt plus 5cm}void wala\+::print (
+\begin{DoxyParamCaption}
+\item[{const std\+::string}]{file\+Name, }
+\item[{const bool}]{print\+H = {\ttfamily false}}
+\end{DoxyParamCaption}
+)}\label{classwala_a65569289fac85d0da9c336e17c9d809a}
+
+
+Print the U\+N-\/\+N\+O\+R\+M\+A\+L\+I\+Z\+E\+D biasing function (ln\+P\+I) and possible the visted-\/states histogram to files. 
+
+Will overwrite the files if another with that name exists. Prints in net\+C\+D\+F format if enabled.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em file\+Name} & Name of the file to print to. Will append with \char`\"{}\+\_\+ln\+P\+I\char`\"{} and \char`\"{}\+\_\+\+H\char`\"{} for the macrostate distribution and visited-\/states histogram, respectively. \\
+\hline
+\mbox{\tt in}  & {\em print\+H} & Defaults to false, but if true will also print the visited-\/states histogram. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 392 of file bias.\+cpp.
+
+
+
+References sstr.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+392                                                        \{
+393 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
+394                 \textcolor{comment}{// Print visited-states histogram}
+395                 \textcolor{keywordflow}{if} (printH) \{
+396                                 \textcolor{keyword}{const} std::string name = fileName + \textcolor{stringliteral}{"\_H.nc"}
+397                                 NcFile outFile(name.c\_str(), NcFile::replace);
+398                                 NcDim probDim = outFile.addDim(\textcolor{stringliteral}{"vectorized\_position"}, H\_.size());
+399                                 NcVar probVar = outFile.addVar(\textcolor{stringliteral}{"H"}, ncDouble, probDim);
+400                                 \textcolor{keyword}{const} std::string dummyName = \textcolor{stringliteral}{"number\_species:"};
+401                                 probVar.putAtt(dummyName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(nSpec\_).c\_str());
+402                                 \textcolor{keyword}{const} std::string attName = \textcolor{stringliteral}{"species\_total\_upper\_bound:"};
+403                                 probVar.putAtt(attName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(Nmax\_).c\_str());
+404                                 \textcolor{keyword}{const} std::string attName = \textcolor{stringliteral}{"species\_upper\_lower\_bound:"};
+405                                 probVar.putAtt(attName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(Nmin\_).c\_str());
+406                                 probVar.putVar(&H\_[0]);
+407                 \}
+408                 
+409                 \textcolor{comment}{// Print lnPI (bias) matrix}
+410                 \textcolor{keyword}{const} std::string name = fileName + \textcolor{stringliteral}{"\_lnPI.nc"}
+411                 NcFile outFile(name.c\_str(), NcFile::replace);
+412                 NcDim probDim = outFile.addDim(\textcolor{stringliteral}{"vectorized\_position"}, lnPI\_.size());
+413                 NcVar probVar = outFile.addVar(\textcolor{stringliteral}{"lnPI"}, ncDouble, probDim);
+414                 \textcolor{keyword}{const} std::string dummyName = \textcolor{stringliteral}{"number\_species:"};
+415                 probVar.putAtt(dummyName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(nSpec\_).c\_str());
+416                 \textcolor{keyword}{const} std::string attName = \textcolor{stringliteral}{"species\_total\_upper\_bound:"};
+417                 probVar.putAtt(attName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(Nmax\_).c\_str());
+418                 \textcolor{keyword}{const} std::string attName = \textcolor{stringliteral}{"species\_total\_lower\_bound:"};
+419                 probVar.putAtt(attName.c\_str(), \hyperlink{utilities_8h_a8feb627efa8e8113cdf95f9a6151a088}{sstr}(Nmin\_).c\_str());
+420                 probVar.putVar(&lnPI\_[0]);
+421 \textcolor{preprocessor}{#else}
+422                 \textcolor{comment}{// Print visited-states histogram}
+423                 \textcolor{keywordflow}{if} (printH) \{
+424                                 std::ofstream of;
+425                                 of.open(fileName+\textcolor{stringliteral}{"\_H.dat"}, std::ofstream::out);
+426                                 of << \textcolor{stringliteral}{"# Visited-states histogram in single row (vectorized) notation."} << 
+      std::endl;
+427                                 of << \textcolor{stringliteral}{"# species\_total\_upper\_bound:"} << Nmax\_ << std::endl;
+428                                 of << \textcolor{stringliteral}{"# species\_total\_lower\_bound:"} << Nmin\_ << std::endl;
+429                                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < H\_.size(); ++i) \{
+430                                                 of << H\_[i] << std::endl;
+431                                 \}
+432                                 of.close();
+433                 \}
+434                 
+435                 \textcolor{comment}{// Print lnPI (bias) matrix}
+436                 std::ofstream of;
+437                 of.open(fileName+\textcolor{stringliteral}{"\_lnPI.dat"}, std::ofstream::out);
+438                 of << \textcolor{stringliteral}{"# lnPI (bias) matrix in single row (vectorized) notation."} << std::endl;
+439                 of << \textcolor{stringliteral}{"# species\_total\_upper\_bound:"} << Nmax\_ << std::endl;
+440                 of << \textcolor{stringliteral}{"# species\_total\_lower\_bound:"} << Nmin\_ << std::endl;
+441                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < lnPI\_.size(); ++i) \{
+442                                 of << lnPI\_[i] << std::endl;
+443                 \}
+444                 of.close();
+445 \textcolor{preprocessor}{#endif}
+446 \}
+\end{DoxyCode}
+\hypertarget{classwala_ae04916f49c11b0636e813787a3906570}{}\index{wala@{wala}!readln\+P\+I@{readln\+P\+I}}
+\index{readln\+P\+I@{readln\+P\+I}!wala@{wala}}
+\subsubsection[{readln\+P\+I(const std\+::string file\+Name)}]{\setlength{\rightskip}{0pt plus 5cm}void wala\+::readln\+P\+I (
+\begin{DoxyParamCaption}
+\item[{const std\+::string}]{file\+Name}
+\end{DoxyParamCaption}
+)}\label{classwala_ae04916f49c11b0636e813787a3906570}
+
+
+Read the macrostate distribution (biasing function) from a file. 
+
+This assumes the user has already guaranteed that the bounds are consistent, e.\+g. Nmin and Nmax, as it will not check this automatically. Also assumes file was generated by this code. \char`\"{}\+Hand made\char`\"{} ones might have formatting issues since parsing is done based on tokens.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em file\+Name} & Name of file containing ln\+P\+I. Must include file extension. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 455 of file bias.\+cpp.
+
+
+
+References \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+.
+
+
+\begin{DoxyCode}
+455                                              \{
+456 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
+457                 NcFile dataFile (fileName.c\_str(), NcFile::read);
+458                 NcVar lnPI\_data = dataFile.getVar(\textcolor{stringliteral}{"lnPI"});
+459                 \textcolor{keywordflow}{if} (lnPI\_data.isNull()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Macrostate distribution
+       matrix (biasing function) was empty, cannot read"});
+460                 lnPI\_data.getVar(&lnPI\_[0]);
+461 \textcolor{preprocessor}{#else}
+462                 std::string line;
+463                 std::ifstream inF (fileName);
+464                 
+465                 \textcolor{comment}{// Skip file header}
+466                 \textcolor{keywordtype}{bool} header = \textcolor{keyword}{true};
+467                 \textcolor{keywordflow}{while} (header) \{
+468                                 std::getline (inF, line);
+469                                 \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
+470                                                 header = \textcolor{keyword}{false};
+471                                 \}
+472                 \}
+473                 
+474                 \textcolor{comment}{// Read line by line, parsing based on token}
+475                 lnPI\_[0] = atof(line.c\_str());
+476                 \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} index = 1;
+477                 \textcolor{keywordflow}{while} (inF >> lnPI\_[index]) \{
+478                                 index++;
+479                 \}
+480 \textcolor{preprocessor}{#endif}
+481 \textcolor{preprocessor}{\}\end{DoxyCode}
+\hypertarget{classwala_a5eb2622be6a9e89f5e59ba0b15aca4bd}{}\index{wala@{wala}!update@{update}}
+\index{update@{update}!wala@{wala}}
+\subsubsection[{update(const int Nval)}]{\setlength{\rightskip}{0pt plus 5cm}void wala\+::update (
+\begin{DoxyParamCaption}
+\item[{const int}]{Nval}
+\end{DoxyParamCaption}
+)}\label{classwala_a5eb2622be6a9e89f5e59ba0b15aca4bd}
+
+
+Update the estimate of the macrostate distribution. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Nval} & Total current number of atoms in the system \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 347 of file bias.\+cpp.
+
+
+
+References \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+, and get\+Address().
+
+
+
+Referenced by delete\+Particle\+::make(), translate\+Particle\+::make(), swap\+Particles\+::make(), and insert\+Particle\+::make().
+
+
+\begin{DoxyCode}
+347                                  \{
+348                 \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} address = \hyperlink{classwala_a01a9bf2af8eaf65c719745ad1b12d238}{getAddress} (Nval);
+349                 lnPI\_[address] += lnF\_;
+350                 H\_[address] += 1.0;
+351 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{bias_8h}{bias.\+h}\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{bias_8cpp}{bias.\+cpp}\end{DoxyCompactItemize}

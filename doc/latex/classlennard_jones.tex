@@ -1,0 +1,253 @@
+\hypertarget{classlennard_jones}{}\section{lennard\+Jones Class Reference}
+\label{classlennard_jones}\index{lennard\+Jones@{lennard\+Jones}}
+
+
+Lennard-\/\+Jones Potential Parameters should be specified in the following order\+: \{ epsilon, sigma, r\+\_\+cut, u\+\_\+shift \}.  
+
+
+
+
+{\ttfamily \#include $<$potentials.\+h$>$}
+
+Inheritance diagram for lennard\+Jones\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classlennard_jones}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classlennard_jones_aa05d64fac84629b8bfbbc1387a41119b}{$\sim$lennard\+Jones} ()
+\item 
+void \hyperlink{classlennard_jones_a5b4c41df05048ce99bffb9f27733100a}{set\+Parameters} (const std\+::vector$<$ double $>$ params)
+\begin{DoxyCompactList}\small\item\em Set the parameters in the Lennard-\/\+Jones equation. \end{DoxyCompactList}\item 
+double \hyperlink{classlennard_jones_af90284faab4a29b15099794c25333a64}{energy} (const double r)
+\begin{DoxyCompactList}\small\item\em Return the energy of two particles separated by a distance r. \end{DoxyCompactList}\item 
+double \hyperlink{classlennard_jones_a4518a7a9970c1fbed2f2abcf0ceebbfc}{tail\+Correction} (const double rho\+Bath)
+\begin{DoxyCompactList}\small\item\em Calculate the tail correction with the approximation g(r) = 1 for r\+\_\+\{cut\} $>$ 1 as explained in Frenkel \& Smit in eq. \end{DoxyCompactList}\item 
+double \hyperlink{classlennard_jones_a6ab5b04c385544da0de985e9635a6e8c}{rcut} ()
+\begin{DoxyCompactList}\small\item\em Return the value of r\+\_\+\{cut\} for this potential. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Lennard-\/\+Jones Potential Parameters should be specified in the following order\+: \{ epsilon, sigma, r\+\_\+cut, u\+\_\+shift \}. 
+
+Definition at line 37 of file potentials.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classlennard_jones_aa05d64fac84629b8bfbbc1387a41119b}{}\index{lennard\+Jones@{lennard\+Jones}!````~lennard\+Jones@{$\sim$lennard\+Jones}}
+\index{````~lennard\+Jones@{$\sim$lennard\+Jones}!lennard\+Jones@{lennard\+Jones}}
+\subsubsection[{$\sim$lennard\+Jones()}]{\setlength{\rightskip}{0pt plus 5cm}lennard\+Jones\+::$\sim$lennard\+Jones (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classlennard_jones_aa05d64fac84629b8bfbbc1387a41119b}
+
+
+Definition at line 39 of file potentials.\+h.
+
+
+\begin{DoxyCode}
+39 \{;\}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classlennard_jones_af90284faab4a29b15099794c25333a64}{}\index{lennard\+Jones@{lennard\+Jones}!energy@{energy}}
+\index{energy@{energy}!lennard\+Jones@{lennard\+Jones}}
+\subsubsection[{energy(const double r)}]{\setlength{\rightskip}{0pt plus 5cm}double lennard\+Jones\+::energy (
+\begin{DoxyParamCaption}
+\item[{const double}]{r}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classlennard_jones_af90284faab4a29b15099794c25333a64}
+
+
+Return the energy of two particles separated by a distance r. 
+
+\[ U(r) = 4 \epsilon \left( \left \frac{ \sigma }{ r } \right)^{12} - \left( \frac{ sigma }{ r } \right)^6 \right) + U_{shift} \quad r < r_{cut} \]
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em r} & Scalar separation, needs to be the minimum image\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+U(r) 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_a43dc9c840e25dc76e76d6ad7947c165d}{pair\+Potential}.
+
+
+
+Definition at line 62 of file potentials.\+cpp.
+
+
+
+References pair\+Potential\+::params\+\_\+, and pair\+Potential\+::params\+Are\+Set\+\_\+.
+
+
+\begin{DoxyCode}
+62                                            \{
+63                 \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+64                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones parameters not set"}
+      );
+65                 \}
+66                 \textcolor{keywordtype}{double} r1 = (\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1]/r), r3 = r1*r1*r1, r6 = r3*r3, r12 = r6*r6;
+67                 \textcolor{keywordflow}{if} (r < \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2]) \{
+68                                 \textcolor{keywordflow}{return} 4.0*\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0]*(r12 - r6) + 
+      \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[3];
+69                 \} \textcolor{keywordflow}{else} \{
+70                                 \textcolor{keywordflow}{return} 0.0;
+71                 \}
+72 \}
+\end{DoxyCode}
+\hypertarget{classlennard_jones_a6ab5b04c385544da0de985e9635a6e8c}{}\index{lennard\+Jones@{lennard\+Jones}!rcut@{rcut}}
+\index{rcut@{rcut}!lennard\+Jones@{lennard\+Jones}}
+\subsubsection[{rcut()}]{\setlength{\rightskip}{0pt plus 5cm}double lennard\+Jones\+::rcut (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classlennard_jones_a6ab5b04c385544da0de985e9635a6e8c}
+
+
+Return the value of r\+\_\+\{cut\} for this potential. 
+
+\begin{DoxyReturn}{Returns}
+rcut 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{pair\+Potential}.
+
+
+
+Definition at line 94 of file potentials.\+cpp.
+
+
+
+References pair\+Potential\+::params\+\_\+, and pair\+Potential\+::params\+Are\+Set\+\_\+.
+
+
+\begin{DoxyCode}
+94                            \{
+95                 \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+96                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones parameters not set"}
+      );
+97                 \} \textcolor{keywordflow}{else} \{
+98                                 \textcolor{keywordflow}{return} \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2];
+99                 \}
+100 \}
+\end{DoxyCode}
+\hypertarget{classlennard_jones_a5b4c41df05048ce99bffb9f27733100a}{}\index{lennard\+Jones@{lennard\+Jones}!set\+Parameters@{set\+Parameters}}
+\index{set\+Parameters@{set\+Parameters}!lennard\+Jones@{lennard\+Jones}}
+\subsubsection[{set\+Parameters(const std\+::vector$<$ double $>$ params)}]{\setlength{\rightskip}{0pt plus 5cm}void lennard\+Jones\+::set\+Parameters (
+\begin{DoxyParamCaption}
+\item[{const std\+::vector$<$ double $>$}]{params}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classlennard_jones_a5b4c41df05048ce99bffb9f27733100a}
+
+
+Set the parameters in the Lennard-\/\+Jones equation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em params} & Vector of inputs\+: \{epsilon, sigma, r\+\_\+cut, u\+\_\+shift\} \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classpair_potential_ad4b237646f9de2ae9f95cc9350564bc5}{pair\+Potential}.
+
+
+
+Definition at line 32 of file potentials.\+cpp.
+
+
+
+References pair\+Potential\+::params\+\_\+, pair\+Potential\+::params\+Are\+Set\+\_\+, and pair\+Potential\+::use\+Tail\+Correction.
+
+
+
+Referenced by main().
+
+
+\begin{DoxyCode}
+32                                                                    \{
+33                 \textcolor{keywordflow}{if} (params.size() != 4) \{
+34                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones must specify 4
+       parameters: epsilon, sigma, r\_cut, u\_shift"});
+35                 \} \textcolor{keywordflow}{else} \{
+36                                 \textcolor{keywordflow}{if} (params[0] < 0) \{
+37                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones,
+       epsilon > 0"});
+38                                 \}
+39                                 \textcolor{keywordflow}{if} (params[1] < 0) \{
+40                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones,
+       sigma > 0"});
+41                                 \}
+42                                 \textcolor{keywordflow}{if} (params[2] < 0) \{
+43                                                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones,
+       r\_cut > 0"});
+44                                 \}
+45                                 
+46                                 \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{true};
+47                                 \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_} = params;
+48                                 
+49                                 \hyperlink{classpair_potential_ab4b4538a7e13771f50a29aaac2443037}{useTailCorrection} = \textcolor{keyword}{true};
+50                 \}
+51 \}
+\end{DoxyCode}
+\hypertarget{classlennard_jones_a4518a7a9970c1fbed2f2abcf0ceebbfc}{}\index{lennard\+Jones@{lennard\+Jones}!tail\+Correction@{tail\+Correction}}
+\index{tail\+Correction@{tail\+Correction}!lennard\+Jones@{lennard\+Jones}}
+\subsubsection[{tail\+Correction(const double rho\+Bath)}]{\setlength{\rightskip}{0pt plus 5cm}double lennard\+Jones\+::tail\+Correction (
+\begin{DoxyParamCaption}
+\item[{const double}]{rho\+Bath}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}\label{classlennard_jones_a4518a7a9970c1fbed2f2abcf0ceebbfc}
+
+
+Calculate the tail correction with the approximation g(r) = 1 for r\+\_\+\{cut\} $>$ 1 as explained in Frenkel \& Smit in eq. 
+
+(3.\+2.\+5)
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em rho\+Bath} & N\+Umber density of the surrounding fluid\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+U\+\_\+tail 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_a5387d21d8d487d1d42e9eaf7cae9175b}{pair\+Potential}.
+
+
+
+Definition at line 82 of file potentials.\+cpp.
+
+
+
+References pair\+Potential\+::params\+\_\+, and P\+I.
+
+
+\begin{DoxyCode}
+82                                                         \{
+83                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} r3 = (\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1]*\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1]*\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1])/(
+      \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2]*\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2]*\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2]);
+84                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} r9 = r3*r3*r3;
+85                 
+86                 \textcolor{keywordflow}{return} (8.0/3.0*\hyperlink{global_8h_a598a3330b3c21701223ee0ca14316eca}{PI}*rhoBath*params\_[0]*params\_[1]*params\_[1]*params\_[1]*(r9/3.0 - r3));
+87 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{potentials_8h}{potentials.\+h}\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{potentials_8cpp}{potentials.\+cpp}\end{DoxyCompactItemize}

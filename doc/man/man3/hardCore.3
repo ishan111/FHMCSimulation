@@ -1,0 +1,184 @@
+.TH "hardCore" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+hardCore \- Hard-core potential Parameters should be specified in the following order: { sigma }\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <potentials\&.h>\fP
+.PP
+Inherits \fBpairPotential\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB~hardCore\fP ()"
+.br
+.ti -1c
+.RI "void \fBsetParameters\fP (const std::vector< double > params)"
+.br
+.RI "\fISet the parameters in the hard-core potential\&. \fP"
+.ti -1c
+.RI "double \fBenergy\fP (const double r)"
+.br
+.RI "\fIReturn the energy of two particles separate by a distance r\&. \fP"
+.ti -1c
+.RI "double \fBtailCorrection\fP (const double rhoBath)"
+.br
+.RI "\fITail correction for a hard core potential always returns 0 radius\&. \fP"
+.ti -1c
+.RI "double \fBrcut\fP ()"
+.br
+.RI "\fIReturn the value of r_{cut} for this potential\&. \fP"
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Hard-core potential Parameters should be specified in the following order: { sigma }\&. 
+.PP
+Definition at line 81 of file potentials\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "hardCore::~hardCore ()\fC [inline]\fP"
+
+.PP
+Definition at line 83 of file potentials\&.h\&.
+.PP
+.nf
+83 {;}
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "double hardCore::energy (const double r)\fC [virtual]\fP"
+
+.PP
+Return the energy of two particles separate by a distance r\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIr\fP Scalar separation, needs to be the minimum image\&.
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+U(r) 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 322 of file potentials\&.cpp\&.
+.PP
+References pairPotential::params_, and pairPotential::paramsAreSet_\&.
+.PP
+.nf
+322                                        {
+323                 if (!paramsAreSet_) {
+324                                 throw customException ("For hardCore parameters not set");
+325                 }
+326                 if (r < params_[0]) {
+327                                 return 1\&.0E12;
+328                 }
+329                 else {
+330                                 return 0\&.0;
+331                 }
+332 }
+.fi
+.SS "double hardCore::rcut ()\fC [virtual]\fP"
+
+.PP
+Return the value of r_{cut} for this potential\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+r_cut 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 350 of file potentials\&.cpp\&.
+.PP
+References pairPotential::params_, and pairPotential::paramsAreSet_\&.
+.PP
+.nf
+350                        {
+351                 if (!paramsAreSet_) {
+352                                 throw customException ("For hardCore parameters not set");
+353                 } else {
+354                                 return (params_[0]);
+355                 }
+356 }
+.fi
+.SS "void hardCore::setParameters (const std::vector< double > params)\fC [virtual]\fP"
+
+.PP
+Set the parameters in the hard-core potential\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparams\fP Vector of inputs: {sigma, infinity} 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 300 of file potentials\&.cpp\&.
+.PP
+References pairPotential::params_, pairPotential::paramsAreSet_, and pairPotential::useTailCorrection\&.
+.PP
+Referenced by main()\&.
+.PP
+.nf
+300                                                                {
+301                 if (params\&.size() != 1) {
+302                                 throw customException ("For hardCore must specify 1 parameter: sigma");
+303                 } else {
+304                                 if (params[0] < 0) {
+305                                                 throw customException ("For hardCore, sigma > 0");
+306                                 }
+307                                 
+308                                 params_ = params;
+309                                 paramsAreSet_ = true;
+310                                 
+311                                 useTailCorrection = false;
+312                 }
+313 }
+.fi
+.SS "double hardCore::tailCorrection (const double rhoBath)\fC [virtual]\fP"
+
+.PP
+Tail correction for a hard core potential always returns 0 radius\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fINumber\fP density of the surrounding fluid
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+U_tail 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 341 of file potentials\&.cpp\&.
+.PP
+.nf
+341                                                     {
+342                 return 0\&.0;
+343 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

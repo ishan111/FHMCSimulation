@@ -1,0 +1,415 @@
+.TH "cellList" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+cellList \- \fBcellList\fP class\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <cellList\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBcellList\fP (std::vector< double >, double, std::vector< \fBatom\fP * >)"
+.br
+.ti -1c
+.RI "void \fBsortIntoCells\fP (std::vector< \fBatom\fP * >)"
+.br
+.ti -1c
+.RI "void \fBsortIntoCells\fP (std::vector< \fBatom\fP > *)"
+.br
+.ti -1c
+.RI "void \fBinsertParticle\fP (\fBatom\fP *)"
+.br
+.ti -1c
+.RI "void \fBswapAndDeleteParticle\fP (\fBatom\fP *, \fBatom\fP *)"
+.br
+.ti -1c
+.RI "void \fBtranslateParticle\fP (\fBatom\fP *, std::vector< double >)"
+.br
+.ti -1c
+.RI "int \fBcalcIndex\fP (int, int, int)"
+.br
+.ti -1c
+.RI "int \fBcalcIndexS\fP (int, int, int)"
+.br
+.ti -1c
+.RI "int \fBcalcIndex\fP (double, double, double)"
+.br
+.ti -1c
+.RI "int \fBcalcIndexS\fP (double, double, double)"
+.br
+.in -1c
+.SS "Public Attributes"
+
+.in +1c
+.ti -1c
+.RI "std::vector< double > \fBcellSize\fP"
+.br
+.ti -1c
+.RI "std::vector< double > \fBbox\fP"
+.br
+.ti -1c
+.RI "int \fBcellCountX\fP"
+.br
+.ti -1c
+.RI "int \fBcellCountY\fP"
+.br
+.ti -1c
+.RI "int \fBcellCountZ\fP"
+.br
+.ti -1c
+.RI "int \fBcellCountXY\fP"
+.br
+.ti -1c
+.RI "int \fBcellCount\fP"
+.br
+.ti -1c
+.RI "std::vector< std::vector< \fBatom\fP * > > \fBcells\fP"
+.br
+.ti -1c
+.RI "std::vector< std::vector< unsigned int > > \fBneighbours\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+\fBcellList\fP class\&. 
+.PP
+Definition at line 15 of file cellList\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "cellList::cellList (std::vector< double > _box, double _cellSize, std::vector< \fBatom\fP * > _atoms)"
+
+.PP
+Definition at line 3 of file cellList\&.cpp\&.
+.PP
+References box, cellCount, cellCountX, cellCountXY, cellCountY, cellCountZ, cells, cellSize, neighbours, and sortIntoCells()\&.
+.PP
+.nf
+3                                                                                           {
+4                 box = _box;
+5                                 
+6                 cellCountX = floor(_box[0]/_cellSize);
+7                 cellCountY = floor(_box[1]/_cellSize);
+8                 cellCountZ = floor(_box[2]/_cellSize);
+9                 cellCountXY = cellCountX*cellCountY;
+10                 cellCount = cellCountXY*cellCountZ;
+11                 
+12                 cellSize\&.resize(3);
+13                 cellSize[0] = _box[0]/cellCountX;
+14                 cellSize[1] = _box[1]/cellCountY;
+15                 cellSize[2] = _box[2]/cellCountZ;
+16 
+17                 // init neighbour list
+18                 neighbours\&.assign(cellCount, std::vector < unsigned int > (26));
+19                 initNeighbours();
+20                 
+21                 // init cell list
+22                 cells\&.assign(cellCount, std::vector < atom* > (0));
+23                 
+24                 // clear all cells
+25                 const unsigned int reserveCount = ceil(cellSize[0]*cellSize[1]*cellSize[2]);
+26                 for (unsigned int i = 0; i < cells\&.size(); i++) {
+27                                 cells[i]\&.reserve(reserveCount);
+28                                 cells[i]\&.clear();
+29                 }
+30                 
+31                 if (_atoms\&.size() > 0) {
+32                                 //std::cout << "Sorting particles into cells\&." << std::endl;
+33                                 sortIntoCells(_atoms);
+34                 }
+35 }
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "int cellList::calcIndex (int k, int l, int m)\fC [inline]\fP"
+
+.PP
+Definition at line 41 of file cellList\&.h\&.
+.PP
+References cellCountX, and cellCountXY\&.
+.PP
+Referenced by simSystem::getNeighborPositions(), insertParticle(), sortIntoCells(), swapAndDeleteParticle(), and translateParticle()\&.
+.PP
+.nf
+41                                                    {
+42                 return (k + l*cellCountX + m*cellCountXY);
+43 }
+.fi
+.SS "int cellList::calcIndex (double _x, double _y, double _z)\fC [inline]\fP"
+
+.PP
+Definition at line 69 of file cellList\&.h\&.
+.PP
+References cellCountX, cellCountXY, and cellSize\&.
+.PP
+.nf
+69                                                                {
+70                 return (floor(_x/cellSize[0]) + floor(_y/cellSize[1])*cellCountX +floor(_z/cellSize[2])*cellCountXY);
+71 }
+.fi
+.SS "int cellList::calcIndexS (int _k, int _l, int _m)\fC [inline]\fP"
+
+.PP
+Definition at line 46 of file cellList\&.h\&.
+.PP
+References cellCountX, cellCountXY, cellCountY, and cellCountZ\&.
+.PP
+.nf
+46                                                        {
+47                 int k = _k;
+48                 int l = _l;
+49                 int m = _m;
+50 
+51                 if (k >= cellCountX)
+52                                 k -= cellCountX;
+53                 else if (k < 0)
+54                                 k += cellCountX;                                
+55                                 
+56                 if (l >= cellCountY)
+57                                 l -= cellCountY;
+58                 else if (l < 0)
+59                                 l += cellCountY;                                
+60 
+61                 if (m >= cellCountZ)
+62                                 m -= cellCountZ;
+63                 else if (m < 0)
+64                                 m += cellCountZ;
+65                                 
+66                 return (k + l*cellCountX + m*cellCountXY);
+67 }
+.fi
+.SS "int cellList::calcIndexS (double _x, double _y, double _z)\fC [inline]\fP"
+
+.PP
+Definition at line 74 of file cellList\&.h\&.
+.PP
+References box, cellCountX, cellCountXY, and cellSize\&.
+.PP
+.nf
+74                                                                 {
+75                 double x = _x;
+76                 double y = _y;
+77                 double z = _z;
+78 
+79                 if (x >= box[0])
+80                                 x -= box[0];
+81                 else if (x < 0\&.0)
+82                                 x += box[0];                    
+83                                 
+84                 if (y >= box[1])
+85                                 y -= box[1];
+86                 else if (y < 0\&.0)
+87                                 y += box[1];                                    
+88 
+89                 if (z >= box[2])
+90                                 z -= box[2];
+91                 else if (z < 0\&.0)
+92                                 z += box[2];    
+93                 
+94                 return (floor(x/cellSize[0]) + floor(y/cellSize[1])*cellCountX +floor(z/cellSize[2])*cellCountXY);
+95 }
+.fi
+.SS "void cellList::insertParticle (\fBatom\fP * _a)"
+
+.PP
+Definition at line 95 of file cellList\&.cpp\&.
+.PP
+References calcIndex(), cells, and atom::pos\&.
+.PP
+Referenced by simSystem::insertAtom()\&.
+.PP
+.nf
+95                                        {
+96                 const unsigned index = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
+97                 cells[index]\&.push_back(_a);
+98 }
+.fi
+.SS "void cellList::sortIntoCells (std::vector< \fBatom\fP * > _atoms)"
+
+.PP
+Definition at line 73 of file cellList\&.cpp\&.
+.PP
+References calcIndex(), and cells\&.
+.PP
+Referenced by cellList()\&.
+.PP
+.nf
+73                                                         {
+74                 // clear all cells
+75                 for (unsigned int i = 0; i < cells\&.size(); i++)
+76                                 cells[i]\&.clear();
+77 
+78                 for (unsigned int i=0; i<_atoms\&.size(); i++) {
+79                                 const unsigned index = calcIndex(_atoms[i]->pos[0], _atoms[i]->pos[1], _atoms[i]->pos[2]);
+80                                 cells[index]\&.push_back(_atoms[i]);
+81                 }
+82 }
+.fi
+.SS "void cellList::sortIntoCells (std::vector< \fBatom\fP > * _atoms)"
+
+.PP
+Definition at line 84 of file cellList\&.cpp\&.
+.PP
+References calcIndex(), and cells\&.
+.PP
+.nf
+84                                                         {
+85                 // clear all cells
+86                 for (unsigned int i = 0; i < cells\&.size(); i++)
+87                                 cells[i]\&.clear();
+88 
+89                 for (unsigned int i = 0; i < _atoms->size(); i++) {
+90                                 const unsigned index = calcIndex(_atoms->at(i)\&.pos[0], _atoms->at(i)\&.pos[1], _atoms->at(i)\&.pos[2]);
+91                                 cells[index]\&.push_back(&_atoms->at(i));
+92                 }
+93 }
+.fi
+.SS "void cellList::swapAndDeleteParticle (\fBatom\fP * _a, \fBatom\fP * _b)"
+
+.PP
+Definition at line 102 of file cellList\&.cpp\&.
+.PP
+References calcIndex(), cells, and atom::pos\&.
+.PP
+Referenced by simSystem::deleteAtom()\&.
+.PP
+.nf
+102                                                         {
+103                 const unsigned indexA = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
+104                 const unsigned indexB = calcIndex(_b->pos[0], _b->pos[1], _b->pos[2]);
+105                 
+106                 unsigned int cellIndexA = 0, cellIndexB = 0;
+107                 bool foundCellIndexA = false, foundCellIndexB = false;
+108                 
+109                 // locate position of atom _a in its cell
+110                 for (unsigned int i = 0; i < cells[indexA]\&.size(); i++) { // error?
+111                                 if (cells[indexA][i] == _a) {
+112                                                 cellIndexA = i;
+113                                                 foundCellIndexA = true;
+114                                                 break;
+115                                 }
+116                 }
+117                 
+118                 // locate position of atom _b in its cell
+119                 for (unsigned int i = 0; i < cells[indexB]\&.size(); i++) { // error ?
+120                                 if (cells[indexB][i] == _b) {
+121                                                 cellIndexB = i;
+122                                                 foundCellIndexB = true;
+123                                                 break;
+124                                 }
+125                 }
+126                 
+127                 if (!foundCellIndexA || !foundCellIndexB) {
+128                                 throw customException ("Failed to locate index in cell list properly");
+129                 }
+130                 
+131                 // swap addresses
+132                 cells[indexB][cellIndexB] = cells[indexA][cellIndexA];
+133                 
+134                 // remove _a from its cell
+135                 cells[indexA]\&.erase(cells[indexA]\&.begin()+cellIndexA);
+136 }
+.fi
+.SS "void cellList::translateParticle (\fBatom\fP * _a, std::vector< double > _oldPos)"
+
+.PP
+Definition at line 139 of file cellList\&.cpp\&.
+.PP
+References calcIndex(), cells, and atom::pos\&.
+.PP
+Referenced by simSystem::translateAtom()\&.
+.PP
+.nf
+139                                                                         {
+140                 const unsigned indexOld = calcIndex(_oldPos[0], _oldPos[1], _oldPos[2]);
+141                 const unsigned indexNew = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
+142                 
+143                 if (indexOld != indexNew) {
+144                                 unsigned int cellIndexOld = 0;
+145                                 bool foundCellIndexOld = false;
+146                 
+147                                 // locate position of atom _a in its cell
+148                                 for (unsigned int i = 0; i < cells[indexOld]\&.size(); i++) { //error?
+149                                                 if (cells[indexOld][i] == _a) {
+150                                                                 cellIndexOld = i;
+151                                                                 foundCellIndexOld = true;
+152                                                                 break;
+153                                                 }
+154                                 }
+155                                 
+156                                 if (!foundCellIndexOld) {
+157                                                 throw customException ("Failed to locate cell index properly");
+158                                 }
+159                                 
+160                                 // remove _a from its cell
+161                                 cells[indexOld]\&.erase(cells[indexOld]\&.begin()+cellIndexOld);
+162                                 
+163                                 // insert _a into new cell
+164                                 cells[indexNew]\&.push_back(_a);
+165                 }
+166 }
+.fi
+.SH "Member Data Documentation"
+.PP 
+.SS "std::vector< double > cellList::box"
+
+.PP
+Definition at line 34 of file cellList\&.h\&.
+.PP
+Referenced by calcIndexS(), and cellList()\&.
+.SS "int cellList::cellCount"
+
+.PP
+Definition at line 36 of file cellList\&.h\&.
+.PP
+Referenced by cellList()\&.
+.SS "int cellList::cellCountX"
+
+.PP
+Definition at line 36 of file cellList\&.h\&.
+.PP
+Referenced by calcIndex(), calcIndexS(), and cellList()\&.
+.SS "int cellList::cellCountXY"
+
+.PP
+Definition at line 36 of file cellList\&.h\&.
+.PP
+Referenced by calcIndex(), calcIndexS(), and cellList()\&.
+.SS "int cellList::cellCountY"
+
+.PP
+Definition at line 36 of file cellList\&.h\&.
+.PP
+Referenced by calcIndexS(), and cellList()\&.
+.SS "int cellList::cellCountZ"
+
+.PP
+Definition at line 36 of file cellList\&.h\&.
+.PP
+Referenced by calcIndexS(), and cellList()\&.
+.SS "std::vector< std::vector < \fBatom\fP* > > cellList::cells"
+
+.PP
+Definition at line 37 of file cellList\&.h\&.
+.PP
+Referenced by cellList(), simSystem::getNeighborPositions(), insertParticle(), sortIntoCells(), swapAndDeleteParticle(), and translateParticle()\&.
+.SS "std::vector< double > cellList::cellSize"
+
+.PP
+Definition at line 33 of file cellList\&.h\&.
+.PP
+Referenced by calcIndex(), calcIndexS(), and cellList()\&.
+.SS "std::vector< std::vector < unsigned int > > cellList::neighbours"
+
+.PP
+Definition at line 38 of file cellList\&.h\&.
+.PP
+Referenced by cellList(), and simSystem::getNeighborPositions()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.

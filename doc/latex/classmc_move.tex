@@ -1,0 +1,196 @@
+\hypertarget{classmc_move}{}\section{mc\+Move Class Reference}
+\label{classmc_move}\index{mc\+Move@{mc\+Move}}
+
+
+Virtual base class for all Monte Carlo moves.  
+
+
+
+
+{\ttfamily \#include $<$moves.\+h$>$}
+
+Inheritance diagram for mc\+Move\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classmc_move}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classmc_move_a27a375cf5fcce904dc1ba6bc315b4e1c}{mc\+Move} ()
+\item 
+\hyperlink{classmc_move_ab0145ba0532e4d47156e2e4565d54c3f}{mc\+Move} (const int type\+Index, const std\+::string tag)
+\item 
+virtual \hyperlink{classmc_move_a3d9fd30dd96eebf857fa92f734d03bbc}{$\sim$mc\+Move} ()=0
+\item 
+virtual int \hyperlink{classmc_move_a2e377a628f9ecee5422fc8967d4924eb}{make} (\hyperlink{classsim_system}{sim\+System} \&sys)=0
+\begin{DoxyCompactList}\small\item\em Make a M\+C move, return M\+O\+V\+E\+\_\+\+S\+U\+C\+C\+E\+S\+S or M\+O\+V\+E\+\_\+\+F\+A\+I\+L\+U\+R\+E. \end{DoxyCompactList}\item 
+const int \hyperlink{classmc_move_aa96ed066866a2abf8b7039fd279d0f37}{what\+Type} ()
+\begin{DoxyCompactList}\small\item\em Returns the index referring to the atom type this move operates on. \end{DoxyCompactList}\item 
+const std\+::string \hyperlink{classmc_move_a7b068357010f8663674a7e70a7776ccd}{my\+Name} ()
+\begin{DoxyCompactList}\small\item\em Return the name of this move. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{type\+Index\+\_\+}
+\begin{DoxyCompactList}\small\item\em Species index this move will operate on. \end{DoxyCompactList}\item 
+std\+::string \hyperlink{classmc_move_ac18c307855e1cb5751bd6e079857a8c5}{name\+\_\+}
+\begin{DoxyCompactList}\small\item\em Move name. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Virtual base class for all Monte Carlo moves. 
+
+Definition at line 17 of file moves.\+h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classmc_move_a27a375cf5fcce904dc1ba6bc315b4e1c}{}\index{mc\+Move@{mc\+Move}!mc\+Move@{mc\+Move}}
+\index{mc\+Move@{mc\+Move}!mc\+Move@{mc\+Move}}
+\subsubsection[{mc\+Move()}]{\setlength{\rightskip}{0pt plus 5cm}mc\+Move\+::mc\+Move (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmc_move_a27a375cf5fcce904dc1ba6bc315b4e1c}
+
+
+Definition at line 19 of file moves.\+h.
+
+
+\begin{DoxyCode}
+19 \{\};
+\end{DoxyCode}
+\hypertarget{classmc_move_ab0145ba0532e4d47156e2e4565d54c3f}{}\index{mc\+Move@{mc\+Move}!mc\+Move@{mc\+Move}}
+\index{mc\+Move@{mc\+Move}!mc\+Move@{mc\+Move}}
+\subsubsection[{mc\+Move(const int type\+Index, const std\+::string tag)}]{\setlength{\rightskip}{0pt plus 5cm}mc\+Move\+::mc\+Move (
+\begin{DoxyParamCaption}
+\item[{const int}]{type\+Index, }
+\item[{const std\+::string}]{tag}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmc_move_ab0145ba0532e4d47156e2e4565d54c3f}
+
+
+Definition at line 20 of file moves.\+h.
+
+
+
+References name\+\_\+, and type\+Index\+\_\+.
+
+
+\begin{DoxyCode}
+20 \{ \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_} = typeIndex; \hyperlink{classmc_move_ac18c307855e1cb5751bd6e079857a8c5}{name\_} = tag + boost::lexical\_cast<std::string>(typeIndex); \}  
+\end{DoxyCode}
+\hypertarget{classmc_move_a3d9fd30dd96eebf857fa92f734d03bbc}{}\index{mc\+Move@{mc\+Move}!````~mc\+Move@{$\sim$mc\+Move}}
+\index{````~mc\+Move@{$\sim$mc\+Move}!mc\+Move@{mc\+Move}}
+\subsubsection[{$\sim$mc\+Move()=0}]{\setlength{\rightskip}{0pt plus 5cm}mc\+Move\+::$\sim$mc\+Move (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}\label{classmc_move_a3d9fd30dd96eebf857fa92f734d03bbc}
+
+
+Definition at line 3 of file moves.\+cpp.
+
+
+\begin{DoxyCode}
+3                  \{
+4     ;
+5 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classmc_move_a2e377a628f9ecee5422fc8967d4924eb}{}\index{mc\+Move@{mc\+Move}!make@{make}}
+\index{make@{make}!mc\+Move@{mc\+Move}}
+\subsubsection[{make(sim\+System \&sys)=0}]{\setlength{\rightskip}{0pt plus 5cm}virtual int mc\+Move\+::make (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\+System} \&}]{sys}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}\label{classmc_move_a2e377a628f9ecee5422fc8967d4924eb}
+
+
+Make a M\+C move, return M\+O\+V\+E\+\_\+\+S\+U\+C\+C\+E\+S\+S or M\+O\+V\+E\+\_\+\+F\+A\+I\+L\+U\+R\+E. 
+
+
+
+Implemented in \hyperlink{classdelete_particle_a14f86dd27a82f571caa12af04e22eb1f}{delete\+Particle}, \hyperlink{classinsert_particle_ad81c09b735d1acea65758242d5c5d595}{insert\+Particle}, \hyperlink{classswap_particles_ad8ca574f8e5308b6f0a5f3c7c2799209}{swap\+Particles}, and \hyperlink{classtranslate_particle_a7ec5c9259f1aae3f7aefdb4db3ee5468}{translate\+Particle}.
+
+\hypertarget{classmc_move_a7b068357010f8663674a7e70a7776ccd}{}\index{mc\+Move@{mc\+Move}!my\+Name@{my\+Name}}
+\index{my\+Name@{my\+Name}!mc\+Move@{mc\+Move}}
+\subsubsection[{my\+Name()}]{\setlength{\rightskip}{0pt plus 5cm}const std\+::string mc\+Move\+::my\+Name (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmc_move_a7b068357010f8663674a7e70a7776ccd}
+
+
+Return the name of this move. 
+
+
+
+Definition at line 24 of file moves.\+h.
+
+
+
+References name\+\_\+.
+
+\hypertarget{classmc_move_aa96ed066866a2abf8b7039fd279d0f37}{}\index{mc\+Move@{mc\+Move}!what\+Type@{what\+Type}}
+\index{what\+Type@{what\+Type}!mc\+Move@{mc\+Move}}
+\subsubsection[{what\+Type()}]{\setlength{\rightskip}{0pt plus 5cm}const int mc\+Move\+::what\+Type (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}\label{classmc_move_aa96ed066866a2abf8b7039fd279d0f37}
+
+
+Returns the index referring to the atom type this move operates on. 
+
+
+
+Definition at line 23 of file moves.\+h.
+
+
+
+References type\+Index\+\_\+.
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classmc_move_ac18c307855e1cb5751bd6e079857a8c5}{}\index{mc\+Move@{mc\+Move}!name\+\_\+@{name\+\_\+}}
+\index{name\+\_\+@{name\+\_\+}!mc\+Move@{mc\+Move}}
+\subsubsection[{name\+\_\+}]{\setlength{\rightskip}{0pt plus 5cm}std\+::string mc\+Move\+::name\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}\label{classmc_move_ac18c307855e1cb5751bd6e079857a8c5}
+
+
+Move name. 
+
+
+
+Definition at line 28 of file moves.\+h.
+
+
+
+Referenced by delete\+Particle\+::delete\+Particle(), insert\+Particle\+::insert\+Particle(), mc\+Move(), my\+Name(), swap\+Particles\+::swap\+Particles(), and translate\+Particle\+::translate\+Particle().
+
+\hypertarget{classmc_move_acb731965547b0326ef318ec96da8b46a}{}\index{mc\+Move@{mc\+Move}!type\+Index\+\_\+@{type\+Index\+\_\+}}
+\index{type\+Index\+\_\+@{type\+Index\+\_\+}!mc\+Move@{mc\+Move}}
+\subsubsection[{type\+Index\+\_\+}]{\setlength{\rightskip}{0pt plus 5cm}int mc\+Move\+::type\+Index\+\_\+\hspace{0.3cm}{\ttfamily [protected]}}\label{classmc_move_acb731965547b0326ef318ec96da8b46a}
+
+
+Species index this move will operate on. 
+
+
+
+Definition at line 27 of file moves.\+h.
+
+
+
+Referenced by delete\+Particle\+::delete\+Particle(), insert\+Particle\+::insert\+Particle(), delete\+Particle\+::make(), translate\+Particle\+::make(), swap\+Particles\+::make(), insert\+Particle\+::make(), mc\+Move(), swap\+Particles\+::swap\+Particles(), translate\+Particle\+::translate\+Particle(), and what\+Type().
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{moves_8h}{moves.\+h}\item 
+/\+Users/nam4/\+Desktop/omcs/src/\hyperlink{moves_8cpp}{moves.\+cpp}\end{DoxyCompactItemize}
