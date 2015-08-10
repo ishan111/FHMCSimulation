@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include "atom.h"
+#include "global.h"
 
 /*!
  * cellList class. 

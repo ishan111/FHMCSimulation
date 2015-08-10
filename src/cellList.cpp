@@ -103,12 +103,14 @@ void cellList::swapAndDeleteParticle (atom* _a, atom* _b) {
 	const unsigned indexA = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
 	const unsigned indexB = calcIndex(_b->pos[0], _b->pos[1], _b->pos[2]);
 	
-	unsigned int cellIndexA, cellIndexB;
+	unsigned int cellIndexA = 0, cellIndexB = 0;
+	bool foundCellIndexA = false, foundCellIndexB = false;
 	
 	// locate position of atom _a in its cell
 	for (unsigned int i = 0; i < cells[indexA].size(); i++) { // error?
 		if (cells[indexA][i] == _a) {
 			cellIndexA = i;
+			foundCellIndexA = true;
 			break;
 		}
 	}
@@ -117,8 +119,13 @@ void cellList::swapAndDeleteParticle (atom* _a, atom* _b) {
 	for (unsigned int i = 0; i < cells[indexB].size(); i++) { // error ?
 		if (cells[indexB][i] == _b) {
 			cellIndexB = i;
+			foundCellIndexB = true;
 			break;
 		}
+	}
+	
+	if (!foundCellIndexA || !foundCellIndexB) {
+		throw customException ("Failed to locate index in cell list properly");
 	}
 	
 	// swap addresses
@@ -134,16 +141,22 @@ void cellList::translateParticle (atom* _a, std::vector < double > _oldPos) {
 	const unsigned indexNew = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
 	
 	if (indexOld != indexNew) {
-		unsigned int cellIndexOld;
+		unsigned int cellIndexOld = 0;
+		bool foundCellIndexOld = false;
 	
 		// locate position of atom _a in its cell
 		for (unsigned int i = 0; i < cells[indexOld].size(); i++) { //error?
 			if (cells[indexOld][i] == _a) {
 				cellIndexOld = i;
+				foundCellIndexOld = true;
 				break;
 			}
 		}
-	
+		
+		if (!foundCellIndexOld) {
+			throw customException ("Failed to locate cell index properly");
+		}
+		
 		// remove _a from its cell
 		cells[indexOld].erase(cells[indexOld].begin()+cellIndexOld);
 		
