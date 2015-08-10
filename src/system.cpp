@@ -422,7 +422,7 @@ void simSystem::addPotential (const int spec1, const int spec2, pairPotential *p
 }
 
 /*!
- * Print an XYZ file of the instantaneous system configuration.
+ * Print an XYZ file of the instantaneous system configuration.  This can be read in at a later time via readRestart() function.
  * 
  * \param [in] filename File to store XYZ coordinates to
  * \param [in] comment Comment line for the file
@@ -441,7 +441,7 @@ void simSystem::printSnapshot (std::string filename, std::string comment) {
     for (unsigned int j = 0; j < nSpecies_; ++j) {
         const int num = numSpecies[j];
         for (unsigned int i = 0; i < num; ++i) {
-            outfile << "A" << j+1 << "\t" << atoms[j][i].pos[0] << "\t" << atoms[j][i].pos[1] << "\t" << atoms[j][i].pos[2] << std::endl;
+            outfile << j << "\t" << atoms[j][i].pos[0] << "\t" << atoms[j][i].pos[1] << "\t" << atoms[j][i].pos[2] << std::endl;
         }
     }
     
@@ -450,6 +450,7 @@ void simSystem::printSnapshot (std::string filename, std::string comment) {
 
 /*!
  * Read an XYZ file as the system's initial configuration.  Note that the number of species, etc. must already be specified in the constructor.
+ * Will also reset and calculate the energy from scratch so these potentials should be set before reading in a restart file.
  * 
  * \param [in] filename File to read XYZ coordinates from
  */
@@ -489,6 +490,8 @@ void simSystem::readRestart (std::string filename) {
 		atoms[j].resize(0);
 	}
 	
+	energy_ = 0.0;
+	
 	for (unsigned int j = 0; j < sysatoms.size(); ++j) {
 		try {
 			insertAtom (index[j], &sysatoms[j]);
@@ -511,6 +514,8 @@ void simSystem::readRestart (std::string filename) {
 			}
 		}
 	}
+
+	energy_ = scratchEnergy();
 }
 
 /*!
