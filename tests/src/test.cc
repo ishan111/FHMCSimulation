@@ -311,3 +311,467 @@ TEST_F (InitializeSystem, scratchEnergy) {
 	mysys.atoms[0][1].pos[2] = 1.0;
 	EXPECT_TRUE (fabs(mysys.scratchEnergy() - 0.0) < tol);
 }
+
+TEST (testTMMC, tmmcGoodInit) {
+	const int Nmax = 100, Nmin = 10;
+	bool pass = true;
+	try {
+		tmmc test (Nmax, Nmin);
+	} catch (customException &ce) {
+		pass = false;
+	}
+	EXPECT_TRUE(pass);
+}
+
+TEST (testTMMC, tmmcBadInitNegative) {
+	const int Nmax = 100, Nmin = -10;
+	bool pass = true;
+	try {
+		tmmc test (Nmax, Nmin);
+	} catch (customException &ce) {
+		pass = false;
+	}
+	EXPECT_TRUE(!pass);
+}
+
+TEST (testTMMC, tmmcBadInitOrder) {
+	const int Nmax = 10, Nmin = 100;
+	bool pass = true;
+	try {
+		tmmc test (Nmax, Nmin);
+	} catch (customException &ce) {
+		pass = false;
+	}
+	EXPECT_TRUE(!pass);
+}
+
+class tmmBiasC : public ::testing::Test {
+protected:
+	tmmc* tmmcBias;
+	int Nmin, Nmax;
+	
+	virtual void SetUp() {
+		Nmin = 3;
+		Nmax = 10;
+		tmmcBias = new tmmc (Nmax, Nmin);
+	}
+};
+
+TEST_F (tmmBiasC, cSize) {
+	std::vector <double> collMat = tmmcBias->getC();
+	EXPECT_TRUE (collMat.size() == 3*(Nmax-Nmin+1));
+}
+
+TEST_F (tmmBiasC, updateCMin) {
+	const double pu = 0.123;
+	tmmcBias->updateC(Nmin, Nmin, pu);
+	std::vector <double> collMat = tmmcBias->getC();
+	
+	for (unsigned int i = 1; i < collMat.size(); ++i) {
+		EXPECT_EQ(collMat[i], 0);
+	}
+	EXPECT_TRUE(fabs(collMat[0] - 1.0) < 1.0e-9);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiasC, updateCMax) {
+	const double pu = 0.123;
+	tmmcBias->updateC(Nmax, Nmax, pu);
+	std::vector <double> collMat = tmmcBias->getC();
+	
+	for (unsigned int i = 0; i < collMat.size(); ++i) {
+		if (i != collMat.size()-3) {
+			EXPECT_EQ(collMat[i], 0);
+		}
+	}
+	EXPECT_TRUE(fabs(collMat[collMat.size()-3] - 1.0) < 1.0e-9);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiasC, updateCForward) {
+	const double pu = 0.123;
+	tmmcBias->updateC(Nmin, Nmin+1, pu);
+	std::vector <double> collMat = tmmcBias->getC();
+	
+	for (unsigned int i = 2; i < collMat.size(); ++i) {
+		EXPECT_EQ(collMat[i], 0);
+	}
+	EXPECT_TRUE(fabs(collMat[1] - pu) < 1.0e-9);
+	EXPECT_TRUE(fabs(collMat[0] - (1-pu)) < 1.0e-9);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiasC, updateCBackward) {
+	const double pu = 0.123;
+	tmmcBias->updateC(Nmin+1, Nmin, pu);
+	std::vector <double> collMat = tmmcBias->getC();
+	
+	for (unsigned int i = 0; i < collMat.size(); ++i) {
+		if (i != 5 && i != 3) {
+			EXPECT_EQ(collMat[i], 0);
+		}
+	}
+	EXPECT_TRUE(fabs(collMat[5] - pu) < 1.0e-9);
+	EXPECT_TRUE(fabs(collMat[3] - (1-pu)) < 1.0e-9);
+	delete tmmcBias;
+}
+
+class tmmBiaslnPI : public ::testing::Test {
+protected:
+	tmmc* tmmcBias;
+	int Nmin, Nmax;
+	double pu;
+	
+	virtual void SetUp() {
+		pu = 0.123;
+		Nmin = 3;
+		Nmax = 5;
+		tmmcBias = new tmmc (Nmax, Nmin);
+		tmmcBias->updateC(Nmin, Nmin+1, pu);
+		tmmcBias->updateC(Nmin+1, Nmin+2, pu);
+		tmmcBias->updateC(Nmin+2, Nmin+1, pu);
+	}
+};
+
+TEST_F (tmmBiaslnPI, incompleteC) {
+	bool caught = false;
+	try {
+		tmmcBias->calculatePI();
+	} catch (customException& ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(caught);
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiaslnPI, completeC) {
+	bool caught = false;
+	tmmcBias->updateC(Nmin+1, Nmin, pu);
+	try {
+		tmmcBias->calculatePI();
+	} catch (customException& ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(!caught);
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiaslnPI, checkVisitedNo) {
+	bool pass = tmmcBias->checkFullyVisited();
+	EXPECT_TRUE(!pass);
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiaslnPI, checkVisitedYes) {
+	tmmcBias->updateC(Nmin+1, Nmin, pu);
+	bool pass = tmmcBias->checkFullyVisited();
+	EXPECT_TRUE(pass);
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiaslnPI, setBias) {
+	std::vector < double > lnPIguess (3, 1.234);
+	tmmcBias->setlnPI(lnPIguess);
+	for (unsigned int i = 0; i < lnPIguess.size(); ++i) {
+		EXPECT_TRUE (fabs(lnPIguess[i] - -tmmcBias->getBias(i)) < 1.0e-9);
+	}
+}
+
+TEST_F (tmmBiaslnPI, checkPrintAndRead) {
+	tmmcBias->updateC(Nmin+1, Nmin, pu);
+	tmmcBias->calculatePI();
+	tmmcBias->print("tmmBiaslnPI_checkPrint", true);
+	std::vector < double > C1 = tmmcBias->getC(), lnPI1(3), lnPI2(3);
+	for (unsigned int i = 0; i < 3; ++i) {
+		lnPI1[i] = -tmmcBias->getBias(i);
+	}
+#ifdef NETCDF_CAPABLE
+	tmmcBias->readC("tmmBiaslnPI_checkPrint_C.nc");
+	tmmcBias->readlnPI("tmmBiaslnPI_checkPrint_lnPI.nc");
+#else
+	tmmcBias->readC("tmmBiaslnPI_checkPrint_C.dat");
+	tmmcBias->readlnPI("tmmBiaslnPI_checkPrint_lnPI.dat");
+#endif
+	std::vector < double > C2 = tmmcBias->getC();
+	EXPECT_EQ (C2.size(), C1.size());
+	for (unsigned int i = 0; i < 3; ++i) {
+		lnPI2[i] = -tmmcBias->getBias(i);
+	}
+	for (unsigned int i = 0; i < C1.size(); ++i) {
+		EXPECT_TRUE (fabs(C1[i] - C2[i]) < 1.0e-9);
+	}
+	for (unsigned int i = 0; i < lnPI1.size(); ++i) {
+		EXPECT_TRUE (fabs(lnPI1[i] - lnPI2[i]) < 1.0e-6);
+	}
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiaslnPI, checkCAddresses) {
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin), 0);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin+1), 1);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin-1), 2);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+1), 3);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+2), 4);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin), 5);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+2), 6);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+3), 7);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+1), 8);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiaslnPI, checkLnPIAddresses) {
+	EXPECT_EQ (tmmcBias->getAddress(Nmin), 0);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin+1), 1);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin+2), 2);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiaslnPI, checkLnPI) {
+	tmmcBias->updateC(Nmin+1, Nmin, pu);
+	tmmcBias->calculatePI();
+	
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin)) - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+1)) - log(2.0)) < 1.0e-9);
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2)) - (log(2.0)+log(0.5))) < 1.0e-9);
+	
+	delete tmmcBias;
+}
+
+TEST (testWALA, walaInitBadlnF) {
+	const double s = 0.8, g = 0.5, lnF = -1.0;
+	const int Nmax = 5, Nmin = 3;
+	bool caught = false;
+	try {
+		wala (lnF, g, s, Nmax, Nmin);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+}
+
+TEST (testWALA, walaInitBadGNeg) {
+	const double s = 0.8, g = -0.5, lnF = 1.0;
+	const int Nmax = 5, Nmin = 3;
+	bool caught = false;
+	try {
+		wala (lnF, g, s, Nmax, Nmin);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+}
+
+TEST (testWALA, walaInitBadGPos) {
+	const double s = 0.8, g = 1.5, lnF = 1.0;
+	const int Nmax = 5, Nmin = 3;
+	bool caught = false;
+	try {
+		wala (lnF, g, s, Nmax, Nmin);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+}
+
+TEST (testWALA, walaInitBadSNeg) {
+	const double s = -0.8, g = 0.5, lnF = 1.0;
+	const int Nmax = 5, Nmin = 3;
+	bool caught = false;
+	try {
+		wala (lnF, g, s, Nmax, Nmin);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+}
+
+TEST (testWALA, walaInitBadSPos) {
+	const double s = 1.8, g = 0.5, lnF = 1.0;
+	const int Nmax = 5, Nmin = 3;
+	bool caught = false;
+	try {
+		wala (lnF, g, s, Nmax, Nmin);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+}
+
+TEST (testWALA, walaInitSwitchedBounds) {
+	const double s = 0.8, g = -0.5, lnF = 1.0;
+	const int Nmax = 5, Nmin = 3;
+	bool caught = false;
+	try {
+		wala (lnF, g, s, Nmin, Nmax);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+}
+
+TEST (testWALA, walaInitNegLowerBound) {
+	const double s = 0.8, g = -0.5, lnF = 1.0;
+	const int Nmax = 5, Nmin = -3;
+	bool caught = false;
+	try {
+		wala (lnF, g, s, Nmax, Nmin);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+}
+
+class testWalaBias : public ::testing::Test {
+protected:
+	wala* walaBias;
+	int Nmin, Nmax;
+	double s, g, lnF, pu;
+	
+	virtual void SetUp() {
+		pu = 0.123;
+		Nmin = 3;
+		Nmax = 5;
+		s = 0.8;
+		g = 0.5;
+		lnF = 1.0;
+		walaBias = new wala (lnF, g, s, Nmax, Nmin);
+	}
+};
+
+TEST_F (testWalaBias, testMatrixSizes) {
+	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
+	EXPECT_EQ (H.size(), 3);
+	EXPECT_EQ (lnPI.size(), 3);
+}
+
+TEST_F (testWalaBias, testUpdateSame) {
+	walaBias->update(Nmin);
+	walaBias->update(Nmin);
+	walaBias->update(Nmin);
+	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
+	EXPECT_TRUE (fabs(H[0] - 3.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[0] - 3.0*lnF) < 1.0e-9);
+}
+
+TEST_F (testWalaBias, testUpdateDiff) {
+	walaBias->update(Nmin);
+	walaBias->update(Nmin+1);
+	walaBias->update(Nmin+2);
+	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
+	EXPECT_TRUE (fabs(H[0] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(H[1] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(H[2] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[0] - lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[1] - lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[2] - lnF) < 1.0e-9);
+}
+
+TEST_F (testWalaBias, GetGoodAddress) {
+	EXPECT_EQ (walaBias->getAddress(Nmin), 0);
+	EXPECT_EQ (walaBias->getAddress(Nmin+1), 1);
+	EXPECT_EQ (walaBias->getAddress(Nmin+2), 2);
+}
+
+TEST_F (testWalaBias, GetBadAddress) {
+	bool caught = false;
+	try {
+		EXPECT_EQ (walaBias->getAddress(Nmin+3), 0);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+}
+
+TEST_F (testWalaBias, getBias) {
+	walaBias->update(Nmin);
+	walaBias->update(Nmin+1);
+	walaBias->update(Nmin+2);
+	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin+1)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin+2)) - -lnF) < 1.0e-9);
+}
+
+TEST_F (testWalaBias, checkIterateForward) {
+	walaBias->update(Nmin);
+	walaBias->update(Nmin+1);
+	walaBias->update(Nmin+2);
+	double lnF1 = 0, lnF2 = 0;
+	std::vector < double > H1 (3, 0), H2 (3, 0);
+	lnF1 = walaBias->lnF();
+	H1 = walaBias->getH(); // ensure NOT originally all zero
+	for (unsigned int i = 0; i < H1.size(); ++i) {
+		EXPECT_TRUE (H1[i] > 0);
+	}
+	
+	// this clears the H_ matrix and resets lnF
+	walaBias->iterateForward();
+	H2 = walaBias->getH();
+	lnF2 = walaBias->lnF();
+	for (unsigned int i = 0; i < H2.size(); ++i) {
+		EXPECT_TRUE (fabs(H2[i] - 0) < 1.0e-9);
+	}
+	EXPECT_TRUE (fabs(lnF1*g - lnF2) < 1.0e-9);
+}
+
+TEST_F (testWalaBias, checkPrintReadlnPI) {
+	walaBias->update(Nmin);
+	walaBias->update(Nmin+1);
+	walaBias->update(Nmin+1);
+	walaBias->update(Nmin+2);
+	
+	std::vector < double > lnPI_ref = walaBias->getlnPI();
+	walaBias->print("walaBiaslnPI_checkPrint", false); // only print lnPI matrix
+	
+	// set lnPI to something random
+	std::vector < double > lnPI_random (lnPI_ref.size(), 0.123456), lnPI_check (lnPI_ref.size(), 0);
+	walaBias->setlnPI (lnPI_random);
+	lnPI_check = walaBias->getlnPI();
+	for (unsigned int i = 0; i < lnPI_check.size(); ++i) {
+		EXPECT_TRUE (fabs(lnPI_check[i] - 0.123456) < 1.0e-9);
+	}
+	
+	// read in and check again
+#ifdef NETCDF_CAPABLE
+	walaBias->readlnPI("walaBiaslnPI_checkPrint_lnPI.nc");
+#else
+	walaBias->readlnPI("walaBiaslnPI_checkPrint_lnPI.dat");
+#endif
+	
+	std::vector < double > lnPI_new = walaBias->getlnPI();
+	for (unsigned int i = 0; i < lnPI_new.size(); ++i) {
+		EXPECT_TRUE (fabs(lnPI_new[i] - lnPI_ref[i]) < 1.0e-6); // read loses precision
+	}
+}
+
+TEST_F (testWalaBias, checkEvaluateFlatnessNo) {
+	walaBias->update(Nmin);
+	walaBias->update(Nmin+1);
+	walaBias->update(Nmin+1);
+	walaBias->update(Nmin+2);
+	// average of [1, 2, 1] = 1.333, average * s (=0.8) = 1.06 > min (=1)
+	bool flat = walaBias->evaluateFlatness();
+	EXPECT_TRUE (!flat);
+}
+
+TEST_F (testWalaBias, checkEvaluateFlatnessYes) {
+	walaBias->update(Nmin);
+	walaBias->update(Nmin+1);
+	walaBias->update(Nmin+2);
+	// average of [1, 1, 1] = 1, average * s (=0.8) = 0.8 < min (=1)
+	bool flat = walaBias->evaluateFlatness();
+	EXPECT_TRUE (flat);
+}
+
+// also test use of these biases when really inserting atoms/deleting atoms with mu's = -INF, +INF to force (both single and multicomponent)
+
+// test swap move on very specific cases, also consider doing this for inserts and deletes too with/without cell lists
+
+// test other simSystem additions
+
+// review and optimize use of __BIAS_TYPE_INT__

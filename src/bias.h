@@ -17,7 +17,7 @@
 /*! Jacobi method for evaluating natural logarithm of a sum of exponentials
  * E.g. ln( exp(a) + exp(b) ) = specExp(a, b)
  */
-#define specExp(a, b) std::max(a, b) + log(1.0 + exp(-std::abs(a-b)))
+#define specExp(a, b) std::max(a, b) + log(1.0 + exp(-std::fabs(a-b)))
 
 //! Transition Matrix Monte Carlo biasing class
 class tmmc {
@@ -30,11 +30,12 @@ public:
 	void print (const std::string fileName, bool printC = false);
 	void readC (const std::string fileName);
 	void readlnPI (const std::string fileName);
-	void setLnPI (const std::vector < double > &lnPIguess) { if (lnPIguess.size() == lnPI_.size()) lnPI_ = lnPIguess; } //!< Blindly assign a guess of the macrostate distribution
+	void setlnPI (const std::vector < double > &lnPIguess) { if (lnPIguess.size() == lnPI_.size()) lnPI_ = lnPIguess; } //!< Blindly assign a guess of the macrostate distribution
 	bool checkFullyVisited ();
 	const __BIAS_INT_TYPE__ getTransitionAddress (const int Nstart, const int Nend);
 	const __BIAS_INT_TYPE__ getAddress (const int Nval);	
 	const double getBias (const int address) { return -lnPI_[address]; }
+	const std::vector < double > getC () { return C_; } //!< Return the collection matrix as it is
 	
 private:
 	int Nmax_; //!< Maximum number of total species in a simulation
@@ -54,11 +55,13 @@ public:
 	void iterateForward ();
 	void print (const std::string fileName, const bool printH = false);
 	void readlnPI (const std::string fileName);
+	void setlnPI (const std::vector < double > &lnPIguess) { if (lnPIguess.size() == lnPI_.size()) lnPI_ = lnPIguess; } //!< Blindly assign a guess of the macrostate distribution
 	bool evaluateFlatness ();
 	const __BIAS_INT_TYPE__ getAddress (const int Nval);
 	const double lnF () { return lnF_; }
 	const double getBias (const int address) { return -lnPI_[address]; }
 	const std::vector <double> getlnPI () { return lnPI_; } //!< Return the current estimate of the macrostate distribution
+	const std::vector <double> getH () { return H_; } //!< Return the visited-states histogram
 	
 private:
 	double lnF_; //!< Factor to add to the macrostate density matrix each time a state is visited

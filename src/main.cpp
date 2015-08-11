@@ -422,6 +422,9 @@ int main (int argc, char * const argv[]) {
 		// Check if bias has flattened out
 		flat = sys.getWALABias()->evaluateFlatness();
 		if (flat) {
+			// Periodically write out checkpoints - before iterateForward() which destroys H matrix
+			sys.getWALABias()->print("wl-Checkpoint", true);
+						
 			// if flat, need to reset H and reduce lnF
 			sys.getWALABias()->iterateForward();
 			lnF = sys.getWALABias()->lnF();
@@ -434,9 +437,6 @@ int main (int argc, char * const argv[]) {
 			char dummy_tmp [80];
 			strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
 			std::cout << "lnF = " << lnF << " at " << dummy_tmp << std::endl;
-			
-			// Periodically write out checkpoints
-			sys.getWALABias()->print("wl-Checkpoint", true);
 		}
 	}
 	
@@ -468,6 +468,10 @@ int main (int argc, char * const argv[]) {
 		// Check if bias has flattened out
 		flat = sys.getWALABias()->evaluateFlatness();
 		if (flat) {
+			// Periodically write out checkpoints 
+			sys.getWALABias()->print("wl-crossover-Checkpoint", true);
+			sys.getTMMCBias()->print("tmmc-crossover-Checkpoint", true);
+			
 			// If flat, need to reset H and reduce lnF
 			sys.getWALABias()->iterateForward();
 			
@@ -478,10 +482,6 @@ int main (int argc, char * const argv[]) {
 			char dummy_tmp [80];
 			strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
 			std::cout << "lnF = " << sys.getWALABias()->lnF() << " at " << dummy_tmp << std::endl;	
-			
-			// Periodically write out checkpoints
-			sys.getWALABias()->print("wl-crossover-Checkpoint", true);
-			sys.getTMMCBias()->print("tmmc-crossover-Checkpoint", true);
 		}
 
 		// Check if collection matrix is ready to take over, not necessarily at points where WL is flat
@@ -490,6 +490,7 @@ int main (int argc, char * const argv[]) {
 
 	std::cout << "Switching over to TMMC completely, ending Wang-Landau" << std::endl;
 	sys.getTMMCBias()->print("tmmc-beginning-Checkpoint", true);
+	sys.getTMMCBias()->calculatePI();
 	
 	// Switch over to TMMC completely
 	sys.stopWALA();

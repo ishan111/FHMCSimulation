@@ -7,10 +7,12 @@
  * \param [in] Nmax Upper bound for total number of particles.
  * \param [in] Nmin Lower bound for total number of particles.
  */
-//tmmc::tmmc (const int nSpec, const int Nmax, const int Nmin) {
 tmmc::tmmc (const int Nmax, const int Nmin) {	
 	if (Nmin > Nmax) {
-		throw customException ("Nmin > Nmax in TMMC bias");
+		throw customException ("Nmin ("+sstr(Nmin)+") > Nmax ("+sstr(Nmax)+" in TMMC bias");
+	}
+	if (Nmin < 0) {
+		throw customException ("Nmin < 0 in TMMC bias");
 	}
 	__BIAS_INT_TYPE__ size = (Nmax - Nmin + 1);
 	Nmin_ = Nmin;
@@ -72,6 +74,10 @@ bool tmmc::checkFullyVisited () {
  * \param [in] Nend Number of total species (in order) after the MC move
  */
 const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const int Nstart, const int Nend) {
+	if (Nstart > Nmax_ || Nstart < Nmin_ || Nend > (Nmax_+1) || Nend < (Nmin_-1)) { // Nend has array positions for going over end of bounds but are never used, still they are valid
+		throw customException ("N out of bounds in TMMC object, cannot retrieve address");
+	}
+	
 	// Layout of y = [0, +1, -1] 
 	int addOrSubtract = (Nend - Nstart), y = 0;
 	if (addOrSubtract == 0) {
@@ -158,34 +164,45 @@ void tmmc::print (const std::string fileName, bool printC) {
 #ifdef NETCDF_CAPABLE
 	// Print collection matrix
 	if (printC) {
-		const std::string name = fileName + "_C.nc"
+		try {
+			const std::string name = fileName + "_C.nc"
+			NcFile outFile(name.c_str(), NcFile::replace);
+			NcDim probDim = outFile.addDim("vectorized_position", C_.size());
+			NcVar probVar = outFile.addVar("C", ncDouble, probDim);
+			const std::string dummyName = "number_species:";
+			probVar.putAtt(dummyName.c_str(), sstr(nSpec_).c_str());
+			const std::string attName = "species_total_upper_bound:";
+			probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
+			const std::string attName = "species_total_lower_bound:";
+			probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
+			probVar.putVar(&C_[0]);
+		} catch (IOException ioe) {
+			throw customException ("Unable to write TMMC collection matrix to "+name);
+		}
+	}
+	
+	// Print lnPI (bias) matrix
+	try {
+		const std::string name = fileName + "_lnPI.nc"
 		NcFile outFile(name.c_str(), NcFile::replace);
-		NcDim probDim = outFile.addDim("vectorized_position", C_.size());
-		NcVar probVar = outFile.addVar("C", ncDouble, probDim);
-		const std::string dummyName = "number_species:";
-		probVar.putAtt(dummyName.c_str(), sstr(nSpec_).c_str());
+		NcDim probDim = outFile.addDim("vectorized_position", lnPI_.size());
+		NcVar probVar = outFile.addVar("lnPI", ncDouble, probDim);
 		const std::string attName = "species_total_upper_bound:";
 		probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
 		const std::string attName = "species_total_lower_bound:";
 		probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
-		probVar.putVar(&C_[0]);
+		probVar.putVar(&lnPI_[0]);
+	} catch (IOException ioe) {
+		throw customException ("Unable to write TMMC lnPI to "+name);
 	}
-	
-	// Print lnPI (bias) matrix
-	const std::string name = fileName + "_lnPI.nc"
-	NcFile outFile(name.c_str(), NcFile::replace);
-	NcDim probDim = outFile.addDim("vectorized_position", lnPI_.size());
-	NcVar probVar = outFile.addVar("lnPI", ncDouble, probDim);
-	const std::string attName = "species_total_upper_bound:";
-	probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
-	const std::string attName = "species_total_lower_bound:";
-	probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
-	probVar.putVar(&lnPI_[0]);
 #else
 	// Print collection matrix
 	if (printC) {
 		std::ofstream of;
 		of.open(fileName+"_C.dat", std::ofstream::out);
+		if (!of.is_open()) {
+			throw customException ("Unable to write TMMC collection matrix to "+fileName+"_C.dat");
+		}
 		of << "# Collection matrix in single row (vectorized) notation." << std::endl;
 		of << "# species_total_upper_bound: " << Nmax_ << std::endl;
 		of << "# species_total_lower_bound: " << Nmin_ << std::endl;
@@ -198,6 +215,9 @@ void tmmc::print (const std::string fileName, bool printC) {
 	// Print lnPI (bias) matrix
 	std::ofstream of;
 	of.open(fileName+"_lnPI.dat", std::ofstream::out);
+	if (!of.is_open()) {
+		throw customException ("Unable to write TMMC lnPI to "+fileName+"_lnPI.dat");
+	}
 	of << "# lnPI (bias) matrix in single row (vectorized) notation." << std::endl;
 	of << "# species_total_upper_bound: " << Nmax_ << std::endl;
 	of << "# species_total_lower_bound: " << Nmin_ << std::endl;
@@ -217,13 +237,21 @@ void tmmc::print (const std::string fileName, bool printC) {
  */
 void tmmc::readC (const std::string fileName) {
 #ifdef NETCDF_CAPABLE
-	NcFile dataFile (fileName.c_str(), NcFile::read);
-	NcVar C_data = dataFile.getVar("C");
-	if (C_data.isNull()) throw customException("Collection matrix was empty, cannot read");
-	C_data.getVar(&C_[0]);
+	try {
+		NcFile dataFile (fileName.c_str(), NcFile::read);
+		NcVar C_data = dataFile.getVar("C");
+		if (C_data.isNull()) throw customException("Collection matrix was empty, cannot read");
+		C_data.getVar(&C_[0]);
+	} catch (IOException ioe) {
+		throw customException ("Unable to read collection matrix from netCDF file "+fileName);
+	}
 #else
 	std::string line;
 	std::ifstream inF (fileName);
+	
+	if (!inF.is_open()) {
+		throw customException("Unable to read collection matrix from ASCII file "+fileName);
+	}
 	
 	// Skip file header
 	bool header = true;
@@ -252,13 +280,21 @@ void tmmc::readC (const std::string fileName) {
  */
 void tmmc::readlnPI (const std::string fileName) {
 #ifdef NETCDF_CAPABLE
-	NcFile dataFile (fileName.c_str(), NcFile::read);
-	NcVar lnPI_data = dataFile.getVar("lnPI");
-	if (lnPI_data.isNull()) throw customException("Macrostate distribution matrix (biasing function) was empty, cannot read");
-	lnPI_data.getVar(&lnPI_[0]);
+	try {
+		NcFile dataFile (fileName.c_str(), NcFile::read);
+		NcVar lnPI_data = dataFile.getVar("lnPI");
+		if (lnPI_data.isNull()) throw customException("Macrostate distribution matrix (biasing function) was empty, cannot read");
+		lnPI_data.getVar(&lnPI_[0]);
+	} catch (IOException ioe) {
+		throw customException ("Unable to read lnPI matrix from netCDF file "+fileName);
+	}
 #else
 	std::string line;
 	std::ifstream inF (fileName);
+	
+	if (!inF.is_open()) {
+		throw customException("Unable to read collection matrix from ASCII file "+fileName);
+	}
 	
 	// Skip file header
 	bool header = true;
@@ -309,6 +345,10 @@ wala::wala (const double lnF, const double g, const double s, const int Nmax, co
 		throw customException ("Nmin > Nmax in Wang-Landau object");
 	}
 	
+	if (Nmin < 0) {
+		throw customException ("Nmin < 0 in Wang-Landau object");
+	}
+	
 	__BIAS_INT_TYPE__ size = (Nmax - Nmin + 1);
 	
 	Nmin_ = Nmin;
@@ -335,6 +375,9 @@ wala::wala (const double lnF, const double g, const double s, const int Nmax, co
  * \param [in] Nval Total number of atoms in the system
  */
 const __BIAS_INT_TYPE__ wala::getAddress (const int Nval) {
+	if (Nval > Nmax_) {
+		throw customException ("N out of bounds in Wang-Landau object, cannot retrieve address");
+	}
 	__BIAS_INT_TYPE__ x = Nval - Nmin_;
 	return x;
 }
@@ -393,36 +436,47 @@ void wala::print (const std::string fileName, bool printH) {
 #ifdef NETCDF_CAPABLE
 	// Print visited-states histogram
 	if (printH) {
-		const std::string name = fileName + "_H.nc"
+		try {
+			const std::string name = fileName + "_H.nc"
+			NcFile outFile(name.c_str(), NcFile::replace);
+			NcDim probDim = outFile.addDim("vectorized_position", H_.size());
+			NcVar probVar = outFile.addVar("H", ncDouble, probDim);
+			const std::string dummyName = "number_species:";
+			probVar.putAtt(dummyName.c_str(), sstr(nSpec_).c_str());
+			const std::string attName = "species_total_upper_bound:";
+			probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
+			const std::string attName = "species_upper_lower_bound:";
+			probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
+			probVar.putVar(&H_[0]);
+		} catch (IOException ioe) {
+			throw customException ("Unable to write Wang-Landau visited-states histogram to "+name);
+		}
+	}
+	
+	// Print lnPI (bias) matrix
+	try {
+		const std::string name = fileName + "_lnPI.nc"
 		NcFile outFile(name.c_str(), NcFile::replace);
-		NcDim probDim = outFile.addDim("vectorized_position", H_.size());
-		NcVar probVar = outFile.addVar("H", ncDouble, probDim);
+		NcDim probDim = outFile.addDim("vectorized_position", lnPI_.size());
+		NcVar probVar = outFile.addVar("lnPI", ncDouble, probDim);
 		const std::string dummyName = "number_species:";
 		probVar.putAtt(dummyName.c_str(), sstr(nSpec_).c_str());
 		const std::string attName = "species_total_upper_bound:";
 		probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
-		const std::string attName = "species_upper_lower_bound:";
+		const std::string attName = "species_total_lower_bound:";
 		probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
-		probVar.putVar(&H_[0]);
+		probVar.putVar(&lnPI_[0]);
+	} catch (IOException ioe) {
+		throw customException ("Unable to write Wang-Landau lnPI  histogram to "+name);
 	}
-	
-	// Print lnPI (bias) matrix
-	const std::string name = fileName + "_lnPI.nc"
-	NcFile outFile(name.c_str(), NcFile::replace);
-	NcDim probDim = outFile.addDim("vectorized_position", lnPI_.size());
-	NcVar probVar = outFile.addVar("lnPI", ncDouble, probDim);
-	const std::string dummyName = "number_species:";
-	probVar.putAtt(dummyName.c_str(), sstr(nSpec_).c_str());
-	const std::string attName = "species_total_upper_bound:";
-	probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
-	const std::string attName = "species_total_lower_bound:";
-	probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
-	probVar.putVar(&lnPI_[0]);
 #else
 	// Print visited-states histogram
 	if (printH) {
 		std::ofstream of;
 		of.open(fileName+"_H.dat", std::ofstream::out);
+		if (!of.is_open()) {
+			throw customException ("Unable to write Wang-Landau visited-states histogram to "+fileName+"_H.dat");
+		}
 		of << "# Visited-states histogram in single row (vectorized) notation." << std::endl;
 		of << "# species_total_upper_bound:" << Nmax_ << std::endl;
 		of << "# species_total_lower_bound:" << Nmin_ << std::endl;
@@ -435,6 +489,9 @@ void wala::print (const std::string fileName, bool printH) {
 	// Print lnPI (bias) matrix
 	std::ofstream of;
 	of.open(fileName+"_lnPI.dat", std::ofstream::out);
+	if (!of.is_open()) {
+		throw customException ("Unable to write Wang-Landau lnPI histogram to "+fileName+"_lnPI.dat");
+	}
 	of << "# lnPI (bias) matrix in single row (vectorized) notation." << std::endl;
 	of << "# species_total_upper_bound:" << Nmax_ << std::endl;
 	of << "# species_total_lower_bound:" << Nmin_ << std::endl;
@@ -454,13 +511,21 @@ void wala::print (const std::string fileName, bool printH) {
  */
 void wala::readlnPI (const std::string fileName) {
 #ifdef NETCDF_CAPABLE
-	NcFile dataFile (fileName.c_str(), NcFile::read);
-	NcVar lnPI_data = dataFile.getVar("lnPI");
-	if (lnPI_data.isNull()) throw customException("Macrostate distribution matrix (biasing function) was empty, cannot read");
-	lnPI_data.getVar(&lnPI_[0]);
+	try {
+		NcFile dataFile (fileName.c_str(), NcFile::read);
+		NcVar lnPI_data = dataFile.getVar("lnPI");
+		if (lnPI_data.isNull()) throw customException("Macrostate distribution matrix (biasing function) was empty, cannot read");
+		lnPI_data.getVar(&lnPI_[0]);
+	} catch (IOException ioe) {
+		throw customException ("Unable to read Wang-Landau lnPI from "+fileName);
+	}
 #else
 	std::string line;
 	std::ifstream inF (fileName);
+	
+	if (!inF.is_open()) {
+		throw customException ("Unable to read Wang-Landau lnPI from "+fileName);
+	}
 	
 	// Skip file header
 	bool header = true;
