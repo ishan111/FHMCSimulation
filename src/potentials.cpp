@@ -236,6 +236,9 @@ void squareWell::setParameters (const std::vector < double > params) {
 		if (params[1] < 0) {
 			throw customException ("For squareWell, wellwidth > 0");
 		}
+		if (params[2] < 0) {
+			throw customException ("For squareWell, welldepth (magnitude) > 0");
+		}
 		
 		// save parameters as sigma, (sigma+wellWidth), -wellDepth to speed up energy calculation
 		params_ = params;
@@ -259,11 +262,10 @@ double squareWell::energy (const double r) {
 		throw customException ("For squareWell parameters not set");
 	}
 	if (r < params_[0]) {
-		return 1.0E12;
+		return NUM_INFINITY;
 	} else if (r < params_[1]) {
 		return params_[2];
-	}
-	else {
+	} else {
 		return 0.0;
 	}
 }
@@ -324,7 +326,7 @@ double hardCore::energy (const double r) {
 		throw customException ("For hardCore parameters not set");
 	}
 	if (r < params_[0]) {
-		return 1.0E12;
+		return NUM_INFINITY;
 	}
 	else {
 		return 0.0;

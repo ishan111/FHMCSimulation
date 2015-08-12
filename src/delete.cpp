@@ -56,7 +56,12 @@ int deleteParticle::make (simSystem &sys) {
     // biasing
     const double p_u = sys.numSpecies[typeIndex_]/V*exp(sys.beta()*(-sys.mu(typeIndex_) - delEnergy));
     int nTotFinal = sys.getTotN() - 1;
-    double bias = calculateBias(sys, nTotFinal, p_u);
+    double bias = calculateBias(sys, nTotFinal);
+    
+    // tmmc gets updated the same way, regardless of whether the move gets accepted
+    if (sys.useTMMC) {
+    	sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, std::min(1.0, p_u));
+    }
     
 	// metropolis criterion
 	if (rng (&RNG_SEED) < p_u*bias) {

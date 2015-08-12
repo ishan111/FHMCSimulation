@@ -169,11 +169,11 @@ void tmmc::print (const std::string fileName, bool printC) {
 			NcFile outFile(name.c_str(), NcFile::replace);
 			NcDim probDim = outFile.addDim("vectorized_position", C_.size());
 			NcVar probVar = outFile.addVar("C", ncDouble, probDim);
-			const std::string dummyName = "number_species:";
+			const std::string dummyName = "number_species";
 			probVar.putAtt(dummyName.c_str(), sstr(nSpec_).c_str());
-			const std::string attName = "species_total_upper_bound:";
+			const std::string attName = "species_total_upper_bound";
 			probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
-			const std::string attName = "species_total_lower_bound:";
+			const std::string attName = "species_total_lower_bound";
 			probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
 			probVar.putVar(&C_[0]);
 		} catch (IOException ioe) {
@@ -187,9 +187,9 @@ void tmmc::print (const std::string fileName, bool printC) {
 		NcFile outFile(name.c_str(), NcFile::replace);
 		NcDim probDim = outFile.addDim("vectorized_position", lnPI_.size());
 		NcVar probVar = outFile.addVar("lnPI", ncDouble, probDim);
-		const std::string attName = "species_total_upper_bound:";
+		const std::string attName = "species_total_upper_bound";
 		probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
-		const std::string attName = "species_total_lower_bound:";
+		const std::string attName = "species_total_lower_bound";
 		probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
 		probVar.putVar(&lnPI_[0]);
 	} catch (IOException ioe) {
@@ -441,11 +441,11 @@ void wala::print (const std::string fileName, bool printH) {
 			NcFile outFile(name.c_str(), NcFile::replace);
 			NcDim probDim = outFile.addDim("vectorized_position", H_.size());
 			NcVar probVar = outFile.addVar("H", ncDouble, probDim);
-			const std::string dummyName = "number_species:";
+			const std::string dummyName = "number_species";
 			probVar.putAtt(dummyName.c_str(), sstr(nSpec_).c_str());
-			const std::string attName = "species_total_upper_bound:";
+			const std::string attName = "species_total_upper_bound";
 			probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
-			const std::string attName = "species_upper_lower_bound:";
+			const std::string attName = "species_upper_lower_bound";
 			probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
 			probVar.putVar(&H_[0]);
 		} catch (IOException ioe) {
@@ -459,11 +459,11 @@ void wala::print (const std::string fileName, bool printH) {
 		NcFile outFile(name.c_str(), NcFile::replace);
 		NcDim probDim = outFile.addDim("vectorized_position", lnPI_.size());
 		NcVar probVar = outFile.addVar("lnPI", ncDouble, probDim);
-		const std::string dummyName = "number_species:";
+		const std::string dummyName = "number_species";
 		probVar.putAtt(dummyName.c_str(), sstr(nSpec_).c_str());
-		const std::string attName = "species_total_upper_bound:";
+		const std::string attName = "species_total_upper_bound";
 		probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
-		const std::string attName = "species_total_lower_bound:";
+		const std::string attName = "species_total_lower_bound";
 		probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
 		probVar.putVar(&lnPI_[0]);
 	} catch (IOException ioe) {

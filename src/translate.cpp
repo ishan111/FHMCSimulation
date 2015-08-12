@@ -81,8 +81,13 @@ int translateParticle::make (simSystem &sys) {
     
 	// biasing
 	const double p_u = exp(-sys.beta()*(newEnergy - oldEnergy));
-	double bias = calculateBias(sys, sys.getTotN(), p_u);
-	    
+	double bias = calculateBias(sys, sys.getTotN()); // N_tot doesn't change throughout this move
+	 
+    // tmmc gets updated the same way, regardless of whether the move gets accepted
+    if (sys.useTMMC) {
+    	sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), std::min(1.0, p_u)); // since the total number of atoms isn't changing, can use getTotN() as both initial and final states
+    }
+    
 	if (rng (&RNG_SEED) < p_u*bias) {
 	    try {
             sys.translateAtom(typeIndex_, chosenAtom, oldPos);

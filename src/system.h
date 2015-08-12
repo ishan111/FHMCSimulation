@@ -80,6 +80,6 @@ private:
     std::vector < std::vector <cellList*> > cellListsByPairType_; // this matrix stores pointers to the actual cell lists for all pair types
 };
 
-const double calculateBias (simSystem &sys, const int nTotFinal, const double p_u);
+const double calculateBias (simSystem &sys, const int nTotFinal);
 
 #endif

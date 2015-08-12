@@ -6,8 +6,11 @@
 #include <string>
 #include <iostream>
 #include <fstream> 
+#include <limits>
 #include "global.h"
 #include "utilities.h"
+
+#define NUM_INFINITY std::numeric_limits<double>::max()
 
 /*!
  * Abstract base class which defines all pair potentials.

@@ -152,7 +152,12 @@ int swapParticles::make (simSystem &sys) {
        
     // Biasing
     const double p_u = exp(-sys.beta()*(insEnergy - delEnergy));
-    double bias = calculateBias(sys, sys.getTotN(), p_u); // sys.numSpecies already contains the currently proposed modifications
+    double bias = calculateBias(sys, sys.getTotN()); // sys.numSpecies already contains the currently proposed modifications
+    
+    // tmmc gets updated the same way, regardless of whether the move gets accepted
+    if (sys.useTMMC) {
+    	sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), std::min(1.0, p_u)); // since the total number of atoms isn't changing, can use getTotN() as both initial and final states
+    }
     
 	if (rng (&RNG_SEED) < p_u*bias) {
 	   sys.incrementEnergy(insEnergy - delEnergy);	

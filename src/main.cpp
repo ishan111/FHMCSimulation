@@ -40,13 +40,13 @@
  * Only uncomment this if simulations are purely in the fluid phase.  
  * This will allow tail corrections to be enabled which are only valid assuming a converging g(r) at large r.
  */
-//#define FLUID_PHASE_SIMULATIONS
+#define FLUID_PHASE_SIMULATIONS
 
 /*!
  * Uncomment this if netCDF libraries are installed and can be compiled against.  Data will be output to these arrays
  * instead of ASCII files if so.
  */
-//#define NETCDF_CAPABLE
+#define NETCDF_CAPABLE
 
 /*!
  * Usage: ./binary_name inputFile.json
@@ -70,7 +70,8 @@ int main (int argc, char * const argv[]) {
 	rapidjson::Document doc;
 	doc.ParseStream(is);	
 	fclose(fp);
-		
+	std::cout << "Parsed " << argv[1] << std::endl;
+	
 	// Assert that this is a JSON document
 	assert(doc.IsObject());
 	
@@ -121,7 +122,7 @@ int main (int argc, char * const argv[]) {
 	}	
 
 	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin);
-	
+
 	std::vector < int > sysWindow;
 	if (doc.HasMember("window")) {
 		assert(doc["window"].IsArray());
@@ -135,9 +136,11 @@ int main (int argc, char * const argv[]) {
 		sys.setTotNBounds(sysWindow);
 	}
 	
-	assert(doc.HasMember("restart_file"));
-	assert(doc["restart_file"].IsString());
-	const std::string restart_file = doc["restart_file"].GetString();
+	std::string restart_file = "";
+	if (doc.HasMember("restart_file")) {
+		assert(doc["restart_file"].IsString());
+		restart_file = doc["restart_file"].GetString();
+	}
 
 	assert(doc.HasMember("tmmc_sweep_size"));
 	assert(doc["tmmc_sweep_size"].IsNumber());
@@ -161,7 +164,7 @@ int main (int argc, char * const argv[]) {
 	assert(doc.HasMember("wala_s"));
 	assert(doc["wala_s"].IsNumber());
 	const double s = doc["wala_s"].GetDouble();
-	
+
 	std::vector < double > ref (sys.nSpecies(), 0);
 	std::vector < std::vector < double > > probEqSwap (sys.nSpecies(), ref), probPrSwap (sys.nSpecies(), ref);
 	std::vector < double > probPrInsDel (sys.nSpecies(), 0), probPrDisp (sys.nSpecies(), 0);
@@ -223,6 +226,7 @@ int main (int argc, char * const argv[]) {
 			probPrSwap[j][i] = doc[moveName.c_str()].GetDouble();
 		}
 	}
+	
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
 			std::string name1 = "prob_eq_swap_"+sstr(i+1)+"_"+sstr(j+1);
@@ -247,7 +251,8 @@ int main (int argc, char * const argv[]) {
 			probEqSwap[j][i] = doc[moveName.c_str()].GetDouble();
 		}
 	}	
-	std::vector < pairPotential* > ppotArray (sys.nSpecies()*(sys.nSpecies()-1)/2);
+
+	std::vector < pairPotential* > ppotArray (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
 	std::vector < std::string > ppotType (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
 	int ppotIndex = 0, ppotTypeIndex = 0;
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
@@ -358,7 +363,7 @@ int main (int argc, char * const argv[]) {
 	std::vector < deleteParticle > eqDeletions (sys.nSpecies()), prDeletions (sys.nSpecies());
 	std::vector < translateParticle > eqTranslations (sys.nSpecies()), prTranslations (sys.nSpecies());
 	std::vector < swapParticles > eqSwaps (sys.nSpecies()*(sys.nSpecies()-1)/2), prSwaps (sys.nSpecies()*(sys.nSpecies()-1)/2);
-	
+
 	int swapCounter = 0;
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		insertParticle newIns (i, "insert");
@@ -399,6 +404,17 @@ int main (int argc, char * const argv[]) {
 	}
 	
 	/* -------------------- END INPUT -------------------- */
+	
+	// Read from restart file if specified
+	if (restart_file != "") {
+		std::cout << "Reading initial configuration from " << restart_file << std::endl;
+		try {
+			sys.readRestart(restart_file);
+		} catch (customException &ce) {
+			std::cerr << ce. what() << std::endl;
+			exit(SYS_FAILURE);
+		}
+	} 
 	
 	std::cout << "Beginning Wang-Landau portion" << std::endl;
 	
@@ -448,7 +464,7 @@ int main (int argc, char * const argv[]) {
 	std::cout << "Assigning initial macrostate density guess from Wang-Landau portion" << std::endl;
 	
 	// Initial guess from Wang-Landau density of states
-	sys.getTMMCBias()->setLnPI(sys.getWALABias()->getlnPI());
+	//sys.getTMMCBias()->setLnPI(sys.getWALABias()->getlnPI());
 	
 	// actually this should run until all elements of the collection matrix have been populated
 	bool fullyVisited = false;
@@ -497,6 +513,7 @@ int main (int argc, char * const argv[]) {
 	
 	std::cout << "Beginning TMMC" << std::endl;
 	
+	bool highSnap = false, lowSnap = false;
 	for (unsigned int sweep = 0; sweep < totalTMMCSweeps; ++sweep) {
 		for (unsigned int move = 0; move < tmmcSweepSize; ++move) {
 			try {
@@ -525,6 +542,20 @@ int main (int argc, char * const argv[]) {
 		
 		// Periodically write out checkpoints
 		sys.getTMMCBias()->print("tmmc-Checkpoint", true);
+		
+		// also check to print out snapshots with 10% of bounds to be used for other restarts
+		if (!highSnap) {
+			if (sys.getTotN() > sys.totNMax() - (sys.totNMax()-sys.totNMin())*0.1) {
+				sys.printSnapshot("high.xyz", "snapshot near upper bound");
+				highSnap = true;
+			}
+		}
+		if (!lowSnap) {
+			if (sys.getTotN() < sys.totNMin() + (sys.totNMax()-sys.totNMin())*0.1 && sys.getTotN() > 0) {
+				sys.printSnapshot("low.xyz", "snapshot near lower bound");
+				lowSnap = true;
+			}
+		}
 	}
 		
 	// Sanity checks
@@ -552,7 +583,7 @@ int main (int argc, char * const argv[]) {
     statFile.close();
 	
     // print out restart file (xyz)
-    sys.printSnapshot(restart_file+".xyz", "last configuration");
+    sys.printSnapshot("final.xyz", "last configuration");
     
     // Print out energy histogram
     sys.printU("energyHistogram");

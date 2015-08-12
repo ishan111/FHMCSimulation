@@ -457,19 +457,30 @@ void simSystem::printSnapshot (std::string filename, std::string comment) {
 void simSystem::readRestart (std::string filename) {
 	std::ifstream infile (filename.c_str());
 	std::string line;
+	std::vector < atom > sysatoms;
+	std::vector < int > index;
 	int natoms = 0;
-	infile >> natoms;
-	std::getline(infile, line); // comment line 
-	
-	std::vector < atom > sysatoms (natoms);
-	std::vector < int > index (natoms);
-	std::map < int, int > types;
-	for (unsigned int j = 0; j < natoms; ++j) {
-        infile >> index[j] >> sysatoms[j].pos[0] >> sysatoms[j].pos[1] >> sysatoms[j].pos[2];
-    }
+	int lineIndex = 0;
+	while(std::getline(infile,line)) {
+		std::stringstream lineStream(line);
+		if (lineIndex == 0) {
+			lineStream >> natoms;
+			index.resize(natoms);
+			sysatoms.resize(natoms);
+		} else if (lineIndex > 1) {
+			lineStream >> index[lineIndex-2] >> sysatoms[lineIndex-2].pos[0] >> sysatoms[lineIndex-2].pos[1] >> sysatoms[lineIndex-2].pos[2];
+		}
+		lineIndex++;
+	}
 	infile.close();
+
+	// check if within global bounds
+	if (sysatoms.size() > totNBounds_[1] || sysatoms.size() < totNBounds_[0]) {
+		throw customException ("Number of particles in the restart file out of target range");
+	}
 	
 	// sort by type
+	std::map < int, int > types;
 	for (unsigned int j = 0; j < natoms; ++j) {
 		if (types.find(index[j]) != types.end()) {
 			types[index[j]] += 1;
@@ -478,23 +489,27 @@ void simSystem::readRestart (std::string filename) {
 		}
 	}
 	int maxType = -1;
-	for (std::map<int,int>::iterator it=types.begin(); it != types.end(); ++it) {
+	for (std::map<int,int>::iterator it = types.begin(); it != types.end(); ++it) {
 		maxType = std::max(maxType, it->first);
 		if (it->first < 0 || it->first >= nSpecies_) {
 			throw customException ("Restart file corrupted, types out of range");
 		}
 	}
-	
-	// ensure system is empty
-	for (unsigned int j = 0; j < nSpecies_; ++j) {
-		atoms[j].resize(0);
+
+	// check that pair potentials exist so energy can be calculated
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		for (unsigned int j = 0; j < nSpecies_; ++j) {
+			if (!potentialIsSet(i, j)) {
+				throw customException("Not all pair potentials are set, so cannot initial from file");
+			}
+		}
 	}
 	
 	energy_ = 0.0;
 	
 	for (unsigned int j = 0; j < sysatoms.size(); ++j) {
 		try {
-			insertAtom (index[j], &sysatoms[j]);
+			insertAtom (index[j], &sysatoms[j]); // this will check that within each species own max and min, global bounds handled above
 		}
 		catch (customException &ce) {
 			std::string a = "Could not initialize system from restart file, ", b = ce.what();
@@ -502,19 +517,7 @@ void simSystem::readRestart (std::string filename) {
 		}
 	}
 	
-	// double check
-	for (unsigned int j = 0; j < nSpecies_; ++j) {
-		if (atoms[j].begin() != atoms[j].end()) {
-			if (atoms[j].size() != types[j]) {
-				throw customException ("Failed to properly insert old atoms into system");
-			}
-		} else {
-			if (0 != types[j]) {
-				throw customException ("Failed to properly insert old atoms into system");
-			}
-		}
-	}
-
+	// recalculate system's initial energy
 	energy_ = scratchEnergy();
 }
 
@@ -600,7 +603,7 @@ const double simSystem::scratchEnergy () {
         for (unsigned int j = 0; j < num1; ++j) {
             for (unsigned int k = j+1; k < num1; ++k) {
                 try {
-                    totU += ppot[spec1][spec1]->energy(atoms[spec1][j].pos, atoms[spec1][k].pos, box_);                
+                    totU += ppot[spec1][spec1]->energy(atoms[spec1][j].pos, atoms[spec1][k].pos, box_); 
                 } catch (customException &ce) {
                     std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
                     throw customException (a+b);
@@ -756,7 +759,7 @@ void simSystem::startTMMC (const int Nmax, const int Nmin) {
  * 
  * \return rel_bias The value of the relative bias to apply in the metropolis criteria during sampling
  */
-const double calculateBias (simSystem &sys, const int nTotFinal, const double p_u) {
+const double calculateBias (simSystem &sys, const int nTotFinal) { //, const double p_u) {
 	double rel_bias = 1.0;
 	
 	if (sys.useTMMC && !sys.useWALA) {
@@ -764,10 +767,9 @@ const double calculateBias (simSystem &sys, const int nTotFinal, const double p_
 		const __BIAS_INT_TYPE__ address1 = sys.tmmcBias->getAddress(sys.getTotN()), address2 = sys.tmmcBias->getAddress(nTotFinal);
 		const double b1 = sys.tmmcBias->getBias (address1), b2 = sys.tmmcBias->getBias (address2);
 		rel_bias = exp(b2-b1);
-		sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, std::min(1.0, p_u)); 
     } else if (!sys.useTMMC && sys.useWALA) {
     	// Wang-Landau Biasing
-    	const __BIAS_INT_TYPE__ address1 = sys.wlBias->getAddress(sys.getTotN()), address2 = sys.wlBias->getAddress(nTotFinal);    	    
+    	const __BIAS_INT_TYPE__ address1 = sys.wlBias->getAddress(sys.getTotN()), address2 = sys.wlBias->getAddress(nTotFinal); 
     	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
     	rel_bias = exp(b2-b1);
     } else if (sys.useTMMC && sys.useWALA) {
@@ -775,7 +777,6 @@ const double calculateBias (simSystem &sys, const int nTotFinal, const double p_
     	const int address1 = sys.wlBias->getAddress(sys.getTotN()), address2 = sys.wlBias->getAddress(nTotFinal);
     	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
     	rel_bias = exp(b2-b1);
-    	sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, std::min(1.0, p_u)); 
     } else {
     	// No biasing
     	rel_bias = 1.0;
