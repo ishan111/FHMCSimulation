@@ -16,6 +16,13 @@
 #include "bias.h"
 #include "global.h"
 
+// netCDF if enabled
+#ifdef NETCDF_CAPABLE
+#include <netcdf>
+using namespace netCDF;
+using namespace netCDF::exceptions;
+#endif
+
 /*!
  * System information for the simulation.
  */

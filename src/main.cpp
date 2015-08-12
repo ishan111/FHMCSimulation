@@ -11,6 +11,12 @@
  * \section Compiling
  * Run tests and run main
  * 
+ * Complile with -DFLUID_PHASE_SIMULATIONS if simulations are purely in the fluid phase.  
+ * This will allow tail corrections to be enabled which are only valid assuming a converging g(r) at large r.
+ * 
+ * Compile with -DNETCDF_CAPABLE if netCDF libraries are installed and can be compiled against.  Data will be output to these arrays
+ * instead of ASCII files if so.
+ * 
  * \section Input
  * 
  */
@@ -35,18 +41,6 @@
 #include "rapidjson/include/rapidjson/stringbuffer.h"
 #include "rapidjson/include/rapidjson/filereadstream.h"
 #include "rapidjson/include/rapidjson/prettywriter.h"
-
-/*! 
- * Only uncomment this if simulations are purely in the fluid phase.  
- * This will allow tail corrections to be enabled which are only valid assuming a converging g(r) at large r.
- */
-#define FLUID_PHASE_SIMULATIONS
-
-/*!
- * Uncomment this if netCDF libraries are installed and can be compiled against.  Data will be output to these arrays
- * instead of ASCII files if so.
- */
-#define NETCDF_CAPABLE
 
 /*!
  * Usage: ./binary_name inputFile.json

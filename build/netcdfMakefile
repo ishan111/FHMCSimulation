@@ -2,6 +2,8 @@
 CXX = clang++
 
 # define any compile-time flags
+# -DNETCDF_CAPABLE to enable printing in netCDF formats, esle defaults to ASCII
+# -DFLUID_PHASE_SIMULATIONS to enable the possibility of tail corrections
 CXXFLAGS = -Wall -O3 -DNETCDF_CAPABLE -DFLUID_PHASE_SIMULATIONS
 
 # define any directories containing header files other than /usr/include

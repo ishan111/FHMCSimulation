@@ -1,12 +1,5 @@
 #include "system.h"
 
-// netCDF if enable
-#ifdef NETCDF_CAPABLE
-#include <netcdf>
-using namespace netCDF;
-using namespace netCDF::exceptions;
-#endif
-
 /*!
  * Set the bounds on the total number of particles in a system.  If not set manually, this defaults to the sum of the bounds given for
  * each individual species in the system.  Therefore, for single component simulations, this is identical to [minSpecies(0), maxSpecies(0)] 
@@ -338,12 +331,12 @@ void simSystem::printU (const std::string fileName) {
     const std::string name = fileName + ".nc";
   	NcFile outFile(name.c_str(), NcFile::replace);
 	NcDim probDim = outFile.addDim("vectorized_position", aveU.size());
-	NcVar probVar = outFile.addVar("<U>", ncDouble, probDim);
+	NcVar probVar = outFile.addVar("averageU", ncDouble, probDim);
 	const std::string dummyName = "number_species:";
 	probVar.putAtt(dummyName.c_str(), sstr(nSpecies_).c_str());
-	const std::string attName = "species_total_upper_bound:";
+	std::string attName = "species_total_upper_bound:";
 	probVar.putAtt(attName.c_str(), sstr(totNBounds_[1]).c_str());
-	const std::string attName = "species_total_lower_bound:";
+	attName = "species_total_lower_bound:";
 	probVar.putAtt(attName.c_str(), sstr(totNBounds_[0]).c_str());
 	probVar.putVar(&aveU[0]);
 #else
