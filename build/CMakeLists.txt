@@ -9,7 +9,7 @@ file(GLOB omcs_SRC
 set (omcs_VERSION_MAJOR 2)
 set (omcs_VERSION_MINOR 1)
 
-set(CMAKE_CXX_FLAGS "-O3 -Wall -DNETCDF_CAPABLE -DFLUID_PHASE_SIMULATIONS")
+set(CMAKE_CXX_FLAGS "-O3 -Wall -DFLUID_PHASE_SIMULATIONS")
 
 include_directories("../src/")
 add_executable(omcs ${omcs_SRC})
