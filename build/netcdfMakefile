@@ -60,7 +60,7 @@ $(MAIN): $(OBJS)
 		$(CXX) $(CXXFLAGS) $(INCLUDES) -c $<  -o $@
 
 clean:
-		$(RM) $(ODIR)/*.o *~ $(MAIN)
+		$(RM) $(SRC_DIR)/*.o *~ $(MAIN)
 
 depend: $(SRCS)
 		makedepend $(INCLUDES) $^

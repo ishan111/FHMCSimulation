@@ -30,7 +30,7 @@ using namespace netCDF::exceptions;
 class tmmc {
 public:
 	tmmc () {};
-	tmmc (const int Nmax, const int Nmin);
+	tmmc (const int Nmax, const int Nmin, const std::vector <double> box);
 	
 	void updateC (const int Nstart, const int Nend, const double pa);
 	void calculatePI ();
@@ -50,13 +50,14 @@ private:
 	std::vector <double> C_; //!< Collection matrix
 	std::vector <double> P_; //!< Probability matrix
 	std::vector <double> lnPI_; //!< Estimated (natural logarithm of) macrostate density used as bias
+	std::vector <double> box_; //!< Size of the simulation box this is originating from
 };
 
 //! Wang-Landau biasing class
 class wala {
 public:
 	wala () {};
-	wala (const double lnF, const double g, const double s, const int Nmax, const int Nmin);
+	wala (const double lnF, const double g, const double s, const int Nmax, const int Nmin, const std::vector <double> box);
 	
 	void update (const int Nval);
 	void iterateForward ();
@@ -78,6 +79,7 @@ private:
 	long long int Nmin_; //!< Minimum total number of atoms in a simulation
 	std::vector <double> H_; //!< Histogram of visited states
 	std::vector <double> lnPI_; //!< Estimated (natural logarithm of) macrostate density used as bias
+	std::vector <double> box_; //!< Size of the simulation box this is originating from
 };
 
 #endif

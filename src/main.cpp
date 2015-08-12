@@ -17,6 +17,8 @@
  * Compile with -DNETCDF_CAPABLE if netCDF libraries are installed and can be compiled against.  Data will be output to these arrays
  * instead of ASCII files if so.
  * 
+ * Tests compile with cmake and by default, do not link to netcdf libraries since they do not use them.  Everything tested in ASCII.
+ * 
  * \section Input
  * 
  */
@@ -409,13 +411,13 @@ int main (int argc, char * const argv[]) {
 			exit(SYS_FAILURE);
 		}
 	} 
-	
+
 	std::cout << "Beginning Wang-Landau portion" << std::endl;
 	
 	// Initially do a WL simulation
 	double lnF = 1;
 	bool flat = false;
-	sys.startWALA (lnF, g, s, sys.totNMax(), sys.totNMin()); //!< Using Shen and Errington method this syntax is same for single and multicomponent
+	sys.startWALA (lnF, g, s); //!< Using Shen and Errington method this syntax is same for single and multicomponent
 	while (lnF > 2.0e-18) {
 		for (unsigned int move = 0; move < wlSweepSize; ++move) {
 			try {
@@ -453,9 +455,9 @@ int main (int argc, char * const argv[]) {
 	std::cout << "Crossing over to build TMMC matrix" << std::endl;
 	
 	// After a while, combine to initialize TMMC collection matrix
-	sys.startTMMC (sys.totNMax(), sys.totNMin());
+	sys.startTMMC ();
 	
-	std::cout << "Assigning initial macrostate density guess from Wang-Landau portion" << std::endl;
+	//std::cout << "Assigning initial macrostate density guess from Wang-Landau portion" << std::endl;
 	
 	// Initial guess from Wang-Landau density of states
 	//sys.getTMMCBias()->setLnPI(sys.getWALABias()->getlnPI());
@@ -474,7 +476,7 @@ int main (int argc, char * const argv[]) {
 			// record U
 			sys.recordU();
 		}
-				
+
 		// Check if bias has flattened out
 		flat = sys.getWALABias()->evaluateFlatness();
 		if (flat) {
@@ -493,7 +495,7 @@ int main (int argc, char * const argv[]) {
 			strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
 			std::cout << "lnF = " << sys.getWALABias()->lnF() << " at " << dummy_tmp << std::endl;	
 		}
-
+		
 		// Check if collection matrix is ready to take over, not necessarily at points where WL is flat
 		fullyVisited = sys.getTMMCBias()->checkFullyVisited();
 	}

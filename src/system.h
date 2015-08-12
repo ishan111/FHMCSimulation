@@ -40,9 +40,9 @@ public:
     void readRestart (std::string filename);
     void recordU ();
     void printU (const std::string fileName);
-    void startWALA (const double lnF, const double g, const double s, const int Nmax, const int Nmin); //!< Start using Wang-Landau and instantiate the bias object
+    void startWALA (const double lnF, const double g, const double s); //!< Start using Wang-Landau and instantiate the bias object
    	void stopWALA () { useWALA = false; delete wlBias; } //!< Stop using Wang-Landau and free the bias object
-   	void startTMMC (const int Nmax, const int Nmin); //!< Start using TMMC and instantiate the bias object
+   	void startTMMC (); //!< Start using TMMC and instantiate the bias object
    	void stopTMMC () { useTMMC = false; delete tmmcBias; } //!< Stop using TMMC and free the bias object
     void setTotNBounds (const std::vector < int > &bounds);
    	bool potentialIsSet (const int spec1, const int spec2) { return ppotSet_[spec1][spec2]; }	//!< Boolean which returns whether or not a pair has had its potential specified by the user yet

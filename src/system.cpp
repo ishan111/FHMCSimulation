@@ -332,21 +332,26 @@ void simSystem::printU (const std::string fileName) {
   	NcFile outFile(name.c_str(), NcFile::replace);
 	NcDim probDim = outFile.addDim("vectorized_position", aveU.size());
 	NcVar probVar = outFile.addVar("averageU", ncDouble, probDim);
-	const std::string dummyName = "number_species:";
+	const std::string dummyName = "number_species";
 	probVar.putAtt(dummyName.c_str(), sstr(nSpecies_).c_str());
-	std::string attName = "species_total_upper_bound:";
+	std::string attName = "species_total_upper_bound";
 	probVar.putAtt(attName.c_str(), sstr(totNBounds_[1]).c_str());
-	attName = "species_total_lower_bound:";
+	attName = "species_total_lower_bound";
 	probVar.putAtt(attName.c_str(), sstr(totNBounds_[0]).c_str());
+	attName = "volume";
+	double V = box_[0]*box_[1]*box_[2];
+	probVar.putAtt(attName.c_str(), sstr(V).c_str());
 	probVar.putVar(&aveU[0]);
 #else
 	// Without netCDF capabilities, just print to ASCII file
 	std::ofstream of;
 	of.open(fileName+".dat", std::ofstream::out);
 	of << "# <U> as a function of N_tot." << std::endl;
-	of << "# Number of species:" << nSpecies_ << std::endl;
-	of << "# species_total_upper_bound:" << totNBounds_[1] << std::endl;
-	of << "# species_total_lower_bound:" << totNBounds_[0] << std::endl;
+	of << "# Number of species: " << nSpecies_ << std::endl;
+	of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
+	of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+	double V = box_[0]*box_[1]*box_[2];
+	of << "# volume: " << V << std::endl;
 	for (long long int i = 0; i < aveU.size(); ++i) {
 		of << aveU[i] << std::endl;
 	}
@@ -712,13 +717,11 @@ wala* simSystem::getWALABias () {
  * \param [in] lnF Factor by which the estimate of the density of states in updated each time it is visited.
  * \param [in] g Factor by which lnF is reduced (multiplied) once "flatness" has been achieved.
  * \param [in] s Factor by which the min(H) must be within the mean of H to be considered "flat", e.g. 0.8 --> min is within 20% error of mean
- * \param [in] Nmax Upper bound for total number of particles in the system.
- * \param [in] Nmin Lower bound for total number of particles in the system. 
  */
-void simSystem::startWALA (const double lnF, const double g, const double s, const int Nmax, const int Nmin) { 
+void simSystem::startWALA (const double lnF, const double g, const double s) { 
 	// initialize the wala object
 	try {
-		wlBias = new wala (lnF, g, s, Nmax, Nmin);
+		wlBias = new wala (lnF, g, s, totNBounds_[1], totNBounds_[0], box_);
 	} catch (customException& ce) {
 		throw customException ("Cannot start Wang-Landau biasing in system: "+sstr(ce.what()));
 	}
@@ -728,14 +731,11 @@ void simSystem::startWALA (const double lnF, const double g, const double s, con
 
 /*!
  * Start using a transition-matrix in the simulation. Throws an exception if input values are illegal or there is another problem (e.g. memory).
- * 
- * \param [in] Nmax Upper bound for total number of particles in the system.
- * \param [in] Nmin Lower bound for total number of particles in the system.
  */
-void simSystem::startTMMC (const int Nmax, const int Nmin) { 
+void simSystem::startTMMC () { 
 	// initialize the tmmc object
 	try {
-		tmmcBias = new tmmc (Nmax, Nmin);
+		tmmcBias = new tmmc (totNBounds_[1], totNBounds_[0], box_);
 	} catch (customException& ce) {
 		throw customException ("Cannot start TMMC biasing in system: "+sstr(ce.what()));
 	}

@@ -6,8 +6,9 @@
  * \param [in] nSpec Number of species in the simulation.
  * \param [in] Nmax Upper bound for total number of particles.
  * \param [in] Nmin Lower bound for total number of particles.
+ * \param [in] box Vector of simulations box dimensions.
  */
-tmmc::tmmc (const int Nmax, const int Nmin) {	
+tmmc::tmmc (const int Nmax, const int Nmin, const std::vector <double> box) {	
 	if (Nmin > Nmax) {
 		throw customException ("Nmin ("+sstr(Nmin)+") > Nmax ("+sstr(Nmax)+" in TMMC bias");
 	}
@@ -17,6 +18,17 @@ tmmc::tmmc (const int Nmax, const int Nmin) {
 	__BIAS_INT_TYPE__ size = (Nmax - Nmin + 1);
 	Nmin_ = Nmin;
 	Nmax_ = Nmax;
+	
+	if (box.size() != 3) {
+		throw customException ("Illegal number of box dimensions in TMMC");
+	}
+	for (unsigned int i = 0; i < box.size(); ++i) {
+		if (box[i] < 0) {
+			throw customException ("Illegal box dimensions in TMMC");
+		}
+	}
+	box_.resize(3, 0);
+	box_ = box;
 	
 	// attempt to allocate memory for collection matrix and initializes it all to 0
 	try {
@@ -173,6 +185,9 @@ void tmmc::print (const std::string fileName, bool printC) {
 			probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
 			attName = "species_total_lower_bound";
 			probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
+			attName = "volume";
+			double V = box_[0]*box_[1]*box_[2];
+			probVar.putAtt(attName.c_str(), sstr(V).c_str());
 			probVar.putVar(&C_[0]);
 		} catch (NcException ioe) {
 			throw customException ("Unable to write TMMC collection matrix to "+name);
@@ -189,6 +204,9 @@ void tmmc::print (const std::string fileName, bool printC) {
 		probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
 		attName = "species_total_lower_bound";
 		probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
+		attName = "volume";
+		double V = box_[0]*box_[1]*box_[2];
+		probVar.putAtt(attName.c_str(), sstr(V).c_str());
 		probVar.putVar(&lnPI_[0]);
 	} catch (NcException ioe) {
 		throw customException ("Unable to write TMMC lnPI to "+name);
@@ -204,6 +222,8 @@ void tmmc::print (const std::string fileName, bool printC) {
 		of << "# Collection matrix in single row (vectorized) notation." << std::endl;
 		of << "# species_total_upper_bound: " << Nmax_ << std::endl;
 		of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+		double V = box_[0]*box_[1]*box_[2];
+		of << "# volume: " << V << std::endl;
 		for (long long int i = 0; i < C_.size(); ++i) {
 			of << C_[i] << std::endl;
 		}
@@ -219,6 +239,8 @@ void tmmc::print (const std::string fileName, bool printC) {
 	of << "# lnPI (bias) matrix in single row (vectorized) notation." << std::endl;
 	of << "# species_total_upper_bound: " << Nmax_ << std::endl;
 	of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+	double V = box_[0]*box_[1]*box_[2];
+	of << "# volume: " << V << std::endl;
 	for (long long int i = 0; i < lnPI_.size(); ++i) {
 		of << lnPI_[i] << std::endl;
 	}
@@ -321,9 +343,9 @@ void tmmc::readlnPI (const std::string fileName) {
  * \param [in] nSpec Number of species in the simulation.
  * \param [in] Nmax Upper bound for total number of particles.
  * \param [in] Nmin Lower bound for total number of particles. 
+ * \param [in] box Vector of simulation box size.
  */
-//wala::wala (const double lnF, const double g, const double s, const int nSpec, const int Nmax, const int Nmin) {
-wala::wala (const double lnF, const double g, const double s, const int Nmax, const int Nmin) {
+wala::wala (const double lnF, const double g, const double s, const int Nmax, const int Nmin, const std::vector <double> box) {
 	if (lnF < 0) {
 		throw customException ("lnF in Wang-Landau cannot be < 0");
 	}
@@ -346,6 +368,17 @@ wala::wala (const double lnF, const double g, const double s, const int Nmax, co
 	if (Nmin < 0) {
 		throw customException ("Nmin < 0 in Wang-Landau object");
 	}
+	
+	if (box.size() != 3) {
+		throw customException ("Illegal number of box dimensions in Wang-Landau");
+	}
+	for (unsigned int i = 0; i < box.size(); ++i) {
+		if (box[i] < 0) {
+			throw customException ("Illegal box dimensions in Wang-Landau");
+		}
+	}
+	box_.resize(3, 0);
+	box_ = box;
 	
 	__BIAS_INT_TYPE__ size = (Nmax - Nmin + 1);
 	
@@ -443,6 +476,9 @@ void wala::print (const std::string fileName, bool printH) {
 			probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
 			attName = "species_upper_lower_bound";
 			probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
+			attName = "volume";
+			double V = box_[0]*box_[1]*box_[2];
+			probVar.putAtt(attName.c_str(), sstr(V).c_str());
 			probVar.putVar(&H_[0]);
 		} catch (NcException ioe) {
 			throw customException ("Unable to write Wang-Landau visited-states histogram to "+name);
@@ -459,6 +495,9 @@ void wala::print (const std::string fileName, bool printH) {
 		probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
 		attName = "species_total_lower_bound";
 		probVar.putAtt(attName.c_str(), sstr(Nmin_).c_str());
+		attName = "volume";
+		double V = box_[0]*box_[1]*box_[2];
+		probVar.putAtt(attName.c_str(), sstr(V).c_str());
 		probVar.putVar(&lnPI_[0]);
 	} catch (NcException ioe) {
 		throw customException ("Unable to write Wang-Landau lnPI  histogram to "+name);
@@ -472,8 +511,10 @@ void wala::print (const std::string fileName, bool printH) {
 			throw customException ("Unable to write Wang-Landau visited-states histogram to "+fileName+"_H.dat");
 		}
 		of << "# Visited-states histogram in single row (vectorized) notation." << std::endl;
-		of << "# species_total_upper_bound:" << Nmax_ << std::endl;
-		of << "# species_total_lower_bound:" << Nmin_ << std::endl;
+		of << "# species_total_upper_bound: " << Nmax_ << std::endl;
+		of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+		double V = box_[0]*box_[1]*box_[2];
+		of << "# volume: " << V << std::endl;
 		for (long long int i = 0; i < H_.size(); ++i) {
 			of << H_[i] << std::endl;
 		}
@@ -487,8 +528,10 @@ void wala::print (const std::string fileName, bool printH) {
 		throw customException ("Unable to write Wang-Landau lnPI histogram to "+fileName+"_lnPI.dat");
 	}
 	of << "# lnPI (bias) matrix in single row (vectorized) notation." << std::endl;
-	of << "# species_total_upper_bound:" << Nmax_ << std::endl;
-	of << "# species_total_lower_bound:" << Nmin_ << std::endl;
+	of << "# species_total_upper_bound: " << Nmax_ << std::endl;
+	of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+	double V = box_[0]*box_[1]*box_[2];
+	of << "# volume: " << V << std::endl;
 	for (long long int i = 0; i < lnPI_.size(); ++i) {
 		of << lnPI_[i] << std::endl;
 	}
