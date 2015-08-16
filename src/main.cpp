@@ -161,6 +161,24 @@ int main (int argc, char * const argv[]) {
 	assert(doc["wala_s"].IsNumber());
 	const double s = doc["wala_s"].GetDouble();
 
+	double lnF_end = 2.0e-18; // default for lnF_end
+	if (doc.HasMember("lnF_end")) {
+		assert(doc["lnF_end"].IsNumber());
+		lnF_end = doc["lnF_end"].GetDouble();
+		if (lnF_end >= 1.0) {
+			std::cerr << "Terminal lnF factor for Wang-Landau must be < 1" << std::endl;
+			exit(SYS_FAILURE);
+		}
+	}
+	
+	bool restartFromTMMC = false;
+	std::string restartFromTMMCFile = "";
+	if (doc.HasMember("restart_from_tmmc_C")) {
+		assert(doc["restart_from_tmmc_C"].IsString());
+		restartFromTMMCFile = doc["restart_from_tmmc_C"].GetString();
+		restartFromTMMC = true;
+	}
+	
 	std::vector < double > ref (sys.nSpecies(), 0);
 	std::vector < std::vector < double > > probEqSwap (sys.nSpecies(), ref), probPrSwap (sys.nSpecies(), ref);
 	std::vector < double > probPrInsDel (sys.nSpecies(), 0), probPrDisp (sys.nSpecies(), 0);
@@ -408,120 +426,151 @@ int main (int argc, char * const argv[]) {
 			sys.readRestart(restart_file);
 		} catch (customException &ce) {
 			std::cerr << ce. what() << std::endl;
+			
+			for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+				delete ppotArray[i];
+			}
+			ppotArray.clear();
+			    
 			exit(SYS_FAILURE);
 		}
 	} 
 
-	std::cout << "Beginning Wang-Landau portion" << std::endl;
+	bool highSnap = false, lowSnap = false;
 	
-	// Initially do a WL simulation
-	bool highSnap = false, lowSnap = false, flat = false;
-	double lnF = 1;
-	sys.startWALA (lnF, g, s); //!< Using Shen and Errington method this syntax is same for single and multicomponent
-	while (lnF > 2.0e-18) {
-		for (unsigned int move = 0; move < wlSweepSize; ++move) {
-			try {
-				usedMovesEq.makeMove(sys);
-			} catch (customException &ce) {
-				std::cerr << ce.what() << std::endl;
-				exit(SYS_FAILURE);
+	if (!restartFromTMMC) {
+		std::cout << "Beginning Wang-Landau portion" << std::endl;
+	
+		// Initially do a WL simulation
+		bool flat = false;
+		double lnF = 1;
+		sys.startWALA (lnF, g, s); //!< Using Shen and Errington method this syntax is same for single and multicomponent
+		while (lnF > lnF_end) {
+			for (unsigned int move = 0; move < wlSweepSize; ++move) {
+				try {
+					usedMovesEq.makeMove(sys);
+				} catch (customException &ce) {
+					std::cerr << ce.what() << std::endl;
+					exit(SYS_FAILURE);
+				}	
+			
+				// record U
+				sys.recordU();
 			}
 			
-			// record U
-			sys.recordU();
-		}
-			
-		// Check if bias has flattened out
-		flat = sys.getWALABias()->evaluateFlatness();
-		if (flat) {
-			// Periodically write out checkpoints - before iterateForward() which destroys H matrix
-			sys.getWALABias()->print("wl-Checkpoint", true);
+			// Check if bias has flattened out
+			flat = sys.getWALABias()->evaluateFlatness();
+			if (flat) {
+				// Periodically write out checkpoints - before iterateForward() which destroys H matrix
+				sys.getWALABias()->print("wl-Checkpoint", true);
 						
-			// if flat, need to reset H and reduce lnF
-			sys.getWALABias()->iterateForward();
-			lnF = sys.getWALABias()->lnF();
-			flat = false;
+				// if flat, need to reset H and reduce lnF
+				sys.getWALABias()->iterateForward();
+				lnF = sys.getWALABias()->lnF();
+				flat = false;
 			
-			time_t rawtime_tmp;
-			time (&rawtime_tmp);
-			struct tm * timeinfo_tmp;
-			timeinfo_tmp = localtime (&rawtime_tmp);
-			char dummy_tmp [80];
-			strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
-			std::cout << "lnF = " << lnF << " at " << dummy_tmp << std::endl;
-		}
+				time_t rawtime_tmp;
+				time (&rawtime_tmp);
+				struct tm * timeinfo_tmp;
+				timeinfo_tmp = localtime (&rawtime_tmp);
+				char dummy_tmp [80];
+				strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+				std::cout << "lnF = " << lnF << " at " << dummy_tmp << std::endl;
+			}
 		
-		// also check to print out snapshots with 10% of bounds to be used for other restarts
-		if (!highSnap) {
-			if (sys.getTotN() > sys.totNMax() - (sys.totNMax()-sys.totNMin())*0.1) {
-				sys.printSnapshot("high.xyz", "snapshot near upper bound");
-				highSnap = true;
+			// also check to print out snapshots with 10% of bounds to be used for other restarts
+			if (!highSnap) {
+				if (sys.getTotN() > sys.totNMax() - (sys.totNMax()-sys.totNMin())*0.1) {
+					sys.printSnapshot("high.xyz", "snapshot near upper bound");
+					highSnap = true;
+				}
+			}
+			if (!lowSnap) {
+				if (sys.getTotN() < sys.totNMin() + (sys.totNMax()-sys.totNMin())*0.1 && sys.getTotN() > 0) {
+					sys.printSnapshot("low.xyz", "snapshot near lower bound");
+					lowSnap = true;
+				}
 			}
 		}
-		if (!lowSnap) {
-			if (sys.getTotN() < sys.totNMin() + (sys.totNMax()-sys.totNMin())*0.1 && sys.getTotN() > 0) {
-				sys.printSnapshot("low.xyz", "snapshot near lower bound");
-				lowSnap = true;
+	
+		std::cout << "Crossing over to build TMMC matrix" << std::endl;
+	
+		// After a while, combine to initialize TMMC collection matrix
+		sys.startTMMC ();
+	
+		// actually this should run until all elements of the collection matrix have been populated
+		bool fullyVisited = false;
+		int timesReduced = 0;
+		while (!fullyVisited && timesReduced < 2) {
+			for (unsigned int move = 0; move < wlSweepSize; ++move) {
+				try {
+					usedMovesEq.makeMove(sys);
+				} catch (customException &ce) {
+					std::cerr << ce.what() << std::endl;
+					
+					for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+						delete ppotArray[i];
+					}
+					ppotArray.clear();
+					
+					exit(SYS_FAILURE);
+				}
+			
+				// record U
+				sys.recordU();
 			}
+
+			// Check if bias has flattened out
+			flat = sys.getWALABias()->evaluateFlatness();
+			if (flat) {
+				// Periodically write out checkpoints 
+				sys.getWALABias()->print("wl-crossover-Checkpoint", true);
+				sys.getTMMCBias()->print("tmmc-crossover-Checkpoint", true);
+			
+				// If flat, need to reset H and reduce lnF
+				sys.getWALABias()->iterateForward();
+				
+				// Count the number of times the lnF factor is reduced
+				timesReduced++;
+				
+				time_t rawtime_tmp;
+				time (&rawtime_tmp);
+				struct tm * timeinfo_tmp;
+				timeinfo_tmp = localtime (&rawtime_tmp);
+				char dummy_tmp [80];
+				strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
+				std::cout << "lnF = " << sys.getWALABias()->lnF() << " at " << dummy_tmp << std::endl;	
+			}
+		
+			// Check if collection matrix is ready to take over, not necessarily at points where WL is flat
+			fullyVisited = sys.getTMMCBias()->checkFullyVisited();
 		}
+
+		// Switch over to TMMC completely
+		sys.stopWALA();
+		
+		std::cout << "Switching over to TMMC completely, ending Wang-Landau" << std::endl;
+		sys.getTMMCBias()->calculatePI();
+		sys.getTMMCBias()->print("tmmc-beginning-Checkpoint", true);
 	}
 	
-	std::cout << "Crossing over to build TMMC matrix" << std::endl;
-	
-	// After a while, combine to initialize TMMC collection matrix
-	sys.startTMMC ();
-	
-	//std::cout << "Assigning initial macrostate density guess from Wang-Landau portion" << std::endl;
-	
-	// Initial guess from Wang-Landau density of states
-	//sys.getTMMCBias()->setLnPI(sys.getWALABias()->getlnPI());
-	
-	// actually this should run until all elements of the collection matrix have been populated
-	bool fullyVisited = false;
-	while (!fullyVisited) {
-		for (unsigned int move = 0; move < wlSweepSize; ++move) {
-			try {
-				usedMovesEq.makeMove(sys);
-			} catch (customException &ce) {
-				std::cerr << ce.what() << std::endl;
-				exit(SYS_FAILURE);
-			}
-			
-			// record U
-			sys.recordU();
-		}
-
-		// Check if bias has flattened out
-		flat = sys.getWALABias()->evaluateFlatness();
-		if (flat) {
-			// Periodically write out checkpoints 
-			sys.getWALABias()->print("wl-crossover-Checkpoint", true);
-			sys.getTMMCBias()->print("tmmc-crossover-Checkpoint", true);
-			
-			// If flat, need to reset H and reduce lnF
-			sys.getWALABias()->iterateForward();
-			
-			time_t rawtime_tmp;
-			time (&rawtime_tmp);
-			struct tm * timeinfo_tmp;
-			timeinfo_tmp = localtime (&rawtime_tmp);
-			char dummy_tmp [80];
-			strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
-			std::cout << "lnF = " << sys.getWALABias()->lnF() << " at " << dummy_tmp << std::endl;	
-		}
-		
-		// Check if collection matrix is ready to take over, not necessarily at points where WL is flat
-		fullyVisited = sys.getTMMCBias()->checkFullyVisited();
-	}
-
-	std::cout << "Switching over to TMMC completely, ending Wang-Landau" << std::endl;
-	sys.getTMMCBias()->print("tmmc-beginning-Checkpoint", true);
-	sys.getTMMCBias()->calculatePI();
-	
-	// Switch over to TMMC completely
-	sys.stopWALA();
-
 	std::cout << "Beginning TMMC" << std::endl;
+	if (restartFromTMMC) {
+		sys.startTMMC (); // this was otherwise started during the crossover phase if WL was used
+		try {
+			sys.getTMMCBias()->readC(restartFromTMMCFile); // read collection matrix
+		} catch (customException& ce) {
+			sys.stopTMMC(); // deallocate
+			std::cerr << "Failed to initialize from TMMC collection matrix: " << ce.what() << std::endl;
+			for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+				delete ppotArray[i];
+			}
+			ppotArray.clear();	
+			exit(SYS_FAILURE);
+		}
+		sys.getTMMCBias()->calculatePI();
+		std::cout << "Restarted TMMC from collection matrix from " << restartFromTMMCFile << std::endl;
+	}
 	
 	int modFactor;
 	if (totalTMMCSweeps > 100) {
@@ -535,6 +584,12 @@ int main (int argc, char * const argv[]) {
 				usedMovesPr.makeMove(sys);
 			} catch (customException &ce) {
 				std::cerr << ce.what() << std::endl;
+				
+				for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+					delete ppotArray[i];
+				}
+				ppotArray.clear();
+				
 				exit(SYS_FAILURE);
 			}
 			
@@ -557,17 +612,39 @@ int main (int argc, char * const argv[]) {
 		
 		// Periodically write out checkpoints
 		sys.getTMMCBias()->print("tmmc-Checkpoint", true);
+	
+		// also check to print out snapshots with 10% of bounds to be used for other restarts
+		if (!highSnap) {
+			if (sys.getTotN() > sys.totNMax() - (sys.totNMax()-sys.totNMin())*0.1) {
+				sys.printSnapshot("high.xyz", "snapshot near upper bound");
+				highSnap = true;
+			}
+		}
+		if (!lowSnap) {
+			if (sys.getTotN() < sys.totNMin() + (sys.totNMax()-sys.totNMin())*0.1 && sys.getTotN() > 0) {
+				sys.printSnapshot("low.xyz", "snapshot near lower bound");
+				lowSnap = true;
+			}
+		}
 	}
 		
 	// Sanity checks
 	if (sys.nSpecies() != sys.atoms.size()) {
         std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
+		for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+			delete ppotArray[i];
+		}
+		ppotArray.clear();
         exit(SYS_FAILURE);
     }
     const double tol = 1.0e-9;
     const double scratchEnergy = sys.scratchEnergy(), incrEnergy = sys.energy();
     if (fabs(scratchEnergy - incrEnergy) > tol) {
         std::cerr << "Error: scratch energy calculation = " << scratchEnergy << ", but incremental = " << incrEnergy << ", |diff| = " << fabs(scratchEnergy - incrEnergy) << std::endl;
+		for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+			delete ppotArray[i];
+		}
+		ppotArray.clear();
         exit(SYS_FAILURE);
     }
     
