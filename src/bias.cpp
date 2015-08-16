@@ -266,28 +266,6 @@ void tmmc::readC (const std::string fileName) {
 		throw customException ("Unable to read collection matrix from netCDF file "+fileName);
 	}
 #else
-	/*std::string line;
-	std::ifstream inF (fileName);
-	
-	if (!inF.is_open()) {
-		throw customException("Unable to read collection matrix from ASCII file "+fileName);
-	}
-	
-	// Skip file header
-	bool header = true;
-	while (header) {
-		std::getline (inF, line);
-		if (line.compare(0,1,"#",0,1) != 0) {
-			header = false;
-		}
-	}
-	
-	// Read line by line, parsing based on token
-	C_[0] = atof(line.c_str());
-	__BIAS_INT_TYPE__ index = 1;
-	while (inF >> C_[index]) {
-		index++;
-	}*/
 	std::ifstream infile (fileName.c_str());
 	if (!infile.is_open()) {
 		throw customException("Unable to read collection matrix from ASCII file "+fileName);
@@ -296,11 +274,9 @@ void tmmc::readC (const std::string fileName) {
 	int lineIndex = 0;
 	while(std::getline(infile,line)) {
 		std::stringstream lineStream(line);
-		// skip an header information
-		if (line.compare(0,1,"#",0,1) == 0) {
-			continue;
-		} else {
-			infile >> C_[lineIndex];
+		// skip any header information
+		if (line.compare(0,1,"#",0,1) != 0) {
+			C_[lineIndex] = atof(line.c_str());
 			lineIndex++;
 		}
 	}
@@ -326,28 +302,6 @@ void tmmc::readlnPI (const std::string fileName) {
 		throw customException ("Unable to read lnPI matrix from netCDF file "+fileName);
 	}
 #else
-	/*std::string line;
-	std::ifstream inF (fileName);
-	
-	if (!inF.is_open()) {
-		throw customException("Unable to read collection matrix from ASCII file "+fileName);
-	}
-	
-	// Skip file header
-	bool header = true;
-	while (header) {
-		std::getline (inF, line);
-		if (line.compare(0,1,"#",0,1) != 0) {
-			header = false;
-		}
-	}
-	
-	// Read line by line, parsing based on token
-	lnPI_[0] = atof(line.c_str());
-	long long int index = 1;
-	while (inF >> lnPI_[index]) {
-		index++;
-	}*/
 	std::ifstream infile (fileName.c_str());
 	if (!infile.is_open()) {
 		throw customException("Unable to read lnPI matrix from ASCII file "+fileName);
@@ -356,11 +310,9 @@ void tmmc::readlnPI (const std::string fileName) {
 	int lineIndex = 0;
 	while(std::getline(infile,line)) {
 		std::stringstream lineStream(line);
-		// skip an header information
-		if (line.compare(0,1,"#",0,1) == 0) {
-			continue;
-		} else {
-			infile >> lnPI_[index];
+		// skip any header information
+		if (line.compare(0,1,"#",0,1) != 0) {
+			lnPI_[lineIndex] = atof(line.c_str());
 			lineIndex++;
 		}
 	}	
@@ -590,28 +542,6 @@ void wala::readlnPI (const std::string fileName) {
 		throw customException ("Unable to read Wang-Landau lnPI from "+fileName);
 	}
 #else
-	/*std::string line;
-	std::ifstream inF (fileName);
-	
-	if (!inF.is_open()) {
-		throw customException ("Unable to read Wang-Landau lnPI from "+fileName);
-	}
-	
-	// Skip file header
-	bool header = true;
-	while (header) {
-		std::getline (inF, line);
-		if (line.compare(0,1,"#",0,1) != 0) {
-			header = false;
-		}
-	}
-	
-	// Read line by line, parsing based on token
-	lnPI_[0] = atof(line.c_str());
-	__BIAS_INT_TYPE__ index = 1;
-	while (inF >> lnPI_[index]) {
-		index++;
-	}*/
 	std::ifstream infile (fileName.c_str());
 	if (!infile.is_open()) {
 		throw customException ("Unable to read Wang-Landau lnPI from "+fileName);
@@ -620,11 +550,9 @@ void wala::readlnPI (const std::string fileName) {
 	int lineIndex = 0;
 	while(std::getline(infile,line)) {
 		std::stringstream lineStream(line);
-		// skip an header information
-		if (line.compare(0,1,"#",0,1) == 0) {
-			continue;
-		} else {
-			infile >> lnPI_[index];
+		// skip any header information
+		if (line.compare(0,1,"#",0,1) != 0) {
+			lnPI_[lineIndex] = atof(line.c_str());
 			lineIndex++;
 		}
 	}
