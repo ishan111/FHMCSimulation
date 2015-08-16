@@ -474,7 +474,7 @@ void simSystem::readRestart (std::string filename) {
 
 	// check if within global bounds
 	if (sysatoms.size() > totNBounds_[1] || sysatoms.size() < totNBounds_[0]) {
-		throw customException ("Number of particles in the restart file out of target range");
+		throw customException ("Number of particles ("+sstr(sysatoms.size())+") in the restart file out of target range ["+sstr(totNBounds_[0])+", "+sstr(totNBounds_[1])+"]");
 	}
 	
 	// sort by type
