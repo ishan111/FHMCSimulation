@@ -415,8 +415,8 @@ int main (int argc, char * const argv[]) {
 	std::cout << "Beginning Wang-Landau portion" << std::endl;
 	
 	// Initially do a WL simulation
+	bool highSnap = false, lowSnap = false, flat = false;
 	double lnF = 1;
-	bool flat = false;
 	sys.startWALA (lnF, g, s); //!< Using Shen and Errington method this syntax is same for single and multicomponent
 	while (lnF > 2.0e-18) {
 		for (unsigned int move = 0; move < wlSweepSize; ++move) {
@@ -449,6 +449,20 @@ int main (int argc, char * const argv[]) {
 			char dummy_tmp [80];
 			strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
 			std::cout << "lnF = " << lnF << " at " << dummy_tmp << std::endl;
+		}
+		
+		// also check to print out snapshots with 10% of bounds to be used for other restarts
+		if (!highSnap) {
+			if (sys.getTotN() > sys.totNMax() - (sys.totNMax()-sys.totNMin())*0.1) {
+				sys.printSnapshot("high.xyz", "snapshot near upper bound");
+				highSnap = true;
+			}
+		}
+		if (!lowSnap) {
+			if (sys.getTotN() < sys.totNMin() + (sys.totNMax()-sys.totNMin())*0.1 && sys.getTotN() > 0) {
+				sys.printSnapshot("low.xyz", "snapshot near lower bound");
+				lowSnap = true;
+			}
 		}
 	}
 	
@@ -506,10 +520,15 @@ int main (int argc, char * const argv[]) {
 	
 	// Switch over to TMMC completely
 	sys.stopWALA();
-	
+
 	std::cout << "Beginning TMMC" << std::endl;
 	
-	bool highSnap = false, lowSnap = false;
+	int modFactor;
+	if (totalTMMCSweeps > 100) {
+		modFactor = 100;
+	} else {
+		modFactor = totalTMMCSweeps;
+	}
 	for (unsigned int sweep = 0; sweep < totalTMMCSweeps; ++sweep) {
 		for (unsigned int move = 0; move < tmmcSweepSize; ++move) {
 			try {
@@ -523,7 +542,7 @@ int main (int argc, char * const argv[]) {
 			sys.recordU();
 		}
 		
-		if (sweep%(totalTMMCSweeps/100) == 0) {
+		if (sweep%(totalTMMCSweeps/modFactor) == 0) {
 			time_t rawtime_tmp;
 			time (&rawtime_tmp);
 			struct tm * timeinfo_tmp;
@@ -538,20 +557,6 @@ int main (int argc, char * const argv[]) {
 		
 		// Periodically write out checkpoints
 		sys.getTMMCBias()->print("tmmc-Checkpoint", true);
-		
-		// also check to print out snapshots with 10% of bounds to be used for other restarts
-		if (!highSnap) {
-			if (sys.getTotN() > sys.totNMax() - (sys.totNMax()-sys.totNMin())*0.1) {
-				sys.printSnapshot("high.xyz", "snapshot near upper bound");
-				highSnap = true;
-			}
-		}
-		if (!lowSnap) {
-			if (sys.getTotN() < sys.totNMin() + (sys.totNMax()-sys.totNMin())*0.1 && sys.getTotN() > 0) {
-				sys.printSnapshot("low.xyz", "snapshot near lower bound");
-				lowSnap = true;
-			}
-		}
 	}
 		
 	// Sanity checks
