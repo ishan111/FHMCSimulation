@@ -8,6 +8,11 @@ ADD_SUBDIRECTORY (gtest-1.7.0)
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+    add_definitions(-std=gnu++0x)
+endif()
+
 # do not include main.cpp
 include_directories("../../src/")
 file(GLOB omcs_SRC
