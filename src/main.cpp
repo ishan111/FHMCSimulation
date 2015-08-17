@@ -171,6 +171,21 @@ int main (int argc, char * const argv[]) {
 		}
 	}
 	
+	double lnF_start = 1.0; // default for lnF_start
+	if (doc.HasMember("lnF_start")) {
+		assert(doc["lnF_start"].IsNumber());
+		lnF_start = doc["lnF_start"].GetDouble(); // bounds are checked later
+	}
+	
+	bool restartFromWALA = false;
+	std::string restartFromWALAFile = "";
+	if (doc.HasMember("restart_from_wala_lnPI")) {
+		assert(doc["restart_from_wala_lnPI"].IsString());
+		restartFromWALAFile = doc["restart_from_wala_lnPI"].GetString();
+		restartFromWALA = true;
+	}
+	
+	// restarting from TMMC overrides WL by skipping that portion altogether
 	bool restartFromTMMC = false;
 	std::string restartFromTMMCFile = "";
 	if (doc.HasMember("restart_from_tmmc_C")) {
@@ -443,8 +458,18 @@ int main (int argc, char * const argv[]) {
 	
 		// Initially do a WL simulation
 		bool flat = false;
-		double lnF = 1;
+		double lnF = lnF_start;
 		sys.startWALA (lnF, g, s); //!< Using Shen and Errington method this syntax is same for single and multicomponent
+		
+		if (restartFromWALA) {
+			try {
+				sys.getWALABias()->readlnPI(restartFromWALAFile);
+			} catch (customException &ce) {
+				std::cerr << ce.what() << std::endl;
+				exit(SYS_FAILURE);
+			}
+		}
+		
 		while (lnF > lnF_end) {
 			for (unsigned int move = 0; move < wlSweepSize; ++move) {
 				try {

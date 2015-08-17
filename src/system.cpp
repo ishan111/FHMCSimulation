@@ -752,7 +752,7 @@ void simSystem::startTMMC () {
  * 
  * \return rel_bias The value of the relative bias to apply in the metropolis criteria during sampling
  */
-const double calculateBias (simSystem &sys, const int nTotFinal) { //, const double p_u) {
+const double calculateBias (simSystem &sys, const int nTotFinal) { 
 	double rel_bias = 1.0;
 	
 	if (sys.useTMMC && !sys.useWALA) {

@@ -430,6 +430,20 @@ bool wala::evaluateFlatness () {
 		return true;
 	}
 	return false;
+	/*long double min = H_[0], mean = 0.0;
+	for (std::vector <double>::iterator it = H_.begin(); it != H_.end(); ++it) {
+		if ((*it) < min) {
+			min = (*it);
+		}
+		
+		mean += (*it);
+	}
+	mean /= H_.size();
+	
+	if (min > s_*mean) {
+		return true;
+	}*/
+	return false;	
 }
 
 /*!
