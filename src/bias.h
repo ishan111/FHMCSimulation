@@ -30,7 +30,7 @@ using namespace netCDF::exceptions;
 class tmmc {
 public:
 	tmmc () {};
-	tmmc (const int Nmax, const int Nmin, const std::vector <double> box);
+	tmmc (const int Nmax, const int Nmin, const long long int tmmcSweepSize, const std::vector <double> box);
 	
 	void updateC (const int Nstart, const int Nend, const double pa);
 	void calculatePI ();
@@ -38,19 +38,24 @@ public:
 	void readC (const std::string fileName);
 	void readlnPI (const std::string fileName);
 	void setlnPI (const std::vector < double > &lnPIguess) { if (lnPIguess.size() == lnPI_.size()) lnPI_ = lnPIguess; } //!< Blindly assign a guess of the macrostate distribution
+	void iterateForward ();
 	bool checkFullyVisited ();
 	const __BIAS_INT_TYPE__ getTransitionAddress (const int Nstart, const int Nend);
 	const __BIAS_INT_TYPE__ getAddress (const int Nval);	
+	const long long int numSweeps () { return nSweeps_; }
 	const double getBias (const int address) { return -lnPI_[address]; }
 	const std::vector < double > getC () { return C_; } //!< Return the collection matrix as it is
 	
 private:
 	int Nmax_; //!< Maximum number of total species in a simulation
 	int Nmin_; //!< Minimum number of total species in a simulation
-	std::vector <double> C_; //!< Collection matrix
-	std::vector <double> P_; //!< Probability matrix
-	std::vector <double> lnPI_; //!< Estimated (natural logarithm of) macrostate density used as bias
-	std::vector <double> box_; //!< Size of the simulation box this is originating from
+	long long int nSweeps_; //!< Number of sweeps that have been completed
+	long long int tmmcSweepSize_; //!< Number of times the each point in the collection matrix must be visited for a "sweep" to be considered finished
+	std::vector < double > C_; //!< Collection matrix
+	std::vector < double > P_; //!< Probability matrix
+	std::vector < double > lnPI_; //!< Estimated (natural logarithm of) macrostate density used as bias
+	std::vector < double > box_; //!< Size of the simulation box this is originating from
+	std::vector < double > HC_; //!< Count the number of time each state and transition has been sampled 
 };
 
 //! Wang-Landau biasing class

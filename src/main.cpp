@@ -182,7 +182,9 @@ int main (int argc, char * const argv[]) {
 	if (doc.HasMember("restart_from_wala_lnPI")) {
 		assert(doc["restart_from_wala_lnPI"].IsString());
 		restartFromWALAFile = doc["restart_from_wala_lnPI"].GetString();
-		restartFromWALA = true;
+		if (restartFromWALAFile != "") {
+			restartFromWALA = true;
+		}
 	}
 	
 	// restarting from TMMC overrides WL by skipping that portion altogether
@@ -191,7 +193,9 @@ int main (int argc, char * const argv[]) {
 	if (doc.HasMember("restart_from_tmmc_C")) {
 		assert(doc["restart_from_tmmc_C"].IsString());
 		restartFromTMMCFile = doc["restart_from_tmmc_C"].GetString();
-		restartFromTMMC = true;
+		if (restartFromTMMCFile != "") {
+			restartFromTMMC = true;
+		}
 	}
 	
 	std::vector < double > ref (sys.nSpecies(), 0);
@@ -472,6 +476,7 @@ int main (int argc, char * const argv[]) {
 			}
 		}
 		
+		int sweep = 0;
 		while (lnF > lnF_end) {
 			for (unsigned int move = 0; move < wlSweepSize; ++move) {
 				try {
@@ -484,18 +489,19 @@ int main (int argc, char * const argv[]) {
 				// record U
 				sys.recordU();
 			}
+			sweep++;
 			
 			// Check if bias has flattened out
 			flat = sys.getWALABias()->evaluateFlatness();
 			if (flat) {
 				// Periodically write out checkpoints - before iterateForward() which destroys H matrix
-				sys.getWALABias()->print("wl-Checkpoint", true);
+				sys.getWALABias()->print("wl-Checkpoint-"+sstr(sweep), true);
 						
 				// if flat, need to reset H and reduce lnF
 				sys.getWALABias()->iterateForward();
 				lnF = sys.getWALABias()->lnF();
 				flat = false;
-			
+				
 				time_t rawtime_tmp;
 				time (&rawtime_tmp);
 				struct tm * timeinfo_tmp;
@@ -523,12 +529,11 @@ int main (int argc, char * const argv[]) {
 		std::cout << "Crossing over to build TMMC matrix" << std::endl;
 	
 		// After a while, combine to initialize TMMC collection matrix
-		sys.startTMMC ();
+		sys.startTMMC (tmmcSweepSize);
 	
 		// actually this should run until all elements of the collection matrix have been populated
-		bool fullyVisited = false;
-		int timesReduced = 0;
-		while (!fullyVisited && timesReduced < 2) {
+		int timesFullyVisited = 0;
+		while (timesFullyVisited < 2) { // 2 is an arbitrary choice for the number of times each was visited
 			for (unsigned int move = 0; move < wlSweepSize; ++move) {
 				try {
 					usedMovesEq.makeMove(sys);
@@ -544,31 +549,37 @@ int main (int argc, char * const argv[]) {
 				// record U
 				sys.recordU();
 			}
-
-			// Check if bias has flattened out
-			flat = sys.getWALABias()->evaluateFlatness();
-			if (flat) {
-				// Periodically write out checkpoints 
-				sys.getWALABias()->print("wl-crossover-Checkpoint", true);
-				sys.getTMMCBias()->print("tmmc-crossover-Checkpoint", true);
 			
-				// If flat, need to reset H and reduce lnF
-				sys.getWALABias()->iterateForward();
-				
-				// Count the number of times the lnF factor is reduced
-				timesReduced++;
-				
+			// Check if collection matrix is ready to take over, not necessarily at points where WL is flat
+			if (sys.getTMMCBias()->checkFullyVisited()) {
+				sys.getTMMCBias()->iterateForward (); // reset the counting matrix and increment total sweep number
+				timesFullyVisited = sys.getTMMCBias()->numSweeps(); 	
+				sys.getWALABias()->print("wl-crossover-Checkpoint-"+sstr(timesFullyVisited), true);
+				sys.getTMMCBias()->print("tmmc-crossover-Checkpoint-"+sstr(timesFullyVisited), true);
+
 				time_t rawtime_tmp;
 				time (&rawtime_tmp);
 				struct tm * timeinfo_tmp;
 				timeinfo_tmp = localtime (&rawtime_tmp);
 				char dummy_tmp [80];
 				strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
-				std::cout << "lnF = " << sys.getWALABias()->lnF() << " at " << dummy_tmp << std::endl;	
+				std::cout << "Times C fully visited = " << timesFullyVisited << " at " << dummy_tmp << std::endl;
 			}
-		
-			// Check if collection matrix is ready to take over, not necessarily at points where WL is flat
-			fullyVisited = sys.getTMMCBias()->checkFullyVisited();
+
+			// Check if bias has flattened out
+			flat = sys.getWALABias()->evaluateFlatness();
+			if (flat) {
+				// If flat, need to reset H and reduce lnF
+				sys.getWALABias()->iterateForward();
+
+				time_t rawtime_tmp;
+				time (&rawtime_tmp);
+				struct tm * timeinfo_tmp;
+				timeinfo_tmp = localtime (&rawtime_tmp);
+				char dummy_tmp [80];
+				strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
+				std::cout << "lnF = " << sys.getWALABias()->lnF() << " at " << dummy_tmp << std::endl;
+			}
 		}
 
 		// Switch over to TMMC completely
@@ -581,7 +592,7 @@ int main (int argc, char * const argv[]) {
 	
 	std::cout << "Beginning TMMC" << std::endl;
 	if (restartFromTMMC) {
-		sys.startTMMC (); // this was otherwise started during the crossover phase if WL was used
+		sys.startTMMC (tmmcSweepSize); // this was otherwise started during the crossover phase if WL was used
 		try {
 			sys.getTMMCBias()->readC(restartFromTMMCFile); // read collection matrix
 		} catch (customException& ce) {
@@ -590,53 +601,58 @@ int main (int argc, char * const argv[]) {
 			for (unsigned int i = 0; i < ppotArray.size(); ++i) {
 				delete ppotArray[i];
 			}
-			ppotArray.clear();	
+			ppotArray.clear();
 			exit(SYS_FAILURE);
 		}
 		sys.getTMMCBias()->calculatePI();
 		std::cout << "Restarted TMMC from collection matrix from " << restartFromTMMCFile << std::endl;
 	}
 	
-	int modFactor;
-	if (totalTMMCSweeps > 100) {
-		modFactor = 100;
-	} else {
-		modFactor = totalTMMCSweeps;
-	}
-	for (unsigned int sweep = 0; sweep < totalTMMCSweeps; ++sweep) {
-		for (unsigned int move = 0; move < tmmcSweepSize; ++move) {
+	long long int sweep = 0;
+	while (sweep < totalTMMCSweeps) {
+		bool done = false;
+		long long int counter = 0;
+		long long int checkPoint = tmmcSweepSize*(sys.totNMax() - sys.totNMin() + 1)*3; // how often to check full traversal of collection matrix
+		while (!done) {
 			try {
 				usedMovesPr.makeMove(sys);
 			} catch (customException &ce) {
 				std::cerr << ce.what() << std::endl;
-				
 				for (unsigned int i = 0; i < ppotArray.size(); ++i) {
 					delete ppotArray[i];
 				}
 				ppotArray.clear();
-				
 				exit(SYS_FAILURE);
 			}
 			
 			// record U
 			sys.recordU();
+			
+			// check if sweep is done
+			if (counter%checkPoint == 0) {
+				done = sys.getTMMCBias()->checkFullyVisited();
+				counter = 0;
+			}
+
+			counter++;
 		}
 		
-		if (sweep%(totalTMMCSweeps/modFactor) == 0) {
-			time_t rawtime_tmp;
-			time (&rawtime_tmp);
-			struct tm * timeinfo_tmp;
-			timeinfo_tmp = localtime (&rawtime_tmp);
-			char dummy_tmp [80];
-			strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
-			std::cout << "Finished " << sweep << "/" << totalTMMCSweeps << " total TMMC sweeps at " << dummy_tmp << std::endl;
-		}
+		sys.getTMMCBias()->iterateForward (); // reset the counting matrix and increment total sweep number
+		sweep++;
+				
+		time_t rawtime_tmp;
+		time (&rawtime_tmp);
+		struct tm * timeinfo_tmp;
+		timeinfo_tmp = localtime (&rawtime_tmp);
+		char dummy_tmp [80];
+		strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
+		std::cout << "Finished " << sweep << "/" << totalTMMCSweeps << " total TMMC sweeps at " << dummy_tmp << std::endl;
 		
 		// Update biasing function from collection matrix
 		sys.getTMMCBias()->calculatePI();
 		
 		// Periodically write out checkpoints
-		sys.getTMMCBias()->print("tmmc-Checkpoint", true);
+		sys.getTMMCBias()->print("tmmc-Checkpoint-"+sstr(sweep), true);
 	
 		// also check to print out snapshots with 10% of bounds to be used for other restarts
 		if (!highSnap) {

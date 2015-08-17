@@ -8,7 +8,7 @@
  * \param [in] Nmin Lower bound for total number of particles.
  * \param [in] box Vector of simulations box dimensions.
  */
-tmmc::tmmc (const int Nmax, const int Nmin, const std::vector <double> box) {	
+tmmc::tmmc (const int Nmax, const int Nmin, const long long int tmmcSweepSize, const std::vector <double> box) {	
 	if (Nmin > Nmax) {
 		throw customException ("Nmin ("+sstr(Nmin)+") > Nmax ("+sstr(Nmax)+" in TMMC bias");
 	}
@@ -30,6 +30,12 @@ tmmc::tmmc (const int Nmax, const int Nmin, const std::vector <double> box) {
 	box_.resize(3, 0);
 	box_ = box;
 	
+	nSweeps_ = 0;
+	if (tmmcSweepSize < 1) {
+		throw customException ("TMMC sweep size myst be >= 1");
+	}
+	tmmcSweepSize_ = tmmcSweepSize;
+	
 	// attempt to allocate memory for collection matrix and initializes it all to 0
 	try {
 		C_.resize(3*size, 0);
@@ -43,6 +49,13 @@ tmmc::tmmc (const int Nmax, const int Nmin, const std::vector <double> box) {
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for probability matrix in tmmc");
 	}
+
+	// attempt to allocate memory for states counter to check how often a sweep has been performed
+	try {
+		HC_.resize(3*size, 0);
+	} catch (const std::bad_alloc &ce) {
+		throw customException ("Out of memory, cannot allocate space for the sweep counter in tmmc");
+	}
 	
 	// attempt to allocate memory for lnPI matrix and initializes it all to 0
 	try {
@@ -53,30 +66,36 @@ tmmc::tmmc (const int Nmax, const int Nmin, const std::vector <double> box) {
 }
 
 /*!
- * Check if the the collection matrix has been filled (i.e. contains no zeros, except when crossing imposed bounds).
- * Technically, if in an ideal gas state, dU ~ 0 so pacc = 1.0, therefore probability of remaining in same state is 0.
- * However, this matrix should be considered filled, if transitions to N+1 and N-1 for each N are found (except at bounds).
+ * Check if the the collection matrix has been samples sufficiently, i.e., if each state and transition has been visited tmmcSweepSize_ times.
  */
 bool tmmc::checkFullyVisited () {
-	for (__BIAS_INT_TYPE__ i = 0; i < C_.size(); i += 3) {
+	for (__BIAS_INT_TYPE__ i = 0; i < HC_.size(); i += 3) {
 		if (i == 0) {
 			// lower bound, so only +1 move must be sampled
-			if (!(C_[i+1] > 0)) {
+			if ((HC_[i] < tmmcSweepSize_) || (HC_[i+1] < tmmcSweepSize_)) {
 				return false;
-			}			
-		} else if (i == C_.size()-3) {
+			}				
+		} else if (i == HC_.size()-3) {
 			// upper bound, so only -1 move must be sampled
-			if (!(C_[i+2] > 0)) {
+			if ((HC_[i] < tmmcSweepSize_) || (HC_[i+2] < tmmcSweepSize_)) {
 				return false;
 			}
 		} else {
 			// midpoints, both +1 and -1 moves must be sampled
-			if (!(C_[i+1] > 0) || !(C_[i+2] > 0)) {
+			if ((HC_[i] < tmmcSweepSize_) || (HC_[i+1] < tmmcSweepSize_) || (HC_[i+2] < tmmcSweepSize_)) {
 				return false;
 			}
-		}
-	}
+		}		
+	}	
 	return true;
+}
+
+/*!
+ * Reset the visited state counter which tracks the number of times each point in the collection matrix has been visited.
+ */
+void tmmc::iterateForward () {
+	std::fill(HC_.begin(), HC_.end(), 0);
+	nSweeps_++;
 }
 
 /*!
@@ -126,6 +145,7 @@ void tmmc::updateC (const int Nstart, const int Nend, const double pa) {
 	const int i = getTransitionAddress(Nstart, Nend), j = getTransitionAddress(Nstart, Nstart);
 	C_[i] += pa;
 	C_[j] += (1-pa);
+	HC_[i] += 1.0; // only count the transition actually proposed, not the Nstart --> Nstart unless that was what was originally proposed
 }
 
 /*!

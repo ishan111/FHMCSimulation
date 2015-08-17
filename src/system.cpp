@@ -731,11 +731,13 @@ void simSystem::startWALA (const double lnF, const double g, const double s) {
 
 /*!
  * Start using a transition-matrix in the simulation. Throws an exception if input values are illegal or there is another problem (e.g. memory).
+ * 
+ * \param [in] tmmcSweepSize Number of times each transition in the collection matrix must be visited for a "sweep" to be completed
  */
-void simSystem::startTMMC () { 
+void simSystem::startTMMC (const long long int tmmcSweepSize) { 
 	// initialize the tmmc object
 	try {
-		tmmcBias = new tmmc (totNBounds_[1], totNBounds_[0], box_);
+		tmmcBias = new tmmc (totNBounds_[1], totNBounds_[0], tmmcSweepSize, box_);
 	} catch (customException& ce) {
 		throw customException ("Cannot start TMMC biasing in system: "+sstr(ce.what()));
 	}
