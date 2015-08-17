@@ -337,12 +337,14 @@ protected:
 	double beta, tol;
 	std::vector < double > box, mu;
 	std::vector < int > maxSpecies, minSpecies;
-	
+	int tmmcSweepSize;
+
 	virtual void SetUp() {
 		nSpecies = 3;
 		maxSpecies.resize(nSpecies), mu.resize(nSpecies), box.resize(3), minSpecies.resize(nSpecies);
 		tol = 1.0e-9;
 		beta = 1.234;
+		tmmcSweepSize = 1;
 		for (unsigned int i = 0; i < nSpecies; ++i) {
 			box[i] = 2*i+1.0;
 			mu[i] = 2*i+2.0;
@@ -578,11 +580,11 @@ TEST_F (InitializeSystem, scratchEnergy) {
 
 
 TEST (testTMMC, tmmcGoodInit) {
-	const int Nmax = 100, Nmin = 10;
+	const int Nmax = 100, Nmin = 10, sweepSize = 100;
 	std::vector < double > dummyBox (3, 0);
 	bool pass = true;
 	try {
-		tmmc test (Nmax, Nmin, dummyBox);
+		tmmc test (Nmax, Nmin, sweepSize, dummyBox);
 	} catch (customException &ce) {
 		pass = false;
 	}
@@ -590,11 +592,11 @@ TEST (testTMMC, tmmcGoodInit) {
 }
 
 TEST (testTMMC, tmmcBadInitNegative) {
-	const int Nmax = 100, Nmin = -10;
+	const int Nmax = 100, Nmin = -10, sweepSize = 100;
 	std::vector < double > dummyBox (3, 0);
 	bool pass = true;
 	try {
-		tmmc test (Nmax, Nmin, dummyBox);
+		tmmc test (Nmax, Nmin, sweepSize, dummyBox);
 	} catch (customException &ce) {
 		pass = false;
 	}
@@ -602,11 +604,11 @@ TEST (testTMMC, tmmcBadInitNegative) {
 }
 
 TEST (testTMMC, tmmcBadInitOrder) {
-	const int Nmax = 10, Nmin = 100;
+	const int Nmax = 10, Nmin = 100, sweepSize = 100;
 	std::vector < double > dummyBox (3, 0);
 	bool pass = true;
 	try {
-		tmmc test (Nmax, Nmin, dummyBox);
+		tmmc test (Nmax, Nmin, sweepSize, dummyBox);
 	} catch (customException &ce) {
 		pass = false;
 	}
@@ -616,16 +618,25 @@ TEST (testTMMC, tmmcBadInitOrder) {
 class tmmBiasC : public ::testing::Test {
 protected:
 	tmmc* tmmcBias;
-	int Nmin, Nmax;
+	int Nmin, Nmax, sweepSize;
 	std::vector < double > dummyBox;
 	
 	virtual void SetUp() {
 		Nmin = 3;
 		Nmax = 10;
 		dummyBox.resize(3, 0);
-		tmmcBias = new tmmc (Nmax, Nmin, dummyBox);
+		sweepSize = 100;
+		tmmcBias = new tmmc (Nmax, Nmin, sweepSize, dummyBox);
 	}
 };
+
+TEST_F (tmmBiasC, iterateForward) {
+	int sweep1 = tmmcBias->numSweeps();
+	tmmcBias->iterateForward();
+	int sweep2 = tmmcBias->numSweeps();
+	EXPECT_EQ (sweep1, 0);
+	EXPECT_EQ (sweep2, 1);
+}
 
 TEST_F (tmmBiasC, cSize) {
 	std::vector <double> collMat = tmmcBias->getC();
@@ -692,7 +703,7 @@ TEST_F (tmmBiasC, updateCBackward) {
 class tmmBiaslnPI : public ::testing::Test {
 protected:
 	tmmc* tmmcBias;
-	int Nmin, Nmax;
+	int Nmin, Nmax, sweepSize;
 	double pu;
 	std::vector < double > dummyBox;
 	
@@ -701,7 +712,8 @@ protected:
 		Nmin = 3;
 		Nmax = 5;
 		dummyBox.resize(3, 0);
-		tmmcBias = new tmmc (Nmax, Nmin, dummyBox);
+		sweepSize = 1;
+		tmmcBias = new tmmc (Nmax, Nmin, sweepSize, dummyBox);
 		tmmcBias->updateC(Nmin, Nmin+1, pu);
 		tmmcBias->updateC(Nmin+1, Nmin+2, pu);
 		tmmcBias->updateC(Nmin+2, Nmin+1, pu);
@@ -739,6 +751,9 @@ TEST_F (tmmBiaslnPI, checkVisitedNo) {
 
 TEST_F (tmmBiaslnPI, checkVisitedYes) {
 	tmmcBias->updateC(Nmin+1, Nmin, pu);
+	tmmcBias->updateC(Nmin, Nmin, pu); // also have to include visiting self
+	tmmcBias->updateC(Nmin+1, Nmin+1, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+2, pu);	
 	bool pass = tmmcBias->checkFullyVisited();
 	EXPECT_TRUE(pass);
 	delete tmmcBias;
@@ -1066,13 +1081,13 @@ TEST_F (InitializeSystem, unsetWALAbias) {
 
 TEST_F (InitializeSystem, setTMMCbias) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
-	mysys.startTMMC ();
+	mysys.startTMMC (tmmcSweepSize);
 	EXPECT_TRUE (mysys.useTMMC);
 }
 
 TEST_F (InitializeSystem, unsetTMMCbias) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
-	mysys.startTMMC ();
+	mysys.startTMMC (tmmcSweepSize);
 	EXPECT_TRUE (mysys.useTMMC);
 	mysys.stopTMMC();
 	EXPECT_TRUE (!mysys.useTMMC);
@@ -1082,12 +1097,14 @@ class testComputeBias : public ::testing::Test {
 protected:
 	double s, g, lnF, pu;
 	std::vector < int > specNmax, specNmin, bounds;
-	
+	int tmmcSweepSize;
+
 	virtual void SetUp() {
 		pu = 0.123;
 		s = 0.8;
 		g = 0.5;
 		lnF = 1.0;
+		tmmcSweepSize = 1;
 		specNmin.resize(2, 0);
 		specNmax.resize(2, 3);
 		bounds.resize(2, 0);
@@ -1128,7 +1145,7 @@ TEST_F (testComputeBias, setCalculateTMMCBias) {
 	std::vector < double > ib (3, 10), mu (2, 1.0);
 	simSystem mysys (2, 1.0, ib, mu, specNmax, specNmin);
 	mysys.setTotNBounds (bounds);
-	mysys.startTMMC ();
+	mysys.startTMMC (tmmcSweepSize);
 	EXPECT_TRUE (mysys.useTMMC);
 	
 	// some simple updates
@@ -1250,7 +1267,7 @@ TEST_F (testComputeBias, testInSituTMMCSingleComponent) {
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (1, 3), nmin (1, 0);
 	simSystem mysys (1, 1.0, ib, mu, nmax, nmin);
-	mysys.startTMMC ();
+	mysys.startTMMC (tmmcSweepSize);
 	EXPECT_TRUE (mysys.useTMMC);
 		
 	hardCore hc;
@@ -1297,7 +1314,7 @@ TEST_F (testComputeBias, testInSituTMMCMultiComponent) {
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (2, 3), nmin (2, 0);
 	simSystem mysys (2, 1.0, ib, mu, nmax, nmin);
-	mysys.startTMMC ();
+	mysys.startTMMC (tmmcSweepSize);
 	EXPECT_TRUE (mysys.useTMMC);
 		
 	hardCore hc11, hc12, hc22;
