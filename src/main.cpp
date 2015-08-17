@@ -160,7 +160,13 @@ int main (int argc, char * const argv[]) {
 	assert(doc.HasMember("wala_s"));
 	assert(doc["wala_s"].IsNumber());
 	const double s = doc["wala_s"].GetDouble();
-
+	
+	double lnF_start = 1.0; // default for lnF_start
+	if (doc.HasMember("lnF_start")) {
+		assert(doc["lnF_start"].IsNumber());
+		lnF_start = doc["lnF_start"].GetDouble(); // bounds are checked later
+	}
+	
 	double lnF_end = 2.0e-18; // default for lnF_end
 	if (doc.HasMember("lnF_end")) {
 		assert(doc["lnF_end"].IsNumber());
@@ -170,11 +176,9 @@ int main (int argc, char * const argv[]) {
 			exit(SYS_FAILURE);
 		}
 	}
-	
-	double lnF_start = 1.0; // default for lnF_start
-	if (doc.HasMember("lnF_start")) {
-		assert(doc["lnF_start"].IsNumber());
-		lnF_start = doc["lnF_start"].GetDouble(); // bounds are checked later
+	if (lnF_end >= lnF_start) {
+		std::cerr << "lnF_end must be < lnF_start for Wang-Landau to proceed forward" << std::endl;
+		exit(SYS_FAILURE);
 	}
 	
 	bool restartFromWALA = false;
@@ -197,6 +201,17 @@ int main (int argc, char * const argv[]) {
 			restartFromTMMC = true;
 		}
 	}
+	
+	// number of times the TMMC C matrix has to be traversed during the WALA --> TMMC crossover
+	int nCrossoverVisits = 2; // default
+	if (doc.HasMember("num_crossover_visits")) {
+		assert(doc["num_crossover_visits"].IsInt());
+		nCrossoverVisits = doc["num_crossover_visits"].GetInt();
+		if (nCrossoverVisits < 1) {
+			std::cerr << "Must allow the collection matrix to be traversed at least once in the crossover from Wang-Landau to TMMC" << std::cerr;
+			exit(SYS_FAILURE);
+		}
+	}	
 	
 	std::vector < double > ref (sys.nSpecies(), 0);
 	std::vector < std::vector < double > > probEqSwap (sys.nSpecies(), ref), probPrSwap (sys.nSpecies(), ref);
@@ -454,7 +469,7 @@ int main (int argc, char * const argv[]) {
 	} 
 
 	bool highSnap = false, lowSnap = false;
-	
+					
 	if (!restartFromTMMC) {
 		std::cout << "Beginning Wang-Landau portion" << std::endl;
 	
@@ -463,6 +478,14 @@ int main (int argc, char * const argv[]) {
 		double lnF = lnF_start;
 		sys.startWALA (lnF, g, s); //!< Using Shen and Errington method this syntax is same for single and multicomponent
 		
+		time_t rawtime_t;
+		time (&rawtime_t);
+		struct tm * timeinfo_t;
+		timeinfo_t = localtime (&rawtime_t);
+		char dummy_t [80];
+		strftime (dummy_t,80,"%d/%m/%Y %H:%M:%S",timeinfo_t);
+		std::cout << "Initial lnF = " << lnF_start << " at " << dummy_t << std::endl;
+			
 		if (restartFromWALA) {
 			try {
 				sys.getWALABias()->readlnPI(restartFromWALAFile);
@@ -474,9 +497,10 @@ int main (int argc, char * const argv[]) {
 				std::cerr << ce.what() << std::endl;
 				exit(SYS_FAILURE);
 			}
+			std::cout << "Read initial lnPI for Wang-Lnadau from " << restartFromWALAFile << std::endl;
 		}
 		
-		int sweep = 0;
+		long long int counter = 0;
 		while (lnF > lnF_end) {
 			for (unsigned int move = 0; move < wlSweepSize; ++move) {
 				try {
@@ -489,13 +513,14 @@ int main (int argc, char * const argv[]) {
 				// record U
 				sys.recordU();
 			}
-			sweep++;
-			
+
 			// Check if bias has flattened out
 			flat = sys.getWALABias()->evaluateFlatness();
 			if (flat) {
+				counter++;
+				
 				// Periodically write out checkpoints - before iterateForward() which destroys H matrix
-				sys.getWALABias()->print("wl-Checkpoint-"+sstr(sweep), true);
+				sys.getWALABias()->print("wl-Checkpoint-"+sstr(counter), true);
 						
 				// if flat, need to reset H and reduce lnF
 				sys.getWALABias()->iterateForward();
@@ -507,7 +532,7 @@ int main (int argc, char * const argv[]) {
 				struct tm * timeinfo_tmp;
 				timeinfo_tmp = localtime (&rawtime_tmp);
 				char dummy_tmp [80];
-				strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+				strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
 				std::cout << "lnF = " << lnF << " at " << dummy_tmp << std::endl;
 			}
 		
@@ -533,7 +558,7 @@ int main (int argc, char * const argv[]) {
 	
 		// actually this should run until all elements of the collection matrix have been populated
 		int timesFullyVisited = 0;
-		while (timesFullyVisited < 2) { // 2 is an arbitrary choice for the number of times each was visited
+		while (timesFullyVisited < nCrossoverVisits) { // nCrossoverVisits = 2 is an arbitrary choice for the number of times each was visited
 			for (unsigned int move = 0; move < wlSweepSize; ++move) {
 				try {
 					usedMovesEq.makeMove(sys);

@@ -45,6 +45,7 @@ public:
 	const long long int numSweeps () { return nSweeps_; }
 	const double getBias (const int address) { return -lnPI_[address]; }
 	const std::vector < double > getC () { return C_; } //!< Return the collection matrix as it is
+	const std::vector < double > getHC () { return HC_; }
 	
 private:
 	int Nmax_; //!< Maximum number of total species in a simulation

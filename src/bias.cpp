@@ -72,9 +72,14 @@ bool tmmc::checkFullyVisited () {
 	for (__BIAS_INT_TYPE__ i = 0; i < HC_.size(); i += 3) {
 		if (i == 0) {
 			// lower bound, so only +1 move must be sampled
-			if ((HC_[i] < tmmcSweepSize_) || (HC_[i+1] < tmmcSweepSize_)) {
+			if ((HC_[i+1] < tmmcSweepSize_)) {
 				return false;
-			}				
+			}
+			// if lower bound = 0, we have a special case because no moves can be proposed which intend to go from 0 --> 0, which is how C is collected
+			// hence when lower bound is 0, HC[0] = 0 is valid, otherwise displacement moves, etc. will fill this in
+			if ((HC_[i] < tmmcSweepSize_) && (Nmin_ > 0)) {
+				return false;
+			}			
 		} else if (i == HC_.size()-3) {
 			// upper bound, so only -1 move must be sampled
 			if ((HC_[i] < tmmcSweepSize_) || (HC_[i+2] < tmmcSweepSize_)) {
