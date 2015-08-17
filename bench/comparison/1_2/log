@@ -1,0 +1,87 @@
+Beginning simulation at 16/08/2015 18:28:08
+Parsed inp1.json
+Setting up cell list for interactions between type 0 and 0
+Creating Cell list with rcut=1.5
+Beginning Wang-Landau portion
+lnF = 0.5 at 16/08/2015 18:28:08
+lnF = 0.25 at 16/08/2015 18:28:09
+lnF = 0.125 at 16/08/2015 18:28:09
+lnF = 0.0625 at 16/08/2015 18:28:09
+lnF = 0.03125 at 16/08/2015 18:28:09
+lnF = 0.015625 at 16/08/2015 18:28:09
+lnF = 0.0078125 at 16/08/2015 18:28:10
+lnF = 0.00390625 at 16/08/2015 18:28:11
+lnF = 0.00195312 at 16/08/2015 18:28:11
+lnF = 0.000976562 at 16/08/2015 18:28:13
+lnF = 0.000488281 at 16/08/2015 18:28:14
+lnF = 0.000244141 at 16/08/2015 18:28:17
+lnF = 0.00012207 at 16/08/2015 18:28:22
+lnF = 6.10352e-05 at 16/08/2015 18:28:29
+lnF = 3.05176e-05 at 16/08/2015 18:28:36
+lnF = 1.52588e-05 at 16/08/2015 18:28:41
+lnF = 7.62939e-06 at 16/08/2015 18:29:10
+lnF = 3.8147e-06 at 16/08/2015 18:29:25
+lnF = 1.90735e-06 at 16/08/2015 18:29:31
+lnF = 9.53674e-07 at 16/08/2015 18:29:42
+lnF = 4.76837e-07 at 16/08/2015 18:29:45
+lnF = 2.38419e-07 at 16/08/2015 18:30:03
+lnF = 1.19209e-07 at 16/08/2015 18:30:08
+lnF = 5.96046e-08 at 16/08/2015 18:30:12
+lnF = 2.98023e-08 at 16/08/2015 18:30:18
+lnF = 1.49012e-08 at 16/08/2015 18:30:33
+lnF = 7.45058e-09 at 16/08/2015 18:30:53
+lnF = 3.72529e-09 at 16/08/2015 18:31:00
+lnF = 1.86265e-09 at 16/08/2015 18:31:07
+lnF = 9.31323e-10 at 16/08/2015 18:31:11
+lnF = 4.65661e-10 at 16/08/2015 18:33:03
+lnF = 2.32831e-10 at 16/08/2015 18:33:12
+lnF = 1.16415e-10 at 16/08/2015 18:33:22
+lnF = 5.82077e-11 at 16/08/2015 18:33:34
+lnF = 2.91038e-11 at 16/08/2015 18:36:30
+lnF = 1.45519e-11 at 16/08/2015 18:36:46
+lnF = 7.27596e-12 at 16/08/2015 18:36:48
+lnF = 3.63798e-12 at 16/08/2015 18:36:59
+lnF = 1.81899e-12 at 16/08/2015 18:38:05
+lnF = 9.09495e-13 at 16/08/2015 18:38:18
+lnF = 4.54747e-13 at 16/08/2015 18:38:37
+lnF = 2.27374e-13 at 16/08/2015 18:38:45
+lnF = 1.13687e-13 at 16/08/2015 18:39:05
+lnF = 5.68434e-14 at 16/08/2015 18:40:51
+lnF = 2.84217e-14 at 16/08/2015 18:40:59
+lnF = 1.42109e-14 at 16/08/2015 18:41:07
+lnF = 7.10543e-15 at 16/08/2015 18:41:18
+lnF = 3.55271e-15 at 16/08/2015 18:41:26
+lnF = 1.77636e-15 at 16/08/2015 18:41:30
+lnF = 8.88178e-16 at 16/08/2015 18:41:49
+lnF = 4.44089e-16 at 16/08/2015 18:42:04
+lnF = 2.22045e-16 at 16/08/2015 18:42:09
+lnF = 1.11022e-16 at 16/08/2015 18:42:28
+lnF = 5.55112e-17 at 16/08/2015 18:42:48
+lnF = 2.77556e-17 at 16/08/2015 18:43:03
+lnF = 1.38778e-17 at 16/08/2015 18:43:19
+lnF = 6.93889e-18 at 16/08/2015 18:43:23
+lnF = 3.46945e-18 at 16/08/2015 18:43:30
+lnF = 1.73472e-18 at 16/08/2015 18:43:35
+Crossing over to build TMMC matrix
+Switching over to TMMC completely, ending Wang-Landau
+Beginning TMMC
+Finished 0/1000 total TMMC sweeps at 16/08/2015 18:43:42
+Finished 10/1000 total TMMC sweeps at 16/08/2015 18:44:29
+Finished 20/1000 total TMMC sweeps at 16/08/2015 18:45:13
+Finished 30/1000 total TMMC sweeps at 16/08/2015 18:45:50
+Finished 40/1000 total TMMC sweeps at 16/08/2015 18:46:26
+Finished 50/1000 total TMMC sweeps at 16/08/2015 18:46:59
+Finished 60/1000 total TMMC sweeps at 16/08/2015 18:47:35
+Finished 70/1000 total TMMC sweeps at 16/08/2015 18:48:10
+Finished 80/1000 total TMMC sweeps at 16/08/2015 18:48:49
+Finished 90/1000 total TMMC sweeps at 16/08/2015 18:49:33
+Finished 100/1000 total TMMC sweeps at 16/08/2015 18:50:20
+Finished 110/1000 total TMMC sweeps at 16/08/2015 18:51:06
+Finished 120/1000 total TMMC sweeps at 16/08/2015 18:51:58
+Finished 130/1000 total TMMC sweeps at 16/08/2015 18:52:47
+Finished 140/1000 total TMMC sweeps at 16/08/2015 18:53:32
+Finished 150/1000 total TMMC sweeps at 16/08/2015 18:54:18
+Finished 160/1000 total TMMC sweeps at 16/08/2015 18:55:05
+Finished 170/1000 total TMMC sweeps at 16/08/2015 18:55:46
+Finished 180/1000 total TMMC sweeps at 16/08/2015 18:56:31
+Finished 190/1000 total TMMC sweeps at 16/08/2015 18:57:16

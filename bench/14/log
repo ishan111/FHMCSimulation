@@ -1,0 +1,8 @@
+Beginning simulation at 16/08/2015 19:55:43
+Parsed inp14.json
+Setting up cell list for interactions between type 0 and 0
+Creating Cell list with rcut=1.5
+Reading initial configuration from ../13/high.xyz
+Beginning Wang-Landau portion
+lnF = 0.5 at 16/08/2015 21:47:29
+lnF = 0.25 at 16/08/2015 22:28:57

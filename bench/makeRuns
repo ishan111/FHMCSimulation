@@ -1,0 +1,28 @@
+#!/bin/bash
+OVERLAP=10;
+MIN=0;
+MAX=600;
+RANGE=60;
+BIN="../../bin/omcs";
+RESFILE=""
+
+UB=$((OVERLAP/2));
+LB=$((-(RANGE-OVERLAP/2)));
+COUNTER=1
+until [ $UB -ge $MAX ]; do
+	let UB+=$((RANGE-OVERLAP/2));
+	let LB+=$((RANGE-OVERLAP/2));
+	if [ $UB -gt $MAX ]; then
+		UB=$MAX;
+	fi
+	
+	sed -e "s/UBOUND/$UB/g" masterInp.json > tmp.json;
+	sed -e "s/LBOUND/$LB/g" tmp.json > tmp2.json;
+	sed -e "s/RESTART/$RESFILE/g" tmp2.json > tmp3.json;
+	mkdir "$COUNTER"
+	mv tmp3.json "$COUNTER/inp$COUNTER.json";
+	rm tmp.json tmp2.json;
+	RESFILE="..\/$COUNTER\/high.xyz";
+	echo "cd $COUNTER/; $BIN inp$COUNTER.json 2> err > log; cd ../;"
+	let COUNTER+=1;
+done

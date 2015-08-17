@@ -1,0 +1,169 @@
+Beginning simulation at 13/08/2015 15:25:06
+Parsed inp5.json
+Setting up cell list for interactions between type 0 and 0
+Creating Cell list with rcut=1.5
+Reading initial configuration from ../4/high.xyz
+Beginning Wang-Landau portion
+lnF = 0.5 at 13/08/2015 15:25:07
+lnF = 0.25 at 13/08/2015 15:25:07
+lnF = 0.125 at 13/08/2015 15:25:08
+lnF = 0.0625 at 13/08/2015 15:25:08
+lnF = 0.03125 at 13/08/2015 15:25:09
+lnF = 0.015625 at 13/08/2015 15:25:09
+lnF = 0.0078125 at 13/08/2015 15:25:10
+lnF = 0.00390625 at 13/08/2015 15:25:12
+lnF = 0.00195312 at 13/08/2015 15:25:13
+lnF = 0.000976562 at 13/08/2015 15:25:15
+lnF = 0.000488281 at 13/08/2015 15:25:17
+lnF = 0.000244141 at 13/08/2015 15:25:21
+lnF = 0.00012207 at 13/08/2015 15:25:23
+lnF = 6.10352e-05 at 13/08/2015 15:25:32
+lnF = 3.05176e-05 at 13/08/2015 15:25:36
+lnF = 1.52588e-05 at 13/08/2015 15:25:49
+lnF = 7.62939e-06 at 13/08/2015 15:25:59
+lnF = 3.8147e-06 at 13/08/2015 15:26:08
+lnF = 1.90735e-06 at 13/08/2015 15:26:11
+lnF = 9.53674e-07 at 13/08/2015 15:26:18
+lnF = 4.76837e-07 at 13/08/2015 15:26:26
+lnF = 2.38419e-07 at 13/08/2015 15:26:35
+lnF = 1.19209e-07 at 13/08/2015 15:27:28
+lnF = 5.96046e-08 at 13/08/2015 15:27:37
+lnF = 2.98023e-08 at 13/08/2015 15:27:54
+lnF = 1.49012e-08 at 13/08/2015 15:29:07
+lnF = 7.45058e-09 at 13/08/2015 15:29:24
+lnF = 3.72529e-09 at 13/08/2015 15:30:00
+lnF = 1.86265e-09 at 13/08/2015 15:30:25
+lnF = 9.31323e-10 at 13/08/2015 15:30:56
+lnF = 4.65661e-10 at 13/08/2015 15:30:59
+lnF = 2.32831e-10 at 13/08/2015 15:31:03
+lnF = 1.16415e-10 at 13/08/2015 15:31:15
+lnF = 5.82077e-11 at 13/08/2015 15:31:18
+lnF = 2.91038e-11 at 13/08/2015 15:31:27
+lnF = 1.45519e-11 at 13/08/2015 15:31:31
+lnF = 7.27596e-12 at 13/08/2015 15:31:46
+lnF = 3.63798e-12 at 13/08/2015 15:32:09
+lnF = 1.81899e-12 at 13/08/2015 15:32:28
+lnF = 9.09495e-13 at 13/08/2015 15:32:33
+lnF = 4.54747e-13 at 13/08/2015 15:33:00
+lnF = 2.27374e-13 at 13/08/2015 15:33:07
+lnF = 1.13687e-13 at 13/08/2015 15:33:38
+lnF = 5.68434e-14 at 13/08/2015 15:33:41
+lnF = 2.84217e-14 at 13/08/2015 15:33:49
+lnF = 1.42109e-14 at 13/08/2015 15:33:51
+lnF = 7.10543e-15 at 13/08/2015 15:34:14
+lnF = 3.55271e-15 at 13/08/2015 15:34:18
+lnF = 1.77636e-15 at 13/08/2015 15:34:25
+lnF = 8.88178e-16 at 13/08/2015 15:34:57
+lnF = 4.44089e-16 at 13/08/2015 15:35:22
+lnF = 2.22045e-16 at 13/08/2015 15:36:15
+lnF = 1.11022e-16 at 13/08/2015 15:36:56
+lnF = 5.55112e-17 at 13/08/2015 15:37:09
+lnF = 2.77556e-17 at 13/08/2015 15:38:10
+lnF = 1.38778e-17 at 13/08/2015 15:38:27
+lnF = 6.93889e-18 at 13/08/2015 15:38:39
+lnF = 3.46945e-18 at 13/08/2015 15:38:49
+lnF = 1.73472e-18 at 13/08/2015 15:39:05
+Crossing over to build TMMC matrix
+Switching over to TMMC completely, ending Wang-Landau
+Beginning TMMC
+Finished 0/100 total TMMC sweeps at 13/08/2015 15:39:06
+Finished 1/100 total TMMC sweeps at 13/08/2015 15:39:06
+Finished 2/100 total TMMC sweeps at 13/08/2015 15:39:06
+Finished 3/100 total TMMC sweeps at 13/08/2015 15:39:07
+Finished 4/100 total TMMC sweeps at 13/08/2015 15:39:07
+Finished 5/100 total TMMC sweeps at 13/08/2015 15:39:07
+Finished 6/100 total TMMC sweeps at 13/08/2015 15:39:07
+Finished 7/100 total TMMC sweeps at 13/08/2015 15:39:08
+Finished 8/100 total TMMC sweeps at 13/08/2015 15:39:08
+Finished 9/100 total TMMC sweeps at 13/08/2015 15:39:08
+Finished 10/100 total TMMC sweeps at 13/08/2015 15:39:09
+Finished 11/100 total TMMC sweeps at 13/08/2015 15:39:09
+Finished 12/100 total TMMC sweeps at 13/08/2015 15:39:09
+Finished 13/100 total TMMC sweeps at 13/08/2015 15:39:10
+Finished 14/100 total TMMC sweeps at 13/08/2015 15:39:10
+Finished 15/100 total TMMC sweeps at 13/08/2015 15:39:10
+Finished 16/100 total TMMC sweeps at 13/08/2015 15:39:10
+Finished 17/100 total TMMC sweeps at 13/08/2015 15:39:11
+Finished 18/100 total TMMC sweeps at 13/08/2015 15:39:11
+Finished 19/100 total TMMC sweeps at 13/08/2015 15:39:11
+Finished 20/100 total TMMC sweeps at 13/08/2015 15:39:12
+Finished 21/100 total TMMC sweeps at 13/08/2015 15:39:12
+Finished 22/100 total TMMC sweeps at 13/08/2015 15:39:12
+Finished 23/100 total TMMC sweeps at 13/08/2015 15:39:13
+Finished 24/100 total TMMC sweeps at 13/08/2015 15:39:13
+Finished 25/100 total TMMC sweeps at 13/08/2015 15:39:13
+Finished 26/100 total TMMC sweeps at 13/08/2015 15:39:13
+Finished 27/100 total TMMC sweeps at 13/08/2015 15:39:14
+Finished 28/100 total TMMC sweeps at 13/08/2015 15:39:14
+Finished 29/100 total TMMC sweeps at 13/08/2015 15:39:14
+Finished 30/100 total TMMC sweeps at 13/08/2015 15:39:15
+Finished 31/100 total TMMC sweeps at 13/08/2015 15:39:15
+Finished 32/100 total TMMC sweeps at 13/08/2015 15:39:15
+Finished 33/100 total TMMC sweeps at 13/08/2015 15:39:16
+Finished 34/100 total TMMC sweeps at 13/08/2015 15:39:16
+Finished 35/100 total TMMC sweeps at 13/08/2015 15:39:16
+Finished 36/100 total TMMC sweeps at 13/08/2015 15:39:17
+Finished 37/100 total TMMC sweeps at 13/08/2015 15:39:17
+Finished 38/100 total TMMC sweeps at 13/08/2015 15:39:17
+Finished 39/100 total TMMC sweeps at 13/08/2015 15:39:18
+Finished 40/100 total TMMC sweeps at 13/08/2015 15:39:18
+Finished 41/100 total TMMC sweeps at 13/08/2015 15:39:18
+Finished 42/100 total TMMC sweeps at 13/08/2015 15:39:18
+Finished 43/100 total TMMC sweeps at 13/08/2015 15:39:19
+Finished 44/100 total TMMC sweeps at 13/08/2015 15:39:19
+Finished 45/100 total TMMC sweeps at 13/08/2015 15:39:19
+Finished 46/100 total TMMC sweeps at 13/08/2015 15:39:20
+Finished 47/100 total TMMC sweeps at 13/08/2015 15:39:20
+Finished 48/100 total TMMC sweeps at 13/08/2015 15:39:20
+Finished 49/100 total TMMC sweeps at 13/08/2015 15:39:20
+Finished 50/100 total TMMC sweeps at 13/08/2015 15:39:21
+Finished 51/100 total TMMC sweeps at 13/08/2015 15:39:21
+Finished 52/100 total TMMC sweeps at 13/08/2015 15:39:21
+Finished 53/100 total TMMC sweeps at 13/08/2015 15:39:22
+Finished 54/100 total TMMC sweeps at 13/08/2015 15:39:22
+Finished 55/100 total TMMC sweeps at 13/08/2015 15:39:22
+Finished 56/100 total TMMC sweeps at 13/08/2015 15:39:23
+Finished 57/100 total TMMC sweeps at 13/08/2015 15:39:23
+Finished 58/100 total TMMC sweeps at 13/08/2015 15:39:23
+Finished 59/100 total TMMC sweeps at 13/08/2015 15:39:24
+Finished 60/100 total TMMC sweeps at 13/08/2015 15:39:24
+Finished 61/100 total TMMC sweeps at 13/08/2015 15:39:24
+Finished 62/100 total TMMC sweeps at 13/08/2015 15:39:25
+Finished 63/100 total TMMC sweeps at 13/08/2015 15:39:25
+Finished 64/100 total TMMC sweeps at 13/08/2015 15:39:25
+Finished 65/100 total TMMC sweeps at 13/08/2015 15:39:25
+Finished 66/100 total TMMC sweeps at 13/08/2015 15:39:26
+Finished 67/100 total TMMC sweeps at 13/08/2015 15:39:26
+Finished 68/100 total TMMC sweeps at 13/08/2015 15:39:26
+Finished 69/100 total TMMC sweeps at 13/08/2015 15:39:27
+Finished 70/100 total TMMC sweeps at 13/08/2015 15:39:27
+Finished 71/100 total TMMC sweeps at 13/08/2015 15:39:27
+Finished 72/100 total TMMC sweeps at 13/08/2015 15:39:28
+Finished 73/100 total TMMC sweeps at 13/08/2015 15:39:28
+Finished 74/100 total TMMC sweeps at 13/08/2015 15:39:28
+Finished 75/100 total TMMC sweeps at 13/08/2015 15:39:28
+Finished 76/100 total TMMC sweeps at 13/08/2015 15:39:29
+Finished 77/100 total TMMC sweeps at 13/08/2015 15:39:29
+Finished 78/100 total TMMC sweeps at 13/08/2015 15:39:29
+Finished 79/100 total TMMC sweeps at 13/08/2015 15:39:30
+Finished 80/100 total TMMC sweeps at 13/08/2015 15:39:30
+Finished 81/100 total TMMC sweeps at 13/08/2015 15:39:30
+Finished 82/100 total TMMC sweeps at 13/08/2015 15:39:31
+Finished 83/100 total TMMC sweeps at 13/08/2015 15:39:31
+Finished 84/100 total TMMC sweeps at 13/08/2015 15:39:31
+Finished 85/100 total TMMC sweeps at 13/08/2015 15:39:31
+Finished 86/100 total TMMC sweeps at 13/08/2015 15:39:32
+Finished 87/100 total TMMC sweeps at 13/08/2015 15:39:32
+Finished 88/100 total TMMC sweeps at 13/08/2015 15:39:32
+Finished 89/100 total TMMC sweeps at 13/08/2015 15:39:33
+Finished 90/100 total TMMC sweeps at 13/08/2015 15:39:33
+Finished 91/100 total TMMC sweeps at 13/08/2015 15:39:33
+Finished 92/100 total TMMC sweeps at 13/08/2015 15:39:34
+Finished 93/100 total TMMC sweeps at 13/08/2015 15:39:34
+Finished 94/100 total TMMC sweeps at 13/08/2015 15:39:34
+Finished 95/100 total TMMC sweeps at 13/08/2015 15:39:34
+Finished 96/100 total TMMC sweeps at 13/08/2015 15:39:35
+Finished 97/100 total TMMC sweeps at 13/08/2015 15:39:35
+Finished 98/100 total TMMC sweeps at 13/08/2015 15:39:35
+Finished 99/100 total TMMC sweeps at 13/08/2015 15:39:36
+Finished simulation at 13/08/2015 15:39:36
