@@ -441,12 +441,10 @@ int main (int argc, char * const argv[]) {
 			sys.readRestart(restart_file);
 		} catch (customException &ce) {
 			std::cerr << ce. what() << std::endl;
-			
 			for (unsigned int i = 0; i < ppotArray.size(); ++i) {
 				delete ppotArray[i];
 			}
 			ppotArray.clear();
-			    
 			exit(SYS_FAILURE);
 		}
 	} 
@@ -465,6 +463,10 @@ int main (int argc, char * const argv[]) {
 			try {
 				sys.getWALABias()->readlnPI(restartFromWALAFile);
 			} catch (customException &ce) {
+				for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+					delete ppotArray[i];
+				}
+				ppotArray.clear();
 				std::cerr << ce.what() << std::endl;
 				exit(SYS_FAILURE);
 			}
@@ -532,12 +534,10 @@ int main (int argc, char * const argv[]) {
 					usedMovesEq.makeMove(sys);
 				} catch (customException &ce) {
 					std::cerr << ce.what() << std::endl;
-					
 					for (unsigned int i = 0; i < ppotArray.size(); ++i) {
 						delete ppotArray[i];
 					}
 					ppotArray.clear();
-					
 					exit(SYS_FAILURE);
 				}
 			
