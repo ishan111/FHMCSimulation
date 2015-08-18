@@ -87,7 +87,8 @@ protected:
 	
 	virtual void SetUp() {
 		lj = new lennardJones;
-		params.resize(4, 0);
+		params.resize(5, 0);
+		params[4] = 1;
 		tol = 1.0e-9;
 	}
 };
@@ -219,10 +220,11 @@ protected:
 		eps = 1.234;
 		sigma = 2.345;
 		width = 0.12;
-		params.resize(3, 0);
+		params.resize(4, 0);
 		params[0] = sigma;
 		params[1] = width;
 		params[2] = eps;
+		params[3] = 1; // Mtot
 		tol = 1.0e-9;
 	}
 };
@@ -263,12 +265,13 @@ TEST_F (squareWellTest, badParams2) {
 	delete sw;
 }
 
-TEST_F (squareWellTest, testInRangeLower) {
+TEST_F (squareWellTest, testInRangeLower) {	
 	sw->setParameters(params);
 	atom a1, a2;
 	std::vector < double > box (3, 10);
 	
 	a2.pos[2] = 1.0001*sigma;
+
 	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - -eps) < tol);
 	delete sw;
 }
@@ -324,8 +327,9 @@ protected:
 	virtual void SetUp() {
 		hc = new hardCore;
 		sigma = 2.345;
-		params.resize(1, 0);
+		params.resize(2, 0);
 		params[0] = sigma;
+		params[1] = 1; // Mtot
 		tol = 1.0e-9;
 	}
 };
@@ -593,13 +597,14 @@ TEST_F (InitializeSystem, deleteAtom) {
 TEST_F (InitializeSystem, scratchEnergy) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	lennardJones ljtest;
-	std::vector < double > params (4), p1(3, 0.0), p2(3, 0.0);
+	std::vector < double > params (5), p1(3, 0.0), p2(3, 0.0);
 	
 	// wca
 	params[0] = 1.0;
 	params[1] = 1.0;
 	params[2] = pow(2.0, 1./6.);
 	params[3] = 1.0;
+	params[4] = 1; // Mtot
 	ljtest.setParameters(params);
 	mysys.addPotential(0, 0, &ljtest);
 	
@@ -634,7 +639,7 @@ TEST (testTMMC, tmmcGoodInit) {
 	std::vector < double > dummyBox (3, 0);
 	bool pass = true;
 	try {
-		tmmc test (Nmax, Nmin, sweepSize, dummyBox);
+		tmmc test (Nmax, Nmin, sweepSize, 1, dummyBox);
 	} catch (customException &ce) {
 		pass = false;
 	}
@@ -646,7 +651,7 @@ TEST (testTMMC, tmmcBadInitNegative) {
 	std::vector < double > dummyBox (3, 0);
 	bool pass = true;
 	try {
-		tmmc test (Nmax, Nmin, sweepSize, dummyBox);
+		tmmc test (Nmax, Nmin, sweepSize, 1, dummyBox);
 	} catch (customException &ce) {
 		pass = false;
 	}
@@ -658,7 +663,7 @@ TEST (testTMMC, tmmcBadInitOrder) {
 	std::vector < double > dummyBox (3, 0);
 	bool pass = true;
 	try {
-		tmmc test (Nmax, Nmin, sweepSize, dummyBox);
+		tmmc test (Nmax, Nmin, sweepSize, 1, dummyBox);
 	} catch (customException &ce) {
 		pass = false;
 	}
@@ -676,7 +681,7 @@ protected:
 		Nmax = 10;
 		dummyBox.resize(3, 0);
 		sweepSize = 100;
-		tmmcBias = new tmmc (Nmax, Nmin, sweepSize, dummyBox);
+		tmmcBias = new tmmc (Nmax, Nmin, 1, sweepSize, dummyBox);
 	}
 };
 
@@ -695,7 +700,7 @@ TEST_F (tmmBiasC, cSize) {
 
 TEST_F (tmmBiasC, updateCMin) {
 	const double pu = 0.123;
-	tmmcBias->updateC(Nmin, Nmin, pu);
+	tmmcBias->updateC(Nmin, Nmin, 0, 0, pu);
 	std::vector <double> collMat = tmmcBias->getC();
 	
 	for (unsigned int i = 1; i < collMat.size(); ++i) {
@@ -708,7 +713,7 @@ TEST_F (tmmBiasC, updateCMin) {
 
 TEST_F (tmmBiasC, updateCMax) {
 	const double pu = 0.123;
-	tmmcBias->updateC(Nmax, Nmax, pu);
+	tmmcBias->updateC(Nmax, Nmax, 0, 0, pu);
 	std::vector <double> collMat = tmmcBias->getC();
 	
 	for (unsigned int i = 0; i < collMat.size(); ++i) {
@@ -723,7 +728,7 @@ TEST_F (tmmBiasC, updateCMax) {
 
 TEST_F (tmmBiasC, updateCForward) {
 	const double pu = 0.123;
-	tmmcBias->updateC(Nmin, Nmin+1, pu);
+	tmmcBias->updateC(Nmin, Nmin+1, 0, 0, pu);
 	std::vector <double> collMat = tmmcBias->getC();
 	
 	for (unsigned int i = 2; i < collMat.size(); ++i) {
@@ -737,7 +742,7 @@ TEST_F (tmmBiasC, updateCForward) {
 
 TEST_F (tmmBiasC, updateCBackward) {
 	const double pu = 0.123;
-	tmmcBias->updateC(Nmin+1, Nmin, pu);
+	tmmcBias->updateC(Nmin+1, Nmin, 0, 0, pu);
 	std::vector <double> collMat = tmmcBias->getC();
 	
 	for (unsigned int i = 0; i < collMat.size(); ++i) {
@@ -763,10 +768,10 @@ protected:
 		Nmax = 5;
 		dummyBox.resize(3, 0);
 		sweepSize = 1;
-		tmmcBias = new tmmc (Nmax, Nmin, sweepSize, dummyBox);
-		tmmcBias->updateC(Nmin, Nmin+1, pu);
-		tmmcBias->updateC(Nmin+1, Nmin+2, pu);
-		tmmcBias->updateC(Nmin+2, Nmin+1, pu);
+		tmmcBias = new tmmc (Nmax, Nmin, 1, sweepSize, dummyBox);
+		tmmcBias->updateC(Nmin, Nmin+1, 0, 0, pu);
+		tmmcBias->updateC(Nmin+1, Nmin+2, 0, 0, pu);
+		tmmcBias->updateC(Nmin+2, Nmin+1, 0, 0, pu);
 	}
 };
 
@@ -783,11 +788,12 @@ TEST_F (tmmBiaslnPI, incompleteC) {
 
 TEST_F (tmmBiaslnPI, completeC) {
 	bool caught = false;
-	tmmcBias->updateC(Nmin+1, Nmin, pu);
+	tmmcBias->updateC(Nmin+1, Nmin, 0, 0, pu);
 	try {
 		tmmcBias->calculatePI();
 	} catch (customException& ce) {
 		caught = true;
+		std::cout << ce.what() << std::endl;
 	}
 	EXPECT_TRUE(!caught);
 	delete tmmcBias;
@@ -800,10 +806,10 @@ TEST_F (tmmBiaslnPI, checkVisitedNo) {
 }
 
 TEST_F (tmmBiaslnPI, checkVisitedYes) {
-	tmmcBias->updateC(Nmin+1, Nmin, pu);
-	tmmcBias->updateC(Nmin, Nmin, pu); // also have to include visiting self
-	tmmcBias->updateC(Nmin+1, Nmin+1, pu);
-	tmmcBias->updateC(Nmin+2, Nmin+2, pu);	
+	tmmcBias->updateC(Nmin+1, Nmin, 0, 0, pu);
+	tmmcBias->updateC(Nmin, Nmin, 0, 0, pu); // also have to include visiting self
+	tmmcBias->updateC(Nmin+1, Nmin+1, 0, 0, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+2, 0, 0, pu);	
 	bool pass = tmmcBias->checkFullyVisited();
 	EXPECT_TRUE(pass);
 	delete tmmcBias;
@@ -818,64 +824,53 @@ TEST_F (tmmBiaslnPI, setBias) {
 }
 
 TEST_F (tmmBiaslnPI, checkPrintAndRead) {
-	tmmcBias->updateC(Nmin+1, Nmin, pu);
+	tmmcBias->updateC(Nmin+1, Nmin, 0, 0, pu);
 	tmmcBias->calculatePI();
 	tmmcBias->print("tmmBiaslnPI_checkPrint", true);
-	std::vector < double > C1 = tmmcBias->getC(), lnPI1(3), lnPI2(3);
-	for (unsigned int i = 0; i < 3; ++i) {
-		lnPI1[i] = -tmmcBias->getBias(i);
-	}
+	std::vector < double > C1 = tmmcBias->getC();
 #ifdef NETCDF_CAPABLE
 	tmmcBias->readC("tmmBiaslnPI_checkPrint_C.nc");
-	tmmcBias->readlnPI("tmmBiaslnPI_checkPrint_lnPI.nc");
 #else
 	tmmcBias->readC("tmmBiaslnPI_checkPrint_C.dat");
-	tmmcBias->readlnPI("tmmBiaslnPI_checkPrint_lnPI.dat");
 #endif
 	std::vector < double > C2 = tmmcBias->getC();
 	EXPECT_EQ (C2.size(), C1.size());
-	for (unsigned int i = 0; i < 3; ++i) {
-		lnPI2[i] = -tmmcBias->getBias(i);
-	}
 	for (unsigned int i = 0; i < C1.size(); ++i) {
 		EXPECT_TRUE (fabs(C1[i] - C2[i]) < 1.0e-9);
-	}
-	for (unsigned int i = 0; i < lnPI1.size(); ++i) {
-		EXPECT_TRUE (fabs(lnPI1[i] - lnPI2[i]) < 1.0e-6);
 	}
 	
 	delete tmmcBias;
 }
 
 TEST_F (tmmBiaslnPI, checkCAddresses) {
-	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin), 0);
-	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin+1), 1);
-	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin-1), 2);
-	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+1), 3);
-	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+2), 4);
-	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin), 5);
-	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+2), 6);
-	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+3), 7);
-	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+1), 8);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin, 0, 0), 0);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin+1, 0, 0), 1);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin-1, 0, 0), 2);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+1, 0, 0), 3);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+2, 0, 0), 4);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin, 0, 0), 5);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+2, 0, 0), 6);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+3, 0, 0), 7);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+1, 0, 0), 8);
 	
 	delete tmmcBias;
 }
 
 TEST_F (tmmBiaslnPI, checkLnPIAddresses) {
-	EXPECT_EQ (tmmcBias->getAddress(Nmin), 0);
-	EXPECT_EQ (tmmcBias->getAddress(Nmin+1), 1);
-	EXPECT_EQ (tmmcBias->getAddress(Nmin+2), 2);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin, 0), 0);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin+1, 0), 1);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin+2, 0), 2);
 	
 	delete tmmcBias;
 }
 
 TEST_F (tmmBiaslnPI, checkLnPI) {
-	tmmcBias->updateC(Nmin+1, Nmin, pu);
+	tmmcBias->updateC(Nmin+1, Nmin, 0, 0, pu);
 	tmmcBias->calculatePI();
 	
-	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin)) - 0.0) < 1.0e-9);
-	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+1)) - log(2.0)) < 1.0e-9);
-	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2)) - (log(2.0)+log(0.5))) < 1.0e-9);
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin, 0)) - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+1, 0)) - log(2.0)) < 1.0e-9);
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2, 0)) - (log(2.0)+log(0.5))) < 1.0e-9);
 	
 	delete tmmcBias;
 }
@@ -887,7 +882,7 @@ TEST (testWALA, walaInitBadlnF) {
 	std::vector < double > dummyBox (3, 0);
 	
 	try {
-		wala (lnF, g, s, Nmax, Nmin, dummyBox);
+		wala (lnF, g, s, Nmax, Nmin, 1, dummyBox);
 	} catch (customException &ce) {
 		caught = true;
 	}
@@ -900,7 +895,7 @@ TEST (testWALA, walaInitBadGNeg) {
 	bool caught = false;
 	std::vector < double > dummyBox (3, 0);
 	try {
-		wala (lnF, g, s, Nmax, Nmin, dummyBox);
+		wala (lnF, g, s, Nmax, Nmin, 1, dummyBox);
 	} catch (customException &ce) {
 		caught = true;
 	}
@@ -913,7 +908,7 @@ TEST (testWALA, walaInitBadGPos) {
 	bool caught = false;
 	std::vector < double > dummyBox (3, 0);
 	try {
-		wala (lnF, g, s, Nmax, Nmin, dummyBox);
+		wala (lnF, g, s, Nmax, Nmin, 1, dummyBox);
 	} catch (customException &ce) {
 		caught = true;
 	}
@@ -926,7 +921,7 @@ TEST (testWALA, walaInitBadSNeg) {
 	bool caught = false;
 	std::vector < double > dummyBox (3, 0);
 	try {
-		wala (lnF, g, s, Nmax, Nmin, dummyBox);
+		wala (lnF, g, s, Nmax, Nmin, 1, dummyBox);
 	} catch (customException &ce) {
 		caught = true;
 	}
@@ -939,7 +934,7 @@ TEST (testWALA, walaInitBadSPos) {
 	bool caught = false;
 	std::vector < double > dummyBox (3, 0);
 	try {
-		wala (lnF, g, s, Nmax, Nmin, dummyBox);
+		wala (lnF, g, s, Nmax, Nmin, 1, dummyBox);
 	} catch (customException &ce) {
 		caught = true;
 	}
@@ -952,7 +947,7 @@ TEST (testWALA, walaInitSwitchedBounds) {
 	bool caught = false;
 	std::vector < double > dummyBox (3, 0);
 	try {
-		wala (lnF, g, s, Nmin, Nmax, dummyBox);
+		wala (lnF, g, s, Nmin, Nmax, 1, dummyBox);
 	} catch (customException &ce) {
 		caught = true;
 	}
@@ -965,7 +960,7 @@ TEST (testWALA, walaInitNegLowerBound) {
 	bool caught = false;
 	std::vector < double > dummyBox (3, 0);
 	try {
-		wala (lnF, g, s, Nmax, Nmin, dummyBox);
+		wala (lnF, g, s, Nmax, Nmin, 1, dummyBox);
 	} catch (customException &ce) {
 		caught = true;
 	}
@@ -987,7 +982,7 @@ protected:
 		g = 0.5;
 		lnF = 1.0;
 		dummyBox.resize(3, 0);
-		walaBias = new wala (lnF, g, s, Nmax, Nmin, dummyBox);
+		walaBias = new wala (lnF, g, s, Nmax, Nmin, 1, dummyBox);
 	}
 };
 
@@ -998,18 +993,18 @@ TEST_F (testWalaBias, testMatrixSizes) {
 }
 
 TEST_F (testWalaBias, testUpdateSame) {
-	walaBias->update(Nmin);
-	walaBias->update(Nmin);
-	walaBias->update(Nmin);
+	walaBias->update(Nmin, 0);
+	walaBias->update(Nmin, 0);
+	walaBias->update(Nmin, 0);
 	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
 	EXPECT_TRUE (fabs(H[0] - 3.0) < 1.0e-9);
 	EXPECT_TRUE (fabs(lnPI[0] - 3.0*lnF) < 1.0e-9);
 }
 
 TEST_F (testWalaBias, testUpdateDiff) {
-	walaBias->update(Nmin);
-	walaBias->update(Nmin+1);
-	walaBias->update(Nmin+2);
+	walaBias->update(Nmin, 0);
+	walaBias->update(Nmin+1, 0);
+	walaBias->update(Nmin+2, 0);
 	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
 	EXPECT_TRUE (fabs(H[0] - 1.0) < 1.0e-9);
 	EXPECT_TRUE (fabs(H[1] - 1.0) < 1.0e-9);
@@ -1020,15 +1015,15 @@ TEST_F (testWalaBias, testUpdateDiff) {
 }
 
 TEST_F (testWalaBias, GetGoodAddress) {
-	EXPECT_EQ (walaBias->getAddress(Nmin), 0);
-	EXPECT_EQ (walaBias->getAddress(Nmin+1), 1);
-	EXPECT_EQ (walaBias->getAddress(Nmin+2), 2);
+	EXPECT_EQ (walaBias->getAddress(Nmin, 0), 0);
+	EXPECT_EQ (walaBias->getAddress(Nmin+1, 0), 1);
+	EXPECT_EQ (walaBias->getAddress(Nmin+2, 0), 2);
 }
 
 TEST_F (testWalaBias, GetBadAddress) {
 	bool caught = false;
 	try {
-		EXPECT_EQ (walaBias->getAddress(Nmin+3), 0);
+		EXPECT_EQ (walaBias->getAddress(Nmin+3, 0), 0);
 	} catch (customException &ce) {
 		caught = true;
 	}
@@ -1036,18 +1031,18 @@ TEST_F (testWalaBias, GetBadAddress) {
 }
 
 TEST_F (testWalaBias, getBias) {
-	walaBias->update(Nmin);
-	walaBias->update(Nmin+1);
-	walaBias->update(Nmin+2);
-	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin)) - -lnF) < 1.0e-9);
-	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin+1)) - -lnF) < 1.0e-9);
-	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin+2)) - -lnF) < 1.0e-9);
+	walaBias->update(Nmin, 0);
+	walaBias->update(Nmin+1, 0);
+	walaBias->update(Nmin+2, 0);
+	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin, 0)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin+1, 0)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin+2, 0)) - -lnF) < 1.0e-9);
 }
 
 TEST_F (testWalaBias, checkIterateForward) {
-	walaBias->update(Nmin);
-	walaBias->update(Nmin+1);
-	walaBias->update(Nmin+2);
+	walaBias->update(Nmin, 0);
+	walaBias->update(Nmin+1, 0);
+	walaBias->update(Nmin+2, 0);
 	double lnF1 = 0, lnF2 = 0;
 	std::vector < double > H1 (3, 0), H2 (3, 0);
 	lnF1 = walaBias->lnF();
@@ -1067,10 +1062,10 @@ TEST_F (testWalaBias, checkIterateForward) {
 }
 
 TEST_F (testWalaBias, checkPrintReadlnPI) {
-	walaBias->update(Nmin);
-	walaBias->update(Nmin+1);
-	walaBias->update(Nmin+1);
-	walaBias->update(Nmin+2);
+	walaBias->update(Nmin, 0);
+	walaBias->update(Nmin+1, 0);
+	walaBias->update(Nmin+1, 0);
+	walaBias->update(Nmin+2, 0);
 	
 	std::vector < double > lnPI_ref = walaBias->getlnPI();
 	walaBias->print("walaBiaslnPI_checkPrint", false); // only print lnPI matrix
@@ -1097,19 +1092,19 @@ TEST_F (testWalaBias, checkPrintReadlnPI) {
 }
 
 TEST_F (testWalaBias, checkEvaluateFlatnessNo) {
-	walaBias->update(Nmin);
-	walaBias->update(Nmin+1);
-	walaBias->update(Nmin+1);
-	walaBias->update(Nmin+2);
+	walaBias->update(Nmin, 0);
+	walaBias->update(Nmin+1, 0);
+	walaBias->update(Nmin+1, 0);
+	walaBias->update(Nmin+2, 0);
 	// average of [1, 2, 1] = 1.333, average * s (=0.8) = 1.06 > min (=1)
 	bool flat = walaBias->evaluateFlatness();
 	EXPECT_TRUE (!flat);
 }
 
 TEST_F (testWalaBias, checkEvaluateFlatnessYes) {
-	walaBias->update(Nmin);
-	walaBias->update(Nmin+1);
-	walaBias->update(Nmin+2);
+	walaBias->update(Nmin, 0);
+	walaBias->update(Nmin+1, 0);
+	walaBias->update(Nmin+2, 0);
 	// average of [1, 1, 1] = 1, average * s (=0.8) = 0.8 < min (=1)
 	bool flat = walaBias->evaluateFlatness();
 	EXPECT_TRUE (flat);
@@ -1117,13 +1112,13 @@ TEST_F (testWalaBias, checkEvaluateFlatnessYes) {
 
 TEST_F (InitializeSystem, setWALAbias) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
-	mysys.startWALA (1.0, 0.5, 0.8);
+	mysys.startWALA (1.0, 0.5, 0.8, 1);
 	EXPECT_TRUE (mysys.useWALA);
 }
 
 TEST_F (InitializeSystem, unsetWALAbias) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
-	mysys.startWALA (1.0, 0.5, 0.8);
+	mysys.startWALA (1.0, 0.5, 0.8, 1);
 	EXPECT_TRUE (mysys.useWALA);
 	mysys.stopWALA();
 	EXPECT_TRUE (!mysys.useWALA);
@@ -1131,13 +1126,13 @@ TEST_F (InitializeSystem, unsetWALAbias) {
 
 TEST_F (InitializeSystem, setTMMCbias) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
-	mysys.startTMMC (tmmcSweepSize);
+	mysys.startTMMC (tmmcSweepSize, 1);
 	EXPECT_TRUE (mysys.useTMMC);
 }
 
 TEST_F (InitializeSystem, unsetTMMCbias) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
-	mysys.startTMMC (tmmcSweepSize);
+	mysys.startTMMC (tmmcSweepSize, 1);
 	EXPECT_TRUE (mysys.useTMMC);
 	mysys.stopTMMC();
 	EXPECT_TRUE (!mysys.useTMMC);
@@ -1166,46 +1161,46 @@ TEST_F (testComputeBias, setCalculateWALABias) {
 	std::vector < double > ib (3, 10), mu (2, 1.0);
 	simSystem mysys (2, 1.0, ib, mu, specNmax, specNmin, 1);
 	mysys.setTotNBounds (bounds);
-	mysys.startWALA (1.0, 0.5, 0.8);
+	mysys.startWALA (1.0, 0.5, 0.8, 1);
 	EXPECT_TRUE (mysys.useWALA);
 	
 	// some simple updates
-	mysys.getWALABias()->update(bounds[0]);
-	mysys.getWALABias()->update(bounds[0]+1);
-	mysys.getWALABias()->update(bounds[0]+1);
-	mysys.getWALABias()->update(bounds[0]+2);
+	mysys.getWALABias()->update(bounds[0], 0);
+	mysys.getWALABias()->update(bounds[0]+1, 0);
+	mysys.getWALABias()->update(bounds[0]+1, 0);
+	mysys.getWALABias()->update(bounds[0]+2, 0);
 	
 	// WALA bias
 	atom a1;
 	
 	// 0 atoms --> 1 atom
-	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1) - exp(-1)) < 1.0e-9);
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 0) - exp(-1)) < 1.0e-9);
 	mysys.insertAtom(0, &a1);
 			
 	// 1 atom --> 2 atoms (same type)
-	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2) - exp(1)) < 1.0e-9);
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - exp(1)) < 1.0e-9);
 	
 	// delete, then move to 1 atom total --> +1 atom of another type
 	mysys.deleteAtom (0, 0);
 	mysys.insertAtom(1, &a1);
-	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2) - exp(1)) < 1.0e-9); // should be same result
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - exp(1)) < 1.0e-9); // should be same result
 }
 
 TEST_F (testComputeBias, setCalculateTMMCBias) {
 	std::vector < double > ib (3, 10), mu (2, 1.0);
 	simSystem mysys (2, 1.0, ib, mu, specNmax, specNmin, 1);
 	mysys.setTotNBounds (bounds);
-	mysys.startTMMC (tmmcSweepSize);
+	mysys.startTMMC (tmmcSweepSize, 1);
 	EXPECT_TRUE (mysys.useTMMC);
 	
 	// some simple updates
-	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], std::min(1.0, pu));
-	mysys.getTMMCBias()->updateC(bounds[0], bounds[0]+1, std::min(1.0, pu));
-	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, std::min(1.0, pu));
-	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+2, std::min(1.0, pu));
-	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0], std::min(1.0, pu));
-	mysys.getTMMCBias()->updateC(bounds[0]+2, bounds[0]+2, std::min(1.0, pu));
-	mysys.getTMMCBias()->updateC(bounds[0]+2, bounds[0]+1, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0]+1, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+2, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0], 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+2, bounds[0]+2, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+2, bounds[0]+1, 0, 0, std::min(1.0, pu));
 	EXPECT_TRUE (mysys.getTMMCBias()->checkFullyVisited());
 	mysys.getTMMCBias()->calculatePI();
 	
@@ -1213,16 +1208,16 @@ TEST_F (testComputeBias, setCalculateTMMCBias) {
 	atom a1;
 	
 	// 0 atoms --> 1 atom
-	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1) - 2.0/3.0) < 1.0e-9); // 0 assigned as a references
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 0) - 2.0/3.0) < 1.0e-9); // 0 assigned as a references
 	mysys.insertAtom(0, &a1);
 			
 	// 1 atom --> 2 atoms (same type)
-	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2) - 3.0/2.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - 3.0/2.0) < 1.0e-9);
 	
 	// delete, then move to 1 atom total --> +1 atom of another type
 	mysys.deleteAtom (0, 0);
 	mysys.insertAtom(1, &a1);
-	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2) - 3.0/2.0) < 1.0e-9); // should be same result	
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - 3.0/2.0) < 1.0e-9); // should be same result	
 }
 
 TEST_F (testComputeBias, testInSituWALASingleComponent) {
@@ -1231,11 +1226,11 @@ TEST_F (testComputeBias, testInSituWALASingleComponent) {
 	std::vector <int> nmax (1, 3), nmin (1, 0);
 	lnF = 3.1; // something random this time
 	simSystem mysys (1, 1.0, ib, mu, nmax, nmin, 1);
-	mysys.startWALA (lnF, 0.5, 0.8);
+	mysys.startWALA (lnF, 0.5, 0.8, 1);
 	EXPECT_TRUE (mysys.useWALA);
 		
 	hardCore hc;
-	std::vector < double > params (1, 1.0);
+	std::vector < double > params (2, 1.0);
 	hc.setParameters (params);
 	mysys.addPotential (0, 0, &hc, false);
 	
@@ -1261,11 +1256,11 @@ TEST_F (testComputeBias, testInSituWALAMultiComponent) {
 	std::vector <int> nmax (2, 3), nmin (2, 0);
 	lnF = 3.1; // something random this time
 	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, 1);
-	mysys.startWALA (lnF, 0.5, 0.8);
+	mysys.startWALA (lnF, 0.5, 0.8, 1);
 	EXPECT_TRUE (mysys.useWALA);
 	
 	hardCore hc11, hc12, hc22;
-	std::vector < double > params (1, 1.0);
+	std::vector < double > params (2, 1.0);
 	hc11.setParameters (params);
 	params[0] = 0.0; // ergo 1 and 2 can sit on top of each other
 	hc12.setParameters (params);
@@ -1317,11 +1312,11 @@ TEST_F (testComputeBias, testInSituTMMCSingleComponent) {
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (1, 3), nmin (1, 0);
 	simSystem mysys (1, 1.0, ib, mu, nmax, nmin, 1);
-	mysys.startTMMC (tmmcSweepSize);
+	mysys.startTMMC (tmmcSweepSize, 1);
 	EXPECT_TRUE (mysys.useTMMC);
 		
 	hardCore hc;
-	std::vector < double > params (1, 1.0);
+	std::vector < double > params (2, 1.0);
 	hc.setParameters (params);
 	mysys.addPotential (0, 0, &hc, false);
 	
@@ -1364,11 +1359,11 @@ TEST_F (testComputeBias, testInSituTMMCMultiComponent) {
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (2, 3), nmin (2, 0);
 	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, 1);
-	mysys.startTMMC (tmmcSweepSize);
+	mysys.startTMMC (tmmcSweepSize, 1);
 	EXPECT_TRUE (mysys.useTMMC);
 		
 	hardCore hc11, hc12, hc22;
-	std::vector < double > params (1, 1.0);
+	std::vector < double > params (2, 1.0);
 	hc11.setParameters (params);
 	params[0] = 0.0;
 	hc12.setParameters (params);
@@ -1445,12 +1440,12 @@ TEST (testSwapMove, twoComponents) {
 	simSystem mysys (3, 1.0, ib, mu, nmax, nmin, 1);
 
 	squareWell sw12, sw13, sw23; // only bother to set cross interactions here
-	std::vector < double > params (3, 0.0);
-	params[0] = 1.0; params[1] = 0.5; params[2] = 1.0;
+	std::vector < double > params (4, 0.0);
+	params[0] = 1.0; params[1] = 0.5; params[2] = 1.0, params[3] = 1;
 	sw12.setParameters (params);
-	params[0] = 1.0; params[1] = 0.5; params[2] = 0.3;
+	params[0] = 1.0; params[1] = 0.5; params[2] = 0.3, params[3] = 1;
 	sw13.setParameters (params);
-	params[0] = 1.0; params[1] = 0.5; params[2] = 2.0;
+	params[0] = 1.0; params[1] = 0.5; params[2] = 2.0, params[3] = 1;
 	sw23.setParameters (params);
 	mysys.addPotential (0, 1, &sw12, true);
 	mysys.addPotential (0, 2, &sw13, true);

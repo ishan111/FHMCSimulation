@@ -308,17 +308,18 @@ void squareWell::setParameters (const std::vector < double > params) {
 		if (params[2] < 0) {
 			throw customException ("For squareWell, welldepth (magnitude) > 0");
 		}
-		if (params[3] < 1) {
+		if (int(params[3]) < 1) {
 			throw customException ("For squareWell, total expanded ensemble states, Mtot >= 1");
 		}
 		
 		useTailCorrection = false;
 
 		// use a "constant volume" scheme to distribute the stages
-		sigmaM_.resize(params[3], 0);
-		rangeM_.resize(params[3], 0);
+		sigmaM_.resize(int(params[3]), 0);
+		rangeM_.resize(int(params[3]), 0);
 		for (unsigned int i = 0; i < sigmaM_.size(); ++i) {
-			if (i = 0) {
+
+			if (i == 0) {
 				// fully inserted
 				sigmaM_[i] = params[0];
 				rangeM_[i] = params[0] + params[1];
@@ -424,7 +425,7 @@ void hardCore::setParameters (const std::vector < double > params) {
 		// use a "constant volume" scheme to distribute the stages
 		sigmaM_.resize(params[1], 0);
 		for (unsigned int i = 0; i < sigmaM_.size(); ++i) {
-			if (i = 0) {
+			if (i == 0) {
 				// fully inserted
 				sigmaM_[i] = params[0];
 			} else {

@@ -41,7 +41,7 @@ tmmc::tmmc (const int Nmax, const int Nmin,  const int Mtot, const long long int
 		throw customException ("TMMC sweep size must be >= 1");
 	}
 	tmmcSweepSize_ = tmmcSweepSize;
-	
+
 	// attempt to allocate memory for collection matrix and initializes it all to 0
 	try {
 		C_.resize(3*Mtot_*size, 0);
@@ -177,6 +177,9 @@ const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const int Nstart, const int 
  * \param [in] Mval Value of expanded ensemble state
  */
 const __BIAS_INT_TYPE__ tmmc::getAddress (const int Nval, const int Mval) {
+	if (Nval > Nmax_ || Nval < Nmin_ || Mval < 0 || Mval > Mtot_-1) {
+		throw customException ("N, M out of bounds in TMMC object, cannot retrieve address");	
+	}	
 	return (Nval - Nmin_)*Mtot_ + Mval;
 }
 
@@ -218,11 +221,11 @@ void tmmc::calculatePI () {
 			throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros");
 		}
 	}
-	
+
 	// Reset first value to zero just to start fresh. Since only ratios matter this is perfectly fair.
 	lnPI_[0] = 0.0;
 	__BIAS_INT_TYPE__ address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, nEndForward = 0, mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;
-	for (__BIAS_INT_TYPE__ i = 0; i < (Nmax_ - Nmin_ + 1); ++i) {
+	for (__BIAS_INT_TYPE__ i = 0; i < (Nmax_ - Nmin_ + 1) - 1; ++i) {
 		nStartForward = Nmin_+i;
 		for (__BIAS_INT_TYPE__ j = 0; j < Mtot_; ++j) { 
 			mStartForward = j;
@@ -455,6 +458,9 @@ wala::wala (const double lnF, const double g, const double s, const int Nmax, co
  * \param [in] Mval Current value of the expanded ensemble state of the system
  */
 const __BIAS_INT_TYPE__ wala::getAddress (const int Nval, const int Mval) {
+	if (Nval > Nmax_ || Nval < Nmin_ || Mval < 0 || Mval > Mtot_-1) {
+		throw customException ("N, M out of bounds in Wang-Landau object, cannot retrieve address");	
+	}
 	return (Nval - Nmin_)*Mtot_ + Mval;
 }
 
