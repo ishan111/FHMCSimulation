@@ -51,19 +51,30 @@ int deleteParticle::make (simSystem &sys) {
 #ifdef FLUID_PHASE_SIMULATIONS
         if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
         	if (spec == typeIndex_) {
-				delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
-			}
-			else {
-				delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
-			}
+			int nBath = 0;
+			if (sys.getCurrentM() > 0) {
+				// we must be trying to delete an already partially inserted atom, this is not counted in sys.numSpecies[spec]
+				nBath = sys.numSpecies[spec];
+			} else {
+				// we are deleting a fully inserted particle, which is counted in sys.numSpecies[spec]
+				nBath = sys.numSpecies[spec]-1;
+			}		
+			delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection(nBath/V);
+		} else {
+			delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
 		}
+	}
 #endif
     }
     
     // if the particle is about to be completely removed, no further calculation is required
-    if (chosenAtom->mState > 1) { // always == 0 if no expanded ensemble, else if == 1, then being completely removed
-    	// temporarily decrement the expanded ensemble state
-    	chosenAtom->mState--;
+    if (chosenAtom->mState != 1 && sys.getTotalM() > 1) { // if 1, it is just completely removed - otherwise have to do calculation
+	// temporarily decrement the expanded ensemble state on the atom
+	int orig_state = chosenAtom->mState; 	
+	chosenAtom->mState -= 1;
+	if (chosenAtom->mState < 0) {
+		chosenAtom->mState = sys.getTotalM() - 1;
+	}
     	
         for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
             // get positions of neighboring atoms around chosenAtom
@@ -79,33 +90,41 @@ int deleteParticle::make (simSystem &sys) {
             }
             // add tail correction to potential energy -- only enable for fluid phase simulations
 #ifdef FLUID_PHASE_SIMULATIONS
-            if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
-            	if (spec == typeIndex_) {
-    				delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
-    			}
-    			else {
-    				delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
-    			}
-    		}
+        if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
+        	if (spec == typeIndex_) {
+			int nBath = 0;
+			if (sys.getCurrentM() > 0) {
+				// we must be trying to delete an already partially inserted atom, this is not counted in sys.numSpecies[spec]
+				nBath = sys.numSpecies[spec];
+			} else {
+				// we are deleting a fully inserted particle, which is counted in sys.numSpecies[spec]
+				nBath = sys.numSpecies[spec]-1;
+			}	
+			delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(nBath/V);
+		} else {
+			delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
+		}
+	}
 #endif
         }
         
         // restore the expanded ensemble state
-        chosenAtom->mState++;
+        chosenAtom->mState = orig_state;
     }
     
     // biasing
     double dN = 1.0/sys.getTotalM();
     const double p_u = pow(sys.numSpecies[typeIndex_]/V, dN)*exp(sys.beta()*(-sys.mu(typeIndex_)*dN - delEnergy));
-    int nTotFinal = sys.getTotN(); //-1;
-    if (sys.getCurrentM() == 1) {
+    int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() - 1;
+    if (sys.getCurrentM() == 0) {
     	nTotFinal--;
+	mFinal = sys.getTotalM() - 1;
     }
-    double bias = calculateBias(sys, nTotFinal); // this will have to be a function of N and M now
+    double bias = calculateBias(sys, nTotFinal, mFinal); 
     
     // tmmc gets updated the same way, regardless of whether the move gets accepted
     if (sys.useTMMC) {
-    	sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, std::min(1.0, p_u)); // also has to be function of N and M now
+    	sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, sys.getCurrentM(), mFinal, std::min(1.0, p_u)); // also has to be function of N and M now
     }
     
 	// metropolis criterion
@@ -128,7 +147,7 @@ int deleteParticle::make (simSystem &sys) {
 		
 		// update Wang-Landau bias, if used
 		if (sys.useWALA) {
-			sys.getWALABias()->update(sys.getTotN());
+			sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
 		}
 				
         return MOVE_SUCCESS;
@@ -136,7 +155,7 @@ int deleteParticle::make (simSystem &sys) {
     
 	// update Wang-Landau bias (even if moved failed), if used
 	if (sys.useWALA) {
-		sys.getWALABias()->update(sys.getTotN());
+		sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
 	}
 		
 	return MOVE_FAILURE;

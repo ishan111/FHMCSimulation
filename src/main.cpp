@@ -333,11 +333,12 @@ int main (int argc, char * const argv[]) {
 			dummy = ppotName+"_params";
 			assert(doc.HasMember(dummy.c_str()));
 			assert(doc[dummy.c_str()].IsArray());
-			std::vector < double > params (doc[dummy.c_str()].Size(), 0);
+			std::vector < double > params (doc[dummy.c_str()].Size()+1, 0);
 			for (unsigned int k = 0; k < params.size(); ++k) {
 				assert(doc[dummy.c_str()][k].IsNumber());
 				params[k] = doc[dummy.c_str()][k].GetDouble();
 			}
+			params[params.size()-1] = Mtot;
 			bool useCellList = false; // default
 			dummy = ppotName+"_use_cell_list";
 			if (doc.HasMember(dummy.c_str())) {
@@ -482,7 +483,7 @@ int main (int argc, char * const argv[]) {
 		// Initially do a WL simulation
 		bool flat = false;
 		double lnF = lnF_start;
-		sys.startWALA (lnF, g, s); //!< Using Shen and Errington method this syntax is same for single and multicomponent
+		sys.startWALA (lnF, g, s, sys.getTotalM()); //!< Using Shen and Errington method this syntax is same for single and multicomponent
 		
 		time_t rawtime_t;
 		time (&rawtime_t);
@@ -560,7 +561,7 @@ int main (int argc, char * const argv[]) {
 		std::cout << "Crossing over to build TMMC matrix" << std::endl;
 	
 		// After a while, combine to initialize TMMC collection matrix
-		sys.startTMMC (tmmcSweepSize);
+		sys.startTMMC (tmmcSweepSize, sys.getTotalM());
 	
 		// actually this should run until all elements of the collection matrix have been populated
 		int timesFullyVisited = 0;
@@ -623,7 +624,7 @@ int main (int argc, char * const argv[]) {
 	
 	std::cout << "Beginning TMMC" << std::endl;
 	if (restartFromTMMC) {
-		sys.startTMMC (tmmcSweepSize); // this was otherwise started during the crossover phase if WL was used
+		sys.startTMMC (tmmcSweepSize, sys.getTotalM()); // this was otherwise started during the crossover phase if WL was used
 		try {
 			sys.getTMMCBias()->readC(restartFromTMMCFile); // read collection matrix
 		} catch (customException& ce) {
@@ -720,6 +721,41 @@ int main (int argc, char * const argv[]) {
         exit(SYS_FAILURE);
     }
     
+	if (sys.getTotalM() > 1) {
+		if (sys.getFractionalAtom()->mState != sys.getCurrentM()) {
+			std::cerr << "Expanded ensemble state deviates between atom ("+sstr(sys.getFractionalAtom()->mState)+") and system log ("+sstr(sys.getCurrentM())+")" << std::endl;
+			exit(SYS_FAILURE);
+			for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+				int end = sys.numSpecies[i];
+				if (i == sys.getFractionalAtomType()) {
+					end++;			
+				}
+				for (unsigned int j = 0; j < end; ++j) {
+					if (&sys.atoms[i][j] != sys.getFractionalAtom()) {
+						if (sys.atoms[i][j].mState != 0) {
+							std::cerr << "Atom ("+sstr(i)+", "+sstr(j)+") has non-zero expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+")" << std::endl;	
+							exit(SYS_FAILURE);				
+						}				
+					} else {
+						if (sys.atoms[i][j].mState != sys.getCurrentM()) {
+							std::cerr << "Fractional atom ("+sstr(i)+", "+sstr(j)+")'s expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+") does not match system's ("+sstr(sys.getCurrentM())+")" << std::endl;	
+							exit(SYS_FAILURE);				
+						}
+					}								
+				}
+			}
+		}
+	} else {
+		for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+			for (unsigned int j = 0; j < sys.numSpecies[i]; ++j) {
+				if (sys.atoms[i][j].mState != 0) {
+					std::cerr << "Atom ("+sstr(i)+", "+sstr(j)+") has non-zero expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+")" << std::endl;	
+					exit(SYS_FAILURE);				
+				}												
+			}
+		}	
+	}
+
     // Report move statistics for final TMMC ("production") stage
 	char statName [80];
 	strftime (statName,80,"%Y_%m_%d_%H_%M_%S-stats.log",timeinfo);

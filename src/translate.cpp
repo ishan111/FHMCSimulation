@@ -26,7 +26,7 @@ int translateParticle::make (simSystem &sys) {
     double oldEnergy = 0.0;
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
         // get positions of neighboring atoms around chosenAtom
-        std::vector< atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex_, &sys.atoms[typeIndex_][chosenAtom]);
+        std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex_, &sys.atoms[typeIndex_][chosenAtom]);
     	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
 			try {
 				oldEnergy += sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &sys.atoms[typeIndex_][chosenAtom], box);
@@ -81,11 +81,11 @@ int translateParticle::make (simSystem &sys) {
     
 	// biasing
 	const double p_u = exp(-sys.beta()*(newEnergy - oldEnergy));
-	double bias = calculateBias(sys, sys.getTotN()); // N_tot doesn't change throughout this move
+	double bias = calculateBias(sys, sys.getTotN(), sys.getCurrentM()); // N_tot doesn't change throughout this move
 	 
     // tmmc gets updated the same way, regardless of whether the move gets accepted
     if (sys.useTMMC) {
-    	sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), std::min(1.0, p_u)); // since the total number of atoms isn't changing, can use getTotN() as both initial and final states
+    	sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), std::min(1.0, p_u)); // since the total number of atoms isn't changing, can use getTotN() as both initial and final states
     }
     
 	if (rng (&RNG_SEED) < p_u*bias) {
@@ -99,7 +99,7 @@ int translateParticle::make (simSystem &sys) {
 		
 		// update Wang-Landau bias, if used
 		if (sys.useWALA) {
-			sys.getWALABias()->update(sys.getTotN());
+			sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
 		}
 			
         return MOVE_SUCCESS;
@@ -112,7 +112,7 @@ int translateParticle::make (simSystem &sys) {
     
     // update Wang-Landau bias (even if moved failed), if used
     if (sys.useWALA) {
-   		sys.getWALABias()->update(sys.getTotN());
+   		sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
     }
     	
 	return MOVE_FAILURE;

@@ -11,7 +11,7 @@
 
 class translateParticle : public mcMove {
 public:
-	translateParticle () {};
+	translateParticle () { changeN_ = false; }
     translateParticle (const int typeIndex, const std::string tag) { typeIndex_ = typeIndex; name_ = tag + boost::lexical_cast<std::string>(typeIndex); maxD_ = 0.1; } //!< Instantiate a new move, also give a name which is the combination of auser-defined tag + the particle index it operates on
 	int make (simSystem &sys);
 	void setMaxDisplacement (const double maxD, const std::vector < double > &box);

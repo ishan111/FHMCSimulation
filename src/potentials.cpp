@@ -33,11 +33,11 @@ void pairPotential::savePotential(std::string filename, double start, double dr)
 /*!
  * Set the parameters in the Lennard-Jones equation.
  * 
- * \param [in] params Vector of inputs: {epsilon, sigma, r_cut, u_shift}
+ * \param [in] params Vector of inputs: {epsilon, sigma, r_cut, u_shift, Mtot}
  */
 void lennardJones::setParameters (const std::vector < double > params) {
-	if (params.size() != 4) {
-		throw customException ("For lennardJones must specify 4 parameters: epsilon, sigma, r_cut, u_shift");
+	if (params.size() != 5) {
+		throw customException ("For lennardJones must specify 5 parameters: epsilon, sigma, r_cut, u_shift, Mtot");
 	} else {
 		if (params[0] < 0) {
 			throw customException ("For lennardJones, epsilon > 0");
@@ -48,11 +48,32 @@ void lennardJones::setParameters (const std::vector < double > params) {
 		if (params[2] < 0) {
 			throw customException ("For lennardJones, r_cut > 0");
 		}
+		if (params[4] < 1) {
+			throw customException ("For lennardJones, total expanded ensemble states, Mtot >= 1");
+		}
 		
 		paramsAreSet_ = true;
 		params_ = params;
 		
 		useTailCorrection = true;
+
+		// use a "constant volume" scheme to distribute the stages
+		sigmaM_.resize(params[4], 0);
+		for (unsigned int i = 0; i < sigmaM_.size(); ++i) {
+			if (i == 0) {
+				// fully inserted
+				sigmaM_[i] = params[1];
+			} else {
+				// use volume scaling so each stage is separated from its neighbors by the same dV 
+				double lastSigma = 0;
+				if (i == 1) {
+					lastSigma = 0;
+				} else {
+					lastSigma = sigmaM_[i-1];
+				}
+				sigmaM_[i] = pow(params[1]*params[1]*params[1]/(8.0*params[4]) + lastSigma*lastSigma*lastSigma, 1./3.);	
+			}
+		}
 	}
 }
 
@@ -72,13 +93,18 @@ double lennardJones::energy (const atom* a1, const atom* a2, const std::vector <
 		throw customException ("For lennardJones parameters not set");
 	}
 	
-	if (a1->mState != 1 || a2->mState != 1) {
-		throw customException ("Have not implemented expanded ensemble for lennardJones potential yet");
-	} 
-	
 	const double r = sqrt(pbc_dist2(a1->pos, a2->pos, box));
 	
-	double r1 = (params_[1]/r), r3 = r1*r1*r1, r6 = r3*r3, r12 = r6*r6;
+	// only one of these atoms (at most) should be "partially" inserted
+	int mState = 0;
+	if (a1->mState != 0) {
+		mState = a1->mState;
+	}
+	if (a2->mState != 0) {
+		mState = a2->mState;
+	}
+
+	double r1 = (sigmaM_[mState]/r), r3 = r1*r1*r1, r6 = r3*r3, r12 = r6*r6;
 	if (r < params_[2]) {
 		return 4.0*params_[0]*(r12 - r6) + params_[3];
 	} else {
@@ -90,7 +116,7 @@ double lennardJones::energy (const atom* a1, const atom* a2, const std::vector <
  * Calculate the tail correction with the approximation g(r) = 1 for r_{cut} > 1
  * as explained in Frenkel & Smit in eq. (3.2.5)
  * 
- * \param [in] rhoBath NUmber density of the surrounding fluid
+ * \param [in] rhoBath Number density of the surrounding fluid
  * 
  * \return U_tail
  */
@@ -117,20 +143,33 @@ double lennardJones::rcut () {
 /*!
  * Set the parameters in the tabulated potential
  * 
- * \param [in] params Vector of inputs: {r_cut, r_shift, u_shift, u_infinity}
+ * \param [in] params Vector of inputs: {r_cut, r_shift, u_shift, u_infinity, Mtot}
  */
 void tabulated::setParameters (const std::vector < double > params) {
-	if (params.size() != 4) {
-		throw customException ("For tabulated must specify 4 parameters: r_cut, r_shift, u_shift, u_infinity");
+	if (params.size() != 5) {
+		throw customException ("For tabulated must specify 5 parameters: r_cut, r_shift, u_shift, u_infinity, Mtot");
 	} else {
 		if (params[0] < 0) {
 			throw customException ("For tabulated, r_cut > 0");
+		}
+		if (params[4] < 1) {
+			throw customException ("For tabulated, total expanded ensemble states, Mtot >= 1");
 		}
 		
 		paramsAreSet_ = true;
 		params_ = params;
 		
 		useTailCorrection = false;
+
+		// scale energy by a constant factor
+		mScale.resize(params[4], 0);
+		for (unsigned int i = 0; i < mScale.size(); ++i) {
+			if (i == 0) {
+				mScale[i] = 1.0;
+			} else {
+				mScale[i] = 1.0/params[4]*i;
+			}		
+		}
 	}
 }
 
@@ -201,12 +240,17 @@ double tabulated::energy (const atom* a1, const atom* a2, const std::vector < do
 		throw customException ("For tabulated parameters not set");
 	}
 	
-	if (a1->mState != 1 || a2->mState != 1) {
-		throw customException ("Have not implemented expanded ensemble for tabulated potential yet");
-	} 
-	
 	const double r = sqrt(pbc_dist2(a1->pos, a2->pos, box));
 	
+	// only one of these atoms (at most) should be "partially" inserted
+	int mState = 0;
+	if (a1->mState != 0) {
+		mState = a1->mState;
+	}
+	if (a2->mState != 0) {
+		mState = a2->mState;
+	}
+
 	if (r < params_[1]) {
 		std::cerr<<"distance r too small in energy calculation in tabulated potential. Returning value at r="<<start<<std::endl;
 	} else if (r > params_[0]) {
@@ -218,7 +262,7 @@ double tabulated::energy (const atom* a1, const atom* a2, const std::vector < do
 		const double upperFraction = (r-params_[1])/dr-lowerIndex;
 		const double lowerFraction = 1.0-upperFraction;
 		
-		return (lowerFraction*table[lowerIndex] + upperFraction*table[upperIndex] + params_[2]);
+		return (lowerFraction*table[lowerIndex] + upperFraction*table[upperIndex] + params_[2])*mScale[mState];
 	}
 }
 
@@ -249,11 +293,11 @@ double tabulated::rcut () {
 /*!
  * Set the parameters in the square-well equation.
  * 
- * \param [in] params Vector of inputs: {sigma, wellwidth, welldepth (magnitude)}
+ * \param [in] params Vector of inputs: {sigma, wellwidth, welldepth (magnitude), Mtot}
  */
 void squareWell::setParameters (const std::vector < double > params) {
-	if (params.size() != 3) {
-		throw customException ("For squareWell must specify 3 parameters: sigma, wellwidth, welldepth");
+	if (params.size() != 4) {
+		throw customException ("For squareWell must specify 4 parameters: sigma, wellwidth, welldepth, Mtot");
 	} else {
 		if (params[0] < 0) {
 			throw customException ("For squareWell, sigma > 0");
@@ -264,14 +308,38 @@ void squareWell::setParameters (const std::vector < double > params) {
 		if (params[2] < 0) {
 			throw customException ("For squareWell, welldepth (magnitude) > 0");
 		}
-		
-		// save parameters as sigma, (sigma+wellWidth), -wellDepth to speed up energy calculation
-		params_ = params;
-		params_[1] = params[0] + params[1];
-		params_[2] = -params[2];
-		paramsAreSet_ = true;
+		if (params[3] < 1) {
+			throw customException ("For squareWell, total expanded ensemble states, Mtot >= 1");
+		}
 		
 		useTailCorrection = false;
+
+		// use a "constant volume" scheme to distribute the stages
+		sigmaM_.resize(params[3], 0);
+		rangeM_.resize(params[3], 0);
+		for (unsigned int i = 0; i < sigmaM_.size(); ++i) {
+			if (i = 0) {
+				// fully inserted
+				sigmaM_[i] = params[0];
+				rangeM_[i] = params[0] + params[1];
+			} else {
+				// use volume scaling so each stage is separated from its neighbors by the same dV 
+				double lastSigma = 0;
+				if (i == 1) {
+					lastSigma = 0;
+				} else {
+					lastSigma = sigmaM_[i-1];
+				}
+				sigmaM_[i] = pow(params[0]*params[0]*params[0]/(8.0*params[3]) + lastSigma*lastSigma*lastSigma, 1./3.);
+				rangeM_[i] = sigmaM_[i] + params[1];	
+			}
+		}
+
+		// save parameters as sigma, (sigma+wellWidth), -wellDepth to speed up energy calculation
+		params_ = params;
+		params_[1] = params[0] + params[1]; // max rcut
+		params_[2] = -params[2];
+		paramsAreSet_ = true;
 	}
 }
 
@@ -289,15 +357,19 @@ double squareWell::energy (const atom* a1, const atom* a2, const std::vector < d
 		throw customException ("For squareWell parameters not set");
 	}
 	
-	if (a1->mState != 1 || a2->mState != 1) {
-		throw customException ("Have not implemented expanded ensemble for squareWell potential yet");
-	} 
-	
 	const double r = sqrt(pbc_dist2(a1->pos, a2->pos, box));
 	
-	if (r < params_[0]) {
+	int mState = 0;
+	if (a1->mState != 0) {
+		mState = a1->mState;
+	}
+	if (a2->mState != 0) {
+		mState = a2->mState;
+	}
+
+	if (r < sigmaM_[mState]) {
 		return NUM_INFINITY;
-	} else if (r < params_[1]) {
+	} else if (r < rangeM_[mState]) {
 		return params_[2];
 	} else {
 		return 0.0;
@@ -331,20 +403,41 @@ double squareWell::rcut () {
 /*!
  * Set the parameters in the hard-core potential.
  * 
- * \param [in] params Vector of inputs: {sigma, infinity}
+ * \param [in] params Vector of inputs: {sigma, Mtot}
  */
 void hardCore::setParameters (const std::vector < double > params) {
-	if (params.size() != 1) {
-		throw customException ("For hardCore must specify 1 parameter: sigma");
+	if (params.size() != 2) {
+		throw customException ("For hardCore must specify 2 parameter: {sigma, Mtot}");
 	} else {
 		if (params[0] < 0) {
 			throw customException ("For hardCore, sigma > 0");
+		}
+		if (params[1] < 1) {
+			throw customException ("For hardCore, total expanded ensemble state, Mtot >= 1");
 		}
 		
 		params_ = params;
 		paramsAreSet_ = true;
 		
 		useTailCorrection = false;
+
+		// use a "constant volume" scheme to distribute the stages
+		sigmaM_.resize(params[1], 0);
+		for (unsigned int i = 0; i < sigmaM_.size(); ++i) {
+			if (i = 0) {
+				// fully inserted
+				sigmaM_[i] = params[0];
+			} else {
+				// use volume scaling so each stage is separated from its neighbors by the same dV 
+				double lastSigma = 0;
+				if (i == 1) {
+					lastSigma = 0;
+				} else {
+					lastSigma = sigmaM_[i-1];
+				}
+				sigmaM_[i] = pow(params[0]*params[0]*params[0]/(8.0*params[1]) + lastSigma*lastSigma*lastSigma, 1./3.);	
+			}
+		}
 	}
 }
 
@@ -362,16 +455,19 @@ double hardCore::energy (const atom* a1, const atom* a2, const std::vector < dou
 		throw customException ("For hardCore parameters not set");
 	}
 	
-	if (a1->mState != 1 || a2->mState != 1) {
-		throw customException ("Have not implemented expanded ensemble for hardCore potential yet");
-	} 
-	
+	int mState = 0;
+	if (a1->mState != 0) {
+		mState = a1->mState;
+	}
+	if (a2->mState != 0) {
+		mState = a2->mState;
+	}
+
 	const double r = sqrt(pbc_dist2(a1->pos, a2->pos, box));
 	
-	if (r < params_[0]) {
+	if (r < sigmaM_[mState]) {
 		return NUM_INFINITY;
-	}
-	else {
+	} else {
 		return 0.0;
 	}
 }

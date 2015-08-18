@@ -104,15 +104,16 @@ int insertParticle::make (simSystem &sys) {
     // biasing
     double dN = 1.0/sys.getTotalM();
     const double p_u = pow(V/(sys.numSpecies[typeIndex_]+1.0), dN)*exp(sys.beta()*(sys.mu(typeIndex_)*dN - insEnergy));
-    int nTotFinal = sys.getTotN(); //+1;
+    int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() + 1;
     if (sys.getCurrentM() == sys.getTotalM()-1) {
     	nTotFinal++;
+	mFinal = 0;
     }
-    double bias = calculateBias(sys, nTotFinal); // this will have to be a function of N and M now
+    double bias = calculateBias(sys, nTotFinal, mFinal);
    
     // tmmc gets updated the same way, regardless of whether the move gets accepted
     if (sys.useTMMC) {
-    	sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, std::min(1.0, p_u)); // also has to be function of N and M now
+    	sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, sys.getCurrentM(), mFinal, std::min(1.0, p_u)); 
     }
     
 	// metropolis criterion
@@ -130,7 +131,7 @@ int insertParticle::make (simSystem &sys) {
 		
 		// update Wang-Landau bias, if used
 		if (sys.useWALA) {
-			sys.getWALABias()->update(sys.getTotN());
+			sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
 		}
 		
 		if (createdAtom) {
@@ -142,7 +143,7 @@ int insertParticle::make (simSystem &sys) {
     
 	// update Wang-Landau bias (even if moved failed), if used
 	if (sys.useWALA) {
-		sys.getWALABias()->update(sys.getTotN());
+		sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
 	}
 	
 	if (createdAtom) {

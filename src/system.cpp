@@ -134,21 +134,20 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
         			
         			// increment expanded state
         			fractionalAtom_->mState = 1;
-        			Mcurrent_++;
+        			Mcurrent_ = 1;
         			
-                    // add particle into appropriate cell lists
-                    for (unsigned int i = 0; i < nSpecies_; ++i) {
-                    	if (useCellList_[typeIndex][i]) {
-                     		cellList* cl = cellListsByPairType_[typeIndex][i];
-                     		cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex]]); // numSpecies[typeIndex] is the number of fully inserted ones, this partially inserted one comes after that
-                     	}
-                     }
+				// add particle into appropriate cell lists
+				for (unsigned int i = 0; i < nSpecies_; ++i) {
+					if (useCellList_[typeIndex][i]) {
+						cellList* cl = cellListsByPairType_[typeIndex][i];
+                     				cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex]]); // numSpecies[typeIndex] is the number of fully inserted ones, this partially inserted one comes after that
+                     			}
+                   		 }
         		}
         	} else if (Mtot_ > 1 && override) {
         		// expanded ensemble behavior, but now amidst a "swap move" rather than an actual insertion or deletion.
-        		// for this, insertions involve just putting the atom into the system / cellLists, but without any net
-        		// change to the systems expanded ensemble state.
-        		
+        		// for this, insertions involve just putting the atom into the system / cellLists
+
         		// ensure we insert at the proper "end"
         		int end = numSpecies[typeIndex];
         		if (Mcurrent_ > 0 && typeIndex == fractionalAtomType_ && newAtom->mState == 0) {
@@ -162,28 +161,31 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
         		if (atoms[typeIndex][end].mState != 0) {
         			fractionalAtom_ = &atoms[typeIndex][end];
         			fractionalAtomType_ = typeIndex;
+
+				// set the system's mState back to that of the atom just inserted, iff it was the partial one
+				Mcurrent_ = atoms[typeIndex][end].mState;
         		}
         		
         		// put newAtom into the cell lists whatever its state
-                for (unsigned int i = 0; i < nSpecies_; ++i) {
-                	if (useCellList_[typeIndex][i]) {
-                 		cellList* cl = cellListsByPairType_[typeIndex][i];
-                 		cl->insertParticle(&atoms[typeIndex][end]);
+               		for (unsigned int i = 0; i < nSpecies_; ++i) {
+                		if (useCellList_[typeIndex][i]) {
+                 			cellList* cl = cellListsByPairType_[typeIndex][i];
+                 			cl->insertParticle(&atoms[typeIndex][end]);
+                 		}
                  	}
-                 }        		
         	} else {
         		// direct insertion (no expanded ensemble)
-                atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
-                numSpecies[typeIndex]++;
-                totN_++;
+               		atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
+               		numSpecies[typeIndex]++;
+                	totN_++;
                 
-               // add particle into appropriate cell lists
-               for (unsigned int i = 0; i < nSpecies_; ++i) {
-               		if (useCellList_[typeIndex][i]) {
-                		cellList* cl = cellListsByPairType_[typeIndex][i];
-                		cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex] - 1]);
+               		// add particle into appropriate cell lists
+               		for (unsigned int i = 0; i < nSpecies_; ++i) {
+               			if (useCellList_[typeIndex][i]) {
+                			cellList* cl = cellListsByPairType_[typeIndex][i];
+                			cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex] - 1]);
+                		}
                 	}
-                }
         	}
         } else {
             std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
@@ -202,104 +204,134 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
  * \param [in] Optional override command which allows the system to delete a particle even it goes below the minimum allowed. E.g. during a swap move.
  */
 void simSystem::deleteAtom (const int typeIndex, const int atomIndex, bool override) {
-   
-	// use override command to completely remove an atom (during swap move this is employed) even if only partially present to begin with
-	// use override to PREVENT changes to mState of system, but allow N to change so tail corrections, etc. can be calculated properly
-	
 	if (typeIndex < nSpecies_ && typeIndex >= 0) {
-        if ((numSpecies[typeIndex] > minSpecies_[typeIndex]) || override) {
-        	if (override) {
-        		// doing a swap move
-        		if (Mtot_ > 1) {
-        			// expanded ensemble
-        			
-        			// trickier - have to totally remove each atom, not partially
-        			
-        			
-        		} else {
-        			// no expanded ensemble, just delete particle from appropriate cell list
-                    for (unsigned int i = 0; i < nSpecies_; ++i) {
-                    	if (useCellList_[typeIndex][i]) {
-                    		cellList* cl = cellListsByPairType_[typeIndex][i];
-                    		cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][numSpecies[typeIndex] - 1]);
-                    	}
-                    }
-                
-                    atoms[typeIndex][atomIndex] = atoms[typeIndex][numSpecies[typeIndex] - 1];    // "replacement" operation
-                    numSpecies[typeIndex]--;
-                    totN_--;
-        		}
-        	} else {
-        		// not doing a swap move, just a "regular" deletion
-        		if (Mtot_ > 1) {
-        			// expanded ensemble
-               		if (Mcurrent_ == 1) {
-               			// when we delete this atom, it is entirely gone
-            			
-               			// first ensure the system pointer is correct if currently a partially inserted atom
-            			if (fractionalAtom_ != &atoms[typeIndex][atomIndex] || typeIndex != fractionalAtomType_) {
-            				throw customException ("Fractional atom pointer does not point to atom belived to be inserted");
-            			}
-            			
-            			// decrement expanded state
-            			fractionalAtom_->mState = 0;
-            			Mcurrent_ = 0;
-            			
-            			// since deleting partial particle, do not update Ntot, etc.
-            			// however, do have to remove from cellLists
-            			int end = numSpecies[typeIndex];
-                        for (unsigned int i = 0; i < nSpecies_; ++i) {
-                        	if (useCellList_[typeIndex][i]) {
-                        		cellList* cl = cellListsByPairType_[typeIndex][i];
-                        		// should work, even if at the end
-                        		cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][end]);
-                        	}
-                        }
-               		} else if (Mcurrent_ == 0) {
-               			// have to decrement Ntot, but keep in cell lists
-               			numSpecies[typeIndex]--;
-               			totN_--;
-               			                    
-            			// this is a new fractional atom
-            			fractionalAtom_ = &atoms[typeIndex][atomIndex];
-            			fractionalAtomType_ = typeIndex;
-            			
-            			// decrement expanded state
-            			fractionalAtom_->mState = Mtot_-1;
-            			Mcurrent_ = Mtot_-1;
-               		} else {
-               			// further deleting an atom that already partially exists in the system, but remains in cell lists
+       		if ((numSpecies[typeIndex] > minSpecies_[typeIndex]) || override) {
+        		if (override) {
+        			// doing a swap move
+        			if (Mtot_ > 1) {
+        				// expanded ensemble and not necessarily deleting the partial atom
 
-               			// first ensure the system pointer is correct if currently a partially inserted atom
-            			if (fractionalAtom_ != &atoms[typeIndex][atomIndex] || typeIndex != fractionalAtomType_) {
-            				throw customException ("Fractional atom pointer does not point to atom belived to be inserted");
-            			}
-               			
-               			// decrement expanded state
-               			fractionalAtom_->mState--;
-               			Mcurrent_--;
-                	} 
-        		} else {
-        			// no expanded ensemble, just delete particle from appropriate cell list
-                    for (unsigned int i = 0; i < nSpecies_; ++i) {
-                    	if (useCellList_[typeIndex][i]) {
-                    		cellList* cl = cellListsByPairType_[typeIndex][i];
-                    		cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][numSpecies[typeIndex] - 1]);
-                    	}
-                    }
+					int end = numSpecies[typeIndex] - 1;
+					if (fractionalAtomType_ == typeIndex && Mcurrent_ > 0) {
+						// we are deleting a particle which has to watch out for the partial atom
+						end++;
+					}
+					
+					
+					if (atoms[typeIndex][atomIndex].mState == 0) {
+						// if we are removing a "full" particle, have to decrement Ntot, else not
+						numSpecies[typeIndex]--;
+               					totN_--;					
+					} else {
+						// but if removing the partial particle, M is affected
+						Mcurrent_ = 0; // regardless of how M was originally, the partial particle is now "entirely" gone
+					}
+
+					bool replace = false;
+					if (&atoms[typeIndex][end] == fractionalAtom_) {
+						// then the fractional atom is about to be used to replace a "full" one
+						replace = true;
+					}
+
+					// have to entirely remove the particle
+					for (unsigned int i = 0; i < nSpecies_; ++i) {
+                    				if (useCellList_[typeIndex][i]) {
+                    					cellList* cl = cellListsByPairType_[typeIndex][i];
+                    					cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][end]);
+                    				}
+                   			}
+					
+					atoms[typeIndex][atomIndex] = atoms[typeIndex][end];    // "replacement" operation
+	
+					if (replace) {
+						fractionalAtom_ = &atoms[typeIndex][atomIndex];	// update the pointer if necessary
+					}  				
+        			} else {
+        				// no expanded ensemble, just delete particle from appropriate cell list
+                    			for (unsigned int i = 0; i < nSpecies_; ++i) {
+                    				if (useCellList_[typeIndex][i]) {
+                    					cellList* cl = cellListsByPairType_[typeIndex][i];
+                    					cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][numSpecies[typeIndex] - 1]);
+                    				}
+                   			}
                 
-                    atoms[typeIndex][atomIndex] = atoms[typeIndex][numSpecies[typeIndex] - 1];    // "replacement" operation
-                    numSpecies[typeIndex]--;
-                    totN_--;
+                   			atoms[typeIndex][atomIndex] = atoms[typeIndex][numSpecies[typeIndex] - 1];    // "replacement" operation
+                   			numSpecies[typeIndex]--;
+                   			totN_--;
+        			}
+        		} else {
+        			// not doing a swap move, just a "regular" deletion
+        			if (Mtot_ > 1) {
+        				// expanded ensemble
+               				if (Mcurrent_ == 1) {
+               					// when we delete this atom, it is entirely gone
+            			
+               					// first ensure the system pointer is correct if currently a partially inserted atom
+            					if (fractionalAtom_ != &atoms[typeIndex][atomIndex] || typeIndex != fractionalAtomType_) {
+            						throw customException ("Fractional atom pointer does not point to atom belived to be inserted");
+            					}
+            			
+            					// decrement expanded state
+            					fractionalAtom_->mState = 0;
+            					Mcurrent_ = 0;
+            			
+            					// since deleting partial particle, do not update Ntot, etc.
+            					// however, do have to remove from cellLists
+            					int end = numSpecies[typeIndex]; // includes space for the partially inserted one currently in cellList
+                        			for (unsigned int i = 0; i < nSpecies_; ++i) {
+                        				if (useCellList_[typeIndex][i]) {
+                        					cellList* cl = cellListsByPairType_[typeIndex][i];
+                        					cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][end]);
+                        				}
+                        			}
+
+						atoms[typeIndex][atomIndex] = atoms[typeIndex][end];    // "replacement" operation
+
+               				} else if (Mcurrent_ == 0) {
+               					// have to decrement Ntot, but keep in cell lists
+               					numSpecies[typeIndex]--;
+               					totN_--;
+               				                    
+            					// this is a new fractional atom
+            					fractionalAtom_ = &atoms[typeIndex][atomIndex];
+            					fractionalAtomType_ = typeIndex;
+            			
+            					// decrement expanded state
+            					fractionalAtom_->mState = Mtot_-1;
+            					Mcurrent_ = Mtot_-1;
+               				} else {
+               					// further deleting an atom that already partially exists in the system, but remains in cell lists
+
+               					// first ensure the system pointer is correct if currently a partially inserted atom
+            					if (fractionalAtom_ != &atoms[typeIndex][atomIndex] || typeIndex != fractionalAtomType_) {
+            						throw customException ("Fractional atom pointer does not point to atom belived to be inserted");
+            					}
+               			
+               					// decrement expanded state
+               					fractionalAtom_->mState--;
+               					Mcurrent_--;
+                			}
+	        		} else {
+        				// no expanded ensemble, just delete particle from appropriate cell list
+                    			for (unsigned int i = 0; i < nSpecies_; ++i) {
+                    				if (useCellList_[typeIndex][i]) {
+                    					cellList* cl = cellListsByPairType_[typeIndex][i];
+                    					cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][numSpecies[typeIndex] - 1]);
+                    				}
+                    			}
+                
+                    			atoms[typeIndex][atomIndex] = atoms[typeIndex][numSpecies[typeIndex] - 1];    // "replacement" operation
+                   			numSpecies[typeIndex]--;
+                   			totN_--;
+        			}
         		}
-        	}
-        } else {
-            std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
-            throw customException ("System going below minimum allowable number of atoms, cannot delete an atom of type index "+index);
-        }
-    } else {
-        throw customException ("That species index does not exist, cannot delete an atom");
-    }
+       		} else {
+            		std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
+           		throw customException ("System going below minimum allowable number of atoms, cannot delete an atom of type index "+index);
+       		}
+    	} else {
+        	throw customException ("That species index does not exist, cannot delete an atom");
+    	}
 }
 
 /*!
@@ -696,7 +728,7 @@ void simSystem::readRestart (std::string filename) {
 }
 
 /*!
- * Return the list of neighbors of type A, for a particle of type B at position pos
+ * Return the list of neighbors of type A, around a particle of type B which is passed
  * 
  * \param [in] typeIndexA Index of first atom type
  * \param [in] typeIndexB Index of second atom type
@@ -704,44 +736,40 @@ void simSystem::readRestart (std::string filename) {
  * 
  * \return neighbor_list
  */
-std::vector< atom* > simSystem::getNeighborAtoms(const unsigned int typeIndexA, const unsigned int typeIndexB, atom* _atom)
-{
-	std::vector< atom* > neighbors;
-	neighbors.reserve(numSpecies[typeIndexA]);
+std::vector < atom* > simSystem::getNeighborAtoms(const unsigned int typeIndexA, const unsigned int typeIndexB, atom* _atom) {
+	std::vector < atom* > neighbors;
+
+	int end = numSpecies[typeIndexA];
+	if (Mcurrent_ > 0 && typeIndexA == fractionalAtomType_) {
+		// account for partial atom too
+		end++;
+	}
+	neighbors.reserve(end);
 	
 	// if no cell lists are defined for this interaction, return all particles
-	if (!useCellList_[typeIndexA][typeIndexB])
-	{
-		for (unsigned int i=0; i<numSpecies[typeIndexA]; i++)
-		{
-			if (_atom != &atoms[typeIndexA][i])
-			{
+	if (!useCellList_[typeIndexA][typeIndexB]) {
+		for (unsigned int i = 0; i < end; ++i) {
+			if (_atom != &atoms[typeIndexA][i]) { // watch out for self in case typeA = typeB
 				neighbors.push_back(&atoms[typeIndexA][i]);
 			}
 		}
-	}
-	else if (useCellList_[typeIndexA][typeIndexB])
-	{
+	} else if (useCellList_[typeIndexA][typeIndexB]) {
 		cellList* cl = cellListsByPairType_[typeIndexA][typeIndexB];
 		const unsigned int cellIndex = cl->calcIndex(_atom->pos[0], _atom->pos[1], _atom->pos[2]);
 
 		// loop over own cell
-		for (unsigned int i=0; i<cl->cells[cellIndex].size(); i++)
-		{
-			if (_atom != cl->cells[cellIndex][i])
-			{
+		for (unsigned int i = 0; i < cl->cells[cellIndex].size(); ++i) {
+			if (_atom != cl->cells[cellIndex][i]) {
 				neighbors.push_back(cl->cells[cellIndex][i]);
 			}
 		}
+
 		// loop over neighboring cells
-		for (unsigned int i=0; i<cl->neighbours[cellIndex].size(); i++)
-		{
+		for (unsigned int i = 0; i < cl->neighbours[cellIndex].size(); ++i) {
 			const unsigned int neighborCellIndex = cl->neighbours[cellIndex][i];
 			
-			for (unsigned int j=0; j<cl->cells[neighborCellIndex].size(); j++)
-			{
-				if (_atom != cl->cells[neighborCellIndex][j])
-				{
+			for (unsigned int j = 0; j < cl->cells[neighborCellIndex].size(); ++j) {
+				if (_atom != cl->cells[neighborCellIndex][j]) {
 					neighbors.push_back(cl->cells[neighborCellIndex][j]);
 				}
 			}
@@ -893,11 +921,12 @@ wala* simSystem::getWALABias () {
  * \param [in] lnF Factor by which the estimate of the density of states in updated each time it is visited.
  * \param [in] g Factor by which lnF is reduced (multiplied) once "flatness" has been achieved.
  * \param [in] s Factor by which the min(H) must be within the mean of H to be considered "flat", e.g. 0.8 --> min is within 20% error of mean
+ * \param [in] Mtot Total number of expanded ensemble state allowed within the system
  */
-void simSystem::startWALA (const double lnF, const double g, const double s) { 
+void simSystem::startWALA (const double lnF, const double g, const double s, const int Mtot) { 
 	// initialize the wala object
 	try {
-		wlBias = new wala (lnF, g, s, totNBounds_[1], totNBounds_[0], box_);
+		wlBias = new wala (lnF, g, s, totNBounds_[1], totNBounds_[0], Mtot, box_);
 	} catch (customException& ce) {
 		throw customException ("Cannot start Wang-Landau biasing in system: "+sstr(ce.what()));
 	}
@@ -909,11 +938,12 @@ void simSystem::startWALA (const double lnF, const double g, const double s) {
  * Start using a transition-matrix in the simulation. Throws an exception if input values are illegal or there is another problem (e.g. memory).
  * 
  * \param [in] tmmcSweepSize Number of times each transition in the collection matrix must be visited for a "sweep" to be completed
+ * \param [in] Mtot Total number of expanded ensemble state allowed within the system
  */
-void simSystem::startTMMC (const long long int tmmcSweepSize) { 
+void simSystem::startTMMC (const long long int tmmcSweepSize, const int Mtot) { 
 	// initialize the tmmc object
 	try {
-		tmmcBias = new tmmc (totNBounds_[1], totNBounds_[0], tmmcSweepSize, box_);
+		tmmcBias = new tmmc (totNBounds_[1], totNBounds_[0], tmmcSweepSize, Mtot, box_);
 	} catch (customException& ce) {
 		throw customException ("Cannot start TMMC biasing in system: "+sstr(ce.what()));
 	}
@@ -926,26 +956,27 @@ void simSystem::startTMMC (const long long int tmmcSweepSize) {
  * 
  * \param [in] sys System object containing the current state of the system.
  * \param [in] nTotFinal Total atoms in the proposed final state.
+ * \param [in] mFinal Final value of the expanded ensemble state of the system.
  * \param [in] p_u Ratio of the system's partition in the final and initial state (e.g. unbiased p_acc = min(1, p_u)).
  * 
  * \return rel_bias The value of the relative bias to apply in the metropolis criteria during sampling
  */
-const double calculateBias (simSystem &sys, const int nTotFinal) { 
+const double calculateBias (simSystem &sys, const int nTotFinal, const int mFinal) { 
 	double rel_bias = 1.0;
 	
 	if (sys.useTMMC && !sys.useWALA) {
 		// TMMC biasing
-		const __BIAS_INT_TYPE__ address1 = sys.tmmcBias->getAddress(sys.getTotN()), address2 = sys.tmmcBias->getAddress(nTotFinal);
+		const __BIAS_INT_TYPE__ address1 = sys.tmmcBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.tmmcBias->getAddress(nTotFinal, mFinal);
 		const double b1 = sys.tmmcBias->getBias (address1), b2 = sys.tmmcBias->getBias (address2);
 		rel_bias = exp(b2-b1);
     } else if (!sys.useTMMC && sys.useWALA) {
     	// Wang-Landau Biasing
-    	const __BIAS_INT_TYPE__ address1 = sys.wlBias->getAddress(sys.getTotN()), address2 = sys.wlBias->getAddress(nTotFinal); 
+    	const __BIAS_INT_TYPE__ address1 = sys.wlBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.wlBias->getAddress(nTotFinal, mFinal); 
     	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
     	rel_bias = exp(b2-b1);
     } else if (sys.useTMMC && sys.useWALA) {
     	// Crossover phase where we use WL but update TMMC collection matrix
-    	const int address1 = sys.wlBias->getAddress(sys.getTotN()), address2 = sys.wlBias->getAddress(nTotFinal);
+    	const int address1 = sys.wlBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.wlBias->getAddress(nTotFinal, mFinal);
     	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
     	rel_bias = exp(b2-b1);
     } else {

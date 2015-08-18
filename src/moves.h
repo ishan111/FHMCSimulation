@@ -20,10 +20,12 @@ public:
 	mcMove (const int typeIndex, const std::string tag) { typeIndex_ = typeIndex; name_ = tag + boost::lexical_cast<std::string>(typeIndex); }  
     virtual ~mcMove () = 0;
     virtual int make (simSystem &sys) = 0; //!< Make a MC move, return MOVE_SUCCESS or MOVE_FAILURE
+	const bool changeN () { return changeN_; }	//!< Returns whether or not the move has the ability to change the net number of particles in the system	
 	const int whatType () { return typeIndex_; } //!< Returns the index referring to the atom type this move operates on
 	const std::string myName () { return name_; }	//!< Return the name of this move
 	
 protected:
+	bool changeN_; 	//!< Does this move have the capacity to create a net change in the total number of particles?
 	int typeIndex_;   //!< Species index this move will operate on
 	std::string name_;	//!< Move name
 };

@@ -40,9 +40,9 @@ public:
     void readRestart (std::string filename);
     void recordU ();
     void printU (const std::string fileName);
-    void startWALA (const double lnF, const double g, const double s); //!< Start using Wang-Landau and instantiate the bias object
+    void startWALA (const double lnF, const double g, const double s, const int Mtot); //!< Start using Wang-Landau and instantiate the bias object
    	void stopWALA () { useWALA = false; delete wlBias; } //!< Stop using Wang-Landau and free the bias object
-   	void startTMMC (const long long int tmmcSweepSize); //!< Start using TMMC and instantiate the bias object
+   	void startTMMC (const long long int tmmcSweepSize, const int Mtot); //!< Start using TMMC and instantiate the bias object
    	void stopTMMC () { useTMMC = false; delete tmmcBias; } //!< Stop using TMMC and free the bias object
     void setTotNBounds (const std::vector < int > &bounds);
    	void incrementMState ();
@@ -56,7 +56,8 @@ public:
     const int getTotN () { return totN_; } //!< Return a sum of the total number of atoms currently in the system
     const int getCurrentM () { return Mcurrent_; } //!< Return the system's current expanded ensemble fractional state
     const int getTotalM () { return Mtot_; } //!< Return the total number of fractional states available to species in the expanded ensemble
-    const double energy () { return energy_; } //!< Return the system's instantaneous energy
+	const int getFractionalAtomType () { return fractionalAtomType_; } //!< Return the atom type of the fractional atom 
+	const double energy () { return energy_; } //!< Return the system's instantaneous energy
     const double scratchEnergy ();
     const double beta () { return beta_; } //!< Return 1/kT
     const double mu (const int index) { return mu_[index]; } //!< Return the chemical potential for a given species' index
@@ -78,8 +79,8 @@ private:
     atom* fractionalAtom_; //!< Pointer to the atom in the system that is currently only fractionally inserted/deleted
     int fractionalAtomType_; //!< Type of atom that is currently fractionally inserted
     int nSpecies_; //!< Number of species types allowed in the simulation (single component = 1, multicomponent > 1)
-    int Mcurrent_; //!< Fractional level of insertion of the current atom in an "expanded" state
-    int Mtot_; //!< Number of fractional states available to each atom of each species in the expanded ensemble
+    int Mcurrent_; //!< Fractional level of insertion of the current atom in an "expanded" state, all species have the same Mtot_
+    int Mtot_; //!< Number of fractional states available to each atom of each species in the expanded ensemble, all species are identical
     int totN_; //!< Sum total of all atoms in the system
     double beta_; //!< Inverse temperature, really 1/kT
     double energy_; //!< Instantaneous energy of the system
@@ -96,6 +97,6 @@ private:
     std::vector < std::vector <cellList*> > cellListsByPairType_; // this matrix stores pointers to the actual cell lists for all pair types
 };
 
-const double calculateBias (simSystem &sys, const int nTotFinal);
+const double calculateBias (simSystem &sys, const int nTotFinal, const int mFinal);
 
 #endif

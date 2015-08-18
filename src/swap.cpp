@@ -18,6 +18,7 @@ int swapParticles::make (simSystem &sys) {
 	const int a2 = (int) floor(rng (&RNG_SEED) * sys.numSpecies[typeIndex2_]);
 	atom a1_orig = sys.atoms[typeIndex_][a1], a1_new = a1_orig;
 	atom a2_orig = sys.atoms[typeIndex2_][a2], a2_new = a2_orig;
+	int fracType = sys.getFractionalAtomType (), n1_orig = sys.numSpecies[typeIndex_], n2_orig = sys.numSpecies[typeIndex2_];
 
 	// positions will be exchanged, but no other property should change
 	a1_new.pos = a2_orig.pos;
@@ -48,12 +49,19 @@ int swapParticles::make (simSystem &sys) {
 #ifdef FLUID_PHASE_SIMULATIONS
         if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
         	if (spec == typeIndex_) {
-				delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
-			}
-			else {
-				delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
-			}
+			int nBath = 0;
+			if (sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex_][a1]) {
+				// a1 must be partially inserted atom, this is not counted in sys.numSpecies[spec]
+				nBath = sys.numSpecies[spec];
+			} else {
+				// we are deleting a fully inserted particle, which is counted in sys.numSpecies[spec]
+				nBath = sys.numSpecies[spec]-1;
+			}		
+			delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(nBath/V);
+		} else {
+			delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
 		}
+	}
 #endif
     }
     
@@ -82,12 +90,19 @@ int swapParticles::make (simSystem &sys) {
 #ifdef FLUID_PHASE_SIMULATIONS
         if (sys.ppot[spec][typeIndex2_]->useTailCorrection) {
         	if (spec == typeIndex2_) {
-				delEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection((sys.numSpecies[spec]-1)/V);
-			}
-			else {
-				delEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection((sys.numSpecies[spec])/V);
-			}
+			int nBath = 0;
+			if (sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex2_][a2]) {
+				// a1 must be partially inserted atom, this is not counted in sys.numSpecies[spec]
+				nBath = sys.numSpecies[spec];
+			} else {
+				// we are deleting a fully inserted particle, which is counted in sys.numSpecies[spec]
+				nBath = sys.numSpecies[spec]-1;
+			}		
+			delEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection(nBath/V);
+		} else {
+			delEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection((sys.numSpecies[spec])/V);
 		}
+	}
 #endif
     }
 
@@ -128,7 +143,7 @@ int swapParticles::make (simSystem &sys) {
     	throw customException (a+b);
     }
 
-    // Inster new_a2
+    // Insert new_a2
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
     	std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex2_, &a2_new);
         for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
@@ -141,7 +156,7 @@ int swapParticles::make (simSystem &sys) {
         }
         // add tail correction to potential energy -- only enable for fluid phase simulations
 #ifdef FLUID_PHASE_SIMULATIONS
-        if (sys.ppot[spec][typeIndex2_]->useTailCorrection){
+        if (sys.ppot[spec][typeIndex2_]->useTailCorrection) {
 			insEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection(sys.numSpecies[spec]/V);
 		}
 #endif
@@ -157,11 +172,11 @@ int swapParticles::make (simSystem &sys) {
       
     // Biasing
     const double p_u = exp(-sys.beta()*(insEnergy - delEnergy));
-    double bias = calculateBias(sys, sys.getTotN()); // sys.numSpecies already contains the currently proposed modifications
+    double bias = calculateBias(sys, sys.getTotN(), sys.getCurrentM()); // sys.numSpecies already contains the currently proposed modifications but Ntot and M should not change
     
     // tmmc gets updated the same way, regardless of whether the move gets accepted
     if (sys.useTMMC) {
-    	sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), std::min(1.0, p_u)); // since the total number of atoms isn't changing, can use getTotN() as both initial and final states
+    	sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), std::min(1.0, p_u)); // since the total number of atoms isn't changing, can use getTotN() as both initial and final states
     }
     
 	if (rng (&RNG_SEED) < p_u*bias) {
@@ -169,42 +184,74 @@ int swapParticles::make (simSystem &sys) {
 		
 		// update Wang-Landau bias, if used
 		if (sys.useWALA) {
-			sys.getWALABias()->update(sys.getTotN());
+			sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
 		}
-			
+		
+	// double check
+	if (n1_orig != sys.numSpecies[typeIndex_]) {
+		throw customException ("Number of species 1 atoms do not match before and after swap move");	
+	}
+	if (n2_orig != sys.numSpecies[typeIndex2_]) {
+		throw customException ("Number of species 2 atoms do not match before and after swap move");	
+	}
+	if (fracType != sys.getFractionalAtomType()) {
+		throw customException ("Fractional type has changed during course of swap move");	
+	}
+
         return MOVE_SUCCESS;
     }
 	
 	// Undo to the swap if move was rejected
 	// The "new" atoms are now at the ends of each of the vector for each type
+	int endIndex = sys.numSpecies[typeIndex_]-1;	
+	if (fracType == typeIndex_ && sys.getCurrentM() > 0) {
+		// "end" of the array is just past the end (sys.numSpecies[typeIndex_]-1) because there is a partial atom in the array
+		endIndex = sys.numSpecies[typeIndex_];
+	}
 	try {
-    	sys.deleteAtom(typeIndex_, sys.numSpecies[typeIndex_]-1);
+    	sys.deleteAtom(typeIndex_, endIndex, true);
     } catch (customException &ce) {
     	std::string a = "Failed to delete atom during swapping: ", b = ce.what();
     	throw customException (a+b);
     }
+	endIndex = sys.numSpecies[typeIndex2_]-1;
+	if (fracType == typeIndex2_ && sys.getCurrentM() > 0) {
+		// "end" of the array is just past the end (sys.numSpecies[typeIndex2_]-1) because there is a partial atom in the array
+		endIndex = sys.numSpecies[typeIndex2_];
+	}
     try {
-        sys.deleteAtom(typeIndex2_, sys.numSpecies[typeIndex2_]-1);
+        sys.deleteAtom(typeIndex2_, endIndex, true);
     } catch (customException &ce) {
        	std::string a = "Failed to delete atom during swapping: ", b = ce.what();
         throw customException (a+b);
     }
     try {
-    	sys.insertAtom(typeIndex_, &a1_orig);
+    	sys.insertAtom(typeIndex_, &a1_orig, true);
     } catch (customException &ce) {
         std::string a = "Failed to insert atom during swapping: ", b = ce.what();
         throw customException (a+b);
     }
     try {
-    	sys.insertAtom(typeIndex2_, &a2_orig);
+    	sys.insertAtom(typeIndex2_, &a2_orig, true);
     } catch (customException &ce) {
         std::string a = "Failed to insert atom during swapping: ", b = ce.what();
         throw customException (a+b);
     }
         
+	// double check
+	if (n1_orig != sys.numSpecies[typeIndex_]) {
+		throw customException ("Number of species 1 atoms do not match before and after swap move");	
+	}
+	if (n2_orig != sys.numSpecies[typeIndex2_]) {
+		throw customException ("Number of species 2 atoms do not match before and after swap move");	
+	}
+	if (fracType != sys.getFractionalAtomType()) {
+		throw customException ("Fractional type has changed during course of swap move");	
+	}
+
 	// update Wang-Landau bias (even if moved failed), if used
 	if (sys.useWALA) {
-		sys.getWALABias()->update(sys.getTotN());
+		sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
 	}
 	
 	return MOVE_FAILURE;

@@ -45,6 +45,9 @@ public:
 	double energy (const atom* a1, const atom* a2, const std::vector < double > &box);
 	double tailCorrection (const double rhoBath);
 	double rcut ();
+
+private:
+	std::vector < double > sigmaM_; //!< Sigma as a function of the expanded ensemble state	
 };
 
 /*!
@@ -52,10 +55,6 @@ public:
  * Parameters should be specified in the following order: { r_cut, r_shift, u_shift, u_infinity }
  */
 class tabulated : public pairPotential {
-private:
-	std::vector <double> table;
-	double start; //!< r To start from
-	double dr; //!< Increment for r
 public:
 	~tabulated () {;}
 	void setParameters (const std::vector < double > params);
@@ -63,6 +62,11 @@ public:
 	double energy (const atom* a1, const atom* a2, const std::vector < double > &box);
 	double tailCorrection (const double rhoBath);
 	double rcut ();
+
+private:
+	double start; //!< r To start from
+	double dr; //!< Increment for r
+	std::vector <double> table, mScale;	
 };
 
 /*!
@@ -76,6 +80,10 @@ public:
 	double energy (const atom* a1, const atom* a2, const std::vector < double > &box);
 	double tailCorrection (const double rhoBath);
 	double rcut ();
+
+private:
+	std::vector < double > sigmaM_; //!< Hard sphere overlap as a function of expanded ensemble stage
+	std::vector < double > rangeM_;	//!< Range of interaction as a function of expanded ensemble stage
 };
 
 /*!
@@ -89,6 +97,9 @@ public:
 	double energy (const atom* a1, const atom* a2, const std::vector < double > &box);
 	double tailCorrection (const double rhoBath);
 	double rcut ();
+
+private:
+	std::vector < double > sigmaM_; //!< Hard sphere overlap as a function of expanded ensemble stage
 };
 
 #endif

@@ -3,21 +3,27 @@
 /*!
  * Initialize the tmmc object.
  * 
- * \param [in] nSpec Number of species in the simulation.
  * \param [in] Nmax Upper bound for total number of particles.
  * \param [in] Nmin Lower bound for total number of particles.
+ * \param [in] Mtot Total number of expanded ensemble states in a system.
+ * \param [in] tmmcSweepSize Number of times the each point in the collection matrix must be visited for a "sweep" to be considered finished
  * \param [in] box Vector of simulations box dimensions.
  */
-tmmc::tmmc (const int Nmax, const int Nmin, const long long int tmmcSweepSize, const std::vector <double> box) {	
+tmmc::tmmc (const int Nmax, const int Nmin,  const int Mtot, const long long int tmmcSweepSize, const std::vector <double> box) {	
 	if (Nmin > Nmax) {
 		throw customException ("Nmin ("+sstr(Nmin)+") > Nmax ("+sstr(Nmax)+" in TMMC bias");
 	}
 	if (Nmin < 0) {
 		throw customException ("Nmin < 0 in TMMC bias");
 	}
+	if (Mtot < 1) {
+		throw customException ("Mtot < 1 in TMMC bias");
+	}
+
 	__BIAS_INT_TYPE__ size = (Nmax - Nmin + 1);
 	Nmin_ = Nmin;
 	Nmax_ = Nmax;
+	Mtot_ = Mtot;
 	
 	if (box.size() != 3) {
 		throw customException ("Illegal number of box dimensions in TMMC");
@@ -32,34 +38,34 @@ tmmc::tmmc (const int Nmax, const int Nmin, const long long int tmmcSweepSize, c
 	
 	nSweeps_ = 0;
 	if (tmmcSweepSize < 1) {
-		throw customException ("TMMC sweep size myst be >= 1");
+		throw customException ("TMMC sweep size must be >= 1");
 	}
 	tmmcSweepSize_ = tmmcSweepSize;
 	
 	// attempt to allocate memory for collection matrix and initializes it all to 0
 	try {
-		C_.resize(3*size, 0);
+		C_.resize(3*Mtot_*size, 0);
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for collection matrix in tmmc");
 	}
 
 	// attempt to allocate memory for probability matrix and initializes it all to 0
 	try {
-		P_.resize(3*size, 0);
+		P_.resize(3*Mtot_*size, 0);
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for probability matrix in tmmc");
 	}
 
 	// attempt to allocate memory for states counter to check how often a sweep has been performed
 	try {
-		HC_.resize(3*size, 0);
+		HC_.resize(3*Mtot_*size, 0);
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for the sweep counter in tmmc");
 	}
 	
 	// attempt to allocate memory for lnPI matrix and initializes it all to 0
 	try {
-		lnPI_.resize(size, 0.0);
+		lnPI_.resize(Mtot_*size, 0.0);
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for macrostate distribution matrix in tmmc");
 	}
@@ -105,38 +111,73 @@ void tmmc::iterateForward () {
 
 /*!
  * For a given multidimensional array which has been cast into 1D, find the address that refers to a given transition.
+ * Assumes only valid moves are moving by +/-1 M (and subsequently N), will throw exception if this is not met.
  * 
  * \param [in] Nstart Number of total species initially (before MC move)
  * \param [in] Nend Number of total species (in order) after the MC move
+ * \param [in] Mstart Expanded ensemble state the system begins in
+ * \param [in] Mend Expanded ensemble state the system ends in
  */
-const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const int Nstart, const int Nend) {
-	if (Nstart > Nmax_ || Nstart < Nmin_ || Nend > (Nmax_+1) || Nend < (Nmin_-1)) { // Nend has array positions for going over end of bounds but are never used, still they are valid
-		throw customException ("N out of bounds in TMMC object, cannot retrieve address");
+const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const int Nstart, const int Nend, const int Mstart, const int Mend) {
+	if (Nstart > Nmax_ || Nstart < Nmin_ || Nend > (Nmax_+1) || Nend < (Nmin_-1) || Mstart < 0 || Mstart > Mtot_-1 || Mend < 0 || Mend > Mtot_-1) { // Nend has array positions for going over end of bounds but are never used, still they are valid
+		throw customException ("N, M out of bounds in TMMC object, cannot retrieve address");
 	}
 	
-	// Layout of y = [0, +1, -1] 
-	int addOrSubtract = (Nend - Nstart), y = 0;
-	if (addOrSubtract == 0) {
-		y = 0;
-	} else if (addOrSubtract == 1) {
-		y = 1;
-	} else if (addOrSubtract == -1) {
-		y = 2;
+	if (Mtot_ > 1) {
+		// expanded ensemble
+		int y = 0;
+		if (Nstart == Nend) {
+			// moving within an expanded set
+			int addOrSubtract = Mend - Mstart;
+			if (addOrSubtract == 0) {
+				y = 0;
+			} else if (addOrSubtract == 1) {
+				y = 1;		
+			} else if (addOrSubtract == -1) {
+				y = 2;
+			} else {	
+				throw customException ("Illegal addOrSubtract value");
+			}
+		} else {
+			// crossing over
+			if (Nend > Nstart) {
+				y = 1;
+				if (Mstart != Mtot_ - 1 && Mend != 0) {
+					throw customException ("Illegal expanded ensemble values");
+				}
+			} else {
+				y = 2;
+				if (Mstart != 0 && Mend != Mtot_ - 1) {
+					throw customException ("Illegal expanded ensemble values");
+				}
+			}
+		}
+		return 3*((Nstart - Nmin_)*Mtot_ + Mstart) + y;
 	} else {
-		throw customException ("Illegal addOrSubtract value");
+		// no expanded ensemble
+		int addOrSubtract = (Nend - Nstart), y = 0;
+		if (addOrSubtract == 0) {
+			y = 0;
+		} else if (addOrSubtract == 1) {
+			y = 1;
+		} else if (addOrSubtract == -1) {
+			y = 2;
+		} else {
+			throw customException ("Illegal addOrSubtract value");
+		}
+		__BIAS_INT_TYPE__ x = Nstart - Nmin_;
+		return x*3 + y; // equivalent to expanded ensemble because Mstart = 0 always, and Mtot_ = 1
 	}
-	__BIAS_INT_TYPE__ x = Nstart - Nmin_;
-	return x*3 + y;
 }
 
 /*!
  * Get the address in lnPI that corresponds to a given macrostate.
  * 
  * \param [in] Nval Number of total atoms
+ * \param [in] Mval Value of expanded ensemble state
  */
-const __BIAS_INT_TYPE__ tmmc::getAddress (const int Nval) {
-	__BIAS_INT_TYPE__ x = Nval - Nmin_;
-	return x;
+const __BIAS_INT_TYPE__ tmmc::getAddress (const int Nval, const int Mval) {
+	return (Nval - Nmin_)*Mtot_ + Mval;
 }
 
 /*!
@@ -144,10 +185,12 @@ const __BIAS_INT_TYPE__ tmmc::getAddress (const int Nval) {
  * 
  * \param [in] Nstart Total number of atoms initially (before MC move)
  * \param [in] Nend Total number of atoms after the MC move
+ * \param [in] Mstart Initial value of expanded ensemble state
+ * \param [in] Mend Final value of expanded ensemble state
  * \param [in] pa Unbiased Metropolis criterion for making a MC move (i.e. pa = min(1, exp(...)))
  */
-void tmmc::updateC (const int Nstart, const int Nend, const double pa) {
-	const int i = getTransitionAddress(Nstart, Nend), j = getTransitionAddress(Nstart, Nstart);
+void tmmc::updateC (const int Nstart, const int Nend, const int Mstart, const int Mend, const double pa) {
+	const int i = getTransitionAddress(Nstart, Nend, Mstart, Mend), j = getTransitionAddress(Nstart, Nstart, Mstart, Mstart);
 	C_[i] += pa;
 	C_[j] += (1-pa);
 	HC_[i] += 1.0; // only count the transition actually proposed, not the Nstart --> Nstart unless that was what was originally proposed
@@ -178,14 +221,32 @@ void tmmc::calculatePI () {
 	
 	// Reset first value to zero just to start fresh. Since only ratios matter this is perfectly fair.
 	lnPI_[0] = 0.0;
-	__BIAS_INT_TYPE__ address1, address2;
-	for (__BIAS_INT_TYPE__ i = 0; i < lnPI_.size()-1; ++i) {
-		address1 = getTransitionAddress(Nmin_+i, Nmin_+i+1);
-		address2 = getTransitionAddress(Nmin_+i+1, Nmin_+i);
-		if (!(P_[address1] > 0) || !(P_[address2] > 0)) {
-			throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros at address: P["+sstr(address1)+"] = "+sstr(P_[address1])+", P["+sstr(address2)+"] = "+sstr(P_[address2]));
-		}
-		lnPI_[i+1] = lnPI_[i] + log(P_[address1]/P_[address2]); // this is why P_ cannot be zero
+	__BIAS_INT_TYPE__ address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, nEndForward = 0, mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;
+	for (__BIAS_INT_TYPE__ i = 0; i < (Nmax_ - Nmin_ + 1); ++i) {
+		nStartForward = Nmin_+i;
+		for (__BIAS_INT_TYPE__ j = 0; j < Mtot_; ++j) { 
+			mStartForward = j;
+			if (j == Mtot_-1) {
+				nEndForward = nStartForward + 1;
+				mEndForward = 0;
+			} else {
+				nEndForward = nStartForward;
+				mEndForward = j + 1;			
+			}
+			
+			nStartBackward = nEndForward;
+			nEndBackward = nStartForward;
+			mStartBackward = mEndForward;
+			mEndBackward = mStartForward;
+
+			address1 = getTransitionAddress(nStartForward, nEndForward, mStartForward, mEndForward);
+			address2 = getTransitionAddress(nStartBackward, nEndBackward, mStartBackward, mEndBackward);	
+
+			if (!(P_[address1] > 0) || !(P_[address2] > 0)) {
+				throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros at address: P["+sstr(address1)+"] = "+sstr(P_[address1])+", P["+sstr(address2)+"] = "+sstr(P_[address2]));
+			}
+			lnPI_[i+1] = lnPI_[i] + log(P_[address1]/P_[address2]); // this is why P_ cannot be zero
+		}	
 	}
 }
 
@@ -203,6 +264,7 @@ void tmmc::print (const std::string fileName, bool printC) {
 	if (printC) {
 		const std::string name = fileName + "_C.nc";
 		try {
+			// print all states, including partial ones, so this can be used to restart from, etc.
 			NcFile outFile(name.c_str(), NcFile::replace);
 			NcDim probDim = outFile.addDim("vectorized_position", C_.size());
 			NcVar probVar = outFile.addVar("C", ncDouble, probDim);
@@ -222,8 +284,13 @@ void tmmc::print (const std::string fileName, bool printC) {
 	// Print lnPI (bias) matrix
 	const std::string name = fileName + "_lnPI.nc";
 	try {
+		// only print the integral states
+		std::vector < double > lnPI_print (Nmax_ - Nmin_ + 1, 0.0);
+		for (unsigned int i = 0; i < lnPI_print.size(); ++i) {
+			lnPI_print[i] = lnPI_[i*Mtot_];		
+		}
 		NcFile outFile(name.c_str(), NcFile::replace);
-		NcDim probDim = outFile.addDim("vectorized_position", lnPI_.size());
+		NcDim probDim = outFile.addDim("vectorized_position", lnPI_print.size());
 		NcVar probVar = outFile.addVar("lnPI", ncDouble, probDim);
 		std::string attName = "species_total_upper_bound";
 		probVar.putAtt(attName.c_str(), sstr(Nmax_).c_str());
@@ -232,13 +299,14 @@ void tmmc::print (const std::string fileName, bool printC) {
 		attName = "volume";
 		double V = box_[0]*box_[1]*box_[2];
 		probVar.putAtt(attName.c_str(), sstr(V).c_str());
-		probVar.putVar(&lnPI_[0]);
+		probVar.putVar(&lnPI_print[0]);
 	} catch (NcException ioe) {
 		throw customException ("Unable to write TMMC lnPI to "+name);
 	}
 #else
 	// Print collection matrix
 	if (printC) {
+		// print all states, including partial ones, so this can be used to restart from, etc.
 		std::ofstream of;
 		of.open(fileName+"_C.dat", std::ofstream::out);
 		if (!of.is_open()) {
@@ -266,8 +334,8 @@ void tmmc::print (const std::string fileName, bool printC) {
 	of << "# species_total_lower_bound: " << Nmin_ << std::endl;
 	double V = box_[0]*box_[1]*box_[2];
 	of << "# volume: " << V << std::endl;
-	for (long long int i = 0; i < lnPI_.size(); ++i) {
-		of << lnPI_[i] << std::endl;
+	for (long long int i = 0; i < lnPI_.size(); i += Mtot_) {
+		of << lnPI_[i] << std::endl; // only print the integral states
 	}
 	of.close();
 #endif
@@ -310,52 +378,17 @@ void tmmc::readC (const std::string fileName) {
 }
 
 /*!
- * Read the macrostate distribution (biasing function) from a file.  This assumes the user has already guaranteed that the bounds are consistent,
- * e.g. Nmin and Nmax, as it will not check this automatically.  Also assumes file was generated by this code.  "Hand made"
- * ones might have formatting issues since parsing is done based on tokens.
- * 
- * \param [in] fileName Name of file containing lnPI.  Must include file extension.
- */
-void tmmc::readlnPI (const std::string fileName) {
-#ifdef NETCDF_CAPABLE
-	try {
-		NcFile dataFile (fileName.c_str(), NcFile::read);
-		NcVar lnPI_data = dataFile.getVar("lnPI");
-		if (lnPI_data.isNull()) throw customException("Macrostate distribution matrix (biasing function) was empty, cannot read");
-		lnPI_data.getVar(&lnPI_[0]);
-	} catch (NcException ioe) {
-		throw customException ("Unable to read lnPI matrix from netCDF file "+fileName);
-	}
-#else
-	std::ifstream infile (fileName.c_str());
-	if (!infile.is_open()) {
-		throw customException("Unable to read lnPI matrix from ASCII file "+fileName);
-	}
-	std::string line;
-	int lineIndex = 0;
-	while(std::getline(infile,line)) {
-		std::stringstream lineStream(line);
-		// skip any header information
-		if (line.compare(0,1,"#",0,1) != 0) {
-			lnPI_[lineIndex] = atof(line.c_str());
-			lineIndex++;
-		}
-	}	
-#endif
-}
-
-/*!
  * Wang-Landau biasing constructor.
  * 
  * \param [in] lnF Factor by which the estimate of the density of states in updated each time it is visited.
  * \param [in] g Factor by which lnF is reduced (multiplied) once "flatness" has been achieved.
  * \param [in] s Factor by which the min(H) must be within the mean of H to be considered "flat", e.g. 0.8 --> min is within 20% error of mean
- * \param [in] nSpec Number of species in the simulation.
  * \param [in] Nmax Upper bound for total number of particles.
  * \param [in] Nmin Lower bound for total number of particles. 
+ * \param [in] Mtot Total number of expanded ensemble states in a system. 
  * \param [in] box Vector of simulation box size.
  */
-wala::wala (const double lnF, const double g, const double s, const int Nmax, const int Nmin, const std::vector <double> box) {
+wala::wala (const double lnF, const double g, const double s, const int Nmax, const int Nmin, const int Mtot, const std::vector <double> box) {
 	if (lnF < 0) {
 		throw customException ("lnF in Wang-Landau cannot be < 0");
 	}
@@ -379,6 +412,11 @@ wala::wala (const double lnF, const double g, const double s, const int Nmax, co
 		throw customException ("Nmin < 0 in Wang-Landau object");
 	}
 	
+	if (Mtot < 1) {
+		throw customException ("Mtot < 1 in Wang-Landau object");	
+	}
+	Mtot_ = Mtot;
+
 	if (box.size() != 3) {
 		throw customException ("Illegal number of box dimensions in Wang-Landau");
 	}
@@ -397,14 +435,14 @@ wala::wala (const double lnF, const double g, const double s, const int Nmax, co
 	
 	// attempt to allocate memory for macrostate distribution matrix and initializes it all to 0
 	try {
-		lnPI_.resize(size, 0.0);
+		lnPI_.resize(size*Mtot_, 0.0);
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for macrostate distribution matrix in wala");
 	}
 	
 	// initialize the visited-states histogram
 	try {
-		H_.resize(size, 0.0);
+		H_.resize(size*Mtot_, 0.0);
 	} catch (const std::bad_alloc &ce) {
 		throw customException ("Out of memory, cannot allocate space for visited-states histogram in wala");
 	}
@@ -414,22 +452,20 @@ wala::wala (const double lnF, const double g, const double s, const int Nmax, co
  * For multidimensional Wang-Landau biasing, get the 1D coordinate of the macrostate distribution estimate (bias) for multidimensional data.
  * 
  * \param [in] Nval Total number of atoms in the system
+ * \param [in] Mval Current value of the expanded ensemble state of the system
  */
-const __BIAS_INT_TYPE__ wala::getAddress (const int Nval) {
-	if (Nval > Nmax_) {
-		throw customException ("N out of bounds in Wang-Landau object, cannot retrieve address");
-	}
-	__BIAS_INT_TYPE__ x = Nval - Nmin_;
-	return x;
+const __BIAS_INT_TYPE__ wala::getAddress (const int Nval, const int Mval) {
+	return (Nval - Nmin_)*Mtot_ + Mval;
 }
 
 /*!
  * Update the estimate of the macrostate distribution.
  * 
  * \param [in] Nval Total current number of atoms in the system
+ * \param [in] Mval Current value of the expanded ensemble state of the system
  */
-void wala::update (const int Nval) {
-	__BIAS_INT_TYPE__ address = getAddress (Nval);
+void wala::update (const int Nval, const int Mval) {
+	__BIAS_INT_TYPE__ address = getAddress (Nval, Mval);
 	lnPI_[address] += lnF_;
 	H_[address] += 1.0;
 }
@@ -455,20 +491,6 @@ bool wala::evaluateFlatness () {
 		return true;
 	}
 	return false;
-	/*long double min = H_[0], mean = 0.0;
-	for (std::vector <double>::iterator it = H_.begin(); it != H_.end(); ++it) {
-		if ((*it) < min) {
-			min = (*it);
-		}
-		
-		mean += (*it);
-	}
-	mean /= H_.size();
-	
-	if (min > s_*mean) {
-		return true;
-	}*/
-	return false;	
 }
 
 /*!
@@ -493,6 +515,7 @@ void wala::print (const std::string fileName, bool printH) {
 	if (printH) {
 		const std::string name = fileName + "_H.nc";
 		try {
+			// print complete visited states histogram to restart / visualize progress
 			NcFile outFile(name.c_str(), NcFile::replace);
 			NcDim probDim = outFile.addDim("vectorized_position", H_.size());
 			NcVar probVar = outFile.addVar("H", ncDouble, probDim);
@@ -512,6 +535,7 @@ void wala::print (const std::string fileName, bool printH) {
 	// Print lnPI (bias) matrix
 	const std::string name = fileName + "_lnPI.nc";
 	try {
+		// only ALL states for restarting purposes
 		NcFile outFile(name.c_str(), NcFile::replace);
 		NcDim probDim = outFile.addDim("vectorized_position", lnPI_.size());
 		NcVar probVar = outFile.addVar("lnPI", ncDouble, probDim);
@@ -524,11 +548,12 @@ void wala::print (const std::string fileName, bool printH) {
 		probVar.putAtt(attName.c_str(), sstr(V).c_str());
 		probVar.putVar(&lnPI_[0]);
 	} catch (NcException ioe) {
-		throw customException ("Unable to write Wang-Landau lnPI  histogram to "+name);
+		throw customException ("Unable to write Wang-Landau lnPI histogram to "+name);
 	}
 #else
 	// Print visited-states histogram
 	if (printH) {
+		// print complete visited states histogram to restart / visualize progress
 		std::ofstream of;
 		of.open(fileName+"_H.dat", std::ofstream::out);
 		if (!of.is_open()) {
@@ -557,7 +582,7 @@ void wala::print (const std::string fileName, bool printH) {
 	double V = box_[0]*box_[1]*box_[2];
 	of << "# volume: " << V << std::endl;
 	for (long long int i = 0; i < lnPI_.size(); ++i) {
-		of << lnPI_[i] << std::endl;
+		of << lnPI_[i] << std::endl; // only ALL states for restarting purposes
 	}
 	of.close();
 #endif
