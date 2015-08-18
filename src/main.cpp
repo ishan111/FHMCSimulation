@@ -116,8 +116,14 @@ int main (int argc, char * const argv[]) {
 		assert(doc["min_N"][i].IsInt());
 		sysMin[i] = doc["min_N"][i].GetInt();
 	}	
-
-	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin);
+	
+	int Mtot = 1;
+	if (doc.HasMember("num_expanded_states")) {
+		assert(doc["num_expanded_states"].IsInt());
+		Mtot = doc["num_expanded_states"].GetInt();
+	}	
+	
+	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot);
 
 	std::vector < int > sysWindow;
 	if (doc.HasMember("window")) {

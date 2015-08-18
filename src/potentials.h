@@ -9,6 +9,7 @@
 #include <limits>
 #include "global.h"
 #include "utilities.h"
+#include "atom.h"
 
 #define NUM_INFINITY std::numeric_limits<double>::max()
 
@@ -21,12 +22,12 @@ public:
 	virtual ~pairPotential () {;}
 	
 	bool useTailCorrection;
-	virtual double energy (const double r) = 0;	
+	virtual double energy (const atom* a1, const atom* a2, const std::vector < double > &box) = 0;	
 	virtual double tailCorrection (const double rhoBath) = 0;
 	virtual void setParameters (const std::vector < double > params) = 0;
 	virtual double rcut () = 0;	//!< All potentials should be able to return their r_{cut} values so neighbor lists, etc. can use them
 	
-	inline double energy (const std::vector < double > &p1, const std::vector < double > &p2, const std::vector < double > &box) { return energy(sqrt(pbc_dist2(p1, p2, box))); } //!< Calculates the minimum image distance and invokes the energy call 
+	//inline double energy (const std::vector < double > &p1, const std::vector < double > &p2, const std::vector < double > &box) { return energy(sqrt(pbc_dist2(p1, p2, box))); } //!< Calculates the minimum image distance and invokes the energy call 
 	void savePotential(std::string filename, double start, double dr);
 //protected:
 	std::vector < double > params_; //!< Parameters (constants) that are needed to calculate U(r)
@@ -41,7 +42,7 @@ class lennardJones : public pairPotential {
 public:
 	~lennardJones () {;}
 	void setParameters (const std::vector < double > params);
-	double energy (const double r);
+	double energy (const atom* a1, const atom* a2, const std::vector < double > &box);
 	double tailCorrection (const double rhoBath);
 	double rcut ();
 };
@@ -59,7 +60,7 @@ public:
 	~tabulated () {;}
 	void setParameters (const std::vector < double > params);
 	void loadPotential(std::string filename);
-	double energy (const double r);
+	double energy (const atom* a1, const atom* a2, const std::vector < double > &box);
 	double tailCorrection (const double rhoBath);
 	double rcut ();
 };
@@ -72,7 +73,7 @@ class squareWell : public pairPotential {
 public:
 	~squareWell () {;}
 	void setParameters (const std::vector < double > params);
-	double energy (const double r);
+	double energy (const atom* a1, const atom* a2, const std::vector < double > &box);
 	double tailCorrection (const double rhoBath);
 	double rcut ();
 };
@@ -85,7 +86,7 @@ class hardCore : public pairPotential {
 public:
 	~hardCore () {;}
 	void setParameters (const std::vector <double> params);
-	double energy (const double r);
+	double energy (const atom* a1, const atom* a2, const std::vector < double > &box);
 	double tailCorrection (const double rhoBath);
 	double rcut ();
 };

@@ -1,6 +1,26 @@
 #include "system.h"
 
 /*!
+ * Increase the expanded ensemble state of the system by 1.  Accounts for the periodicity of [0, M)
+ */
+void simSystem::incrementMState () {
+	Mcurrent_++;
+	if (Mcurrent_ == Mtot_) {
+		Mcurrent_ = 0;
+	}
+}
+
+/*!
+ * Decrease the expanded ensemble state of the system by 1.  Accounts for the periodicity of [0, M)
+ */
+void simSystem::decrementMState () {
+	Mcurrent_--;
+	if (Mcurrent_ < 0) {
+		Mcurrent_ += Mtot_;
+	}
+}
+
+/*!
  * Set the bounds on the total number of particles in a system.  If not set manually, this defaults to the sum of the bounds given for
  * each individual species in the system.  Therefore, for single component simulations, this is identical to [minSpecies(0), maxSpecies(0)] 
  * unless otherwise set.  These bounds are intended to be used to create "windows" so that specific simulations can sample subregions
@@ -80,23 +100,91 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
  * 
  * \param [in] typeIndex What type the atom is (>= 0)
  * \param [in] newAtom Pointer to new atom.  A copy is stored in the system so the original may be destroyed.
+ * \param [in] override Override command that prevents the expanded ensemble state from being changed.  Used during swap moves where "insertions" are temporary.
  */
-void simSystem::insertAtom (const int typeIndex, atom *newAtom) {
+void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
     if (typeIndex < nSpecies_ && typeIndex >= 0) {
         if (numSpecies[typeIndex] < maxSpecies_[typeIndex]) {
-            atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
-            numSpecies[typeIndex]++;
-            totN_++;
-           // add particle into appropriate cell list
-           for (unsigned int i=0; i<nSpecies_; i++)
-           {
-           		if (useCellList_[typeIndex][i])
-            	{
-            		cellList* cl = cellListsByPairType_[typeIndex][i];
-            		cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex]- 1]);
-            	}
-            }
-            
+        	if (Mtot_ > 1 && !override) {
+        		// expanded ensemble behavior, "normal" insertion and deletion
+        		if (Mcurrent_ > 0) { // further inserting an atom that already partially exists in the system
+        			// ensure the system pointer is correct if currently a partially inserted atom
+        			if (fractionalAtom_ != newAtom || typeIndex != fractionalAtomType_) {
+        				throw customException ("Fractional atom pointer does not point to atom belived to be inserted");
+        			}
+        			
+        			// increment expanded state
+        			fractionalAtom_->mState++;
+        			Mcurrent_++;
+        			
+        			// check if now fully inserted
+        			if (fractionalAtom_->mState == Mtot_) {
+        				fractionalAtom_->mState = 0;
+        				Mcurrent_ = 0;
+        				totN_++;
+        				numSpecies[typeIndex]++;
+        			}
+        		} else {
+        			// inserting a new atom for the first time
+        			atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
+        			
+        			// assign fractional atom
+        			fractionalAtom_ = &atoms[typeIndex][numSpecies[typeIndex]];
+        			fractionalAtomType_ = typeIndex;
+        			
+        			// increment expanded state
+        			fractionalAtom_->mState = 1;
+        			Mcurrent_++;
+        			
+                    // add particle into appropriate cell lists
+                    for (unsigned int i = 0; i < nSpecies_; ++i) {
+                    	if (useCellList_[typeIndex][i]) {
+                     		cellList* cl = cellListsByPairType_[typeIndex][i];
+                     		cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex]]); // numSpecies[typeIndex] is the number of fully inserted ones, this partially inserted one comes after that
+                     	}
+                     }
+        		}
+        	} else if (Mtot_ > 1 && override) {
+        		// expanded ensemble behavior, but now amidst a "swap move" rather than an actual insertion or deletion.
+        		// for this, insertions involve just putting the atom into the system / cellLists, but without any net
+        		// change to the systems expanded ensemble state.
+        		
+        		// ensure we insert at the proper "end"
+        		int end = numSpecies[typeIndex];
+        		if (Mcurrent_ > 0 && typeIndex == fractionalAtomType_ && newAtom->mState == 0) {
+        			end++; // insert after the partially inserted one since newAtom is NOT the partial one
+        			totN_++; // we just added a "full" atom
+        			numSpecies[typeIndex]++; // we just added a "full" atom
+        		}
+        		atoms[typeIndex][end] = (*newAtom);
+        		
+        		// if we just added a partially inserted/deleted particle back to the system, need to update the pointer
+        		if (atoms[typeIndex][end].mState != 0) {
+        			fractionalAtom_ = &atoms[typeIndex][end];
+        			fractionalAtomType_ = typeIndex;
+        		}
+        		
+        		// put newAtom into the cell lists whatever its state
+                for (unsigned int i = 0; i < nSpecies_; ++i) {
+                	if (useCellList_[typeIndex][i]) {
+                 		cellList* cl = cellListsByPairType_[typeIndex][i];
+                 		cl->insertParticle(&atoms[typeIndex][end]);
+                 	}
+                 }        		
+        	} else {
+        		// direct insertion (no expanded ensemble)
+                atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
+                numSpecies[typeIndex]++;
+                totN_++;
+                
+               // add particle into appropriate cell lists
+               for (unsigned int i = 0; i < nSpecies_; ++i) {
+               		if (useCellList_[typeIndex][i]) {
+                		cellList* cl = cellListsByPairType_[typeIndex][i];
+                		cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex] - 1]);
+                	}
+                }
+        	}
         } else {
             std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
             throw customException ("Reached upper bound, cannot insert an atom of type index "+index);
@@ -114,21 +202,97 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom) {
  * \param [in] Optional override command which allows the system to delete a particle even it goes below the minimum allowed. E.g. during a swap move.
  */
 void simSystem::deleteAtom (const int typeIndex, const int atomIndex, bool override) {
-    if (typeIndex < nSpecies_ && typeIndex >= 0) {
+   
+	// use override command to completely remove an atom (during swap move this is employed) even if only partially present to begin with
+	// use override to PREVENT changes to mState of system, but allow N to change so tail corrections, etc. can be calculated properly
+	
+	if (typeIndex < nSpecies_ && typeIndex >= 0) {
         if ((numSpecies[typeIndex] > minSpecies_[typeIndex]) || override) {
-        	// delete particle from appropriate cell list
-            for (unsigned int i=0; i<nSpecies_; i++)
-            {
-            	if (useCellList_[typeIndex][i])
-            	{
-            		cellList* cl = cellListsByPairType_[typeIndex][i];
-            		cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][numSpecies[typeIndex] - 1]);
-            	}
-            }
-        
-            atoms[typeIndex][atomIndex] = atoms[typeIndex][numSpecies[typeIndex] - 1];    // "replacement" operation
-            numSpecies[typeIndex]--;
-            totN_--;
+        	if (override) {
+        		// doing a swap move
+        		if (Mtot_ > 1) {
+        			// expanded ensemble
+        			
+        			// trickier - have to totally remove each atom, not partially
+        			
+        			
+        		} else {
+        			// no expanded ensemble, just delete particle from appropriate cell list
+                    for (unsigned int i = 0; i < nSpecies_; ++i) {
+                    	if (useCellList_[typeIndex][i]) {
+                    		cellList* cl = cellListsByPairType_[typeIndex][i];
+                    		cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][numSpecies[typeIndex] - 1]);
+                    	}
+                    }
+                
+                    atoms[typeIndex][atomIndex] = atoms[typeIndex][numSpecies[typeIndex] - 1];    // "replacement" operation
+                    numSpecies[typeIndex]--;
+                    totN_--;
+        		}
+        	} else {
+        		// not doing a swap move, just a "regular" deletion
+        		if (Mtot_ > 1) {
+        			// expanded ensemble
+               		if (Mcurrent_ == 1) {
+               			// when we delete this atom, it is entirely gone
+            			
+               			// first ensure the system pointer is correct if currently a partially inserted atom
+            			if (fractionalAtom_ != &atoms[typeIndex][atomIndex] || typeIndex != fractionalAtomType_) {
+            				throw customException ("Fractional atom pointer does not point to atom belived to be inserted");
+            			}
+            			
+            			// decrement expanded state
+            			fractionalAtom_->mState = 0;
+            			Mcurrent_ = 0;
+            			
+            			// since deleting partial particle, do not update Ntot, etc.
+            			// however, do have to remove from cellLists
+            			int end = numSpecies[typeIndex];
+                        for (unsigned int i = 0; i < nSpecies_; ++i) {
+                        	if (useCellList_[typeIndex][i]) {
+                        		cellList* cl = cellListsByPairType_[typeIndex][i];
+                        		// should work, even if at the end
+                        		cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][end]);
+                        	}
+                        }
+               		} else if (Mcurrent_ == 0) {
+               			// have to decrement Ntot, but keep in cell lists
+               			numSpecies[typeIndex]--;
+               			totN_--;
+               			                    
+            			// this is a new fractional atom
+            			fractionalAtom_ = &atoms[typeIndex][atomIndex];
+            			fractionalAtomType_ = typeIndex;
+            			
+            			// decrement expanded state
+            			fractionalAtom_->mState = Mtot_-1;
+            			Mcurrent_ = Mtot_-1;
+               		} else {
+               			// further deleting an atom that already partially exists in the system, but remains in cell lists
+
+               			// first ensure the system pointer is correct if currently a partially inserted atom
+            			if (fractionalAtom_ != &atoms[typeIndex][atomIndex] || typeIndex != fractionalAtomType_) {
+            				throw customException ("Fractional atom pointer does not point to atom belived to be inserted");
+            			}
+               			
+               			// decrement expanded state
+               			fractionalAtom_->mState--;
+               			Mcurrent_--;
+                	} 
+        		} else {
+        			// no expanded ensemble, just delete particle from appropriate cell list
+                    for (unsigned int i = 0; i < nSpecies_; ++i) {
+                    	if (useCellList_[typeIndex][i]) {
+                    		cellList* cl = cellListsByPairType_[typeIndex][i];
+                    		cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][numSpecies[typeIndex] - 1]);
+                    	}
+                    }
+                
+                    atoms[typeIndex][atomIndex] = atoms[typeIndex][numSpecies[typeIndex] - 1];    // "replacement" operation
+                    numSpecies[typeIndex]--;
+                    totN_--;
+        		}
+        	}
         } else {
             std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
             throw customException ("System going below minimum allowable number of atoms, cannot delete an atom of type index "+index);
@@ -189,7 +353,7 @@ simSystem::~simSystem () {
  * \param [in] mu Chemical potential of each species
  * \param [in] maxSpecies Maximum number of each species to allow in the system
  */
-simSystem::simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies) {
+simSystem::simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies, const int Mtot) {
 	if ((box.size() != 3) || (nSpecies != mu.size()) || (maxSpecies.size() != nSpecies)) {
 		throw customException ("Invalid system initialization parameters");
 		exit(SYS_FAILURE);
@@ -201,6 +365,18 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		mu_ = mu;
 		beta_ = beta;
 	}
+	
+	for (unsigned int i = 0; i < 3; ++i) {
+		if (box_[i] <= 0) {
+			throw customException ("Box dimensions must be > 0");
+		}
+	}
+	
+	if (Mtot < 1) {
+		throw customException ("Total fractional states for expanded ensemble must be >= 1");
+	}
+	Mtot_ = Mtot;
+	Mcurrent_ = 0; // always start from fully inserted state
 	
 	try {
 		ppot.resize(nSpecies);
@@ -528,9 +704,9 @@ void simSystem::readRestart (std::string filename) {
  * 
  * \return neighbor_list
  */
-std::vector< std::vector<double> > simSystem::getNeighborPositions(const unsigned int typeIndexA, const unsigned int typeIndexB, atom* _atom)
+std::vector< atom* > simSystem::getNeighborAtoms(const unsigned int typeIndexA, const unsigned int typeIndexB, atom* _atom)
 {
-	std::vector< std::vector<double> > neighbors;
+	std::vector< atom* > neighbors;
 	neighbors.reserve(numSpecies[typeIndexA]);
 	
 	// if no cell lists are defined for this interaction, return all particles
@@ -540,7 +716,7 @@ std::vector< std::vector<double> > simSystem::getNeighborPositions(const unsigne
 		{
 			if (_atom != &atoms[typeIndexA][i])
 			{
-				neighbors.push_back(atoms[typeIndexA][i].pos);
+				neighbors.push_back(&atoms[typeIndexA][i]);
 			}
 		}
 	}
@@ -554,7 +730,7 @@ std::vector< std::vector<double> > simSystem::getNeighborPositions(const unsigne
 		{
 			if (_atom != cl->cells[cellIndex][i])
 			{
-				neighbors.push_back(cl->cells[cellIndex][i]->pos);
+				neighbors.push_back(cl->cells[cellIndex][i]);
 			}
 		}
 		// loop over neighboring cells
@@ -566,7 +742,7 @@ std::vector< std::vector<double> > simSystem::getNeighborPositions(const unsigne
 			{
 				if (_atom != cl->cells[neighborCellIndex][j])
 				{
-					neighbors.push_back(cl->cells[neighborCellIndex][j]->pos);
+					neighbors.push_back(cl->cells[neighborCellIndex][j]);
 				}
 			}
 		}
@@ -601,7 +777,7 @@ const double simSystem::scratchEnergy () {
         for (unsigned int j = 0; j < num1; ++j) {
             for (unsigned int k = j+1; k < num1; ++k) {
                 try {
-                    totU += ppot[spec1][spec1]->energy(atoms[spec1][j].pos, atoms[spec1][k].pos, box_); 
+                    totU += ppot[spec1][spec1]->energy(&atoms[spec1][j], &atoms[spec1][k], box_); 
                 } catch (customException &ce) {
                     std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
                     throw customException (a+b);
@@ -629,7 +805,7 @@ const double simSystem::scratchEnergy () {
                 for (unsigned int j = 0; j < num1; ++j) {
                     for (unsigned int k = 0; k < num2; ++k) {
                         try {
-                            totU += ppot[spec1][spec2]->energy(atoms[spec1][j].pos, atoms[spec2][k].pos, box_);
+                            totU += ppot[spec1][spec2]->energy(&atoms[spec1][j], &atoms[spec2][k], box_);
                         } catch (customException &ce) {
                             std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
                             throw customException (a+b);

@@ -26,10 +26,10 @@ int translateParticle::make (simSystem &sys) {
     double oldEnergy = 0.0;
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
         // get positions of neighboring atoms around chosenAtom
-        std::vector< std::vector<double> > neighborPositions = sys.getNeighborPositions(spec, typeIndex_, &sys.atoms[typeIndex_][chosenAtom]);
-    	for (unsigned int i = 0; i < neighborPositions.size(); ++i) {
+        std::vector< atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex_, &sys.atoms[typeIndex_][chosenAtom]);
+    	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
 			try {
-				oldEnergy += sys.ppot[spec][typeIndex_]->energy(neighborPositions[i], sys.atoms[typeIndex_][chosenAtom].pos, box);
+				oldEnergy += sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &sys.atoms[typeIndex_][chosenAtom], box);
 			}
 			catch (customException& ce) {
 				std::string a = "Cannot translate because of energy error: ", b = ce.what();
@@ -61,10 +61,10 @@ int translateParticle::make (simSystem &sys) {
     double newEnergy = 0.0;
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
         // get positions of neighboring atoms around chosenAtom
-        std::vector< std::vector<double> > neighborPositions = sys.getNeighborPositions(spec, typeIndex_, &sys.atoms[typeIndex_][chosenAtom]);
-    	for (unsigned int i = 0; i < neighborPositions.size(); ++i) {
+        std::vector< atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex_, &sys.atoms[typeIndex_][chosenAtom]);
+    	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
 			try {
-				newEnergy += sys.ppot[spec][typeIndex_]->energy(neighborPositions[i], sys.atoms[typeIndex_][chosenAtom].pos, box);
+				newEnergy += sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &sys.atoms[typeIndex_][chosenAtom], box);
 			}
 			catch (customException& ce) {
 				std::string a = "Cannot delete because of energy error: ", b = ce.what();

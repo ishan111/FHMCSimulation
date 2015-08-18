@@ -16,8 +16,14 @@ void pairPotential::savePotential(std::string filename, double start, double dr)
 	double r = start;
 	std::ofstream outData(filename.c_str());
 		
+	atom a1, a2;
+	std::vector <double> p1 (3, 0), box(3, 2.1*rcut()); // box must be atleast 2 rcut, +0.1 for good measure
+	a1.pos = p1;
+	a2.pos = p1;
+	
 	while (r < rcut()) {
-		outData<<r<<"\t"<<energy(r)<<std::endl;		
+		a2.pos[2] = r;
+		outData << r << "\t" << energy(&a1, &a2, box) << std::endl;		
 		r += dr;
 	}
 	
@@ -51,18 +57,27 @@ void lennardJones::setParameters (const std::vector < double > params) {
 }
 
 /*!
- * Return the energy of two particles separated by a distance r.
+ * Return the energy of two particles.
  * \f[ U(r) = 4 \epsilon \left( \left \frac{ \sigma }{ r } \right)^{12} - \left( \frac{ sigma }{ r } \right)^6 \right) + U_{shift} \quad r < r_{cut}
 	\f]
  *
- * \param [in] r Scalar separation, needs to be the minimum image
+ * \param [in] a1 Atom 1
+ * \param [in] a2 Atom 2
+ * \param [in] box Simulation box dimensions
  * 
  * \return U(r)
  */
-double lennardJones::energy (const double r) {
+double lennardJones::energy (const atom* a1, const atom* a2, const std::vector < double > &box) {
 	if (!paramsAreSet_) {
 		throw customException ("For lennardJones parameters not set");
 	}
+	
+	if (a1->mState != 1 || a2->mState != 1) {
+		throw customException ("Have not implemented expanded ensemble for lennardJones potential yet");
+	} 
+	
+	const double r = sqrt(pbc_dist2(a1->pos, a2->pos, box));
+	
 	double r1 = (params_[1]/r), r3 = r1*r1*r1, r6 = r3*r3, r12 = r6*r6;
 	if (r < params_[2]) {
 		return 4.0*params_[0]*(r12 - r6) + params_[3];
@@ -172,15 +187,25 @@ void tabulated::loadPotential(std::string filename)
 }
 
 /*!
- * Return the energy of two particles separate by a distance r.
+ * Return the energy of two particles.
  * Use linear interpolation to calculate energy from tabulated values
  * 
- * \param [in] r Scalar separation, needs to be the minimum image
+ * \param [in] a1 Atom 1
+ * \param [in] a2 Atom 2
+ * \param [in] box Simulation box dimensions
+ * 
+ * \return U(r)
  */
-double tabulated::energy (const double r) {
+double tabulated::energy (const atom* a1, const atom* a2, const std::vector < double > &box) {
 	if (!paramsAreSet_) {
 		throw customException ("For tabulated parameters not set");
 	}
+	
+	if (a1->mState != 1 || a2->mState != 1) {
+		throw customException ("Have not implemented expanded ensemble for tabulated potential yet");
+	} 
+	
+	const double r = sqrt(pbc_dist2(a1->pos, a2->pos, box));
 	
 	if (r < params_[1]) {
 		std::cerr<<"distance r too small in energy calculation in tabulated potential. Returning value at r="<<start<<std::endl;
@@ -251,16 +276,25 @@ void squareWell::setParameters (const std::vector < double > params) {
 }
 
 /*!
- * Return the energy of two particles separate by a distance r.
+ * Return the energy of two particles.
  * 
- * \param [in] r Scalar separation, needs to be the minimum image
+ * \param [in] a1 Atom 1
+ * \param [in] a2 Atom 2
+ * \param [in] box Simulation box dimensions
  * 
  * \return U(r)
  */
-double squareWell::energy (const double r) {
+double squareWell::energy (const atom* a1, const atom* a2, const std::vector < double > &box) {
 	if (!paramsAreSet_) {
 		throw customException ("For squareWell parameters not set");
 	}
+	
+	if (a1->mState != 1 || a2->mState != 1) {
+		throw customException ("Have not implemented expanded ensemble for squareWell potential yet");
+	} 
+	
+	const double r = sqrt(pbc_dist2(a1->pos, a2->pos, box));
+	
 	if (r < params_[0]) {
 		return NUM_INFINITY;
 	} else if (r < params_[1]) {
@@ -315,16 +349,25 @@ void hardCore::setParameters (const std::vector < double > params) {
 }
 
 /*!
- * Return the energy of two particles separate by a distance r.
+ * Return the energy of two particles.
  * 
- * \param [in] r Scalar separation, needs to be the minimum image.
+ * \param [in] a1 Atom 1
+ * \param [in] a2 Atom 2
+ * \param [in] box Simulation box dimensions
  * 
  * \return U(r)
  */
-double hardCore::energy (const double r) {
+double hardCore::energy (const atom* a1, const atom* a2, const std::vector < double > &box) {
 	if (!paramsAreSet_) {
 		throw customException ("For hardCore parameters not set");
 	}
+	
+	if (a1->mState != 1 || a2->mState != 1) {
+		throw customException ("Have not implemented expanded ensemble for hardCore potential yet");
+	} 
+	
+	const double r = sqrt(pbc_dist2(a1->pos, a2->pos, box));
+	
 	if (r < params_[0]) {
 		return NUM_INFINITY;
 	}

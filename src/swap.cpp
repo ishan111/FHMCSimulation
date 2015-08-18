@@ -12,26 +12,32 @@ int swapParticles::make (simSystem &sys) {
 	if (sys.numSpecies[typeIndex_] < 1 || sys.numSpecies[typeIndex2_] < 1) {
 		return MOVE_FAILURE;
 	}
+	
+	// because the locations are effectively being swapped, it is fair to select a partially inserted atom to be involved
 	const int a1 = (int) floor(rng (&RNG_SEED) * sys.numSpecies[typeIndex_]);
 	const int a2 = (int) floor(rng (&RNG_SEED) * sys.numSpecies[typeIndex2_]);
-	atom a1_orig = sys.atoms[typeIndex_][a1];
-	atom a2_orig = sys.atoms[typeIndex2_][a2];
+	atom a1_orig = sys.atoms[typeIndex_][a1], a1_new = a1_orig;
+	atom a2_orig = sys.atoms[typeIndex2_][a2], a2_new = a2_orig;
 
+	// positions will be exchanged, but no other property should change
+	a1_new.pos = a2_orig.pos;
+	a2_new.pos = a1_orig.pos;
+	
 	const std::vector < double > box = sys.box();
 	double V = 1.0;
 	for (unsigned int i = 0; i < box.size(); ++i) {
         V *= box[i];
     }
 	    
-	// Swapping = delete both, one at a time, then add both at opposite positions, one at a time
-	// Delete a1
+	// Swapping = COMPLETELY delete both, one at a time, then add both at opposite positions, one at a time
+	// Delete a1 - take it from some, potentially partially inserted state, and entirely remove it
     double delEnergy = 0.0;
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
         // get positions of neighboring atoms around a1
-        std::vector < std::vector< double > > neighborPositions = sys.getNeighborPositions(spec, typeIndex_, &sys.atoms[typeIndex_][a1]);
-        for (unsigned int i = 0; i < neighborPositions.size(); ++i) {
+        std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex_, &sys.atoms[typeIndex_][a1]);
+        for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
             try {
-				delEnergy += sys.ppot[spec][typeIndex_]->energy(neighborPositions[i], sys.atoms[typeIndex_][a1].pos, box);
+				delEnergy += sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &sys.atoms[typeIndex_][a1], box);
 			}
 			catch (customException& ce) {
 				std::string a = "Cannot delete because of energy error: ", b = ce.what();
@@ -62,10 +68,10 @@ int swapParticles::make (simSystem &sys) {
 	// Delete a2
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
         // get positions of neighboring atoms around a2
-        std::vector < std::vector< double > > neighborPositions = sys.getNeighborPositions(spec, typeIndex2_, &sys.atoms[typeIndex2_][a2]);
-        for (unsigned int i = 0; i < neighborPositions.size(); ++i) {
+        std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex2_, &sys.atoms[typeIndex2_][a2]);
+        for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
             try {
-				delEnergy += sys.ppot[spec][typeIndex2_]->energy(neighborPositions[i], sys.atoms[typeIndex2_][a2].pos, box);
+				delEnergy += sys.ppot[spec][typeIndex2_]->energy(neighborAtoms[i], &sys.atoms[typeIndex2_][a2], box);
 			}
 			catch (customException& ce) {
 				std::string a = "Cannot delete because of energy error: ", b = ce.what();
@@ -93,14 +99,14 @@ int swapParticles::make (simSystem &sys) {
     	throw customException (a+b);
     }
 
-	// Insert a1 at a2's original location
+	// Insert new_a1
     double insEnergy = 0.0;
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
     	// get positions of neighboring atoms around a1's (a2's) new (old) location
-    	std::vector < std::vector < double > > neighborPositions = sys.getNeighborPositions(spec, typeIndex_, &a2_orig);
-        for (unsigned int i = 0; i < neighborPositions.size(); ++i) {
+    	std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex_, &a1_new);
+        for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
 			try {
-				insEnergy += sys.ppot[spec][typeIndex_]->energy(neighborPositions[i], a2_orig.pos, box);	
+				insEnergy += sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &a1_new, box);	
 			} catch (customException& ce) {
 				std::string a = "Cannot insert because of energy error: ", b = ce.what();
 				throw customException (a+b);
@@ -114,21 +120,20 @@ int swapParticles::make (simSystem &sys) {
 #endif
     }
     
-    // Add a1 to the system
+    // Add a1 into the system in a2's original place
     try {
-    	sys.insertAtom(typeIndex_, &a2_orig);
+    	sys.insertAtom(typeIndex_, &a1_new, true); 
     } catch (customException &ce) {
     	std::string a = "Failed to insert atom during swapping: ", b = ce.what();
     	throw customException (a+b);
     }
 
-	// Insert a2 at a1's original location
+    // Inster new_a2
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
-    	// get positions of neighboring atoms around a2's (a1's) new (old) location
-    	std::vector < std::vector < double > > neighborPositions = sys.getNeighborPositions(spec, typeIndex2_, &a1_orig);
-        for (unsigned int i = 0; i < neighborPositions.size(); ++i) {
+    	std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex2_, &a2_new);
+        for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
 			try {
-				insEnergy += sys.ppot[spec][typeIndex2_]->energy(neighborPositions[i], a1_orig.pos, box);	
+				insEnergy += sys.ppot[spec][typeIndex2_]->energy(neighborAtoms[i], &a2_new, box);	
 			} catch (customException& ce) {
 				std::string a = "Cannot insert because of energy error: ", b = ce.what();
 				throw customException (a+b);
@@ -144,12 +149,12 @@ int swapParticles::make (simSystem &sys) {
 
     // Add a2 to the system
     try {
-    	sys.insertAtom(typeIndex2_, &a1_orig);
+    	sys.insertAtom(typeIndex2_, &a2_new, true);
     } catch (customException &ce) {
     	std::string a = "Failed to insert atom during swapping: ", b = ce.what();
     	throw customException (a+b);
     }
-       
+      
     // Biasing
     const double p_u = exp(-sys.beta()*(insEnergy - delEnergy));
     double bias = calculateBias(sys, sys.getTotN()); // sys.numSpecies already contains the currently proposed modifications
