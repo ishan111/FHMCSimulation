@@ -159,12 +159,23 @@ TEST_F (lennardJonesTest, StandardParams) {
 	params[2] = rcut;
 	params[3] = ushift;
 	lj->setParameters(params);
+	atom a1, a2;
+	std::vector < double > box(3, 2.1*rcut);
 	
-	EXPECT_TRUE ( fabs(lj->energy(pow(2.0, 1./6.)) - -eps) < tol );
-	EXPECT_TRUE ( fabs(lj->energy(1.0001*rcut) - 0) < tol );
-	EXPECT_TRUE ( lj->energy(0.9999*rcut) < 0.0 );
-	EXPECT_TRUE ( fabs(lj->energy(sigma) - 0) < tol );
-	EXPECT_TRUE ( fabs(lj->energy(1.234) - -0.812008901) < tol );
+	a2.pos[2] = pow(2.0, 1./6.);	
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - -eps) < tol );
+	
+	a2.pos[2] = 1.0001*rcut;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	
+	a2.pos[2] = 0.9999*rcut;
+	EXPECT_TRUE ( lj->energy(&a1, &a2, box) < 0.0 );
+	
+	a2.pos[2] = sigma;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	
+	a2.pos[2] = 1.234;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - -0.812008901) < tol );
 	
 	delete lj;
 }
@@ -179,11 +190,20 @@ TEST_F (lennardJonesTest, WCAparams) {
 	params[2] = rcut;
 	params[3] = ushift;
 	lj->setParameters(params);
+	atom a1, a2;
+	std::vector < double > box(3, 2.1*rcut);
 	
-	EXPECT_TRUE ( fabs(lj->energy(pow(2.0, 1./6.)) - 0.0) < tol );
-	EXPECT_TRUE ( fabs(lj->energy(1.0001*rcut) - 0) < tol );
-	EXPECT_TRUE ( lj->energy(0.9999*rcut) > 0.0 );
-	EXPECT_TRUE ( fabs(lj->energy(0.987) - 1.353386603) < tol );
+	a2.pos[2] = pow(2.0, 1./6.);
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0.0) < tol );
+	
+	a2.pos[2] = 1.0001*rcut;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	
+	a2.pos[2] = 0.9999*rcut;
+	EXPECT_TRUE ( lj->energy(&a1, &a2, box) > 0.0 );
+	
+	a2.pos[2] = 0.987;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 1.353386603) < tol );
 	
 	delete lj;
 }
@@ -245,25 +265,41 @@ TEST_F (squareWellTest, badParams2) {
 
 TEST_F (squareWellTest, testInRangeLower) {
 	sw->setParameters(params);
-	EXPECT_TRUE (fabs(sw->energy(1.0001*sigma) - -eps) < tol);
+	atom a1, a2;
+	std::vector < double > box (3, 10);
+	
+	a2.pos[2] = 1.0001*sigma;
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - -eps) < tol);
 	delete sw;
 }
 
 TEST_F (squareWellTest, testInRangeUpper) {
 	sw->setParameters(params);
-	EXPECT_TRUE (fabs(sw->energy(0.9999*(sigma+width)) - -eps) < tol);
+	atom a1, a2;
+	std::vector < double > box (3, 10);
+	
+	a2.pos[2] = 0.9999*(sigma+width);
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - -eps) < tol);
 	delete sw;
 }
 
 TEST_F (squareWellTest, testOutOfRange) {
 	sw->setParameters(params);
-	EXPECT_TRUE (fabs(sw->energy(1.0001*(sigma+width)) - 0) < tol);
+	atom a1, a2;
+	std::vector < double > box (3, 10);
+	
+	a2.pos[2] = 1.0001*(sigma+width);
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - 0) < tol);
 	delete sw;
 }
 
 TEST_F (squareWellTest, testBadRange) {
 	sw->setParameters(params);
-	EXPECT_TRUE (fabs(sw->energy(0.9999*(sigma)) - NUM_INFINITY) < tol);
+	atom a1, a2;
+	std::vector < double > box (3, 10);
+	
+	a2.pos[2] = 0.9999*(sigma);
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - NUM_INFINITY) < tol);
 	delete sw;
 }
 
@@ -308,13 +344,21 @@ TEST_F (hardCoreTest, badParams0) {
 
 TEST_F (hardCoreTest, testRange) {
 	hc->setParameters(params);
-	EXPECT_TRUE (fabs(hc->energy(1.0001*sigma) - 0) < tol);
+	atom a1, a2;
+	std::vector < double > box (3, 10);
+	
+	a2.pos[2] = 1.0001*sigma;
+	EXPECT_TRUE (fabs(hc->energy(&a1, &a2, box) - 0) < tol);
 	delete hc;
 }
 
 TEST_F (hardCoreTest, testBadRange) {
 	hc->setParameters(params);
-	EXPECT_TRUE (fabs(hc->energy(0.9999*sigma) - NUM_INFINITY) < tol);
+	atom a1, a2;
+	std::vector < double > box (3, 10);
+	
+	a2.pos[2] = 0.9999*sigma;
+	EXPECT_TRUE (fabs(hc->energy(&a1, &a2, box) - NUM_INFINITY) < tol);
 	delete hc;
 }
 
@@ -355,38 +399,44 @@ protected:
 };
 
 TEST_F (InitializeSystem, nSpecies) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	EXPECT_EQ (mysys.nSpecies(), nSpecies);
 	EXPECT_EQ (mysys.totNMax(), 60);
 	EXPECT_EQ (mysys.totNMin(), 0);
 }
 
 TEST_F (InitializeSystem, beta) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	EXPECT_EQ (mysys.beta(), beta);
 }
 
+TEST_F (InitializeSystem, expandedStates) {
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 2);
+	EXPECT_EQ (mysys.getTotalM(), 2);
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+}
+
 TEST_F (InitializeSystem, box) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	EXPECT_EQ (mysys.box(), box);
 }
 
 TEST_F (InitializeSystem, mu) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	for (unsigned int i = 0; i < mysys.nSpecies(); ++i) {
 		EXPECT_EQ (mysys.mu(i), mu[i]);
 	}
 }
 
 TEST_F (InitializeSystem, maxSpecies) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	for (unsigned int i = 0; i < mysys.nSpecies(); ++i) {
 		EXPECT_EQ (mysys.maxSpecies(i), maxSpecies[i]);
 	}
 }
 
 TEST_F (InitializeSystem, minSpecies) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	for (unsigned int i = 0; i < mysys.nSpecies(); ++i) {
 		EXPECT_EQ (mysys.minSpecies(i), minSpecies[i]);
 	}
@@ -397,7 +447,7 @@ TEST_F (InitializeSystem, setUpperWindowHigh) {
 	totNbounds[0] = 0;
 	totNbounds[1] = 20;
 	
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	mysys.setTotNBounds (totNbounds);
 	
 	// should have resized species 3 from 30 to 20
@@ -412,7 +462,7 @@ TEST_F (InitializeSystem, setUpperWindowLower) {
 	totNbounds[0] = 0;
 	totNbounds[1] = 19;
 	
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	mysys.setTotNBounds (totNbounds);
 	
 	// should have resized species 2,3 from 30,20 to 19,19
@@ -430,7 +480,7 @@ TEST_F (InitializeSystem, setInterfereWindowLower) {
 	totNbounds[0] = 10;
 	totNbounds[1] = 19;
 	
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	mysys.setTotNBounds (totNbounds);
 	
 	// should have resized species 2,3 from 30,20 to 19,19
@@ -444,7 +494,7 @@ TEST_F (InitializeSystem, setInterfereWindowLower) {
 }
 
 TEST_F (InitializeSystem, incrementEnergy) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	double dU = -0.1;
 	mysys.incrementEnergy(dU);
 	EXPECT_TRUE (fabs(mysys.energy() - dU) < tol);
@@ -453,7 +503,7 @@ TEST_F (InitializeSystem, incrementEnergy) {
 }
 
 TEST_F (InitializeSystem, addPotential) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	lennardJones ljtest;
 	mysys.addPotential(0, 0, &ljtest);
 	EXPECT_EQ (mysys.potentialIsSet (0, 0), true);
@@ -463,7 +513,7 @@ TEST_F (InitializeSystem, addPotential) {
 }
 
 TEST_F (InitializeSystem, insertAtom) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	atom typeA1, typeA2, typeB1, typeB2;
 	std::vector < double > pos (3, 1.234), pos2 (3, 2.345);
 	typeA1.pos = pos;
@@ -512,7 +562,7 @@ TEST_F (InitializeSystem, insertAtom) {
 }
 
 TEST_F (InitializeSystem, deleteAtom) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	atom typeA1, typeA2, typeB1, typeB2;
 	std::vector < double > pos (3, 1.234), pos2 (3, 2.345);
 	typeA1.pos = pos;
@@ -541,7 +591,7 @@ TEST_F (InitializeSystem, deleteAtom) {
 }
 
 TEST_F (InitializeSystem, scratchEnergy) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	lennardJones ljtest;
 	std::vector < double > params (4), p1(3, 0.0), p2(3, 0.0);
 	
@@ -1066,13 +1116,13 @@ TEST_F (testWalaBias, checkEvaluateFlatnessYes) {
 }
 
 TEST_F (InitializeSystem, setWALAbias) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	mysys.startWALA (1.0, 0.5, 0.8);
 	EXPECT_TRUE (mysys.useWALA);
 }
 
 TEST_F (InitializeSystem, unsetWALAbias) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	mysys.startWALA (1.0, 0.5, 0.8);
 	EXPECT_TRUE (mysys.useWALA);
 	mysys.stopWALA();
@@ -1080,13 +1130,13 @@ TEST_F (InitializeSystem, unsetWALAbias) {
 }
 
 TEST_F (InitializeSystem, setTMMCbias) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	mysys.startTMMC (tmmcSweepSize);
 	EXPECT_TRUE (mysys.useTMMC);
 }
 
 TEST_F (InitializeSystem, unsetTMMCbias) {
-	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies);
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	mysys.startTMMC (tmmcSweepSize);
 	EXPECT_TRUE (mysys.useTMMC);
 	mysys.stopTMMC();
@@ -1114,7 +1164,7 @@ protected:
 
 TEST_F (testComputeBias, setCalculateWALABias) {
 	std::vector < double > ib (3, 10), mu (2, 1.0);
-	simSystem mysys (2, 1.0, ib, mu, specNmax, specNmin);
+	simSystem mysys (2, 1.0, ib, mu, specNmax, specNmin, 1);
 	mysys.setTotNBounds (bounds);
 	mysys.startWALA (1.0, 0.5, 0.8);
 	EXPECT_TRUE (mysys.useWALA);
@@ -1143,7 +1193,7 @@ TEST_F (testComputeBias, setCalculateWALABias) {
 
 TEST_F (testComputeBias, setCalculateTMMCBias) {
 	std::vector < double > ib (3, 10), mu (2, 1.0);
-	simSystem mysys (2, 1.0, ib, mu, specNmax, specNmin);
+	simSystem mysys (2, 1.0, ib, mu, specNmax, specNmin, 1);
 	mysys.setTotNBounds (bounds);
 	mysys.startTMMC (tmmcSweepSize);
 	EXPECT_TRUE (mysys.useTMMC);
@@ -1180,7 +1230,7 @@ TEST_F (testComputeBias, testInSituWALASingleComponent) {
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (1, 3), nmin (1, 0);
 	lnF = 3.1; // something random this time
-	simSystem mysys (1, 1.0, ib, mu, nmax, nmin);
+	simSystem mysys (1, 1.0, ib, mu, nmax, nmin, 1);
 	mysys.startWALA (lnF, 0.5, 0.8);
 	EXPECT_TRUE (mysys.useWALA);
 		
@@ -1210,7 +1260,7 @@ TEST_F (testComputeBias, testInSituWALAMultiComponent) {
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (2, 3), nmin (2, 0);
 	lnF = 3.1; // something random this time
-	simSystem mysys (2, 1.0, ib, mu, nmax, nmin);
+	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, 1);
 	mysys.startWALA (lnF, 0.5, 0.8);
 	EXPECT_TRUE (mysys.useWALA);
 	
@@ -1266,7 +1316,7 @@ TEST_F (testComputeBias, testInSituTMMCSingleComponent) {
 	std::vector < double > mu (1, std::numeric_limits<double>::max()); // force an insertion to an empty system
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (1, 3), nmin (1, 0);
-	simSystem mysys (1, 1.0, ib, mu, nmax, nmin);
+	simSystem mysys (1, 1.0, ib, mu, nmax, nmin, 1);
 	mysys.startTMMC (tmmcSweepSize);
 	EXPECT_TRUE (mysys.useTMMC);
 		
@@ -1313,7 +1363,7 @@ TEST_F (testComputeBias, testInSituTMMCMultiComponent) {
 	std::vector < double > mu (2, std::numeric_limits<double>::max()); // force an insertion to an empty system
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (2, 3), nmin (2, 0);
-	simSystem mysys (2, 1.0, ib, mu, nmax, nmin);
+	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, 1);
 	mysys.startTMMC (tmmcSweepSize);
 	EXPECT_TRUE (mysys.useTMMC);
 		
@@ -1392,7 +1442,7 @@ TEST (testSwapMove, twoComponents) {
 	std::vector < double > mu (3, 0); 
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (3, 3), nmin (3, 0);
-	simSystem mysys (3, 1.0, ib, mu, nmax, nmin);
+	simSystem mysys (3, 1.0, ib, mu, nmax, nmin, 1);
 
 	squareWell sw12, sw13, sw23; // only bother to set cross interactions here
 	std::vector < double > params (3, 0.0);
