@@ -9,12 +9,19 @@
  */
 int deleteParticle::make (simSystem &sys) {
 	// check if any can be deleted from this species
-    if (sys.numSpecies[typeIndex_] <= sys.minSpecies(typeIndex_)) {
+    if (sys.numSpecies[typeIndex_] < sys.minSpecies(typeIndex_)) {
         return MOVE_FAILURE;
     }
+    if (sys.numSpecies[typeIndex_] == sys.minSpecies(typeIndex_) && sys.getCurrentM() == 0) {
+        return MOVE_FAILURE;
+    }
+    
     // also check if at global bound on total number of particles
-    if (sys.getTotN() <= sys.totNMin()) {
-       	return MOVE_FAILURE;
+    if (sys.getTotN() < sys.totNMin()) {
+    	return MOVE_FAILURE;
+    }
+    if (sys.getTotN() == sys.totNMin() && sys.getCurrentM() == 0) { // move class guarantees only operating on the correct species already
+        return MOVE_FAILURE;
     }
     
 	const std::vector < double > box = sys.box();
@@ -24,7 +31,7 @@ int deleteParticle::make (simSystem &sys) {
 	}
 	
 	double delEnergy = 0.0;
-	
+
 	atom* chosenAtom; 
     if (sys.getCurrentM() == 0) {
     	// pick a brand new one to delete

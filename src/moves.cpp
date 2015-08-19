@@ -56,9 +56,10 @@ void moves::makeMove (simSystem &sys) {
 			if (ran < normProbabilities_[i]) {
 				if (sys.getTotalM() > 1) {
 					// expanded ensemble has to check the moves because have to only work on the partially inserted atom 
-					if (moves_[i]->changeN() && moves_[i]->whatType() != sys.getFractionalAtomType() && sys.getCurrentM() > 0) {
+					if ((moves_[i]->changeN() == true) && (moves_[i]->whatType() != sys.getFractionalAtomType()) && (sys.getCurrentM() > 0)) {
 						// reject this choice because we must only insert/delete the type that is already partially inserted IFF we are *already* in a partially inserted state
-						// choose a new move						
+						// choose a new move
+						
 						done = false;
 						break;
 					} else {
@@ -70,8 +71,8 @@ void moves::makeMove (simSystem &sys) {
 							throw customException(a+b);
 						}
 						done = true;
-			    			moveChosen = i;
-			    			break;
+			    		moveChosen = i;
+			    		break;
 					}
 				} else {
 					// without expanded ensemble, inserts/deletes can proceed unchecked

@@ -110,7 +110,7 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
         		if (Mcurrent_ > 0) { // further inserting an atom that already partially exists in the system
         			// ensure the system pointer is correct if currently a partially inserted atom
         			if (fractionalAtom_ != newAtom || typeIndex != fractionalAtomType_) {
-        				throw customException ("Fractional atom pointer does not point to atom belived to be inserted");
+        				throw customException ("Fractional atom pointer does not point to atom believed to be inserted");
         			}
         			
         			// increment expanded state
@@ -140,9 +140,9 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
 				for (unsigned int i = 0; i < nSpecies_; ++i) {
 					if (useCellList_[typeIndex][i]) {
 						cellList* cl = cellListsByPairType_[typeIndex][i];
-                     				cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex]]); // numSpecies[typeIndex] is the number of fully inserted ones, this partially inserted one comes after that
-                     			}
-                   		 }
+                     	cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex]]); // numSpecies[typeIndex] is the number of fully inserted ones, this partially inserted one comes after that
+                     	}
+                   	}
         		}
         	} else if (Mtot_ > 1 && override) {
         		// expanded ensemble behavior, but now amidst a "swap move" rather than an actual insertion or deletion.
@@ -205,7 +205,7 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
  */
 void simSystem::deleteAtom (const int typeIndex, const int atomIndex, bool override) {
 	if (typeIndex < nSpecies_ && typeIndex >= 0) {
-       		if ((numSpecies[typeIndex] > minSpecies_[typeIndex]) || override) {
+       		if ((numSpecies[typeIndex] > minSpecies_[typeIndex]) || ((numSpecies[typeIndex] == minSpecies_[typeIndex]) && (Mcurrent_ > 0)) || override) {
         		if (override) {
         			// doing a swap move
         			if (Mtot_ > 1) {
@@ -308,8 +308,8 @@ void simSystem::deleteAtom (const int typeIndex, const int atomIndex, bool overr
             					}
                			
                					// decrement expanded state
-               					fractionalAtom_->mState--;
-               					Mcurrent_--;
+               					fractionalAtom_->mState -= 1;
+               					Mcurrent_ -= 1;
                 			}
 	        		} else {
         				// no expanded ensemble, just delete particle from appropriate cell list

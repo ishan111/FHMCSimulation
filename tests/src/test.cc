@@ -639,7 +639,7 @@ TEST (testTMMC, tmmcGoodInit) {
 	std::vector < double > dummyBox (3, 0);
 	bool pass = true;
 	try {
-		tmmc test (Nmax, Nmin, sweepSize, 1, dummyBox);
+		tmmc test (Nmax, Nmin, 1, sweepSize, dummyBox);
 	} catch (customException &ce) {
 		pass = false;
 	}
@@ -651,7 +651,7 @@ TEST (testTMMC, tmmcBadInitNegative) {
 	std::vector < double > dummyBox (3, 0);
 	bool pass = true;
 	try {
-		tmmc test (Nmax, Nmin, sweepSize, 1, dummyBox);
+		tmmc test (Nmax, Nmin, 1, sweepSize, dummyBox);
 	} catch (customException &ce) {
 		pass = false;
 	}
@@ -663,7 +663,7 @@ TEST (testTMMC, tmmcBadInitOrder) {
 	std::vector < double > dummyBox (3, 0);
 	bool pass = true;
 	try {
-		tmmc test (Nmax, Nmin, sweepSize, 1, dummyBox);
+		tmmc test (Nmax, Nmin, 1, sweepSize, dummyBox);
 	} catch (customException &ce) {
 		pass = false;
 	}
@@ -793,7 +793,6 @@ TEST_F (tmmBiaslnPI, completeC) {
 		tmmcBias->calculatePI();
 	} catch (customException& ce) {
 		caught = true;
-		std::cout << ce.what() << std::endl;
 	}
 	EXPECT_TRUE(!caught);
 	delete tmmcBias;
@@ -1521,6 +1520,1533 @@ TEST (testSwapMove, twoComponents) {
 	EXPECT_TRUE (fabs(U_save - mysys.scratchEnergy() - 0) < 1.0e-9); // no change in energy
 }
 
-// test swap move on very specific cases, also consider doing this for inserts and deletes too with/without cell lists
+/* Expanded Ensemble Tests */
+TEST (testExpandedTMMC, tmmcBadInitOrder) {
+	const int Nmax = 10, Nmin = 100, sweepSize = 100, Mtot = 3;
+	std::vector < double > dummyBox (3, 0);
+	bool pass = true;
+	try {
+		tmmc test (Nmax, Nmin, Mtot, sweepSize, dummyBox);
+	} catch (customException &ce) {
+		pass = false;
+	}
+	EXPECT_TRUE(!pass);
+}
 
-// review and optimize use of __BIAS_TYPE_INT__
+class tmmcExpandedBiasC : public ::testing::Test {
+protected:
+	tmmc* tmmcBias;
+	int Nmin, Nmax, sweepSize, Mtot;
+	std::vector < double > dummyBox;
+	
+	virtual void SetUp() {
+		Nmin = 3;
+		Nmax = 10;
+		dummyBox.resize(3, 0);
+		sweepSize = 100;
+		Mtot = 3;
+		tmmcBias = new tmmc (Nmax, Nmin, Mtot, sweepSize, dummyBox);
+	}
+};
+
+TEST_F (tmmcExpandedBiasC, iterateForward) {
+	int sweep1 = tmmcBias->numSweeps();
+	tmmcBias->iterateForward();
+	int sweep2 = tmmcBias->numSweeps();
+	EXPECT_EQ (sweep1, 0);
+	EXPECT_EQ (sweep2, 1);
+}
+
+TEST_F (tmmcExpandedBiasC, cSize) {
+	std::vector <double> collMat = tmmcBias->getC();
+	EXPECT_TRUE (collMat.size() == 3*(Nmax-Nmin+1)*Mtot);
+}
+
+TEST_F (tmmcExpandedBiasC, updateCMinNoMove) {
+	const double pu = 0.123;
+	tmmcBias->updateC(Nmin, Nmin, 1, 1, pu);
+	std::vector <double> collMat = tmmcBias->getC();
+	
+	for (unsigned int i = 0; i < collMat.size(); ++i) {
+		if (i == 3) {
+			continue;
+		} else {
+			EXPECT_EQ(collMat[i], 0);
+		}
+	}
+	EXPECT_TRUE(fabs(collMat[3] - 1.0) < 1.0e-9);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, updateCMinWithMove) {
+	const double pu = 0.123;
+	tmmcBias->updateC(Nmin, Nmin, 1, 2, pu);
+	std::vector <double> collMat = tmmcBias->getC();
+	
+	for (unsigned int i = 0; i < collMat.size(); ++i) {
+		if (i == 3 || i == 4) {
+			continue;
+		} else {
+			EXPECT_EQ(collMat[i], 0);
+		}
+	}
+	EXPECT_TRUE(fabs(collMat[3] - (1-pu)) < 1.0e-9);
+	EXPECT_TRUE(fabs(collMat[4] - pu) < 1.0e-9);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, updateCMaxNoMove) {
+	const double pu = 0.123;
+	tmmcBias->updateC(Nmax, Nmax, 1, 1, pu);
+	std::vector <double> collMat = tmmcBias->getC();
+	
+	for (unsigned int i = 0; i < collMat.size(); ++i) {
+		if (i != 3*((10-3)*3 + 1)) {
+			EXPECT_EQ(collMat[i], 0);
+		}
+	}
+	EXPECT_TRUE(fabs(collMat[3*((10-3)*3 + 1)] - 1.0) < 1.0e-9);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, updateCMaxWithMove) {
+	const double pu = 0.123;
+	tmmcBias->updateC(Nmax, Nmax, 1, 2, pu);
+	std::vector <double> collMat = tmmcBias->getC();
+	
+	for (unsigned int i = 0; i < collMat.size(); ++i) {
+		if (i != 3*((10-3)*3 + 1) && i != 3*((10-3)*3 + 1)+1) {
+			EXPECT_EQ(collMat[i], 0);
+		}
+	}
+	EXPECT_TRUE(fabs(collMat[3*((10-3)*3 + 1)] - (1-pu)) < 1.0e-9);
+	EXPECT_TRUE(fabs(collMat[3*((10-3)*3 + 1)+1] - pu) < 1.0e-9);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, updateCForward) {
+	const double pu = 0.123;
+	tmmcBias->updateC(Nmin, Nmin+1, 2, 0, pu);
+	std::vector <double> collMat = tmmcBias->getC();
+	
+	for (unsigned int i = 0; i < collMat.size(); ++i) {
+		if (i != 7 && i != 6) {
+			EXPECT_EQ(collMat[i], 0);
+		}
+	}
+	EXPECT_TRUE(fabs(collMat[7] - pu) < 1.0e-9);
+	EXPECT_TRUE(fabs(collMat[6] - (1-pu)) < 1.0e-9);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, updateCBackward) {
+	const double pu = 0.123;
+	tmmcBias->updateC(Nmin+1, Nmin, 0, 2, pu);
+	std::vector <double> collMat = tmmcBias->getC();
+	
+	for (unsigned int i = 0; i < collMat.size(); ++i) {
+		if (i != 9 && i != 11) {
+			EXPECT_EQ(collMat[i], 0);
+		}
+	}
+	EXPECT_TRUE(fabs(collMat[11] - pu) < 1.0e-9);
+	EXPECT_TRUE(fabs(collMat[9] - (1-pu)) < 1.0e-9);
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, catchHighM) {
+	const double pu = 0.123;
+	bool caught = false;
+	try {
+		tmmcBias->updateC(Nmin, Nmin+1, 2, 3, pu);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(caught);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, catchLowM) {
+	const double pu = 0.123;
+	bool caught = false;
+	try {
+		tmmcBias->updateC(Nmin+1, Nmin, 0, -1, pu);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(caught);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, catchBadM1) {
+	const double pu = 0.123;
+	bool caught = false;
+	try {
+		tmmcBias->updateC(Nmin+1, Nmin, 0, 0, pu);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(caught);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, catchBadM2) {
+	const double pu = 0.123;
+	bool caught = false;
+	try {
+		tmmcBias->updateC(Nmin, Nmin+1, 0, 2, pu);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(caught);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, catchBadM3) {
+	const double pu = 0.123;
+	bool caught = false;
+	try {
+		tmmcBias->updateC(Nmin, Nmin+1, 1, 2, pu);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(caught);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, catchBadM4) {
+	const double pu = 0.123;
+	bool caught = false;
+	try {
+		tmmcBias->updateC(Nmin, Nmin+1, 2, 1, pu);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(caught);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, catchBadM5) {
+	const double pu = 0.123;
+	bool caught = false;
+	try {
+		tmmcBias->updateC(Nmin+1, Nmin, 1, 1, pu);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(caught);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, catchBadM6) {
+	const double pu = 0.123;
+	bool caught = false;
+	try {
+		tmmcBias->updateC(Nmin+1, Nmin, 1, 0, pu);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(caught);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, catchBadM7) {
+	const double pu = 0.123;
+	bool caught = false;
+	try {
+		tmmcBias->updateC(Nmin+1, Nmin, 2, 0, pu);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(caught);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, catchBadM8) {
+	const double pu = 0.123;
+	bool caught = false;
+	try {
+		tmmcBias->updateC(Nmin+1, Nmin, 2, 1, pu);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(caught);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, allowLowBoundaryN) {
+	const double pu = 0.123;
+	bool caught = false;
+	try {
+		tmmcBias->updateC(Nmin, Nmin-1, 0, 2, pu);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(!caught);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmcExpandedBiasC, allowHighBoundaryN) {
+	const double pu = 0.123;
+	bool caught = false;
+	try {
+		tmmcBias->updateC(Nmax, Nmax+1, 2, 0, pu);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(!caught);
+	
+	delete tmmcBias;
+}
+
+class tmmBiasExpandedlnPI : public ::testing::Test {
+protected:
+	tmmc* tmmcBias;
+	int Nmin, Nmax, sweepSize, Mtot;
+	double pu;
+	std::vector < double > dummyBox;
+	
+	virtual void SetUp() {
+		pu = 0.123;
+		Nmin = 3;
+		Nmax = 5;
+		dummyBox.resize(3, 0);
+		sweepSize = 1;
+		Mtot = 3;
+		tmmcBias = new tmmc (Nmax, Nmin, Mtot, sweepSize, dummyBox);
+		
+		tmmcBias->updateC(Nmin, Nmin, 0, 0, pu);
+		tmmcBias->updateC(Nmin, Nmin, 0, 1, pu);
+
+		tmmcBias->updateC(Nmin, Nmin, 1, 1, pu);
+		tmmcBias->updateC(Nmin, Nmin, 1, 2, pu);
+		tmmcBias->updateC(Nmin, Nmin, 1, 0, pu);
+		
+		tmmcBias->updateC(Nmin, Nmin, 2, 2, pu);
+		tmmcBias->updateC(Nmin, Nmin+1, 2, 0, pu);
+		tmmcBias->updateC(Nmin, Nmin, 2, 1, pu);
+
+		tmmcBias->updateC(Nmin+1, Nmin+1, 0, 0, pu);
+		tmmcBias->updateC(Nmin+1, Nmin+1, 0, 1, pu);
+		tmmcBias->updateC(Nmin+1, Nmin, 0, 2, pu);
+		
+		tmmcBias->updateC(Nmin+1, Nmin+1, 1, 1, pu);
+		tmmcBias->updateC(Nmin+1, Nmin+1, 1, 2, pu);
+		tmmcBias->updateC(Nmin+1, Nmin+1, 1, 0, pu);
+		
+		tmmcBias->updateC(Nmin+1, Nmin+1, 2, 2, pu);
+		tmmcBias->updateC(Nmin+1, Nmin+2, 2, 0, pu);
+		tmmcBias->updateC(Nmin+1, Nmin+1, 2, 1, pu);
+		
+		tmmcBias->updateC(Nmin+2, Nmin+2, 0, 0, pu);
+		tmmcBias->updateC(Nmin+2, Nmin+2, 0, 1, pu);
+		tmmcBias->updateC(Nmin+2, Nmin+1, 0, 2, pu);
+		
+		// "missing states"
+		/*tmmcBias->updateC(Nmin+2, Nmin+2, 1, 1, pu);
+		tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, pu);
+		tmmcBias->updateC(Nmin+2, Nmin+2, 1, 0, pu);*/
+		
+		tmmcBias->updateC(Nmin+2, Nmin+2, 2, 2, pu);
+		tmmcBias->updateC(Nmin+2, Nmin+2, 2, 1, pu);
+	}
+};
+
+TEST_F (tmmBiasExpandedlnPI, checkVisitedNo) {
+	bool pass = tmmcBias->checkFullyVisited();
+	EXPECT_TRUE(!pass);
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiasExpandedlnPI, checkVisitedYes) {	
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 1, pu); // add missing states
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 0, pu);
+	bool pass = tmmcBias->checkFullyVisited();
+	EXPECT_TRUE(pass);
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiasExpandedlnPI, incompleteC) {
+	bool caught = false;
+	try {
+		tmmcBias->calculatePI();
+	} catch (customException& ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(caught);
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiasExpandedlnPI, completeC) {
+	bool caught = false;
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, pu);	
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 0, pu);
+	try {
+		tmmcBias->calculatePI();
+	} catch (customException& ce) {
+		caught = true;
+	}
+	EXPECT_TRUE(!caught);
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiasExpandedlnPI, setBias) {
+	std::vector < double > lnPIguess (9, 1.234);
+	tmmcBias->setlnPI(lnPIguess);
+	for (unsigned int i = 0; i < lnPIguess.size(); ++i) {
+		EXPECT_TRUE (fabs(lnPIguess[i] - -tmmcBias->getBias(i)) < 1.0e-9);
+	}
+}
+
+TEST_F (tmmBiasExpandedlnPI, checkPrintAndRead) {
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 1, pu); // add missing states
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 0, pu);
+	tmmcBias->calculatePI();
+	tmmcBias->print("tmmBiasExpandedlnPI_checkPrint", true);
+	std::vector < double > C1 = tmmcBias->getC();
+#ifdef NETCDF_CAPABLE
+	tmmcBias->readC("tmmBiasExpandedlnPI_checkPrint_C.nc");
+#else
+	tmmcBias->readC("tmmBiasExpandedlnPI_checkPrint_C.dat");
+#endif
+	std::vector < double > C2 = tmmcBias->getC();
+	EXPECT_EQ (C2.size(), C1.size());
+	for (unsigned int i = 0; i < C1.size(); ++i) {
+		EXPECT_TRUE (fabs(C1[i] - C2[i]) < 1.0e-9);
+	}
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiasExpandedlnPI, checkCAddresses) {
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin, 0, 0), 0);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin, 0, 1), 1);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin-1, 0, 2), 2);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin, 1, 1), 3);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin, 1, 2), 4);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin, 1, 0), 5);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin, 2, 2), 6);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin+1, 2, 0), 7);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin, Nmin, 2, 1), 8);
+	
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+1, 0, 0), 9);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+1, 0, 1), 10);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin, 0, 2), 11);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+1, 1, 1), 12);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+1, 1, 2), 13);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+1, 1, 0), 14);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+1, 2, 2), 15);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+2, 2, 0), 16);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+1, Nmin+1, 2, 1), 17);
+	
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+2, 0, 0), 18);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+2, 0, 1), 19);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+1, 0, 2), 20);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+2, 1, 1), 21);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+2, 1, 2), 22);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+2, 1, 0), 23);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+2, 2, 2), 24);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+3, 2, 0), 25);
+	EXPECT_EQ (tmmcBias->getTransitionAddress(Nmin+2, Nmin+2, 2, 1), 26);
+	
+	delete tmmcBias;
+}
+
+TEST_F (tmmBiasExpandedlnPI, checkLnPIAddresses) {
+	EXPECT_EQ (tmmcBias->getAddress(Nmin, 0), 0);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin, 1), 1);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin, 2), 2);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin+1, 0), 3);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin+1, 1), 4);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin+1, 2), 5);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin+2, 0), 6);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin+2, 1), 7);
+	EXPECT_EQ (tmmcBias->getAddress(Nmin+2, 2), 8);
+	
+	delete tmmcBias;
+}
+
+
+TEST_F (tmmBiasExpandedlnPI, checkLnPI) {
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 1, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 0, pu);
+	tmmcBias->calculatePI();
+	
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin, 0)) - 0.0) < 1.0e-9); // reference
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin, 1)) - (log(3/2.))) < 1.0e-9); 
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin, 2)) - (log(3/2.))) < 1.0e-9);
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+1, 0)) - (log(3/2.))) < 1.0e-9);
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+1, 1)) - (log(3/2.))) < 1.0e-9);
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+1, 2)) - (log(3/2.))) < 1.0e-9);
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2, 0)) - (log(3/2.))) < 1.0e-9);
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2, 1)) - (log(3/2.))) < 1.0e-9);
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2, 2)) - 0.0) < 1.0e-9);
+	
+	// update C one more time with diff pu
+	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, 0.5);
+	tmmcBias->calculatePI();
+	
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2, 1)) - (log(3./2.)+log(4./3.))) < 1.0e-9);
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2, 2)) - (log(3./2.)+log(4./3.)+log((pu+0.5)/(2*pu)))) < 1.0e-9);
+	
+	delete tmmcBias;
+}
+
+class testExpandedWalaBias : public ::testing::Test {
+protected:
+	wala* walaBias;
+	int Nmin, Nmax, Mtot;
+	double s, g, lnF, pu;
+	std::vector < double > dummyBox;
+	
+	virtual void SetUp() {
+		pu = 0.123;
+		Nmin = 3;
+		Nmax = 5;
+		s = 0.8;
+		g = 0.5;
+		lnF = 1.0;
+		Mtot = 3;
+		dummyBox.resize(3, 0);
+		walaBias = new wala (lnF, g, s, Nmax, Nmin, Mtot, dummyBox);
+	}
+};
+
+TEST_F (testExpandedWalaBias, testMatrixSizes) {
+	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
+	EXPECT_EQ (H.size(), (Nmax-Nmin+1)*Mtot);
+	EXPECT_EQ (lnPI.size(), (Nmax-Nmin+1)*Mtot);
+}
+
+TEST_F (testExpandedWalaBias, testUpdateSame) {
+	walaBias->update(Nmin, 1);
+	walaBias->update(Nmin, 1);
+	walaBias->update(Nmin, 1);
+	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
+	EXPECT_TRUE (fabs(H[1] - 3.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[1] - 3.0*lnF) < 1.0e-9);
+}
+
+TEST_F (testExpandedWalaBias, testUpdateDiff) {
+	walaBias->update(Nmin, 1);
+	walaBias->update(Nmin+1, 2);
+	walaBias->update(Nmin+2, 0);
+	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
+	EXPECT_TRUE (fabs(H[1] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(H[5] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(H[6] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[0] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[1] - lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[2] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[3] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[4] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[5] - lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[6] - lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[7] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[8] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(lnPI[9] - 0.0) < 1.0e-9);
+}
+
+TEST_F (testExpandedWalaBias, GetGoodAddress) {
+	EXPECT_EQ (walaBias->getAddress(Nmin, 0), 0);
+	EXPECT_EQ (walaBias->getAddress(Nmin+1, 0), 3);
+	EXPECT_EQ (walaBias->getAddress(Nmin+2, 0), 6);
+}
+
+TEST_F (testExpandedWalaBias, GetBadAddress) {
+	bool caught = false;
+	try {
+		EXPECT_EQ (walaBias->getAddress(Nmin+3, 0), 0);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+}
+
+TEST_F (testExpandedWalaBias, getBias) {
+	walaBias->update(Nmin, 1);
+	walaBias->update(Nmin+1, 2);
+	walaBias->update(Nmin+2, 0);
+	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin, 1)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin+1, 2)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin+2, 0)) - -lnF) < 1.0e-9);
+}
+
+TEST_F (testExpandedWalaBias, checkIterateForward) {
+	walaBias->update(Nmin, 0);
+	walaBias->update(Nmin, 1);
+	walaBias->update(Nmin, 2);
+	walaBias->update(Nmin+1, 0);
+	walaBias->update(Nmin+1, 1);
+	walaBias->update(Nmin+1, 2);
+	walaBias->update(Nmin+2, 0);
+	walaBias->update(Nmin+2, 1);
+	walaBias->update(Nmin+2, 2);
+	double lnF1 = 0, lnF2 = 0;
+	std::vector < double > H1 (9, 0), H2 (9, 0);
+	lnF1 = walaBias->lnF();
+	H1 = walaBias->getH(); // ensure NOT originally all zero
+	for (unsigned int i = 0; i < H1.size(); ++i) {
+		EXPECT_TRUE (H1[i] > 0);
+	}
+	
+	// this clears the H_ matrix and resets lnF
+	walaBias->iterateForward();
+	H2 = walaBias->getH();
+	lnF2 = walaBias->lnF();
+	for (unsigned int i = 0; i < H2.size(); ++i) {
+		EXPECT_TRUE (fabs(H2[i] - 0) < 1.0e-9);
+	}
+	EXPECT_TRUE (fabs(lnF1*g - lnF2) < 1.0e-9);
+}
+
+TEST_F (testExpandedWalaBias, checkPrintReadlnPI) {
+	walaBias->update(Nmin, 0);
+	walaBias->update(Nmin, 1);
+	walaBias->update(Nmin, 2);
+	walaBias->update(Nmin+1, 0);
+	walaBias->update(Nmin+1, 1);
+	walaBias->update(Nmin+1, 2);
+	walaBias->update(Nmin+2, 0);
+	walaBias->update(Nmin+2, 1);
+	walaBias->update(Nmin+2, 2);
+	
+	std::vector < double > lnPI_ref = walaBias->getlnPI();
+	walaBias->print("walaBiasExpandedlnPI_checkPrint", false); // only print lnPI matrix
+	
+	// set lnPI to something random
+	std::vector < double > lnPI_random (lnPI_ref.size(), 0.123456), lnPI_check (lnPI_ref.size(), 0);
+	walaBias->setlnPI (lnPI_random);
+	lnPI_check = walaBias->getlnPI();
+	for (unsigned int i = 0; i < lnPI_check.size(); ++i) {
+		EXPECT_TRUE (fabs(lnPI_check[i] - 0.123456) < 1.0e-9);
+	}
+	
+	// read in and check again
+#ifdef NETCDF_CAPABLE
+	walaBias->readlnPI("walaBiasExpandedlnPI_checkPrint_lnPI.nc");
+#else
+	walaBias->readlnPI("walaBiasExpandedlnPI_checkPrint_lnPI.dat");
+#endif
+	
+	std::vector < double > lnPI_new = walaBias->getlnPI();
+	for (unsigned int i = 0; i < lnPI_new.size(); ++i) {
+		EXPECT_TRUE (fabs(lnPI_new[i] - lnPI_ref[i]) < 1.0e-6); // read loses precision
+	}
+}
+
+TEST_F (testExpandedWalaBias, checkEvaluateFlatnessNo) {
+	walaBias->update(Nmin, 0);
+	walaBias->update(Nmin, 1);
+	walaBias->update(Nmin, 2);
+	walaBias->update(Nmin+1, 0);
+	walaBias->update(Nmin+1, 1);
+	walaBias->update(Nmin+1, 1);
+	walaBias->update(Nmin+1, 1);
+	walaBias->update(Nmin+1, 1);
+	walaBias->update(Nmin+1, 2);
+	walaBias->update(Nmin+2, 0);
+	walaBias->update(Nmin+2, 1);
+	walaBias->update(Nmin+2, 2);
+	// average = 8*1+1*4 / 9 = 1.333, average * s (=0.8) = 1.06 > min (=1)
+	bool flat = walaBias->evaluateFlatness();
+	EXPECT_TRUE (!flat);
+}
+
+TEST_F (testExpandedWalaBias, checkEvaluateFlatnessYes) {
+	walaBias->update(Nmin, 0);
+	walaBias->update(Nmin, 1);
+	walaBias->update(Nmin, 2);
+	walaBias->update(Nmin+1, 0);
+	walaBias->update(Nmin+1, 1);
+	walaBias->update(Nmin+1, 2);
+	walaBias->update(Nmin+2, 0);
+	walaBias->update(Nmin+2, 1);
+	walaBias->update(Nmin+2, 2);
+	// average = 1, average * s (=0.8) = 0.8 < min (=1)
+	bool flat = walaBias->evaluateFlatness();
+	EXPECT_TRUE (flat);
+}
+
+/* Expanded Ensemble Single Component Insertion/Deletion */
+
+class testBookkeepingExpanded : public ::testing::Test {
+protected:
+	//double s, g, lnF, pu;
+	std::vector < int > specNmax, specNmin, bounds;
+	int Mtot, Nspec;
+
+	virtual void SetUp() {
+		Mtot = 3;
+		Nspec = 1;
+		specNmin.resize(Nspec, 0);
+		specNmax.resize(Nspec, 2);
+		bounds.resize(2, 0);
+		bounds[1] = 2; // window to [0, 2] same as total range [0, 2]
+	}
+};
+
+TEST_F (testBookkeepingExpanded, partialInsert) {
+	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
+	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
+	
+	atom a1;
+
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+	EXPECT_EQ (a1.mState, 0);
+	
+	// this should increase M state of atom and system
+	EXPECT_EQ (mysys.atoms[0][0].mState, 0); // sys.atoms originally just empty
+	mysys.insertAtom(0, &a1); // atoms makes a copy
+		
+	EXPECT_EQ (mysys.numSpecies[0], 0); // N stays the same since not fully inserted yet
+	EXPECT_EQ (mysys.getCurrentM(), 1); // M should increase 
+	EXPECT_EQ (mysys.atoms[0][0].mState, 1); // atom is copied and its M state increased	
+}
+
+TEST_F (testBookkeepingExpanded, sequentialInsert) {
+	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
+	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
+	
+	atom a1;
+
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+	EXPECT_EQ (a1.mState, 0);
+	
+	// this should increase M state of atom and system
+	EXPECT_EQ (mysys.atoms[0][0].mState, 0); // sys.atoms originally just empty
+	mysys.insertAtom(0, &a1); // atoms makes a copy
+	
+	// check pointer is correct
+	EXPECT_TRUE (mysys.getFractionalAtom() != &a1);
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][0]);
+	
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	// check pointer is correct
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][0]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 0); // N stays the same since not fully inserted yet
+	EXPECT_EQ (mysys.getCurrentM(), 2); // M should increase 
+	EXPECT_EQ (mysys.atoms[0][0].mState, 2); // atom M state increased	
+		
+	// now "fully inserted
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 1); // N increased
+	EXPECT_EQ (mysys.getCurrentM(), 0); // M should reset
+	EXPECT_EQ (mysys.atoms[0][0].mState, 0); // atom M state reset	
+	
+	// insert a second atom (which will hit the upper limit)
+	mysys.insertAtom(0, &a1); // atoms makes a copy
+	
+	// check pointer is correct
+	EXPECT_TRUE (mysys.getFractionalAtom() != &a1);
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][1]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 1); // N same
+	EXPECT_EQ (mysys.getCurrentM(), 1); // M increased
+	EXPECT_EQ (mysys.atoms[0][1].mState, 1); // atom M state increased		
+		
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	
+	// check pointer is correct
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][1]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 1); // N same
+	EXPECT_EQ (mysys.getCurrentM(), 2); // M increased
+	EXPECT_EQ (mysys.atoms[0][1].mState, 2); // atom M state increased	
+	
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 2); // N increased
+	EXPECT_EQ (mysys.getCurrentM(), 0); // M reset
+	EXPECT_EQ (mysys.atoms[0][1].mState, 0); // atom M state reset	
+		
+	// hitting upper bound now, can't have a third one
+	bool caught = false;
+	try {
+		mysys.insertAtom(0, &a1);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	
+	EXPECT_TRUE (caught);
+}
+
+TEST_F (testBookkeepingExpanded, sequentialDelete) {
+	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
+	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
+	
+	atom a1;
+
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+	EXPECT_EQ (a1.mState, 0);
+	
+	EXPECT_EQ (mysys.atoms[0][0].mState, 0); // sys.atoms originally just empty
+	mysys.insertAtom(0, &a1); // atoms makes a copy
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	// now delete
+	mysys.deleteAtom(0, 0);
+	
+	// check pointer is correct
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][0]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 0); // N decreased
+	EXPECT_EQ (mysys.getCurrentM(), 2); // M should reset
+	EXPECT_EQ (mysys.atoms[0][0].mState, 2); // atom M state reset	
+	
+	mysys.deleteAtom(0, 0);
+	
+	// check pointer is correct
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][0]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 0); // N same
+	EXPECT_EQ (mysys.getCurrentM(), 1); // M should reset
+	EXPECT_EQ (mysys.atoms[0][0].mState, 1); // atom M state reset	
+
+	mysys.deleteAtom(0, 0);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 0); // N same
+	EXPECT_EQ (mysys.getCurrentM(), 0); // M should reset
+	EXPECT_EQ (mysys.atoms[0][0].mState, 0); // atom M state reset	
+	
+	// can't delete anymore
+	bool caught = false;
+	try {
+		mysys.deleteAtom(0, 0);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+}
+
+TEST_F (testBookkeepingExpanded, deleteOutOfOrder) {
+	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
+	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
+	
+	atom a1;
+
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+	EXPECT_EQ (a1.mState, 0);
+	EXPECT_EQ (mysys.atoms[0][0].mState, 0);
+	
+	// insert first atom
+	mysys.insertAtom(0, &a1); 
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	// insert a second atom
+	mysys.insertAtom(0, &a1); 
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	
+	// now delete the first atom
+	mysys.deleteAtom(0, 0);
+	
+	// check pointer is correct
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][0]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 1); // N decreased
+	EXPECT_EQ (mysys.getCurrentM(), 2); // M should reset
+	EXPECT_EQ (mysys.atoms[0][0].mState, 2); // atom M state reset	
+	
+	mysys.deleteAtom(0, 0);
+	
+	// check pointer is correct
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][0]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 1); // N same
+	EXPECT_EQ (mysys.getCurrentM(), 1); // M should reset
+	EXPECT_EQ (mysys.atoms[0][0].mState, 1); // atom M state reset	
+
+	mysys.deleteAtom(0, 0);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 1); // N same
+	EXPECT_EQ (mysys.getCurrentM(), 0); // M should reset
+	EXPECT_EQ (mysys.atoms[0][0].mState, 0); // atom M state reset	
+}
+
+TEST_F (testBookkeepingExpanded, partialInsertDelete) {
+	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
+	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
+	
+	atom a1;
+
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+	EXPECT_EQ (a1.mState, 0);
+	EXPECT_EQ (mysys.atoms[0][0].mState, 0);
+	
+	// insert first atom
+	mysys.insertAtom(0, &a1); 
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	// insert a second atom
+	mysys.insertAtom(0, &a1); 
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	
+	// now begin deleting the first atom
+	mysys.deleteAtom(0, 0);
+	
+	// check pointer is correct
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][0]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 1); // N decreased
+	EXPECT_EQ (mysys.getCurrentM(), 2); // M should reset
+	EXPECT_EQ (mysys.atoms[0][0].mState, 2); // atom M state reset	
+	
+	mysys.deleteAtom(0, 0);
+	
+	// check pointer is correct
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][0]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 1); // N same
+	EXPECT_EQ (mysys.getCurrentM(), 1); // M should reset
+	EXPECT_EQ (mysys.atoms[0][0].mState, 1); // atom M state reset	
+
+	// now insert again
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 1); 
+	EXPECT_EQ (mysys.getCurrentM(), 2);
+	EXPECT_EQ (mysys.atoms[0][0].mState, 2); 
+	
+	// and again
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+		
+	EXPECT_EQ (mysys.numSpecies[0], 2); 
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+	EXPECT_EQ (mysys.atoms[0][0].mState, 0); 
+}
+
+TEST_F (testBookkeepingExpanded, badDelete) {
+	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
+	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
+	
+	atom a1;
+
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+	EXPECT_EQ (a1.mState, 0);
+	EXPECT_EQ (mysys.atoms[0][0].mState, 0);
+	
+	// insert first atom
+	mysys.insertAtom(0, &a1); 
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	// insert a second atom
+	mysys.insertAtom(0, &a1); 
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	
+	// now begin deleting the first atom
+	mysys.deleteAtom(0, 0);
+	
+	// check pointer is correct
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][0]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 1); // N decreased
+	EXPECT_EQ (mysys.getCurrentM(), 2); // M should reset
+	EXPECT_EQ (mysys.atoms[0][0].mState, 2); // atom M state reset	
+	
+	// accidentally try to delete the second atom no the first
+	bool caught = false;
+	try {
+		mysys.deleteAtom(0, 1);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+}
+
+TEST_F (testBookkeepingExpanded, badInsert) {
+	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
+	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
+	
+	atom a1;
+
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+	EXPECT_EQ (a1.mState, 0);
+	EXPECT_EQ (mysys.atoms[0][0].mState, 0);
+	
+	// insert first atom
+	mysys.insertAtom(0, &a1); 
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	// insert a second atom
+	mysys.insertAtom(0, &a1); 
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	
+	// now begin deleting the first atom
+	mysys.deleteAtom(0, 0);
+	
+	// check pointer is correct
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][0]);
+	
+	EXPECT_EQ (mysys.numSpecies[0], 1); // N decreased
+	EXPECT_EQ (mysys.getCurrentM(), 2); // M should reset
+	EXPECT_EQ (mysys.atoms[0][0].mState, 2); // atom M state reset	
+	
+	// accidentally try to insert any new atoms
+	bool caught = false;
+	try {
+		mysys.insertAtom(0, &a1);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+	
+	// correctly try to insert the fractional atom
+	caught = false;
+	try {
+		mysys.insertAtom(0, &mysys.atoms[0][0]);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (!caught);
+}
+
+class testMulticomponentExpandedMCMove : public ::testing::Test {
+protected:
+	std::vector < int > specNmax, specNmin, bounds;
+	int Mtot, Nspec;
+
+	virtual void SetUp() {
+		Mtot = 4;
+		Nspec = 2;
+		specNmin.resize(Nspec, 0);
+		specNmax.resize(Nspec, 2);
+		bounds.resize(2, 0);
+		bounds[1] = 2; // window to [0, 2] same as total range [0, 2]
+	}
+};
+
+TEST_F (testMulticomponentExpandedMCMove, selectSpec1) {
+	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
+	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
+	
+	hardCore hc11, hc12, hc22;
+	std::vector < double > params (2, Mtot);
+	hc11.setParameters (params);
+	params[0] = 1.0;
+	hc12.setParameters (params);
+	params[0] = 2.0;
+	hc22.setParameters (params);
+	mysys.addPotential (0, 0, &hc11, false);
+	mysys.addPotential (0, 1, &hc12, false);
+	mysys.addPotential (1, 1, &hc22, false);
+		
+	moves mover;
+	
+	insertParticle insOne (0, "in1"), insTwo (1, "in2");
+	deleteParticle delOne (0, "del1"), delTwo (1, "del2");
+	
+	mover.addMove (&insOne, 1.0);
+	mover.addMove (&insTwo, 1.0);
+	mover.addMove (&delOne, 1.0);
+	mover.addMove (&delTwo, 1.0);
+	
+	// manually insert two particles of each into the system
+	atom a1;
+	mysys.insertAtom(0, &a1); 
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &a1); 
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(1, &a1); 
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	mysys.insertAtom(1, &a1); 
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+	
+	// now say we choose to set species 2, atom 0 as the partial by deleting it
+	mysys.deleteAtom(1, 0);
+	mysys.deleteAtom(1, 0); // set to m state = 2 (middle between inserted and deleted)
+	
+	// have to check this stochastically
+	const int iters = 100;
+	for (unsigned int i = 0; i < iters; ++i) {
+		EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[1][0]);
+		EXPECT_TRUE (mysys.getFractionalAtomType() == 1);
+		
+		mover.makeMove(mysys); // this MUST choose to operate on species 2 
+		
+		EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[1][0]);
+		EXPECT_TRUE (mysys.getFractionalAtomType() == 1);
+		
+		if (mysys.atoms[1][0].mState == 3) {
+			// was inserted, delete to reset
+			mysys.deleteAtom(1, 0);
+		}
+		if (mysys.atoms[1][0].mState == 1) {
+			// was deleted, insert a new one to reset
+			mysys.insertAtom(1, &mysys.atoms[1][0]);
+		}
+	}
+}
+
+
+TEST_F (testMulticomponentExpandedMCMove, selectSpec1_moved) {
+	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
+	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
+	
+	hardCore hc11, hc12, hc22;
+	std::vector < double > params (2, Mtot);
+	hc11.setParameters (params);
+	params[0] = 1.0;
+	hc12.setParameters (params);
+	params[0] = 2.0;
+	hc22.setParameters (params);
+	mysys.addPotential (0, 0, &hc11, false);
+	mysys.addPotential (0, 1, &hc12, false);
+	mysys.addPotential (1, 1, &hc22, false);
+		
+	moves mover;
+	
+	insertParticle insOne (0, "in1"), insTwo (1, "in2");
+	deleteParticle delOne (0, "del1"), delTwo (1, "del2");
+	
+	mover.addMove (&insOne, 1.0);
+	mover.addMove (&insTwo, 1.0);
+	mover.addMove (&delOne, 1.0);
+	mover.addMove (&delTwo, 1.0);
+	
+	// manually insert two particles of each into the system
+	atom a1;
+	mysys.insertAtom(0, &a1); 
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &a1); 
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(1, &a1); 
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	mysys.insertAtom(1, &a1); 
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+	
+	// now say we choose to set species 2, atom 0 as the partial by deleting it
+	mysys.deleteAtom(1, 0);
+	mysys.deleteAtom(1, 0);
+	mysys.deleteAtom(1, 0); // set to m state = 1 this time
+	
+	// have to check this stochastically
+	const int iters = 100;
+	bool moved = false;
+	atom* mypointer = &mysys.atoms[1][0];
+	for (unsigned int i = 0; i < iters; ++i) {
+		EXPECT_TRUE (mysys.getFractionalAtom() == mypointer);
+		EXPECT_TRUE (mysys.getFractionalAtomType() == 1);
+		
+		mover.makeMove(mysys); // this MUST choose to operate on species 2 
+		
+		EXPECT_TRUE (mysys.getFractionalAtom() == mypointer);
+		EXPECT_TRUE (mysys.getFractionalAtomType() == 1);
+		
+		if (mysys.getFractionalAtom()->mState == 2) {
+			EXPECT_TRUE (mysys.numSpecies[0] == 2);
+			EXPECT_TRUE (mysys.numSpecies[1] == 1);
+			EXPECT_TRUE (mysys.getCurrentM() == 2);
+			EXPECT_TRUE (mysys.getTotN() == 3);
+			
+			// was inserted, delete to reset
+			if (!moved) {
+				mysys.deleteAtom(1, 0);
+			} else {
+				mysys.deleteAtom(1, 1);
+			}
+			
+			EXPECT_TRUE (mysys.getCurrentM() == 1);
+		}
+		if (mysys.getFractionalAtom()->mState == 0) {
+			EXPECT_TRUE (mysys.numSpecies[0] == 2);
+			EXPECT_TRUE (mysys.numSpecies[1] == 1);
+			EXPECT_TRUE (mysys.getCurrentM() == 0);
+			EXPECT_TRUE (mysys.getTotN() == 3);
+			
+			// was deleted, insert a new one to reset - this is now at the END of this list with mState = 1
+			mysys.insertAtom(1, &a1);
+
+			EXPECT_TRUE (mysys.getCurrentM() == 1);
+			
+			// thus the partial particle is now (and will always be here)
+			mypointer = &mysys.atoms[1][1];
+			moved = true;
+		}
+	}
+}
+
+class testComputeBiasExpanded : public ::testing::Test {
+protected:
+	double s, g, lnF, pu;
+	std::vector < int > specNmax, specNmin, bounds;
+	int tmmcSweepSize, Mtot, Nspec;
+
+	virtual void SetUp() {
+		pu = 0.123;
+		s = 0.8;
+		g = 0.5;
+		lnF = 1.0;
+		Mtot = 3;
+		tmmcSweepSize = 1;
+		Nspec = 2;
+		specNmin.resize(Nspec, 0);
+		specNmax.resize(Nspec, 2);
+		bounds.resize(2, 0);
+		bounds[1] = 2; // window to [0, 2] same as total range [0, 2]
+	}
+};
+
+TEST_F (testComputeBiasExpanded, setCalculateWALABias) {
+	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
+	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
+	mysys.setTotNBounds (bounds);
+	mysys.startWALA (1.0, 0.5, 0.8, Mtot);
+	EXPECT_TRUE (mysys.useWALA);
+	
+	// some simple updates 
+	
+	// change this one to WALA, next do TMMC
+	/*mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 0, 1, std::min(1.0, pu));
+	
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 1, 1, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 1, 2, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 1, 0, std::min(1.0, pu));
+	
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 2, 2, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0]+1, 2, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 2, 1, std::min(1.0, pu));
+	
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 0, 1, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0], 0, 2, std::min(1.0, pu));
+	
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 1, 1, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 1, 2, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 1, 0, std::min(1.0, pu));
+	
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 2, 2, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 2, 1, std::min(1.0, pu));
+	
+	mysys.getTMMCBias()->calculatePI();*/
+
+	atom a1;
+	
+	// Insert atom a1 through stages up to max
+	
+	// 0 --> 1/3
+	//EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0], 1) - -log(3/2.)) < 1.0e-9);
+	mysys.insertAtom(0, &a1);
+	
+	// 1/3 --> 2/3
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	// 2/3 --> 1
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	// 1 --> 4/3
+	mysys.insertAtom(0, &a1);
+	
+	// 4/3 --> 5/3
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	
+	// 5/3 --> 2
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	
+	// calculate relative bias for each of these stages
+	
+	// repeat for a2
+	
+	// do a mix of one a1 and one a2
+}
+
+
+
+
+/*
+TEST_F (testComputeBias, setCalculateTMMCBias) {
+	std::vector < double > ib (3, 10), mu (2, 1.0);
+	simSystem mysys (2, 1.0, ib, mu, specNmax, specNmin, 1);
+	mysys.setTotNBounds (bounds);
+	mysys.startTMMC (tmmcSweepSize, 1);
+	EXPECT_TRUE (mysys.useTMMC);
+	
+	// some simple updates
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0]+1, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+2, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0], 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+2, bounds[0]+2, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+2, bounds[0]+1, 0, 0, std::min(1.0, pu));
+	EXPECT_TRUE (mysys.getTMMCBias()->checkFullyVisited());
+	mysys.getTMMCBias()->calculatePI();
+	
+	// TMMC bias
+	atom a1;
+	
+	// 0 atoms --> 1 atom
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 0) - 2.0/3.0) < 1.0e-9); // 0 assigned as a references
+	mysys.insertAtom(0, &a1);
+			
+	// 1 atom --> 2 atoms (same type)
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - 3.0/2.0) < 1.0e-9);
+	
+	// delete, then move to 1 atom total --> +1 atom of another type
+	mysys.deleteAtom (0, 0);
+	mysys.insertAtom(1, &a1);
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - 3.0/2.0) < 1.0e-9); // should be same result	
+}
+
+TEST_F (testComputeBias, testInSituWALASingleComponent) {
+	std::vector < double > mu (1, std::numeric_limits<double>::max()); // force an insertion to an empty system
+	std::vector < double > ib (3, 10);
+	std::vector <int> nmax (1, 3), nmin (1, 0);
+	lnF = 3.1; // something random this time
+	simSystem mysys (1, 1.0, ib, mu, nmax, nmin, 1);
+	mysys.startWALA (lnF, 0.5, 0.8, 1);
+	EXPECT_TRUE (mysys.useWALA);
+		
+	hardCore hc;
+	std::vector < double > params (2, 1.0);
+	hc.setParameters (params);
+	mysys.addPotential (0, 0, &hc, false);
+	
+	moves usedMoves;
+	insertParticle newIns (0, "insert");
+	usedMoves.addMove(&newIns, 1.0);
+	
+	// will insert
+	usedMoves.makeMove(mysys);
+	
+	// check WALA properties - should have incremented where the system ENDED (at N = 1)
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(1) - -lnF) < 1.0e-9);
+	
+	// all the rest should be 0
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(0) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(2) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(3) - 0) < 1.0e-9);
+}
+
+TEST_F (testComputeBias, testInSituWALAMultiComponent) {
+	std::vector < double > mu (2, std::numeric_limits<double>::max()); // force an insertion to an empty system
+	std::vector < double > ib (3, 10);
+	std::vector <int> nmax (2, 3), nmin (2, 0);
+	lnF = 3.1; // something random this time
+	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, 1);
+	mysys.startWALA (lnF, 0.5, 0.8, 1);
+	EXPECT_TRUE (mysys.useWALA);
+	
+	hardCore hc11, hc12, hc22;
+	std::vector < double > params (2, 1.0);
+	hc11.setParameters (params);
+	params[0] = 0.0; // ergo 1 and 2 can sit on top of each other
+	hc12.setParameters (params);
+	params[1] = 2.0;
+	hc22.setParameters (params);
+	mysys.addPotential (0, 0, &hc11, false);
+	mysys.addPotential (0, 1, &hc12, false);
+	mysys.addPotential (1, 1, &hc22, false);
+		
+	moves usedMoves;
+	insertParticle newIns (0, "insert");
+	usedMoves.addMove(&newIns, 1.0);
+	
+	// will insert first species
+	usedMoves.makeMove(mysys);
+	
+	// check WALA properties - should have incremented where the system ENDED (at N = 1)
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(1) - -lnF) < 1.0e-9);
+	
+	// all the rest should be 0
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(0) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(2) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(3) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(4) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(5) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(6) - 0) < 1.0e-9);
+	
+	// will insert the second species
+	moves usedMoves2;
+	insertParticle newIns2 (1, "insert");
+	usedMoves2.addMove(&newIns2, 1.0);
+	
+	usedMoves2.makeMove(mysys);
+	
+	// check WALA properties - should have incremented where the system ENDED (at N_tot = 2)
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(2) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(1) - -lnF) < 1.0e-9); // left over from first insertion
+	
+	// all the rest should be 0
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(0) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(3) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(4) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(5) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(6) - 0) < 1.0e-9);
+}
+
+TEST_F (testComputeBias, testInSituTMMCSingleComponent) {
+	std::vector < double > mu (1, std::numeric_limits<double>::max()); // force an insertion to an empty system
+	std::vector < double > ib (3, 10);
+	std::vector <int> nmax (1, 3), nmin (1, 0);
+	simSystem mysys (1, 1.0, ib, mu, nmax, nmin, 1);
+	mysys.startTMMC (tmmcSweepSize, 1);
+	EXPECT_TRUE (mysys.useTMMC);
+		
+	hardCore hc;
+	std::vector < double > params (2, 1.0);
+	hc.setParameters (params);
+	mysys.addPotential (0, 0, &hc, false);
+	
+	moves usedMoves;
+	insertParticle newIns (0, "insert");
+	usedMoves.addMove(&newIns, 1.0);
+	
+	// will insert
+	usedMoves.makeMove(mysys);
+	
+	// check TMMC properties - should have incremented where the system started from (N = 0)
+	std::vector < double > C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+	
+	// all the rest should be 0
+	for (unsigned int i = 2; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+	
+	// insert again
+	usedMoves.makeMove(mysys);
+	C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[2] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[3] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[4] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[5] - 0.0) < 1.0e-9);
+	
+	// all the rest should be 0
+	for (unsigned int i = 6; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+}
+
+TEST_F (testComputeBias, testInSituTMMCMultiComponent) {
+	std::vector < double > mu (2, std::numeric_limits<double>::max()); // force an insertion to an empty system
+	std::vector < double > ib (3, 10);
+	std::vector <int> nmax (2, 3), nmin (2, 0);
+	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, 1);
+	mysys.startTMMC (tmmcSweepSize, 1);
+	EXPECT_TRUE (mysys.useTMMC);
+		
+	hardCore hc11, hc12, hc22;
+	std::vector < double > params (2, 1.0);
+	hc11.setParameters (params);
+	params[0] = 0.0;
+	hc12.setParameters (params);
+	params[0] = 0.0;
+	hc22.setParameters (params);
+	mysys.addPotential (0, 0, &hc11, false);
+	mysys.addPotential (0, 1, &hc12, false);
+	mysys.addPotential (1, 1, &hc22, false);
+	
+	moves usedMoves;
+	insertParticle newIns (0, "insert");
+	usedMoves.addMove(&newIns, 1.0);
+	
+	// will insert first species
+	usedMoves.makeMove(mysys);
+	
+	// check TMMC properties - should have incremented where the system started from (N = 0)
+	std::vector < double > C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+	
+	// all the rest should be 0
+	for (unsigned int i = 2; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+	
+	// insert same species again
+	usedMoves.makeMove(mysys);
+	C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[2] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[3] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[4] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[5] - 0.0) < 1.0e-9);
+	
+	// all the rest should be 0
+	for (unsigned int i = 6; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+	
+	// do insertions with the other species
+	moves usedMoves2;
+	insertParticle newIns2 (1, "insert");
+	usedMoves2.addMove(&newIns2, 1.0);
+	
+	// insert 1 atom from second species
+	usedMoves2.makeMove(mysys);
+	
+	C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[2] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[3] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[4] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[5] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[6] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[7] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[8] - 0.0) < 1.0e-9);
+	
+	// all the rest should be 0
+	for (unsigned int i = 9; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+}*/
+
+// add expanded ensemble, 2 component SWAP move testing

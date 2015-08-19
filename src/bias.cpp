@@ -142,12 +142,12 @@ const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const int Nstart, const int 
 			// crossing over
 			if (Nend > Nstart) {
 				y = 1;
-				if (Mstart != Mtot_ - 1 && Mend != 0) {
+				if (Mstart != Mtot_ - 1 || Mend != 0) {
 					throw customException ("Illegal expanded ensemble values");
 				}
 			} else {
 				y = 2;
-				if (Mstart != 0 && Mend != Mtot_ - 1) {
+				if (Mstart != 0 || Mend != (Mtot_-1)) {
 					throw customException ("Illegal expanded ensemble values");
 				}
 			}
@@ -193,7 +193,17 @@ const __BIAS_INT_TYPE__ tmmc::getAddress (const int Nval, const int Mval) {
  * \param [in] pa Unbiased Metropolis criterion for making a MC move (i.e. pa = min(1, exp(...)))
  */
 void tmmc::updateC (const int Nstart, const int Nend, const int Mstart, const int Mend, const double pa) {
-	const int i = getTransitionAddress(Nstart, Nend, Mstart, Mend), j = getTransitionAddress(Nstart, Nstart, Mstart, Mstart);
+	int i = 0, j = 0;
+	try { 
+		i = getTransitionAddress(Nstart, Nend, Mstart, Mend);
+	} catch (customException &ce) {
+		throw customException ("Cannot update collection matrix: " + sstr(ce.what()));
+	}
+	try { 
+		j = getTransitionAddress(Nstart, Nstart, Mstart, Mstart);
+	} catch (customException &ce) {
+		throw customException ("Cannot update collection matrix: " + sstr(ce.what()));
+	}
 	C_[i] += pa;
 	C_[j] += (1-pa);
 	HC_[i] += 1.0; // only count the transition actually proposed, not the Nstart --> Nstart unless that was what was originally proposed
@@ -224,10 +234,16 @@ void tmmc::calculatePI () {
 
 	// Reset first value to zero just to start fresh. Since only ratios matter this is perfectly fair.
 	lnPI_[0] = 0.0;
+	int counter = 0;
 	__BIAS_INT_TYPE__ address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, nEndForward = 0, mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;
-	for (__BIAS_INT_TYPE__ i = 0; i < (Nmax_ - Nmin_ + 1) - 1; ++i) {
+	for (__BIAS_INT_TYPE__ i = 0; i < (Nmax_ - Nmin_ + 1); ++i) {
 		nStartForward = Nmin_+i;
 		for (__BIAS_INT_TYPE__ j = 0; j < Mtot_; ++j) { 
+			// skip the very last point
+			if (counter == lnPI_.size()-1) {
+				break;
+			}
+
 			mStartForward = j;
 			if (j == Mtot_-1) {
 				nEndForward = nStartForward + 1;
@@ -248,7 +264,8 @@ void tmmc::calculatePI () {
 			if (!(P_[address1] > 0) || !(P_[address2] > 0)) {
 				throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros at address: P["+sstr(address1)+"] = "+sstr(P_[address1])+", P["+sstr(address2)+"] = "+sstr(P_[address2]));
 			}
-			lnPI_[i+1] = lnPI_[i] + log(P_[address1]/P_[address2]); // this is why P_ cannot be zero
+			lnPI_[counter+1] = lnPI_[counter] + log(P_[address1]/P_[address2]); // this is why P_ cannot be zero
+			counter++;
 		}	
 	}
 }

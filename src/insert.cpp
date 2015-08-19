@@ -12,6 +12,7 @@ int insertParticle::make (simSystem &sys) {
     if (sys.numSpecies[typeIndex_] >= sys.maxSpecies(typeIndex_)) {
         return MOVE_FAILURE;
     }
+
     // also check if at upper bound for total number of atoms
     if (sys.getTotN() >= sys.totNMax()) {
     	return MOVE_FAILURE;

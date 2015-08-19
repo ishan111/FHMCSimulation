@@ -27,9 +27,7 @@ public:
 	virtual void setParameters (const std::vector < double > params) = 0;
 	virtual double rcut () = 0;	//!< All potentials should be able to return their r_{cut} values so neighbor lists, etc. can use them
 	
-	//inline double energy (const std::vector < double > &p1, const std::vector < double > &p2, const std::vector < double > &box) { return energy(sqrt(pbc_dist2(p1, p2, box))); } //!< Calculates the minimum image distance and invokes the energy call 
 	void savePotential(std::string filename, double start, double dr);
-//protected:
 	std::vector < double > params_; //!< Parameters (constants) that are needed to calculate U(r)
 	bool paramsAreSet_; //!< Logical check if the paramters for this potential have been specified by the user
 };
