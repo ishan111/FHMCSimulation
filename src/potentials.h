@@ -47,7 +47,9 @@ public:
 	double rcut ();
 
 private:
+	std::vector < double > epsM_; //!< Epsilon as a function of the expanded ensemble state
 	std::vector < double > sigmaM_; //!< Sigma as a function of the expanded ensemble state	
+	std::vector < double > uShiftM_; //!< Energy shift as a function of the expanded ensemble state
 };
 
 /*!
@@ -84,6 +86,7 @@ public:
 private:
 	std::vector < double > sigmaM_; //!< Hard sphere overlap as a function of expanded ensemble stage
 	std::vector < double > rangeM_;	//!< Range of interaction as a function of expanded ensemble stage
+	std::vector < double > epsM_; //!< Epsilon as a function of the expanded ensemble state
 };
 
 /*!

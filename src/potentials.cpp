@@ -48,7 +48,7 @@ void lennardJones::setParameters (const std::vector < double > params) {
 		if (params[2] < 0) {
 			throw customException ("For lennardJones, r_cut > 0");
 		}
-		if (params[4] < 1) {
+		if (int(params[4]) < 1) {
 			throw customException ("For lennardJones, total expanded ensemble states, Mtot >= 1");
 		}
 		
@@ -58,7 +58,7 @@ void lennardJones::setParameters (const std::vector < double > params) {
 		useTailCorrection = true;
 
 		// use a "constant volume" scheme to distribute the stages
-		sigmaM_.resize(params[4], 0);
+		sigmaM_.resize(int(params[4]), 0);
 		for (unsigned int i = 0; i < sigmaM_.size(); ++i) {
 			if (i == 0) {
 				// fully inserted
@@ -71,7 +71,29 @@ void lennardJones::setParameters (const std::vector < double > params) {
 				} else {
 					lastSigma = sigmaM_[i-1];
 				}
-				sigmaM_[i] = pow(params[1]*params[1]*params[1]/(8.0*params[4]) + lastSigma*lastSigma*lastSigma, 1./3.);	
+				sigmaM_[i] = pow(params[1]*params[1]*params[1]/(8.0*int(params[4])) + lastSigma*lastSigma*lastSigma, 1./3.);	
+			}
+		}
+		
+		// scale energy linearly across the stages
+		epsM_.resize(int(params[4]), 0);
+		for (unsigned int i = 0; i < epsM_.size(); ++i) {
+			if (i == 0) {
+				// fully inserted
+				epsM_[i] = params[0];
+			} else {
+				epsM_[i] = i*(params[0]/int(params[4]));	
+			}
+		}
+		
+		// scale energy linearly across the stages
+		uShiftM_.resize(int(params[4]), 0);
+		for (unsigned int i = 0; i < epsM_.size(); ++i) {
+			if (i == 0) {
+				// fully inserted
+				uShiftM_[i] = params[3];
+			} else {
+				uShiftM_[i] = i*(params[3]/int(params[4]));	
 			}
 		}
 	}
@@ -93,7 +115,7 @@ double lennardJones::energy (const atom* a1, const atom* a2, const std::vector <
 		throw customException ("For lennardJones parameters not set");
 	}
 	
-	const double r = sqrt(pbc_dist2(a1->pos, a2->pos, box));
+	const double r_sq = pbc_dist2(a1->pos, a2->pos, box);
 	
 	// only one of these atoms (at most) should be "partially" inserted
 	int mState = 0;
@@ -104,9 +126,9 @@ double lennardJones::energy (const atom* a1, const atom* a2, const std::vector <
 		mState = a2->mState;
 	}
 
-	double r1 = (sigmaM_[mState]/r), r3 = r1*r1*r1, r6 = r3*r3, r12 = r6*r6;
-	if (r < params_[2]) {
-		return 4.0*params_[0]*(r12 - r6) + params_[3];
+	double r2 = (sigmaM_[mState]*sigmaM_[mState]/r_sq), r6 = r2*r2*r2, r12 = r6*r6;
+	if (r_sq < params_[2]*params_[2]) {
+		return 4.0*epsM_[mState]*(r12 - r6) + uShiftM_[mState];
 	} else {
 		return 0.0;
 	}
@@ -114,7 +136,8 @@ double lennardJones::energy (const atom* a1, const atom* a2, const std::vector <
 
 /*!
  * Calculate the tail correction with the approximation g(r) = 1 for r_{cut} > 1
- * as explained in Frenkel & Smit in eq. (3.2.5)
+ * as explained in Frenkel & Smit in eq. (3.2.5).  Tail corrections only account for number of fully inserted particles
+ * so I have chosen not to scale this part of the energy with expanded ensemble stage.
  * 
  * \param [in] rhoBath Number density of the surrounding fluid
  * 
@@ -152,7 +175,7 @@ void tabulated::setParameters (const std::vector < double > params) {
 		if (params[0] < 0) {
 			throw customException ("For tabulated, r_cut > 0");
 		}
-		if (params[4] < 1) {
+		if (int(params[4]) < 1) {
 			throw customException ("For tabulated, total expanded ensemble states, Mtot >= 1");
 		}
 		
@@ -162,12 +185,12 @@ void tabulated::setParameters (const std::vector < double > params) {
 		useTailCorrection = false;
 
 		// scale energy by a constant factor
-		mScale.resize(params[4], 0);
+		mScale.resize(int(params[4]), 0);
 		for (unsigned int i = 0; i < mScale.size(); ++i) {
 			if (i == 0) {
 				mScale[i] = 1.0;
 			} else {
-				mScale[i] = 1.0/params[4]*i;
+				mScale[i] = 1.0/int(params[4])*i;
 			}		
 		}
 	}
@@ -331,8 +354,19 @@ void squareWell::setParameters (const std::vector < double > params) {
 				} else {
 					lastSigma = sigmaM_[i-1];
 				}
-				sigmaM_[i] = pow(params[0]*params[0]*params[0]/(8.0*params[3]) + lastSigma*lastSigma*lastSigma, 1./3.);
+				sigmaM_[i] = pow(params[0]*params[0]*params[0]/(8.0*int(params[3])) + lastSigma*lastSigma*lastSigma, 1./3.);
 				rangeM_[i] = sigmaM_[i] + params[1];	
+			}
+		}
+
+		// scale energy linearly across the stages
+		epsM_.resize(int(params[3]), 0);
+		for (unsigned int i = 0; i < epsM_.size(); ++i) {
+			if (i == 0) {
+				// fully inserted
+				epsM_[i] = -params[2];
+			} else {
+				epsM_[i] = -i*(params[2]/int(params[3]));	
 			}
 		}
 
@@ -371,7 +405,7 @@ double squareWell::energy (const atom* a1, const atom* a2, const std::vector < d
 	if (r < sigmaM_[mState]) {
 		return NUM_INFINITY;
 	} else if (r < rangeM_[mState]) {
-		return params_[2];
+		return epsM_[mState];
 	} else {
 		return 0.0;
 	}
@@ -413,7 +447,7 @@ void hardCore::setParameters (const std::vector < double > params) {
 		if (params[0] < 0) {
 			throw customException ("For hardCore, sigma > 0");
 		}
-		if (params[1] < 1) {
+		if (int(params[1]) < 1) {
 			throw customException ("For hardCore, total expanded ensemble state, Mtot >= 1");
 		}
 		
@@ -423,7 +457,7 @@ void hardCore::setParameters (const std::vector < double > params) {
 		useTailCorrection = false;
 
 		// use a "constant volume" scheme to distribute the stages
-		sigmaM_.resize(params[1], 0);
+		sigmaM_.resize(int(params[1]), 0);
 		for (unsigned int i = 0; i < sigmaM_.size(); ++i) {
 			if (i == 0) {
 				// fully inserted
@@ -436,7 +470,7 @@ void hardCore::setParameters (const std::vector < double > params) {
 				} else {
 					lastSigma = sigmaM_[i-1];
 				}
-				sigmaM_[i] = pow(params[0]*params[0]*params[0]/(8.0*params[1]) + lastSigma*lastSigma*lastSigma, 1./3.);	
+				sigmaM_[i] = pow(params[0]*params[0]*params[0]/(8.0*int(params[1])) + lastSigma*lastSigma*lastSigma, 1./3.);	
 			}
 		}
 	}
