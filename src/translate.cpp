@@ -30,8 +30,7 @@ int translateParticle::make (simSystem &sys) {
     	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
 			try {
 				oldEnergy += sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &sys.atoms[typeIndex_][chosenAtom], box);
-			}
-			catch (customException& ce) {
+			} catch (customException& ce) {
 				std::string a = "Cannot translate because of energy error: ", b = ce.what();
 				throw customException (a+b);
 			}
@@ -39,8 +38,15 @@ int translateParticle::make (simSystem &sys) {
         // add tail correction to potential energy
 #ifdef FLUID_PHASE_SIMULATIONS
         if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
-			oldEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
-		}
+        	if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex_][chosenAtom])) {
+        		// then chosenAtom is not a partially inserted particle and tail interactions must be included
+        		if (spec == typeIndex_) {
+        			oldEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);		
+        		} else {
+        			oldEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
+        		}
+        	}
+        }
 #endif
     }
     
@@ -74,8 +80,15 @@ int translateParticle::make (simSystem &sys) {
         // add tail correction to potential energy
 #ifdef FLUID_PHASE_SIMULATIONS
         if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
-			newEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
-		}
+        	if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex_][chosenAtom])) {
+        		// then chosenAtom is not a partially inserted particle and tail interactions must be included
+        		if (spec == typeIndex_) {
+        			newEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);		
+        		} else {
+        			newEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
+        		}
+        	}
+        }
 #endif
     }
     

@@ -62,12 +62,8 @@ int insertParticle::make (simSystem &sys) {
     				throw customException (a+b);
     			}
             }
-            // add tail correction to potential energy -- only enable for fluid phase simulations
-    #ifdef FLUID_PHASE_SIMULATIONS
-            if (sys.ppot[spec][typeIndex_]->useTailCorrection){
-    			insEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
-    		}
-    #endif
+            
+            // neglect all tail corrections for partially inserted particles
         }
         
         // now increment the expanded ensemble state after baseline has been calculated
@@ -93,9 +89,12 @@ int insertParticle::make (simSystem &sys) {
         }
         // add tail correction to potential energy -- only enable for fluid phase simulations
 #ifdef FLUID_PHASE_SIMULATIONS
-        if (sys.ppot[spec][typeIndex_]->useTailCorrection){
-			insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
-		}
+        if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
+        	if (newAtom->mState == 0) { // the mState was updated above to be what the atom will be if move is accepted
+        		// if current atom becomes a full atom, include tail corrections
+        		insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
+        	} 
+        }
 #endif
     }
     
@@ -108,7 +107,7 @@ int insertParticle::make (simSystem &sys) {
     int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() + 1;
     if (sys.getCurrentM() == sys.getTotalM()-1) {
     	nTotFinal++;
-	mFinal = 0;
+    	mFinal = 0;
     }
     double bias = calculateBias(sys, nTotFinal, mFinal);
    

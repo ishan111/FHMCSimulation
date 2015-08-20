@@ -144,6 +144,9 @@ double lennardJones::energy (const atom* a1, const atom* a2, const std::vector <
  * \return U_tail
  */
 double lennardJones::tailCorrection(const double rhoBath) {
+	if (rhoBath < 0) {
+		return 0;
+	}
 	const double r3 = (params_[1]*params_[1]*params_[1])/(params_[2]*params_[2]*params_[2]);
 	const double r9 = r3*r3*r3;
 	

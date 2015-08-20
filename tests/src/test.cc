@@ -1502,6 +1502,8 @@ TEST (testSwapMove, twoComponents) {
 	}	
 	EXPECT_TRUE (fabs(mysys.scratchEnergy() - -0.3) < 1.0e-9); // only 1-3 interaction remains
 		
+	
+	
 	// swap a1 and a3 which are now an isolated pair
 	moves usedMoves3;
 	swapParticles newSwap3 (0, 2, "swap"); // only can swap a1 and a3

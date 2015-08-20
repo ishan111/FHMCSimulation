@@ -54,34 +54,29 @@ int deleteParticle::make (simSystem &sys) {
 				throw customException (a+b);
 			}
         }
-        // add tail correction to potential energy -- only enable for fluid phase simulations
+        // add tail correction to potential energy -- only enable for fluid phase simulations       
 #ifdef FLUID_PHASE_SIMULATIONS
         if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
-        	if (spec == typeIndex_) {
-			int nBath = 0;
-			if (sys.getCurrentM() > 0) {
-				// we must be trying to delete an already partially inserted atom, this is not counted in sys.numSpecies[spec]
-				nBath = sys.numSpecies[spec];
-			} else {
-				// we are deleting a fully inserted particle, which is counted in sys.numSpecies[spec]
-				nBath = sys.numSpecies[spec]-1;
-			}		
-			delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection(nBath/V);
-		} else {
-			delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
-		}
-	}
+        	if (chosenAtom->mState == 0) { 
+        		// if current atom is a full atom right now, include tail corrections
+        		if (spec == typeIndex_) {
+        			delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
+        		} else {
+        			delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
+        		}
+        	} 
+        }
 #endif
     }
     
     // if the particle is about to be completely removed, no further calculation is required
-    if (chosenAtom->mState != 1 && sys.getTotalM() > 1) { // if 1, it is just completely removed - otherwise have to do calculation
-	// temporarily decrement the expanded ensemble state on the atom
-	int orig_state = chosenAtom->mState; 	
-	chosenAtom->mState -= 1;
-	if (chosenAtom->mState < 0) {
-		chosenAtom->mState = sys.getTotalM() - 1;
-	}
+    if (chosenAtom->mState != 1 && sys.getTotalM() > 1) { // if 1, it is just completely removed - otherwise have to do calculation since in expanded ensemble if M > 1
+    	// temporarily decrement the expanded ensemble state on the atom
+    	int orig_state = chosenAtom->mState; 	
+    	chosenAtom->mState -= 1;
+    	if (chosenAtom->mState < 0) {
+    		chosenAtom->mState = sys.getTotalM() - 1;
+    	}
     	
         for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
             // get positions of neighboring atoms around chosenAtom
@@ -89,30 +84,12 @@ int deleteParticle::make (simSystem &sys) {
             for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
                 try {
     				delEnergy += sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], chosenAtom, box);
-    			}
-    			catch (customException& ce) {
+    			} catch (customException& ce) {
     				std::string a = "Cannot delete because of energy error: ", b = ce.what();
     				throw customException (a+b);
     			}
             }
-            // add tail correction to potential energy -- only enable for fluid phase simulations
-#ifdef FLUID_PHASE_SIMULATIONS
-        if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
-        	if (spec == typeIndex_) {
-			int nBath = 0;
-			if (sys.getCurrentM() > 0) {
-				// we must be trying to delete an already partially inserted atom, this is not counted in sys.numSpecies[spec]
-				nBath = sys.numSpecies[spec];
-			} else {
-				// we are deleting a fully inserted particle, which is counted in sys.numSpecies[spec]
-				nBath = sys.numSpecies[spec]-1;
-			}	
-			delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(nBath/V);
-		} else {
-			delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
-		}
-	}
-#endif
+            // no tail corrections for partially inserted particles
         }
         
         // restore the expanded ensemble state
@@ -125,7 +102,7 @@ int deleteParticle::make (simSystem &sys) {
     int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() - 1;
     if (sys.getCurrentM() == 0) {
     	nTotFinal--;
-	mFinal = sys.getTotalM() - 1;
+    	mFinal = sys.getTotalM() - 1;
     }
     double bias = calculateBias(sys, nTotFinal, mFinal); 
     
