@@ -136,24 +136,22 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
         			fractionalAtom_->mState = 1;
         			Mcurrent_ = 1;
         			
-				// add particle into appropriate cell lists
-				for (unsigned int i = 0; i < nSpecies_; ++i) {
-					if (useCellList_[typeIndex][i]) {
-						cellList* cl = cellListsByPairType_[typeIndex][i];
-                     	cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex]]); // numSpecies[typeIndex] is the number of fully inserted ones, this partially inserted one comes after that
-                     	}
-                   	}
+					// add particle into appropriate cell lists
+					for (unsigned int i = 0; i < nSpecies_; ++i) {
+						if (useCellList_[typeIndex][i]) {
+							cellList* cl = cellListsByPairType_[typeIndex][i];
+							cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex]]); // numSpecies[typeIndex] is the number of fully inserted ones, this partially inserted one comes after that
+						}
+					}
         		}
         	} else if (Mtot_ > 1 && override) {
         		// expanded ensemble behavior, but now amidst a "swap move" rather than an actual insertion or deletion.
-        		// for this, insertions involve just putting the atom into the system / cellLists
+        		// for this, insertions involve just putting the atom "back" into the system / cellLists after being artificially completely removed
 
         		// ensure we insert at the proper "end"
         		int end = numSpecies[typeIndex];
         		if (Mcurrent_ > 0 && typeIndex == fractionalAtomType_ && newAtom->mState == 0) {
         			end++; // insert after the partially inserted one since newAtom is NOT the partial one
-        			totN_++; // we just added a "full" atom
-        			numSpecies[typeIndex]++; // we just added a "full" atom
         		}
         		atoms[typeIndex][end] = (*newAtom);
         		
@@ -162,8 +160,11 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
         			fractionalAtom_ = &atoms[typeIndex][end];
         			fractionalAtomType_ = typeIndex;
 
-				// set the system's mState back to that of the atom just inserted, iff it was the partial one
-				Mcurrent_ = atoms[typeIndex][end].mState;
+        			// set the system's mState back to that of the atom just inserted, iff it was the partial one
+        			Mcurrent_ = atoms[typeIndex][end].mState;
+        		} else {
+        			totN_++; // we just added a "full" atom
+        			numSpecies[typeIndex]++; // we just added a "full" atom
         		}
         		
         		// put newAtom into the cell lists whatever its state
@@ -211,41 +212,40 @@ void simSystem::deleteAtom (const int typeIndex, const int atomIndex, bool overr
         			if (Mtot_ > 1) {
         				// expanded ensemble and not necessarily deleting the partial atom
 
-					int end = numSpecies[typeIndex] - 1;
-					if (fractionalAtomType_ == typeIndex && Mcurrent_ > 0) {
-						// we are deleting a particle which has to watch out for the partial atom
-						end++;
-					}
-					
-					
-					if (atoms[typeIndex][atomIndex].mState == 0) {
-						// if we are removing a "full" particle, have to decrement Ntot, else not
-						numSpecies[typeIndex]--;
-               					totN_--;					
-					} else {
-						// but if removing the partial particle, M is affected
-						Mcurrent_ = 0; // regardless of how M was originally, the partial particle is now "entirely" gone
-					}
-
-					bool replace = false;
-					if (&atoms[typeIndex][end] == fractionalAtom_) {
-						// then the fractional atom is about to be used to replace a "full" one
-						replace = true;
-					}
-
-					// have to entirely remove the particle
-					for (unsigned int i = 0; i < nSpecies_; ++i) {
-                    				if (useCellList_[typeIndex][i]) {
-                    					cellList* cl = cellListsByPairType_[typeIndex][i];
-                    					cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][end]);
-                    				}
-                   			}
-					
-					atoms[typeIndex][atomIndex] = atoms[typeIndex][end];    // "replacement" operation
+						int end = numSpecies[typeIndex] - 1;
+						if (fractionalAtomType_ == typeIndex && Mcurrent_ > 0) {
+							// we are deleting a particle which has to watch out for the partial atom
+							end++;
+						}
+						
+						if (atoms[typeIndex][atomIndex].mState == 0) {
+							// if we are removing a "full" particle, have to decrement Ntot, else not
+							numSpecies[typeIndex]--;
+							totN_--;					
+						} else {
+							// but if removing the partial particle, M is affected
+							Mcurrent_ = 0; // regardless of how M was originally, the partial particle is now "entirely" gone
+						}
 	
-					if (replace) {
-						fractionalAtom_ = &atoms[typeIndex][atomIndex];	// update the pointer if necessary
-					}  				
+						bool replace = false;
+						if (&atoms[typeIndex][end] == fractionalAtom_) {
+							// then the fractional atom is about to be used to replace a "full" one
+							replace = true;
+						}
+	
+						// have to entirely remove the particle
+						for (unsigned int i = 0; i < nSpecies_; ++i) {
+								if (useCellList_[typeIndex][i]) {
+									cellList* cl = cellListsByPairType_[typeIndex][i];
+									cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][end]);
+								}
+							}
+						
+						atoms[typeIndex][atomIndex] = atoms[typeIndex][end];    // "replacement" operation
+		
+						if (replace) {
+							fractionalAtom_ = &atoms[typeIndex][atomIndex];	// update the pointer if necessary
+						}  				
         			} else {
         				// no expanded ensemble, just delete particle from appropriate cell list
                     			for (unsigned int i = 0; i < nSpecies_; ++i) {

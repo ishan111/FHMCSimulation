@@ -3820,4 +3820,457 @@ TEST_F (hardCoreExpandedTest, testTailCorrection) {
 	delete hc;
 }
 
-// add expanded ensemble, 2 component SWAP move testing
+TEST (testExpandedSwapMove, multicomponentNoSwapTwoFullyInserted) {
+	const int Mtot = 3;
+	std::vector < double > mu (2, 0); 
+	std::vector < double > ib (3, 10);
+	std::vector <int> nmax (2, 3), nmin (2, 0);
+	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, Mtot);
+
+	squareWell sw11, sw12, sw22; 
+	std::vector < double > params (4, 0.0);
+	params[0] = 1.0; params[1] = 0.1; params[2] = 1.0, params[3] = Mtot;
+	sw11.setParameters (params);
+	params[0] = 1.5; params[1] = 0.1; params[2] = 1.5, params[3] = Mtot;
+	sw12.setParameters (params);
+	params[0] = 2.0; params[1] = 0.1; params[2] = 2.0, params[3] = Mtot;
+	sw22.setParameters (params);
+	mysys.addPotential (0, 0, &sw11, true);
+	mysys.addPotential (0, 1, &sw12, true);
+	mysys.addPotential (1, 1, &sw22, true);
+	
+	atom a1, a2, a3, a4;
+	
+	a1.pos[0] = 7;
+	a1.pos[1] = 0;
+	a1.pos[2] = 5;
+	
+	a2.pos[0] = 8.01;
+	a2.pos[1] = 0;
+	a2.pos[2] = 5;
+	
+	a3.pos[0] = 0;
+	a3.pos[1] = 0;
+	a3.pos[2] = 5;
+	
+	a4.pos[0] = 2.01;
+	a4.pos[1] = 0;
+	a4.pos[2] = 5;
+	
+	// Fully insert 4 atoms
+	mysys.insertAtom(0, &a1);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	mysys.insertAtom(0, &a2);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	
+	mysys.insertAtom(1, &a3);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	
+	mysys.insertAtom(1, &a4);
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+
+	double U_save = mysys.scratchEnergy();
+	EXPECT_TRUE (fabs(U_save - -(1.0+2.0)) < 1.0e-9);
+	
+	moves usedMoves;
+	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
+	usedMoves.addMove(&newSwap, 1.0);
+	
+	bool noMove = true;
+	double lastAns = 0;
+	int iterMax = 1000, iter = 0;
+	while (noMove && iter < iterMax) {
+		usedMoves.makeMove (mysys);
+		std::vector < double > ans = usedMoves.reportMoveStatistics();
+		if (ans[0] > lastAns) {
+			noMove = false;
+		} 
+		lastAns = ans[0];
+		iter++;
+	}
+	
+	// this should nevery succeed since two large and two small particles form different clusters
+	EXPECT_TRUE(noMove);
+}
+
+TEST (testExpandedSwapMove, multicomponentAllowSwapTwoFullyInserted) {
+	const int Mtot = 3;
+	std::vector < double > mu (2, 0); 
+	std::vector < double > ib (3, 10);
+	std::vector <int> nmax (2, 3), nmin (2, 0);
+	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, Mtot);
+
+	squareWell sw11, sw12, sw22; 
+	std::vector < double > params (4, 0.0);
+	params[0] = 1.0; params[1] = 0.1; params[2] = 1.0, params[3] = Mtot;
+	sw11.setParameters (params);
+	params[0] = 1.5; params[1] = 0.1; params[2] = 1.5, params[3] = Mtot;
+	sw12.setParameters (params);
+	params[0] = 2.0; params[1] = 0.1; params[2] = 2.0, params[3] = Mtot;
+	sw22.setParameters (params);
+	mysys.addPotential (0, 0, &sw11, true);
+	mysys.addPotential (0, 1, &sw12, true);
+	mysys.addPotential (1, 1, &sw22, true);
+	
+	atom a1, a2, a3, a4;
+	
+	a1.pos[0] = 6.5;
+	a1.pos[1] = 0;
+	a1.pos[2] = 5;
+	
+	a2.pos[0] = 8.01;
+	a2.pos[1] = 0;
+	a2.pos[2] = 5;
+	
+	a3.pos[0] = 0;
+	a3.pos[1] = 0;
+	a3.pos[2] = 5;
+	
+	a4.pos[0] = 2.01;
+	a4.pos[1] = 0;
+	a4.pos[2] = 5;
+	
+	// Fully insert 4 atoms
+	mysys.insertAtom(0, &a1);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	mysys.insertAtom(0, &a2);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	
+	mysys.insertAtom(1, &a3);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	
+	mysys.insertAtom(1, &a4);
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+
+	double U_save = mysys.scratchEnergy();
+	EXPECT_TRUE (fabs(U_save - -(0.0+2.0)) < 1.0e-9);
+	
+	moves usedMoves;
+	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
+	usedMoves.addMove(&newSwap, 1.0);
+	
+	bool noMove = true;
+	double lastAns = 0;
+	int iterMax = 1000, iter = 0;
+	while (noMove && iter < iterMax) {
+		usedMoves.makeMove (mysys);
+		std::vector < double > ans = usedMoves.reportMoveStatistics();
+		if (ans[0] > lastAns) {
+			noMove = false;
+		} 
+		lastAns = ans[0];
+		iter++;
+	}
+	
+	// this should succeed at somepoint since 0 < dU < infinity
+	EXPECT_TRUE(!noMove);
+}
+
+TEST (testExpandedSwapMove, multicomponentAllowSingleSwapTwoFullyInserted) {
+	const int Mtot = 3;
+	std::vector < double > mu (2, 0); 
+	std::vector < double > ib (3, 10);
+	std::vector <int> nmax (2, 3), nmin (2, 0);
+	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, Mtot);
+
+	squareWell sw11, sw12, sw22; 
+	std::vector < double > params (4, 0.0);
+	params[0] = 1.0; params[1] = 0.1; params[2] = 1.0, params[3] = Mtot;
+	sw11.setParameters (params);
+	params[0] = 1.5; params[1] = 0.1; params[2] = NUM_INFINITY, params[3] = Mtot; // once 1-2 come together they won't separate
+	sw12.setParameters (params);
+	params[0] = 2.0; params[1] = 0.1; params[2] = 2.0, params[3] = Mtot;
+	sw22.setParameters (params);
+	mysys.addPotential (0, 0, &sw11, true);
+	mysys.addPotential (0, 1, &sw12, true);
+	mysys.addPotential (1, 1, &sw22, true);
+	
+	atom a1, a2, a3, a4;
+	
+	a1.pos[0] = 6.5;
+	a1.pos[1] = 0;
+	a1.pos[2] = 5;
+	
+	a2.pos[0] = 8.01;
+	a2.pos[1] = 0;
+	a2.pos[2] = 5;
+	
+	a3.pos[0] = 0;
+	a3.pos[1] = 0;
+	a3.pos[2] = 5;
+	
+	a4.pos[0] = 2.01;
+	a4.pos[1] = 0;
+	a4.pos[2] = 5;
+	
+	// Fully insert 4 atoms
+	mysys.insertAtom(0, &a1);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	mysys.insertAtom(0, &a2);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	
+	mysys.insertAtom(1, &a3);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	
+	mysys.insertAtom(1, &a4);
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+
+	double U_save = mysys.scratchEnergy();
+	EXPECT_TRUE (fabs(U_save - -(0.0+2.0)) < 1.0e-9);
+	
+	moves usedMoves;
+	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
+	usedMoves.addMove(&newSwap, 1.0);
+	
+	bool done = false, badSwap = true;
+	double lastAns = 0;
+	int iterMax = 1000, iter = 0;
+	while (iter < iterMax && !done) {
+		usedMoves.makeMove (mysys);
+		std::vector < double > ans = usedMoves.reportMoveStatistics();
+		
+		if (ans[0] > lastAns) {
+			if ((mysys.atoms[0][0].pos[0] == 8.01 || mysys.atoms[0][1].pos[0] == 8.01) && (mysys.atoms[1][0].pos[0] == 6.5 || mysys.atoms[1][1].pos[0] == 6.5)) {
+				badSwap = false;
+			} else if ((mysys.atoms[0][0].pos[0] == 6.5 || mysys.atoms[0][1].pos[0] == 6.5) && (mysys.atoms[1][0].pos[0] == 8.01 || mysys.atoms[1][1].pos[0] == 8.01)) {
+				badSwap = false;
+			} else {
+				badSwap = true;
+			}
+			done = true;
+		} 
+		lastAns = ans[0];
+		iter++;
+	}
+	
+	// this should only succeed once since breaking like clusters has finite energy, but after that swap, have 1-2 pairs which have infinite attraction
+	EXPECT_TRUE (done);
+	EXPECT_TRUE (!badSwap);
+}
+
+TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
+	const int Mtot = 3;
+	std::vector < double > mu (2, 0); 
+	std::vector < double > ib (3, 10);
+	std::vector <int> nmax (2, 3), nmin (2, 0);
+	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, Mtot);
+
+	squareWell sw11, sw12, sw22; 
+	std::vector < double > params (4, 0.0);
+	params[0] = 1.0; params[1] = 0.1; params[2] = 1.0, params[3] = Mtot;
+	sw11.setParameters (params);
+	params[0] = 1.5; params[1] = 0.1; params[2] = NUM_INFINITY, params[3] = Mtot; // once 1-2 come together they won't separate
+	sw12.setParameters (params);
+	params[0] = 2.0; params[1] = 0.1; params[2] = 2.0, params[3] = Mtot;
+	sw22.setParameters (params);
+	mysys.addPotential (0, 0, &sw11, true);
+	mysys.addPotential (0, 1, &sw12, true);
+	mysys.addPotential (1, 1, &sw22, true);
+	
+	atom a1, a2, a3, a4;
+	
+	a1.pos[0] = 6.5;
+	a1.pos[1] = 0;
+	a1.pos[2] = 5;
+	
+	a2.pos[0] = 8.01;
+	a2.pos[1] = 0;
+	a2.pos[2] = 5;
+	
+	a3.pos[0] = 0;
+	a3.pos[1] = 0;
+	a3.pos[2] = 5;
+	
+	a4.pos[0] = 2.01;
+	a4.pos[1] = 0;
+	a4.pos[2] = 5;
+	
+	// Fully insert 4 atoms
+	mysys.insertAtom(0, &a1);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+	
+	mysys.insertAtom(0, &a2);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	mysys.insertAtom(0, &mysys.atoms[0][1]);
+	
+	mysys.insertAtom(1, &a3);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	
+	mysys.insertAtom(1, &a4);
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+	mysys.insertAtom(1, &mysys.atoms[1][1]);
+
+	// partially remove a1 to set it as the partially inserted atom
+	mysys.deleteAtom(0, 0);
+	
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][0]);
+	EXPECT_EQ (mysys.getTotN(), 3);
+	EXPECT_EQ (mysys.getCurrentM(), 2);
+	
+	double U_save = mysys.scratchEnergy();
+	EXPECT_TRUE (fabs(U_save - -(0.0+2.0)) < 1.0e-9);
+	
+	moves usedMoves;
+	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
+	usedMoves.addMove(&newSwap, 1.0);
+	
+	bool badSwap = true;
+	double lastAns = 0;
+	int iterMax = 1000, iter = 0;
+	while (iter < iterMax) {
+		usedMoves.makeMove (mysys);
+		std::vector < double > ans = usedMoves.reportMoveStatistics();
+		
+		if (ans[0] > lastAns) {
+			// each time a move succeeds, check that M, N are the same
+			EXPECT_EQ (mysys.getTotN(), 3);
+			EXPECT_EQ (mysys.getCurrentM(), 2);
+			
+			// although the insert/deletes move fractionalAtom around, check that the pointer still points to the one with mState == 2
+			EXPECT_TRUE (mysys.getFractionalAtom()->mState == 2);
+			
+			// and that no other atoms have that property
+			for (unsigned int i = 0; i < 2; ++i) {
+				for (unsigned int j = 0; j < 2; ++j) {
+					if (&mysys.atoms[i][j] != mysys.getFractionalAtom()) {
+						EXPECT_TRUE (mysys.atoms[i][j].mState == 0);
+					}
+				}
+			}
+		} 
+		lastAns = ans[0];
+		iter++;
+	}
+				
+	// now insert that atom again and set to a2
+	mysys.insertAtom(0, mysys.getFractionalAtom());
+	EXPECT_EQ (mysys.getTotN(), 4);
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+	
+	mysys.deleteAtom(0, 1);
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[0][1]);
+	EXPECT_EQ (mysys.getTotN(), 3);
+	EXPECT_EQ (mysys.getCurrentM(), 2);
+	
+	badSwap = true;
+	lastAns = 0;
+	iterMax = 1000;
+	iter = 0;
+	while (iter < iterMax) {
+		usedMoves.makeMove (mysys);
+		std::vector < double > ans = usedMoves.reportMoveStatistics();
+		
+		if (ans[0] > lastAns) {
+			// each time a move succeeds, check that M, N are the same
+			EXPECT_EQ (mysys.getTotN(), 3);
+			EXPECT_EQ (mysys.getCurrentM(), 2);
+			
+			// although the insert/deletes move fractionalAtom around, check that the pointer still points to the one with mState == 2
+			EXPECT_TRUE (mysys.getFractionalAtom()->mState == 2);
+			
+			// and that no other atoms have that property
+			for (unsigned int i = 0; i < 2; ++i) {
+				for (unsigned int j = 0; j < 2; ++j) {
+					if (&mysys.atoms[i][j] != mysys.getFractionalAtom()) {
+						EXPECT_TRUE (mysys.atoms[i][j].mState == 0);
+					}
+				}
+			}
+		} 
+		lastAns = ans[0];
+		iter++;
+	}	
+	
+	// now insert that atom and switch to second species
+	mysys.insertAtom(0, mysys.getFractionalAtom());
+	EXPECT_EQ (mysys.getTotN(), 4);
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+	
+	mysys.deleteAtom(1, 0);
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[1][0]);
+	EXPECT_EQ (mysys.getTotN(), 3);
+	EXPECT_EQ (mysys.getCurrentM(), 2);
+	
+	badSwap = true;
+	lastAns = 0;
+	iterMax = 1000;
+	iter = 0;
+	while (iter < iterMax) {
+		usedMoves.makeMove (mysys);
+		std::vector < double > ans = usedMoves.reportMoveStatistics();
+		if (ans[0] > lastAns) {
+			// each time a move succeeds, check that M, N are the same
+			EXPECT_EQ (mysys.getTotN(), 3);
+			EXPECT_EQ (mysys.getCurrentM(), 2);
+			
+			// although the insert/deletes move fractionalAtom around, check that the pointer still points to the one with mState == 2
+			EXPECT_TRUE (mysys.getFractionalAtom()->mState == 2);
+			
+			// and that no other atoms have that property
+			for (unsigned int i = 0; i < 2; ++i) {
+				for (unsigned int j = 0; j < 2; ++j) {
+					if (&mysys.atoms[i][j] != mysys.getFractionalAtom()) {
+						EXPECT_TRUE (mysys.atoms[i][j].mState == 0);
+					}
+				}
+			}
+		} 
+		lastAns = ans[0];
+		iter++;
+	}	
+	
+	// now insert that atom and switch to other of the second species
+	mysys.insertAtom(1, mysys.getFractionalAtom());
+	EXPECT_EQ (mysys.getTotN(), 4);
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+	
+	mysys.deleteAtom(1, 1);
+	EXPECT_TRUE (mysys.getFractionalAtom() == &mysys.atoms[1][1]);
+	EXPECT_EQ (mysys.getTotN(), 3);
+	EXPECT_EQ (mysys.getCurrentM(), 2);
+	
+	badSwap = true;
+	lastAns = 0;
+	iterMax = 1000;
+	iter = 0;
+	while (iter < iterMax) {
+		usedMoves.makeMove (mysys);
+		std::vector < double > ans = usedMoves.reportMoveStatistics();
+		if (ans[0] > lastAns) {
+			// each time a move succeeds, check that M, N are the same
+			EXPECT_EQ (mysys.getTotN(), 3);
+			EXPECT_EQ (mysys.getCurrentM(), 2);
+			
+			// although the insert/deletes move fractionalAtom around, check that the pointer still points to the one with mState == 2
+			EXPECT_TRUE (mysys.getFractionalAtom()->mState == 2);
+			
+			// and that no other atoms have that property
+			for (unsigned int i = 0; i < 2; ++i) {
+				for (unsigned int j = 0; j < 2; ++j) {
+					if (&mysys.atoms[i][j] != mysys.getFractionalAtom()) {
+						EXPECT_TRUE (mysys.atoms[i][j].mState == 0);
+					}
+				}
+			}
+		} 
+		lastAns = ans[0];
+		iter++;
+	}	
+}

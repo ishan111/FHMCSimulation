@@ -59,14 +59,13 @@ void moves::makeMove (simSystem &sys) {
 					if ((moves_[i]->changeN() == true) && (moves_[i]->whatType() != sys.getFractionalAtomType()) && (sys.getCurrentM() > 0)) {
 						// reject this choice because we must only insert/delete the type that is already partially inserted IFF we are *already* in a partially inserted state
 						// choose a new move
-						
 						done = false;
 						break;
 					} else {
 						try {
 							succ = moves_[i]->make(sys);
 						} catch (customException &ce) {
-							std::string a = "Failed to make a move properly";
+							std::string a = "Failed to make a move properly: ";
 							std::string b = ce.what();
 							throw customException(a+b);
 						}
@@ -79,7 +78,7 @@ void moves::makeMove (simSystem &sys) {
 					try {
 						succ = moves_[i]->make(sys);
 					} catch (customException &ce) {
-						std::string a = "Failed to make a move properly";
+						std::string a = "Failed to make a move properly: ";
 						std::string b = ce.what();
 						throw customException(a+b);
 					}

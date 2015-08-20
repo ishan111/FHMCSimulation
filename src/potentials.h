@@ -34,7 +34,7 @@ public:
 
 /*!
  * Lennard-Jones Potential
- * Parameters should be specified in the following order: { epsilon, sigma, r_cut, u_shift }
+ * Parameters should be specified in the following order: { epsilon, sigma, r_cut, u_shift, Mtot }
  */
 class lennardJones : public pairPotential {
 public:
@@ -52,7 +52,7 @@ private:
 
 /*!
  * Tabulated Potential
- * Parameters should be specified in the following order: { r_cut, r_shift, u_shift, u_infinity }
+ * Parameters should be specified in the following order: { r_cut, r_shift, u_shift, u_infinity, Mtot }
  */
 class tabulated : public pairPotential {
 public:
@@ -71,7 +71,7 @@ private:
 
 /*!
  * Square-well potential
- * Parameters should be specified in the following order: { sigma, wellwidth, welldepth }
+ * Parameters should be specified in the following order: { sigma, wellwidth, welldepth, Mtot }
  */
 class squareWell : public pairPotential {
 public:
@@ -89,7 +89,7 @@ private:
 
 /*!
  * Hard-core potential
- * Parameters should be specified in the following order: { sigma }
+ * Parameters should be specified in the following order: { sigma, Mtot }
  */
 class hardCore : public pairPotential {
 public:

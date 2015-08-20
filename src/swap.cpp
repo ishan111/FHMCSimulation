@@ -9,17 +9,25 @@
  */
 int swapParticles::make (simSystem &sys) {
 	// Choose an atom of each type to try to exchange
-	if (sys.numSpecies[typeIndex_] < 1 || sys.numSpecies[typeIndex2_] < 1) {
+	int n1Avail = sys.numSpecies[typeIndex_];
+	if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == typeIndex_) {
+		n1Avail++;
+	}
+	int n2Avail = sys.numSpecies[typeIndex2_];
+	if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == typeIndex2_) {
+		n2Avail++;
+	}
+	if (n1Avail < 1 || n2Avail < 1) {
 		return MOVE_FAILURE;
 	}
 	
 	// because the locations are effectively being swapped, it is fair to select a partially inserted atom to be involved
-	const int a1 = (int) floor(rng (&RNG_SEED) * sys.numSpecies[typeIndex_]);
-	const int a2 = (int) floor(rng (&RNG_SEED) * sys.numSpecies[typeIndex2_]);
+	const int a1 = (int) floor(rng (&RNG_SEED) * n1Avail);
+	const int a2 = (int) floor(rng (&RNG_SEED) * n2Avail);
 	atom a1_orig = sys.atoms[typeIndex_][a1], a1_new = a1_orig;
 	atom a2_orig = sys.atoms[typeIndex2_][a2], a2_new = a2_orig;
-	int fracType = sys.getFractionalAtomType (), n1_orig = sys.numSpecies[typeIndex_], n2_orig = sys.numSpecies[typeIndex2_];
-
+	int fracType = sys.getFractionalAtomType(), n1_orig = sys.numSpecies[typeIndex_], n2_orig = sys.numSpecies[typeIndex2_], m_orig = sys.getCurrentM();
+	
 	// positions will be exchanged, but no other property should change
 	a1_new.pos = a2_orig.pos;
 	a2_new.pos = a1_orig.pos;
@@ -142,7 +150,7 @@ int swapParticles::make (simSystem &sys) {
     	std::string a = "Failed to insert atom during swapping: ", b = ce.what();
     	throw customException (a+b);
     }
-
+ 
     // Insert new_a2
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
     	std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex2_, &a2_new);
@@ -178,7 +186,7 @@ int swapParticles::make (simSystem &sys) {
     if (sys.useTMMC) {
     	sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), std::min(1.0, p_u)); // since the total number of atoms isn't changing, can use getTotN() as both initial and final states
     }
-    
+	
 	if (rng (&RNG_SEED) < p_u*bias) {
 	   sys.incrementEnergy(insEnergy - delEnergy);	
 		
@@ -186,17 +194,20 @@ int swapParticles::make (simSystem &sys) {
 		if (sys.useWALA) {
 			sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
 		}
-		
-	// double check
-	if (n1_orig != sys.numSpecies[typeIndex_]) {
-		throw customException ("Number of species 1 atoms do not match before and after swap move");	
-	}
-	if (n2_orig != sys.numSpecies[typeIndex2_]) {
-		throw customException ("Number of species 2 atoms do not match before and after swap move");	
-	}
-	if (fracType != sys.getFractionalAtomType()) {
-		throw customException ("Fractional type has changed during course of swap move");	
-	}
+			
+		// double check
+		if (n1_orig != sys.numSpecies[typeIndex_]) {
+			throw customException ("Number of species 1 atoms do not match before and after swap move");	
+		}
+		if (n2_orig != sys.numSpecies[typeIndex2_]) {
+			throw customException ("Number of species 2 atoms do not match before and after swap move");	
+		}
+		if (fracType != sys.getFractionalAtomType()) {
+			throw customException ("Fractional type has changed during course of swap move");	
+		}
+		if (m_orig != sys.getCurrentM()) {
+			throw customException ("Expanded ensemble state of system has changed during course of swap move");
+		}
 
         return MOVE_SUCCESS;
     }
@@ -247,6 +258,9 @@ int swapParticles::make (simSystem &sys) {
 	}
 	if (fracType != sys.getFractionalAtomType()) {
 		throw customException ("Fractional type has changed during course of swap move");	
+	}
+	if (m_orig != sys.getCurrentM()) {
+		throw customException ("Expanded ensemble state of system has changed during course of swap move");
 	}
 
 	// update Wang-Landau bias (even if moved failed), if used
