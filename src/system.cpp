@@ -104,7 +104,7 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
  */
 void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
     if (typeIndex < nSpecies_ && typeIndex >= 0) {
-        if (numSpecies[typeIndex] < maxSpecies_[typeIndex]) {
+    	if (numSpecies[typeIndex] < maxSpecies_[typeIndex]) {
         	if (Mtot_ > 1 && !override) {
         		// expanded ensemble behavior, "normal" insertion and deletion
         		if (Mcurrent_ > 0) { // further inserting an atom that already partially exists in the system
@@ -384,6 +384,7 @@ simSystem::~simSystem () {
  * \param [in] box Box dimensions [x, y, z]
  * \param [in] mu Chemical potential of each species
  * \param [in] maxSpecies Maximum number of each species to allow in the system
+ * \param [in] Mtot Total number of expanded ensemble states
  */
 simSystem::simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies, const int Mtot) {
 	if ((box.size() != 3) || (nSpecies != mu.size()) || (maxSpecies.size() != nSpecies)) {
@@ -943,7 +944,7 @@ void simSystem::startWALA (const double lnF, const double g, const double s, con
 void simSystem::startTMMC (const long long int tmmcSweepSize, const int Mtot) { 
 	// initialize the tmmc object
 	try {
-		tmmcBias = new tmmc (totNBounds_[1], totNBounds_[0], tmmcSweepSize, Mtot, box_);
+		tmmcBias = new tmmc (totNBounds_[1], totNBounds_[0], Mtot, tmmcSweepSize, box_);
 	} catch (customException& ce) {
 		throw customException ("Cannot start TMMC biasing in system: "+sstr(ce.what()));
 	}

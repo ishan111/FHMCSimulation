@@ -59,7 +59,7 @@ void lennardJones::setParameters (const std::vector < double > params) {
 
 		// use a "constant volume" scheme to distribute the stages
 		sigmaM_.resize(int(params[4]), 0);
-		for (unsigned int i = 0; i < sigmaM_.size(); ++i) {
+		for (int i = 0; i < sigmaM_.size(); ++i) {
 			if (i == 0) {
 				// fully inserted
 				sigmaM_[i] = params[1];
@@ -77,7 +77,7 @@ void lennardJones::setParameters (const std::vector < double > params) {
 		
 		// scale energy linearly across the stages
 		epsM_.resize(int(params[4]), 0);
-		for (unsigned int i = 0; i < epsM_.size(); ++i) {
+		for (int i = 0; i < epsM_.size(); ++i) {
 			if (i == 0) {
 				// fully inserted
 				epsM_[i] = params[0];
@@ -88,7 +88,7 @@ void lennardJones::setParameters (const std::vector < double > params) {
 		
 		// scale energy linearly across the stages
 		uShiftM_.resize(int(params[4]), 0);
-		for (unsigned int i = 0; i < epsM_.size(); ++i) {
+		for (int i = 0; i < epsM_.size(); ++i) {
 			if (i == 0) {
 				// fully inserted
 				uShiftM_[i] = params[3];
@@ -186,7 +186,7 @@ void tabulated::setParameters (const std::vector < double > params) {
 
 		// scale energy by a constant factor
 		mScale.resize(int(params[4]), 0);
-		for (unsigned int i = 0; i < mScale.size(); ++i) {
+		for (int i = 0; i < mScale.size(); ++i) {
 			if (i == 0) {
 				mScale[i] = 1.0;
 			} else {
@@ -340,8 +340,7 @@ void squareWell::setParameters (const std::vector < double > params) {
 		// use a "constant volume" scheme to distribute the stages
 		sigmaM_.resize(int(params[3]), 0);
 		rangeM_.resize(int(params[3]), 0);
-		for (unsigned int i = 0; i < sigmaM_.size(); ++i) {
-
+		for (int i = 0; i < sigmaM_.size(); ++i) {
 			if (i == 0) {
 				// fully inserted
 				sigmaM_[i] = params[0];
@@ -361,7 +360,7 @@ void squareWell::setParameters (const std::vector < double > params) {
 
 		// scale energy linearly across the stages
 		epsM_.resize(int(params[3]), 0);
-		for (unsigned int i = 0; i < epsM_.size(); ++i) {
+		for (int i = 0; i < epsM_.size(); ++i) {
 			if (i == 0) {
 				// fully inserted
 				epsM_[i] = -params[2];
@@ -458,7 +457,7 @@ void hardCore::setParameters (const std::vector < double > params) {
 
 		// use a "constant volume" scheme to distribute the stages
 		sigmaM_.resize(int(params[1]), 0);
-		for (unsigned int i = 0; i < sigmaM_.size(); ++i) {
+		for (int i = 0; i < sigmaM_.size(); ++i) {
 			if (i == 0) {
 				// fully inserted
 				sigmaM_[i] = params[0];

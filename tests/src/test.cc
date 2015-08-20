@@ -1854,17 +1854,9 @@ protected:
 		tmmcBias->updateC(Nmin+1, Nmin+2, 2, 0, pu);
 		tmmcBias->updateC(Nmin+1, Nmin+1, 2, 1, pu);
 		
-		tmmcBias->updateC(Nmin+2, Nmin+2, 0, 0, pu);
-		tmmcBias->updateC(Nmin+2, Nmin+2, 0, 1, pu);
-		tmmcBias->updateC(Nmin+2, Nmin+1, 0, 2, pu);
-		
 		// "missing states"
-		/*tmmcBias->updateC(Nmin+2, Nmin+2, 1, 1, pu);
-		tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, pu);
-		tmmcBias->updateC(Nmin+2, Nmin+2, 1, 0, pu);*/
-		
-		tmmcBias->updateC(Nmin+2, Nmin+2, 2, 2, pu);
-		tmmcBias->updateC(Nmin+2, Nmin+2, 2, 1, pu);
+		/*tmmcBias->updateC(Nmin+2, Nmin+2, 0, 0, pu);
+		tmmcBias->updateC(Nmin+2, Nmin+1, 0, 2, pu);*/
 	}
 };
 
@@ -1875,9 +1867,8 @@ TEST_F (tmmBiasExpandedlnPI, checkVisitedNo) {
 }
 
 TEST_F (tmmBiasExpandedlnPI, checkVisitedYes) {	
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 1, pu); // add missing states
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, pu);
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 0, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+2, 0, 0, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+1, 0, 2, pu);
 	bool pass = tmmcBias->checkFullyVisited();
 	EXPECT_TRUE(pass);
 	delete tmmcBias;
@@ -1896,9 +1887,8 @@ TEST_F (tmmBiasExpandedlnPI, incompleteC) {
 
 TEST_F (tmmBiasExpandedlnPI, completeC) {
 	bool caught = false;
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, pu);	
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, pu);
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 0, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+2, 0, 0, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+1, 0, 2, pu);
 	try {
 		tmmcBias->calculatePI();
 	} catch (customException& ce) {
@@ -1917,9 +1907,8 @@ TEST_F (tmmBiasExpandedlnPI, setBias) {
 }
 
 TEST_F (tmmBiasExpandedlnPI, checkPrintAndRead) {
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 1, pu); // add missing states
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, pu);
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 0, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+2, 0, 0, pu);	// add missing states
+	tmmcBias->updateC(Nmin+2, Nmin+1, 0, 2, pu);
 	tmmcBias->calculatePI();
 	tmmcBias->print("tmmBiasExpandedlnPI_checkPrint", true);
 	std::vector < double > C1 = tmmcBias->getC();
@@ -1979,6 +1968,8 @@ TEST_F (tmmBiasExpandedlnPI, checkLnPIAddresses) {
 	EXPECT_EQ (tmmcBias->getAddress(Nmin+1, 1), 4);
 	EXPECT_EQ (tmmcBias->getAddress(Nmin+1, 2), 5);
 	EXPECT_EQ (tmmcBias->getAddress(Nmin+2, 0), 6);
+	
+	// these will never be used, but are still present in the matrix
 	EXPECT_EQ (tmmcBias->getAddress(Nmin+2, 1), 7);
 	EXPECT_EQ (tmmcBias->getAddress(Nmin+2, 2), 8);
 	
@@ -1987,9 +1978,8 @@ TEST_F (tmmBiasExpandedlnPI, checkLnPIAddresses) {
 
 
 TEST_F (tmmBiasExpandedlnPI, checkLnPI) {
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 1, pu);
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, pu);
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 0, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+2, 0, 0, pu);
+	tmmcBias->updateC(Nmin+2, Nmin+1, 0, 2, pu);
 	tmmcBias->calculatePI();
 	
 	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin, 0)) - 0.0) < 1.0e-9); // reference
@@ -1998,17 +1988,8 @@ TEST_F (tmmBiasExpandedlnPI, checkLnPI) {
 	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+1, 0)) - (log(3/2.))) < 1.0e-9);
 	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+1, 1)) - (log(3/2.))) < 1.0e-9);
 	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+1, 2)) - (log(3/2.))) < 1.0e-9);
-	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2, 0)) - (log(3/2.))) < 1.0e-9);
-	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2, 1)) - (log(3/2.))) < 1.0e-9);
-	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2, 2)) - 0.0) < 1.0e-9);
-	
-	// update C one more time with diff pu
-	tmmcBias->updateC(Nmin+2, Nmin+2, 1, 2, 0.5);
-	tmmcBias->calculatePI();
-	
-	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2, 1)) - (log(3./2.)+log(4./3.))) < 1.0e-9);
-	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2, 2)) - (log(3./2.)+log(4./3.)+log((pu+0.5)/(2*pu)))) < 1.0e-9);
-	
+	EXPECT_TRUE (fabs(-tmmcBias->getBias(tmmcBias->getAddress(Nmin+2, 0)) - 0.0) < 1.0e-9);
+
 	delete tmmcBias;
 }
 
@@ -2738,13 +2719,83 @@ TEST_F (testComputeBiasExpanded, setCalculateWALABias) {
 	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
 	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
 	mysys.setTotNBounds (bounds);
-	mysys.startWALA (1.0, 0.5, 0.8, Mtot);
+	mysys.startWALA (lnF, 0.5, 0.8, Mtot);
 	EXPECT_TRUE (mysys.useWALA);
 	
-	// some simple updates 
+	mysys.getWALABias()->update(bounds[0], 0);
+	mysys.getWALABias()->update(bounds[0], 1);
+	mysys.getWALABias()->update(bounds[0], 2);
+	mysys.getWALABias()->update(bounds[0], 2);
+	mysys.getWALABias()->update(bounds[0], 2);
 	
-	// change this one to WALA, next do TMMC
-	/*mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 0, 0, std::min(1.0, pu));
+	mysys.getWALABias()->update(bounds[0]+1, 0);
+	mysys.getWALABias()->update(bounds[0]+1, 0);
+	mysys.getWALABias()->update(bounds[0]+1, 1);
+	mysys.getWALABias()->update(bounds[0]+1, 2);
+	
+	mysys.getWALABias()->update(bounds[0]+2, 0);
+	mysys.getWALABias()->update(bounds[0]+2, 1);
+	mysys.getWALABias()->update(bounds[0]+2, 1);
+	mysys.getWALABias()->update(bounds[0]+2, 2);
+	mysys.getWALABias()->update(bounds[0]+2, 2);
+	mysys.getWALABias()->update(bounds[0]+2, 2);
+	
+	atom a1;
+	
+	// N = 0, M = 0 state --> N = 0, M = 1
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0], 1) - exp(-lnF - -lnF)) < 1.0e-9);
+	mysys.insertAtom(0, &a1);
+	
+	// N = 0, M = 1 state --> N = 0, M = 2
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0], 2) - exp(-3*lnF - -lnF)) < 1.0e-9);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+		
+	// N = 0, M = 2 state --> N = 1, M = 0
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 0) - exp(-2*lnF - -3*lnF)) < 1.0e-9);
+	mysys.insertAtom(0, &mysys.atoms[0][0]);
+		
+	// now choose to insert atom into a different species
+
+	// N = 1, M = 0 state --> N = 1, M = 1
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 1) - exp(-lnF - -2*lnF)) < 1.0e-9);
+	mysys.insertAtom(1, &a1);
+	
+	// N = 1, M = 1 state --> N = 1, M = 2
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 2) - exp(-lnF - -lnF)) < 1.0e-9);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	
+	// N = 1, M = 2 state --> N = 2, M = 0
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 2) - exp(-lnF - -lnF)) < 1.0e-9);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	
+	// now delete (completely the first atom), so now in N = Nmin+1, M = 0 state
+	mysys.deleteAtom(0, 0);
+	mysys.deleteAtom(0, 0);
+	mysys.deleteAtom(0, 0);
+	
+	EXPECT_EQ (mysys.getCurrentM(), 0);
+	EXPECT_EQ (mysys.getTotN(), 1);
+	
+	// propose deletion of other particle --> N = Nmin (0), M = 2
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0], 2) - exp(-3*lnF - -2*lnF)) < 1.0e-9);
+	mysys.deleteAtom(1, 0);
+	
+	// N = 0, M = 2 --> N = 0, M = 1
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0], 1) - exp(-1*lnF - -3*lnF)) < 1.0e-9);
+	mysys.deleteAtom(1, 0);
+	
+	// N = 0, M = 1 --> N = 0, M = 0
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0], 0) - exp(-lnF - -lnF)) < 1.0e-9);
+}
+	
+TEST_F (testComputeBiasExpanded, setCalculateTMMCBias) {
+	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
+	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
+	mysys.setTotNBounds (bounds);
+	mysys.startTMMC (tmmcSweepSize, Mtot);
+	EXPECT_TRUE (mysys.useTMMC);
+	
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 0, 0, std::min(1.0, pu));
 	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 0, 1, std::min(1.0, pu));
 	
 	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 1, 1, std::min(1.0, pu));
@@ -2760,89 +2811,82 @@ TEST_F (testComputeBiasExpanded, setCalculateWALABias) {
 	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0], 0, 2, std::min(1.0, pu));
 	
 	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 1, 1, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 1, 1, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 1, 1, std::min(1.0, pu));
 	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 1, 2, std::min(1.0, pu));
 	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 1, 0, std::min(1.0, pu));
 	
 	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 2, 2, std::min(1.0, pu));
 	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 2, 1, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 2, 1, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+2, 2, 0, std::min(1.0, pu));
 	
-	mysys.getTMMCBias()->calculatePI();*/
+	mysys.getTMMCBias()->updateC(bounds[0]+2, bounds[0]+2, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+2, bounds[0]+1, 0, 2, std::min(1.0, pu));
+		
+	mysys.getTMMCBias()->calculatePI();
 
+	// some simple updates 
+	
 	atom a1;
 	
 	// Insert atom a1 through stages up to max
 	
 	// 0 --> 1/3
-	//EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0], 1) - -log(3/2.)) < 1.0e-9);
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0], 1) - exp(-log(3./2.) - 0)) < 1.0e-9); // by construction first lnPI = 0
 	mysys.insertAtom(0, &a1);
 	
 	// 1/3 --> 2/3
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0], 2) - exp(-log(3./2.) - -log(3./2.))) < 1.0e-9);
 	mysys.insertAtom(0, &mysys.atoms[0][0]);
 	
 	// 2/3 --> 1
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 0) - exp(-log(3./2.) - -log(3./2.))) < 1.0e-9);
 	mysys.insertAtom(0, &mysys.atoms[0][0]);
 	
 	// 1 --> 4/3
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 1) - exp(-log(5./2.) - -log(3./2.))) < 1.0e-9);
 	mysys.insertAtom(0, &a1);
 	
 	// 4/3 --> 5/3
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 2) - exp(-0 - -log(5./2.))) < 1.0e-9);
 	mysys.insertAtom(0, &mysys.atoms[0][1]);
 	
 	// 5/3 --> 2
-	mysys.insertAtom(0, &mysys.atoms[0][1]);
-	
-	// calculate relative bias for each of these stages
-	
-	// repeat for a2
-	
-	// do a mix of one a1 and one a2
-}
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - exp(-log(2./4.) - -0)) < 1.0e-9);
+	// 5/3 --> 4/3 (backwards check)
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 1) - exp(-log(5./2.) - -0)) < 1.0e-9);
 
-
-
-
-/*
-TEST_F (testComputeBias, setCalculateTMMCBias) {
-	std::vector < double > ib (3, 10), mu (2, 1.0);
-	simSystem mysys (2, 1.0, ib, mu, specNmax, specNmin, 1);
-	mysys.setTotNBounds (bounds);
-	mysys.startTMMC (tmmcSweepSize, 1);
-	EXPECT_TRUE (mysys.useTMMC);
+	// remove one of these from the system
+	mysys.deleteAtom(0, 1);
+	mysys.deleteAtom(0, 1);
 	
-	// some simple updates
-	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 0, 0, std::min(1.0, pu));
-	mysys.getTMMCBias()->updateC(bounds[0], bounds[0]+1, 0, 0, std::min(1.0, pu));
-	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 0, 0, std::min(1.0, pu));
-	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+2, 0, 0, std::min(1.0, pu));
-	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0], 0, 0, std::min(1.0, pu));
-	mysys.getTMMCBias()->updateC(bounds[0]+2, bounds[0]+2, 0, 0, std::min(1.0, pu));
-	mysys.getTMMCBias()->updateC(bounds[0]+2, bounds[0]+1, 0, 0, std::min(1.0, pu));
-	EXPECT_TRUE (mysys.getTMMCBias()->checkFullyVisited());
-	mysys.getTMMCBias()->calculatePI();
-	
-	// TMMC bias
-	atom a1;
-	
-	// 0 atoms --> 1 atom
-	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 0) - 2.0/3.0) < 1.0e-9); // 0 assigned as a references
-	mysys.insertAtom(0, &a1);
-			
-	// 1 atom --> 2 atoms (same type)
-	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - 3.0/2.0) < 1.0e-9);
-	
-	// delete, then move to 1 atom total --> +1 atom of another type
-	mysys.deleteAtom (0, 0);
+	// add in a different species to check that bias indepenent of species, just depends on Ntot
+	// 1 --> 4/3
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 1) - exp(-log(5./2.) - -log(3./2.))) < 1.0e-9);
 	mysys.insertAtom(1, &a1);
-	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - 3.0/2.0) < 1.0e-9); // should be same result	
+	
+	// 4/3 --> 5/3
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 2) - exp(-0 - -log(5./2.))) < 1.0e-9);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	
+	// 5/3 --> 2
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - exp(-log(2./4.) - -0)) < 1.0e-9);
+	// 5/3 --> 4/3 (backwards check)
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 1) - exp(-log(5./2.) - -0)) < 1.0e-9);
+	mysys.insertAtom(1, &mysys.atoms[1][0]);
+	
+	// 2 --> 2
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - exp(0)) < 1.0e-9);
 }
 
-TEST_F (testComputeBias, testInSituWALASingleComponent) {
+TEST_F (testComputeBiasExpanded, testInSituWALASingleComponent) {
 	std::vector < double > mu (1, std::numeric_limits<double>::max()); // force an insertion to an empty system
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (1, 3), nmin (1, 0);
 	lnF = 3.1; // something random this time
-	simSystem mysys (1, 1.0, ib, mu, nmax, nmin, 1);
-	mysys.startWALA (lnF, 0.5, 0.8, 1);
+	simSystem mysys (1, 1.0, ib, mu, nmax, nmin, Mtot);
+	mysys.startWALA (lnF, 0.5, 0.8, Mtot);
 	EXPECT_TRUE (mysys.useWALA);
 		
 	hardCore hc;
@@ -2857,26 +2901,32 @@ TEST_F (testComputeBias, testInSituWALASingleComponent) {
 	// will insert
 	usedMoves.makeMove(mysys);
 	
-	// check WALA properties - should have incremented where the system ENDED (at N = 1)
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(1) - -lnF) < 1.0e-9);
+	// check WALA properties - should have incremented where the system ENDED (at N = 0, M = 1)
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 1)) - -lnF) < 1.0e-9);
 	
 	// all the rest should be 0
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(0) - 0) < 1.0e-9);
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(2) - 0) < 1.0e-9);
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(3) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 0)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 2)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 0)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 1)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 2)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(2, 0)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(2, 1)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(2, 2)) - 0) < 1.0e-9);
+	
 }
 
-TEST_F (testComputeBias, testInSituWALAMultiComponent) {
+TEST_F (testComputeBiasExpanded, testInSituWALAMultiComponent) {
 	std::vector < double > mu (2, std::numeric_limits<double>::max()); // force an insertion to an empty system
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (2, 3), nmin (2, 0);
 	lnF = 3.1; // something random this time
-	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, 1);
-	mysys.startWALA (lnF, 0.5, 0.8, 1);
+	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, Mtot);
+	mysys.startWALA (lnF, 0.5, 0.8, Mtot);
 	EXPECT_TRUE (mysys.useWALA);
 	
 	hardCore hc11, hc12, hc22;
-	std::vector < double > params (2, 1.0);
+	std::vector < double > params (2, Mtot);
 	hc11.setParameters (params);
 	params[0] = 0.0; // ergo 1 and 2 can sit on top of each other
 	hc12.setParameters (params);
@@ -2893,16 +2943,25 @@ TEST_F (testComputeBias, testInSituWALAMultiComponent) {
 	// will insert first species
 	usedMoves.makeMove(mysys);
 	
-	// check WALA properties - should have incremented where the system ENDED (at N = 1)
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(1) - -lnF) < 1.0e-9);
+	// check WALA properties - should have incremented where the system ends and nowhere else
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 1)) - -lnF) < 1.0e-9);
+	
+	usedMoves.makeMove(mysys);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 1)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 2)) - -lnF) < 1.0e-9);
+	
+	usedMoves.makeMove(mysys);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 1)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 2)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 0)) - -lnF) < 1.0e-9);
 	
 	// all the rest should be 0
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(0) - 0) < 1.0e-9);
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(2) - 0) < 1.0e-9);
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(3) - 0) < 1.0e-9);
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(4) - 0) < 1.0e-9);
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(5) - 0) < 1.0e-9);
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(6) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 0)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 1)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 2)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(2, 0)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(2, 1)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(2, 2)) - 0) < 1.0e-9);
 	
 	// will insert the second species
 	moves usedMoves2;
@@ -2911,31 +2970,42 @@ TEST_F (testComputeBias, testInSituWALAMultiComponent) {
 	
 	usedMoves2.makeMove(mysys);
 	
-	// check WALA properties - should have incremented where the system ENDED (at N_tot = 2)
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(2) - -lnF) < 1.0e-9);
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(1) - -lnF) < 1.0e-9); // left over from first insertion
+	// check WALA properties - should have incremented where the system ends (N = 1, M = 1)
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 1)) - -lnF) < 1.0e-9);
 	
-	// all the rest should be 0
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(0) - 0) < 1.0e-9);
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(3) - 0) < 1.0e-9);
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(4) - 0) < 1.0e-9);
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(5) - 0) < 1.0e-9);
-	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(6) - 0) < 1.0e-9);
+	usedMoves2.makeMove(mysys);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 2)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 1)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 1)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 2)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 0)) - -lnF) < 1.0e-9);
+	
+	usedMoves2.makeMove(mysys);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(2, 0)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 2)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 1)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 1)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(0, 2)) - -lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(1, 0)) - -lnF) < 1.0e-9);
+	
+	// only "junk space" should remain 0
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(2, 1)) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(2, 2)) - 0) < 1.0e-9);
 }
 
-TEST_F (testComputeBias, testInSituTMMCSingleComponent) {
+TEST_F (testComputeBiasExpanded, testInSituTMMCSingleComponent) {
 	std::vector < double > mu (1, std::numeric_limits<double>::max()); // force an insertion to an empty system
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (1, 3), nmin (1, 0);
-	simSystem mysys (1, 1.0, ib, mu, nmax, nmin, 1);
-	mysys.startTMMC (tmmcSweepSize, 1);
+	simSystem mysys (1, 1.0, ib, mu, nmax, nmin, Mtot);
+	mysys.startTMMC (tmmcSweepSize, Mtot);
 	EXPECT_TRUE (mysys.useTMMC);
 		
 	hardCore hc;
-	std::vector < double > params (2, 1.0);
+	std::vector < double > params (2, Mtot);
 	hc.setParameters (params);
 	mysys.addPotential (0, 0, &hc, false);
-	
+
 	moves usedMoves;
 	insertParticle newIns (0, "insert");
 	usedMoves.addMove(&newIns, 1.0);
@@ -2968,18 +3038,38 @@ TEST_F (testComputeBias, testInSituTMMCSingleComponent) {
 	for (unsigned int i = 6; i < C.size(); ++i) {
 		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
 	}
+	
+	// insert again
+	usedMoves.makeMove(mysys);
+	C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[2] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[3] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[4] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[5] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[6] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[7] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[8] - 0.0) < 1.0e-9);
+		
+	// all the rest should be 0
+	for (unsigned int i = 9; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
 }
 
-TEST_F (testComputeBias, testInSituTMMCMultiComponent) {
+TEST_F (testComputeBiasExpanded, testInSituTMMCMultiComponent) {
 	std::vector < double > mu (2, std::numeric_limits<double>::max()); // force an insertion to an empty system
 	std::vector < double > ib (3, 10);
 	std::vector <int> nmax (2, 3), nmin (2, 0);
-	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, 1);
-	mysys.startTMMC (tmmcSweepSize, 1);
+	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, Mtot);
+	mysys.startTMMC (tmmcSweepSize, Mtot);
 	EXPECT_TRUE (mysys.useTMMC);
 		
 	hardCore hc11, hc12, hc22;
-	std::vector < double > params (2, 1.0);
+	std::vector < double > params (2, Mtot);
 	hc11.setParameters (params);
 	params[0] = 0.0;
 	hc12.setParameters (params);
@@ -3022,6 +3112,26 @@ TEST_F (testComputeBias, testInSituTMMCMultiComponent) {
 		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
 	}
 	
+	// finish inserting the same species again
+	usedMoves.makeMove(mysys);
+	C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[2] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[3] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[4] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[5] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[6] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[7] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[8] - 0.0) < 1.0e-9);
+		
+	// all the rest should be 0
+	for (unsigned int i = 9; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+		
 	// do insertions with the other species
 	moves usedMoves2;
 	insertParticle newIns2 (1, "insert");
@@ -3043,10 +3153,671 @@ TEST_F (testComputeBias, testInSituTMMCMultiComponent) {
 	EXPECT_TRUE (fabs(C[7] - 1.0) < 1.0e-9);
 	EXPECT_TRUE (fabs(C[8] - 0.0) < 1.0e-9);
 	
+	// N = 1, M = 1 now
+	EXPECT_TRUE (fabs(C[9] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[10] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[11] - 0.0) < 1.0e-9);
+	
 	// all the rest should be 0
-	for (unsigned int i = 9; i < C.size(); ++i) {
+	for (unsigned int i = 12; i < C.size(); ++i) {
 		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
 	}
-}*/
+	
+	// second level of insertion
+	usedMoves2.makeMove(mysys);
+	
+	C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[2] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[3] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[4] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[5] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[6] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[7] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[8] - 0.0) < 1.0e-9);
+	
+	// N = 1, M = 2 now
+	EXPECT_TRUE (fabs(C[9] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[10] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[11] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[12] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[13] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[14] - 0.0) < 1.0e-9);
+	
+	// all the rest should be 0
+	for (unsigned int i = 15; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+	
+	// final level of insertion
+	usedMoves2.makeMove(mysys);
+	
+	C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[2] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[3] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[4] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[5] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[6] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[7] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[8] - 0.0) < 1.0e-9);
+	
+	// N = 2, M = 0 now
+	EXPECT_TRUE (fabs(C[9] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[10] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[11] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[12] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[13] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[14] - 0.0) < 1.0e-9);
+	
+	EXPECT_TRUE (fabs(C[15] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[16] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[17] - 0.0) < 1.0e-9);
+	
+	// all the rest should be 0
+	for (unsigned int i = 18; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+}
+
+/* Check potentials in the expanded ensemble */
+class lennardJonesExpandedTest : public ::testing::Test {
+protected:
+	pairPotential* lj;
+	
+	int Mtot;
+	double eps, sigma, rcut, ushift, tol;
+	std::vector < double > params;
+	
+	virtual void SetUp() {
+		Mtot = 3;
+		lj = new lennardJones;
+		params.resize(5, 0);
+		params[4] = Mtot;
+		tol = 1.0e-9;
+	}
+};
+
+TEST_F (lennardJonesExpandedTest, badParams0) {
+	eps = -1.0;
+	sigma = 1.0;
+	rcut = 2.5;
+	ushift = 0.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	params[3] = ushift;
+	bool caught = false;
+	try {
+		lj->setParameters(params);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+	delete lj;
+}
+
+TEST_F (lennardJonesExpandedTest, badParams1) {
+	eps = 1.0;
+	sigma = -1.0;
+	rcut = 2.5;
+	ushift = 0.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	params[3] = ushift;
+	bool caught = false;
+	try {
+		lj->setParameters(params);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+	delete lj;
+}
+
+TEST_F (lennardJonesExpandedTest, badParams2) {
+	eps = 1.0;
+	sigma = 1.0;
+	rcut = -2.5;
+	ushift = 0.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	params[3] = ushift;
+	bool caught = false;
+	try {
+		lj->setParameters(params);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+	delete lj;
+}
+
+TEST_F (lennardJonesExpandedTest, StandardParams_M0) {
+	eps = 1.0;
+	sigma = 1.0;
+	rcut = 2.5;
+	ushift = 0.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	params[3] = ushift;
+	lj->setParameters(params);
+	atom a1, a2;
+	std::vector < double > box(3, 2.1*rcut);
+	
+	a2.pos[2] = pow(2.0, 1./6.);	
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - -eps) < tol );
+	
+	a2.pos[2] = 1.0001*rcut;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	
+	a2.pos[2] = 0.9999*rcut;
+	EXPECT_TRUE ( lj->energy(&a1, &a2, box) < 0.0 );
+	
+	a2.pos[2] = sigma;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	
+	a2.pos[2] = 1.234;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - -0.812008901) < tol );
+	
+	delete lj;
+}
+
+TEST_F (lennardJonesExpandedTest, StandardParams_M1) {
+	eps = 1.0;
+	sigma = 1.0;
+	rcut = 2.5;
+	ushift = 0.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	params[3] = ushift;
+	lj->setParameters(params);
+	atom a1, a2;
+	
+	a1.mState = 1; // M = 1/3
+	
+	std::vector < double > box(3, 2.1*rcut);
+	
+	// Energy should be linearly scaled, sigma gets scaled volumetrically
+	a2.pos[2] = pow(2.0, 1./6.)*pow(params[1]*params[1]*params[1]/(8.0*Mtot), 1./3.);	
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - -eps/Mtot) < tol );
+	
+	// rcut unaffected
+	a2.pos[2] = 1.0001*rcut;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	
+	a2.pos[2] = 0.9999*rcut;
+	EXPECT_TRUE ( lj->energy(&a1, &a2, box) < 0.0 );
+	
+	// at tangency
+	a2.pos[2] = pow(params[1]*params[1]*params[1]/(8.0*Mtot), 1./3.);
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	
+	delete lj;
+}
+
+TEST_F (lennardJonesExpandedTest, StandardParams_M2) {
+	eps = 1.0;
+	sigma = 1.0;
+	rcut = 2.5;
+	ushift = 0.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	params[3] = ushift;
+	lj->setParameters(params);
+	atom a1, a2;
+	
+	a1.mState = 2; // M = 2/3
+	
+	std::vector < double > box(3, 2.1*rcut);
+	
+	// Energy should be linearly scaled, sigma gets scaled volumetrically
+	double r1_cub = params[1]*params[1]*params[1]/(8.0*Mtot);
+	a2.pos[2] = pow(2.0, 1./6.)*pow(params[1]*params[1]*params[1]/(8.0*Mtot)+r1_cub, 1./3.);	
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - -2.0*eps/Mtot) < tol );
+	
+	// rcut unaffected
+	a2.pos[2] = 1.0001*rcut;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	
+	a2.pos[2] = 0.9999*rcut;
+	EXPECT_TRUE ( lj->energy(&a1, &a2, box) < 0.0 );
+	
+	// at tangency
+	a2.pos[2] = pow(params[1]*params[1]*params[1]/(8.0*Mtot)+r1_cub, 1./3.);
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	
+	delete lj;
+}
+
+TEST_F (lennardJonesExpandedTest, WCAparams_M0) {
+	eps = 1.0;
+	sigma = 1.0;
+	rcut = pow(2.0, 1./6.);
+	ushift = 1.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	params[3] = ushift;
+	lj->setParameters(params);
+	atom a1, a2;
+	std::vector < double > box(3, 2.1*rcut);
+	
+	a1.mState = 0;
+	
+	a2.pos[2] = pow(2.0, 1./6.);
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0.0) < tol );
+	
+	a2.pos[2] = 1.0001*rcut;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	
+	a2.pos[2] = 0.9999*rcut;
+	EXPECT_TRUE ( lj->energy(&a1, &a2, box) > 0.0 );
+	
+	a2.pos[2] = 0.987;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 1.353386603) < tol );
+	
+	delete lj;
+}
+
+TEST_F (lennardJonesExpandedTest, WCAparams_M1) {
+	eps = 1.0;
+	sigma = 1.0;
+	rcut = pow(2.0, 1./6.);
+	ushift = 1.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	params[3] = ushift;
+	lj->setParameters(params);
+	atom a1, a2;
+	std::vector < double > box(3, 2.1*rcut);
+	
+	a1.mState = 1;
+	
+	a2.pos[2] = pow(2.0, 1./6.)*pow(params[1]*params[1]*params[1]/(8.0*Mtot), 1./3.);
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0.0) < tol );
+	
+	a2.pos[2] = 1.0001*rcut;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	
+	a2.pos[2] = 0.9999*rcut;
+	EXPECT_TRUE ( lj->energy(&a1, &a2, box) > 0.0 );
+	
+	a2.pos[2] = 0.987*pow(params[1]*params[1]*params[1]/(8.0*Mtot), 1./3.);
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 1.353386603/Mtot) < tol );
+	
+	delete lj;
+}
+
+TEST_F (lennardJonesExpandedTest, WCAparams_M2) {
+	eps = 1.0;
+	sigma = 1.0;
+	rcut = pow(2.0, 1./6.);
+	ushift = 1.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	params[3] = ushift;
+	lj->setParameters(params);
+	atom a1, a2;
+	std::vector < double > box(3, 2.1*rcut);
+	
+	a1.mState = 2;
+	
+	double r1_cub = params[1]*params[1]*params[1]/(8.0*Mtot);
+	a2.pos[2] = pow(2.0, 1./6.)*pow(params[1]*params[1]*params[1]/(8.0*Mtot) + r1_cub, 1./3.);
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0.0) < tol );
+	
+	a2.pos[2] = 1.0001*rcut;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	
+	a2.pos[2] = 0.9999*rcut;
+	EXPECT_TRUE ( lj->energy(&a1, &a2, box) > 0.0 );
+	
+	a2.pos[2] = 0.987*pow(params[1]*params[1]*params[1]/(8.0*Mtot) + r1_cub, 1./3.);
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 2.0*1.353386603/Mtot) < tol );
+	
+	delete lj;
+}
+
+class squareWellExpandedTest : public ::testing::Test {
+protected:
+	squareWell *sw;
+	double eps, sigma, width, tol;
+	std::vector < double > params;
+	int Mtot;
+	
+	virtual void SetUp() {
+		sw = new squareWell;
+		eps = 1.234;
+		sigma = 2.345;
+		width = 0.12;
+		Mtot = 3;
+		params.resize(4, 0);
+		params[0] = sigma;
+		params[1] = width;
+		params[2] = eps;
+		params[3] = Mtot;
+		tol = 1.0e-9;
+	}
+};
+
+TEST_F (squareWellExpandedTest, badParams0) {
+	params[0] = -1.0;
+	bool caught = false;
+	try {
+		sw->setParameters(params);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, badParams1) {
+	params[1] = -1.0;
+	bool caught = false;
+	try {
+		sw->setParameters(params);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, badParams2) {
+	params[2] = -1.0;
+	bool caught = false;
+	try {
+		sw->setParameters(params);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testInRangeLower_M0) {	
+	sw->setParameters(params);
+	atom a1, a2;
+	std::vector < double > box (3, 10);
+	
+	a1.mState = 0;
+	
+	a2.pos[2] = 1.0001*sigma;
+
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - -eps) < tol);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testInRangeLower_M1) {	
+	sw->setParameters(params);
+	atom a1, a2;
+	std::vector < double > box (3, 10);
+	
+	a1.mState = 1;
+	
+	a2.pos[2] = 1.0001*pow(params[0]*params[0]*params[0]/(8.0*Mtot), 1./3.);
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - -eps/Mtot) < 1.0e-9);
+
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testInRangeLower_M2) {	
+	sw->setParameters(params);
+	atom a1, a2;
+	std::vector < double > box (3, 10);
+	
+	a1.mState = 2;
+	
+	double r1_cub = params[0]*params[0]*params[0]/(8.0*Mtot);
+	a2.pos[2] = 1.0001*pow(params[0]*params[0]*params[0]/(8.0*Mtot)+r1_cub, 1./3.); 
+
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - -2.0*eps/Mtot) < tol);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testInRangeUpper_M0) {
+	sw->setParameters(params);
+	atom a1, a2;
+	a1.mState = 0;
+	std::vector < double > box (3, 10);
+	
+	a2.pos[2] = 0.9999*(sigma+width);
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - -eps) < tol);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testInRangeUpper_M1) {
+	sw->setParameters(params);
+	atom a1, a2;
+	a1.mState = 1;
+	std::vector < double > box (3, 10);
+	
+	a2.pos[2] = 0.9999*(pow(params[0]*params[0]*params[0]/(8.0*Mtot), 1./3.)+width);
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - -eps/Mtot) < tol);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testInRangeUpper_M2) {
+	sw->setParameters(params);
+	atom a1, a2;
+	a1.mState = 2;
+	std::vector < double > box (3, 10);
+	
+	double r1_cub = params[0]*params[0]*params[0]/(8.0*Mtot);
+	a2.pos[2] = 0.9999*(pow(params[0]*params[0]*params[0]/(8.0*Mtot)+r1_cub, 1./3.)+width);
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - -2.0*eps/Mtot) < tol);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testOutOfRange_M0) {
+	sw->setParameters(params);
+	atom a1, a2;
+	a2.mState = 0;
+	std::vector < double > box (3, 10);
+	
+	a2.pos[2] = 1.0001*(sigma+width);
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - 0) < tol);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testOutOfRange_M1) {
+	sw->setParameters(params);
+	atom a1, a2;
+	a2.mState = 1;
+	std::vector < double > box (3, 10);
+	
+	double r1_cub = params[0]*params[0]*params[0]/(8.0*Mtot);
+	a2.pos[2] = 1.0001*(pow(r1_cub, 1./3.)+width);
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - 0) < tol);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testOutOfRange_M2) {
+	sw->setParameters(params);
+	atom a1, a2;
+	a2.mState = 2;
+	std::vector < double > box (3, 10);
+	
+	double r1_cub = params[0]*params[0]*params[0]/(8.0*Mtot);
+	a2.pos[2] = 1.0001*(pow(params[0]*params[0]*params[0]/(8.0*Mtot)+r1_cub, 1./3.)+width);
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - 0) < tol);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testBadRange_M0) {
+	sw->setParameters(params);
+	atom a1, a2;
+	a1.mState = 0;
+	std::vector < double > box (3, 10);
+	
+	a2.pos[2] = 0.9999*(sigma);
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - NUM_INFINITY) < tol);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testBadRange_M1) {
+	sw->setParameters(params);
+	atom a1, a2;
+	a1.mState = 1;
+	std::vector < double > box (3, 10);
+	
+	double r1_cub = params[0]*params[0]*params[0]/(8.0*Mtot);
+	a2.pos[2] = 0.9999*pow(r1_cub, 1./3.);
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - NUM_INFINITY) < tol);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testBadRange_M2) {
+	sw->setParameters(params);
+	atom a1, a2;
+	a1.mState = 2;
+	std::vector < double > box (3, 10);
+	
+	double r1_cub = params[0]*params[0]*params[0]/(8.0*Mtot);
+	a2.pos[2] = 0.9999*(pow(params[0]*params[0]*params[0]/(8.0*Mtot)+r1_cub, 1./3.));
+	EXPECT_TRUE (fabs(sw->energy(&a1, &a2, box) - NUM_INFINITY) < tol);
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testRcut) {
+	sw->setParameters(params);
+	EXPECT_TRUE (fabs(sw->rcut() - (sigma+width)) < tol); // rcut unaffected by Mtot > 0
+	delete sw;
+}
+
+TEST_F (squareWellExpandedTest, testTailCorrection) {
+	sw->setParameters(params);
+	EXPECT_TRUE (fabs(sw->tailCorrection(0.1234) - 0) < tol); // I have chosen not to scale this
+	delete sw;
+}
+
+class hardCoreExpandedTest : public ::testing::Test {
+protected:
+	hardCore *hc;
+	double sigma, tol;
+	std::vector < double > params;
+	int Mtot;
+	
+	virtual void SetUp() {
+		hc = new hardCore;
+		Mtot = 3;
+		sigma = 2.345;
+		params.resize(2, 0);
+		params[0] = sigma;
+		params[1] = Mtot;
+		tol = 1.0e-9;
+	}
+};
+
+TEST_F (hardCoreExpandedTest, badParams0) {
+	params[0] = -1.0;
+	bool caught = false;
+	try {
+		hc->setParameters(params);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+	delete hc;
+}
+
+TEST_F (hardCoreExpandedTest, testRange_M0) {
+	hc->setParameters(params);
+	atom a1, a2;
+	a1.mState = 0;
+	std::vector < double > box (3, 10);
+	
+	a2.pos[2] = 1.0001*sigma;
+	EXPECT_TRUE (fabs(hc->energy(&a1, &a2, box) - 0) < tol);
+	delete hc;
+}
+
+TEST_F (hardCoreExpandedTest, testRange_M1) {
+	hc->setParameters(params);
+	atom a1, a2;
+	a1.mState = 1;
+	std::vector < double > box (3, 10);
+	
+	double r1_cub = params[0]*params[0]*params[0]/(8.0*Mtot);
+	a2.pos[2] = 1.0001*pow(r1_cub, 1./3.);
+	EXPECT_TRUE (fabs(hc->energy(&a1, &a2, box) - 0) < tol);
+	delete hc;
+}
+
+TEST_F (hardCoreExpandedTest, testRange_M2) {
+	hc->setParameters(params);
+	atom a1, a2;
+	a1.mState = 2;
+	std::vector < double > box (3, 10);
+	
+	double r1_cub = params[0]*params[0]*params[0]/(8.0*Mtot);
+	a2.pos[2] = 1.0001*pow( params[0]*params[0]*params[0]/(8.0*Mtot)+r1_cub, 1./3.);
+	EXPECT_TRUE (fabs(hc->energy(&a1, &a2, box) - 0) < tol);
+	delete hc;
+}
+
+TEST_F (hardCoreExpandedTest, testBadRange_M0) {
+	hc->setParameters(params);
+	atom a1, a2;
+	a1.mState = 0;
+	std::vector < double > box (3, 10);
+	
+	a2.pos[2] = 0.9999*sigma;
+	EXPECT_TRUE (fabs(hc->energy(&a1, &a2, box) - NUM_INFINITY) < tol);
+	delete hc;
+}
+
+TEST_F (hardCoreExpandedTest, testBadRange_M1) {
+	hc->setParameters(params);
+	atom a1, a2;
+	a1.mState = 1;
+	std::vector < double > box (3, 10);
+	
+	double r1_cub = params[0]*params[0]*params[0]/(8.0*Mtot);
+	a2.pos[2] = 0.9999*pow(r1_cub, 1./3.);
+	EXPECT_TRUE (fabs(hc->energy(&a1, &a2, box) - NUM_INFINITY) < tol);
+	delete hc;
+}
+
+TEST_F (hardCoreExpandedTest, testBadRange_M2) {
+	hc->setParameters(params);
+	atom a1, a2;
+	a1.mState = 2;
+	std::vector < double > box (3, 10);
+	
+	double r1_cub = params[0]*params[0]*params[0]/(8.0*Mtot);
+	a2.pos[2] = 0.9999*pow(params[0]*params[0]*params[0]/(8.0*Mtot)+r1_cub, 1./3.);
+	EXPECT_TRUE (fabs(hc->energy(&a1, &a2, box) - NUM_INFINITY) < tol);
+	delete hc;
+}
+
+TEST_F (hardCoreExpandedTest, testRcut) {
+	hc->setParameters(params);
+	EXPECT_TRUE (fabs(hc->rcut() - sigma) < tol); // unaffected by Mtot > 0
+	delete hc;
+}
+
+TEST_F (hardCoreExpandedTest, testTailCorrection) {
+	hc->setParameters(params);
+	EXPECT_TRUE (fabs(hc->tailCorrection(0.1234) - 0) < tol); // unscaled with Mtot
+	delete hc;
+}
 
 // add expanded ensemble, 2 component SWAP move testing

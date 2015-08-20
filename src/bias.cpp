@@ -75,7 +75,8 @@ tmmc::tmmc (const int Nmax, const int Nmin,  const int Mtot, const long long int
  * Check if the the collection matrix has been samples sufficiently, i.e., if each state and transition has been visited tmmcSweepSize_ times.
  */
 bool tmmc::checkFullyVisited () {
-	for (__BIAS_INT_TYPE__ i = 0; i < HC_.size(); i += 3) {
+	const int endPoint = HC_.size() - (Mtot_-1)*3; // we don't care about the last chunk where N = Nmax, but M > 0 - stop at N = Nmax, M = 0
+	for (__BIAS_INT_TYPE__ i = 0; i < endPoint; i += 3) { 
 		if (i == 0) {
 			// lower bound, so only +1 move must be sampled
 			if ((HC_[i+1] < tmmcSweepSize_)) {
@@ -86,7 +87,7 @@ bool tmmc::checkFullyVisited () {
 			if ((HC_[i] < tmmcSweepSize_) && (Nmin_ > 0)) {
 				return false;
 			}			
-		} else if (i == HC_.size()-3) {
+		} else if (i == endPoint-3) {
 			// upper bound, so only -1 move must be sampled
 			if ((HC_[i] < tmmcSweepSize_) || (HC_[i+2] < tmmcSweepSize_)) {
 				return false;
@@ -213,7 +214,8 @@ void tmmc::updateC (const int Nstart, const int Nend, const int Mstart, const in
  * Calculate the (natural logarithm of the) macrostate density matrix via the probability matrix.
  */
 void tmmc::calculatePI () {
-	for (__BIAS_INT_TYPE__ i = 0; i < C_.size(); i += 3) {
+	const int endPoint = C_.size() - (Mtot_-1)*3;
+	for (__BIAS_INT_TYPE__ i = 0; i < endPoint; i += 3) {
 		double sum = 0.0;
 		for (unsigned int j = 0; j < 3; ++j) {
 			sum += C_[i+j];
@@ -236,14 +238,9 @@ void tmmc::calculatePI () {
 	lnPI_[0] = 0.0;
 	int counter = 0;
 	__BIAS_INT_TYPE__ address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, nEndForward = 0, mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;
-	for (__BIAS_INT_TYPE__ i = 0; i < (Nmax_ - Nmin_ + 1); ++i) {
+	for (__BIAS_INT_TYPE__ i = 0; i < (Nmax_ - Nmin_); ++i) { // don't calculate the last N = Nmax when M > 0, stops initially at N = Nmax, M = 0
 		nStartForward = Nmin_+i;
 		for (__BIAS_INT_TYPE__ j = 0; j < Mtot_; ++j) { 
-			// skip the very last point
-			if (counter == lnPI_.size()-1) {
-				break;
-			}
-
 			mStartForward = j;
 			if (j == Mtot_-1) {
 				nEndForward = nStartForward + 1;
