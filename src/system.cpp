@@ -554,7 +554,8 @@ void simSystem::printU (const std::string fileName) {
 #else
 	// Without netCDF capabilities, just print to ASCII file
 	std::ofstream of;
-	of.open(fileName+".dat", std::ofstream::out);
+	std::string name = fileName+".dat";
+	of.open(name.c_str(), std::ofstream::out);
 	of << "# <U> as a function of N_tot." << std::endl;
 	of << "# Number of species: " << nSpecies_ << std::endl;
 	of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;

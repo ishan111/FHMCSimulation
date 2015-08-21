@@ -325,7 +325,8 @@ void tmmc::print (const std::string fileName, bool printC) {
 	if (printC) {
 		// print all states, including partial ones, so this can be used to restart from, etc.
 		std::ofstream of;
-		of.open(fileName+"_C.dat", std::ofstream::out);
+		std::string name = fileName+"_C.dat";
+		of.open(name.c_str(), std::ofstream::out);
 		if (!of.is_open()) {
 			throw customException ("Unable to write TMMC collection matrix to "+fileName+"_C.dat");
 		}
@@ -342,7 +343,8 @@ void tmmc::print (const std::string fileName, bool printC) {
 	
 	// Print lnPI (bias) matrix
 	std::ofstream of;
-	of.open(fileName+"_lnPI.dat", std::ofstream::out);
+	std::string name = fileName+"_lnPI.dat";
+	of.open(name.c_str(), std::ofstream::out);
 	if (!of.is_open()) {
 		throw customException ("Unable to write TMMC lnPI to "+fileName+"_lnPI.dat");
 	}
@@ -575,7 +577,8 @@ void wala::print (const std::string fileName, bool printH) {
 	if (printH) {
 		// print complete visited states histogram to restart / visualize progress
 		std::ofstream of;
-		of.open(fileName+"_H.dat", std::ofstream::out);
+		std::string name = fileName+"_H.dat";
+		of.open(name.c_str(), std::ofstream::out);
 		if (!of.is_open()) {
 			throw customException ("Unable to write Wang-Landau visited-states histogram to "+fileName+"_H.dat");
 		}
@@ -592,7 +595,8 @@ void wala::print (const std::string fileName, bool printH) {
 	
 	// Print lnPI (bias) matrix
 	std::ofstream of;
-	of.open(fileName+"_lnPI.dat", std::ofstream::out);
+	std::string name = fileName+"_lnPI.dat";
+	of.open(name.c_str(), std::ofstream::out);
 	if (!of.is_open()) {
 		throw customException ("Unable to write Wang-Landau lnPI histogram to "+fileName+"_lnPI.dat");
 	}

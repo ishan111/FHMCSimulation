@@ -27,7 +27,7 @@
 #include <time.h>
 #include <fstream>
 #include <cmath>
-#include <boost/lexical_cast.hpp>
+//#include <boost/lexical_cast.hpp>
 #include "system.h"
 #include "utilities.h"
 #include "global.h"
