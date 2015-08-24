@@ -21,7 +21,7 @@ LIBS = -lstdc++ -lnetcdf_c++4 -lnetcdf
 
 # define the C source files
 SRC_DIR = ../src/
-SRCS = ${SRC_DIR}bias.cpp ${SRC_DIR}cellList.cpp ${SRC_DIR}delete.cpp ${SRC_DIR}insert.cpp ${SRC_DIR}main.cpp ${SRC_DIR}moves.cpp ${SRC_DIR}potentials.cpp ${SRC_DIR}swap.cpp ${SRC_DIR}system.cpp ${SRC_DIR}translate.cpp ${SRC_DIR}utilities.cpp
+SRCS = ${SRC_DIR}bias.cpp ${SRC_DIR}cellList.cpp ${SRC_DIR}delete.cpp ${SRC_DIR}histogram.cpp ${SRC_DIR}insert.cpp ${SRC_DIR}main.cpp ${SRC_DIR}moves.cpp ${SRC_DIR}potentials.cpp ${SRC_DIR}swap.cpp ${SRC_DIR}system.cpp ${SRC_DIR}translate.cpp ${SRC_DIR}utilities.cpp
 
 # define the CPP object files 
 #
