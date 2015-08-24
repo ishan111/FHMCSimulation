@@ -218,7 +218,7 @@ int main (int argc, char * const argv[]) {
 			exit(SYS_FAILURE);
 		}
 	}	
-	
+
 	std::vector < double > ref (sys.nSpecies(), 0);
 	std::vector < std::vector < double > > probEqSwap (sys.nSpecies(), ref), probPrSwap (sys.nSpecies(), ref);
 	std::vector < double > probPrInsDel (sys.nSpecies(), 0), probPrDisp (sys.nSpecies(), 0);
@@ -327,18 +327,19 @@ int main (int argc, char * const argv[]) {
 			} else {
 				std::cerr << "Input file does not specify pair potential for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
 				exit(SYS_FAILURE);
-			} 
+			}
 			assert(doc[ppotName.c_str()].IsString());
 			ppotType[ppotTypeIndex] = doc[ppotName.c_str()].GetString();
 			dummy = ppotName+"_params";
 			assert(doc.HasMember(dummy.c_str()));
 			assert(doc[dummy.c_str()].IsArray());
 			std::vector < double > params (doc[dummy.c_str()].Size()+1, 0);
-			for (unsigned int k = 0; k < params.size(); ++k) {
+			for (unsigned int k = 0; k < params.size()-1; ++k) {
 				assert(doc[dummy.c_str()][k].IsNumber());
 				params[k] = doc[dummy.c_str()][k].GetDouble();
-			}
+			}	
 			params[params.size()-1] = Mtot;
+
 			bool useCellList = false; // default
 			dummy = ppotName+"_use_cell_list";
 			if (doc.HasMember(dummy.c_str())) {
@@ -413,7 +414,7 @@ int main (int argc, char * const argv[]) {
 	}
 	
 	// specify moves to use for the system
-    moves usedMovesEq, usedMovesPr;
+    	moves usedMovesEq, usedMovesPr;
 	std::vector < insertParticle > eqInsertions (sys.nSpecies()), prInsertions (sys.nSpecies());
 	std::vector < deleteParticle > eqDeletions (sys.nSpecies()), prDeletions (sys.nSpecies());
 	std::vector < translateParticle > eqTranslations (sys.nSpecies()), prTranslations (sys.nSpecies());
@@ -474,7 +475,7 @@ int main (int argc, char * const argv[]) {
 			exit(SYS_FAILURE);
 		}
 	} 
-
+	
 	bool highSnap = false, lowSnap = false;
 					
 	if (!restartFromTMMC) {
@@ -643,8 +644,8 @@ int main (int argc, char * const argv[]) {
 	long long int sweep = 0;
 	while (sweep < totalTMMCSweeps) {
 		bool done = false;
-		long long int counter = 0;
-		long long int checkPoint = tmmcSweepSize*(sys.totNMax() - sys.totNMin() + 1)*3; // how often to check full traversal of collection matrix
+		unsigned long long int counter = 0;
+		unsigned long long int checkPoint = tmmcSweepSize*(sys.totNMax() - sys.totNMin() + 1)*3; // how often to check full traversal of collection matrix
 		while (!done) {
 			try {
 				usedMovesPr.makeMove(sys);
