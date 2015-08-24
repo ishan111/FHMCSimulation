@@ -7,6 +7,7 @@
 #include "../../src/cellList.h"
 #include "../../src/delete.h"
 #include "../../src/global.h"
+#include "../../src/histogram.h"
 #include "../../src/insert.h"
 #include "../../src/moves.h"
 #include "../../src/potentials.h"
@@ -4275,4 +4276,225 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 		lastAns = ans[0];
 		iter++;
 	}	
+}
+
+class testHistogram : public ::testing::Test {
+protected:
+	histogram *h;
+	std::vector < double > lb, ub, coords;
+	std::vector < unsigned long long int > dx;
+	
+	virtual void SetUp() {
+		coords.resize(3, 0);
+		lb.resize(3, 10);
+		ub.resize(3, 20);
+		dx.resize(3, 11);
+		h = new histogram (lb, ub, dx);
+	}
+};
+
+TEST_F (testHistogram, getAddress) {
+	coords[0] = 10;
+	coords[1] = 10;
+	coords[2] = 10;
+	EXPECT_EQ(h->getAddress (coords), 0);
+	
+	coords[0] = 20;
+	coords[1] = 20;
+	coords[2] = 20;
+	EXPECT_EQ(h->getAddress (coords), 11*11*11-1);
+	
+	coords[0] = 11;
+	coords[1] = 10;
+	coords[2] = 10;
+	EXPECT_EQ(h->getAddress (coords), 1);
+	
+	coords[0] = 20;
+	coords[1] = 10;
+	coords[2] = 10;
+	EXPECT_EQ(h->getAddress (coords), 10);
+		
+	coords[0] = 10;
+	coords[1] = 11;
+	coords[2] = 10;
+	EXPECT_EQ(h->getAddress (coords), 11);
+	
+	coords[0] = 20;
+	coords[1] = 20;
+	coords[2] = 10;
+	EXPECT_EQ(h->getAddress (coords), 11*11-1);
+	
+	coords[0] = 20;
+	coords[1] = 20;
+	coords[2] = 11;
+	EXPECT_EQ(h->getAddress (coords), 2*11*11-1);
+	
+	coords[0] = 15;
+	coords[1] = 15;
+	coords[2] = 15;
+	EXPECT_EQ(h->getAddress (coords), 11*11*5 + 11*5 + 5);
+	
+	delete h;
+}
+
+TEST_F (testHistogram, getCoords) {
+	std::vector <double> coords (3, 0);
+	
+	coords = h->getCoords(0);
+	EXPECT_EQ (coords[0], 10);
+	EXPECT_EQ (coords[1], 10);
+	EXPECT_EQ (coords[2], 10);
+	
+	coords = h->getCoords(11*11*11-1);
+	EXPECT_EQ (coords[0], 20);
+	EXPECT_EQ (coords[1], 20);
+	EXPECT_EQ (coords[2], 20);
+	
+	coords = h->getCoords(1);
+	EXPECT_EQ (coords[0], 11);
+	EXPECT_EQ (coords[1], 10);
+	EXPECT_EQ (coords[2], 10);
+	
+	coords = h->getCoords(10);
+	EXPECT_EQ (coords[0], 20);
+	EXPECT_EQ (coords[1], 10);
+	EXPECT_EQ (coords[2], 10);
+	
+	coords = h->getCoords(11);
+	EXPECT_EQ (coords[0], 10);
+	EXPECT_EQ (coords[1], 11);
+	EXPECT_EQ (coords[2], 10);
+	
+	coords = h->getCoords(11*11-1);
+	EXPECT_EQ (coords[0], 20);
+	EXPECT_EQ (coords[1], 20);
+	EXPECT_EQ (coords[2], 10);
+	
+	coords = h->getCoords(2*11*11-1);
+	EXPECT_EQ (coords[0], 20);
+	EXPECT_EQ (coords[1], 20);
+	EXPECT_EQ (coords[2], 11);
+	
+	coords = h->getCoords(11*11*5 + 11*5 + 5);
+	EXPECT_EQ (coords[0], 15);
+	EXPECT_EQ (coords[1], 15);
+	EXPECT_EQ (coords[2], 15);
+	
+	delete h;
+}
+
+TEST_F (testHistogram, incrementCoords) {
+	std::vector <double> coords (3, 0), hist1, hist2;
+	
+	hist1 = h->getHistogram();
+	coords = h->getCoords(0);
+	h->increment(coords, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[0], 0);
+	EXPECT_EQ (hist2[0], 3);
+	
+	hist1 = hist2;
+	coords = h->getCoords(11*11*11-1);
+	h->increment(coords, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[11*11*11-1], 0);
+	EXPECT_EQ (hist2[11*11*11-1], 3);
+		
+	hist1 = hist2;
+	coords = h->getCoords(1);
+	h->increment(coords, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[1], 0);
+	EXPECT_EQ (hist2[1], 3);
+	
+	hist1 = hist2;
+	coords = h->getCoords(10);
+	h->increment(coords, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[10], 0);
+	EXPECT_EQ (hist2[10], 3);
+	
+	hist1 = hist2;
+	coords = h->getCoords(11);
+	h->increment(coords, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[11], 0);
+	EXPECT_EQ (hist2[11], 3);
+	
+	hist1 = hist2;
+	coords = h->getCoords(11*11-1);
+	h->increment(coords, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[11*11-1], 0);
+	EXPECT_EQ (hist2[11*11-1], 3);
+
+	hist1 = hist2;
+	coords = h->getCoords(2*11*11-1);
+	h->increment(coords, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[2*11*11-1], 0);
+	EXPECT_EQ (hist2[2*11*11-1], 3);
+	
+	hist1 = hist2;
+	coords = h->getCoords(11*11*5 + 11*5 + 5);
+	h->increment(coords, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[11*11*5 + 11*5 + 5], 0);
+	EXPECT_EQ (hist2[11*11*5 + 11*5 + 5], 3);
+	
+	delete h;
+}
+
+TEST_F (testHistogram, incrementAddress) {
+	std::vector <double> hist1, hist2;
+	
+	hist1 = h->getHistogram();
+	h->increment(0, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[0], 0);
+	EXPECT_EQ (hist2[0], 3);
+	
+	hist1 = hist2;
+	h->increment(11*11*11-1, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[11*11*11-1], 0);
+	EXPECT_EQ (hist2[11*11*11-1], 3);
+		
+	hist1 = hist2;
+	h->increment(1, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[1], 0);
+	EXPECT_EQ (hist2[1], 3);
+	
+	hist1 = hist2;;
+	h->increment(10, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[10], 0);
+	EXPECT_EQ (hist2[10], 3);
+	
+	hist1 = hist2;
+	h->increment(11, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[11], 0);
+	EXPECT_EQ (hist2[11], 3);
+	
+	hist1 = hist2;
+	h->increment(11*11-1, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[11*11-1], 0);
+	EXPECT_EQ (hist2[11*11-1], 3);
+
+	hist1 = hist2;
+	h->increment(2*11*11-1, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[2*11*11-1], 0);
+	EXPECT_EQ (hist2[2*11*11-1], 3);
+	
+	hist1 = hist2;
+	h->increment(11*11*5 + 11*5 + 5, 3);
+	hist2 = h->getHistogram();
+	EXPECT_EQ (hist1[11*11*5 + 11*5 + 5], 0);
+	EXPECT_EQ (hist2[11*11*5 + 11*5 + 5], 3);
+
+	delete h;
 }

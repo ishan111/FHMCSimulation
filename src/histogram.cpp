@@ -1,4 +1,5 @@
 #include "histogram.h"
+#include <iostream>
 
 /*!
  * Instantiate a multidimensional histogram.  Bounds and widths must be specified for each dimension.
@@ -15,11 +16,11 @@ histogram::histogram (const std::vector <double> lbound, const std::vector <doub
     if (nbins.size() != lbound.size()) {
         throw customException ("Number of bins for histogram's dimensions does not have the same size as its bounds");
     }
-    
+
     dim_ = nbins.size();
     widths_.resize(dim_, 0);
     delta_.resize(dim_, 0);
-    
+ 
     size_ = 1;
     for (unsigned int i = 0; i < dim_; ++i) {
         if (lbound[i] >= ubound[i]) {
@@ -29,8 +30,8 @@ histogram::histogram (const std::vector <double> lbound, const std::vector <doub
             throw customException ("Must > 1 bins for each dimensions in the histogram");
         }
         size_ *= nbins[i];
-        delta_[i] = (ubound_[i] - lbound_[i])/(nbins_[i]-1);
-        
+        delta_[i] = (ubound[i] - lbound[i])/(nbins[i]-1);
+         
         // build projected widths
         if (i == 0) {
             widths_[i] = 1;
@@ -38,7 +39,7 @@ histogram::histogram (const std::vector <double> lbound, const std::vector <doub
             widths_[i] = widths_[i-1]*nbins[i-1];
         }
     }
-    
+        
     lbound_ = lbound;
     ubound_ = ubound;
     nbins_ = nbins;
@@ -107,11 +108,37 @@ const std::vector <double> histogram::getCoords (long long unsigned int address)
     if (address >= size_) {
         throw customException ("Histogram address out of bounds");
     }
-    for (unsigned int i = size_-1; i > 0; --i) {
+    
+    for (unsigned int i = dim_-1; i > 0; --i) {
         long long int diff = floor(address/widths_[i]);
-        coords[i] = diff;
+        coords[i] = diff*delta_[i] + lbound_[i];
         address -= diff*widths_[i];
     }
-    coords[0] = address;
+    coords[0] = address*delta_[0] + lbound_[0];
+    
     return coords;
 }
+
+/*!
+ * Print a histogram to file
+ */
+void histogram::print (const std::string fileName) {
+	// Print histogram
+	std::ofstream of;
+	of.open(fileName.c_str(), std::ofstream::out);
+	if (!of.is_open()) {
+		throw customException ("Unable to write histogram to "+fileName);
+	}
+	of << "# Histogram in single row (vectorized) notation." << std::endl;
+	for (unsigned int i = 0; i < dim_; ++i) {
+		of << "# dim_"+sstr(i+1)+"_upper_bound:" << ubound_[i] << std::endl;
+		of << "# dim_"+sstr(i+1)+"_lower_bound:" << lbound_[i] << std::endl;
+		of << "# dim_"+sstr(i+1)+"_number_of_bins:" << nbins_[i] << std::endl;
+	}
+	
+	for (unsigned long long int i = 0; i < h_.size(); ++i) {
+		of << h_[i] << std::endl;
+	}
+	of.close();
+}
+ 

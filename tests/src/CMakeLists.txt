@@ -20,6 +20,7 @@ file(GLOB omcs_SRC
 	"../../src/bias.cpp"
 	"../../src/cellList.cpp"
 	"../../src/delete.cpp"
+	"../../src/histogram.cpp"
 	"../../src/insert.cpp"
 	"../../src/moves.cpp"
 	"../../src/potentials.cpp"

@@ -3,13 +3,17 @@
 
 #include <vector>
 #include <cmath>
+#include <fstream>
+#include <sstream>
 #include "global.h"
+#include "utilities.h"
 
 class histogram {
 public:
     ~histogram () {;}
     histogram (const std::vector <double> lbound, const std::vector <double> ubound, const std::vector <long long unsigned int> nbins);
     
+    void print (const std::string fileName);
     void increment (const long long unsigned int address, const double val);
     void increment (const std::vector <double> &coords, const double val);
     const long long unsigned int getAddress (const std::vector <double> &coords);

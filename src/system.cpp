@@ -374,6 +374,7 @@ simSystem::~simSystem () {
 	if (useWALA) {
 		delete wlBias;
 	}
+	delete composition;
 }
 
 /*!
@@ -436,6 +437,16 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 			throw customException (e.what());
 		}
 	}
+	
+	std::vector <double> lb (nSpecies_, 0), ub (nSpecies_, 0);
+	std::vector <unsigned long long int> dx (nSpecies_, 0); 
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		dx[i] = maxSpecies_[i] - minSpecies_[i] + 1;
+		lb[i] = minSpecies_[i];
+		ub[i] = maxSpecies_[i];
+	}
+	composition = new histogram (lb, ub, dx);
+
 	
 	// Prepare vectors and matrices for cell lists.
 	// It is crucial to reserve the correct number of cellLists in advance

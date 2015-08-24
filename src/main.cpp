@@ -517,9 +517,6 @@ int main (int argc, char * const argv[]) {
 					std::cerr << ce.what() << std::endl;
 					exit(SYS_FAILURE);
 				}	
-			
-				// record U
-				sys.recordU();
 			}
 
 			// Check if bias has flattened out
@@ -578,9 +575,6 @@ int main (int argc, char * const argv[]) {
 					ppotArray.clear();
 					exit(SYS_FAILURE);
 				}
-			
-				// record U
-				sys.recordU();
 			}
 			
 			// Check if collection matrix is ready to take over, not necessarily at points where WL is flat
@@ -641,6 +635,7 @@ int main (int argc, char * const argv[]) {
 		std::cout << "Restarted TMMC from collection matrix from " << restartFromTMMCFile << std::endl;
 	}
 	
+	std::vector <double> nSpecHist (sys.nSpecies());
 	long long int sweep = 0;
 	while (sweep < totalTMMCSweeps) {
 		bool done = false;
@@ -660,6 +655,12 @@ int main (int argc, char * const argv[]) {
 			
 			// record U
 			sys.recordU();
+			
+			// record composition
+			for (unsigned int i = 0; i < nSpecHist.size(); ++i) {
+				nSpecHist[i] = sys.numSpecies[i];
+			}
+			sys.composition->increment(nSpecHist, 1);
 			
 			// check if sweep is done
 			if (counter%checkPoint == 0) {
@@ -774,6 +775,9 @@ int main (int argc, char * const argv[]) {
     
     // Print out energy histogram
     sys.printU("energyHistogram");
+    
+    // Print out composition histogram
+    sys.composition->print("compositionHistogram.dat");
     
     // Print out final macrostate distribution
     sys.getTMMCBias()->print("final", false);
