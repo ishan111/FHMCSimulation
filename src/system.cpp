@@ -734,8 +734,9 @@ void simSystem::readRestart (std::string filename) {
 	for (unsigned int j = 0; j < sysatoms.size(); ++j) {
 		try {
 			// "partially" insert each atom so it goes through all the stages
-			for (unsigned int k = 0; k < Mtot_; ++k) {
-				insertAtom (index[j], &sysatoms[j]); // this will check that within each species own max and min, global bounds handled above
+			insertAtom (index[j], &sysatoms[j]);
+			for (unsigned int k = 1; k < Mtot_; ++k) {
+				insertAtom (index[j], fractionalAtom_); // this will check that within each species own max and min, global bounds handled above
 			}
 		}
 		catch (customException &ce) {

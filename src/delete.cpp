@@ -15,7 +15,7 @@ int deleteParticle::make (simSystem &sys) {
     if (sys.numSpecies[typeIndex_] == sys.minSpecies(typeIndex_) && sys.getCurrentM() == 0) {
         return MOVE_FAILURE;
     }
-    
+
     // also check if at global bound on total number of particles
     if (sys.getTotN() < sys.totNMin()) {
     	return MOVE_FAILURE;
@@ -32,14 +32,19 @@ int deleteParticle::make (simSystem &sys) {
 	
 	double delEnergy = 0.0;
 
+	// initial guess at the N state we are coming from
+        long long int nHigh = sys.numSpecies[typeIndex_];
+
 	atom* chosenAtom; 
     if (sys.getCurrentM() == 0) {
     	// pick a brand new one to delete
     	chosenAtom = &sys.atoms[typeIndex_][(int) floor(rng (&RNG_SEED) * sys.numSpecies[typeIndex_])];
+	nHigh = sys.numSpecies[typeIndex_];
     } else {
     	// continue to try to delete the partially deleted one
     	chosenAtom = sys.getFractionalAtom(); // mcMove guarantees this move only being made if fractional atom of type typeIndex_
-    }
+    	nHigh = sys.numSpecies[typeIndex_] + 1; // again mcMove guarantees this species is the fractional one, reference has to be at the next fully inserted level
+	}
     
     // get baseline as the particle currently is
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
@@ -98,7 +103,7 @@ int deleteParticle::make (simSystem &sys) {
     
     // biasing
     double dN = 1.0/sys.getTotalM();
-    const double p_u = pow(sys.numSpecies[typeIndex_]/V, dN)*exp(sys.beta()*(-sys.mu(typeIndex_)*dN - delEnergy));
+    const double p_u = pow(nHigh/V, dN)*exp(sys.beta()*(-sys.mu(typeIndex_)*dN - delEnergy));
     int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() - 1;
     if (sys.getCurrentM() == 0) {
     	nTotFinal--;

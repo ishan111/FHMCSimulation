@@ -519,6 +519,9 @@ int main (int argc, char * const argv[]) {
 				}	
 			}
 
+			// TMP
+			sys.getWALABias()->print("wl-test-"+sstr(counter), true);
+			
 			// Check if bias has flattened out
 			flat = sys.getWALABias()->evaluateFlatness();
 			if (flat) {

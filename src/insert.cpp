@@ -27,6 +27,9 @@ int insertParticle::make (simSystem &sys) {
 	double insEnergy = 0.0;
 	int origState = 0;
 	bool createdAtom = false;
+
+	// reference N state
+	long long int nHigh = sys.numSpecies[typeIndex_]+1;
 	
     atom* newAtom;
     if (sys.getCurrentM() == 0) {
@@ -46,7 +49,7 @@ int insertParticle::make (simSystem &sys) {
     	// don't increment the state yet
     	newAtom = sys.getFractionalAtom(); // mcMove object guarantees we are only making this move if the fractional atom if type typeIndex_ 
     	origState = newAtom->mState;
-    			
+
     	// if doing expanded ensemble and one is already partially inserted, have to get baseline, else this baseline is 0
     	for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
         	// get positions of neighboring atoms around newAtom
@@ -103,7 +106,7 @@ int insertParticle::make (simSystem &sys) {
     
     // biasing
     double dN = 1.0/sys.getTotalM();
-    const double p_u = pow(V/(sys.numSpecies[typeIndex_]+1.0), dN)*exp(sys.beta()*(sys.mu(typeIndex_)*dN - insEnergy));
+    const double p_u = pow(V/nHigh, dN)*exp(sys.beta()*(sys.mu(typeIndex_)*dN - insEnergy));
     int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() + 1;
     if (sys.getCurrentM() == sys.getTotalM()-1) {
     	nTotFinal++;
