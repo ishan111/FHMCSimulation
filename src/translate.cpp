@@ -9,13 +9,26 @@
  */
 int translateParticle::make (simSystem &sys) {
 	// check if any exist to be translated
-    if (sys.numSpecies[typeIndex_] < 1) {
-        return MOVE_FAILURE;
-    }
-    
+	if (sys.getFractionalAtomType() == typeIndex_) {
+		if (sys.numSpecies[typeIndex_] == 0 && sys.getCurrentM() == 0) {
+        		return MOVE_FAILURE;
+    		}
+	} else {
+		if (sys.numSpecies[typeIndex_] == 0) {
+			return MOVE_FAILURE;
+		}
+	}
+	
 	// choose a random particle of that type
-	const int chosenAtom = (int) floor(rng (&RNG_SEED) * sys.numSpecies[typeIndex_]);
- 
+	int chosenAtom = 0;
+	if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == typeIndex_) {
+		// we are moving a species that has a partially inserted atom, so account for that in the choice
+		chosenAtom = (int) floor(rng (&RNG_SEED) * (sys.numSpecies[typeIndex_]+1));	
+	} else {
+		// all atoms of this type are fully inserted
+		chosenAtom = (int) floor(rng (&RNG_SEED) * sys.numSpecies[typeIndex_]);
+	}
+    
 	// attempt to translate that one
 	const std::vector < double > box = sys.box();
     double V = 1.0;

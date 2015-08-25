@@ -76,7 +76,7 @@ tmmc::tmmc (const int Nmax, const int Nmin,  const int Mtot, const long long int
  */
 bool tmmc::checkFullyVisited () {
 	const int endPoint = HC_.size() - (Mtot_-1)*3; // we don't care about the last chunk where N = Nmax, but M > 0 - stop at N = Nmax, M = 0
-	for (__BIAS_INT_TYPE__ i = 0; i < endPoint; i += 3) { 
+	for (__BIAS_INT_TYPE__ i = 0; i < endPoint; i += 3) {	
 		if (i == 0) {
 			// lower bound, so only +1 move must be sampled
 			if ((HC_[i+1] < tmmcSweepSize_)) {
@@ -97,8 +97,9 @@ bool tmmc::checkFullyVisited () {
 			if ((HC_[i] < tmmcSweepSize_) || (HC_[i+1] < tmmcSweepSize_) || (HC_[i+2] < tmmcSweepSize_)) {
 				return false;
 			}
-		}		
-	}	
+		}	
+	}
+		
 	return true;
 }
 

@@ -519,9 +519,6 @@ int main (int argc, char * const argv[]) {
 				}	
 			}
 
-			// TMP
-			sys.getWALABias()->print("wl-test-"+sstr(counter), true);
-			
 			// Check if bias has flattened out
 			flat = sys.getWALABias()->evaluateFlatness();
 			if (flat) {
@@ -566,7 +563,7 @@ int main (int argc, char * const argv[]) {
 	
 		// actually this should run until all elements of the collection matrix have been populated
 		int timesFullyVisited = 0;
-		while (timesFullyVisited < nCrossoverVisits) { // nCrossoverVisits = 2 is an arbitrary choice for the number of times each was visited
+		while (timesFullyVisited < nCrossoverVisits) { 
 			for (unsigned int move = 0; move < wlSweepSize; ++move) {
 				try {
 					usedMovesEq.makeMove(sys);
