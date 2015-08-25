@@ -499,7 +499,7 @@ void wala::update (const int Nval, const int Mval) {
  */
 bool wala::evaluateFlatness () {
 	double min = H_[0], lnMean = -DBL_MAX;
-	for (unsigned int i = 0; i < H_.size(); ++i) {
+	for (unsigned int i = 0; i < H_.size() - (Mtot_-1); ++i) { // insert routine prevents the sampling past N = Nmax, M = 0, so N = Nmax and M > 0 are validly empty
 		if (H_[i] < min) {
 			min = H_[i];
 		}
@@ -507,7 +507,7 @@ bool wala::evaluateFlatness () {
 		// summing so many doubles may overrun DBL_MAX, so instead track the lnMean
 		lnMean = specExp(lnMean, log(H_[i]));
 	}
-	lnMean -= log(H_.size());
+	lnMean -= log(H_.size() - (Mtot_-1));
 	
 	if (log(min) - lnMean > log(s_)) {
 		return true;
