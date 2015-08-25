@@ -651,17 +651,22 @@ void simSystem::printSnapshot (std::string filename, std::string comment) {
     
     int tot = 0;
     for (unsigned int j = 0; j < nSpecies_; ++j) {
-        tot += numSpecies[j];
+        tot += numSpecies[j]; // only count fully inserted species
     }
     
     outfile << tot << std::endl;
     outfile << comment << std::endl;
     
     for (unsigned int j = 0; j < nSpecies_; ++j) {
-        const int num = numSpecies[j];
-        for (unsigned int i = 0; i < num; ++i) {
-            outfile << j << "\t" << atoms[j][i].pos[0] << "\t" << atoms[j][i].pos[1] << "\t" << atoms[j][i].pos[2] << std::endl;
-        }
+        long long int num = numSpecies[j];
+	if (Mcurrent_ > 1 && fractionalAtomType_ == j) {
+        	num += 1; // account for partially inserted atom
+	}
+	for (unsigned int i = 0; i < num; ++i) {
+		if (atoms[j][i].mState == 0) { // only print fully inserted atoms
+            		outfile << j << "\t" << atoms[j][i].pos[0] << "\t" << atoms[j][i].pos[1] << "\t" << atoms[j][i].pos[2] << std::endl;
+        	}
+	}
     }
     
     outfile.close();
@@ -728,7 +733,10 @@ void simSystem::readRestart (std::string filename) {
 	
 	for (unsigned int j = 0; j < sysatoms.size(); ++j) {
 		try {
-			insertAtom (index[j], &sysatoms[j]); // this will check that within each species own max and min, global bounds handled above
+			// "partially" insert each atom so it goes through all the stages
+			for (unsigned int k = 0; k < Mtot_; ++k) {
+				insertAtom (index[j], &sysatoms[j]); // this will check that within each species own max and min, global bounds handled above
+			}
 		}
 		catch (customException &ce) {
 			std::string a = "Could not initialize system from restart file, ", b = ce.what();
