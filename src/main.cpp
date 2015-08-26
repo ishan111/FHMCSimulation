@@ -411,7 +411,7 @@ int main (int argc, char * const argv[]) {
 				exit(SYS_FAILURE);
 			}
 		}
-	}
+	} 
 	
 	// specify moves to use for the system
     	moves usedMovesEq, usedMovesPr;
@@ -431,6 +431,7 @@ int main (int argc, char * const argv[]) {
 		usedMovesEq.addMove (&eqDeletions[i], probEqInsDel[i]);
 		
 		translateParticle newTranslate (i, "translate");
+		newTranslate.setMaxDisplacement (maxEqD[i], sys.box());
 		eqTranslations[i] = newTranslate;
 		usedMovesEq.addMove (&eqTranslations[i], probEqDisp[i]);
 		
@@ -443,6 +444,7 @@ int main (int argc, char * const argv[]) {
 		usedMovesPr.addMove (&prDeletions[i], probPrInsDel[i]);		
 		
 		translateParticle newTranslate2 (i, "translate");
+		newTranslate2.setMaxDisplacement (maxPrD[i], sys.box());
 		prTranslations[i] = newTranslate2;
 		usedMovesPr.addMove (&prTranslations[i], probPrDisp[i]);
 		
@@ -474,7 +476,84 @@ int main (int argc, char * const argv[]) {
 			ppotArray.clear();
 			exit(SYS_FAILURE);
 		}
-	} 
+	} else if (restart_file == "" && sys.totNMin() > 0) {
+                std::cout << "Automatically generating the initial configuration" << std::endl;
+		
+		// have to generate initial configuration manually - start with mu = INF
+                std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e9);
+                simSystem initSys (doc["num_species"].GetInt(), 1/50., sysBox, initMu, sysMax, sysMin, Mtot); // beta =  1/T, so low beta to have high T
+
+                // add the same potentials
+                int initInd = 0;
+                for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+                        for (unsigned int j = i; j < sys.nSpecies(); ++j) {
+                                initSys.addPotential (i, j, ppotArray[initInd], true); // default use of cell list even if otherwise not in main simulation
+                                initInd++;
+                        }
+                }
+
+		// iteratively add each individual species, assume we want an equimolar mixture to start from
+		for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+			std::cout << "Initializing species " << i << " configurations" << std::endl;
+			
+			// insert this species i
+			moves initMove;
+			insertParticle initIns (i, "insert");
+                	initMove.addMove (&initIns, 1.0);
+			std::vector < translateParticle > initTrans (i+1);
+
+			// also add displacment moves for all species present
+			for (unsigned int j = 0; j <= i; ++j) {
+				std::cout << "Added translation moves for initialization of species " << j << std::endl;
+				translateParticle newTrans (j, "translate");
+                		newTrans.setMaxDisplacement (1.0, initSys.box()); // allow large displacements if necessary
+				initTrans[j] = newTrans;
+                		initMove.addMove (&initTrans[j], 1.0);	
+			}
+
+			// now do simuation until within proper range
+			int targetNum = sys.totNMin()/sys.nSpecies();
+			if (i == sys.nSpecies() - 1) {
+				// to account for integer rounding
+				targetNum = sys.totNMin() - (sys.nSpecies()-1)*(sys.totNMin()/sys.nSpecies());
+			}
+			std::cout << "Target number = " << targetNum << std::endl;
+			int tmpCounter = 0, statusPrint = 10e6;
+			while (initSys.numSpecies[i] < targetNum) {
+				// this creates an equimolar mixture
+				try {
+                                        initMove.makeMove(initSys);
+                                } catch (customException &ce) {
+					for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+                                		delete ppotArray[i];
+                        		}
+                        		ppotArray.clear();
+                                        std::cerr << "Failed to create an initial configuration: " << ce.what() << std::endl;
+                                        exit(SYS_FAILURE);
+                                }	
+				tmpCounter++;
+				if (tmpCounter%statusPrint == 0) {
+					tmpCounter = 0;
+					std::cout << "Grew " << initSys.numSpecies[i] << " atoms of type " << i << " so far" << std::endl;
+				}
+			}
+		}
+
+		// print snapshot from initSys
+		initSys.printSnapshot("auto-init.xyz", "auto-generated initial configuration");
+
+		// read into sys
+		try {
+                        sys.readRestart("auto-init.xyz");
+                } catch (customException &ce) {
+                        std::cerr << "Failed to read auto-generated initialization file: " << ce. what() << std::endl;
+                        for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+                                delete ppotArray[i];
+                        }
+                        ppotArray.clear();
+                        exit(SYS_FAILURE);
+                }
+        }
 	
 	bool highSnap = false, lowSnap = false;
 					
@@ -653,15 +732,18 @@ int main (int argc, char * const argv[]) {
 				exit(SYS_FAILURE);
 			}
 			
-			// record U
-			sys.recordU();
+			// only record properties of the system when it is NOT in an intermediate state
+			if (sys.getCurrentM() == 0) {
+				// record U
+				sys.recordU();
 			
-			// record composition
-			for (unsigned int i = 0; i < nSpecHist.size(); ++i) {
-				nSpecHist[i] = sys.numSpecies[i];
+				// record composition
+				for (unsigned int i = 0; i < nSpecHist.size(); ++i) {
+					nSpecHist[i] = sys.numSpecies[i];
+				}	
+				sys.composition->increment(nSpecHist, 1);
 			}
-			sys.composition->increment(nSpecHist, 1);
-			
+	
 			// check if sweep is done
 			if (counter%checkPoint == 0) {
 				done = sys.getTMMCBias()->checkFullyVisited();
