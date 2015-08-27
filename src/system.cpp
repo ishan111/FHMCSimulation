@@ -93,6 +93,18 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory for energy record");
     }
+	for (unsigned int i = 0; i < averageN_.size(); ++i) {
+		try {
+        		averageN_[i].resize(size, 0);
+    		} catch (std::bad_alloc &ba) {
+        		throw customException ("Out of memory for composition histogram");
+    		}
+	}
+	try {
+        	numAverageN_.resize(size, 0);
+    	} catch (std::bad_alloc &ba) {
+        	throw customException ("Out of memory for composition histogram");
+    	}
 }
 
 /*!
@@ -374,7 +386,6 @@ simSystem::~simSystem () {
 	if (useWALA) {
 		delete wlBias;
 	}
-	delete composition;
 }
 
 /*!
@@ -438,15 +449,6 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		}
 	}
 	
-	std::vector <double> lb (nSpecies_, 0), ub (nSpecies_, 0);
-	std::vector <unsigned long long int> dx (nSpecies_, 0); 
-	for (unsigned int i = 0; i < nSpecies_; ++i) {
-		dx[i] = maxSpecies_[i] - minSpecies_[i] + 1;
-		lb[i] = minSpecies_[i];
-		ub[i] = maxSpecies_[i];
-	}
-	composition = new histogram (lb, ub, dx);
-
 	
 	// Prepare vectors and matrices for cell lists.
 	// It is crucial to reserve the correct number of cellLists in advance
@@ -520,6 +522,109 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory for energy record");
     }
+
+	try {
+                numAverageN_.resize(size, 0);
+        } catch (std::bad_alloc &ba) {
+                throw customException ("Out of memory for particle histogram");
+        }
+	try {
+		averageN_.resize(nSpecies_);
+	} catch (std::bad_alloc &ba) {
+		throw customException ("Out of memory for particle histogram");
+	}
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		try {
+			averageN_[i].resize(size, 0);
+		} catch (std::bad_alloc &ba) {
+			throw customException ("Out of memory for particle histogram");
+		}
+	}
+}
+
+
+/*!
+ * Save the instantaneous number of each component as a function of the total number of particles in the system.
+ * Only records values when N_tot in range of [min, max].
+ */
+void simSystem::recordComposition () {
+	// only record if in range (removes equilibration stage to get in this range, if there was any)
+        if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+                const long int address = totN_-totNBounds_[0];
+		numAverageN_[address] += 1.0;
+		for (unsigned int i = 0; i < nSpecies_; ++i) {
+                	averageN_[i][address] += numSpecies[i];
+        	}
+	}
+}
+
+/*!
+ * Print the average composition to file, <N_i> for every N_tot within range recorded. Will overwrite the file if another with that name exists. Prints in netCDF format if enabled.
+ *
+ * \param [in] fileName Name of the file to print to
+ */
+void simSystem::printComposition (const std::string fileName) {
+	std::vector < std::vector < double > > aveX;
+	try {
+		aveX.resize(averageN_.size());
+	} catch (std::bad_alloc &ba) {
+		throw customException ("Out of memory for composition printing");
+	}
+	for (unsigned int i = 0; i < aveX.size(); ++i) {
+		try {
+                	aveX[i].resize(averageN_[i].size(), 0);
+        	} catch (std::bad_alloc &ba) {
+                	throw customException ("Out of memory for composition printing");
+        	}
+	}
+	for (unsigned int i = 0; i < averageN_.size(); ++i) {
+		for (unsigned int j = 0; j < averageN_[i].size(); ++j) {
+			aveX[i][j] = averageN_[i][j]/numAverageN_[j];
+		}	
+	}
+
+#ifdef NETCDF_CAPABLE
+	// If netCDF libs are enabled, write to this format
+    	const std::string name = fileName + ".nc";
+        NcFile outFile(name.c_str(), NcFile::replace);
+        NcDim probDim = outFile.addDim("vectorized_position", averageN_[0].size());
+        std::vector < NcVar > probVar (nSpecies_);
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		std::string vName = "average_N_"+sstr(i+1);
+		probVar[i] = outFile.addVar(vName.c_str(), ncdouble, probDim); 
+	}	
+	std::string attName = "species_total_upper_bound";
+        probVar[0].putAtt(attName.c_str(), sstr(totNBounds_[1]).c_str());
+        attName = "species_total_lower_bound";
+        probVar[0].putAtt(attName.c_str(), sstr(totNBounds_[0]).c_str());
+        const std::string dummyName = "number_species";
+        probVar[0].putAtt(dummyName.c_str(), sstr(nSpecies_).c_str());
+	attName = "volume";
+        double V = box_[0]*box_[1]*box_[2];
+        probVar[0].putAtt(attName.c_str(), sstr(V).c_str());
+        for (unsigned int i = 0; i < nSpecies_; ++i) {
+		probVar[i].putVar(&aveX[i]);
+	}
+#else
+	// Without netCDF capabilities, just print to ASCII file
+        std::ofstream of;
+        std::string name = fileName+".dat";
+        of.open(name.c_str(), std::ofstream::out);
+        of << "# <N_i> as a function of N_tot." << std::endl;
+        of << "# Number of species: " << nSpecies_ << std::endl;
+        of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
+        of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+        double V = box_[0]*box_[1]*box_[2];
+        of << "# volume: " << V << std::endl;
+	of << "# <N_1>\t<N_2>\t...\t<N_n>" << std::endl;
+        for (unsigned long long int i = 0; i < aveX[0].size(); ++i) {
+		for (unsigned long long int j = 0; j < nSpecies_; ++j) {
+			of << aveX[j][i] << "\t";
+		}
+                of << std::endl;
+        }
+        of.close();	
+#endif	
 }
 
 /*!

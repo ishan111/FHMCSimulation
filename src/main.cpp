@@ -738,10 +738,7 @@ int main (int argc, char * const argv[]) {
 				sys.recordU();
 			
 				// record composition
-				for (unsigned int i = 0; i < nSpecHist.size(); ++i) {
-					nSpecHist[i] = sys.numSpecies[i];
-				}	
-				sys.composition->increment(nSpecHist, 1);
+				sys.recordComposition();
 			}
 	
 			// check if sweep is done
@@ -859,7 +856,7 @@ int main (int argc, char * const argv[]) {
     sys.printU("energyHistogram");
     
     // Print out composition histogram
-    sys.composition->print("compositionHistogram.dat");
+    sys.printComposition("compositionHistogram");
     
     // Print out final macrostate distribution
     sys.getTMMCBias()->print("final", false);

@@ -41,7 +41,9 @@ public:
    	void readRestart (std::string filename);
     	void recordU ();
     	void printU (const std::string fileName);
-    	void startWALA (const double lnF, const double g, const double s, const int Mtot); //!< Start using Wang-Landau and instantiate the bias object
+    	void recordComposition ();
+	void printComposition (const std::string fileName);
+	void startWALA (const double lnF, const double g, const double s, const int Mtot); //!< Start using Wang-Landau and instantiate the bias object
    	void stopWALA () { useWALA = false; delete wlBias; } //!< Stop using Wang-Landau and free the bias object
    	void startTMMC (const long long int tmmcSweepSize, const int Mtot); //!< Start using TMMC and instantiate the bias object
    	void stopTMMC () { useTMMC = false; delete tmmcBias; } //!< Stop using TMMC and free the bias object
@@ -76,8 +78,6 @@ public:
     	std::vector < std::vector < atom > > atoms;	//!< Atoms in a matrix by type, and particle index, respectively that a system CAN hold but not all are actually "in" the system
     	std::vector < std::vector < pairPotential* > > ppot;	//!< Matrix of pair potentials for atom types i, j
 
-    	histogram* composition; //!< Composition histogram
-    
 private:
     atom* fractionalAtom_; //!< Pointer to the atom in the system that is currently only fractionally inserted/deleted
     int fractionalAtomType_; //!< Type of atom that is currently fractionally inserted
@@ -93,7 +93,9 @@ private:
 	std::vector < double > box_; //!< System box size
 	std::vector < double > mu_; //!< Chemical potential of each species
 	std::vector < long double > AverageU_; //!< Accumulator for U for each N_tot macrostate observed between the [min, max] ranges specified
-	std::vector < long double > numAverageU_; //!< Number of times U has been recorded at each macrostate
+	std::vector < long double > numAverageU_; //!< Number of times U has been recorded at each macrostate (Ntot)
+	std::vector < long double > numAverageN_; //!< Number of times <N_i> was recorded at each macrostate (Ntot)
+	std::vector < std::vector < long double > > averageN_; //!< Accumulator for the average number of each species observed as a function of N_tot
 	std::vector < std::vector < bool > > ppotSet_; //!< Matrix of pair potentials between type i and j
     std::vector < std::vector < bool > > useCellList_;  //!< Matrix of whether or not to use cell lists to calculate potentials for pair type (i,j)
     std::vector <cellList> cellLists_; // this vector stores the actual cell lists for the inserted potentials
