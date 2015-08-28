@@ -27,7 +27,7 @@
 #include <time.h>
 #include <fstream>
 #include <cmath>
-//#include <boost/lexical_cast.hpp>
+#include <iomanip>
 #include "system.h"
 #include "utilities.h"
 #include "global.h"
@@ -508,7 +508,7 @@ int main (int argc, char * const argv[]) {
 				translateParticle newTrans (j, "translate");
                 		newTrans.setMaxDisplacement (1.0, initSys.box()); // allow large displacements if necessary
 				initTrans[j] = newTrans;
-                		initMove.addMove (&initTrans[j], 1.0);	
+                		initMove.addMove (&initTrans[j], 2.0); // move more than insert so this relaxes better (qualitative observation)	
 			}
 
 			// now do simuation until within proper range
@@ -536,6 +536,14 @@ int main (int argc, char * const argv[]) {
 					tmpCounter = 0;
 					std::cout << "Grew " << initSys.numSpecies[i] << " atoms of type " << i << " so far" << std::endl;
 				}
+	
+				
+				//TMP
+				/*std::cout << tmpCounter << " " << std::setprecision(20) << initSys.scratchEnergy() << " " << std::setprecision(20) << initSys.energy() << std::endl;
+                        	if (fabs(initSys.energy() - initSys.scratchEnergy()) > 1e-10) {
+                                	std::cout << "DIFF = " << std::setprecision(20) << initSys.energy() - initSys.scratchEnergy() << " " << tmpCounter << std::endl;
+      	                          	exit(-1);
+        	                }*/
 			}
 		}
 
@@ -559,7 +567,7 @@ int main (int argc, char * const argv[]) {
 					
 	if (!restartFromTMMC) {
 		std::cout << "Beginning Wang-Landau portion" << std::endl;
-	
+		
 		// Initially do a WL simulation
 		bool flat = false;
 		double lnF = lnF_start;
@@ -716,10 +724,15 @@ int main (int argc, char * const argv[]) {
 	
 	std::vector <double> nSpecHist (sys.nSpecies());
 	long long int sweep = 0;
+	int sweepPrint = totalTMMCSweeps, numSweepSnaps = 100, printCounter = 0;
+	if (totalTMMCSweeps > numSweepSnaps) {
+		sweepPrint /= numSweepSnaps;
+	}
 	while (sweep < totalTMMCSweeps) {
 		bool done = false;
 		unsigned long long int counter = 0;
 		unsigned long long int checkPoint = tmmcSweepSize*(sys.totNMax() - sys.totNMin() + 1)*3; // how often to check full traversal of collection matrix
+		// perform a sweep
 		while (!done) {
 			try {
 				usedMovesPr.makeMove(sys);
@@ -765,8 +778,11 @@ int main (int argc, char * const argv[]) {
 		sys.getTMMCBias()->calculatePI();
 		
 		// Periodically write out checkpoints
-		sys.getTMMCBias()->print("tmmc-Checkpoint-"+sstr(sweep), true);
-	
+		if (sweep%sweepPrint == 0) {
+			printCounter++;
+			sys.getTMMCBias()->print("tmmc-Checkpoint-"+sstr(printCounter), true);
+		}
+
 		// also check to print out snapshots with 10% of bounds to be used for other restarts
 		if (!highSnap) {
 			if (sys.getTotN() > sys.totNMax() - (sys.totNMax()-sys.totNMin())*0.1) {
@@ -791,17 +807,6 @@ int main (int argc, char * const argv[]) {
 		ppotArray.clear();
         exit(SYS_FAILURE);
     }
-    const double tol = 1.0e-9;
-    const double scratchEnergy = sys.scratchEnergy(), incrEnergy = sys.energy();
-    if (fabs(scratchEnergy - incrEnergy) > tol) {
-        std::cerr << "Error: scratch energy calculation = " << scratchEnergy << ", but incremental = " << incrEnergy << ", |diff| = " << fabs(scratchEnergy - incrEnergy) << std::endl;
-		for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-			delete ppotArray[i];
-		}
-		ppotArray.clear();
-        exit(SYS_FAILURE);
-    }
-    
 	if (sys.getTotalM() > 1) {
 		if (sys.getFractionalAtom()->mState != sys.getCurrentM()) {
 			std::cerr << "Expanded ensemble state deviates between atom ("+sstr(sys.getFractionalAtom()->mState)+") and system log ("+sstr(sys.getCurrentM())+")" << std::endl;
@@ -849,28 +854,43 @@ int main (int argc, char * const argv[]) {
     statFile << std::endl;
     statFile.close();
 	
-    // print out restart file (xyz)
-    sys.printSnapshot("final.xyz", "last configuration");
+    	// print out restart file (xyz)
+    	sys.printSnapshot("final.xyz", "last configuration");
     
-    // Print out energy histogram
-    sys.printU("energyHistogram");
+    	// Print out energy histogram
+    	sys.printU("energyHistogram");
     
-    // Print out composition histogram
-    sys.printComposition("compositionHistogram");
+   	// Print out composition histogram
+    	sys.printComposition("compositionHistogram");
     
-    // Print out final macrostate distribution
-    sys.getTMMCBias()->print("final", false);
+    	// Print out final macrostate distribution
+    	sys.getTMMCBias()->print("final", false);
 	
+	// Still allow for printing of all data, even if there is an error, in order to interrogate the results anyway
+	const double tol = 1.0e-6;
+	const double scratchEnergy = sys.scratchEnergy(), incrEnergy = sys.energy();
+    	if (fabs(scratchEnergy - incrEnergy) > tol) {
+        	std::cerr << "Error: scratch energy calculation = " << std::setprecision(20) << scratchEnergy << ", but incremental = " << std::setprecision(20) << incrEnergy << ", |diff| = " << std::setprecision(20) << fabs(scratchEnergy - incrEnergy) << std::endl;
+                for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+                       	delete ppotArray[i];
+                }
+                ppotArray.clear();
+        	exit(SYS_FAILURE);
+    	} else {
+        	std::cout << "Passed: Final scratch energy - incremental = " << std::setprecision(20) << scratchEnergy - incrEnergy << std::endl;
+        }
+
+
 	// Free pair potential pointers
-	for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-		delete ppotArray[i];
-	}
-    ppotArray.clear();
-    
-    // Finished
-    time (&rawtime);
-    timeinfo = localtime (&rawtime);
-    strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
-    std::cout << "Finished simulation at " << timestamp << std::endl;
+        for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+                delete ppotArray[i];
+        }
+    	ppotArray.clear();
+
+    	// Finished
+    	time (&rawtime);
+ 	timeinfo = localtime (&rawtime);
+    	strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+    	std::cout << "Finished simulation at " << timestamp << std::endl;
 	return SAFE_EXIT;
 }
