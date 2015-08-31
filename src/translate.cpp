@@ -8,16 +8,31 @@
  * \return MOVE_SUCCESS if translated a particle, otherwise MOVE_FAILURE if did not.  Will throw exceptions if there was an error.
  */
 int translateParticle::make (simSystem &sys) {
+	bool earlyReject = false;
+
 	// check if any exist to be translated
 	if (sys.getFractionalAtomType() == typeIndex_) {
 		if (sys.numSpecies[typeIndex_] == 0 && sys.getCurrentM() == 0) {
-        		return MOVE_FAILURE;
+        		earlyReject = true;
     		}
 	} else {
 		if (sys.numSpecies[typeIndex_] == 0) {
-			return MOVE_FAILURE;
+			earlyReject = true;
 		}
 	}
+
+	// updates to biasing functions must be done even if at bounds
+        if (earlyReject) {
+                if (sys.useWALA) {
+                         sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+                }
+
+                if (sys.useTMMC) {
+                        sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
+                }
+
+                return MOVE_FAILURE;
+        }
 	
 	// choose a random particle of that type
 	int chosenAtom = 0;

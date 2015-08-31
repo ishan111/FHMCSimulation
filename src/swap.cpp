@@ -18,7 +18,16 @@ int swapParticles::make (simSystem &sys) {
 		n2Avail++;
 	}
 	if (n1Avail < 1 || n2Avail < 1) {
-		return MOVE_FAILURE;
+		// updates to biasing functions must be done even if at bounds
+                if (sys.useWALA) {
+                         sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+                }
+
+                if (sys.useTMMC) {
+                        sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
+                }
+
+                return MOVE_FAILURE;
 	}
 
 	// because the locations are effectively being swapped, it is fair to select a partially inserted atom to be involved

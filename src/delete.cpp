@@ -8,21 +8,36 @@
  * \return MOVE_SUCCESS if deleted a particle, otherwise MOVE_FAILURE if did not.  Will throw exceptions if there was an error.
  */
 int deleteParticle::make (simSystem &sys) {
-	// check if any can be deleted from this species
-    if (sys.numSpecies[typeIndex_] < sys.minSpecies(typeIndex_)) {
-        return MOVE_FAILURE;
-    }
-    if (sys.numSpecies[typeIndex_] == sys.minSpecies(typeIndex_) && sys.getCurrentM() == 0) {
-        return MOVE_FAILURE;
-    }
+	bool earlyReject = false;
 
-    // also check if at global bound on total number of particles
-    if (sys.getTotN() < sys.totNMin()) {
-    	return MOVE_FAILURE;
-    }
-    if (sys.getTotN() == sys.totNMin() && sys.getCurrentM() == 0) { // move class guarantees only operating on the correct species already
-        return MOVE_FAILURE;
-    }
+	// check if any can be deleted from this species
+    	if (sys.numSpecies[typeIndex_] < sys.minSpecies(typeIndex_)) {
+       		earlyReject = true;
+    	}
+    	if (sys.numSpecies[typeIndex_] == sys.minSpecies(typeIndex_) && sys.getCurrentM() == 0) {
+        	earlyReject = true;
+    	}
+
+    	// also check if at global bound on total number of particles
+    	if (sys.getTotN() < sys.totNMin()) {
+    		earlyReject = true;
+    	}
+    	if (sys.getTotN() == sys.totNMin() && sys.getCurrentM() == 0) { // move class guarantees only operating on the correct species already
+      		earlyReject = true;
+    	}
+
+	// updates to biasing functions must be done even if at bounds
+        if (earlyReject) {
+                if (sys.useWALA) {
+                         sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+                }
+
+                if (sys.useTMMC) {
+                        sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
+                }
+
+                return MOVE_FAILURE;
+        }
     
 	const std::vector < double > box = sys.box();
 	double V = 1.0;

@@ -8,16 +8,31 @@
  * \return MOVE_SUCCESS if inserted a particle, otherwise MOVE_FAILURE if did not.  Will throw exceptions if there was an error.
  */
 int insertParticle::make (simSystem &sys) {
-    // check if at upper bound for this specific species type
-    if (sys.numSpecies[typeIndex_] >= sys.maxSpecies(typeIndex_)) {
-        return MOVE_FAILURE;
-    }
+    	bool earlyReject = false;
+	
+	// check if at upper bound for this specific species type
+	if (sys.numSpecies[typeIndex_] >= sys.maxSpecies(typeIndex_)) {
+        	earlyReject = true;	
+	}
 
-    // also check if at upper bound for total number of atoms
-    if (sys.getTotN() >= sys.totNMax()) {
-    	return MOVE_FAILURE;
-    }
+	// also check if at upper bound for total number of atoms
+	if (sys.getTotN() >= sys.totNMax()) {
+		earlyReject = true;
+ 	}
     
+	// updates to biasing functions must be done even if at bounds
+	if (earlyReject) {
+		if (sys.useWALA) {
+			 sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());		
+		}
+
+		if (sys.useTMMC) {
+			sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);		
+		}
+
+		return MOVE_FAILURE;
+	}
+
 	const std::vector < double > box = sys.box();
 	double V = 1.0;
 	for (unsigned int i = 0; i < box.size(); ++i) {
