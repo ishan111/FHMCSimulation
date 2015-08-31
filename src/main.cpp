@@ -781,6 +781,8 @@ int main (int argc, char * const argv[]) {
 		if (sweep%sweepPrint == 0) {
 			printCounter++;
 			sys.getTMMCBias()->print("tmmc-Checkpoint-"+sstr(printCounter), true);
+			sys.printU("energy-Checkpoint-"+sstr(printCounter));
+			sys.printComposition("composition-Checkpoint-"+sstr(printCounter));
 		}
 
 		// also check to print out snapshots with 10% of bounds to be used for other restarts
