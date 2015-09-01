@@ -10,7 +10,7 @@
 class aggVolBias : public mcMove {
 public:
         aggVolBias () { changeN_ = false; pBias_ = 0; }
-        aggVolBias (const int typeIndex, const int typeIndex2, const double pBias; const std::string tag);
+        aggVolBias (const int typeIndex, const int typeIndex2, const double pBias, const double rc1, const double rc2 const std::string tag);
         int make (simSystem &sys);
 
 private:
