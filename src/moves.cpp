@@ -85,6 +85,10 @@ void moves::makeMove (simSystem &sys) {
 						done = false;
 						break;
 					} else {
+                        // get M before move happens which can change the state of the system
+                        if (moves_[i]->changeN()) {
+                            mIndex = sys.getCurrentM();
+                        }
 						try {
 							succ = moves_[i]->make(sys);
 						} catch (customException &ce) {
@@ -94,9 +98,6 @@ void moves::makeMove (simSystem &sys) {
 						}
 						done = true;
 			    		moveChosen = i;
-                        if (moves_[i]->changeN()) {
-                            mIndex = sys.getCurrentM();
-                        }
 			    		break;
 					}
 				} else {

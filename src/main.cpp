@@ -840,7 +840,7 @@ int main (int argc, char * const argv[]) {
 	strftime (statName,80,"%Y_%m_%d_%H_%M_%S-stats.log",timeinfo);
 	std::ofstream statFile (statName);
     std::vector < std::vector < double > > stats = usedMovesPr.reportMoveStatistics();
-    statFile << " --------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
+    statFile << " ---------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
     for (unsigned int i = 0; i < stats.size(); ++i) {
         double prod = 1.0;
         for (unsigned int j = 0; j < stats[i].size(); ++j) {
