@@ -10,6 +10,7 @@
 #include <exception>
 #include <map>
 #include <cmath>
+#include <iomanip>
 #include "potentials.h"
 #include "atom.h"
 #include "cellList.h"

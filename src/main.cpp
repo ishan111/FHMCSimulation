@@ -554,7 +554,8 @@ int main (int argc, char * const argv[]) {
             		exit(SYS_FAILURE);
         	}
    	}
-	
+
+
 	bool highSnap = false, lowSnap = false;
 					
 	if (!restartFromTMMC) {
@@ -593,6 +594,10 @@ int main (int argc, char * const argv[]) {
 				try {
 					usedMovesEq.makeMove(sys);
 				} catch (customException &ce) {
+					for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+                                                delete ppotArray[i];
+                                        }
+                                        ppotArray.clear();
 					std::cerr << ce.what() << std::endl;
 					exit(SYS_FAILURE);
 				}	

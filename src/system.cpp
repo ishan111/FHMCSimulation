@@ -758,7 +758,7 @@ void simSystem::printSnapshot (std::string filename, std::string comment) {
 		}
 		for (unsigned int i = 0; i < num; ++i) {
 			if (atoms[j][i].mState == 0) { // only print fully inserted atoms
-            			outfile << j << "\t" << atoms[j][i].pos[0] << "\t" << atoms[j][i].pos[1] << "\t" << atoms[j][i].pos[2] << std::endl;
+            			outfile << j << "\t" <<  std::setprecision(15) << atoms[j][i].pos[0] << "\t" << std::setprecision(15) << atoms[j][i].pos[1] << "\t" << std::setprecision(15) << atoms[j][i].pos[2] << std::endl;
         		}
 		}
     	}
@@ -907,17 +907,22 @@ const double simSystem::scratchEnergy () {
     	}
     
     	for (unsigned int spec1 = 0; spec1 < nSpecies_; ++spec1) {
-        	int num1;
+        	int num1 = 0, adj1 = 0;
         	try {
             		num1 = numSpecies[spec1];
         	} catch (customException &ce) {
             		std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
-            	throw customException (a+b);
+            		throw customException (a+b);
         	}
 		
+		// possibly have fractionally inserted atom
+		if (fractionalAtomType_ == spec1 && Mcurrent_ > 0) {
+			adj1 = 1;
+		}
+		
         	// interactions with same type
-        	for (unsigned int j = 0; j < num1; ++j) {
-	        	for (unsigned int k = j+1; k < num1; ++k) {
+        	for (unsigned int j = 0; j < num1+adj1; ++j) {
+	        	for (unsigned int k = j+1; k < num1+adj1; ++k) {
        				try {
                     			totU += ppot[spec1][spec1]->energy(&atoms[spec1][j], &atoms[spec1][k], box_); 
                 		} catch (customException &ce) {
@@ -926,34 +931,40 @@ const double simSystem::scratchEnergy () {
                 		}
             		}
         	}
-        
-        	// add tail correction to potential energy
+
+        	// add tail correction to potential energy but only for atoms fully inserted
 #ifdef FLUID_PHASE_SIMULATIONS
         	if ((ppot[spec1][spec1]->useTailCorrection) && (num1 > 1)) {
         		totU += (num1)*0.5*ppot[spec1][spec1]->tailCorrection((num1-1)/V);
         	}
 #endif        
+
         	// interactions with other unique types
         	for (unsigned int spec2 = spec1+1; spec2 < nSpecies_; ++spec2) {
-            		int num2;
+            		int num2 = 0, adj2 = 0;
             		try {
                 		num2 = numSpecies[spec2];
             		} catch (customException &ce) {
                 		std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
                 		throw customException (a+b);
             		}
+
+			if (fractionalAtomType_ == spec2 && Mcurrent_ > 0) {
+				adj2 = 1;
+			}
                 
-            		for (unsigned int j = 0; j < num1; ++j) {
-                		for (unsigned int k = 0; k < num2; ++k) {
+            		for (unsigned int j = 0; j < num1+adj1; ++j) {
+                		for (unsigned int k = 0; k < num2+adj2; ++k) {
                     			try {
                         			totU += ppot[spec1][spec2]->energy(&atoms[spec1][j], &atoms[spec2][k], box_);
-                    			} catch (customException &ce) {
+					} catch (customException &ce) {
                         			std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
                         			throw customException (a+b);
                     			}
                 		}
             		}
-            		// add tail correction to potential energy
+
+            		// add tail correction to potential energy but only bewteen fully inserted species
 #ifdef FLUID_PHASE_SIMULATIONS
             		if ((ppot[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) {
                 		totU += (num1)*ppot[spec1][spec2]->tailCorrection(num2/V);
