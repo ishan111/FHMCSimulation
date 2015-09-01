@@ -104,13 +104,82 @@ int aggVolBias::make (simSystem &sys) {
     if (rng(&RNG_SEED) < pBias_) {
         // choose a particle "in" k or "out" j with equal probability
         // note that "out" j includes the "in" k region as well
+        atom* chosenAtom;
         if (rng (&RNG_SEED) < 0.5) {
-            // choose particle "in" k
+            // choose particle "in" k, this chosen particle can be of any type
+            std::vector < atom* > neighborAtoms;
+            neighborAtoms.reserve(100); // 100 is just an arbitrary number to help accelerate
+            for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+                int totKatoms = sys.numSpecies[i];
+                
+                // account for if in expanded ensemble and have an additional partially inserted particle floating around
+                if (sys.getCurrentM() > 0 && sys.getFactionalAtomType() == i) {
+                    totKatoms++;
+                }
+                
+                for (unsigned int j = 0; j < totKatoms; ++j) {
+                    if (pbc_dist2(sys.atoms[i][j]->pos, sys.atoms[typeIndex2_][pkK]->pos, sys.box()) < rc2_*rc2_) {
+                        if (sys.atoms[typeIndex2_][pkK] != sys.atoms[i][j]) { // since J and K do not overlap do not have to check if this is pkJ
+                            neighborAtoms.push_back(&sys.atoms[i][j]);
+                        }
+                    }
+                }
+            }
             
+            // reject move if no neighbors
+            if (neighborAtoms.begin() == neighborAtoms.end()) {
+                if (sys.useWALA) {
+                    sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+                }
+                if (sys.useTMMC) {
+                    sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
+                }
+                return MOVE_FAILURE;
+            }
+            
+            // otherwise choose an atom
+            const int atomIndex = (int) floor(rng (&RNG_SEED) * neighborAtoms.size());
+            chosenAtom = neighborAtoms[atomIndex];
         } else {
-            // choose particle "out" of j
+            // choose particle "out" of j, this chosen particle can be of any type
             
+            // just pick atoms (of any type) at random and see if it is "out" of j
+            // this should be faster than establishing, a priori, all atoms which are "out"
+            // and then picking from that list since *most* atoms should be "out"
+            // unlike when we have to pick from "in" ones which are more rare
+            
+            bool inJ = true;
+            while (inJ) {
+                const int ranSpec = (int) floor(rng (&RNG_SEED) * sys.nSpecies());
+                int availAtoms = sys.numSpecies[ranSpec];
+                // account for if in expanded ensemble and have an additional partially inserted particle floating around
+                if (sys.getCurrentM() > 0 && sys.getFactionalAtomType() == ranSpec) {
+                    availAtoms++;
+                }
+                int ranIndex = (int) floor(rng (&RNG_SEED) * availAtoms);
+                
+                // check this atom is neither pkJ nor pkK
+                if (sys.atoms[ranSpec][ranIndex] != sys.atoms[typeIndex_][pkJ] && sys.atoms[ranSpec][ranIndex] != sys.atoms[typeIndex2_][pkK]) {
+                    if (!(pbc_dist2(sys.atoms[ranSpec][ranIndex]->pos, sys.atoms[typeIndex1_][pkJ]->pos, sys.box()) < rc1_*rc1_)) {
+                        chosenAtom = sys.atoms[ranSpec][ranIndex];
+                        inJ = false;
+                    }
+                }
+            }
         }
+        
+        // move the chosen particle "in" j
+        
+        // randomly choose a radius from [0, rc2) <-- Could be a bit smarter with this (adjust V_in later) if HS, but for now just leave as in
+        
+        // then choose a point randomly on the surface of that sphere to place chosenAtomInJ
+        
+        // get energy of chosenAtom in current state
+        
+        // "move" chosenAtom, amounts to translation algorithm
+        
+        // assign p_u
+        
     } else {
 		// choose a particle "in" j, this chosen particle can be of any type
         std::vector < atom* > neighborAtoms;
@@ -125,7 +194,7 @@ int aggVolBias::make (simSystem &sys) {
             
             for (unsigned int j = 0; j < totJatoms; ++j) {
                 if (pbc_dist2(sys.atoms[i][j]->pos, sys.atoms[typeIndex1_][pkJ]->pos, sys.box()) < rc1_*rc1_) {
-                    if (sys.atoms[typeIndex1_][pkJ] != sys.atoms[i][j]) {
+                    if (sys.atoms[typeIndex1_][pkJ] != sys.atoms[i][j]) { // since J and K do not overlap do not have to check this is pkK
                         neighborAtoms.push_back(&sys.atoms[i][j]);
                     }
                 }
@@ -180,6 +249,7 @@ int aggVolBias::make (simSystem &sys) {
 	
 	// remember to upated TMMC and WL regardless of what happens
 
+        // ADD CHECKS TO ENSURE NOT pkK also
 
 	return MOVE_FAILURE;
 }
