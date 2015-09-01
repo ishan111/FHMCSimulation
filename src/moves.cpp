@@ -1,15 +1,15 @@
 #include "moves.h"
 
 mcMove::~mcMove () {
-    ;
+	;
 }
 
 moves::moves (const int M) {
-    if (M > 0) {
-        M_ = M;
-    } else {
-        throw customException ("Error, number of expanded ensemble stages must be > 0");
-    }
+	if (M > 0) {
+        	M_ = M;
+	} else {
+        	throw customException ("Error, number of expanded ensemble stages must be > 0");
+	}
 }
 
 moves::~moves () {
@@ -27,23 +27,23 @@ void moves::addMove (mcMove *newMove, const double probability) {
 	moves_.push_back(newMove);
 	rawProbabilities_.push_back(probability);
 	normProbabilities_.resize(rawProbabilities_.size());
-    int size = 0;
-    if (newMove->changeN()) {
-        size = M_;
-    } else {
-        size = 1;
-    }
-    if (succeeded_.end() == succeeded_.begin()) {
-        succeeded_.resize(1);
-        attempted_.resize(1);
-        succeeded_[0].resize(size, 0.0);
-        attempted_[0].resize(size, 0.0);
-    } else {
-        succeeded_.resize(succeeded_.size()+1);
-        attempted_.resize(attempted_.size()+1);
-        succeeded_[succeeded_.size()-1].resize(size, 0.0);
-        attempted_[attempted_.size()-1].resize(size, 0.0);
-    }
+    	int size = 0;
+    	if (newMove->changeN()) {
+       		size = M_;
+    	} else {
+        	size = 1;
+    	}
+    	if (succeeded_.end() == succeeded_.begin()) {
+        	succeeded_.resize(1);
+        	attempted_.resize(1);
+        	succeeded_[0].resize(size, 0.0);
+        	attempted_[0].resize(size, 0.0);
+    	} else {
+        	succeeded_.resize(succeeded_.size()+1);
+        	attempted_.resize(attempted_.size()+1);
+        	succeeded_[succeeded_.size()-1].resize(size, 0.0);
+        	attempted_[attempted_.size()-1].resize(size, 0.0);
+    	}
 	
 	// update move probabilities
 	double sum = 0.0;
@@ -67,9 +67,9 @@ void moves::addMove (mcMove *newMove, const double probability) {
  * \param [in] sys simSystem object to make a move in.
  */
 void moves::makeMove (simSystem &sys) {
-    if (sys.getTotalM() != M_) {
-        throw customException ("Error, M in system different from M in moves class operating on the system");
-    }
+	if (sys.getTotalM() != M_) {
+        	throw customException ("Error, M in system different from M in moves class operating on the system");
+    	}
     
 	int moveChosen = -1, succ = 0, mIndex = 0;
 	bool done = false;
@@ -85,10 +85,10 @@ void moves::makeMove (simSystem &sys) {
 						done = false;
 						break;
 					} else {
-                        // get M before move happens which can change the state of the system
-                        if (moves_[i]->changeN()) {
-                            mIndex = sys.getCurrentM();
-                        }
+                        			// get M before move happens which can change the state of the system
+                        			if (moves_[i]->changeN()) {
+                            				mIndex = sys.getCurrentM();
+                        			}
 						try {
 							succ = moves_[i]->make(sys);
 						} catch (customException &ce) {
@@ -97,8 +97,8 @@ void moves::makeMove (simSystem &sys) {
 							throw customException(a+b);
 						}
 						done = true;
-			    		moveChosen = i;
-			    		break;
+			    			moveChosen = i;
+			    			break;
 					}
 				} else {
 					// without expanded ensemble, inserts/deletes can proceed unchecked
@@ -110,9 +110,9 @@ void moves::makeMove (simSystem &sys) {
 						throw customException(a+b);
 					}
 					done = true;
-                    moveChosen = i;
-                    mIndex = 0;
-                    break;
+                    			moveChosen = i;
+                    			mIndex = 0;
+                    			break;
 				}
 			}
 		}
@@ -122,8 +122,8 @@ void moves::makeMove (simSystem &sys) {
 		throw customException("Failed to choose a move properly");
 	}
 	
-    attempted_[moveChosen][mIndex] += 1.0;
-    succeeded_[moveChosen][mIndex] += succ;
+	attempted_[moveChosen][mIndex] += 1.0;
+	succeeded_[moveChosen][mIndex] += succ;
 }
 
 /*!
@@ -133,14 +133,14 @@ void moves::makeMove (simSystem &sys) {
  * \return ans Number of Success / Total Attempts for each move
  */
 std::vector < std::vector < double > > moves::reportMoveStatistics () {
-    std::vector < std::vector < double > > ans = succeeded_;
-    if (attempted_.begin() == attempted_.end()) {
-        throw customException ("No moves added to system");
-    }
-    for (unsigned int i = 0; i < attempted_.size(); ++i) {
-        for (unsigned int j = 0; j < attempted_[i].size(); ++j) {
-            ans[i][j] /= attempted_[i][j];
-        }
-    }
-    return ans;
+	std::vector < std::vector < double > > ans = succeeded_;
+	if (attempted_.begin() == attempted_.end()) {
+		throw customException ("No moves added to system");
+    	}
+    	for (unsigned int i = 0; i < attempted_.size(); ++i) {
+        	for (unsigned int j = 0; j < attempted_[i].size(); ++j) {
+            	ans[i][j] /= attempted_[i][j];
+        	}
+    	}
+    	return ans;
 }

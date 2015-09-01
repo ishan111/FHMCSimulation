@@ -17,8 +17,8 @@ class mcMove {
 public:
 	mcMove () {};
 	mcMove (const int typeIndex, const std::string tag) { typeIndex_ = typeIndex; name_ = tag+sstr(typeIndex); } 
-    virtual ~mcMove () = 0;
-    virtual int make (simSystem &sys) = 0; //!< Make a MC move, return MOVE_SUCCESS or MOVE_FAILURE
+   	virtual ~mcMove () = 0;
+    	virtual int make (simSystem &sys) = 0; //!< Make a MC move, return MOVE_SUCCESS or MOVE_FAILURE
 	const bool changeN () { return changeN_; }	//!< Returns whether or not the move has the ability to change the net number of particles in the system	
 	const int whatType () { return typeIndex_; } //!< Returns the index referring to the atom type this move operates on
 	const std::string myName () { return name_; }	//!< Return the name of this move
@@ -34,22 +34,22 @@ protected:
  */
 class moves {
 public:
-    moves (const int M = 1);
-    ~moves ();
+    	moves (const int M = 1);
+    	~moves ();
     
-    void makeMove (simSystem &sys);	
-    void addMove (mcMove *newMove, const double probability);
-    std::vector < std::vector < double > > reportMoveStatistics ();
-    std::vector < double > reportProbabilities () { return normProbabilities_; } //!< Echo the normalized probabilities of each move in the object
+    	void makeMove (simSystem &sys);	
+    	void addMove (mcMove *newMove, const double probability);
+    	std::vector < std::vector < double > > reportMoveStatistics ();
+    	std::vector < double > reportProbabilities () { return normProbabilities_; } //!< Echo the normalized probabilities of each move in the object
 	const std::vector < mcMove* > includedMoves () { return moves_; } //!< Returns a vector of pointers to move objects currently being used
 	
 private:
-    std::vector < double > normProbabilities_; //!< Sum of un-normalized probability of each move included
-    std::vector < double > rawProbabilities_; //!< Un-normalized probabilty of each move
-    std::vector < std::vector < double > > succeeded_; //!< Number of times each move was successful
-    std::vector < std::vector < double > > attempted_; //!< Number of times each move was attempted
-    std::vector < mcMove* > moves_; //!< Vector of pointers to all moves used
-    int M_; //!< Number of stages for insert/delete moves
+    	std::vector < double > normProbabilities_; //!< Sum of un-normalized probability of each move included
+    	std::vector < double > rawProbabilities_; //!< Un-normalized probabilty of each move
+    	std::vector < std::vector < double > > succeeded_; //!< Number of times each move was successful
+    	std::vector < std::vector < double > > attempted_; //!< Number of times each move was attempted
+    	std::vector < mcMove* > moves_; //!< Vector of pointers to all moves used
+    	int M_; //!< Number of stages for insert/delete moves
 };
 
 #endif

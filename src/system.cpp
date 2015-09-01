@@ -64,10 +64,10 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
 	
 	// recheck bounds and possibly resize
 	int tmpTot = 0;
-    for (unsigned int i = 0; i < nSpecies_; ++i) {
-        if (maxSpecies_[i] < minSpecies_[i]) {
-            throw customException ("Max species < Min species");
-        }
+    	for (unsigned int i = 0; i < nSpecies_; ++i) {
+        	if (maxSpecies_[i] < minSpecies_[i]) {
+            		throw customException ("Max species < Min species");
+        	}
 		try {
 			atoms[i].resize(maxSpecies_[i]);
 		} catch (std::exception &e) {
@@ -78,21 +78,21 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
 		}
 		tmpTot += numSpecies[i];
 	}
-    totN_ = tmpTot;
+    	totN_ = tmpTot;
   
-    // Allocate space for energy matrix - this will only be recorded when the system is within the specific window we are looking for
-    // Because of implementation of Shen and Errington method, this syntax is the same for single and multicomponent systems
-    long long int size = totNBounds_[1] - totNBounds_[0] + 1;
-    try {
-    	AverageU_.resize(size, 0); 
-    } catch (std::bad_alloc &ba) {
-    	throw customException ("Out of memory for energy record");
-    }
-    try {
-    	numAverageU_.resize(size, 0);
-    } catch (std::bad_alloc &ba) {
-        throw customException ("Out of memory for energy record");
-    }
+    	// Allocate space for energy matrix - this will only be recorded when the system is within the specific window we are looking for
+    	// Because of implementation of Shen and Errington method, this syntax is the same for single and multicomponent systems
+    	long long int size = totNBounds_[1] - totNBounds_[0] + 1;
+    	try {
+    		AverageU_.resize(size, 0); 
+    	} catch (std::bad_alloc &ba) {
+    		throw customException ("Out of memory for energy record");
+    	}
+    	try {
+    		numAverageU_.resize(size, 0);
+    	} catch (std::bad_alloc &ba) {
+        	throw customException ("Out of memory for energy record");
+    	}
 	for (unsigned int i = 0; i < averageN_.size(); ++i) {
 		try {
         		averageN_[i].resize(size, 0);
@@ -115,38 +115,38 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
  * \param [in] override Override command that prevents the expanded ensemble state from being changed.  Used during swap moves where "insertions" are temporary.
  */
 void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
-    if (typeIndex < nSpecies_ && typeIndex >= 0) {
-    	if (numSpecies[typeIndex] < maxSpecies_[typeIndex]) {
-        	if (Mtot_ > 1 && !override) {
-        		// expanded ensemble behavior, "normal" insertion and deletion
-        		if (Mcurrent_ > 0) { // further inserting an atom that already partially exists in the system
-        			// ensure the system pointer is correct if currently a partially inserted atom
-        			if (fractionalAtom_ != newAtom || typeIndex != fractionalAtomType_) {
-        				throw customException ("Fractional atom pointer does not point to atom believed to be inserted");
-        			}
+	if (typeIndex < nSpecies_ && typeIndex >= 0) {
+		if (numSpecies[typeIndex] < maxSpecies_[typeIndex]) {
+			if (Mtot_ > 1 && !override) {
+        			// expanded ensemble behavior, "normal" insertion and deletion
+        			if (Mcurrent_ > 0) { // further inserting an atom that already partially exists in the system
+        				// ensure the system pointer is correct if currently a partially inserted atom
+        				if (fractionalAtom_ != newAtom || typeIndex != fractionalAtomType_) {
+        					throw customException ("Fractional atom pointer does not point to atom believed to be inserted");
+        				}
         			
-        			// increment expanded state
-        			fractionalAtom_->mState++;
-        			Mcurrent_++;
-        			
-        			// check if now fully inserted
-        			if (fractionalAtom_->mState == Mtot_) {
-        				fractionalAtom_->mState = 0;
-        				Mcurrent_ = 0;
-        				totN_++;
-        				numSpecies[typeIndex]++;
-        			}
-        		} else {
-        			// inserting a new atom for the first time
-        			atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
-        			
-        			// assign fractional atom
-        			fractionalAtom_ = &atoms[typeIndex][numSpecies[typeIndex]];
-        			fractionalAtomType_ = typeIndex;
-        			
-        			// increment expanded state
-        			fractionalAtom_->mState = 1;
-        			Mcurrent_ = 1;
+	        			// increment expanded state
+        				fractionalAtom_->mState++;
+        				Mcurrent_++;
+        				
+ 	       				// check if now fully inserted
+        				if (fractionalAtom_->mState == Mtot_) {
+        					fractionalAtom_->mState = 0;
+	        				Mcurrent_ = 0;
+        					totN_++;
+        					numSpecies[typeIndex]++;
+        				}
+        			} else {
+	        			// inserting a new atom for the first time
+        				atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
+        				
+        				// assign fractional atom
+        				fractionalAtom_ = &atoms[typeIndex][numSpecies[typeIndex]];
+	        			fractionalAtomType_ = typeIndex;
+        				
+        				// increment expanded state
+        				fractionalAtom_->mState = 1;
+        				Mcurrent_ = 1;
         			
 					// add particle into appropriate cell lists
 					for (unsigned int i = 0; i < nSpecies_; ++i) {
@@ -155,58 +155,58 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
 							cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex]]); // numSpecies[typeIndex] is the number of fully inserted ones, this partially inserted one comes after that
 						}
 					}
-        		}
-        	} else if (Mtot_ > 1 && override) {
-        		// expanded ensemble behavior, but now amidst a "swap move" rather than an actual insertion or deletion.
-        		// for this, insertions involve just putting the atom "back" into the system / cellLists after being artificially completely removed
-
-        		// ensure we insert at the proper "end"
-        		int end = numSpecies[typeIndex];
-        		if (Mcurrent_ > 0 && typeIndex == fractionalAtomType_ && newAtom->mState == 0) {
-        			end++; // insert after the partially inserted one since newAtom is NOT the partial one
-        		}
-        		atoms[typeIndex][end] = (*newAtom);
+        			}
+        		} else if (Mtot_ > 1 && override) {
+	        		// expanded ensemble behavior, but now amidst a "swap move" rather than an actual insertion or deletion.
+        			// for this, insertions involve just putting the atom "back" into the system / cellLists after being artificially completely removed
+	
+        			// ensure we insert at the proper "end"
+        			int end = numSpecies[typeIndex];
+        			if (Mcurrent_ > 0 && typeIndex == fractionalAtomType_ && newAtom->mState == 0) {
+        				end++; // insert after the partially inserted one since newAtom is NOT the partial one
+	        		}
+        			atoms[typeIndex][end] = (*newAtom);
+        			
+        			// if we just added a partially inserted/deleted particle back to the system, need to update the pointer
+	        		if (atoms[typeIndex][end].mState != 0) {
+        				fractionalAtom_ = &atoms[typeIndex][end];
+        				fractionalAtomType_ = typeIndex;
+		
+        				// set the system's mState back to that of the atom just inserted, iff it was the partial one
+        				Mcurrent_ = atoms[typeIndex][end].mState;
+        			} else {
+        				totN_++; // we just added a "full" atom
+        				numSpecies[typeIndex]++; // we just added a "full" atom
+        			}
         		
-        		// if we just added a partially inserted/deleted particle back to the system, need to update the pointer
-        		if (atoms[typeIndex][end].mState != 0) {
-        			fractionalAtom_ = &atoms[typeIndex][end];
-        			fractionalAtomType_ = typeIndex;
-
-        			// set the system's mState back to that of the atom just inserted, iff it was the partial one
-        			Mcurrent_ = atoms[typeIndex][end].mState;
-        		} else {
-        			totN_++; // we just added a "full" atom
-        			numSpecies[typeIndex]++; // we just added a "full" atom
-        		}
-        		
-        		// put newAtom into the cell lists whatever its state
-               		for (unsigned int i = 0; i < nSpecies_; ++i) {
-                		if (useCellList_[typeIndex][i]) {
-                 			cellList* cl = cellListsByPairType_[typeIndex][i];
-                 			cl->insertParticle(&atoms[typeIndex][end]);
+	        		// put newAtom into the cell lists whatever its state
+               			for (unsigned int i = 0; i < nSpecies_; ++i) {
+        	        		if (useCellList_[typeIndex][i]) {
+                 				cellList* cl = cellListsByPairType_[typeIndex][i];
+                 				cl->insertParticle(&atoms[typeIndex][end]);
+                 			}
                  		}
-                 	}
-        	} else {
-        		// direct insertion (no expanded ensemble)
-               		atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
-               		numSpecies[typeIndex]++;
-                	totN_++;
+        		} else {
+	        		// direct insertion (no expanded ensemble)
+        	       		atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
+               			numSpecies[typeIndex]++;
+                		totN_++;
                 
-               		// add particle into appropriate cell lists
-               		for (unsigned int i = 0; i < nSpecies_; ++i) {
-               			if (useCellList_[typeIndex][i]) {
-                			cellList* cl = cellListsByPairType_[typeIndex][i];
-                			cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex] - 1]);
+	               		// add particle into appropriate cell lists
+        	       		for (unsigned int i = 0; i < nSpecies_; ++i) {
+               				if (useCellList_[typeIndex][i]) {
+                				cellList* cl = cellListsByPairType_[typeIndex][i];
+                				cl->insertParticle(&atoms[typeIndex][numSpecies[typeIndex] - 1]);
+                			}
                 		}
-                	}
+        		}
+        	} else {
+            		std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
+            		throw customException ("Reached upper bound, cannot insert an atom of type index "+index);
         	}
-        } else {
-            std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
-            throw customException ("Reached upper bound, cannot insert an atom of type index "+index);
-        }
-    } else {
-        throw customException ("That species index does not exist, cannot insert an atom");
-    }
+	} else {
+        	throw customException ("That species index does not exist, cannot insert an atom");
+    	}
 }
 
 /*!
@@ -224,40 +224,40 @@ void simSystem::deleteAtom (const int typeIndex, const int atomIndex, bool overr
         			if (Mtot_ > 1) {
         				// expanded ensemble and not necessarily deleting the partial atom
 
-						int end = numSpecies[typeIndex] - 1;
-						if (fractionalAtomType_ == typeIndex && Mcurrent_ > 0) {
-							// we are deleting a particle which has to watch out for the partial atom
-							end++;
-						}
+					int end = numSpecies[typeIndex] - 1;
+					if (fractionalAtomType_ == typeIndex && Mcurrent_ > 0) {
+						// we are deleting a particle which has to watch out for the partial atom
+						end++;
+					}
 						
-						if (atoms[typeIndex][atomIndex].mState == 0) {
-							// if we are removing a "full" particle, have to decrement Ntot, else not
-							numSpecies[typeIndex]--;
-							totN_--;					
-						} else {
-							// but if removing the partial particle, M is affected
-							Mcurrent_ = 0; // regardless of how M was originally, the partial particle is now "entirely" gone
-						}
+					if (atoms[typeIndex][atomIndex].mState == 0) {
+						// if we are removing a "full" particle, have to decrement Ntot, else not
+						numSpecies[typeIndex]--;
+						totN_--;					
+					} else {
+						// but if removing the partial particle, M is affected
+						Mcurrent_ = 0; // regardless of how M was originally, the partial particle is now "entirely" gone
+					}
 	
-						bool replace = false;
-						if (&atoms[typeIndex][end] == fractionalAtom_) {
-							// then the fractional atom is about to be used to replace a "full" one
-							replace = true;
-						}
+					bool replace = false;
+					if (&atoms[typeIndex][end] == fractionalAtom_) {
+						// then the fractional atom is about to be used to replace a "full" one
+						replace = true;
+					}
 	
-						// have to entirely remove the particle
-						for (unsigned int i = 0; i < nSpecies_; ++i) {
-								if (useCellList_[typeIndex][i]) {
-									cellList* cl = cellListsByPairType_[typeIndex][i];
-									cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][end]);
-								}
-							}
+					// have to entirely remove the particle
+					for (unsigned int i = 0; i < nSpecies_; ++i) {
+						if (useCellList_[typeIndex][i]) {
+							cellList* cl = cellListsByPairType_[typeIndex][i];
+							cl->swapAndDeleteParticle(&atoms[typeIndex][atomIndex], &atoms[typeIndex][end]);
+						}
+					}
 						
-						atoms[typeIndex][atomIndex] = atoms[typeIndex][end];    // "replacement" operation
+					atoms[typeIndex][atomIndex] = atoms[typeIndex][end];    // "replacement" operation
 		
-						if (replace) {
-							fractionalAtom_ = &atoms[typeIndex][atomIndex];	// update the pointer if necessary
-						}  				
+					if (replace) {
+						fractionalAtom_ = &atoms[typeIndex][atomIndex];	// update the pointer if necessary
+					}  				
         			} else {
         				// no expanded ensemble, just delete particle from appropriate cell list
                     			for (unsigned int i = 0; i < nSpecies_; ++i) {
@@ -355,25 +355,22 @@ void simSystem::deleteAtom (const int typeIndex, const int atomIndex, bool overr
  * \param [in] oldPos Old position of the atom.  The current/new position should already be stored in the atom at sys.atoms[typeIndex][atomIndex]
  */
 void simSystem::translateAtom (const int typeIndex, const int atomIndex, std::vector<double> oldPos) {
-    if (typeIndex < nSpecies_ && typeIndex >= 0) {
-        if (atomIndex >= 0) { 
-        
-        	// delete particle from appropriate cell list, move to new one
-            for (unsigned int i=0; i<nSpecies_; i++)
-            {
-            	if (useCellList_[typeIndex][i])
-            	{
-            		cellList* cl = cellListsByPairType_[typeIndex][i];
-            		cl->translateParticle(&atoms[typeIndex][atomIndex], oldPos);
-            	}
-            }        
-        } else {
-            std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
-            throw customException ("Number of those atoms in system is out of bounds, cannot translate an atom of type index "+index);
-        }
-    } else {
-        throw customException ("That species index does not exist, cannot translate the atom");
-    }
+	if (typeIndex < nSpecies_ && typeIndex >= 0) {
+        	if (atomIndex >= 0) { 
+        		// delete particle from appropriate cell list, move to new one
+            		for (unsigned int i=0; i<nSpecies_; i++) {
+            			if (useCellList_[typeIndex][i]) {
+	            			cellList* cl = cellListsByPairType_[typeIndex][i];
+	        	    		cl->translateParticle(&atoms[typeIndex][atomIndex], oldPos);
+        	    		}
+            		}        
+        	} else {
+            		std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
+            		throw customException ("Number of those atoms in system is out of bounds, cannot translate an atom of type index "+index);
+        	}
+    	} else {
+       		throw customException ("That species index does not exist, cannot translate the atom");
+    	}
 }
 
 /*
@@ -404,8 +401,8 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		exit(SYS_FAILURE);
 	} else {
 		nSpecies_ = nSpecies;
-        maxSpecies_ = maxSpecies;
-        minSpecies_ = minSpecies;
+        	maxSpecies_ = maxSpecies;
+        	minSpecies_ = minSpecies;
 		box_ = box;
 		mu_ = mu;
 		beta_ = beta;
@@ -473,24 +470,24 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 	}
     
 	totN_ = 0;
-    try {
+    	try {
 		numSpecies.resize(nSpecies, 0);
 	} catch (std::exception &e) {
 		throw customException (e.what());
 	}
     
-    try {
-        atoms.resize(nSpecies);
-    } catch (std::exception &e) {
-        throw customException (e.what());
-    }
-    for (unsigned int i = 0; i < nSpecies; ++i) {
-        if (minSpecies_[i] < 0) {
-            throw customException ("Min species < 0");
-        }
-        if (maxSpecies_[i] < minSpecies_[i]) {
-            throw customException ("Max species < Min species");
-        }
+    	try {
+        	atoms.resize(nSpecies);
+   	} catch (std::exception &e) {
+        	throw customException (e.what());
+    	}
+    	for (unsigned int i = 0; i < nSpecies; ++i) {
+        	if (minSpecies_[i] < 0) {
+            		throw customException ("Min species < 0");
+        	}
+        	if (maxSpecies_[i] < minSpecies_[i]) {
+            		throw customException ("Max species < Min species");
+        	}
 		try {
 			atoms[i].resize(maxSpecies_[i]);
 		} catch (std::exception &e) {
@@ -498,30 +495,30 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		}
 	}
     
-    energy_ = 0.0;
+    	energy_ = 0.0;
     
-    useTMMC = false;
-    useWALA = false;
+    	useTMMC = false;
+    	useWALA = false;
      
-    totNBounds_.resize(2, 0);
-    for (unsigned int i = 0; i < nSpecies_; ++i) {
-    	totNBounds_[0] += minSpecies_[i];
-    	totNBounds_[1] += maxSpecies_[i];
-    }
+    	totNBounds_.resize(2, 0);
+    	for (unsigned int i = 0; i < nSpecies_; ++i) {
+    		totNBounds_[0] += minSpecies_[i];
+    		totNBounds_[1] += maxSpecies_[i];
+    	}
     
-    // allocate space for average U storage matrix - Shen and Errington method implies this size is always the same for
-    // both single and multicomponent mixtures
-    long long int size = totNBounds_[1] - totNBounds_[0] + 1;
-    try {
-        numAverageU_.resize(size, 0);
-    } catch (std::bad_alloc &ba) {
-     	throw customException ("Out of memory for energy record");
-    }
-    try {
-        AverageU_.resize(size, 0);
-    } catch (std::bad_alloc &ba) {
-        throw customException ("Out of memory for energy record");
-    }
+    	// allocate space for average U storage matrix - Shen and Errington method implies this size is always the same for
+    	// both single and multicomponent mixtures
+    	long long int size = totNBounds_[1] - totNBounds_[0] + 1;
+    	try {
+        	numAverageU_.resize(size, 0);
+    	} catch (std::bad_alloc &ba) {
+     		throw customException ("Out of memory for energy record");
+    	}
+    	try {
+       		AverageU_.resize(size, 0);
+    	} catch (std::bad_alloc &ba) {
+        	throw customException ("Out of memory for energy record");
+    	}
 
 	try {
                 numAverageN_.resize(size, 0);
@@ -652,8 +649,8 @@ void simSystem::printU (const std::string fileName) {
 	}
 	
 #ifdef NETCDF_CAPABLE
-    // If netCDF libs are enabled, write to this format
-    const std::string name = fileName + ".nc";
+    	// If netCDF libs are enabled, write to this format
+    	const std::string name = fileName + ".nc";
   	NcFile outFile(name.c_str(), NcFile::replace);
 	NcDim probDim = outFile.addDim("vectorized_position", aveU.size());
 	NcVar probVar = outFile.addVar("averageU", ncDouble, probDim);
@@ -708,38 +705,30 @@ void simSystem::addPotential (const int spec1, const int spec2, pairPotential *p
 	ppotSet_[spec1][spec2] = true;
 	ppotSet_[spec2][spec1] = true;
 	
-	if (useCellList)
-	{
+	if (useCellList) {
 		std::cout<<"Setting up cell list for interactions between type "<<spec1<<" and "<<spec2<<std::endl;
 		// add creation of cell lists
-		if ((pp->rcut() > box_[0]/3.0) || (pp->rcut() > box_[1]/3.0) || (pp->rcut() > box_[2]/3.0))
-		{
+		if ((pp->rcut() > box_[0]/3.0) || (pp->rcut() > box_[1]/3.0) || (pp->rcut() > box_[2]/3.0)) {
 			std::cerr<<"Cutoff ("<<pp->rcut()<<") larger than 1.0/3.0 boxsize, disabling cell lists for this interaction."<<std::endl;
 			useCellList_[spec1][spec2] = false;
 			useCellList_[spec2][spec1] = false;
-		}
-		else
-		{
+		} else {
 			std::cout<<"Creating Cell list with rcut="<<pp->rcut()<<std::endl;
 			useCellList_[spec1][spec2] = true;
 			useCellList_[spec2][spec1] = true;
 			
 			std::vector<atom*> dummyList(0);
 			
-			if (cellListsByPairType_[spec1][spec2] == NULL)
-			{
+			if (cellListsByPairType_[spec1][spec2] == NULL) {
 				cellLists_.push_back(cellList(box_, pp->rcut(), dummyList));
 				cellListsByPairType_[spec1][spec2] = &cellLists_[cellLists_.size()-1];
 			}
-			if (cellListsByPairType_[spec2][spec1] == NULL)
-			{
+			if (cellListsByPairType_[spec2][spec1] == NULL) {
 				cellLists_.push_back(cellList(box_, pp->rcut(), dummyList));
 				cellListsByPairType_[spec2][spec1] = &cellLists_[cellLists_.size()-1];
 			}
 		}
-	}
-	else
-	{
+	} else {
 		useCellList_[spec1][spec2] = false;
 		useCellList_[spec2][spec1] = false;
 	}
@@ -752,29 +741,29 @@ void simSystem::addPotential (const int spec1, const int spec2, pairPotential *p
  * \param [in] comment Comment line for the file
  */
 void simSystem::printSnapshot (std::string filename, std::string comment) {
-    std::ofstream outfile (filename.c_str());
+	std::ofstream outfile (filename.c_str());
     
-    int tot = 0;
-    for (unsigned int j = 0; j < nSpecies_; ++j) {
-        tot += numSpecies[j]; // only count fully inserted species
-    }
+    	int tot = 0;
+    	for (unsigned int j = 0; j < nSpecies_; ++j) {
+        	tot += numSpecies[j]; // only count fully inserted species
+    	}
     
-    outfile << tot << std::endl;
-    outfile << comment << std::endl;
+    	outfile << tot << std::endl;
+    	outfile << comment << std::endl;
     
-    for (unsigned int j = 0; j < nSpecies_; ++j) {
-        long long int num = numSpecies[j];
-	if (Mcurrent_ > 1 && fractionalAtomType_ == j) {
-        	num += 1; // account for partially inserted atom
-	}
-	for (unsigned int i = 0; i < num; ++i) {
-		if (atoms[j][i].mState == 0) { // only print fully inserted atoms
-            		outfile << j << "\t" << atoms[j][i].pos[0] << "\t" << atoms[j][i].pos[1] << "\t" << atoms[j][i].pos[2] << std::endl;
-        	}
-	}
-    }
+    	for (unsigned int j = 0; j < nSpecies_; ++j) {
+        	long long int num = numSpecies[j];
+		if (Mcurrent_ > 1 && fractionalAtomType_ == j) {
+        		num += 1; // account for partially inserted atom
+		}
+		for (unsigned int i = 0; i < num; ++i) {
+			if (atoms[j][i].mState == 0) { // only print fully inserted atoms
+            			outfile << j << "\t" << atoms[j][i].pos[0] << "\t" << atoms[j][i].pos[1] << "\t" << atoms[j][i].pos[2] << std::endl;
+        		}
+		}
+    	}
     
-    outfile.close();
+    	outfile.close();
 }
 
 /*!
@@ -843,8 +832,7 @@ void simSystem::readRestart (std::string filename) {
 			for (unsigned int k = 1; k < Mtot_; ++k) {
 				insertAtom (index[j], fractionalAtom_); // this will check that within each species own max and min, global bounds handled above
 			}
-		}
-		catch (customException &ce) {
+		} catch (customException &ce) {
 			std::string a = "Could not initialize system from restart file, ", b = ce.what();
 			throw customException (a+b);
 		}
@@ -894,7 +882,6 @@ std::vector < atom* > simSystem::getNeighborAtoms(const unsigned int typeIndexA,
 		// loop over neighboring cells
 		for (unsigned int i = 0; i < cl->neighbours[cellIndex].size(); ++i) {
 			const unsigned int neighborCellIndex = cl->neighbours[cellIndex][i];
-			
 			for (unsigned int j = 0; j < cl->cells[neighborCellIndex].size(); ++j) {
 				if (_atom != cl->cells[neighborCellIndex][j]) {
 					neighbors.push_back(cl->cells[neighborCellIndex][j]);
@@ -912,70 +899,70 @@ std::vector < atom* > simSystem::getNeighborAtoms(const unsigned int typeIndexA,
  * \returns totU Total energy of the system
  */
 const double simSystem::scratchEnergy () {
-    double totU = 0.0;
-    double V = 1.0;
+   	double totU = 0.0;
+   	double V = 1.0;
     
-    for (unsigned int i = 0; i < box_.size(); ++i) {
-    	V *= box_[i];
-    }
+	for (unsigned int i = 0; i < box_.size(); ++i) {
+    		V *= box_[i];
+    	}
     
-    for (unsigned int spec1 = 0; spec1 < nSpecies_; ++spec1) {
-        int num1;
-        try {
-            num1 = numSpecies[spec1];
-        } catch (customException &ce) {
-            std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
-            throw customException (a+b);
-        }
+    	for (unsigned int spec1 = 0; spec1 < nSpecies_; ++spec1) {
+        	int num1;
+        	try {
+            		num1 = numSpecies[spec1];
+        	} catch (customException &ce) {
+            		std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
+            	throw customException (a+b);
+        	}
 		
-        // interactions with same type
-        for (unsigned int j = 0; j < num1; ++j) {
-            for (unsigned int k = j+1; k < num1; ++k) {
-                try {
-                    totU += ppot[spec1][spec1]->energy(&atoms[spec1][j], &atoms[spec1][k], box_); 
-                } catch (customException &ce) {
-                    std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
-                    throw customException (a+b);
-                }
-            }
-        }
+        	// interactions with same type
+        	for (unsigned int j = 0; j < num1; ++j) {
+	        	for (unsigned int k = j+1; k < num1; ++k) {
+       				try {
+                    			totU += ppot[spec1][spec1]->energy(&atoms[spec1][j], &atoms[spec1][k], box_); 
+                		} catch (customException &ce) {
+                    			std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
+                    			throw customException (a+b);
+                		}
+            		}
+        	}
         
-        // add tail correction to potential energy
+        	// add tail correction to potential energy
 #ifdef FLUID_PHASE_SIMULATIONS
-        if ((ppot[spec1][spec1]->useTailCorrection) && (num1 > 1)) {
-        	totU += (num1)*0.5*ppot[spec1][spec1]->tailCorrection((num1-1)/V);
-        }
+        	if ((ppot[spec1][spec1]->useTailCorrection) && (num1 > 1)) {
+        		totU += (num1)*0.5*ppot[spec1][spec1]->tailCorrection((num1-1)/V);
+        	}
 #endif        
-        // interactions with other unique types
-        for (unsigned int spec2 = spec1+1; spec2 < nSpecies_; ++spec2) {
-            int num2;
-            try {
-                num2 = numSpecies[spec2];
-            } catch (customException &ce) {
-                std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
-                throw customException (a+b);
-            }
+        	// interactions with other unique types
+        	for (unsigned int spec2 = spec1+1; spec2 < nSpecies_; ++spec2) {
+            		int num2;
+            		try {
+                		num2 = numSpecies[spec2];
+            		} catch (customException &ce) {
+                		std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
+                		throw customException (a+b);
+            		}
                 
-            for (unsigned int j = 0; j < num1; ++j) {
-                for (unsigned int k = 0; k < num2; ++k) {
-                    try {
-                        totU += ppot[spec1][spec2]->energy(&atoms[spec1][j], &atoms[spec2][k], box_);
-                    } catch (customException &ce) {
-                        std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
-                        throw customException (a+b);
-                    }
-                }
-            }
-            // add tail correction to potential energy
+            		for (unsigned int j = 0; j < num1; ++j) {
+                		for (unsigned int k = 0; k < num2; ++k) {
+                    			try {
+                        			totU += ppot[spec1][spec2]->energy(&atoms[spec1][j], &atoms[spec2][k], box_);
+                    			} catch (customException &ce) {
+                        			std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
+                        			throw customException (a+b);
+                    			}
+                		}
+            		}
+            		// add tail correction to potential energy
 #ifdef FLUID_PHASE_SIMULATIONS
-            if ((ppot[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) {
-                totU += (num1)*ppot[spec1][spec2]->tailCorrection(num2/V);
-            }
+            		if ((ppot[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) {
+                		totU += (num1)*ppot[spec1][spec2]->tailCorrection(num2/V);
+            		}
 #endif
-        }
-    }
+        	}
+    	}
     
-    return totU;
+    	return totU;
 }
 
 /*!
@@ -986,14 +973,14 @@ const double simSystem::scratchEnergy () {
  * \return maxSpecies Maximum number of them allowed
  */
 const int simSystem::maxSpecies (const int index) {
-    if (maxSpecies_.begin() == maxSpecies_.end()) {
-        throw customException ("No species in the system, cannot report a maximum");
-    }
-    if (maxSpecies_.size() <= index) {
-         throw customException ("System does not contain that species, cannot report a maximum");
-    } else  {
-        return maxSpecies_[index];
-    }
+	if (maxSpecies_.begin() == maxSpecies_.end()) {
+        	throw customException ("No species in the system, cannot report a maximum");
+    	}
+    	if (maxSpecies_.size() <= index) {
+        	throw customException ("System does not contain that species, cannot report a maximum");
+    	} else  {
+        	return maxSpecies_[index];
+    	}
 }
 
 /*!
@@ -1004,14 +991,14 @@ const int simSystem::maxSpecies (const int index) {
  * \return minSpecies Minimum number of them allowed
  */
 const int simSystem::minSpecies (const int index) {
-    if (minSpecies_.begin() == minSpecies_.end()) {
-        throw customException ("No species in the system, cannot report a minimum");
-    }
-    if (minSpecies_.size() <= index) {
-        throw customException ("System does not contain that species, cannot report a minimum");
-    } else  {
-        return minSpecies_[index];
-    }
+	if (minSpecies_.begin() == minSpecies_.end()) {
+        	throw customException ("No species in the system, cannot report a minimum");
+    	}
+    	if (minSpecies_.size() <= index) {
+        	throw customException ("System does not contain that species, cannot report a minimum");
+    	} else  {
+        	return minSpecies_[index];
+    	}
 }
 
 /*!
@@ -1094,20 +1081,20 @@ const double calculateBias (simSystem &sys, const int nTotFinal, const int mFina
 		const __BIAS_INT_TYPE__ address1 = sys.tmmcBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.tmmcBias->getAddress(nTotFinal, mFinal);
 		const double b1 = sys.tmmcBias->getBias (address1), b2 = sys.tmmcBias->getBias (address2);
 		rel_bias = exp(b2-b1);
-    } else if (!sys.useTMMC && sys.useWALA) {
-    	// Wang-Landau Biasing
-    	const __BIAS_INT_TYPE__ address1 = sys.wlBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.wlBias->getAddress(nTotFinal, mFinal); 
-    	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
-    	rel_bias = exp(b2-b1);
-    } else if (sys.useTMMC && sys.useWALA) {
-    	// Crossover phase where we use WL but update TMMC collection matrix
-    	const int address1 = sys.wlBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.wlBias->getAddress(nTotFinal, mFinal);
-    	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
-    	rel_bias = exp(b2-b1);
-    } else {
-    	// No biasing
-    	rel_bias = 1.0;
-    }
+    	} else if (!sys.useTMMC && sys.useWALA) {
+    		// Wang-Landau Biasing
+    		const __BIAS_INT_TYPE__ address1 = sys.wlBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.wlBias->getAddress(nTotFinal, mFinal); 
+    		const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
+    		rel_bias = exp(b2-b1);
+    	} else if (sys.useTMMC && sys.useWALA) {
+    		// Crossover phase where we use WL but update TMMC collection matrix
+	    	const int address1 = sys.wlBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.wlBias->getAddress(nTotFinal, mFinal);
+    		const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
+    		rel_bias = exp(b2-b1);
+    	} else {
+    		// No biasing
+    		rel_bias = 1.0;
+    	}
 	
 	return rel_bias;
 }

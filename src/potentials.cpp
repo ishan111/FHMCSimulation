@@ -7,8 +7,7 @@
  * \param [in] start r value to start printing U(r) from 
  * \param [in] dr Increment to move in r between prints
  */
-void pairPotential::savePotential(std::string filename, double start, double dr)
-{
+void pairPotential::savePotential(std::string filename, double start, double dr) {
 	if (dr <= 0.0) {
 		throw customException("The value for dr must be positive");
 	}
@@ -204,12 +203,10 @@ void tabulated::setParameters (const std::vector < double > params) {
  * 
  * \param [in] filename Name of ASCII file to read (r, U(r)) from 
  */
-void tabulated::loadPotential(std::string filename)
-{
+void tabulated::loadPotential(std::string filename) {
 	std::cout<<"Loading pair potential from file: "<<filename<<std::endl;
 	// first check, if file exists
-	if (fileExists(filename))
-	{
+	if (fileExists(filename)) {
 		std::cout<<"File found, processing."<<std::endl;
 		table.clear();
 		double r, pot;
@@ -244,8 +241,7 @@ void tabulated::loadPotential(std::string filename)
 			params_[3] = 0.0;
 			paramsAreSet_ = true;
 		}
-	}
-	else {
+	} else {
 		std::cerr<<"File "<<filename<<" not found, cannot setup potential."<<std::endl;
 		paramsAreSet_ = false;
 	}

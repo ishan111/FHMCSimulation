@@ -79,17 +79,17 @@ public:
     	std::vector < std::vector < pairPotential* > > ppot;	//!< Matrix of pair potentials for atom types i, j
 
 private:
-    atom* fractionalAtom_; //!< Pointer to the atom in the system that is currently only fractionally inserted/deleted
-    int fractionalAtomType_; //!< Type of atom that is currently fractionally inserted
-    int nSpecies_; //!< Number of species types allowed in the simulation (single component = 1, multicomponent > 1)
-    int Mcurrent_; //!< Fractional level of insertion of the current atom in an "expanded" state, all species have the same Mtot_
-    int Mtot_; //!< Number of fractional states available to each atom of each species in the expanded ensemble, all species are identical
-    int totN_; //!< Sum total of all atoms in the system
-    double beta_; //!< Inverse temperature, really 1/kT
-    double energy_; //!< Instantaneous energy of the system
-    std::vector < int > totNBounds_; //!< For multicomponent mixtures, biases use Shen and Errington method which uses bounds on the total number of particles in the system
-    std::vector < int > maxSpecies_; //!< Maximum number of each species allowed in the simulation
-    std::vector < int > minSpecies_; //!< Minimum number of each species allowed in the simulation
+    	atom* fractionalAtom_; //!< Pointer to the atom in the system that is currently only fractionally inserted/deleted
+    	int fractionalAtomType_; //!< Type of atom that is currently fractionally inserted
+    	int nSpecies_; //!< Number of species types allowed in the simulation (single component = 1, multicomponent > 1)
+   	int Mcurrent_; //!< Fractional level of insertion of the current atom in an "expanded" state, all species have the same Mtot_
+    	int Mtot_; //!< Number of fractional states available to each atom of each species in the expanded ensemble, all species are identical
+    	int totN_; //!< Sum total of all atoms in the system
+    	double beta_; //!< Inverse temperature, really 1/kT
+    	double energy_; //!< Instantaneous energy of the system
+    	std::vector < int > totNBounds_; //!< For multicomponent mixtures, biases use Shen and Errington method which uses bounds on the total number of particles in the system
+    	std::vector < int > maxSpecies_; //!< Maximum number of each species allowed in the simulation
+    	std::vector < int > minSpecies_; //!< Minimum number of each species allowed in the simulation
 	std::vector < double > box_; //!< System box size
 	std::vector < double > mu_; //!< Chemical potential of each species
 	std::vector < long double > AverageU_; //!< Accumulator for U for each N_tot macrostate observed between the [min, max] ranges specified
@@ -97,9 +97,9 @@ private:
 	std::vector < long double > numAverageN_; //!< Number of times <N_i> was recorded at each macrostate (Ntot)
 	std::vector < std::vector < long double > > averageN_; //!< Accumulator for the average number of each species observed as a function of N_tot
 	std::vector < std::vector < bool > > ppotSet_; //!< Matrix of pair potentials between type i and j
-    std::vector < std::vector < bool > > useCellList_;  //!< Matrix of whether or not to use cell lists to calculate potentials for pair type (i,j)
-    std::vector <cellList> cellLists_; // this vector stores the actual cell lists for the inserted potentials
-    std::vector < std::vector <cellList*> > cellListsByPairType_; // this matrix stores pointers to the actual cell lists for all pair types
+    	std::vector < std::vector < bool > > useCellList_;  //!< Matrix of whether or not to use cell lists to calculate potentials for pair type (i,j)
+    	std::vector <cellList> cellLists_; // this vector stores the actual cell lists for the inserted potentials
+    	std::vector < std::vector <cellList*> > cellListsByPairType_; // this matrix stores pointers to the actual cell lists for all pair types
 };
 
 const double calculateBias (simSystem &sys, const int nTotFinal, const int mFinal);

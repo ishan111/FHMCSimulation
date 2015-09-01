@@ -39,7 +39,7 @@ ODIR = ./
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
 # define the executable file 
-MAIN = ../bin/omcs3
+MAIN = ../bin/omcs_tc
 
 #
 # The following part of the makefile is generic; it can be used to 

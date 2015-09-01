@@ -43,162 +43,160 @@ int swapParticles::make (simSystem &sys) {
 	const std::vector < double > box = sys.box();
 	double V = 1.0;
 	for (unsigned int i = 0; i < box.size(); ++i) {
-        V *= box[i];
-    }
+        	V *= box[i];
+    	}
 	
-    double delEnergy = 0.0;
-    for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
-        // get positions of neighboring atoms around a1
-        std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex_, &sys.atoms[typeIndex_][a1]);
-        for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
-        	if (neighborAtoms[i] == &sys.atoms[typeIndex2_][a2]) {
-        		// skip their interaction as they were already deleted - this is fine because their net pairwise interaction doesn't change over the
-        		// course of the simulation - this means we don't have to actually re-insert the other atom / get its interation somehow later
-        		continue;
-        	} else {
+    	double delEnergy = 0.0;
+    	for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
+        	// get positions of neighboring atoms around a1
+        	std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex_, &sys.atoms[typeIndex_][a1]);
+        	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
+        		if (neighborAtoms[i] == &sys.atoms[typeIndex2_][a2]) {
+        			// skip their interaction as they were already deleted - this is fine because their net pairwise interaction doesn't change over the
+        			// course of the simulation - this means we don't have to actually re-insert the other atom / get its interation somehow later
+        			continue;
+        		} else {
 				try {
 					delEnergy += sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &sys.atoms[typeIndex_][a1], box);
-				}
-				catch (customException& ce) {
+				} catch (customException& ce) {
 					std::string a = "Cannot delete because of energy error: ", b = ce.what();
 					throw customException (a+b);
 				}
-        	}
-        }
-        // add tail correction to potential energy -- only enable for fluid phase simulations
-#ifdef FLUID_PHASE_SIMULATIONS
-        if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
-        	if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex_][a1])) {
-        		// then a1 is not the partially inserted particle and tail interactions must be included
-        		if (spec == typeIndex_) {
-                    if (sys.numSpecies[spec]-1 > 0) {
-                        delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
-                    }
-        		} else {
-                    if (sys.numSpecies[spec] > 0) {
-                        delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
-                    }
         		}
         	}
-        }
+        	// add tail correction to potential energy -- only enable for fluid phase simulations
+#ifdef FLUID_PHASE_SIMULATIONS
+        	if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
+        		if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex_][a1])) {
+        			// then a1 is not the partially inserted particle and tail interactions must be included
+        			if (spec == typeIndex_) {
+                    			if (sys.numSpecies[spec]-1 > 0) {
+                        			delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
+                    			}
+        			} else {
+                    			if (sys.numSpecies[spec] > 0) {
+                        			delEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
+                    			}
+        			}
+        		}
+        	}
 #endif
-    }
+	}
 
-    for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
-        // get positions of neighboring atoms around a2
-        std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex2_, &sys.atoms[typeIndex2_][a2]);
-        for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
-        	if (neighborAtoms[i] == &sys.atoms[typeIndex_][a1]) {
-        		// skip their interaction as they were already deleted - this is fine because their net pairwise interaction doesn't change over the
-        		// course of the simulation - this means we don't have to actually re-insert the other atom / get its interation somehow later
-        		continue;
-        	} else {
+    	for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
+        	// get positions of neighboring atoms around a2
+        	std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex2_, &sys.atoms[typeIndex2_][a2]);
+        	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
+        		if (neighborAtoms[i] == &sys.atoms[typeIndex_][a1]) {
+        			// skip their interaction as they were already deleted - this is fine because their net pairwise interaction doesn't change over the
+        			// course of the simulation - this means we don't have to actually re-insert the other atom / get its interation somehow later
+        			continue;
+        		} else {
 				try {
 					delEnergy += sys.ppot[spec][typeIndex2_]->energy(neighborAtoms[i], &sys.atoms[typeIndex2_][a2], box);
-				}
-				catch (customException& ce) {
+				} catch (customException& ce) {
 					std::string a = "Cannot delete because of energy error: ", b = ce.what();
 					throw customException (a+b);
 				}
-        	}
-        }
-        // add tail correction to potential energy -- only enable for fluid phase simulations
-#ifdef FLUID_PHASE_SIMULATIONS
-        if (sys.ppot[spec][typeIndex2_]->useTailCorrection) {
-        	if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex2_][a2])) {
-        		// then a2 is not the partially inserted particle and tail interactions must be included
-        		if (spec == typeIndex2_) {
-                    if (sys.numSpecies[spec]-1 > 0) {
-                        delEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection((sys.numSpecies[spec]-1)/V);
-                    }
-        		} else {
-                    if (sys.numSpecies[spec] > 0) {
-                        delEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection(sys.numSpecies[spec]/V);
-                    }
         		}
         	}
-        }
+        	// add tail correction to potential energy -- only enable for fluid phase simulations
+#ifdef FLUID_PHASE_SIMULATIONS
+        	if (sys.ppot[spec][typeIndex2_]->useTailCorrection) {
+        		if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex2_][a2])) {
+        			// then a2 is not the partially inserted particle and tail interactions must be included
+        			if (spec == typeIndex2_) {
+                    			if (sys.numSpecies[spec]-1 > 0) {
+                        			delEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection((sys.numSpecies[spec]-1)/V);
+                    			}
+        			} else {
+                    			if (sys.numSpecies[spec] > 0) {
+                        			delEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection(sys.numSpecies[spec]/V);
+                    			}
+        			}
+        		}
+        	}
 #endif
-    }
+    	}
 
-    double insEnergy = 0.0;
-    for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
-    	// get positions of neighboring atoms around a1's (a2's) new (old) location
-    	std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex_, &a1_new);
-        for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
-        	// with these new "copy atoms" getNeighborAtoms can't guarantee it doesn't point to old self, so must check
-        	if ((neighborAtoms[i] == &sys.atoms[typeIndex2_][a2]) || (neighborAtoms[i] == &sys.atoms[typeIndex_][a1])) {
-        		continue;
-        	} else {
+    	double insEnergy = 0.0;
+    	for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
+    		// get positions of neighboring atoms around a1's (a2's) new (old) location
+    		std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex_, &a1_new);
+        	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
+        		// with these new "copy atoms" getNeighborAtoms can't guarantee it doesn't point to old self, so must check
+        		if ((neighborAtoms[i] == &sys.atoms[typeIndex2_][a2]) || (neighborAtoms[i] == &sys.atoms[typeIndex_][a1])) {
+        			continue;
+        		} else {
 				try {
 					insEnergy += sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &a1_new, box);	
 				} catch (customException& ce) {
 					std::string a = "Cannot insert because of energy error: ", b = ce.what();
 					throw customException (a+b);
 				}
-        	}
-        }
-        // add tail correction to potential energy -- only enable for fluid phase simulations
-#ifdef FLUID_PHASE_SIMULATIONS
-        if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
-        	if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex_][a1])) {
-        		// then a1 is not the partially inserted particle and tail interactions must be included
-        		if (spec == typeIndex_) {
-                    if (sys.numSpecies[spec]-1 > 0) {
-                        insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
-                    }
-        		} else {
-                    if (sys.numSpecies[spec] > 0) {
-                        insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
-                    }
         		}
         	}
-        }
+        	// add tail correction to potential energy -- only enable for fluid phase simulations
+#ifdef FLUID_PHASE_SIMULATIONS
+        	if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
+        		if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex_][a1])) {
+        			// then a1 is not the partially inserted particle and tail interactions must be included
+        			if (spec == typeIndex_) {
+                    			if (sys.numSpecies[spec]-1 > 0) {
+                        			insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
+                   			}
+        			} else {
+                    			if (sys.numSpecies[spec] > 0) {
+                        			insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
+                    			}
+        			}
+        		}
+        	}
 #endif
-    }
+    	}
     
-    for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
-    	// get positions of neighboring atoms around a2's (a1's) new (old) location
-    	std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex2_, &a2_new);
-        for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
-        	if ((neighborAtoms[i] == &sys.atoms[typeIndex_][a1]) || (neighborAtoms[i] == &sys.atoms[typeIndex2_][a2])) {
-        		continue;
-        	} else {
+    	for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
+    		// get positions of neighboring atoms around a2's (a1's) new (old) location
+    		std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex2_, &a2_new);
+        	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
+        		if ((neighborAtoms[i] == &sys.atoms[typeIndex_][a1]) || (neighborAtoms[i] == &sys.atoms[typeIndex2_][a2])) {
+        			continue;
+        		} else {
 				try {
 					insEnergy += sys.ppot[spec][typeIndex2_]->energy(neighborAtoms[i], &a2_new, box);	
 				} catch (customException& ce) {
 					std::string a = "Cannot insert because of energy error: ", b = ce.what();
 					throw customException (a+b);
 				}
-        	}
-        }
-        // add tail correction to potential energy -- only enable for fluid phase simulations
-#ifdef FLUID_PHASE_SIMULATIONS
-        if (sys.ppot[spec][typeIndex2_]->useTailCorrection) {
-        	if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex2_][a2])) {
-        		// then a2 is not the partially inserted particle and tail interactions must be included
-        		if (spec == typeIndex2_) {
-                    if (sys.numSpecies[spec]-1 > 0) {
-                        insEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection((sys.numSpecies[spec]-1)/V);
-                    }
-        		} else {
-                    if (sys.numSpecies[spec] > 0) {
-                        insEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection(sys.numSpecies[spec]/V);
-                    }
         		}
         	}
-        }
+        	// add tail correction to potential energy -- only enable for fluid phase simulations
+#ifdef FLUID_PHASE_SIMULATIONS
+        	if (sys.ppot[spec][typeIndex2_]->useTailCorrection) {
+        		if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex2_][a2])) {
+        			// then a2 is not the partially inserted particle and tail interactions must be included
+        			if (spec == typeIndex2_) {
+                    			if (sys.numSpecies[spec]-1 > 0) {
+                        			insEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection((sys.numSpecies[spec]-1)/V);
+                    			}
+        			} else {
+                    			if (sys.numSpecies[spec] > 0) {
+                        			insEnergy += sys.ppot[spec][typeIndex2_]->tailCorrection(sys.numSpecies[spec]/V);
+                    			}
+        			}
+        		}
+        	}
 #endif
-    }
+    	}
 	
-    // Biasing
-    const double p_u = exp(-sys.beta()*(insEnergy - delEnergy));
-    double bias = calculateBias(sys, sys.getTotN(), sys.getCurrentM()); 
+	// Biasing
+    	const double p_u = exp(-sys.beta()*(insEnergy - delEnergy));
+    	double bias = calculateBias(sys, sys.getTotN(), sys.getCurrentM()); 
     
-    // tmmc gets updated the same way, regardless of whether the move gets accepted
-    if (sys.useTMMC) {
-    	sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), std::min(1.0, p_u)); 
-    }
+    	// tmmc gets updated the same way, regardless of whether the move gets accepted
+    	if (sys.useTMMC) {
+    		sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), std::min(1.0, p_u)); 
+    	}
 	
 	if (rng (&RNG_SEED) < p_u*bias) {
 		sys.incrementEnergy(insEnergy - delEnergy);	
@@ -256,8 +254,8 @@ int swapParticles::make (simSystem &sys) {
 			throw customException ("Expanded ensemble state of system has changed during course of swap move");
 		}*/
 
-        return MOVE_SUCCESS;
-    }
+	return MOVE_SUCCESS;
+    	}
 	
 	// update Wang-Landau bias (even if moved failed), if used
 	if (sys.useWALA) {
