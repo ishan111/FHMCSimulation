@@ -8,7 +8,7 @@
  * \return MOVE_SUCCESS if inserted a particle, otherwise MOVE_FAILURE if did not.  Will throw exceptions if there was an error.
  */
 int insertParticle::make (simSystem &sys) {
-    	bool earlyReject = false;
+    bool earlyReject = false;
 	
 	// check if at upper bound for this specific species type
 	if (sys.numSpecies[typeIndex_] >= sys.maxSpecies(typeIndex_)) {
@@ -25,11 +25,14 @@ int insertParticle::make (simSystem &sys) {
 		if (sys.useWALA) {
 			 sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());		
 		}
-
 		if (sys.useTMMC) {
-			sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);		
+            int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() + 1;
+            if (sys.getCurrentM() == sys.getTotalM()-1) {
+                nTotFinal++;
+                mFinal = 0;
+            }
+			sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, sys.getCurrentM(), mFinal, 0.0);
 		}
-
 		return MOVE_FAILURE;
 	}
 
@@ -60,7 +63,6 @@ int insertParticle::make (simSystem &sys) {
     	}
     } else {
     	// continue to try to insert the partially inserted one
-    	// which always stored at the "end" of the list
     	// don't increment the state yet
     	newAtom = sys.getFractionalAtom(); // mcMove object guarantees we are only making this move if the fractional atom if type typeIndex_ 
     	origState = newAtom->mState;
@@ -80,7 +82,6 @@ int insertParticle::make (simSystem &sys) {
     				throw customException (a+b);
     			}
             }
-            
             // neglect all tail corrections for partially inserted particles
         }
         
@@ -110,8 +111,10 @@ int insertParticle::make (simSystem &sys) {
         if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
         	if (newAtom->mState == 0) { // the mState was updated above to be what the atom will be if move is accepted
         		// if current atom becomes a full atom, include tail corrections
-        		insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
-        	} 
+                if (sys.numSpecies[spec] > 0) {
+                    insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
+                }
+            }
         }
 #endif
     }

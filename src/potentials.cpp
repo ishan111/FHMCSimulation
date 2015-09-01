@@ -150,7 +150,7 @@ double lennardJones::tailCorrection(const double rhoBath) {
 	const double r3 = (params_[1]*params_[1]*params_[1])/(params_[2]*params_[2]*params_[2]);
 	const double r9 = r3*r3*r3;
 	
-	return (8.0/3.0*PI*rhoBath*params_[0]*params_[1]*params_[1]*params_[1]*(r9/3.0 - r3));
+	return 2.0*(8.0/3.0*PI*rhoBath*params_[0]*params_[1]*params_[1]*params_[1]*(r9/3.0 - r3));
 }
 
 /*!

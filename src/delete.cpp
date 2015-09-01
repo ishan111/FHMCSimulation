@@ -11,33 +11,36 @@ int deleteParticle::make (simSystem &sys) {
 	bool earlyReject = false;
 
 	// check if any can be deleted from this species
-    	if (sys.numSpecies[typeIndex_] < sys.minSpecies(typeIndex_)) {
-       		earlyReject = true;
-    	}
-    	if (sys.numSpecies[typeIndex_] == sys.minSpecies(typeIndex_) && sys.getCurrentM() == 0) {
-        	earlyReject = true;
-    	}
+    if (sys.numSpecies[typeIndex_] < sys.minSpecies(typeIndex_)) {
+        earlyReject = true;
+    }
+    if (sys.numSpecies[typeIndex_] == sys.minSpecies(typeIndex_) && sys.getCurrentM() == 0) {
+        earlyReject = true;
+    }
 
-    	// also check if at global bound on total number of particles
-    	if (sys.getTotN() < sys.totNMin()) {
-    		earlyReject = true;
-    	}
-    	if (sys.getTotN() == sys.totNMin() && sys.getCurrentM() == 0) { // move class guarantees only operating on the correct species already
-      		earlyReject = true;
-    	}
+    // also check if at global bound on total number of particles
+    if (sys.getTotN() < sys.totNMin()) {
+        earlyReject = true;
+    }
+    if (sys.getTotN() == sys.totNMin() && sys.getCurrentM() == 0) { // move class guarantees only operating on the correct species already
+        earlyReject = true;
+    }
 
 	// updates to biasing functions must be done even if at bounds
-        if (earlyReject) {
-                if (sys.useWALA) {
-                         sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
-                }
-
-                if (sys.useTMMC) {
-                        sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
-                }
-
-                return MOVE_FAILURE;
+    if (earlyReject) {
+        if (sys.useWALA) {
+            sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
         }
+        if (sys.useTMMC) {
+            int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() - 1;
+            if (sys.getCurrentM() == 0) {
+                nTotFinal--;
+                mFinal = sys.getTotalM() - 1;
+            }
+            sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, sys.getCurrentM(), mFinal, 0.0);
+        }
+        return MOVE_FAILURE;
+    }
     
 	const std::vector < double > box = sys.box();
 	double V = 1.0;
@@ -48,13 +51,13 @@ int deleteParticle::make (simSystem &sys) {
 	double delEnergy = 0.0;
 
 	// initial guess at the N state we are coming from
-        long long int nHigh = sys.numSpecies[typeIndex_];
+    long long int nHigh = sys.numSpecies[typeIndex_];
 
 	atom* chosenAtom; 
     if (sys.getCurrentM() == 0) {
     	// pick a brand new one to delete
     	chosenAtom = &sys.atoms[typeIndex_][(int) floor(rng (&RNG_SEED) * sys.numSpecies[typeIndex_])];
-	nHigh = sys.numSpecies[typeIndex_];
+        nHigh = sys.numSpecies[typeIndex_];
     } else {
     	// continue to try to delete the partially deleted one
     	chosenAtom = sys.getFractionalAtom(); // mcMove guarantees this move only being made if fractional atom of type typeIndex_
@@ -80,10 +83,14 @@ int deleteParticle::make (simSystem &sys) {
         	if (chosenAtom->mState == 0) { 
         		// if current atom is a full atom right now, include tail corrections
         		if (spec == typeIndex_) {
-        			delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
+                    if (sys.numSpecies[spec]-1 > 0) {
+                        delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
+                    }
         		} else {
-        			delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
-        		}
+                    if (sys.numSpecies[spec] > 0) {
+                        delEnergy -= sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
+                    }
+                }
         	} 
         }
 #endif

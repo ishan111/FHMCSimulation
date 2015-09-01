@@ -946,34 +946,32 @@ const double simSystem::scratchEnergy () {
         	totU += (num1)*0.5*ppot[spec1][spec1]->tailCorrection((num1-1)/V);
         }
 #endif        
-        // interactions with other types
-        for (unsigned int spec2 = 0; spec2 < nSpecies_; ++spec2) {
-            if (spec2 > spec1) { // only compute unique interactions
-                int num2;
-                try {
-                    num2 = numSpecies[spec2];
-                } catch (customException &ce) {
-                    std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
-                    throw customException (a+b);
-                }
+        // interactions with other unique types
+        for (unsigned int spec2 = spec1+1; spec2 < nSpecies_; ++spec2) {
+            int num2;
+            try {
+                num2 = numSpecies[spec2];
+            } catch (customException &ce) {
+                std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
+                throw customException (a+b);
+            }
                 
-                for (unsigned int j = 0; j < num1; ++j) {
-                    for (unsigned int k = 0; k < num2; ++k) {
-                        try {
-                            totU += ppot[spec1][spec2]->energy(&atoms[spec1][j], &atoms[spec2][k], box_);
-                        } catch (customException &ce) {
-                            std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
-                            throw customException (a+b);
-                        }
+            for (unsigned int j = 0; j < num1; ++j) {
+                for (unsigned int k = 0; k < num2; ++k) {
+                    try {
+                        totU += ppot[spec1][spec2]->energy(&atoms[spec1][j], &atoms[spec2][k], box_);
+                    } catch (customException &ce) {
+                        std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
+                        throw customException (a+b);
                     }
                 }
-                // add tail correction to potential energy
-#ifdef FLUID_PHASE_SIMULATIONS
-                if ((ppot[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) {
-                	totU += (num1)*ppot[spec1][spec2]->tailCorrection(num2/V);
-        		}
-#endif
             }
+            // add tail correction to potential energy
+#ifdef FLUID_PHASE_SIMULATIONS
+            if ((ppot[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) {
+                totU += (num1)*ppot[spec1][spec2]->tailCorrection(num2/V);
+            }
+#endif
         }
     }
     

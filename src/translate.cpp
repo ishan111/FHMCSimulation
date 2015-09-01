@@ -22,17 +22,15 @@ int translateParticle::make (simSystem &sys) {
 	}
 
 	// updates to biasing functions must be done even if at bounds
-        if (earlyReject) {
-                if (sys.useWALA) {
-                         sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
-                }
-
-                if (sys.useTMMC) {
-                        sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
-                }
-
-                return MOVE_FAILURE;
+    if (earlyReject) {
+        if (sys.useWALA) {
+            sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
         }
+        if (sys.useTMMC) {
+            sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
+        }
+        return MOVE_FAILURE;
+    }
 	
 	// choose a random particle of that type
 	int chosenAtom = 0;
@@ -69,9 +67,13 @@ int translateParticle::make (simSystem &sys) {
         	if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex_][chosenAtom])) {
         		// then chosenAtom is not a partially inserted particle and tail interactions must be included
         		if (spec == typeIndex_) {
-        			oldEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);		
+                    if (sys.numSpecies[spec]-1 > 0) {
+                        oldEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
+                    }
         		} else {
-        			oldEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
+                    if (sys.numSpecies[spec] > 0) {
+                        oldEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
+                    }
         		}
         	}
         }
@@ -111,9 +113,13 @@ int translateParticle::make (simSystem &sys) {
         	if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex_][chosenAtom])) {
         		// then chosenAtom is not a partially inserted particle and tail interactions must be included
         		if (spec == typeIndex_) {
-        			newEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);		
+                    if (sys.numSpecies[spec]-1 > 0) {
+                        newEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V);
+                    }
         		} else {
-        			newEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec])/V);
+                    if (sys.numSpecies[spec] > 0) {
+                        newEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V);
+                    }
         		}
         	}
         }

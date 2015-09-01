@@ -15,6 +15,9 @@
 
 /*!
  * Abstract base class which defines all pair potentials.
+ * Note that tail corrections should be "double" the "standard tail corrections" which try to account for 
+ * double-counting ahead of time.  The system only iterates over unique pairs, so do NOT do this.
+ * Also, when doing MC insertions/deletions this double counting is never a problem so easier to do it this way.
  */
 class pairPotential {
 public:
