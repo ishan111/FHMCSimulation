@@ -6,6 +6,7 @@
 #include "global.h"
 #include "moves.h"
 #include "atom.h"
+#include "utilities.h"
 
 class aggVolBias : public mcMove {
 public:

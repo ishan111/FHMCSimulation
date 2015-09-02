@@ -41,105 +41,105 @@ aggVolBias::aggVolBias (const int typeIndex, const int typeIndex2, const double 
  * \return MOVE_SUCCESS if particles are swapped, otherwise MOVE_FAILURE if not.  Will throw exceptions if there was an error.
  */
 int aggVolBias::make (simSystem &sys) {
-	// choose a particle of typeIndex_
-	int nAvail1 = sys.numSpecies[typeIndex_];
-	if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == typeIndex_) {
-		nAvail1++;
-	}
+        // choose a particle of typeIndex_
+        int nAvail1 = sys.numSpecies[typeIndex_];
+        if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == typeIndex_) {
+            nAvail1++;
+        }
 
-	// choose a particle of typeIndex2_
-	int nAvail2 = sys.numSpecies[typeIndex2_];
-	if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == typeIndex2_) {
+        // choose a particle of typeIndex2_
+        int nAvail2 = sys.numSpecies[typeIndex2_];
+        if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == typeIndex2_) {
                 nAvail2++;
         }
 
-	// update biases even upon failure to try move (also reject if types are same and only one overall particle)
-	if (nAvail1 < 1 || nAvail2 < 1 || (typeIndex_ == typeIndex2_ && nAvail1 == 1)) {
-		if (sys.useWALA) {
-                        sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
-                }
-                if (sys.useTMMC) {
-                        sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
-                }
-		return MOVE_FAILURE;
-	}
+        // update biases even upon failure to try move (also reject if types are same and only one overall particle)
+        if (nAvail1 < 1 || nAvail2 < 1 || (typeIndex_ == typeIndex2_ && nAvail1 == 1)) {
+            if (sys.useWALA) {
+                sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+            }
+            if (sys.useTMMC) {
+                sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
+            }
+            return MOVE_FAILURE;
+        }
 
-	// choose particles, j and k - at present we are guaranteed at least 2 unique particles in the system
-	int pkJ = (int) floor(rng (&RNG_SEED) * nAvail1), pkK = 0;
-	bool jkOverlap = true;
-	while (jkOverlap) {
-		pkK = (int) floor(rng (&RNG_SEED) * nAvail2);
+        // choose particles, j and k - at present we are guaranteed at least 2 unique particles in the system
+        int pkJ = (int) floor(rng (&RNG_SEED) * nAvail1), pkK = 0;
+        bool jkOverlap = true;
+        while (jkOverlap) {
+            pkK = (int) floor(rng (&RNG_SEED) * nAvail2);
 		
-		// establish if j and k overlap their "in" regions
-		const double rc = (rc1_ + rc2_)/2.0;
+            // establish if j and k overlap their "in" regions
+            const double rc = (rc1_ + rc2_)/2.0;
 		
-		// if pkK and pkJ are withing rcut of each other, they overlap
-		if (pbc_dist2(sys.atoms[typeIndex_][pkJ]->pos, sys.atoms[typeIndex2_][pkK]->pos, sys.box()) > rc*rc) {
-			jkOverlap = false;
-		}
+            // if pkK and pkJ are withing rcut of each other, they overlap
+            if (pbc_dist2(sys.atoms[typeIndex_][pkJ]->pos, sys.atoms[typeIndex2_][pkK]->pos, sys.box()) > rc*rc) {
+                jkOverlap = false;
+            }
 
-		// However, we also technically need to ensure that if typeIndex_ == typeIndex2_, j and k are not the same particle.  
-		// Happily, this is already guaranteed by the above distance check (a particle is a distance 0 from itself)
-	}
+            // However, we also technically need to ensure that if typeIndex_ == typeIndex2_, j and k are not the same particle.
+            // Happily, this is already guaranteed by the above distance check (a particle is a distance 0 from itself)
+        }
     
-    const std::vector < double > box = sys.box();
-    double minL = box[0];
-    double Vtot = 1.0;
-    for (unsigned int i = 0; i < box.size(); ++i) {
-        Vtot *= box[i];
-        minL = std::min(minL, box[i]);
-    }
+        const std::vector < double > box = sys.box();
+        double minL = box[0];
+        double Vtot = 1.0;
+        for (unsigned int i = 0; i < box.size(); ++i) {
+            Vtot *= box[i];
+            minL = std::min(minL, box[i]);
+        }
     
-    // sanity check for rc's
-    if (!(rc1_ < minL) {
-        throw customException ("Neighborhood radius for species 1 in aggVolBias must be < box/2");
-    }
-    if (!(rc2_ < minL) {
-        throw customException ("Neighborhood radius for species 2 in aggVolBias must be < box/2");
-    }
+        // sanity check for rc's
+        if (!(rc1_ < minL) {
+            throw customException ("Neighborhood radius for species 1 in aggVolBias must be < box/2");
+        }
+        if (!(rc2_ < minL) {
+            throw customException ("Neighborhood radius for species 2 in aggVolBias must be < box/2");
+        }
     
-    // based on the choices made below, the unbiased acceptance probability will be set in each case
-    double p_u = 1.0, bias = 1.0, dU = 0.0;
-
-    if (rng(&RNG_SEED) < pBias_) {
-        // choose a particle "in" k or "out" j with equal probability
-        // note that "out" j includes the "in" k region as well
+        // based on the choices made below, the unbiased acceptance probability will be set in each case
+        double p_u = 1.0, bias = 1.0, dU = 0.0;
         atom* chosenAtom;
-        if (rng (&RNG_SEED) < 0.5) {
-            // choose particle "in" k, this chosen particle can be of any type
-            std::vector < atom* > neighborAtoms;
-            neighborAtoms.reserve(100); // 100 is just an arbitrary number to help accelerate
-            for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-                int totKatoms = sys.numSpecies[i];
+        
+        if (rng(&RNG_SEED) < pBias_) {
+            // choose a particle "in" k or "out" j with equal probability
+            // note that "out" j includes the "in" k region as well
+            if (rng (&RNG_SEED) < 0.5) {
+                // choose particle "in" k, this chosen particle can be of any type
+                std::vector < atom* > neighborAtoms;
+                neighborAtoms.reserve(100); // 100 is just an arbitrary number to help accelerate
+                for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+                    int totKatoms = sys.numSpecies[i];
                 
-                // account for if in expanded ensemble and have an additional partially inserted particle floating around
-                if (sys.getCurrentM() > 0 && sys.getFactionalAtomType() == i) {
-                    totKatoms++;
-                }
+                    // account for if in expanded ensemble and have an additional partially inserted particle floating around
+                    if (sys.getCurrentM() > 0 && sys.getFactionalAtomType() == i) {
+                        totKatoms++;
+                    }
                 
-                for (unsigned int j = 0; j < totKatoms; ++j) {
-                    if (pbc_dist2(sys.atoms[i][j]->pos, sys.atoms[typeIndex2_][pkK]->pos, sys.box()) < rc2_*rc2_) {
-                        if (sys.atoms[typeIndex2_][pkK] != sys.atoms[i][j]) { // since J and K do not overlap do not have to check if this is pkJ
-                            neighborAtoms.push_back(&sys.atoms[i][j]);
+                    for (unsigned int j = 0; j < totKatoms; ++j) {
+                        if (pbc_dist2(sys.atoms[i][j]->pos, sys.atoms[typeIndex2_][pkK]->pos, sys.box()) < rc2_*rc2_) {
+                            if (sys.atoms[typeIndex2_][pkK] != sys.atoms[i][j]) { // since J and K do not overlap do not have to check if this is pkJ
+                                neighborAtoms.push_back(&sys.atoms[i][j]);
+                            }
                         }
                     }
                 }
-            }
             
-            // reject move if no neighbors
-            if (neighborAtoms.begin() == neighborAtoms.end()) {
-                if (sys.useWALA) {
-                    sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+                // reject move if no neighbors
+                if (neighborAtoms.begin() == neighborAtoms.end()) {
+                    if (sys.useWALA) {
+                        sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+                    }
+                    if (sys.useTMMC) {
+                        sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
+                    }
+                    return MOVE_FAILURE;
                 }
-                if (sys.useTMMC) {
-                    sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
-                }
-                return MOVE_FAILURE;
-            }
             
-            // otherwise choose an atom
-            const int atomIndex = (int) floor(rng (&RNG_SEED) * neighborAtoms.size());
-            chosenAtom = neighborAtoms[atomIndex];
+                // otherwise choose an atom
+                const int atomIndex = (int) floor(rng (&RNG_SEED) * neighborAtoms.size());
+                chosenAtom = neighborAtoms[atomIndex];
         } else {
             // choose particle "out" of j, this chosen particle can be of any type
             
@@ -170,9 +170,14 @@ int aggVolBias::make (simSystem &sys) {
         
         // move the chosen particle "in" j
         
-        // randomly choose a radius from [0, rc2) <-- Could be a bit smarter with this (adjust V_in later) if HS, but for now just leave as in
+        // randomly choose a radius from [0, rc1) <-- Could be a bit smarter with this (adjust V_in later) if HS, but for now just leave as in
+        const double magnitude = rng (&RNG_SEED)*rc1_;
         
         // then choose a point randomly on the surface of that sphere to place chosenAtomInJ
+        std::vector < double > surfaceVec = random3DSurfaceVector (const double magnitude), newPos (box.size(), 0);
+        for (unsigned int i = 0; i < newPos.size(); ++i) {
+            newPos[i] = chosenAtom->pos[i] + surfaceVec[i];
+        }
         
         // get energy of chosenAtom in current state
         
@@ -242,14 +247,53 @@ int aggVolBias::make (simSystem &sys) {
             // move this chosenAtomInJ "in" pkK
             
             // randomly choose a radius from [0, rc2) <-- Could be a bit smarter with this (adjust V_in later) if HS, but for now just leave as in
+            const double magnitude = rng (&RNG_SEED)*rc2_;
             
             // then choose a point randomly on the surface of that sphere to place chosenAtomInJ
+            std::vector < double > surfaceVec = random3DSurfaceVector (const double magnitude), newPos (box.size(), 0);
+            for (unsigned int i = 0; i < newPos.size(); ++i) {
+                newPos[i] = chosenAtomInJ->pos[i] + surfaceVec[i];
+            }
+            
+            // calculate the energy of its old location
+            
+            // move, recalculate energy
+            
         }
 	}
 	
-	// remember to upated TMMC and WL regardless of what happens
+        // biasing
+        double bias = calculateBias(sys, sys.getTotN(), sys.getCurrentM()); // N_tot doesn't change throughout this move
+        
+        // tmmc gets updated the same way, regardless of whether the move gets accepted
+        if (sys.useTMMC) {
+            sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), std::min(1.0, p_u)); // since the total number of atoms isn't changing, can use getTotN() as both initial and final states
+        }
+        
+        if (rng (&RNG_SEED) < p_u*bias) {
+            try {
+                //sys.translateAtom(chosenAtomType, chosenAtom, oldAtomPos);
 
-        // ADD CHECKS TO ENSURE NOT pkK also
-
-	return MOVE_FAILURE;
+                // assuming these atoms are modified already, have to "undo" that if the move is rejected
+                
+            } catch (customException &ce) {
+                std::string a = "Failed to move atom in aggVolBias: ", b = ce.what();
+                throw customException (a+b);
+            }
+            sys.incrementEnergy(dU);
+            
+            // update Wang-Landau bias, if used
+            if (sys.useWALA) {
+                sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+            }
+            
+            return MOVE_SUCCESS;
+        }
+        
+        // update Wang-Landau bias (even if moved failed), if used
+        if (sys.useWALA) {
+            sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+        }
+        
+        return MOVE_FAILURE;
 }

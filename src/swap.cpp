@@ -203,6 +203,8 @@ int swapParticles::make (simSystem &sys) {
 		
 		// swap the particles by deleting/reinserting
 		
+        // could probably make this faster by using translateAtom instead of full insert/delete?
+        
 		// -a1 completely
 	    try {
 	    	sys.deleteAtom(typeIndex_, a1, true);

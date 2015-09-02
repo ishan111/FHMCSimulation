@@ -19,6 +19,29 @@ int RNG_SEED = -1024;	//!< Default RNG seed
 #define RNMX (1.0-EPS)
 
 /*!
+ * Chose a random vector sampled from a random distribution on the surface of a sphere.
+ *
+ * \param [in] magnitude Mangitude of the vector (radius of sphere)
+ *
+ * \return ans double3 containing coordinates of vector
+ */
+std::vector < double > random3DSurfaceVector (const double magnitude) {
+    int success = 0;
+    std:vector < double > ans (3, 0);
+    while (success == 0) {
+        double r1 = rng(&RNG_SEED), r2 = rng(&RNG_SEED), x1 = 1.0-2.0*r1, x2 = 1.0-2.0*r2;
+        double sum2 = x1*x1+x2*x2;
+        if (sum2 < 1.0) {
+            ans[0] = 2*x1*sqrt(1-sum2)*magnitude;
+            ans[1] = 2*x2*sqrt(1-sum2)*magnitude;
+            ans[2] = (1-2.0*sum2)*magnitude;
+            success = 1;
+        }
+    }
+    return ans;
+}
+
+/*!
  * Random number generator (from Numerical Recipes)
  * 
  * \param [in] idum seed
