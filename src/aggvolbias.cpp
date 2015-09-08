@@ -1,6 +1,92 @@
 #include "aggvolbias.h"
 
 /*!
+ * Instantiate a grand canonical aggregation-volume bias move to insert particles. From Chen et al., J. Chem. Phys. 115 (2001).
+ *
+ * \param [in] typeIndex Type to consider deleting from the vicinity of
+ * \param [in] pBias Biasing probability
+ * \param [in] rc Radius (min, max) around particle of typeIndex to consider as being the "in" region
+ * \param [in] tag Name modifier to identify move to user
+ */
+aggVolBiasInsert::aggVolBiasInsert (const int typeIndex, const double pBias, const std::vector < double > rc, const std::string tag) {
+	typeIndex_ = typeIndex;
+        if (pBias < 1 && pBias > 0) {
+                pBias_ = pBias;
+        } else {
+                throw customException ("Bias probability must be > 0 and < 1 for aggVolBias moves");
+        }
+
+        if (!(rc[0] > 0.0)) {
+                throw customException ("Min neighborhood radius for aggVolBias must be > 0");
+        } else {
+                rcmin_ = rc[0];
+        }
+
+        if (!(rc[1] > rc[0])) {
+                throw customException ("Max neighborhood radius for aggVolBias must be > min");
+        } else {
+                rcmax_ = rc[1];
+        }
+
+        name_ = tag + sstr(typeIndex);
+        changeN_ = true;
+}
+
+/*!
+ * Use aggregation-volume bias to insert a particle into the system.  All other information is stored in the simSystem object.
+ * 
+ * \param [in] sys System object to attempt to insert particles into.
+ * 
+ * \return MOVE_SUCCESS if particle is inserted, otherwise MOVE_FAILURE if not.  Will throw exceptions if there was an error.
+ */
+int aggVolBiasInsert::make (simSystem &sys) {
+	return MOVE_FAILURE;
+}
+
+/*!
+ * Instantiate a grand canonical aggregation-volume bias move to delete particles. From Chen et al., J. Chem. Phys. 115 (2001).
+ *
+ * \param [in] typeIndex Type to consider deleting from the vicinity of
+ * \param [in] pBias Biasing probability
+ * \param [in] rc Radius (min, max) around particle of typeIndex to consider as being the "in" region
+ * \param [in] tag Name modifier to identify move to user
+ */
+aggVolBiasDelete::aggVolBiasDelete (const int typeIndex, const double pBias, const std::vector < double > rc, const std::string tag) {
+	typeIndex_ = typeIndex;
+        if (pBias < 1 && pBias > 0) {
+                pBias_ = pBias;
+        } else {
+                throw customException ("Bias probability must be > 0 and < 1 for aggVolBias moves");
+        }
+
+        if (!(rc[0] > 0.0)) {
+                throw customException ("Min neighborhood radius for aggVolBias must be > 0");
+        } else {
+                rcmin_ = rc[0];
+        }
+
+        if (!(rc[1] > rc[0])) {
+                throw customException ("Max neighborhood radius for aggVolBias must be > min");
+        } else {
+                rcmax_ = rc[1];
+        }
+
+        name_ = tag + sstr(typeIndex);
+        changeN_ = true;
+}
+
+/*!
+ * Use aggregation-volume bias to delete a particle from the system.  All other information is stored in the simSystem object.
+ * 
+ * \param [in] sys System object to attempt to delete particles from.
+ * 
+ * \return MOVE_SUCCESS if particle is deleted, otherwise MOVE_FAILURE if not.  Will throw exceptions if there was an error.
+ */
+int aggVolBiasDelete::make (simSystem &sys) {
+        return MOVE_FAILURE;
+}
+
+/*!
  * Instantiate a canonical aggregation-volume bias move to swap particles. AVBMC3 from Chen and Siepmann, J. Phys. Chem. B 105 (2001).
  *
  * \param [in] typeIndex Type to consider in swapping in the vicinity of
@@ -13,7 +99,7 @@
 aggVolBias3::aggVolBias3 (const int typeIndex, const int typeIndex2, const double pBias, const std::vector < double > rc1, const std::vector < double > rc2, const std::string tag) {
 	typeIndex_ = typeIndex;
 	typeIndex2_ = typeIndex2; 
-	name_ = tag + sstr(typeIndex); 
+	
 	if (pBias < 1 && pBias > 0) {
 		pBias_ = pBias;
 	} else {

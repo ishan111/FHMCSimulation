@@ -24,4 +24,28 @@ private:
 	double rc2max_; //!< Maximum bonding radius around pk K
 };
 
+class aggVolBiasInsert : public mcMove {
+public:
+	aggVolBiasInsert () { changeN_ = true; pBias_ = 0; }
+	aggVolBiasInsert (const int typeIndex, const double pBias, const std::vector < double > rc, const std::string tag);
+	int make (simSystem &sys);
+
+private:
+	double pBias_;
+	double rcmin_; //!< Minimum bonding radius around pk J
+        double rcmax_; //!< Maximum bonding radius around pk J
+};
+
+class aggVolBiasDelete : public mcMove {
+public:
+        aggVolBiasDelete () { changeN_ = true; pBias_ = 0; }
+        aggVolBiasDelete (const int typeIndex, const double pBias, const std::vector < double > rc, const std::string tag);
+        int make (simSystem &sys);
+
+private:
+        double pBias_;
+        double rcmin_; //!< Minimum bonding radius around pk J
+        double rcmax_; //!< Maximum bonding radius around pk J
+};
+
 #endif
