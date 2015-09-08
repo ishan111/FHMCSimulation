@@ -330,9 +330,9 @@ void tmmc::print (const std::string fileName, bool printC) {
 		of << "# species_total_upper_bound: " << Nmax_ << std::endl;
 		of << "# species_total_lower_bound: " << Nmin_ << std::endl;
 		double V = box_[0]*box_[1]*box_[2];
-		of << "# volume: " << V << std::endl;
+		of << "# volume: " << std::setprecision(15) << V << std::endl;
 		for (long long int i = 0; i < C_.size(); ++i) {
-			of << C_[i] << std::endl;
+			of << std::setprecision(15) << C_[i] << std::endl;
 		}
 		of.close();
 	}
@@ -348,9 +348,9 @@ void tmmc::print (const std::string fileName, bool printC) {
 	of << "# species_total_upper_bound: " << Nmax_ << std::endl;
 	of << "# species_total_lower_bound: " << Nmin_ << std::endl;
 	double V = box_[0]*box_[1]*box_[2];
-	of << "# volume: " << V << std::endl;
+	of << "# volume: " << std::setprecision(15) << V << std::endl;
 	for (long long int i = 0; i < lnPI_.size(); i += Mtot_) {
-		of << lnPI_[i] << std::endl; // only print the integral states
+		of << std::setprecision(15) << lnPI_[i] << std::endl; // only print the integral states
 	}
 	of.close();
 #endif
@@ -582,9 +582,9 @@ void wala::print (const std::string fileName, bool printH) {
 		of << "# species_total_upper_bound: " << Nmax_ << std::endl;
 		of << "# species_total_lower_bound: " << Nmin_ << std::endl;
 		double V = box_[0]*box_[1]*box_[2];
-		of << "# volume: " << V << std::endl;
+		of << "# volume: " << std::setprecision(15) << V << std::endl;
 		for (long long int i = 0; i < H_.size(); ++i) {
-			of << H_[i] << std::endl;
+			of << std::setprecision(15) << H_[i] << std::endl;
 		}
 		of.close();
 	}
@@ -600,9 +600,9 @@ void wala::print (const std::string fileName, bool printH) {
 	of << "# species_total_upper_bound: " << Nmax_ << std::endl;
 	of << "# species_total_lower_bound: " << Nmin_ << std::endl;
 	double V = box_[0]*box_[1]*box_[2];
-	of << "# volume: " << V << std::endl;
+	of << "# volume: " << std::setprecision(15) << V << std::endl;
 	for (long long int i = 0; i < lnPI_.size(); ++i) {
-		of << lnPI_[i] << std::endl; // only ALL states for restarting purposes
+		of << std::setprecision(15) << lnPI_[i] << std::endl; // only ALL states for restarting purposes
 	}
 	of.close();
 #endif
