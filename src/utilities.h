@@ -6,6 +6,7 @@
 #include <sys/stat.h> 
 #include <cstdio>
 #include <sstream>
+#include <cmath>
 
 //! For converting to string
 #define sstr( x ) dynamic_cast< std::ostringstream & >( ( std::ostringstream() << std::dec << x ) ).str()

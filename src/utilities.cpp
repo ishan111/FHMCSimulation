@@ -27,7 +27,7 @@ int RNG_SEED = -1024;	//!< Default RNG seed
  */
 std::vector < double > random3DSurfaceVector (const double magnitude) {
     int success = 0;
-    std:vector < double > ans (3, 0);
+    std::vector < double > ans (3, 0);
     while (success == 0) {
         double r1 = rng(&RNG_SEED), r2 = rng(&RNG_SEED), x1 = 1.0-2.0*r1, x2 = 1.0-2.0*r2;
         double sum2 = x1*x1+x2*x2;

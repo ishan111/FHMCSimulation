@@ -77,7 +77,7 @@ int aggVolBias::make (simSystem &sys) {
         const double rc = (rc1_ + rc2_)/2.0;
 		
         // if pkK and pkJ are withing rcut of each other, they overlap
-        if (pbc_dist2(sys.atoms[typeIndex_][pkJ]->pos, sys.atoms[typeIndex2_][pkK]->pos, sys.box()) > rc*rc) {
+        if (pbc_dist2(sys.atoms[typeIndex_][pkJ].pos, sys.atoms[typeIndex2_][pkK].pos, sys.box()) > rc*rc) {
             jkOverlap = false;
         }
             
@@ -98,45 +98,49 @@ int aggVolBias::make (simSystem &sys) {
     
     const std::vector < double > box = sys.box();
     double minL = box[0];
-    double Vtot = 1.0;
+    double V = 1.0;
     for (unsigned int i = 0; i < box.size(); ++i) {
-        Vtot *= box[i];
+        V *= box[i];
         minL = std::min(minL, box[i]);
     }
     
     // sanity check for rc's
-    if (!(rc1_ < minL/2.0) {
+    if (!(rc1_ < minL/2.0)) {
         throw customException ("Neighborhood radius for species 1 in aggVolBias must be < box/2");
     }
-    if (!(rc2_ < minL/2.0) {
+    if (!(rc2_ < minL/2.0)) {
         throw customException ("Neighborhood radius for species 2 in aggVolBias must be < box/2");
     }
     
     // based on the choices made below, the unbiased acceptance probability will be set in each case
     double p_u = 1.0, bias = 1.0, dU = 0.0;
+	double V_in_j = 0.0, V_in_k = 0.0, V_out_j = 0.0, V_out_k = 0.0;
     int chosenAtomType = 0;
+	int  N_in_k = 0, N_in_j = 0, N_out_k = 0, N_out_j = 0;
     atom* chosenAtom;
     atom tmpNewAtom; // stores position the chosenAtom is being proposed to be moved to
-        
+     
+	bool inA = false; 
     if (rng(&RNG_SEED) < pBias_) {
         // choose a particle either "in" k or "out" j with equal probability
         // note that "out" j includes the "in" k region as well
         if (rng (&RNG_SEED) < 0.5) {
             // choose particle "in" k, this chosen particle can be of any type
-            std::vector < atom* > neighborAtoms;
+            inA = true;
+		std::vector < atom* > neighborAtoms;
             neighborAtoms.reserve(100); // 100 is just an arbitrary number to help accelerate
             std::vector < int > nEachType (sys.nSpecies(), 0);
             for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
                 int totKatoms = sys.numSpecies[i];
                 
                 // account for if in expanded ensemble and have an additional partially inserted particle floating around
-                if (sys.getCurrentM() > 0 && sys.getFactionalAtomType() == i) {
+                if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == i) {
                     totKatoms++;
                 }
                 
                 for (unsigned int j = 0; j < totKatoms; ++j) {
-                    if (pbc_dist2(sys.atoms[i][j]->pos, sys.atoms[typeIndex2_][pkK]->pos, sys.box()) < rc2_*rc2_) {
-                        if (sys.atoms[typeIndex2_][pkK] != sys.atoms[i][j]) { // since J and K do not overlap do not have to check if this is pkJ
+                    if (pbc_dist2(sys.atoms[i][j].pos, sys.atoms[typeIndex2_][pkK].pos, sys.box()) < rc2_*rc2_) {
+                        if (&sys.atoms[typeIndex2_][pkK] != &sys.atoms[i][j]) { // since J and K do not overlap do not have to check if this is pkJ
                             neighborAtoms.push_back(&sys.atoms[i][j]);
                             nEachType[i] += 1;
                         }
@@ -170,9 +174,12 @@ int aggVolBias::make (simSystem &sys) {
             if (chosenAtomType < 0) { // in case atomIndex = 0 and above loop did not execute at all
                 chosenAtomType = 0;
             }
+		N_in_k = nEachType[chosenAtomType]; // only concerned about the number of the chosen type
+		V_in_k = 4.0/3.0*PI*rc2_*rc2_*rc2_;
         } else {
             // choose particle "out" of j, this chosen particle can be of any type
-            
+            inA = false;
+
             // just pick atoms (of any type) at random and see if it is "out" of j
             // this should be faster than establishing, a priori, all atoms which are "out"
             // and then picking from that list since *most* atoms should be "out"
@@ -185,15 +192,15 @@ int aggVolBias::make (simSystem &sys) {
                 const int ranSpec = (int) floor(rng (&RNG_SEED) * sys.nSpecies());
                 int availAtoms = sys.numSpecies[ranSpec];
                 // account for if in expanded ensemble and have an additional partially inserted particle floating around
-                if (sys.getCurrentM() > 0 && sys.getFactionalAtomType() == ranSpec) {
+                if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == ranSpec) {
                     availAtoms++;
                 }
                 int ranIndex = (int) floor(rng (&RNG_SEED) * availAtoms);
                 
                 // check this atom is neither pkJ nor pkK
-                if (sys.atoms[ranSpec][ranIndex] != sys.atoms[typeIndex_][pkJ] && sys.atoms[ranSpec][ranIndex] != sys.atoms[typeIndex2_][pkK]) {
-                    if (!(pbc_dist2(sys.atoms[ranSpec][ranIndex]->pos, sys.atoms[typeIndex1_][pkJ]->pos, sys.box()) < rc1_*rc1_)) {
-                        chosenAtom = sys.atoms[ranSpec][ranIndex];
+                if (&sys.atoms[ranSpec][ranIndex] != &sys.atoms[typeIndex_][pkJ] && &sys.atoms[ranSpec][ranIndex] != &sys.atoms[typeIndex2_][pkK]) {
+                    if (!(pbc_dist2(sys.atoms[ranSpec][ranIndex].pos, sys.atoms[typeIndex_][pkJ].pos, sys.box()) < rc1_*rc1_)) {
+                        chosenAtom = &sys.atoms[ranSpec][ranIndex];
                         chosenAtomType = ranSpec;
                         inJ = false;
                     }
@@ -210,14 +217,25 @@ int aggVolBias::make (simSystem &sys) {
                 }
                 return MOVE_FAILURE;
             }
+
+		// need to know how many chosenAtoms are "out" of j
+		int totJatoms = sys.numSpecies[chosenAtomType];
+
+        	// account for if in expanded ensemble and have an additional partially inserted particle floating around
+        	if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == chosenAtomType) {
+                	totJatoms++;
+        	}
+
+		// need for V_out_j later
+		V_in_k = 4.0/3.0*PI*rc2_*rc2_*rc2_;
         }
         
         // move the chosenAtom "in" j
-        
+
         // (1) get energy of chosenAtom in current state
         double oldEnergy = 0.0;
         try {
-            oldEnergy = getTempEnergy_ (sys, box, chosenAtomType, chosenAtom);
+            oldEnergy = getTempEnergy_ (sys, box, V, chosenAtomType, chosenAtom);
         } catch (customException &ce) {
             throw customException (ce.what());
         }
@@ -226,8 +244,8 @@ int aggVolBias::make (simSystem &sys) {
         const double magnitude = rng (&RNG_SEED)*rc1_;
         
         // then choose a point randomly on the surface of that sphere to place chosenAtom
-        std::vector < double > surfaceVec = random3DSurfaceVector (const double magnitude), origPos = chosenAtom->pos;
-        for (unsigned int i = 0; i < newPos.size(); ++i) {
+        std::vector < double > surfaceVec = random3DSurfaceVector (magnitude), origPos = chosenAtom->pos;
+        for (unsigned int i = 0; i < origPos.size(); ++i) {
             chosenAtom->pos[i] = sys.atoms[typeIndex_][pkJ].pos[i] + surfaceVec[i];
             
             // apply periodic boundary conditions
@@ -240,10 +258,29 @@ int aggVolBias::make (simSystem &sys) {
         
         // store the newly proposed position for later
         tmpNewAtom.pos = chosenAtom->pos;
-        
+       
+	// establish how many chosenAtoms are "in" j
+	int totJatoms = sys.numSpecies[chosenAtomType];
+
+        // account for if in expanded ensemble and have an additional partially inserted particle floating around
+        if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == chosenAtomType) {
+        	totJatoms++;
+        }
+
+	N_in_j = 0;
+        for (unsigned int j = 0; j < totJatoms; ++j) {
+        	if (pbc_dist2(sys.atoms[chosenAtomType][j].pos, sys.atoms[typeIndex_][pkJ].pos, sys.box()) < rc1_*rc1_) {
+                        if (&sys.atoms[chosenAtomType][j] != &sys.atoms[typeIndex_][pkJ]) {
+				N_in_j++;
+			}
+		}
+	}
+	N_out_j = totJatoms - (N_in_j + 1); // +1 to account for pkJ itself
+	V_in_j = 4.0/3.0*PI*rc1_*rc1_*rc1_;
+	 
         double newEnergy = 0.0;
         try {
-            newEnergy = getTempEnergy_ (sys, box, chosenAtomType, chosenAtom);
+            newEnergy = getTempEnergy_ (sys, box, V, chosenAtomType, chosenAtom);
         } catch (customException &ce) {
             throw customException (ce.what());
         }
@@ -253,10 +290,15 @@ int aggVolBias::make (simSystem &sys) {
         
         // assign p_u
         dU = newEnergy - oldEnergy;
-        p_u =
-        
-        
-        
+        p_u =  0.0;
+	if (inA) {
+		// "in K" to "in J" move
+		p_u = (1.0 - pBias_)*V_in_j*N_in_k*exp(-dU*sys.beta())/(pBias_*V_in_k*(N_in_j+1.0));
+	} else {
+		// "out J" to "in J" move
+		V_out_j = V - V_in_j - V_in_k; // V_in_k subtracted must also be done consistently
+		p_u = (1.0 - pBias_)*V_in_j*N_out_j*exp(-dU*sys.beta())/((1.0 - pBias_)*V_out_j*(N_in_j + 1.0));	
+	}
     } else {
 		// choose a particle "in" j, this chosen particle can be of any type
         std::vector < atom* > neighborAtoms;
@@ -266,13 +308,13 @@ int aggVolBias::make (simSystem &sys) {
             int totJatoms = sys.numSpecies[i];
             
             // account for if in expanded ensemble and have an additional partially inserted particle floating around
-            if (sys.getCurrentM() > 0 && sys.getFactionalAtomType() == i) {
+            if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == i) {
                 totJatoms++;
             }
             
             for (unsigned int j = 0; j < totJatoms; ++j) {
-                if (pbc_dist2(sys.atoms[i][j]->pos, sys.atoms[typeIndex1_][pkJ]->pos, sys.box()) < rc1_*rc1_) {
-                    if (sys.atoms[typeIndex1_][pkJ] != sys.atoms[i][j]) { // since J and K do not overlap do not have to check this is pkK
+                if (pbc_dist2(sys.atoms[i][j].pos, sys.atoms[typeIndex_][pkJ].pos, sys.box()) < rc1_*rc1_) {
+                    if (&sys.atoms[typeIndex_][pkJ] != &sys.atoms[i][j]) { // since J and K do not overlap do not have to check this is pkK
                         neighborAtoms.push_back(&sys.atoms[i][j]);
                         nEachType[i] += 1;
                     }
@@ -294,7 +336,7 @@ int aggVolBias::make (simSystem &sys) {
         // otherwise choose an atom
         const int atomIndex = (int) floor(rng (&RNG_SEED) * neighborAtoms.size());
         chosenAtom = neighborAtoms[atomIndex];
-        int tot = 0;
+	int tot = 0;
         while (tot < atomIndex) {
             tot += nEachType[chosenAtomType];
             chosenAtomType++;
@@ -306,7 +348,10 @@ int aggVolBias::make (simSystem &sys) {
         if (chosenAtomType < 0) { // in case atomIndex = 0 and above loop did not execute at all
             chosenAtomType = 0;
         }
-        
+       
+	N_in_j = nEachType[chosenAtomType];
+	V_in_j = 4.0/3.0*PI*rc1_*rc1_*rc1_;
+ 
         // what to do with chosenAtom?
         if (rng (&RNG_SEED) < 0.5) {
             // move this chosenAtom "out" of pkJ
@@ -317,7 +362,7 @@ int aggVolBias::make (simSystem &sys) {
                 }
                 
                 // check that this position is "out" of J
-                if (pbc_dist2(tmpNewAtom.pos, sys.atoms[typeIndex_][pkJ]->pos, sys.box()) > rc1_*rc1_) {
+                if (pbc_dist2(tmpNewAtom.pos, sys.atoms[typeIndex_][pkJ].pos, sys.box()) > rc1_*rc1_) {
                     inJ = false;
                 }
             }
@@ -325,7 +370,7 @@ int aggVolBias::make (simSystem &sys) {
             // calculate energy of chosenAtom in current configuration
             double oldEnergy = 0.0;
             try {
-                oldEnergy = getTempEnergy_ (sys, box, chosenAtomType, chosenAtom);
+                oldEnergy = getTempEnergy_ (sys, box, V, chosenAtomType, chosenAtom);
             } catch (customException &ce) {
                 throw customException (ce.what());
             }
@@ -336,28 +381,40 @@ int aggVolBias::make (simSystem &sys) {
             
             double newEnergy = 0.0;
             try {
-                newEnergy = getTempEnergy_ (sys, box, chosenAtomType, chosenAtom);
+                newEnergy = getTempEnergy_ (sys, box, V, chosenAtomType, chosenAtom);
             } catch (customException &ce) {
                 throw customException (ce.what());
             }
             
             // restore atom to original position
             chosenAtom->pos = origPos;
-            
-            // assign p_u
+           
+		// must know now many chosenAtoms are "out" of J
+                N_out_j = sys.numSpecies[chosenAtomType];
+		int totJatoms = sys.numSpecies[chosenAtomType];
+
+                if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == chosenAtomType) {
+                        totJatoms++;
+                }
+
+                for (unsigned int j = 0; j < totJatoms; ++j) {
+                        if (pbc_dist2(sys.atoms[chosenAtomType][j].pos, sys.atoms[typeIndex_][pkJ].pos, sys.box()) < rc1_*rc1_) {
+                                N_out_j--; // also will subtract pkJ itself, as needed
+                        }
+                }		
+
+            // assign p_u going from "in J" to "out J"
             dU = newEnergy - oldEnergy;
-            p_u =
-            
-            
-            
-            
+		V_in_k = 4.0/3.0*PI*rc2_*rc2_*rc2_;
+		V_out_j = V - V_in_j - V_in_k;
+		p_u = (pBias_*V_out_j*N_in_j*exp(-dU*sys.beta()))/((1.0 - pBias_)*V_in_j*(N_out_j + 1.0));
         } else {
             // move this chosenAtom "in" pkK
             
             // calculate the energy of its old location
             double oldEnergy = 0.0;
             try {
-                oldEnergy = getTempEnergy_ (sys, box, chosenAtomType, chosenAtom);
+                oldEnergy = getTempEnergy_ (sys, box, V, chosenAtomType, chosenAtom);
             } catch (customException &ce) {
                 throw customException (ce.what());
             }
@@ -366,8 +423,8 @@ int aggVolBias::make (simSystem &sys) {
             const double magnitude = rng (&RNG_SEED)*rc2_;
             
             // then choose a point randomly on the surface of that sphere to place chosenAtom
-            std::vector < double > surfaceVec = random3DSurfaceVector (const double magnitude), origPos = chosenAtom->pos;
-            for (unsigned int i = 0; i < newPos.size(); ++i) {
+            std::vector < double > surfaceVec = random3DSurfaceVector (magnitude), origPos = chosenAtom->pos;
+            for (unsigned int i = 0; i < origPos.size(); ++i) {
                 chosenAtom->pos[i] = sys.atoms[typeIndex2_][pkK].pos[i] + surfaceVec[i];
                 
                 // apply periodic boundary conditions
@@ -384,25 +441,38 @@ int aggVolBias::make (simSystem &sys) {
             // move, recalculate energy
             double newEnergy = 0.0;
             try {
-                newEnergy = getTempEnergy_ (sys, box, chosenAtomType, chosenAtom);
+                newEnergy = getTempEnergy_ (sys, box, V, chosenAtomType, chosenAtom);
             } catch (customException &ce) {
                 throw customException (ce.what());
             }
             
             // restore the chosenAtoms position
             chosenAtom->pos = origPos;
+
+		// must know the number of chosenAtoms "in k"
+		int totKatoms = sys.numSpecies[chosenAtomType];
+		N_in_k = 0;
+		if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == chosenAtomType) {
+                        totKatoms++;
+                }
+
+                for (unsigned int j = 0; j < totKatoms; ++j) {
+                        if (pbc_dist2(sys.atoms[chosenAtomType][j].pos, sys.atoms[typeIndex2_][pkK].pos, sys.box()) < rc2_*rc2_) {
+                               	if (&sys.atoms[chosenAtomType][j] != &sys.atoms[typeIndex2_][pkK]) { // pkK and pkJ do not overlap so don't have to check for pkJ
+					N_in_k++;
+                        	}
+			}
+                }		
             
-            // assign p_u
+            // assign p_u going from "in J" to "in K"
             dU = newEnergy - oldEnergy;
-            p_u =
-            
-            
-            
+		V_in_k = 4.0/3.0*PI*rc2_*rc2_*rc2_;
+            p_u = (pBias_*V_in_k*N_in_j*exp(-sys.beta()*dU))/((1.0 - pBias_)*V_in_j*(N_in_k + 1.0));
         }
 	}
-	
+
     // biasing
-    double bias = calculateBias(sys, sys.getTotN(), sys.getCurrentM()); // N_tot doesn't change throughout this move
+    bias = calculateBias(sys, sys.getTotN(), sys.getCurrentM()); // N_tot doesn't change throughout this move
         
     // tmmc gets updated the same way, regardless of whether the move gets accepted
     if (sys.useTMMC) {
@@ -414,7 +484,21 @@ int aggVolBias::make (simSystem &sys) {
             // atoms were not modified overall so must do that here
             std::vector < double > origPos = chosenAtom->pos;
             chosenAtom->pos = tmpNewAtom.pos; // move the atom
-            sys.translateAtom(chosenAtomType, chosenAtom, origPos);
+            int totAtoms = sys.numSpecies[chosenAtomType];
+		if (sys.getCurrentM() > 0 && sys.getFractionalAtomType() == chosenAtomType) {
+			totAtoms++;
+		}
+		int chosenAtomIndex = -1;
+		for (unsigned int i = 0; i < totAtoms; ++i) {
+			if (&sys.atoms[chosenAtomType][i] == chosenAtom) {
+				chosenAtomIndex = i;
+				break;
+			}
+		}
+		if (chosenAtomIndex < 0) {
+			throw customException ("Error, could not locate the atom chosen to move in aggVolBias move");
+		}
+		sys.translateAtom(chosenAtomType, chosenAtomIndex, origPos);
         } catch (customException &ce) {
             std::string a = "Failed to move atom in aggVolBias: ", b = ce.what();
             throw customException (a+b);
@@ -447,7 +531,7 @@ int aggVolBias::make (simSystem &sys) {
  *
  * \return tmpEnergy Energy of the system in its current configuration
  */
-double aggVolBias::getTempEnergy_ (const simSystem &sys, const std::vector < double > &box, const int chosenAtomType, const atom* chosenAtom) {
+double aggVolBias::getTempEnergy_ (simSystem &sys, const std::vector < double > &box, const double V, const int chosenAtomType, atom* chosenAtom) {
     double tmpEnergy = 0.0;
     for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
         // get positions of neighboring atoms around chosenAtom
