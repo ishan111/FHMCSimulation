@@ -493,7 +493,8 @@ int main (int argc, char * const argv[]) {
         	}
 
 		// iteratively add each individual species, assume we want an equimolar mixture to start from
-		for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		//for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		for (unsigned int i = 0; i < 1; ++i) {
 			std::cout << "Initializing species " << i << " configurations" << std::endl;
 			
 			// insert this species i
@@ -512,11 +513,11 @@ int main (int argc, char * const argv[]) {
 			}
 
 			// now do simuation until within proper range
-			int targetNum = sys.totNMin()/sys.nSpecies();
+			int targetNum = sys.totNMin();/*/sys.nSpecies();
 			if (i == sys.nSpecies() - 1) {
 				// to account for integer rounding
 				targetNum = sys.totNMin() - (sys.nSpecies()-1)*(sys.totNMin()/sys.nSpecies());
-			}
+			}*/
 			std::cout << "Target number = " << targetNum << std::endl;
 			int tmpCounter = 0, statusPrint = 10e6;
 			while (initSys.numSpecies[i] < targetNum) {
