@@ -37,6 +37,22 @@ bool hardWallZ::inside (const std::vector < double > &point, const std::vector <
 }
 
 /*!
+ * Interaction energy with the wall.
+ *
+ * \param [in] point (x, y, z) Point to test - this does NOT need to be in the simulation box a priori
+ * \param [in] box Simulation box
+ */
+double hardWallZ::energy (const std::vector < double > &point, const std::vector < double > &box) {
+    std::vector < double > p = point;
+    pbc (p, box);
+    if (p[2] >= ub_ - sigma_/2.0 || p[2] <= lb_ + sigma_/2.0) {
+        return NUM_INFINITY;
+    } else {
+        return 0.0;
+    }
+}
+
+/*!
  * Instantiate a square well wall with boundaries in the +/- z direction.
  *
  * \param [in] lb z-Position of the lower wall
