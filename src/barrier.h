@@ -2,7 +2,6 @@
 #define BARRIER_H_
 
 #include <vector>
-#include <deque>
 #include "global.h"
 #include "utilities.h"
 #include "potentials.h"
@@ -12,6 +11,7 @@
  */
 class barrier {
 public:
+    virtual ~barrier () {;}
     virtual bool inside (const std::vector < double > &point, const std::vector < double > &box) = 0;
     virtual double energy (const std::vector < double > &point, const std::vector < double > &box) = 0;
 };
@@ -21,7 +21,7 @@ public:
  */
 class hardWallZ : public barrier {
 public:
-    ~hardWallZ ();
+    ~hardWallZ () {};
     hardWallZ (const double lb, const double ub, const double sigma);
     bool inside (const std::vector < double > &point, const std::vector < double > &box);
     double energy (const std::vector < double > &point, const std::vector < double > &box);
@@ -59,13 +59,13 @@ public:
     ~compositeBarrier ();
     
     void addhardWallZ (const double lb, const double ub, const double sigma);
-    void squareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps);
+    void addSquareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps);
     
     bool inside (const std::vector < double > &point, const std::vector < double > &box);
     double energy (const std::vector < double > &point, const std::vector < double > &box);
     
 private:
-    std::deque < barrier* > sysBarriers_;
+    std::vector < barrier* > sysBarriers_;
 };
 
 #endif
