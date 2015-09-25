@@ -17,6 +17,7 @@
 #include "bias.h"
 #include "global.h"
 #include "histogram.h"
+#include "barrier.h"
 
 // netCDF if enabled
 #ifdef NETCDF_CAPABLE
@@ -78,7 +79,8 @@ public:
     	std::vector < int > numSpecies;		//!< Total number of each type of atom the system contains
     	std::vector < std::vector < atom > > atoms;	//!< Atoms in a matrix by type, and particle index, respectively that a system CAN hold but not all are actually "in" the system
     	std::vector < std::vector < pairPotential* > > ppot;	//!< Matrix of pair potentials for atom types i, j
-
+        std::vector < compositeBarrier > speciesBarriers; //!< Barriers, if any, for each species
+    
 private:
     	atom* fractionalAtom_; //!< Pointer to the atom in the system that is currently only fractionally inserted/deleted
     	int fractionalAtomType_; //!< Type of atom that is currently fractionally inserted

@@ -413,6 +413,26 @@ int main (int argc, char * const argv[]) {
 		}
 	} 
 	
+    // Wall potentials for each species, if there are any?
+    try {
+        sys.speciesBarriers.resize(sys.nSpecies());
+    } catch (std::bad_alloc &ba) {
+        std::cerr << ba.what() << std::endl;
+        exit(SYS_FAILURE);
+    }
+    
+    // Add barriers for each species
+    
+    
+    // Still have to add this to MC moves as well
+    
+    
+    
+    
+    
+    
+    
+    
 	// specify moves to use for the system
 	moves usedMovesEq (sys.getTotalM()), usedMovesPr (sys.getTotalM());
 	std::vector < insertParticle > eqInsertions (sys.nSpecies()), prInsertions (sys.nSpecies());
