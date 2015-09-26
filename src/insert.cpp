@@ -84,6 +84,9 @@ int insertParticle::make (simSystem &sys) {
             		}
             		// neglect all tail corrections for partially inserted particles
         	}
+            
+            // account for any wall or barrier interactions
+            insEnergy -= sys.speciesBarriers[typeIndex_].energy(newAtom, box);
         
         	// now increment the expanded ensemble state after baseline has been calculated
         	newAtom->mState += 1;
@@ -118,6 +121,9 @@ int insertParticle::make (simSystem &sys) {
         	}
 #endif
     	}
+    
+        // account for any wall or barrier interaction
+        insEnergy += sys.speciesBarriers[typeIndex_].energy(newAtom, box);
     
     	// restore the original mState of the newAtom
     	newAtom->mState = origState;

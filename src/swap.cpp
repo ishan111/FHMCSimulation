@@ -82,6 +82,9 @@ int swapParticles::make (simSystem &sys) {
         	}
 #endif
 	}
+    
+    // account for wall interaction energy
+    delEnergy += sys.speciesBarriers[typeIndex_].energy(&sys.atoms[typeIndex_][a1], box);
 
     	for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
         	// get positions of neighboring atoms around a2
@@ -118,6 +121,9 @@ int swapParticles::make (simSystem &sys) {
         	}
 #endif
     	}
+    
+        // account for wall interaction energy
+        delEnergy += sys.speciesBarriers[typeIndex2_].energy(&sys.atoms[typeIndex2_][a2], box);
 
     	double insEnergy = 0.0;
     	for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
@@ -154,6 +160,8 @@ int swapParticles::make (simSystem &sys) {
         	}
 #endif
     	}
+        // account for wall interaction energy
+        insEnergy += sys.speciesBarriers[typeIndex_].energy(&a1_new, box);
     
     	for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
     		// get positions of neighboring atoms around a2's (a1's) new (old) location
@@ -188,7 +196,9 @@ int swapParticles::make (simSystem &sys) {
         	}
 #endif
     	}
-	
+        // account for wall interaction energy
+        insEnergy += sys.speciesBarriers[typeIndex2_].energy(&a2_new, box);
+    
 	// Biasing
     	const double p_u = exp(-sys.beta()*(insEnergy - delEnergy));
     	double bias = calculateBias(sys, sys.getTotN(), sys.getCurrentM()); 

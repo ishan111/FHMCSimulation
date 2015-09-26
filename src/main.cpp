@@ -424,10 +424,6 @@ int main (int argc, char * const argv[]) {
     // Add barriers for each species
     
     
-    // Still have to add this to MC moves as well
-    
-    
-    
     
     
     

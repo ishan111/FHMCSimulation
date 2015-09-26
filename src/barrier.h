@@ -5,6 +5,7 @@
 #include "global.h"
 #include "utilities.h"
 #include "potentials.h"
+#include "atom.h"
 
 /*!
  * Virtual base class for barriers.  It is intended that there should be a separate barrier class defined for each species type.
@@ -12,8 +13,11 @@
 class barrier {
 public:
     virtual ~barrier () {;}
-    virtual bool inside (const std::vector < double > &point, const std::vector < double > &box) = 0;
-    virtual double energy (const std::vector < double > &point, const std::vector < double > &box) = 0;
+    virtual bool inside (const atom *a1, const std::vector < double > &box) = 0;
+    virtual double energy (const atom *a1, const std::vector < double > &box) = 0;
+    
+protected:
+    int M_;
 };
 
 /*!
@@ -22,9 +26,9 @@ public:
 class hardWallZ : public barrier {
 public:
     ~hardWallZ () {};
-    hardWallZ (const double lb, const double ub, const double sigma);
-    bool inside (const std::vector < double > &point, const std::vector < double > &box);
-    double energy (const std::vector < double > &point, const std::vector < double > &box);
+    hardWallZ (const double lb, const double ub, const double sigma, const int M = 1);
+    bool inside (const atom *a1, const std::vector < double > &box);
+    double energy (const atom *a1, const std::vector < double > &box);
     
 private:
     double lb_; //!< Lower bound for wall in the z-direction
@@ -38,9 +42,9 @@ private:
 class squareWellWallZ : public barrier {
 public:
     ~squareWellWallZ () {};
-    squareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps);
-    bool inside (const std::vector < double > &point, const std::vector < double > &box);
-    double energy (const std::vector < double > &point, const std::vector < double > &box);
+    squareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps,  const int M = 1);
+    bool inside (const atom *a1, const std::vector < double > &box);
+    double energy (const atom *a1, const std::vector < double > &box);
     
 private:
     double lb_; //!< Lower bound for wall in the z-direction
@@ -58,11 +62,11 @@ public:
     compositeBarrier () {};
     ~compositeBarrier ();
     
-    void addhardWallZ (const double lb, const double ub, const double sigma);
-    void addSquareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps);
+    void addhardWallZ (const double lb, const double ub, const double sigma, const int M = 1);
+    void addSquareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps, const int M = 1);
     
-    bool inside (const std::vector < double > &point, const std::vector < double > &box);
-    double energy (const std::vector < double > &point, const std::vector < double > &box);
+    bool inside (const atom *a1, const std::vector < double > &box);
+    double energy (const atom *a1, const std::vector < double > &box);
     
 private:
     std::vector < barrier* > sysBarriers_;

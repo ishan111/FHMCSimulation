@@ -80,6 +80,9 @@ int translateParticle::make (simSystem &sys) {
 #endif
     	}
     
+        // account for wall or barrier interactions
+        oldEnergy += sys.speciesBarriers[typeIndex_].energy(&sys.atoms[typeIndex_][chosenAtom], box);
+    
     	// store old position and move particle along random direction in interval [-maxD_:maxD_]
     	std::vector<double> oldPos = sys.atoms[typeIndex_][chosenAtom].pos;
     	for (unsigned int i = 0; i< sys.atoms[typeIndex_][chosenAtom].pos.size(); ++i) {
@@ -124,6 +127,9 @@ int translateParticle::make (simSystem &sys) {
         	}
 #endif
     	}
+    
+        // account for wall or barrier interactions
+    newEnergy += sys.speciesBarriers[typeIndex_].energy(&sys.atoms[typeIndex_][chosenAtom], box);
     
 	// biasing
 	const double p_u = exp(-sys.beta()*(newEnergy - oldEnergy));

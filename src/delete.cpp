@@ -95,6 +95,9 @@ int deleteParticle::make (simSystem &sys) {
 #endif
     	}
     
+        // also account for any wall or barrier interaction
+    delEnergy -= sys.speciesBarriers[typeIndex_].energy(chosenAtom, box);
+    
     	// if the particle is about to be completely removed, no further calculation is required
     	if (chosenAtom->mState != 1 && sys.getTotalM() > 1) { // if 1, it is just completely removed - otherwise have to do calculation since in expanded ensemble if M > 1
     		// temporarily decrement the expanded ensemble state on the atom
@@ -118,6 +121,9 @@ int deleteParticle::make (simSystem &sys) {
             		// no tail corrections for partially inserted particles
         	}
         
+            // also account for any wall or barrier interaction
+            delEnergy += sys.speciesBarriers[typeIndex_].energy(chosenAtom, box);
+            
         	// restore the expanded ensemble state
         	chosenAtom->mState = orig_state;
     	}
