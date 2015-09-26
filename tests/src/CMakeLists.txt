@@ -17,6 +17,7 @@ endif()
 include_directories("../../src/")
 file(GLOB omcs_SRC
 	"../../src/*.h"
+	"../../src/barrier.cpp"
 	"../../src/bias.cpp"
 	"../../src/cellList.cpp"
 	"../../src/delete.cpp"

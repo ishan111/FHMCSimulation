@@ -1477,11 +1477,11 @@ TEST (testSwapMove, twoComponents) {
 	double lastAns = 0, U_save = mysys.scratchEnergy();
 	while (noMove) {
 		usedMoves.makeMove (mysys);
-		std::vector < double > ans = usedMoves.reportMoveStatistics();
-		if (ans[0] > lastAns) {
+		std::vector < std::vector < double > > ans = usedMoves.reportMoveStatistics();
+		if (ans[0][0] > lastAns) {
 			noMove = false;
 		} 
-		lastAns = ans[0];
+		lastAns = ans[0][0];
 	}
 	double dU1 = mysys.scratchEnergy();
 	EXPECT_TRUE (fabs(U_save - dU1) < 1.0e-9);
@@ -1495,11 +1495,11 @@ TEST (testSwapMove, twoComponents) {
 	U_save = mysys.scratchEnergy();
 	while (noMove) {
 		usedMoves2.makeMove (mysys);
-		std::vector < double > ans = usedMoves2.reportMoveStatistics();
-		if (ans[0] > lastAns) {
+		std::vector < std::vector < double > > ans = usedMoves2.reportMoveStatistics();
+		if (ans[0][0] > lastAns) {
 			noMove = false;
 		} 
-		lastAns = ans[0];
+		lastAns = ans[0][0];
 	}	
 	EXPECT_TRUE (fabs(mysys.scratchEnergy() - -0.3) < 1.0e-9); // only 1-3 interaction remains
 		
@@ -1514,11 +1514,11 @@ TEST (testSwapMove, twoComponents) {
 	U_save = mysys.scratchEnergy();
 	while (noMove) {
 		usedMoves3.makeMove (mysys);
-		std::vector < double > ans = usedMoves3.reportMoveStatistics();
-		if (ans[0] > lastAns) {
+		std::vector < std::vector < double > > ans = usedMoves3.reportMoveStatistics();
+		if (ans[0][0] > lastAns) {
 			noMove = false;
 		} 
-		lastAns = ans[0];
+		lastAns = ans[0][0];
 	}	
 	EXPECT_TRUE (fabs(U_save - mysys.scratchEnergy() - 0) < 1.0e-9); // no change in energy
 }
@@ -2546,7 +2546,7 @@ TEST_F (testMulticomponentExpandedMCMove, selectSpec1) {
 	mysys.addPotential (0, 1, &hc12, false);
 	mysys.addPotential (1, 1, &hc22, false);
 		
-	moves mover;
+	moves mover (Mtot);
 	
 	insertParticle insOne (0, "in1"), insTwo (1, "in2");
 	deleteParticle delOne (0, "del1"), delTwo (1, "del2");
@@ -2617,7 +2617,7 @@ TEST_F (testMulticomponentExpandedMCMove, selectSpec1_moved) {
 	mysys.addPotential (0, 1, &hc12, false);
 	mysys.addPotential (1, 1, &hc22, false);
 		
-	moves mover;
+	moves mover (Mtot);
 	
 	insertParticle insOne (0, "in1"), insTwo (1, "in2");
 	deleteParticle delOne (0, "del1"), delTwo (1, "del2");
@@ -2897,7 +2897,7 @@ TEST_F (testComputeBiasExpanded, testInSituWALASingleComponent) {
 	hc.setParameters (params);
 	mysys.addPotential (0, 0, &hc, false);
 	
-	moves usedMoves;
+	moves usedMoves (Mtot);
 	insertParticle newIns (0, "insert");
 	usedMoves.addMove(&newIns, 1.0);
 	
@@ -2939,7 +2939,7 @@ TEST_F (testComputeBiasExpanded, testInSituWALAMultiComponent) {
 	mysys.addPotential (0, 1, &hc12, false);
 	mysys.addPotential (1, 1, &hc22, false);
 		
-	moves usedMoves;
+	moves usedMoves (Mtot);
 	insertParticle newIns (0, "insert");
 	usedMoves.addMove(&newIns, 1.0);
 	
@@ -2967,7 +2967,7 @@ TEST_F (testComputeBiasExpanded, testInSituWALAMultiComponent) {
 	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(mysys.getWALABias()->getAddress(2, 2)) - 0) < 1.0e-9);
 	
 	// will insert the second species
-	moves usedMoves2;
+	moves usedMoves2 (Mtot);
 	insertParticle newIns2 (1, "insert");
 	usedMoves2.addMove(&newIns2, 1.0);
 	
@@ -3009,7 +3009,7 @@ TEST_F (testComputeBiasExpanded, testInSituTMMCSingleComponent) {
 	hc.setParameters (params);
 	mysys.addPotential (0, 0, &hc, false);
 
-	moves usedMoves;
+	moves usedMoves (Mtot);
 	insertParticle newIns (0, "insert");
 	usedMoves.addMove(&newIns, 1.0);
 	
@@ -3082,7 +3082,7 @@ TEST_F (testComputeBiasExpanded, testInSituTMMCMultiComponent) {
 	mysys.addPotential (0, 1, &hc12, false);
 	mysys.addPotential (1, 1, &hc22, false);
 	
-	moves usedMoves;
+	moves usedMoves (Mtot);
 	insertParticle newIns (0, "insert");
 	usedMoves.addMove(&newIns, 1.0);
 	
@@ -3136,7 +3136,7 @@ TEST_F (testComputeBiasExpanded, testInSituTMMCMultiComponent) {
 	}
 		
 	// do insertions with the other species
-	moves usedMoves2;
+	moves usedMoves2 (Mtot);
 	insertParticle newIns2 (1, "insert");
 	usedMoves2.addMove(&newIns2, 1.0);
 	
@@ -3880,7 +3880,7 @@ TEST (testExpandedSwapMove, multicomponentNoSwapTwoFullyInserted) {
 	double U_save = mysys.scratchEnergy();
 	EXPECT_TRUE (fabs(U_save - -(1.0+2.0)) < 1.0e-9);
 	
-	moves usedMoves;
+	moves usedMoves (Mtot);
 	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
 	usedMoves.addMove(&newSwap, 1.0);
 	
@@ -3889,11 +3889,11 @@ TEST (testExpandedSwapMove, multicomponentNoSwapTwoFullyInserted) {
 	int iterMax = 1000, iter = 0;
 	while (noMove && iter < iterMax) {
 		usedMoves.makeMove (mysys);
-		std::vector < double > ans = usedMoves.reportMoveStatistics();
-		if (ans[0] > lastAns) {
+		std::vector < std::vector < double > > ans = usedMoves.reportMoveStatistics();
+		if (ans[0][0] > lastAns) {
 			noMove = false;
 		} 
-		lastAns = ans[0];
+		lastAns = ans[0][0];
 		iter++;
 	}
 	
@@ -3958,7 +3958,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapTwoFullyInserted) {
 	double U_save = mysys.scratchEnergy();
 	EXPECT_TRUE (fabs(U_save - -(0.0+2.0)) < 1.0e-9);
 	
-	moves usedMoves;
+	moves usedMoves (Mtot);
 	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
 	usedMoves.addMove(&newSwap, 1.0);
 	
@@ -3967,11 +3967,11 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapTwoFullyInserted) {
 	int iterMax = 1000, iter = 0;
 	while (noMove && iter < iterMax) {
 		usedMoves.makeMove (mysys);
-		std::vector < double > ans = usedMoves.reportMoveStatistics();
-		if (ans[0] > lastAns) {
+		std::vector < std::vector < double > > ans = usedMoves.reportMoveStatistics();
+		if (ans[0][0] > lastAns) {
 			noMove = false;
 		} 
-		lastAns = ans[0];
+		lastAns = ans[0][0];
 		iter++;
 	}
 	
@@ -4036,7 +4036,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSingleSwapTwoFullyInserted) {
 	double U_save = mysys.scratchEnergy();
 	EXPECT_TRUE (fabs(U_save - -(0.0+2.0)) < 1.0e-9);
 	
-	moves usedMoves;
+	moves usedMoves (Mtot);
 	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
 	usedMoves.addMove(&newSwap, 1.0);
 	
@@ -4045,9 +4045,9 @@ TEST (testExpandedSwapMove, multicomponentAllowSingleSwapTwoFullyInserted) {
 	int iterMax = 1000, iter = 0;
 	while (iter < iterMax && !done) {
 		usedMoves.makeMove (mysys);
-		std::vector < double > ans = usedMoves.reportMoveStatistics();
+		std::vector < std::vector < double > > ans = usedMoves.reportMoveStatistics();
 		
-		if (ans[0] > lastAns) {
+		if (ans[0][0] > lastAns) {
 			if ((mysys.atoms[0][0].pos[0] == 8.01 || mysys.atoms[0][1].pos[0] == 8.01) && (mysys.atoms[1][0].pos[0] == 6.5 || mysys.atoms[1][1].pos[0] == 6.5)) {
 				badSwap = false;
 			} else if ((mysys.atoms[0][0].pos[0] == 6.5 || mysys.atoms[0][1].pos[0] == 6.5) && (mysys.atoms[1][0].pos[0] == 8.01 || mysys.atoms[1][1].pos[0] == 8.01)) {
@@ -4057,7 +4057,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSingleSwapTwoFullyInserted) {
 			}
 			done = true;
 		} 
-		lastAns = ans[0];
+		lastAns = ans[0][0];
 		iter++;
 	}
 	
@@ -4130,7 +4130,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	double U_save = mysys.scratchEnergy();
 	EXPECT_TRUE (fabs(U_save - -(0.0+2.0)) < 1.0e-9);
 	
-	moves usedMoves;
+	moves usedMoves (Mtot);
 	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
 	usedMoves.addMove(&newSwap, 1.0);
 	
@@ -4139,9 +4139,9 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	int iterMax = 1000, iter = 0;
 	while (iter < iterMax) {
 		usedMoves.makeMove (mysys);
-		std::vector < double > ans = usedMoves.reportMoveStatistics();
+		std::vector < std::vector < double > > ans = usedMoves.reportMoveStatistics();
 		
-		if (ans[0] > lastAns) {
+		if (ans[0][0] > lastAns) {
 			// each time a move succeeds, check that M, N are the same
 			EXPECT_EQ (mysys.getTotN(), 3);
 			EXPECT_EQ (mysys.getCurrentM(), 2);
@@ -4158,7 +4158,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 				}
 			}
 		} 
-		lastAns = ans[0];
+		lastAns = ans[0][0];
 		iter++;
 	}
 				
@@ -4178,9 +4178,9 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	iter = 0;
 	while (iter < iterMax) {
 		usedMoves.makeMove (mysys);
-		std::vector < double > ans = usedMoves.reportMoveStatistics();
+		std::vector < std::vector < double > > ans = usedMoves.reportMoveStatistics();
 		
-		if (ans[0] > lastAns) {
+		if (ans[0][0] > lastAns) {
 			// each time a move succeeds, check that M, N are the same
 			EXPECT_EQ (mysys.getTotN(), 3);
 			EXPECT_EQ (mysys.getCurrentM(), 2);
@@ -4197,7 +4197,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 				}
 			}
 		} 
-		lastAns = ans[0];
+		lastAns = ans[0][0];
 		iter++;
 	}	
 	
@@ -4217,8 +4217,8 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	iter = 0;
 	while (iter < iterMax) {
 		usedMoves.makeMove (mysys);
-		std::vector < double > ans = usedMoves.reportMoveStatistics();
-		if (ans[0] > lastAns) {
+		std::vector < std::vector < double > > ans = usedMoves.reportMoveStatistics();
+		if (ans[0][0] > lastAns) {
 			// each time a move succeeds, check that M, N are the same
 			EXPECT_EQ (mysys.getTotN(), 3);
 			EXPECT_EQ (mysys.getCurrentM(), 2);
@@ -4235,7 +4235,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 				}
 			}
 		} 
-		lastAns = ans[0];
+		lastAns = ans[0][0];
 		iter++;
 	}	
 	
@@ -4255,8 +4255,8 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	iter = 0;
 	while (iter < iterMax) {
 		usedMoves.makeMove (mysys);
-		std::vector < double > ans = usedMoves.reportMoveStatistics();
-		if (ans[0] > lastAns) {
+		std::vector < std::vector < double > > ans = usedMoves.reportMoveStatistics();
+		if (ans[0][0] > lastAns) {
 			// each time a move succeeds, check that M, N are the same
 			EXPECT_EQ (mysys.getTotN(), 3);
 			EXPECT_EQ (mysys.getCurrentM(), 2);
@@ -4273,7 +4273,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 				}
 			}
 		} 
-		lastAns = ans[0];
+		lastAns = ans[0][0];
 		iter++;
 	}	
 }
