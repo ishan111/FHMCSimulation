@@ -446,7 +446,13 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		}
 	}
 	
-	
+    // Wall potentials for each species, if there are any?
+    try {
+        speciesBarriers.resize(nSpecies);
+    } catch (std::exception &e) {
+        throw customException (e.what());
+    }
+    
 	// Prepare vectors and matrices for cell lists.
 	// It is crucial to reserve the correct number of cellLists in advance
 	// since cellListsByPairType uses the addresses of cellLists. Otherwise,

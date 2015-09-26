@@ -412,14 +412,6 @@ int main (int argc, char * const argv[]) {
 			}
 		}
 	} 
-	
-    // Wall potentials for each species, if there are any?
-    try {
-        sys.speciesBarriers.resize(sys.nSpecies());
-    } catch (std::bad_alloc &ba) {
-        std::cerr << ba.what() << std::endl;
-        exit(SYS_FAILURE);
-    }
     
     // Add barriers for each species
     
