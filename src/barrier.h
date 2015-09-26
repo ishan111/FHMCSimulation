@@ -62,7 +62,7 @@ public:
     compositeBarrier () {};
     ~compositeBarrier ();
     
-    void addhardWallZ (const double lb, const double ub, const double sigma, const int M = 1);
+    void addHardWallZ (const double lb, const double ub, const double sigma, const int M = 1);
     void addSquareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps, const int M = 1);
     
     bool inside (const atom *a1, const std::vector < double > &box);

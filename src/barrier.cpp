@@ -183,7 +183,7 @@ double squareWellWallZ::energy (const atom *a1, const std::vector < double > &bo
  * \param [in] sigma Hard-sphere diameter the species this wall interacts with can approach within
  * \param [in] M Total number of expanded ensemble states possible for this atom type (defaults to 1)
  */
-void compositeBarrier::addhardWallZ (const double lb, const double ub, const double sigma, const int M) {
+void compositeBarrier::addHardWallZ (const double lb, const double ub, const double sigma, const int M) {
     if (sysBarriers_.begin() == sysBarriers_.end()) {
         try {
             sysBarriers_.resize(1);

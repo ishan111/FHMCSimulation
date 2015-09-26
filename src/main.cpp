@@ -423,11 +423,35 @@ int main (int argc, char * const argv[]) {
     
     // Add barriers for each species
     
+    // Hard wall (expect parameters: {lb, ub, sigma})
+    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+        std::string dummy = "hardWallZ_" + sstr(i+1);
+        std::vector < double > wallParams (3, 0);
+        if (doc.HasMember(dummy.c_str())) {
+            assert(doc[dummy.c_str()].IsArray());
+            assert(doc[dummy.c_str()].Size() == 3);
+            for (unsigned int j = 0; j < 3; ++j) {
+                wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+            }
+            sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
+        }
+    }
     
+    // Square well wall (expect parameters: {lb, ub, sigma, range, eps})
+    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+        std::string dummy = "squareWellWallZ_" + sstr(i+1);
+        std::vector < double > wallParams (5, 0);
+        if (doc.HasMember(dummy.c_str())) {
+            assert(doc[dummy.c_str()].IsArray());
+            assert(doc[dummy.c_str()].Size() == 5);
+            for (unsigned int j = 0; j < 5; ++j) {
+                wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+            }
+            sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
+        }
+    }
     
-    
-    
-    
+    // in the future, can be multiple instances of the same barrier, but for the above, assume only 1
     
 	// specify moves to use for the system
 	moves usedMovesEq (sys.getTotalM()), usedMovesPr (sys.getTotalM());
