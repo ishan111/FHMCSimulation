@@ -2027,8 +2027,8 @@ TEST_F (testExpandedWalaBias, testUpdateSame) {
 	walaBias->update(Nmin, 1);
 	walaBias->update(Nmin, 1);
 	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
-	EXPECT_TRUE (fabs(H[1] - 3.0) < 1.0e-9);
-	EXPECT_TRUE (fabs(lnPI[1] - 3.0*lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(H[1] - 3.0) < 1.0e-8);
+	EXPECT_TRUE (fabs(lnPI[1] - 3.0*lnF) < 1.0e-8);
 }
 
 TEST_F (testExpandedWalaBias, testUpdateDiff) {
@@ -2036,19 +2036,20 @@ TEST_F (testExpandedWalaBias, testUpdateDiff) {
 	walaBias->update(Nmin+1, 2);
 	walaBias->update(Nmin+2, 0);
 	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
-	EXPECT_TRUE (fabs(H[1] - 1.0) < 1.0e-9);
-	EXPECT_TRUE (fabs(H[5] - 1.0) < 1.0e-9);
-	EXPECT_TRUE (fabs(H[6] - 1.0) < 1.0e-9);
-	EXPECT_TRUE (fabs(lnPI[0] - 0.0) < 1.0e-9);
-	EXPECT_TRUE (fabs(lnPI[1] - lnF) < 1.0e-9);
-	EXPECT_TRUE (fabs(lnPI[2] - 0.0) < 1.0e-9);
-	EXPECT_TRUE (fabs(lnPI[3] - 0.0) < 1.0e-9);
-	EXPECT_TRUE (fabs(lnPI[4] - 0.0) < 1.0e-9);
-	EXPECT_TRUE (fabs(lnPI[5] - lnF) < 1.0e-9);
-	EXPECT_TRUE (fabs(lnPI[6] - lnF) < 1.0e-9);
-	EXPECT_TRUE (fabs(lnPI[7] - 0.0) < 1.0e-9);
-	EXPECT_TRUE (fabs(lnPI[8] - 0.0) < 1.0e-9);
-	EXPECT_TRUE (fabs(lnPI[9] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(H[1] - 1.0) < 1.0e-8);
+	EXPECT_TRUE (fabs(H[5] - 1.0) < 1.0e-8);
+	EXPECT_TRUE (fabs(H[6] - 1.0) < 1.0e-8);
+	EXPECT_TRUE (fabs(lnPI[0] - 0.0) < 1.0e-8);
+	EXPECT_TRUE (fabs(lnPI[1] - lnF) < 1.0e-8);
+	EXPECT_TRUE (fabs(lnPI[2] - 0.0) < 1.0e-8);
+	EXPECT_TRUE (fabs(lnPI[3] - 0.0) < 1.0e-8);
+	EXPECT_TRUE (fabs(lnPI[4] - 0.0) < 1.0e-8);
+	EXPECT_TRUE (fabs(lnPI[5] - lnF) < 1.0e-8);
+	EXPECT_TRUE (fabs(lnPI[6] - lnF) < 1.0e-8);
+	EXPECT_TRUE (fabs(lnPI[7] - 0.0) < 1.0e-8);
+	EXPECT_TRUE (fabs(lnPI[8] - 0.0) < 1.0e-8);
+	EXPECT_TRUE (fabs(lnPI[9] - 0.0) < 1.0e-8);
+    std::cout << lnPI[9] << std::endl;
 }
 
 TEST_F (testExpandedWalaBias, GetGoodAddress) {
@@ -4498,3 +4499,565 @@ TEST_F (testHistogram, incrementAddress) {
 
 	delete h;
 }
+
+class testHardWallZ : public ::testing::Test {
+protected:
+    atom a1;
+    double sigma, H;
+    int M;
+    std::vector < double > box;
+    
+    virtual void SetUp() {
+        std::vector < double > coords (3, 0);
+        sigma = 1.234;
+        coords[2] = sigma/2.0;
+        a1.pos = coords;
+        H = 3*sigma;
+        M = 3;
+        box.resize(3, 4*sigma);
+    }
+};
+
+TEST_F (testHardWallZ, badInit) {
+    hardWallZ *hwz;
+    
+    // ub > lb
+    bool caught = false;
+    try {
+        hwz = new hardWallZ (H, 0, sigma, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // bad sigma
+    caught = false;
+    try {
+        hwz = new hardWallZ (0, H, -sigma, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // bad M
+    caught = false;
+    try {
+        hwz = new hardWallZ (0, H, sigma, 0);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+}
+
+TEST_F (testHardWallZ, inside) {
+    hardWallZ hwz (0, H, sigma); // M defaults to 1
+    
+    double zpos = a1.pos[2]; // at the border
+    
+    // test bottom wall
+    a1.pos[2] = zpos*1.01; // inside (not overlapping wall)
+    bool inside = hwz.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = zpos*0.99; // outside (overlapping wall)
+    inside = hwz.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+    
+    // test top wall
+    a1.pos[2] = H-zpos*1.01; // inside (not overlapping wall)
+    inside = hwz.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = H-zpos*0.99; // outside (overlapping wall)
+    inside = hwz.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+}
+
+TEST_F (testHardWallZ, energy) {
+    hardWallZ hwz (0, H, sigma); // M defaults to 1
+    
+    double zpos = a1.pos[2]; // at the border
+    
+    // test bottom wall
+    a1.pos[2] = zpos*1.01; // inside (not overlapping wall)
+    double U = hwz.energy (&a1, box);
+    EXPECT_EQ (U, 0);
+    
+    a1.pos[2] = zpos*0.99; // outside (overlapping wall)
+    U = hwz.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+    
+    // test top wall
+    a1.pos[2] = H-zpos*1.01; // inside (not overlapping wall)
+    U = hwz.energy (&a1, box);
+    EXPECT_EQ (U, 0);
+    
+    a1.pos[2] = H-zpos*0.99; // outside (overlapping wall)
+    U = hwz.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+}
+
+TEST_F (testHardWallZ, insideM) {
+    hardWallZ hwz (0, H, sigma, M);
+    a1.mState = M-1;
+ 
+    // test bottom wall
+    a1.pos[2] = sigma/2.0*a1.mState/M*1.01; // inside (not overlapping wall)
+    bool inside = hwz.inside (&a1, box);
+    EXPECT_TRUE (inside);
+
+    a1.pos[2] = sigma/2.0*a1.mState/M*0.99; // outside (overlapping wall)
+    inside = hwz.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+    
+    // test top wall
+    a1.pos[2] = H-sigma/2.0*a1.mState/M*1.01; // inside (not overlapping wall)
+    inside = hwz.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = H-sigma/2.0*a1.mState/M*0.99; // outside (overlapping wall)
+    inside = hwz.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+}
+
+TEST_F (testHardWallZ, energyM) {
+    hardWallZ hwz (0, H, sigma, M);
+    a1.mState = M-1;
+    
+    // test bottom wall
+    a1.pos[2] = sigma/2.0*a1.mState/M*1.01; // inside (not overlapping wall)
+    double U = hwz.energy (&a1, box);
+    EXPECT_EQ (U, 0);
+    
+    a1.pos[2] = sigma/2.0*a1.mState/M*0.99; // outside (overlapping wall)
+    U = hwz.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+    
+    // test top wall
+    a1.pos[2] = H-sigma/2.0*a1.mState/M*1.01; // inside (not overlapping wall)
+    U = hwz.energy (&a1, box);
+    EXPECT_EQ (U, 0);
+    
+    a1.pos[2] = H-sigma/2.0*a1.mState/M*0.99; // outside (overlapping wall)
+    U = hwz.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+}
+
+class testSquareWellWallZ : public ::testing::Test {
+protected:
+    atom a1;
+    double eps, sigma, H, range;
+    int M;
+    std::vector < double > box;
+    
+    virtual void SetUp() {
+        std::vector < double > coords (3, 0);
+        sigma = 1.234;
+        coords[2] = sigma/2.0;
+        a1.pos = coords;
+        eps = 2.345;
+        H = 3*sigma;
+        M = 3;
+        range = sigma;
+        box.resize(3, 4*sigma);
+    }
+};
+
+TEST_F (testSquareWellWallZ, badInit) {
+    squareWellWallZ *sqz;
+    
+    // ub > lb
+    bool caught = false;
+    try {
+        sqz = new squareWellWallZ (H, 0, sigma, range, eps, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // bad sigma
+    caught = false;
+    try {
+        sqz = new squareWellWallZ (0, H, -sigma, range, eps, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    caught = false;
+    try {
+        sqz = new squareWellWallZ (0, H, range*2.0, range, eps, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // bad M
+    caught = false;
+    try {
+        sqz = new squareWellWallZ (0, H, sigma, range, eps, 0);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // bad range
+    caught = false;
+    try {
+        sqz = new squareWellWallZ (0, H, sigma, -range, eps, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // bad eps
+    caught = false;
+    try {
+        sqz = new squareWellWallZ (0, H, sigma, range, -eps, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+}
+
+TEST_F (testSquareWellWallZ, inside) {
+    squareWellWallZ sqz (0, H, sigma, range, eps); // M defaults to 1
+    
+    double zpos = a1.pos[2]; // at the border
+    
+    // test bottom wall
+    a1.pos[2] = zpos*1.01; // inside (not overlapping wall)
+    bool inside = sqz.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = zpos*0.99; // outside (overlapping wall)
+    inside = sqz.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+    
+    // test top wall
+    a1.pos[2] = H-zpos*1.01; // inside (not overlapping wall)
+    inside = sqz.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = H-zpos*0.99; // outside (overlapping wall)
+    inside = sqz.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+}
+
+TEST_F (testSquareWellWallZ, energy) {
+    squareWellWallZ sqz (0, H, sigma, range, eps); // M defaults to 1
+    
+    double zpos = a1.pos[2]; // at the border
+    
+    // test bottom wall
+    a1.pos[2] = zpos*1.01; // inside (not overlapping wall)
+    double U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, -eps);
+    
+    a1.pos[2] = zpos*0.99; // outside (overlapping wall)
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+    
+    a1.pos[2] = range*0.99; // inside range
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, -eps);
+    
+    a1.pos[2] = range*1.01; // outside range
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, 0);
+    
+    // test top wall
+    a1.pos[2] = H-zpos*1.01; // inside (not overlapping wall)
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, -eps);
+    
+    a1.pos[2] = H-zpos*0.99; // outside (overlapping wall)
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+    
+    a1.pos[2] = H-range*0.99; // inside range
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, -eps);
+    
+    a1.pos[2] = H-range*1.01; // outside range
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, 0);
+}
+
+TEST_F (testSquareWellWallZ, insideM) {
+    squareWellWallZ sqz (0, H, sigma, range, eps, M);
+    a1.mState = M-1;
+    
+    // test bottom wall
+    a1.pos[2] = sigma/2.0*a1.mState/M*1.01; // inside (not overlapping wall)
+    bool inside = sqz.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = sigma/2.0*a1.mState/M*0.99; // outside (overlapping wall)
+    inside = sqz.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+    
+    // test top wall
+    a1.pos[2] = H-sigma/2.0*a1.mState/M*1.01; // inside (not overlapping wall)
+    inside = sqz.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = H-sigma/2.0*a1.mState/M*0.99; // outside (overlapping wall)
+    inside = sqz.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+}
+
+TEST_F (testSquareWellWallZ, energyM) {
+    squareWellWallZ sqz (0, H, sigma, range, eps, M);
+    a1.mState = M-1;
+    
+    // test bottom wall
+    a1.pos[2] = sigma/2.0*a1.mState/M*1.01; // inside (not overlapping wall)
+    double U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, -eps/M*a1.mState);
+    
+    a1.pos[2] = sigma/2.0*a1.mState/M*0.99; // outside (overlapping wall)
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+    
+    a1.pos[2] = range*0.99; // inside range
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, -eps/M*a1.mState);
+    
+    a1.pos[2] = range*1.01; // outside range
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, 0);
+    
+    // test top wall
+    a1.pos[2] = H-sigma/2.0*a1.mState/M*1.01; // inside (not overlapping wall)
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, -eps/M*a1.mState);
+    
+    a1.pos[2] = H-sigma/2.0*a1.mState/M*0.99; // outside (overlapping wall)
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+    
+    a1.pos[2] = H-range*0.99; // inside range
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, -eps/M*a1.mState);
+    
+    a1.pos[2] = H-range*1.01; // outside range
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, 0);
+}
+
+//  then add 2 square well walls with diff ranges
+// also test M
+
+class testCompositeBarrier : public ::testing::Test {
+protected:
+    compositeBarrier cB;
+    atom a1;
+    double eps, sigma, H, range1, range2;
+    int M;
+    std::vector < double > box;
+    
+    virtual void SetUp() {
+        std::vector < double > coords (3, 0);
+        sigma = 1.234;
+        coords[2] = sigma/2.0;
+        a1.pos = coords;
+        eps = 2.345;
+        H = 3*sigma;
+        M = 3;
+        range1 = sigma;
+        range2 = 0.75*sigma;
+        box.resize(3, 4*sigma);
+    }
+};
+
+TEST_F (testCompositeBarrier, empty) {
+    const int nincrs = 5;
+    for (unsigned int i = 0; i < nincrs; ++i) {
+        double zpos = H/(nincrs-1)*i;
+        a1.pos[2] = zpos;
+        bool inside = cB.inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+}
+
+TEST_F (testCompositeBarrier, singleHardWall) {
+    cB.addHardWallZ (0, H, sigma); // M defaults to 1
+    
+    double zpos = a1.pos[2]; // at the border
+    
+    // test bottom wall
+    a1.pos[2] = zpos*1.01; // inside (not overlapping wall)
+    bool inside = cB.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = zpos*0.99; // outside (overlapping wall)
+    inside = cB.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+    
+    // test top wall
+    a1.pos[2] = H-zpos*1.01; // inside (not overlapping wall)
+    inside = cB.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = H-zpos*0.99; // outside (overlapping wall)
+    inside = cB.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+}
+
+TEST_F (testCompositeBarrier, singleHardWallM) {
+    cB.addHardWallZ (0, H, sigma, M);
+    
+    a1.mState = M-1;
+    
+    // test bottom wall
+    a1.pos[2] = sigma/2.0*a1.mState/M*1.01; // inside (not overlapping wall)
+    bool inside = cB.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = sigma/2.0*a1.mState/M*0.99; // outside (overlapping wall)
+    inside = cB.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+    
+    // test top wall
+    a1.pos[2] = H-sigma/2.0*a1.mState/M*1.01; // inside (not overlapping wall)
+    inside = cB.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = H-sigma/2.0*a1.mState/M*0.99; // outside (overlapping wall)
+    inside = cB.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+}
+
+TEST_F (testCompositeBarrier, singleSquareWellWallZ) {
+    cB.addSquareWellWallZ (0, H, sigma, range1, eps); // M defaults to 1
+    
+    double zpos = a1.pos[2]; // at the border
+    
+    // test bottom wall
+    a1.pos[2] = zpos*1.01; // inside (not overlapping wall)
+    bool inside = cB.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = zpos*0.99; // outside (overlapping wall)
+    inside = cB.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+    
+    // test top wall
+    a1.pos[2] = H-zpos*1.01; // inside (not overlapping wall)
+    inside = cB.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = H-zpos*0.99; // outside (overlapping wall)
+    inside = cB.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+}
+
+TEST_F (testCompositeBarrier, singleSquareWellWallZM) {
+    cB.addSquareWellWallZ (0, H, sigma, range1, eps, M);
+    a1.mState = M-1;
+    
+    // test bottom wall
+    a1.pos[2] = sigma/2.0*a1.mState/M*1.01; // inside (not overlapping wall)
+    bool inside = cB.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = sigma/2.0*a1.mState/M*0.99; // outside (overlapping wall)
+    inside = cB.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+    
+    // test top wall
+    a1.pos[2] = H-sigma/2.0*a1.mState/M*1.01; // inside (not overlapping wall)
+    inside = cB.inside (&a1, box);
+    EXPECT_TRUE (inside);
+    
+    a1.pos[2] = H-sigma/2.0*a1.mState/M*0.99; // outside (overlapping wall)
+    inside = cB.inside (&a1, box);
+    EXPECT_TRUE (!inside);
+}
+
+TEST_F (testCompositeBarrier, pairSquareWellWallZ) {
+    cB.addSquareWellWallZ (0, H, sigma, range1, eps); // M defaults to 1
+    cB.addSquareWellWallZ (0, H, sigma, range2, eps); // M defaults to 1
+    
+    double zpos = a1.pos[2]; // at the border
+    
+    // test bottom wall
+    a1.pos[2] = zpos*1.01; // inside (not overlapping wall)
+    double U = cB.energy (&a1, box);
+    EXPECT_EQ (U, -2.0*eps);
+    
+    a1.pos[2] = zpos*0.99; // outside (overlapping wall)
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+    
+    a1.pos[2] = range1*0.99; // inside single range
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, -eps);
+    
+    a1.pos[2] = range1*1.01; // outside ranges
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, 0);
+    
+    a1.pos[2] = range2*0.99; // inside both ranges
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, -2.0*eps);
+    
+    a1.pos[2] = range2*1.01; // outside single range, but inside other
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, -eps);
+    
+    // test top wall
+    a1.pos[2] = H-zpos*1.01; // inside (not overlapping wall)
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, -2.0*eps);
+    
+    a1.pos[2] = H-zpos*0.99; // outside (overlapping wall)
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+    
+    a1.pos[2] = H-range1*0.99; // inside single range
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, -eps);
+    
+    a1.pos[2] = H-range1*1.01; // outside ranges
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, 0);
+    
+    a1.pos[2] = H-range2*0.99; // inside both ranges
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, -2.0*eps);
+    
+    a1.pos[2] = H-range2*1.01; // outside single range, but inside other
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, -eps);
+}
+
+TEST_F (testCompositeBarrier, hardWallInsideSquareWell) {
+    cB.addSquareWellWallZ (0, H, sigma, range1, eps); // M defaults to 1
+    cB.addHardWallZ (H/2-sigma/2*1.01, H/2+sigma/2*1.01, sigma); // M defaults to 1
+    
+    double zpos = a1.pos[2]; // at the border
+    
+    // test bottom wall
+    a1.pos[2] = 0;
+    double U = cB.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+    
+    a1.pos[2] = H/3.0;
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+    
+    a1.pos[2] = H/2.0;
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, 0);
+    
+    a1.pos[2] = H*2.0/3.0;
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+    
+    a1.pos[2] = H;
+    U = cB.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+}
+// line 2051

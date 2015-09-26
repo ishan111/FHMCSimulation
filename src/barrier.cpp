@@ -42,7 +42,7 @@ bool hardWallZ::inside (const atom *a1, const std::vector < double > &box) {
     if (a1->mState < 0 || a1->mState > M_-1) {
         throw customException ("mState out of bounds for hardWallZ");
     }
-    
+
     if (p[2] >= ub_ - sig/2.0 || p[2] <= lb_ + sig/2.0) {
         return false;
     } else {
@@ -105,6 +105,7 @@ squareWellWallZ::squareWellWallZ (const double lb, const double ub, const double
         throw customException ("squareWellWallZ must have M >= 1");
     }
     
+    eps_ = eps;
     sigma_ = sigma;
     range_ = range;
     ub_ = ub;
@@ -248,7 +249,7 @@ compositeBarrier::~compositeBarrier () {
 }
 
 /*!
- * Test if inside ALL the barriers.  Returns false if outside any single one.
+ * Test if inside ALL the barriers.  Returns false if outside any single one, but defaults to true (infinitely far away walls/barriers).
  *
  * \param [in] a1 Pointer to atom with position to test - this does NOT need to be in the simulation box a priori
  * \param [in] box Simulation box

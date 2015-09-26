@@ -1,7 +1,0 @@
-Beginning simulation at 16/08/2015 22:54:40
-Parsed inp12.json
-Setting up cell list for interactions between type 0 and 0
-Creating Cell list with rcut=1.5
-Reading initial configuration from ./high_11.xyz
-Beginning Wang-Landau portion
-lnF = 0.5 at 16/08/2015 23:09:27
