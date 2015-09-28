@@ -36,6 +36,7 @@
 #include "translate.h"
 #include "swap.h"
 #include "moves.h"
+#include "barrier.h"
 
 // JSON interface from local distro of rapidjson
 #include "rapidjson/include/rapidjson/document.h"

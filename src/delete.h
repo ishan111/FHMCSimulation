@@ -8,6 +8,7 @@
 #include "global.h"
 #include "moves.h"
 #include "atom.h"
+#include "barrier.h"
 
 class deleteParticle : public mcMove {
 public:
