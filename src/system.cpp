@@ -618,7 +618,7 @@ void simSystem::printComposition (const std::string fileName) {
         of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
         of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
         double V = box_[0]*box_[1]*box_[2];
-        of << "# volume: " << V << std::endl;
+        of << "# volume: " << std::setprecision(15) << V << std::endl;
 	of << "# <N_1>\t<N_2>\t...\t<N_n>" << std::endl;
         for (unsigned long long int i = 0; i < aveX[0].size(); ++i) {
 		for (unsigned long long int j = 0; j < nSpecies_; ++j) {
@@ -680,7 +680,7 @@ void simSystem::printU (const std::string fileName) {
 	of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
 	of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
 	double V = box_[0]*box_[1]*box_[2];
-	of << "# volume: " << V << std::endl;
+	of << "# volume: " << std::setprecision(15) << V << std::endl;
 	for (long long int i = 0; i < aveU.size(); ++i) {
 		of << aveU[i] << std::endl;
 	}
