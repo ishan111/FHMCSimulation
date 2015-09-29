@@ -46,6 +46,53 @@
 #include "rapidjson/include/rapidjson/prettywriter.h"
 
 /*!
+ * Initialize the barriers in a system by parsing the input document.  This function is defined separately since it must be done several times.
+ *
+ * \params [in, out] sys System to initialize with barriers
+ * \params [in] doc Input JSON document
+ */
+void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
+	// get Mtot, first from doc, otherwise try sys, but they should be the same
+	int Mtot = 1;
+        if (doc.HasMember("num_expanded_states")) {
+                assert(doc["num_expanded_states"].IsInt());
+                Mtot = doc["num_expanded_states"].GetInt();
+        } else {
+		Mtot = sys.getTotalM();
+	}
+
+	// Hard wall (expect parameters: {lb, ub, sigma})
+    	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+        	std::string dummy = "hardWallZ_" + sstr(i+1);
+	        std::vector < double > wallParams (3, 0);
+        	if (doc.HasMember(dummy.c_str())) {
+			assert(doc[dummy.c_str()].IsArray());
+        	    	assert(doc[dummy.c_str()].Size() == 3);
+	            	for (unsigned int j = 0; j < 3; ++j) {
+        	        	wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+			}
+        	   	sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
+        	}
+    	}
+
+    	// Square well wall (expect parameters: {lb, ub, sigma, range, eps})
+    	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+        	std::string dummy = "squareWellWallZ_" + sstr(i+1);
+        	std::vector < double > wallParams (5, 0);
+        	if (doc.HasMember(dummy.c_str())) {
+            		assert(doc[dummy.c_str()].IsArray());
+            		assert(doc[dummy.c_str()].Size() == 5);
+            		for (unsigned int j = 0; j < 5; ++j) {
+                		wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+            		}
+            		sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
+        	}
+    	}
+
+    	// in the future, can be multiple instances of the same barrier, but for the above, assume only 1	
+}
+
+/*!
  * Usage: ./binary_name inputFile.json
  */
 int main (int argc, char * const argv[]) {
@@ -414,38 +461,9 @@ int main (int argc, char * const argv[]) {
 		}
 	} 
     
-    // Add barriers for each species
-    
-    // Hard wall (expect parameters: {lb, ub, sigma})
-    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-        std::string dummy = "hardWallZ_" + sstr(i+1);
-        std::vector < double > wallParams (3, 0);
-        if (doc.HasMember(dummy.c_str())) {
-            assert(doc[dummy.c_str()].IsArray());
-            assert(doc[dummy.c_str()].Size() == 3);
-            for (unsigned int j = 0; j < 3; ++j) {
-                wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-            }
-            sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
-        }
-    }
-    
-    // Square well wall (expect parameters: {lb, ub, sigma, range, eps})
-    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-        std::string dummy = "squareWellWallZ_" + sstr(i+1);
-        std::vector < double > wallParams (5, 0);
-        if (doc.HasMember(dummy.c_str())) {
-            assert(doc[dummy.c_str()].IsArray());
-            assert(doc[dummy.c_str()].Size() == 5);
-            for (unsigned int j = 0; j < 5; ++j) {
-                wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-            }
-            sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
-        }
-    }
-    
-    // in the future, can be multiple instances of the same barrier, but for the above, assume only 1
-    
+    	// Add barriers for each species
+	initializeSystemBarriers (sys, doc);
+
 	// specify moves to use for the system
 	moves usedMovesEq (sys.getTotalM()), usedMovesPr (sys.getTotalM());
 	std::vector < insertParticle > eqInsertions (sys.nSpecies()), prInsertions (sys.nSpecies());
@@ -513,8 +531,8 @@ int main (int argc, char * const argv[]) {
         	std::cout << "Automatically generating the initial configuration" << std::endl;
 		
 		// have to generate initial configuration manually - start with mu = INF
-        	std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e9);
-        	simSystem initSys (doc["num_species"].GetInt(), 1/50., sysBox, initMu, sysMax, sysMin, Mtot); // beta =  1/T, so low beta to have high T
+        	std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
+        	simSystem initSys (doc["num_species"].GetInt(), 1/10., sysBox, initMu, sysMax, sysMin, Mtot); // beta =  1/T, so low beta to have high T
 
         	// add the same potentials
         	int initInd = 0;
@@ -524,6 +542,8 @@ int main (int argc, char * const argv[]) {
                 		initInd++;
             		}
         	}
+
+		initializeSystemBarriers (initSys, doc);
 
 		// iteratively add each individual species, assume we want an equimolar mixture to start from
 		for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
@@ -606,7 +626,7 @@ int main (int argc, char * const argv[]) {
 		char dummy_t [80];
 		strftime (dummy_t,80,"%d/%m/%Y %H:%M:%S",timeinfo_t);
 		std::cout << "Initial lnF = " << lnF_start << " at " << dummy_t << std::endl;
-			
+		
 		if (restartFromWALA) {
 			try {
 				sys.getWALABias()->readlnPI(restartFromWALAFile);
@@ -620,7 +640,7 @@ int main (int argc, char * const argv[]) {
 			}
 			std::cout << "Read initial lnPI for Wang-Lnadau from " << restartFromWALAFile << std::endl;
 		}
-		
+	
 		long long int counter = 0;
 		while (lnF > lnF_end) {
 			for (unsigned int move = 0; move < wlSweepSize; ++move) {

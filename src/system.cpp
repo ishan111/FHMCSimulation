@@ -925,7 +925,23 @@ const double simSystem::scratchEnergy () {
 		if (fractionalAtomType_ == spec1 && Mcurrent_ > 0) {
 			adj1 = 1;
 		}
-		
+
+		// wall/barrier interactions
+		for (unsigned int j = 0; j < num1+adj1; ++j) {
+			double dU = 0.0;
+			try {
+                        	dU = speciesBarriers[spec1].energy(&atoms[spec1][j], box_); 
+                        } catch (customException &ce) {
+                                std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
+                                throw customException (a+b);
+                        }
+			if (dU == NUM_INFINITY) {
+				return NUM_INFINITY;
+			} else {
+				totU += dU;
+			}
+                }
+	
         	// interactions with same type
         	for (unsigned int j = 0; j < num1+adj1; ++j) {
 	        	for (unsigned int k = j+1; k < num1+adj1; ++k) {
