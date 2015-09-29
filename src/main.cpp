@@ -696,6 +696,7 @@ int main (int argc, char * const argv[]) {
 			
 			// Check if collection matrix is ready to take over, not necessarily at points where WL is flat
 			if (sys.getTMMCBias()->checkFullyVisited()) {
+				sys.getTMMCBias()->calculatePI();
 				sys.getTMMCBias()->iterateForward (); // reset the counting matrix and increment total sweep number
 				timesFullyVisited = sys.getTMMCBias()->numSweeps(); 	
 				sys.getWALABias()->print("wl-crossover-Checkpoint-"+sstr(timesFullyVisited), true);
