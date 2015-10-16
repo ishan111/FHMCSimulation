@@ -442,10 +442,10 @@ int main (int argc, char * const argv[]) {
 			ppotIndex++;
 		}
 	}
-
+	
 	// check all pair potentials have been set and all r_cut < L/2
 	double minL = sys.box()[0];
-	for (unsigned int i = 1; i < 2; ++i) {
+	for (unsigned int i = 1; i < 3; ++i) {
 		minL = std::min(minL, sys.box()[i]);
 	}
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
