@@ -72,6 +72,29 @@ tmmc::tmmc (const int Nmax, const int Nmin,  const int Mtot, const long long int
 }
 
 /*!
+ * Dump the current visited states counter.
+ *
+ * \param [in] filename Name of file to print to.  Prints in column format.
+ */
+void tmmc::dumpVisited (const std::string fileName) {
+	std::ofstream of;
+        std::string name = fileName+".dat";
+        of.open(name.c_str(), std::ofstream::out);
+        if (!of.is_open()) {
+        	throw customException ("Unable to write TMMC collection matrix to "+fileName+"_C.dat");
+        }
+        of << "# TMMC visited states counter in single row (vectorized) notation." << std::endl;
+        of << "# species_total_upper_bound: " << Nmax_ << std::endl;
+        of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+        double V = box_[0]*box_[1]*box_[2];
+        of << "# volume: " << std::setprecision(15) << V << std::endl;
+        for (long long int i = 0; i < HC_.size(); ++i) {
+        	of << std::setprecision(15) << HC_[i] << std::endl;
+        }
+        of.close();
+}
+
+/*!
  * Check if the the collection matrix has been samples sufficiently, i.e., if each state and transition has been visited tmmcSweepSize_ times.
  */
 bool tmmc::checkFullyVisited () {

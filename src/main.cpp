@@ -717,7 +717,18 @@ int main (int argc, char * const argv[]) {
 			
 			// Check if collection matrix is ready to take over, not necessarily at points where WL is flat
 			if (sys.getTMMCBias()->checkFullyVisited()) {
-				sys.getTMMCBias()->calculatePI();
+				try {
+					sys.getTMMCBias()->calculatePI();
+				} catch (customException &ce) {
+					std::cerr << ce.what() << std::endl;
+                                        for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+                                                delete ppotArray[i];
+                                        }
+                                        ppotArray.clear();
+					sys.getTMMCBias()->print("tmmc-crossover-fail", true);
+					sys.getTMMCBias()->dumpVisited("tmmc-crossover-fail-visited");
+                                        exit(SYS_FAILURE);
+				}
 				sys.getTMMCBias()->iterateForward (); // reset the counting matrix and increment total sweep number
 				timesFullyVisited = sys.getTMMCBias()->numSweeps(); 	
 				sys.getWALABias()->print("wl-crossover-Checkpoint-"+sstr(timesFullyVisited), true);
@@ -752,8 +763,19 @@ int main (int argc, char * const argv[]) {
 		sys.stopWALA();
 		
 		std::cout << "Switching over to TMMC completely, ending Wang-Landau" << std::endl;
-		sys.getTMMCBias()->calculatePI();
-		sys.getTMMCBias()->print("tmmc-beginning-Checkpoint", true);
+		try {
+			sys.getTMMCBias()->calculatePI();
+			sys.getTMMCBias()->print("tmmc-beginning-Checkpoint", true);
+		} catch (customException &ce) {
+			std::cerr << ce.what() << std::endl;
+                        for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+                        	delete ppotArray[i];
+                        }
+                        ppotArray.clear();
+                        sys.getTMMCBias()->print("tmmc-beginning-fail", true);
+                        sys.getTMMCBias()->dumpVisited("tmmc-beginning-fail-visited");
+                        exit(SYS_FAILURE);
+		}
 	}
 	
 	std::cout << "Beginning TMMC" << std::endl;
@@ -761,7 +783,9 @@ int main (int argc, char * const argv[]) {
 		sys.startTMMC (tmmcSweepSize, sys.getTotalM()); // this was otherwise started during the crossover phase if WL was used
 		try {
 			sys.getTMMCBias()->readC(restartFromTMMCFile); // read collection matrix
-		} catch (customException& ce) {
+			sys.getTMMCBias()->calculatePI();
+	                std::cout << "Restarted TMMC from collection matrix from " << restartFromTMMCFile << std::endl;
+		} catch (customException &ce) {
 			sys.stopTMMC(); // deallocate
 			std::cerr << "Failed to initialize from TMMC collection matrix: " << ce.what() << std::endl;
 			for (unsigned int i = 0; i < ppotArray.size(); ++i) {
@@ -770,8 +794,6 @@ int main (int argc, char * const argv[]) {
 			ppotArray.clear();
 			exit(SYS_FAILURE);
 		}
-		sys.getTMMCBias()->calculatePI();
-		std::cout << "Restarted TMMC from collection matrix from " << restartFromTMMCFile << std::endl;
 	}
 	
 	long long int sweep = 0;

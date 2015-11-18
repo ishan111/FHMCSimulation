@@ -39,6 +39,7 @@ public:
 	void readC (const std::string fileName);
 	void setlnPI (const std::vector < double > &lnPIguess) { if (lnPIguess.size() == lnPI_.size()) lnPI_ = lnPIguess; } //!< Blindly assign a guess of the macrostate distribution
 	void iterateForward ();
+	void dumpVisited (const std::string fileName);
 	bool checkFullyVisited ();
 	const __BIAS_INT_TYPE__ getTransitionAddress (const int Nstart, const int Nend, const int Mstart, const int Mend);
 	const __BIAS_INT_TYPE__ getAddress (const int Nval, const int Mval);	
