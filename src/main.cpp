@@ -546,7 +546,8 @@ int main (int argc, char * const argv[]) {
 		initializeSystemBarriers (initSys, doc);
 
 		// iteratively add each individual species, assume we want an equimolar mixture to start from
-		for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		//for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		for (unsigned int i = 0; i < 1; ++i) {
 			std::cout << "Initializing species " << i << " configurations" << std::endl;
 			
 			// insert this species i
@@ -565,7 +566,7 @@ int main (int argc, char * const argv[]) {
 			}
 
 			// now do simuation until within proper range
-			int targetNum = sys.totNMin()/sys.nSpecies();
+			int targetNum = sys.totNMin(); //sys.nSpecies();
 			if (i == sys.nSpecies() - 1) {
 				// to account for integer rounding
 				targetNum = sys.totNMin() - (sys.nSpecies()-1)*(sys.totNMin()/sys.nSpecies());
@@ -700,7 +701,7 @@ int main (int argc, char * const argv[]) {
 	
 		// actually this should run until all elements of the collection matrix have been populated
 		int timesFullyVisited = 0;
-		while (timesFullyVisited < nCrossoverVisits) { 
+		while (timesFullyVisited < nCrossoverVisits) {
 			for (unsigned int move = 0; move < wlSweepSize; ++move) {
 				try {
 					usedMovesEq.makeMove(sys);

@@ -543,8 +543,6 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 			throw customException ("Out of memory for particle histogram");
 		}
 	}
-
-	std::cout << "internal = " << box_[0] << " " << box_[1] << " " << box_[2] << std::endl;
 }
 
 
