@@ -1,6 +1,7 @@
 #ifndef BARRIER_H_
 #define BARRIER_H_
 
+#include <cmath>
 #include <vector>
 #include "global.h"
 #include "utilities.h"
@@ -52,6 +53,36 @@ private:
     double range_; //!< Distance normal to the wall's surface where there is an interaction
     double eps_; //!< Magnitude of the interaction
     double sigma_; //!< Hard-sphere diameter the species this wall interacts with can approach within
+};
+
+class rightTriangleZ : public barrier {
+public:
+    ~rightTriangleZ () {};
+    rightTriangleZ (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector < double > &box, bool top = false, const int M = 1);
+    bool inside (const atom *a1, const std::vector < double > &box);
+    double energy (const atom *a1, const std::vector < double > &box);
+    
+private:
+    double getRange_ (double x);
+    double getU0_ (const double x, const double z);
+    double getU1_ (const double x, const double z);
+    double getU2_ (const double x, const double z);
+    double getU3_ (const double x, const double z);
+    double getU4_ (const double x, const double z);
+    double getU5_ (const double x, const double z);
+    double getU6_ (const double x, const double z);
+    double getU7_ (const double x, const double z);
+    
+    double lam_; //!< Width of triangle's feature
+    double theta_; //!< Elevation angle of the feature
+    double lamWall_; //!< Attractive range beyond the hard sphere in contact with the feature
+    double eps_; //!< Attraction strength to feature
+    double sigma_; //!< Hard sphere diameter of interaction with the feature
+    double lamP_; //!< Distance between features
+    double xOffset_; //!< Offset from x = 0 position of the first feature
+    bool top_; //!< If true, feature is on the "top", else is on the bottom (default)
+    double cosTheta_, sinTheta_, a_, b_, c_, m_, n_, p_, q_, u_, v_, j_, k_, s_;
+    std::vector < double > lbounds_, ubounds_, box_;
 };
 
 /*!
