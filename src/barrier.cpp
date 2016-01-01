@@ -13,18 +13,15 @@
  * \param [in] box System box size to check the feature (as specified) is periodic in the box
  * \param [in] zbase Z-coordinate of XY plane that defines the base of the feature.  To avoid periodicity effects be sure it is > 0 and less than Lz, but this depends on other interactions so it cannot be checked automatically here.
  * \param [in] top If true, feature is on the "top", else is on the bottom (default)
- * \param [in] Number of expanded ensemble states to recognize (default = 1)
+ * \param [in] M Number of expanded ensemble states to recognize (default = 1)
  */
-rightTriangleZ::rightTriangleZ (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector < double > &box, const double zbase, bool top, const int M) {
+rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector < double > &box, const double zbase, bool top, const int M) {
     if (sep < 0.0) {
         throw customException ("rightTriangle sep is out of bounds");
     }
     // Check the feature fits periodically in the box
     if ( fmod(box[0]/(sep+width), 1) != 0.0 ) {
         throw customException ("rightTriangle width+separation is not commensurate with the box size");
-    }
-    if ((int)round(box[0]/(sep+width)) == 1) {
-        throw customException ("Only 1 rightTriangle feature in box - there could exist (self) periodicity problems");
     }
     if (theta <= 0.0 || theta >= PI/2.0) {
         throw customException ("rightTriangle elevation angle is out of bounds");
@@ -44,32 +41,27 @@ rightTriangleZ::rightTriangleZ (const double width, const double theta, const do
     if (zbase < 0.0 || zbase > box[2]) {
         throw customException ("rightTriangle zbase value is out of bounds");
     }
+    if (offset >= box[0] || offset < 0) {
+        throw customException ("rightTriangle offset value is out of bounds");
+    }
     
     // store variables internally and do conversion to conventions in which derivation was done
     zbase_ = zbase;
-    lam_ = width;
-    lamP_ = sep;
+    width_ = width;
+    sep_ = sep;
     theta_ = theta;
     xOffset_ = offset;
     top_ = top;
-    box_.resize(3);
-    box_ = box;
     M_ = M;
-    cosTheta_ = cos(theta_);
-    sinTheta_ = sin(theta_);
+    x_max_image_ = (int) round(box[0]/(sep+width)) - 1;
     
     // precompute points and trigonometry
-    a_ = lam_*cos(theta_)*sin(theta_);
-    b_ = lam_*sin(theta_)*cos(PI/2.0-theta_);
-    c_ = lam_*cos(theta_)*cos(theta_);
-    
+    a_ = width_*cos(theta_)*sin(theta_);
+    b_ = width_*sin(theta_)*cos(PI/2.0-theta_);
+    c_ = width_*cos(theta_)*cos(theta_);
+
     try {
         sigma_.resize(M_);
-    } catch (std::bad_alloc &ba) {
-        throw customException ("Out of memory");
-    }
-    try {
-        lamWall_.resize(M_);
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
@@ -79,70 +71,109 @@ rightTriangleZ::rightTriangleZ (const double width, const double theta, const do
         throw customException ("Out of memory");
     }
     try {
-        m_.resize(M_);
+        box_.resize(3);
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
+    box_ = box;
     try {
-        n_.resize(M_);
+        ub_check_.resize(M_, -NUM_INFINITY);
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
+    
     try {
-        u_.resize(M_);
-    } catch (std::bad_alloc &ba) {
-        throw customException ("Out of memory");
-    }
-    try {
-        v_.resize(M_);
-    } catch (std::bad_alloc &ba) {
-        throw customException ("Out of memory");
-    }
-    try {
-        p_.resize(M_);
-    } catch (std::bad_alloc &ba) {
-        throw customException ("Out of memory");
-    }
-    try {
-        q_.resize(M_);
-    } catch (std::bad_alloc &ba) {
-        throw customException ("Out of memory");
-    }
-    try {
-        j_.resize(M_);
-    } catch (std::bad_alloc &ba) {
-        throw customException ("Out of memory");
-    }
-    try {
-        k_.resize(M_);
-    } catch (std::bad_alloc &ba) {
-        throw customException ("Out of memory");
-    }
-    try {
-        s_.resize(M_);
-    } catch (std::bad_alloc &ba) {
-        throw customException ("Out of memory");
-    }
-    try {
-        lbounds_.resize(M_);
+        ub_seg_x_.resize(M_);
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
     for (unsigned int i = 0; i < M_; ++i) {
         try {
-            lbounds_[i].resize(8);
+            ub_seg_x_[i].resize(4);
         } catch (std::bad_alloc &ba) {
             throw customException ("Out of memory");
         }
     }
     try {
-        ubounds_.resize(M_);
+        lb_seg_x_.resize(M_);
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
     for (unsigned int i = 0; i < M_; ++i) {
         try {
-            ubounds_[i].resize(8);
+            lb_seg_x_[i].resize(4);
+        } catch (std::bad_alloc &ba) {
+            throw customException ("Out of memory");
+        }
+    }
+    try {
+        ub_seg_z_.resize(M_);
+    } catch (std::bad_alloc &ba) {
+        throw customException ("Out of memory");
+    }
+    for (unsigned int i = 0; i < M_; ++i) {
+        try {
+            ub_seg_z_[i].resize(4);
+        } catch (std::bad_alloc &ba) {
+            throw customException ("Out of memory");
+        }
+    }
+    try {
+        lb_seg_z_.resize(M_);
+    } catch (std::bad_alloc &ba) {
+        throw customException ("Out of memory");
+    }
+    for (unsigned int i = 0; i < M_; ++i) {
+        try {
+            lb_seg_z_[i].resize(4);
+        } catch (std::bad_alloc &ba) {
+            throw customException ("Out of memory");
+        }
+    }
+    try {
+        ub_slope_.resize(M_);
+    } catch (std::bad_alloc &ba) {
+        throw customException ("Out of memory");
+    }
+    for (unsigned int i = 0; i < M_; ++i) {
+        try {
+            ub_slope_[i].resize(5);
+        } catch (std::bad_alloc &ba) {
+            throw customException ("Out of memory");
+        }
+    }
+    try {
+        lb_slope_.resize(M_);
+    } catch (std::bad_alloc &ba) {
+        throw customException ("Out of memory");
+    }
+    for (unsigned int i = 0; i < M_; ++i) {
+        try {
+            lb_slope_[i].resize(5);
+        } catch (std::bad_alloc &ba) {
+            throw customException ("Out of memory");
+        }
+    }
+    try {
+        ub_int_.resize(M_);
+    } catch (std::bad_alloc &ba) {
+        throw customException ("Out of memory");
+    }
+    for (unsigned int i = 0; i < M_; ++i) {
+        try {
+            ub_int_[i].resize(5);
+        } catch (std::bad_alloc &ba) {
+            throw customException ("Out of memory");
+        }
+    }
+    try {
+        lb_int_.resize(M_);
+    } catch (std::bad_alloc &ba) {
+        throw customException ("Out of memory");
+    }
+    for (unsigned int i = 0; i < M_; ++i) {
+        try {
+            lb_int_[i].resize(5);
         } catch (std::bad_alloc &ba) {
             throw customException ("Out of memory");
         }
@@ -157,219 +188,98 @@ rightTriangleZ::rightTriangleZ (const double width, const double theta, const do
             eps_[i] = eps_[0]/M_*i;
         }
         
-        lamWall_[i] = lamW*sigma_[i] - sigma_[i];
-        m_[i] = c_ - (lamWall_[i] + sigma_[i])*sinTheta_;
-        n_[i] = a_ + (lamWall_[i] + sigma_[i])*cosTheta_;
-        u_[i] = c_ + sigma_[i]/2.0*(cosTheta_ - sinTheta_);
-        v_[i] = a_ + sigma_[i]/2.0*(cosTheta_ + sinTheta_);
-        p_[i] = c_ + (lamWall_[i] + sigma_[i])*cosTheta_;
-        q_[i] = a_ + (lamWall_[i] + sigma_[i])*sinTheta_;
-        j_[i] = c_ + b_ + sigma_[i]/2.0*cosTheta_;
-        k_[i] = sigma_[i]/2.0*sinTheta_;
-        s_[i] = (q_[i] - n_[i])/(p_[i] - m_[i]);
+        ub_seg_x_[i][0] = -lamW_*sigma_[i]*sin(theta_);
+        ub_seg_x_[i][1] = c_ - lamW_*sigma_[i]*sin(theta_);
+        ub_seg_x_[i][2] = c_ + lamW_*sigma_[i]*cos(theta_);
+        ub_seg_x_[i][3] = width_ + lamW_*sigma_[i]*cos(theta_);
         
-        lbounds_[i][0] = -(lamWall_[i]+sigma_[i])*sinTheta_;
-        lbounds_[i][1] = -sigma_[i]/2.0*sinTheta_;
-        lbounds_[i][2] = 0.0;
-        lbounds_[i][3] = m_[i];
-        lbounds_[i][4] = u_[i];
-        lbounds_[i][5] = p_[i];
-        lbounds_[i][6] = c_ + b_;
-        lbounds_[i][7] = j_[i];
+        lb_seg_x_[i][0] = -sigma_[i]/2.0*sin(theta_);
+        lb_seg_x_[i][1] = c_ - sigma_[i]/2.0*sin(theta_);
+        lb_seg_x_[i][2] = c_ + sigma_[i]/2.0*cos(theta_);
+        lb_seg_x_[i][3] = width_ + sigma_[i]/2.0*cos(theta_);
         
-        ubounds_[i][0] = -sigma_[i]/2.0*sinTheta_;
-        ubounds_[i][1] = 0.0;
-        ubounds_[i][2] = m_[i];
-        ubounds_[i][3] = u_[i];
-        ubounds_[i][4] = p_[i];
-        ubounds_[i][5] = b_ + c_;
-        ubounds_[i][6] = j_[i];
-        ubounds_[i][7] = b_ + c_ + (lamWall_[i] + sigma_[i])*cosTheta_;
+        ub_seg_z_[i][0] = lamW_*sigma_[i]*cos(theta_);
+        ub_seg_z_[i][1] = a_ + lamW_*sigma_[i]*cos(theta_);
+        ub_seg_z_[i][2] = a_ + lamW_*sigma_[i]*sin(theta_);
+        ub_seg_z_[i][3] = lamW_*sigma_[i]*sin(theta_);
+        
+        lb_seg_z_[i][0] = sigma_[i]/2.0*cos(theta_);
+        lb_seg_z_[i][1] = a_ + sigma_[i]/2.0*cos(theta_);
+        lb_seg_z_[i][2] = a_ + sigma_[i]/2.0*sin(theta_);
+        lb_seg_z_[i][3] = sigma_[i]/2.0*sin(theta_);
+        
+        ub_check_[i] = *std::max_element(ub_seg_z_[i].begin(), ub_seg_z_[i].end());
+        
+        ub_slope_[i][0] = 0.0;
+        ub_slope_[i][1] = (ub_seg_z_[i][1] - ub_seg_z_[i][0])/(ub_seg_x_[i][1] - ub_seg_x_[i][0]);
+        ub_slope_[i][2] = (ub_seg_z_[i][2] - ub_seg_z_[i][1])/(ub_seg_x_[i][2] - ub_seg_x_[i][1]);
+        ub_slope_[i][3] = (ub_seg_z_[i][3] - ub_seg_z_[i][2])/(ub_seg_x_[i][3] - ub_seg_x_[i][2]);
+        ub_slope_[i][4] = 0.0;
+        
+        ub_int_[i][0] = 0.0;
+        ub_int_[i][1] = ub_seg_z_[i][0];
+        ub_int_[i][2] = ub_seg_z_[i][1];
+        ub_int_[i][3] = ub_seg_z_[i][2];
+        ub_int_[i][4] = 0.0;
+        
+        lb_slope_[i][0] = 0.0;
+        lb_slope_[i][1] = (lb_seg_z_[i][1] - lb_seg_z_[i][0])/(lb_seg_x_[i][1] - lb_seg_x_[i][0]);
+        lb_slope_[i][2] = (lb_seg_z_[i][2] - lb_seg_z_[i][1])/(lb_seg_x_[i][2] - lb_seg_x_[i][1]);
+        lb_slope_[i][3] = (lb_seg_z_[i][3] - lb_seg_z_[i][2])/(lb_seg_x_[i][3] - lb_seg_x_[i][2]);
+        lb_slope_[i][4] = 0.0;
+        
+        lb_int_[i][0] = 0.0;
+        lb_int_[i][1] = lb_seg_z_[i][0];
+        lb_int_[i][2] = lb_seg_z_[i][1];
+        lb_int_[i][3] = lb_seg_z_[i][2];
+        lb_int_[i][4] = 0.0;
     }
 }
 
 /*!
- * Return the x-position of an atom that is within the first period of this feature. This function takes into account the x-offset of the feature automatically for all other routines.
+ * Get the interaction energy with a feature at a given period.
  *
- * \param [in] x X position of an atom accounting for box pbc, but not the feature's periodicity
- * \param [in] mv Expanded ensemble state of the atom
+ * \param [in] dx Difference between x-coordinate and offset, when x has already been replaced in the box
+ * \param [in] dz Z-distance to the feature's surface
+ * \param [in] x_shift How much to shift imaginary feature (in period units) to obtain coordinates of one interested in
+ * \param [in] m Expanded ensemble state of the system
  */
-double rightTriangleZ::getRange_ (double x, const int mv) {
-    double L = lam_ + lamP_;
+double rightTriangleXZ::featureInteraction_ (const double dx, const double dz, const int x_shift, const int m) {
+    double ub = 0, lb = 0, U = 0.0;
     
-    // x is currently in the "box frame" so account for xOffset
-    while (x > lam_ + (lamWall_[mv] + sigma_[mv])*cosTheta_ + lamP_ + xOffset_) {
-        x -= L;
+    if (dx < ub_seg_x_[m][0]+x_shift) {
+        ub = 0.0;
+    } else if (dx < ub_seg_x_[m][1]+x_shift) {
+        ub = ub_slope_[m][1]*(dx-ub_seg_x_[m][0]-x_shift) + ub_int_[m][1];
+    } else if (dx < ub_seg_x_[m][2]+x_shift) {
+        ub = ub_slope_[m][2]*(dx-ub_seg_x_[m][1]-x_shift) + ub_int_[m][2];
+    } else if (dx < ub_seg_x_[m][3]+x_shift) {
+        ub = ub_slope_[m][3]*(dx-ub_seg_x_[m][2]-x_shift) + ub_int_[m][3];
+    } else {
+        ub = 0.0;
     }
-    while (x < -(lamWall_[mv] + sigma_[mv])*sinTheta_ + xOffset_) {
-        x += L;
+  
+    if (dx < lb_seg_x_[m][0]+x_shift) {
+        lb = 0.0;
+    } else if (dx < lb_seg_x_[m][1]+x_shift) {
+        lb = lb_slope_[m][1]*(dx-lb_seg_x_[m][0]-x_shift) + lb_int_[m][1];
+    } else if (dx < lb_seg_x_[m][2]+x_shift) {
+        lb = lb_slope_[m][2]*(dx-lb_seg_x_[m][1]-x_shift) + lb_int_[m][2];
+    } else if (dx < lb_seg_x_[m][3]+x_shift) {
+        lb = lb_slope_[m][3]*(dx-lb_seg_x_[m][2]-x_shift) + lb_int_[m][3];
+    } else {
+        lb = 0.0;
+    }
+                    
+    if (dz >= ub) {
+        U = 0.0;
+    } else if (dz >= lb) {
+        U = -eps_[m];
+    } else {
+        U = NUM_INFINITY;
     }
     
-    // shift back to "origin" of feature
-    x -= xOffset_;
-    
-    // in the case of having only one feature, these loops could place the particle out of the box
-    // however, this is not a problem since that convention is not assumed during this calculation
-    
-    return x;
-}
-
-/*!
- * Get the energy of a position assuming it is located within window 0.
- *
- * \param [in] x X position, wrapped to periodicity of feature
- * \param [in] z Z position, shifted to account for feature's zbase
- * \param [in] mv Expanded ensemble state of the atom
- */
-double rightTriangleZ::getU0_ (const double x, const double z, const int mv) {
-    double ub = (a_/c_)*(x + (lamWall_[mv] + sigma_[mv])*sinTheta_) + (lamWall_[mv] + sigma_[mv])*cosTheta_;
-    double lb = (-a_/b_)*(x + (lamWall_[mv] + sigma_[mv])*sinTheta_) + (lamWall_[mv] + sigma_[mv])*cosTheta_;
-    if (z < lb) {
-        return 0.0;
-    } else if (z <= ub) {
-        return -eps_[mv];
-    } else {
-        return 0.0;
-    }
-}
-
-/*!
- * Get the energy of a position assuming it is located within window 1.
- *
- * \param [in] x X position, wrapped to periodicity of feature
- * \param [in] z Z position, shifted to account for feature's zbase
- * \param [in] mv Expanded ensemble state of the atom
- */
-double rightTriangleZ::getU1_ (const double x, const double z, const int mv) {
-    double ub = (a_/c_)*(x + (lamWall_[mv] + sigma_[mv])*sinTheta_) + (lamWall_[mv] + sigma_[mv])*cosTheta_;
-    double lb1 = (a_/c_)*(x + sigma_[mv]/2.0*sinTheta_) + sigma_[mv]/2.0*cosTheta_;
-    double lb2 = (-a_/b_)*(x + (lamWall_[mv] + sigma_[mv])*sinTheta_) + (lamWall_[mv] + sigma_[mv])*cosTheta_;
-    if (z < lb2) {
-        return 0.0;
-    } else if (z < lb1) {
-        return NUM_INFINITY;
-    } else if (z <= ub) {
-        return -eps_[mv];
-    } else {
-        return 0.0;
-    }
-}
-
-/*!
- * Get the energy of a position assuming it is located within window 2.
- *
- * \param [in] x X position, wrapped to periodicity of feature
- * \param [in] z Z position, shifted to account for feature's zbase
- * \param [in] mv Expanded ensemble state of the atom
- */
-double rightTriangleZ::getU2_ (const double x, const double z, const int mv) {
-    double ub = (a_/c_)*(x + (lamWall_[mv] + sigma_[mv])*sinTheta_) + (lamWall_[mv] + sigma_[mv])*cosTheta_;
-    double lb = (a_/c_)*(x + sigma_[mv]/2.0*sinTheta_) + sigma_[mv]/2.0*cosTheta_;
-    if (z < lb) {
-        return NUM_INFINITY;
-    } else if (z <= ub) {
-        return -eps_[mv];
-    } else {
-        return 0.0;
-    }
-}
-
-/*!
- * Get the energy of a position assuming it is located within window 3.
- *
- * \param [in] x X position, wrapped to periodicity of feature
- * \param [in] z Z position, shifted to account for feature's zbase
- * \param [in] mv Expanded ensemble state of the atom
- */
-double rightTriangleZ::getU3_ (const double x, const double z, const int mv) {
-    double ub = s_[mv]*(x - m_[mv]) + n_[mv];
-    double lb = (a_/c_)*(x + sigma_[mv]/2.0*sinTheta_) + sigma_[mv]/2.0*cosTheta_;
-    if (z < lb) {
-        return NUM_INFINITY;
-    } else if (z <= ub) {
-        return -eps_[mv];
-    } else {
-        return 0.0;
-    }
-}
-
-/*!
- * Get the energy of a position assuming it is located within window 4.
- *
- * \param [in] x X position, wrapped to periodicity of feature
- * \param [in] z Z position, shifted to account for feature's zbase
- * \param [in] mv Expanded ensemble state of the atom
- */
-double rightTriangleZ::getU4_ (const double x, const double z, const int mv) {
-    double ub = s_[mv]*(x - m_[mv]) + n_[mv];
-    double lb = (-a_/b_)*(x - u_[mv]) + v_[mv];
-    if (z < lb) {
-        return NUM_INFINITY;
-    } else if (z <= ub) {
-        return -eps_[mv];
-    } else {
-        return 0.0;
-    }
-}
-
-/*!
- * Get the energy of a position assuming it is located within window 5.
- *
- * \param [in] x X position, wrapped to periodicity of feature
- * \param [in] z Z position, shifted to account for feature's zbase
- * \param [in] mv Expanded ensemble state of the atom
- */
-double rightTriangleZ::getU5_ (const double x, const double z, const int mv) {
-    double ub = (-a_/b_)*(x - p_[mv]) + q_[mv];
-    double lb = (-a_/b_)*(x - u_[mv]) + v_[mv];
-    if (z < lb) {
-        return NUM_INFINITY;
-    } else if (z <= ub) {
-        return -eps_[mv];
-    } else {
-        return 0.0;
-    }
-}
-
-/*!
- * Get the energy of a position assuming it is located within window 6.
- *
- * \param [in] x X position, wrapped to periodicity of feature
- * \param [in] z Z position, shifted to account for feature's zbase
- * \param [in] mv Expanded ensemble state of the atom
- */
-double rightTriangleZ::getU6_ (const double x, const double z, const int mv) {
-    double ub = (-a_/b_)*(x - p_[mv]) + q_[mv];
-    double lb1 = (-a_/b_)*(x - u_[mv]) + v_[mv];
-    double lb2 = (a_/c_)*(x - j_[mv]) + k_[mv];
-    if (z < lb2) {
-        return 0.0;
-    } else if (z < lb1) {
-        return NUM_INFINITY;
-    } else if (z <= ub) {
-        return -eps_[mv];
-    } else {
-        return 0.0;
-    }
-}
-
-/*!
- * Get the energy of a position assuming it is located within window 7.
- *
- * \param [in] x X position, wrapped to periodicity of feature
- * \param [in] z Z position, shifted to account for feature's zbase
- * \param [in] mv Expanded ensemble state of the atom
- */
-double rightTriangleZ::getU7_ (const double x, const double z, const int mv) {
-    double ub = (-a_/b_)*(x - p_[mv]) + q_[mv];
-    double lb = (a_/c_)*(x - j_[mv]) + k_[mv];
-    if (z < lb) {
-        return 0.0;
-    } else if (z <= ub) {
-        return -eps_[mv];
-    } else {
-        return 0.0;
-    }
+    return U;
 }
 
 /*!
@@ -378,96 +288,58 @@ double rightTriangleZ::getU7_ (const double x, const double z, const int mv) {
  * \param [in] atom Pointer to atom to examine
  * \param [in] box System box size. Will be checked that it is identical to value at class instantiation.
  */
-double rightTriangleZ::energy (const atom *a1, const std::vector < double > &box) {
+double rightTriangleXZ::energy (const atom *a1, const std::vector < double > &box) {
     for (unsigned int i = 0; i < box_.size(); ++i) {
         if (box[i] != box_[i]) {
-            throw customException ("System box size has changed from when rightTriangleZ was instantiated");
+            throw customException ("System box size has changed from when rightTriangleXZ was instantiated");
         }
     }
 
     const int mv = a1->mState;
     std::vector < double > p = a1->pos;
-    pbc (p, box);
+    
     
     if (mv < 0 || mv > M_-1) {
         throw customException ("mState out of bounds for rightTriangleZ");
     }
     
-    // Shift z and x into origin frame of feature
-    double z = p[2], x = p[0];
-    if (top_) {
-        z = zbase_ - p[2];
-    } else {
-        z = p[2] - zbase_;
-    }
-    x = getRange_ (x, mv);
+    // First find nearest feature (the one right below)
+    pbc (p, box);
+    double dx = p[0] - xOffset_, dz = 0.0;
+    int x_image = int(floor(dx/(width_+sep_)));
+    double x_shift = x_image*(width_+sep_);
     
-    // early check
-    if (z > std::max(n_[mv], q_[mv])) { // n > q if theta < PI/4
+    if (top_) {
+        dz = zbase_ - p[2];
+    } else {
+        dz = p[2] - zbase_;
+    }
+    
+    if (dz > ub_check_[mv]) {
         return 0.0;
     }
-
-    double U = 0.0;
     
-    if (x < ubounds_[mv][0] and x >= lbounds_[mv][0]) {
-        U = getU0_ (x, z, mv);
-    } else if (x < ubounds_[mv][1] and x >= lbounds_[mv][1]) {
-        U = getU1_ (x, z, mv);
-    } else if (x < ubounds_[mv][2] and x >= lbounds_[mv][2]) {
-        U = getU2_ (x, z, mv);
-    } else if (x < ubounds_[mv][3] and x >= lbounds_[mv][3]) {
-        U = getU3_ (x, z, mv);
-    } else if (x < ubounds_[mv][4] and x >= lbounds_[mv][4]) {
-        U = getU4_ (x, z, mv);
-    } else if (x < ubounds_[mv][5] and x >= lbounds_[mv][5]) {
-        U = getU5_ (x, z, mv);
-    } else if (x < ubounds_[mv][6] and x >= lbounds_[mv][6]) {
-        U = getU6_ (x, z, mv);
-    } else if (x < ubounds_[mv][7] and x >= lbounds_[mv][7]) {
-        U = getU7_ (x, z, mv);
-    } else {
-        U = 0.0;
+    double U = featureInteraction_ (dx, dz, x_shift, mv);
+    if (U == NUM_INFINITY) {
+        return U;
     }
     
-    // Check interactions with periodic features
-    if (U < NUM_INFINITY) {
-        double xn = 0.0;
-        bool periodic = false;
-        if (x < 0 + (lamWall_[mv] + sigma_[mv])*cosTheta_ - lamP_) {
-            xn = x + (lamP_ + lam_);
-            periodic = true;
-        } else if (x > lam_ - (lamWall_[mv] + sigma_[mv])*sinTheta_ + lamP_) {
-            xn = x - (lamP_ + lam_);
-            periodic = true;
+    // Must check all neighboring images, including images beyond edge of each box for periodicity effects
+    int x_i = x_image+1;
+    if (x_i > x_max_image_+1) {
+        x_i = -1;
+    }
+    while (x_i != x_image) { // Stop once one complete cycle is finished
+        x_shift = x_i*(width_+sep_);
+        double dU = featureInteraction_ (dx, dz, x_shift, mv);
+        if (dU == NUM_INFINITY) {
+            return NUM_INFINITY;
+        } else {
+            U += dU;
         }
-            
-        if (periodic) {
-            double dU = 0.0;
-            if (xn < ubounds_[mv][0] and xn >= lbounds_[mv][0]) {
-                dU = getU0_ (xn, z, mv);
-            } else if (xn < ubounds_[mv][1] and xn >= lbounds_[mv][1]) {
-                dU = getU1_ (xn, z, mv);
-            } else if (xn < ubounds_[mv][2] and xn >= lbounds_[mv][2]) {
-                dU = getU2_ (xn, z, mv);
-            } else if (xn < ubounds_[mv][3] and xn >= lbounds_[mv][3]) {
-                dU = getU3_ (xn, z, mv);
-            } else if (xn < ubounds_[mv][4] and xn >= lbounds_[mv][4]) {
-                dU = getU4_ (xn, z, mv);
-            } else if (xn < ubounds_[mv][5] and xn >= lbounds_[mv][5]) {
-                dU = getU5_ (xn, z, mv);
-            } else if (xn < ubounds_[mv][6] and xn >= lbounds_[mv][6]) {
-                dU = getU6_ (xn, z, mv);
-            } else if (xn < ubounds_[mv][7] and xn >= lbounds_[mv][7]) {
-                dU = getU7_ (xn, z, mv);
-            } else {
-                dU = 0.0;
-            }
-            
-            if (dU < NUM_INFINITY) {
-                U += dU;
-            } else {
-                return NUM_INFINITY;
-            }
+        x_i += 1;
+        if (x_i > x_max_image_+1) {
+            x_i = -1;
         }
     }
     
@@ -484,12 +356,12 @@ double rightTriangleZ::energy (const atom *a1, const std::vector < double > &box
  * \param [in] a1 Atom whose position to test.
  * \param [in] box System box size. Not actually used, but will be checked that it is identical to value at class instantiation.
  */
-bool rightTriangleZ::inside (const atom *a1, const std::vector < double > &box) {
+bool rightTriangleXZ::inside (const atom *a1, const std::vector < double > &box) {
     double U = NUM_INFINITY;
     try {
         U = energy (a1, box); // takes care of pbc internally
     } catch (customException &ce) {
-        throw customException ("Unable to test if inside rightTriangleZ : "+sstr(ce.what()));
+        throw customException ("Unable to test if inside rightTriangleXZ : "+sstr(ce.what()));
         //exit (SYS_FAILURE);
     }
     
@@ -751,7 +623,7 @@ void compositeBarrier::addSquareWellWallZ (const double lb, const double ub, con
  * \param [in] top If true, feature is on the "top", else is on the bottom (default)
  * \param [in] Number of expanded ensemble states to recognize (default = 1)
  */
-void compositeBarrier::addRightTriangleZ (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector < double > &box, const double zbase, bool top, const int M) {
+void compositeBarrier::addRightTriangleXZ (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector < double > &box, const double zbase, bool top, const int M) {
     if (sysBarriers_.begin() == sysBarriers_.end()) {
         try {
             sysBarriers_.resize(1);
@@ -766,9 +638,9 @@ void compositeBarrier::addRightTriangleZ (const double width, const double theta
         }
     }
     try {
-        sysBarriers_[sysBarriers_.size()-1] = new rightTriangleZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+        sysBarriers_[sysBarriers_.size()-1] = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
     } catch (customException &ce) {
-        throw customException ("Cannot add rightTriangleZ to composite barrier: "+sstr(ce.what()));
+        throw customException ("Cannot add rightTriangleXZ to composite barrier: "+sstr(ce.what()));
     }
 }
 
