@@ -13,6 +13,9 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-std=gnu++0x)
 endif()
 
+add_definitions(-D_GLIBCXX_DEBUG)
+#add_definitions(-fsanitize=address -mllvm -asan-stack)
+
 # do not include main.cpp
 include_directories("../../src/")
 file(GLOB omcs_SRC
