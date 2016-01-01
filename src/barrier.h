@@ -58,31 +58,37 @@ private:
 class rightTriangleZ : public barrier {
 public:
     ~rightTriangleZ () {};
-    rightTriangleZ (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector < double > &box, bool top = false, const int M = 1);
+    rightTriangleZ (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector < double > &box, const double zbase, bool top = false, const int M = 1);
     bool inside (const atom *a1, const std::vector < double > &box);
     double energy (const atom *a1, const std::vector < double > &box);
     
-private:
-    double getRange_ (double x);
-    double getU0_ (const double x, const double z);
-    double getU1_ (const double x, const double z);
-    double getU2_ (const double x, const double z);
-    double getU3_ (const double x, const double z);
-    double getU4_ (const double x, const double z);
-    double getU5_ (const double x, const double z);
-    double getU6_ (const double x, const double z);
-    double getU7_ (const double x, const double z);
+    std::vector < std::vector < double > > lbounds () { return lbounds_; } //!< Return the lower bound for each range for each M state
+    std::vector < std::vector < double > > ubounds () { return ubounds_; } //!< Return the upper bound for each range for each M state
     
+private:
+    double getRange_ (double x, const int mv);
+    double getU0_ (const double x, const double z, const int mv);
+    double getU1_ (const double x, const double z, const int mv);
+    double getU2_ (const double x, const double z, const int mv);
+    double getU3_ (const double x, const double z, const int mv);
+    double getU4_ (const double x, const double z, const int mv);
+    double getU5_ (const double x, const double z, const int mv);
+    double getU6_ (const double x, const double z, const int mv);
+    double getU7_ (const double x, const double z, const int mv);
+    
+    bool top_; //!< If true, feature is on the "top", else is on the bottom (default)
     double lam_; //!< Width of triangle's feature
     double theta_; //!< Elevation angle of the feature
-    double lamWall_; //!< Attractive range beyond the hard sphere in contact with the feature
-    double eps_; //!< Attraction strength to feature
-    double sigma_; //!< Hard sphere diameter of interaction with the feature
     double lamP_; //!< Distance between features
     double xOffset_; //!< Offset from x = 0 position of the first feature
-    bool top_; //!< If true, feature is on the "top", else is on the bottom (default)
-    double cosTheta_, sinTheta_, a_, b_, c_, m_, n_, p_, q_, u_, v_, j_, k_, s_;
-    std::vector < double > lbounds_, ubounds_, box_;
+    double zbase_; //!< Z-coordinate of XY plane that defines the base of the feature
+    double cosTheta_, sinTheta_, a_, b_, c_;
+    
+    std::vector < double > lamWall_; //!< Attractive range beyond the hard sphere in contact with the feature
+    std::vector < double > eps_; //!< Attraction strength to feature
+    std::vector < double > sigma_; //!< Hard sphere diameter of interaction with the feature
+    std::vector < double > m_, n_, p_, q_, u_, v_, j_, k_, s_, box_;
+    std::vector < std::vector < double > > lbounds_, ubounds_;
 };
 
 /*!
@@ -95,6 +101,7 @@ public:
     
     void addHardWallZ (const double lb, const double ub, const double sigma, const int M = 1);
     void addSquareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps, const int M = 1);
+    void addRightTriangleZ (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector < double > &box, const double zbase, bool top = false, const int M = 1);
     
     bool inside (const atom *a1, const std::vector < double > &box);
     double energy (const atom *a1, const std::vector < double > &box);

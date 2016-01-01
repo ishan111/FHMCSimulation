@@ -2048,8 +2048,6 @@ TEST_F (testExpandedWalaBias, testUpdateDiff) {
 	EXPECT_TRUE (fabs(lnPI[6] - lnF) < 1.0e-8);
 	EXPECT_TRUE (fabs(lnPI[7] - 0.0) < 1.0e-8);
 	EXPECT_TRUE (fabs(lnPI[8] - 0.0) < 1.0e-8);
-	EXPECT_TRUE (fabs(lnPI[9] - 0.0) < 1.0e-8);
-    std::cout << lnPI[9] << std::endl;
 }
 
 TEST_F (testExpandedWalaBias, GetGoodAddress) {
@@ -5060,4 +5058,1249 @@ TEST_F (testCompositeBarrier, hardWallInsideSquareWell) {
     U = cB.energy (&a1, box);
     EXPECT_EQ (U, NUM_INFINITY);
 }
-// line 2051
+
+/*class testRightTriangleZ : public ::testing::Test {
+protected:
+    
+    double width, theta, lamW, eps, sigma, sep, offset, L, zbase;
+    std::vector < double > box;
+    bool top;
+    int M;
+    
+    virtual void SetUp() {
+        sigma = 1.234;
+        eps = 1.234;
+        lamW = 2.345;
+        L = 10;
+        box.resize(3, L);
+        sep = 0;
+        width = (L/2.0 - sep);
+        M = 3;
+        top = false;
+        offset = 0;
+        theta = PI/4.0;
+        zbase = 0;
+    }
+};
+
+TEST_F (testRightTriangleZ, badInit) {
+    rightTriangleZ *rtz;
+    
+    // sep < 0
+    bool caught = false;
+    try {
+        rtz = new rightTriangleZ (width, theta, lamW, eps, sigma, -0.01, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // bad periodicity
+    caught = false;
+    try {
+        rtz = new rightTriangleZ (width, theta, lamW, eps, sigma, sep+0.01, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // only one feature
+    caught = false;
+    try {
+        rtz = new rightTriangleZ (L/2, theta, lamW, eps, sigma, L/2, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    caught = false;
+    try {
+        rtz = new rightTriangleZ (L/4, theta, lamW, eps, sigma, 3*L/4, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    caught = false;
+    try {
+        rtz = new rightTriangleZ (L, theta, lamW, eps, sigma, 0, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // theta <= 0
+    caught = false;
+    try {
+        rtz = new rightTriangleZ (width, 0.0, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    caught = false;
+    try {
+        rtz = new rightTriangleZ (width, -0.01, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // theta >= 90 degrees (PI/2)
+    caught = false;
+    try {
+        rtz = new rightTriangleZ (width, PI/2.0, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    caught = false;
+    try {
+        rtz = new rightTriangleZ (width, PI/2.0*1.1, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // sigma <= 0
+    caught = false;
+    try {
+        rtz = new rightTriangleZ (width, theta, lamW, eps, 0.0, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // lamW < 1
+    caught = false;
+    try {
+        rtz = new rightTriangleZ (width, theta, 0.99, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // eps < 0
+    caught = false;
+    try {
+        rtz = new rightTriangleZ (width, theta, lamW, -0.01, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
+    // M <= 0
+    caught = false;
+    try {
+        rtz = new rightTriangleZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, 0);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+}
+
+TEST_F (testRightTriangleZ, checkLBounds) {
+    rightTriangleZ *rtz;
+    
+    bool fail = false;
+    try {
+        rtz = new rightTriangleZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        fail = true;
+    }
+    EXPECT_TRUE (!fail);
+    
+    std::vector < std::vector < double > > lb = rtz->lbounds();
+    
+    EXPECT_TRUE (lb.size() == M);
+    
+    // m = 0 is fully inserted
+    double lamWall = lamW*sigma-sigma;
+    EXPECT_TRUE (fabs(lb[0][0] - (-(lamWall+sigma)*sin(theta))) < 1.0e-9);
+    EXPECT_TRUE (fabs(lb[0][0] - (-lamW*sigma*sin(theta))) < 1.0e-9);
+    EXPECT_TRUE (fabs(lb[0][1] - (-sigma/2.0*sin(theta))) < 1.0e-9);
+    EXPECT_TRUE (fabs(lb[0][2] - 0.0) < 1.0e-9);
+    EXPECT_TRUE (fabs(lb[0][3] - (width/2.0 - (lamWall + sigma)*sin(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(lb[0][4] - (width/2.0 + sigma/2.0*(cos(theta) - sin(theta)))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(lb[0][5] - (width/2.0 + (lamWall + sigma)*cos(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(lb[0][6] - width) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(lb[0][7] - (width + sigma/2.0*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    
+    // m = 1 is 1/3 inserted becaue M = 3, so sigma is 1/3 its value
+    lamWall = lamW*sigma/3-sigma/3;
+    EXPECT_TRUE (fabs(lb[1][0] - (-(lamWall+sigma/3)*sin(theta))) < 1.0e-9);
+    EXPECT_TRUE (fabs(lb[1][0] - (-lamW*sigma/3*sin(theta))) < 1.0e-9);
+    EXPECT_TRUE (fabs(lb[1][1] - (-sigma/3/2.0*sin(theta))) < 1.0e-9);
+    EXPECT_TRUE (fabs(lb[1][2] - 0.0) < 1.0e-9);
+    EXPECT_TRUE (fabs(lb[1][3] - (width/2.0 - (lamWall + sigma/3)*sin(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(lb[1][4] - (width/2.0 + sigma/3/2.0*(cos(theta) - sin(theta)))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(lb[1][5] - (width/2.0 + (lamWall + sigma/3)*cos(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(lb[1][6] - width) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(lb[1][7] - (width + sigma/3/2.0*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    
+    // m = 2 is 2/3 inserted becaue M = 3, so sigma is 2/3 its value
+    lamWall = lamW*sigma*2./3-sigma*2./3;
+    EXPECT_TRUE (fabs(lb[2][0] - (-(lamWall+sigma*2./3)*sin(theta))) < 1.0e-9);
+    EXPECT_TRUE (fabs(lb[2][0] - (-lamW*sigma*2./3*sin(theta))) < 1.0e-9);
+    EXPECT_TRUE (fabs(lb[2][1] - (-sigma*2./3/2.0*sin(theta))) < 1.0e-9);
+    EXPECT_TRUE (fabs(lb[2][2] - 0.0) < 1.0e-9);
+    EXPECT_TRUE (fabs(lb[2][3] - (width/2.0 - (lamWall + sigma*2./3)*sin(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(lb[2][4] - (width/2.0 + sigma*2./3/2.0*(cos(theta) - sin(theta)))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(lb[2][5] - (width/2.0 + (lamWall + sigma*2./3)*cos(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(lb[2][6] - width) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(lb[2][7] - (width + sigma*2./3/2.0*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleZ, checkUBounds) {
+    rightTriangleZ *rtz;
+    
+    bool fail = false;
+    try {
+        rtz = new rightTriangleZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        fail = true;
+    }
+    EXPECT_TRUE (!fail);
+
+    std::vector < std::vector < double > > ub = rtz->ubounds();
+    
+    EXPECT_TRUE (ub.size() == M);
+    
+    // m = 0 is fully inserted
+    double lamWall = lamW*sigma-sigma;
+    EXPECT_TRUE (fabs(ub[0][0] - (-sigma/2.0*sin(theta))) < 1.0e-9);
+    EXPECT_TRUE (fabs(ub[0][1] - 0.0) < 1.0e-9);
+    EXPECT_TRUE (fabs(ub[0][2] - (width/2.0 - (lamWall + sigma)*sin(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[0][3] - (width/2.0 + sigma/2.0*(cos(theta) - sin(theta)))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[0][4] - (width/2.0 + (lamWall + sigma)*cos(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[0][5] - width) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[0][6] - (width + sigma/2.0*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[0][7] - (width + (lamWall + sigma)*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    
+    // m = 1 is 1/3 inserted becaue M = 3, so sigma is 1/3 its value
+    lamWall = lamW*sigma/3-sigma/3;
+    EXPECT_TRUE (fabs(ub[1][0] - (-sigma/3/2.0*sin(theta))) < 1.0e-9);
+    EXPECT_TRUE (fabs(ub[1][1] - 0.0) < 1.0e-9);
+    EXPECT_TRUE (fabs(ub[1][2] - (width/2.0 - (lamWall + sigma/3)*sin(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[1][3] - (width/2.0 + sigma/3/2.0*(cos(theta) - sin(theta)))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[1][4] - (width/2.0 + (lamWall + sigma/3)*cos(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[1][5] - width) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[1][6] - (width + sigma/3/2.0*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[1][7] - (width + (lamWall + sigma/3)*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    
+    // m = 2 is 2/3 inserted becaue M = 3, so sigma is 2/3 its value
+    lamWall = lamW*sigma*2./3-sigma*2./3;
+    EXPECT_TRUE (fabs(ub[2][0] - (-sigma*2./3/2.0*sin(theta))) < 1.0e-9);
+    EXPECT_TRUE (fabs(ub[2][1] - 0.0) < 1.0e-9);
+    EXPECT_TRUE (fabs(ub[2][2] - (width/2.0 - (lamWall + sigma*2./3)*sin(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[2][3] - (width/2.0 + sigma*2./3/2.0*(cos(theta) - sin(theta)))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[2][4] - (width/2.0 + (lamWall + sigma*2./3)*cos(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[2][5] - width) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[2][6] - (width + sigma*2./3/2.0*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    EXPECT_TRUE (fabs(ub[2][7] - (width + (lamWall + sigma*2./3)*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    
+    delete rtz;
+}
+
+class testRightTriangleZ_30 : public ::testing::Test {
+protected:
+    atom a1;
+    rightTriangleZ *rtz;
+    
+    double width, theta, lamW, eps, sigma, sep, offset, L, zbase, Utest;
+    bool top, fail, io;
+    int M;
+    std::vector < double > box;
+    std::vector < std::vector < double > > lb, ub;
+    
+    virtual void SetUp() {
+        sigma = 1.234;
+        eps = 1.234;
+        lamW = 2.345;
+        L = 20;
+        box.resize(3, L);
+        sep = 5;
+        width = (L/2.0 - sep);
+        M = 3;
+        top = false;
+        offset = 0;
+        theta = PI/6.0;
+        zbase = 0;
+        fail = false;
+        try {
+            rtz = new rightTriangleZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+        } catch (customException &ce) {
+            fail = true;
+        }
+        lb = rtz->lbounds();
+        ub = rtz->ubounds();
+    }
+};
+
+TEST_F (testRightTriangleZ_30, in_out_0) {
+    EXPECT_TRUE (!fail);
+    int range = 0;
+    std::vector < double > pos(3, 0);
+    
+    // Fully inserted
+    for (unsigned int mv = 0; mv < M; ++mv) {
+        a1.mState = mv;
+        pos[0] = (ub[mv][range] - lb[mv][range])/2.0 + lb[mv][range];
+        double factor = 0;
+        
+        if (mv > 0) {
+            factor = mv*1.0/M;
+        } else {
+            factor = 1.0;
+        }
+        
+        // safe below corner
+        pos[2] = lamW*sigma*cos(theta)/2.0*factor;
+        a1.pos = pos;
+        Utest = rtz->energy(&a1, box);
+        EXPECT_EQ (Utest, 0.0);
+        io = rtz->inside(&a1, box);
+        EXPECT_EQ (io, true);
+        
+        // also safe inside energy region
+        pos[2] = lamW*sigma*cos(theta)*factor;
+        a1.pos = pos;
+        Utest = rtz->energy(&a1, box);
+        EXPECT_EQ (Utest, -eps*factor);
+        io = rtz->inside(&a1, box);
+        EXPECT_EQ (io, true);
+        
+        // also safe above
+        pos[2] = lamW*sigma*cos(theta)*2.0*factor;
+        a1.pos = pos;
+        Utest = rtz->energy(&a1, box);
+        EXPECT_EQ (Utest, 0.0);
+        io = rtz->inside(&a1, box);
+        EXPECT_EQ (io, true);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleZ_30, in_out_1) {
+    EXPECT_TRUE (!fail);
+    int range = 1;
+    double factor = 1;
+    std::vector < double > pos(3, 0);
+    
+    // M = 0/3
+    a1.mState = 0;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 3.2523353099*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 3.2523353099*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 0.623393953157*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 0.623393953157*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // above surface
+    pos[2] = 0.267168837067*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // safe below corner
+    pos[2] = 0.267168837067*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+
+    // M = 1/3
+    a1.mState = 1;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 1.08411176997*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 1.08411176997*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 0.207797984386*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 0.207797984386*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // above surface
+    pos[2] = 0.0890562790225*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // safe below corner
+    pos[2] = 0.0890562790225*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // M = 2/3
+    a1.mState = 2;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 2.16822353993*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 2.16822353993*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 0.415595968772*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 0.415595968772*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // above surface
+    pos[2] = 0.178112558045*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // safe below corner
+    pos[2] = 0.178112558045*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleZ_30, in_out_2) {
+    EXPECT_TRUE (!fail);
+    int range = 2;
+    double factor = 1;
+    std::vector < double > pos(3, 0);
+    
+    // M = 0/3
+    a1.mState = 0;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 4.00624939504*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 4.00624939504*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 1.3773080383*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 1.3773080383*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // M = 1/3
+    a1.mState = 1;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 2.0571043015*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 2.0571043015*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 1.18079051592*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 1.18079051592*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // M = 2/3
+    a1.mState = 2;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 3.03167684827*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 3.03167684827*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 1.27904927711*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 1.27904927711*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleZ_30, in_out_3) {
+    EXPECT_TRUE (!fail);
+    int range = 3;
+    double factor = 1;
+    std::vector < double > pos(3, 0);
+    
+    // M = 0/3
+    a1.mState = 0;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 4.4470075358*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 4.4470075358*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 2.525033514*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 2.525033514*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // M = 1/3
+    a1.mState = 1;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 2.92571151824*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 2.92571151824*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 2.28505351098*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 2.28505351098*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // M = 2/3
+    a1.mState = 2;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 3.68635952702*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 3.68635952702*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 2.40504351249*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 2.40504351249*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleZ_30, in_out_4) {
+    EXPECT_TRUE (!fail);
+    int range = 4;
+    double factor = 1;
+    std::vector < double > pos(3, 0);
+    
+    // M = 0/3
+    a1.mState = 0;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 3.91741818995*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 3.91741818995*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 1.03318484653*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 1.03318484653*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // M = 1/3
+    a1.mState = 1;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 2.74918173629*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 2.74918173629*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 1.78777062182*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 1.78777062182*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // M = 2/3
+    a1.mState = 2;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 3.33329996312*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 3.33329996312*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 1.41047773417*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 1.41047773417*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleZ_30, in_out_5) {
+    EXPECT_TRUE (!fail);
+    int range = 5;
+    double factor = 1;
+    std::vector < double > pos(3, 0);
+    
+    // M = 0/3
+    a1.mState = 0;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 3.78020645588*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 3.78020645588*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 0.146234254731*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 0.146234254731*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // M = 1/3
+    a1.mState = 1;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 2.28825258806*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 2.28825258806*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 0.770432588064*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 0.770432588064*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // M = 2/3
+    a1.mState = 2;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 3.18600272532*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 3.18600272532*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 0.458333421397*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 0.458333421397*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleZ_30, in_out_6) {
+    EXPECT_TRUE (!fail);
+    int range = 6;
+    double factor = 1;
+    std::vector < double > pos(3, 0);
+    
+    // M = 0/3
+    a1.mState = 0;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 3.2523353099*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 3.2523353099*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 0.623393953157*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 0.623393953157*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // above surface
+    pos[2] = 0.267168837067*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // safe below corner
+    pos[2] = 0.267168837067*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // M = 1/3
+    a1.mState = 1;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 1.08411176997*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 1.08411176997*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 0.207797984386*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 0.207797984386*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // above surface
+    pos[2] = 0.0890562790225*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // safe below corner
+    pos[2] = 0.0890562790225*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // M = 2/3
+    a1.mState = 2;
+    
+    // set
+    factor = 1;
+    if (a1.mState > 0) {
+        factor = a1.mState/3.0;
+    }
+    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
+    
+    // also safe above
+    pos[2] = 2.16822353993*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // enters energy region
+    pos[2] = 2.16822353993*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // also safe inside energy region
+    pos[2] = 0.415595968772*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, -eps*factor);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    // hits surface
+    pos[2] = 0.415595968772*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // above surface
+    pos[2] = 0.178112558045*1.01;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, NUM_INFINITY);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, false);
+    
+    // safe below corner
+    pos[2] = 0.178112558045*0.99;
+    a1.pos = pos;
+    Utest = rtz->energy(&a1, box);
+    EXPECT_EQ (Utest, 0.0);
+    io = rtz->inside(&a1, box);
+    EXPECT_EQ (io, true);
+    
+    delete rtz;
+}*/
+
+// other in_out ranges
+
+// other angles (45, 60)
+
+// repeat above for top
+
+// try one xOffset
+
+// try one zbase > 0 (both top and bottom)
+
+// superposition
+
+// run test simulations
