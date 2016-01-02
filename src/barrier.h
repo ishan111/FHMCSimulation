@@ -62,9 +62,6 @@ public:
     bool inside (const atom *a1, const std::vector < double > &box);
     double energy (const atom *a1, const std::vector < double > &box);
     
-    //std::vector < std::vector < double > > lbounds () { return lbounds_; } //!< Return the lower bound for each range for each M state
-    //std::vector < std::vector < double > > ubounds () { return ubounds_; } //!< Return the upper bound for each range for each M state
-    
 private:
     double featureInteraction_ (const double dx, const double dz, const int x_shift, const int m);
     
