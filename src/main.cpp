@@ -72,7 +72,12 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
                 for (unsigned int j = 0; j < 3; ++j) {
                     wallParams[j] = doc[dummy.c_str()][j].GetDouble();
                 }
-        	   	sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
+                try {
+                    sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
+                } catch (customException &ce) {
+                    std::cerr << ce.what() << std::endl;
+                    exit(SYS_FAILURE);
+                }
                 convention0 = true;
             }
             for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
@@ -89,7 +94,12 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
                         for (unsigned int j = 0; j < 3; ++j) {
                             wallParams[j] = doc[dummy.c_str()][j].GetDouble();
                         }
-                        sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
+                        try {
+                            sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
+                        } catch (customException &ce) {
+                            std::cerr << ce.what() << std::endl;
+                            exit(SYS_FAILURE);
+                        }
                     }
                 }
             }
@@ -106,7 +116,12 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
                 for (unsigned int j = 0; j < 5; ++j) {
                     wallParams[j] = doc[dummy.c_str()][j].GetDouble();
                 }
-                sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
+                try {
+                    sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
+                } catch (customException &ce) {
+                    std::cerr << ce.what() << std::endl;
+                    exit(SYS_FAILURE);
+                }
                 convention0 = true;
         	}
             for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
@@ -123,7 +138,12 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
                         for (unsigned int j = 0; j < 5; ++j) {
                             wallParams[j] = doc[dummy.c_str()][j].GetDouble();
                         }
-                        sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
+                        try {
+                            sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
+                        } catch (customException &ce) {
+                            std::cerr << ce.what() << std::endl;
+                            exit(SYS_FAILURE);
+                        }
                     }
                 }
             }
@@ -152,7 +172,12 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
             }
             assert (doc[dummy.c_str()][8].IsBool());
             top = doc[dummy.c_str()][8].GetBool();
-            sys.speciesBarriers[i].addRightTriangleXZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
+            try {
+                sys.speciesBarriers[i].addRightTriangleXZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
+            } catch (customException &ce) {
+                std::cerr << ce.what() << std::endl;
+                exit(SYS_FAILURE);
+            }
             convention0 = true;
         }
         for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
@@ -172,7 +197,12 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
                     }
                     assert (doc[dummy.c_str()][8].IsBool());
                     top = doc[dummy.c_str()][8].GetBool();
-                    sys.speciesBarriers[i].addRightTriangleXZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
+                    try {
+                        sys.speciesBarriers[i].addRightTriangleXZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
+                    } catch (customException &ce) {
+                        std::cerr << ce.what() << std::endl;
+                        exit(SYS_FAILURE);
+                    }
                 }
             }
         }
