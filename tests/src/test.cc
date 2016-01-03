@@ -5059,12 +5059,14 @@ TEST_F (testCompositeBarrier, hardWallInsideSquareWell) {
     EXPECT_EQ (U, NUM_INFINITY);
 }
 
-/*class testRightTriangleZ : public ::testing::Test {
+class testRightTriangleXZ : public ::testing::Test {
 protected:
+    rightTriangleXZ *rtz;
+    atom a1;
     
     double width, theta, lamW, eps, sigma, sep, offset, L, zbase;
     std::vector < double > box;
-    bool top;
+    bool top, inside;
     int M;
     
     virtual void SetUp() {
@@ -5083,56 +5085,53 @@ protected:
     }
 };
 
-TEST_F (testRightTriangleZ, badInit) {
-    rightTriangleZ *rtz;
-    
+TEST_F (testRightTriangleXZ, badSep) {
     // sep < 0
     bool caught = false;
     try {
-        rtz = new rightTriangleZ (width, theta, lamW, eps, sigma, -0.01, offset, box, zbase, top, M);
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, -0.01, offset, box, zbase, top, M);
     } catch (customException &ce) {
         caught = true;
     }
     EXPECT_TRUE (caught);
-    
+}
+
+TEST_F (testRightTriangleXZ, badPeriodicity) {
     // bad periodicity
-    caught = false;
+    bool caught = false;
     try {
-        rtz = new rightTriangleZ (width, theta, lamW, eps, sigma, sep+0.01, offset, box, zbase, top, M);
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep+0.01, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+}
+
+TEST_F (testRightTriangleXZ, badZbase) {
+    // zbase < 0
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, -0.01, top, M);
     } catch (customException &ce) {
         caught = true;
     }
     EXPECT_TRUE (caught);
     
-    // only one feature
+    // zbase > Z-width of box
     caught = false;
     try {
-        rtz = new rightTriangleZ (L/2, theta, lamW, eps, sigma, L/2, offset, box, zbase, top, M);
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, box[2]+0.01, top, M);
     } catch (customException &ce) {
         caught = true;
     }
     EXPECT_TRUE (caught);
-    
-    caught = false;
-    try {
-        rtz = new rightTriangleZ (L/4, theta, lamW, eps, sigma, 3*L/4, offset, box, zbase, top, M);
-    } catch (customException &ce) {
-        caught = true;
-    }
-    EXPECT_TRUE (caught);
-    
-    caught = false;
-    try {
-        rtz = new rightTriangleZ (L, theta, lamW, eps, sigma, 0, offset, box, zbase, top, M);
-    } catch (customException &ce) {
-        caught = true;
-    }
-    EXPECT_TRUE (caught);
-    
+}
+
+TEST_F (testRightTriangleXZ, badTheta) {
     // theta <= 0
-    caught = false;
+    bool caught = false;
     try {
-        rtz = new rightTriangleZ (width, 0.0, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+        rtz = new rightTriangleXZ (width, 0.0, lamW, eps, sigma, sep, offset, box, zbase, top, M);
     } catch (customException &ce) {
         caught = true;
     }
@@ -5140,7 +5139,7 @@ TEST_F (testRightTriangleZ, badInit) {
     
     caught = false;
     try {
-        rtz = new rightTriangleZ (width, -0.01, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+        rtz = new rightTriangleXZ (width, -0.01, lamW, eps, sigma, sep, offset, box, zbase, top, M);
     } catch (customException &ce) {
         caught = true;
     }
@@ -5149,7 +5148,7 @@ TEST_F (testRightTriangleZ, badInit) {
     // theta >= 90 degrees (PI/2)
     caught = false;
     try {
-        rtz = new rightTriangleZ (width, PI/2.0, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+        rtz = new rightTriangleXZ (width, PI/2.0, lamW, eps, sigma, sep, offset, box, zbase, top, M);
     } catch (customException &ce) {
         caught = true;
     }
@@ -5157,1150 +5156,4789 @@ TEST_F (testRightTriangleZ, badInit) {
     
     caught = false;
     try {
-        rtz = new rightTriangleZ (width, PI/2.0*1.1, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+        rtz = new rightTriangleXZ (width, PI/2.0*1.1, lamW, eps, sigma, sep, offset, box, zbase, top, M);
     } catch (customException &ce) {
         caught = true;
     }
     EXPECT_TRUE (caught);
-    
+}
+
+TEST_F (testRightTriangleXZ, badSigma) {
     // sigma <= 0
-    caught = false;
+    bool caught = false;
     try {
-        rtz = new rightTriangleZ (width, theta, lamW, eps, 0.0, sep, offset, box, zbase, top, M);
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, 0.0, sep, offset, box, zbase, top, M);
     } catch (customException &ce) {
         caught = true;
     }
     EXPECT_TRUE (caught);
-    
+}
+
+TEST_F (testRightTriangleXZ, badLamW) {
     // lamW < 1
-    caught = false;
+    bool caught = false;
     try {
-        rtz = new rightTriangleZ (width, theta, 0.99, eps, sigma, sep, offset, box, zbase, top, M);
+        rtz = new rightTriangleXZ (width, theta, 0.99, eps, sigma, sep, offset, box, zbase, top, M);
     } catch (customException &ce) {
         caught = true;
     }
     EXPECT_TRUE (caught);
-    
+}
+
+TEST_F (testRightTriangleXZ, badEps) {
     // eps < 0
-    caught = false;
+    bool caught = false;
     try {
-        rtz = new rightTriangleZ (width, theta, lamW, -0.01, sigma, sep, offset, box, zbase, top, M);
+        rtz = new rightTriangleXZ (width, theta, lamW, -0.01, sigma, sep, offset, box, zbase, top, M);
     } catch (customException &ce) {
         caught = true;
     }
     EXPECT_TRUE (caught);
-    
+}
+
+TEST_F (testRightTriangleXZ, badM) {
     // M <= 0
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, 0);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+    
     caught = false;
     try {
-        rtz = new rightTriangleZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, 0);
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, -1);
     } catch (customException &ce) {
         caught = true;
     }
     EXPECT_TRUE (caught);
 }
 
-TEST_F (testRightTriangleZ, checkLBounds) {
-    rightTriangleZ *rtz;
-    
-    bool fail = false;
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_0_M_0) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+
+    bool caught = false;
     try {
-        rtz = new rightTriangleZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
     } catch (customException &ce) {
-        fail = true;
+        caught = true;
     }
-    EXPECT_TRUE (!fail);
+    EXPECT_TRUE (!caught);
     
-    std::vector < std::vector < double > > lb = rtz->lbounds();
+    a1.mState = 0;
     
-    EXPECT_TRUE (lb.size() == M);
-    
-    // m = 0 is fully inserted
-    double lamWall = lamW*sigma-sigma;
-    EXPECT_TRUE (fabs(lb[0][0] - (-(lamWall+sigma)*sin(theta))) < 1.0e-9);
-    EXPECT_TRUE (fabs(lb[0][0] - (-lamW*sigma*sin(theta))) < 1.0e-9);
-    EXPECT_TRUE (fabs(lb[0][1] - (-sigma/2.0*sin(theta))) < 1.0e-9);
-    EXPECT_TRUE (fabs(lb[0][2] - 0.0) < 1.0e-9);
-    EXPECT_TRUE (fabs(lb[0][3] - (width/2.0 - (lamWall + sigma)*sin(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(lb[0][4] - (width/2.0 + sigma/2.0*(cos(theta) - sin(theta)))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(lb[0][5] - (width/2.0 + (lamWall + sigma)*cos(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(lb[0][6] - width) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(lb[0][7] - (width + sigma/2.0*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    
-    // m = 1 is 1/3 inserted becaue M = 3, so sigma is 1/3 its value
-    lamWall = lamW*sigma/3-sigma/3;
-    EXPECT_TRUE (fabs(lb[1][0] - (-(lamWall+sigma/3)*sin(theta))) < 1.0e-9);
-    EXPECT_TRUE (fabs(lb[1][0] - (-lamW*sigma/3*sin(theta))) < 1.0e-9);
-    EXPECT_TRUE (fabs(lb[1][1] - (-sigma/3/2.0*sin(theta))) < 1.0e-9);
-    EXPECT_TRUE (fabs(lb[1][2] - 0.0) < 1.0e-9);
-    EXPECT_TRUE (fabs(lb[1][3] - (width/2.0 - (lamWall + sigma/3)*sin(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(lb[1][4] - (width/2.0 + sigma/3/2.0*(cos(theta) - sin(theta)))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(lb[1][5] - (width/2.0 + (lamWall + sigma/3)*cos(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(lb[1][6] - width) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(lb[1][7] - (width + sigma/3/2.0*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    
-    // m = 2 is 2/3 inserted becaue M = 3, so sigma is 2/3 its value
-    lamWall = lamW*sigma*2./3-sigma*2./3;
-    EXPECT_TRUE (fabs(lb[2][0] - (-(lamWall+sigma*2./3)*sin(theta))) < 1.0e-9);
-    EXPECT_TRUE (fabs(lb[2][0] - (-lamW*sigma*2./3*sin(theta))) < 1.0e-9);
-    EXPECT_TRUE (fabs(lb[2][1] - (-sigma*2./3/2.0*sin(theta))) < 1.0e-9);
-    EXPECT_TRUE (fabs(lb[2][2] - 0.0) < 1.0e-9);
-    EXPECT_TRUE (fabs(lb[2][3] - (width/2.0 - (lamWall + sigma*2./3)*sin(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(lb[2][4] - (width/2.0 + sigma*2./3/2.0*(cos(theta) - sin(theta)))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(lb[2][5] - (width/2.0 + (lamWall + sigma*2./3)*cos(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(lb[2][6] - width) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(lb[2][7] - (width + sigma*2./3/2.0*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -0.7234325 + image*box[2];
+        
+        a1.pos[2] = 2.47564552135*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.47564552135*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.92371764031*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.92371764031*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.14232755646*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.14232755646*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
     
     delete rtz;
 }
 
-TEST_F (testRightTriangleZ, checkUBounds) {
-    rightTriangleZ *rtz;
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_0_M_1) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
     
-    bool fail = false;
+    bool caught = false;
     try {
-        rtz = new rightTriangleZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
     } catch (customException &ce) {
-        fail = true;
+        caught = true;
     }
-    EXPECT_TRUE (!fail);
-
-    std::vector < std::vector < double > > ub = rtz->ubounds();
+    EXPECT_TRUE (!caught);
     
-    EXPECT_TRUE (ub.size() == M);
+    a1.mState = 1;
     
-    // m = 0 is fully inserted
-    double lamWall = lamW*sigma-sigma;
-    EXPECT_TRUE (fabs(ub[0][0] - (-sigma/2.0*sin(theta))) < 1.0e-9);
-    EXPECT_TRUE (fabs(ub[0][1] - 0.0) < 1.0e-9);
-    EXPECT_TRUE (fabs(ub[0][2] - (width/2.0 - (lamWall + sigma)*sin(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[0][3] - (width/2.0 + sigma/2.0*(cos(theta) - sin(theta)))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[0][4] - (width/2.0 + (lamWall + sigma)*cos(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[0][5] - width) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[0][6] - (width + sigma/2.0*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[0][7] - (width + (lamWall + sigma)*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    
-    // m = 1 is 1/3 inserted becaue M = 3, so sigma is 1/3 its value
-    lamWall = lamW*sigma/3-sigma/3;
-    EXPECT_TRUE (fabs(ub[1][0] - (-sigma/3/2.0*sin(theta))) < 1.0e-9);
-    EXPECT_TRUE (fabs(ub[1][1] - 0.0) < 1.0e-9);
-    EXPECT_TRUE (fabs(ub[1][2] - (width/2.0 - (lamWall + sigma/3)*sin(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[1][3] - (width/2.0 + sigma/3/2.0*(cos(theta) - sin(theta)))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[1][4] - (width/2.0 + (lamWall + sigma/3)*cos(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[1][5] - width) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[1][6] - (width + sigma/3/2.0*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[1][7] - (width + (lamWall + sigma/3)*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    
-    // m = 2 is 2/3 inserted becaue M = 3, so sigma is 2/3 its value
-    lamWall = lamW*sigma*2./3-sigma*2./3;
-    EXPECT_TRUE (fabs(ub[2][0] - (-sigma*2./3/2.0*sin(theta))) < 1.0e-9);
-    EXPECT_TRUE (fabs(ub[2][1] - 0.0) < 1.0e-9);
-    EXPECT_TRUE (fabs(ub[2][2] - (width/2.0 - (lamWall + sigma*2./3)*sin(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[2][3] - (width/2.0 + sigma*2./3/2.0*(cos(theta) - sin(theta)))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[2][4] - (width/2.0 + (lamWall + sigma*2./3)*cos(theta))) < 1.0e-9); // c =  width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[2][5] - width) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[2][6] - (width + sigma*2./3/2.0*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
-    EXPECT_TRUE (fabs(ub[2][7] - (width + (lamWall + sigma*2./3)*cos(theta))) < 1.0e-9); // c = b = width/2 if theta = PI/4
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -0.241144166667 + image*box[2];
+        
+        a1.pos[2] = 0.829007281949*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 0.829007281949*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 0.97457254677*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 0.97457254677*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.34682728195*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.34682728195*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
     
     delete rtz;
 }
 
-class testRightTriangleZ_30 : public ::testing::Test {
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_0_M_2) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -0.482288333333 + image*box[2];
+        
+        a1.pos[2] = 1.6580145639*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.6580145639*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 1.94914509354*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.94914509354*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.37159404395*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.37159404395*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_1_M_0) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.875 + image*box[2];
+        
+        a1.pos[2] = 1.79498198691*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.79498198691*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 4.42392334365*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.42392334365*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_1_M_1) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false, inside;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.875 + image*box[2];
+        
+        a1.pos[2] = 1.32001516546*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.32001516546*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.19632895104*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.19632895104*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_1_M_2) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.875 + image*box[2];
+        
+        a1.pos[2] = 1.55749857618*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.55749857618*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3.31012614735*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.31012614735*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_2_M_0) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.7875 + image*box[2];
+        
+        a1.pos[2] = 2.60669076301*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.60669076301*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 4.27337279813*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.27337279813*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_2_M_1) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.7875 + image*box[2];
+        
+        a1.pos[2] = 2.30557386417*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.30557386417*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.86113454254*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.86113454254*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_2_M_2) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.7875 + image*box[2];
+        
+        a1.pos[2] = 2.45613231359*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.45613231359*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3.56725367034*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.56725367034*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_3_M_0) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 4.375 + image*box[2];
+        
+        a1.pos[2] = 2.31653175473*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.31653175473*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 4.11595264758*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.11595264758*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_3_M_1) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 4.375 + image*box[2];
+        
+        a1.pos[2] = 1.49386508806*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.49386508806*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.70371439199*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.70371439199*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_3_M_2) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 4.375 + image*box[2];
+        
+        a1.pos[2] = 1.9051984214*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.9051984214*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3.40983351978*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.40983351978*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_4_M_0) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 6.25302184585 + image*box[2];
+        
+        a1.pos[2] = 1.43588273218*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.43588273218*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3.61273821062*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.61273821062*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.06482408892*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.06482408892*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_4_M_1) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.41767394862 + image*box[2];
+        
+        a1.pos[2] = 0.478627577393*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 0.478627577393*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 1.20572083333*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.20572083333*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.35494136297*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.35494136297*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_4_M_2) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.83534789723 + image*box[2];
+        
+        a1.pos[2] = 0.957255154787*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 0.957255154787*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.41144166667*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.41144166667*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.70988272595*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.70988272595*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_0_M_0) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -1.25302184585 + image*box[2];
+        
+        a1.pos[2] = 1.43588273218*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.43588273218*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3.61273821062*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.61273821062*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.06482408892*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.06482408892*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_0_M_1) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -0.417673948616 + image*box[2];
+        
+        a1.pos[2] = 0.478627577393*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 0.478627577393*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 1.20572083333*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.20572083333*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.35494136297*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.35494136297*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_0_M_2) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -0.835347897231 + image*box[2];
+        
+        a1.pos[2] = 0.957255154787*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 0.957255154787*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.41144166667*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.41144166667*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.70988272595*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.70988272595*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_1_M_0) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 0.625 + image*box[2];
+        
+        a1.pos[2] = 2.31653175473*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.31653175473*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.98054767068*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.98054767068*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.11595264758*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.11595264758*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_1_M_1) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 0.625 + image*box[2];
+        
+        a1.pos[2] = 1.49386508806*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.49386508806*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.70371439199*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.70371439199*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_1_M_2) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 0.625 + image*box[2];
+        
+        a1.pos[2] = 1.9051984214*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.9051984214*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3.40983351978*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.40983351978*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_2_M_0) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.2625 + image*box[2];
+        
+        a1.pos[2] = 2.62008822264*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.62008822264*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 4.28677025775*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.28677025775*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_2_M_1) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.2625 + image*box[2];
+        
+        a1.pos[2] = 2.31897132379*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.31897132379*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.87453200216*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.87453200216*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_2_M_2) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.2625 + image*box[2];
+        
+        a1.pos[2] = 2.46952977321*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.46952977321*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3.58065112996*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.58065112996*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_3_M_0) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.125 + image*box[2];
+        
+        a1.pos[2] = 1.79498198691*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.79498198691*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.53986473581*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.53986473581*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.42392334365*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.42392334365*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_3_M_1) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.125 + image*box[2];
+        
+        a1.pos[2] = 1.32001516546*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.32001516546*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.19632895104*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.19632895104*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_3_M_2) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.125 + image*box[2];
+        
+        a1.pos[2] = 1.55749857618*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.55749857618*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3.31012614735*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.31012614735*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_4_M_0) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.7234325 + image*box[2];
+        
+        a1.pos[2] = 2.47564552135*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.47564552135*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.92371764031*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.92371764031*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.14232755646*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.14232755646*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_4_M_1) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.24114416667 + image*box[2];
+        
+        a1.pos[2] = 0.829007281949*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 0.829007281949*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 0.97457254677*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 0.97457254677*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.34682728195*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.34682728195*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_4_M_2) {
+    theta = PI/3.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.48228833333 + image*box[2];
+        
+        a1.pos[2] = 1.6580145639*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.6580145639*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 1.94914509354*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.94914509354*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.37159404395*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.37159404395*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_0_M_0_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -1.25302184585 + image*box[2];
+        
+        a1.pos[2] = box[2] - 1.43588273218*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 1.43588273218*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 3.61273821062*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 3.61273821062*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 4.06482408892*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 4.06482408892*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_0_M_1_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -0.417673948616 + image*box[2];
+        
+        a1.pos[2] = box[2] - 0.478627577393*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 0.478627577393*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 1.20572083333*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 1.20572083333*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 1.35494136297*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 1.35494136297*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_0_M_2_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -0.835347897231 + image*box[2];
+        
+        a1.pos[2] = box[2] - 0.957255154787*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 0.957255154787*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 2.41144166667*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.41144166667*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.70988272595*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.70988272595*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_1_M_0_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 0.625 + image*box[2];
+        
+        a1.pos[2] = box[2] - 2.31653175473*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.31653175473*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 2.98054767068*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.98054767068*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 4.11595264758*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 4.11595264758*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_1_M_1_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 0.625 + image*box[2];
+        
+        a1.pos[2] = box[2] - 1.49386508806*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 1.49386508806*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 2.70371439199*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.70371439199*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_1_M_2_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 0.625 + image*box[2];
+        
+        a1.pos[2] = box[2] - 1.9051984214*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 1.9051984214*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 3.40983351978*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 3.40983351978*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_2_M_0_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.2625 + image*box[2];
+        
+        a1.pos[2] = box[2] - 2.62008822264*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.62008822264*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 4.28677025775*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 4.28677025775*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_2_M_1_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.2625 + image*box[2];
+        
+        a1.pos[2] = box[2] - 2.31897132379*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.31897132379*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 2.87453200216*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.87453200216*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_2_M_2_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.2625 + image*box[2];
+        
+        a1.pos[2] = box[2] - 2.46952977321*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.46952977321*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 3.58065112996*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 3.58065112996*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_3_M_0_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.125 + image*box[2];
+        
+        a1.pos[2] = box[2] - 1.79498198691*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 1.79498198691*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 2.53986473581*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.53986473581*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 4.42392334365*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 4.42392334365*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_3_M_1_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.125 + image*box[2];
+        
+        a1.pos[2] = box[2] - 1.32001516546*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 1.32001516546*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 2.19632895104*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.19632895104*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_3_M_2_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.125 + image*box[2];
+        
+        a1.pos[2] = box[2] - 1.55749857618*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 1.55749857618*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 3.31012614735*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 3.31012614735*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_4_M_0_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.7234325 + image*box[2];
+        
+        a1.pos[2] = box[2] - 2.47564552135*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.47564552135*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 2.92371764031*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.92371764031*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 4.14232755646*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 4.14232755646*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_4_M_1_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.24114416667 + image*box[2];
+        
+        a1.pos[2] = box[2] - 0.829007281949*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 0.829007281949*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 0.97457254677*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 0.97457254677*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.34682728195*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 2.34682728195*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_4_M_2_top) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.48228833333 + image*box[2];
+        
+        a1.pos[2] = box[2] - 1.6580145639*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 1.6580145639*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2] - 1.94914509354*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 1.94914509354*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 3.37159404395*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 3.37159404395*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_4_M_0_top_z_periodicity) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.7234325 + image*box[2];
+        
+        a1.pos[2] = 3*box[2] - 2.47564552135*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3*box[2] - 2.47564552135*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3*box[2] - 2.92371764031*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3*box[2] - 2.92371764031*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3*box[2] - 4.14232755646*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3*box[2] - 4.14232755646*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_4_M_1_top_z_periodicity) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.24114416667 + image*box[2];
+        
+        a1.pos[2] = -3*box[2] - 0.829007281949*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = -3*box[2] - 0.829007281949*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = -3*box[2] - 0.97457254677*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = -3*box[2] - 0.97457254677*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = -3*box[2] - 2.34682728195*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = -3*box[2] - 2.34682728195*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_4_M_2_top_z_periodicity) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2];
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.48228833333 + image*box[2];
+        
+        a1.pos[2] = 3*box[2] - 1.6580145639*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = -3*box[2] - 1.6580145639*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3*box[2] - 1.94914509354*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = -3*box[2] - 1.94914509354*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3*box[2] - 3.37159404395*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = -3*box[2] - 3.37159404395*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_0_M_0_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -1.25302184585 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 1.43588273218*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 1.43588273218*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 3.61273821062*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 3.61273821062*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 4.06482408892*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 4.06482408892*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_0_M_1_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -0.417673948616 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 0.478627577393*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 0.478627577393*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 1.20572083333*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 1.20572083333*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 1.35494136297*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 1.35494136297*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_0_M_2_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -0.835347897231 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 0.957255154787*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 0.957255154787*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.41144166667*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.41144166667*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.70988272595*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.70988272595*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_1_M_0_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 0.625 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 2.31653175473*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.31653175473*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.98054767068*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.98054767068*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 4.11595264758*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 4.11595264758*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_1_M_1_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 0.625 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 1.49386508806*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 1.49386508806*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.70371439199*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.70371439199*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_1_M_2_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 0.625 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 1.9051984214*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 1.9051984214*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 3.40983351978*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 3.40983351978*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_2_M_0_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.2625 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 2.62008822264*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.62008822264*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 4.28677025775*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 4.28677025775*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_2_M_1_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.2625 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 2.31897132379*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.31897132379*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.87453200216*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.87453200216*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_2_M_2_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.2625 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 2.46952977321*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.46952977321*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 3.58065112996*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 3.58065112996*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_3_M_0_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.125 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 1.79498198691*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2] - 1.79498198691*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.53986473581*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.53986473581*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 4.42392334365*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 4.42392334365*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_3_M_1_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.125 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 1.32001516546*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 1.32001516546*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.19632895104*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.19632895104*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_3_M_2_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.125 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 1.55749857618*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 1.55749857618*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 3.31012614735*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 3.31012614735*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_4_M_0_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.7234325 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 2.47564552135*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.47564552135*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.92371764031*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.92371764031*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 4.14232755646*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 4.14232755646*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_4_M_1_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.24114416667 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 0.829007281949*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 0.829007281949*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 0.97457254677*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 0.97457254677*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.34682728195*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 2.34682728195*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 60_degrees_energy_pos_4_M_2_top_zbase_offset) {
+    theta = PI/3.0;
+    top = true;
+    zbase = box[2]*0.75;
+    offset = 2.345;
+    double U = 0;
+    a1.pos[1] = 0;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.48228833333 + image*box[2] + offset;
+        
+        a1.pos[2] = box[2]*0.75 - 1.6580145639*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 1.6580145639*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = box[2]*0.75 - 1.94914509354*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 1.94914509354*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 3.37159404395*1.01;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = box[2]*0.75 - 3.37159404395*0.99;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_0_M_0_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -0.7234325 + image*box[2] + offset;
+        
+        a1.pos[2] = 2.47564552135*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.47564552135*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.92371764031*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.92371764031*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.14232755646*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.14232755646*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_0_M_1_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -0.241144166667 + image*box[2] + offset;
+        
+        a1.pos[2] = 0.829007281949*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 0.829007281949*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 0.97457254677*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 0.97457254677*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.34682728195*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.34682728195*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_0_M_2_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = -0.482288333333 + image*box[2] + offset;
+        
+        a1.pos[2] = 1.6580145639*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.6580145639*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 1.94914509354*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.94914509354*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.37159404395*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.37159404395*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_1_M_0_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.875 + image*box[2] + offset;
+        
+        a1.pos[2] = 1.79498198691*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.79498198691*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 4.42392334365*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.42392334365*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_1_M_1_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false, inside;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.875 + image*box[2] + offset;
+        
+        a1.pos[2] = 1.32001516546*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.32001516546*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.19632895104*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.19632895104*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_1_M_2_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 1.875 + image*box[2] + offset;
+        
+        a1.pos[2] = 1.55749857618*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.55749857618*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3.31012614735*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.31012614735*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_2_M_0_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.7875 + image*box[2] + offset;
+        
+        a1.pos[2] = 2.60669076301*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.60669076301*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 4.27337279813*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.27337279813*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_2_M_1_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.7875 + image*box[2] + offset;
+        
+        a1.pos[2] = 2.30557386417*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.30557386417*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.86113454254*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.86113454254*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_2_M_2_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 3.7875 + image*box[2] + offset;
+        
+        a1.pos[2] = 2.45613231359*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.45613231359*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3.56725367034*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.56725367034*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_3_M_0_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 2; ++image) {
+        a1.pos[0] = 4.375 + image*box[2] + offset;
+        
+        a1.pos[2] = 2.31653175473*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.31653175473*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 4.11595264758*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.11595264758*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_3_M_1_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 4.375 + image*box[2] + offset;
+        
+        a1.pos[2] = 1.49386508806*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.49386508806*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.70371439199*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.70371439199*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_3_M_2_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 4.375 + image*box[2] + offset;
+        
+        a1.pos[2] = 1.9051984214*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.9051984214*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3.40983351978*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.40983351978*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_4_M_0_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 6.25302184585 + image*box[2] + offset;
+        
+        a1.pos[2] = 1.43588273218*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.43588273218*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 3.61273821062*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 3.61273821062*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.06482408892*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 4.06482408892*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_4_M_1_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 1;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.41767394862 + image*box[2] + offset;
+        
+        a1.pos[2] = 0.478627577393*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 0.478627577393*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 1.20572083333*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.20572083333*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps/3.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.35494136297*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 1.35494136297*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps/3.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+TEST_F (testRightTriangleXZ, 30_degrees_energy_pos_4_M_2_zbase_offset) {
+    theta = PI/6.0;
+    double U = 0;
+    a1.pos[1] = 0;
+    zbase = 1.234;
+    offset = 2.345;
+    
+    bool caught = false;
+    try {
+        rtz = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+    
+    a1.mState = 2;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        a1.pos[0] = 5.83534789723 + image*box[2] + offset;
+        
+        a1.pos[2] = 0.957255154787*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 0.957255154787*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (!inside);
+        
+        a1.pos[2] = 2.41144166667*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.41144166667*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -2*eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.70988272595*1.01 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+        
+        a1.pos[2] = 2.70988272595*0.99 + zbase;
+        U = rtz->energy(&a1, box);
+        EXPECT_EQ (U, -eps*2./3.);
+        inside = rtz->inside(&a1, box);
+        EXPECT_TRUE (inside);
+    }
+    
+    delete rtz;
+}
+
+class testCompositeRightTriangleXZ : public ::testing::Test {
 protected:
+    compositeBarrier cB;
     atom a1;
-    rightTriangleZ *rtz;
     
-    double width, theta, lamW, eps, sigma, sep, offset, L, zbase, Utest;
-    bool top, fail, io;
-    int M;
+    double width, theta, lamW, eps, sigma, sep, offset, L, zbase;
     std::vector < double > box;
-    std::vector < std::vector < double > > lb, ub;
+    bool top, inside;
+    int M;
     
     virtual void SetUp() {
         sigma = 1.234;
         eps = 1.234;
         lamW = 2.345;
-        L = 20;
+        L = 10;
         box.resize(3, L);
-        sep = 5;
+        sep = 0;
         width = (L/2.0 - sep);
         M = 3;
         top = false;
         offset = 0;
-        theta = PI/6.0;
+        theta = PI/3.0;
         zbase = 0;
-        fail = false;
-        try {
-            rtz = new rightTriangleZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
-        } catch (customException &ce) {
-            fail = true;
-        }
-        lb = rtz->lbounds();
-        ub = rtz->ubounds();
     }
 };
 
-TEST_F (testRightTriangleZ_30, in_out_0) {
-    EXPECT_TRUE (!fail);
-    int range = 0;
-    std::vector < double > pos(3, 0);
+TEST_F (testCompositeRightTriangleXZ, top_bottom) {
+    double U = 0;
+    a1.pos[1] = 0;
     
-    // Fully inserted
-    for (unsigned int mv = 0; mv < M; ++mv) {
-        a1.mState = mv;
-        pos[0] = (ub[mv][range] - lb[mv][range])/2.0 + lb[mv][range];
-        double factor = 0;
+    bool caught = false;
+    try {
+        cB.addRightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE(!caught);
+    
+    caught = false;
+    try {
+        cB.addRightTriangleXZ (width, theta, lamW, eps, sigma, sep, 2.0, box, box[2], true, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE(!caught);
+    
+    a1.mState = 0;
+    
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
         
-        if (mv > 0) {
-            factor = mv*1.0/M;
-        } else {
-            factor = 1.0;
-        }
+        // chosen from visualization
+        a1.pos[0] = 1.447489 + image*box[2];
+        a1.pos[2] = 2.230522;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
         
-        // safe below corner
-        pos[2] = lamW*sigma*cos(theta)/2.0*factor;
-        a1.pos = pos;
-        Utest = rtz->energy(&a1, box);
-        EXPECT_EQ (Utest, 0.0);
-        io = rtz->inside(&a1, box);
-        EXPECT_EQ (io, true);
+        a1.pos[0] = 3.940259 + image*box[2];
+        a1.pos[2] = 0.741173;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
         
-        // also safe inside energy region
-        pos[2] = lamW*sigma*cos(theta)*factor;
-        a1.pos = pos;
-        Utest = rtz->energy(&a1, box);
-        EXPECT_EQ (Utest, -eps*factor);
-        io = rtz->inside(&a1, box);
-        EXPECT_EQ (io, true);
+        a1.pos[0] = 6.719604 + image*box[2];
+        a1.pos[2] = 2.580019;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
         
-        // also safe above
-        pos[2] = lamW*sigma*cos(theta)*2.0*factor;
-        a1.pos = pos;
-        Utest = rtz->energy(&a1, box);
-        EXPECT_EQ (Utest, 0.0);
-        io = rtz->inside(&a1, box);
-        EXPECT_EQ (io, true);
+        a1.pos[0] = 0.405736 + image*box[2];
+        a1.pos[2] = 9.447467;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 4.329733 + image*box[2];
+        a1.pos[2] = 8.129570;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 8.543460 + image*box[2];
+        a1.pos[2] = 7.317294;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 1.314948 + image*box[2];
+        a1.pos[2] = 5.024857;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 4.379501 + image*box[2];
+        a1.pos[2] = 4.112680;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 6.185803 + image*box[2];
+        a1.pos[2] = 5.944372;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 0.513676 + image*box[2];
+        a1.pos[2] = 3.656887;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 3.623591 + image*box[2];
+        a1.pos[2] = 3.435689;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 9.915614 + image*box[2];
+        a1.pos[2] = 3.731327;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 0.169984 + image*box[2];
+        a1.pos[2] = 7.152836;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 4.721392 + image*box[2];
+        a1.pos[2] = 5.679895;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 8.310266 + image*box[2];
+        a1.pos[2] = 7.118589;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 1.142391 + image*box[2];
+        a1.pos[2] = 6.530009;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
+        a1.pos[0] = 6.791347 + image*box[2];
+        a1.pos[2] = 8.781039;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
+        a1.pos[0] = 0.269557 + image*box[2];
+        a1.pos[2] = 2.405319;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
+        a1.pos[0] = 4.214802 + image*box[2];
+        a1.pos[2] = 3.517564;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
+        a1.pos[0] = 9.671770 + image*box[2];
+        a1.pos[2] = 1.179469;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
     }
-    
-    delete rtz;
 }
 
-TEST_F (testRightTriangleZ_30, in_out_1) {
-    EXPECT_TRUE (!fail);
-    int range = 1;
-    double factor = 1;
-    std::vector < double > pos(3, 0);
+TEST_F (testCompositeRightTriangleXZ, bottom_bottom) {
+    double U = 0;
+    a1.pos[1] = 0;
     
-    // M = 0/3
+    cB.addRightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    cB.addRightTriangleXZ (width, theta, lamW, eps, sigma, sep, 2.0, box, zbase, top, M);
+    
     a1.mState = 0;
     
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        
+        // chosen from visualization
+        a1.pos[0] = 0.378401 + image*box[2];
+        a1.pos[2] = 1.753589;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 1.186937 + image*box[2];
+        a1.pos[2] = 2.398154;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 2.644928 + image*box[2];
+        a1.pos[2] = 2.069054;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 5.183863 + image*box[2];
+        a1.pos[2] = 1.699569;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 6.974709 + image*box[2];
+        a1.pos[2] = 2.412507;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 7.946108 + image*box[2];
+        a1.pos[2] = 2.479060;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 0.791921 + image*box[2];
+        a1.pos[2] = 4.314692;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 2.892660 + image*box[2];
+        a1.pos[2] = 4.943779;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 3.489028 + image*box[2];
+        a1.pos[2] = 4.528201;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 6.885559 + image*box[2];
+        a1.pos[2] = 4.685033;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 9.849988 + image*box[2];
+        a1.pos[2] = 4.700240;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 0.212752 + image*box[2];
+        a1.pos[2] = 4.289830;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 1.264140 + image*box[2];
+        a1.pos[2] = 4.131850;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 3.076959 + image*box[2];
+        a1.pos[2] = 4.441474;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 5.832169 + image*box[2];
+        a1.pos[2] = 4.127904;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 9.559871 + image*box[2];
+        a1.pos[2] = 4.602983;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 9.181351 + image*box[2];
+        a1.pos[2] = 3.913560;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 0.553184 + image*box[2];
+        a1.pos[2] = 3.360072;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
+        a1.pos[0] = 1.144858 + image*box[2];
+        a1.pos[2] = 3.826946;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
+        a1.pos[0] = 0.581205 + image*box[2];
+        a1.pos[2] = 3.949698;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
+        a1.pos[0] = 3.257825 + image*box[2];
+        a1.pos[2] = 2.978000;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
+        a1.pos[0] = 4.902641 + image*box[2];
+        a1.pos[2] = 3.822539;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
+        a1.pos[0] = 6.712595 + image*box[2];
+        a1.pos[2] = 3.839948;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
+        a1.pos[0] = 8.125311 + image*box[2];
+        a1.pos[2] = 4.196345;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
+        a1.pos[0] = 9.710505 + image*box[2];
+        a1.pos[2] = 3.775819;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -2*eps);
+        
+        a1.pos[0] = 0.034884 + image*box[2];
+        a1.pos[2] = 3.223501;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -3*eps);
+        
+        a1.pos[0] = 0.786501 + image*box[2];
+        a1.pos[2] = 3.577915;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -3*eps);
+        
+        a1.pos[0] = 1.262904 + image*box[2];
+        a1.pos[2] = 3.626476;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -3*eps);
+        
+        a1.pos[0] = 2.524760 + image*box[2];
+        a1.pos[2] = 2.283315;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -3*eps);
+        
+        a1.pos[0] = 8.008121 + image*box[2];
+        a1.pos[2] = 2.609876;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -3*eps);
+        
+        a1.pos[0] = 0.523231 + image*box[2];
+        a1.pos[2] = 2.871053;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -4*eps);
+        
+        a1.pos[0] = 0.358148 + image*box[2];
+        a1.pos[2] = 1.888662;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -4*eps);
+        
+        a1.pos[0] = 1.007053 + image*box[2];
+        a1.pos[2] = 2.714060;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -4*eps);
+        
+        a1.pos[0] = 5.029243 + image*box[2];
+        a1.pos[2] = 2.038298;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -4*eps);
+        
+        a1.pos[0] = 5.407055 + image*box[2];
+        a1.pos[2] = 2.999161;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -4*eps);
+        
+        a1.pos[0] = 5.937607 + image*box[2];
+        a1.pos[2] = 2.724622;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -4*eps);
     }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 3.2523353099*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 3.2523353099*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 0.623393953157*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 0.623393953157*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // above surface
-    pos[2] = 0.267168837067*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // safe below corner
-    pos[2] = 0.267168837067*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-
-    // M = 1/3
-    a1.mState = 1;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 1.08411176997*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 1.08411176997*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 0.207797984386*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 0.207797984386*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // above surface
-    pos[2] = 0.0890562790225*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // safe below corner
-    pos[2] = 0.0890562790225*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // M = 2/3
-    a1.mState = 2;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 2.16822353993*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 2.16822353993*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 0.415595968772*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 0.415595968772*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // above surface
-    pos[2] = 0.178112558045*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // safe below corner
-    pos[2] = 0.178112558045*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    delete rtz;
 }
 
-TEST_F (testRightTriangleZ_30, in_out_2) {
-    EXPECT_TRUE (!fail);
-    int range = 2;
-    double factor = 1;
-    std::vector < double > pos(3, 0);
+
+TEST_F (testCompositeRightTriangleXZ, bottom_bottom_sep) {
+    double U = 0;
+    a1.pos[1] = 0;
     
-    // M = 0/3
+    width = 2.0;
+    sep = 8.0;
+    box[0] = 20;
+    box[1] = 20;
+    box[2] = 20;
+    lamW = 1.1;
+    
+    cB.addRightTriangleXZ (width, theta, lamW, eps, sigma, sep, 0.0, box, zbase, top, M);
+    cB.addRightTriangleXZ (width, theta, lamW, eps, sigma, sep, 4.5, box, zbase, top, M);
+    
     a1.mState = 0;
     
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
+    // check periodicity outside of box
+    for (int image = -2; image < 3; ++image) {
+        
+        // chosen from visualization
+        a1.pos[0] = 0.371768 + image*box[2];
+        a1.pos[2] = 0.287454;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 1.054832 + image*box[2];
+        a1.pos[2] = 1.250588;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 5.460271 + image*box[2];
+        a1.pos[2] = 1.241101;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 6.768400 + image*box[2];
+        a1.pos[2] = 0.550438;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 9.822715 + image*box[2];
+        a1.pos[2] = 0.408006;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 10.068356 + image*box[2];
+        a1.pos[2] = 1.038385;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 15.347902 + image*box[2];
+        a1.pos[2] = 0.616920;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 11.825713 + image*box[2];
+        a1.pos[2] = 0.434620;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, NUM_INFINITY);
+        
+        a1.pos[0] = 0.312175 + image*box[2];
+        a1.pos[2] = 2.088335;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 1.973930 + image*box[2];
+        a1.pos[2] = 1.971786;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 2.978860 + image*box[2];
+        a1.pos[2] = 0.385523;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 4.367439 + image*box[2];
+        a1.pos[2] = 2.207314;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 7.392719 + image*box[2];
+        a1.pos[2] = 0.647471;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 8.752916 + image*box[2];
+        a1.pos[2] = 0.788170;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 12.863974 + image*box[2];
+        a1.pos[2] = 0.359594;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 17.864019 + image*box[2];
+        a1.pos[2] = 0.729772;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, 0.0);
+        
+        a1.pos[0] = 0.450586 + image*box[2];
+        a1.pos[2] = 1.564356;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 2.612290 + image*box[2];
+        a1.pos[2] = 0.274607;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 4.022984 + image*box[2];
+        a1.pos[2] = 0.859342;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 6.083365 + image*box[2];
+        a1.pos[2] = 1.475007;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 9.491282 + image*box[2];
+        a1.pos[2] = 0.731473;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
+        
+        a1.pos[0] = 18.987976 + image*box[2];
+        a1.pos[2] = 0.490000;
+        U = cB.energy(&a1, box);
+        EXPECT_EQ (U, -eps);
     }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 4.00624939504*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 4.00624939504*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 1.3773080383*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 1.3773080383*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // M = 1/3
-    a1.mState = 1;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 2.0571043015*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 2.0571043015*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 1.18079051592*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 1.18079051592*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // M = 2/3
-    a1.mState = 2;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 3.03167684827*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 3.03167684827*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 1.27904927711*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 1.27904927711*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    delete rtz;
 }
-
-TEST_F (testRightTriangleZ_30, in_out_3) {
-    EXPECT_TRUE (!fail);
-    int range = 3;
-    double factor = 1;
-    std::vector < double > pos(3, 0);
-    
-    // M = 0/3
-    a1.mState = 0;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 4.4470075358*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 4.4470075358*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 2.525033514*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 2.525033514*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // M = 1/3
-    a1.mState = 1;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 2.92571151824*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 2.92571151824*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 2.28505351098*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 2.28505351098*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // M = 2/3
-    a1.mState = 2;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 3.68635952702*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 3.68635952702*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 2.40504351249*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 2.40504351249*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    delete rtz;
-}
-
-TEST_F (testRightTriangleZ_30, in_out_4) {
-    EXPECT_TRUE (!fail);
-    int range = 4;
-    double factor = 1;
-    std::vector < double > pos(3, 0);
-    
-    // M = 0/3
-    a1.mState = 0;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 3.91741818995*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 3.91741818995*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 1.03318484653*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 1.03318484653*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // M = 1/3
-    a1.mState = 1;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 2.74918173629*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 2.74918173629*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 1.78777062182*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 1.78777062182*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // M = 2/3
-    a1.mState = 2;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 3.33329996312*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 3.33329996312*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 1.41047773417*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 1.41047773417*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    delete rtz;
-}
-
-TEST_F (testRightTriangleZ_30, in_out_5) {
-    EXPECT_TRUE (!fail);
-    int range = 5;
-    double factor = 1;
-    std::vector < double > pos(3, 0);
-    
-    // M = 0/3
-    a1.mState = 0;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 3.78020645588*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 3.78020645588*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 0.146234254731*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 0.146234254731*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // M = 1/3
-    a1.mState = 1;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 2.28825258806*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 2.28825258806*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 0.770432588064*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 0.770432588064*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // M = 2/3
-    a1.mState = 2;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 3.18600272532*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 3.18600272532*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 0.458333421397*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 0.458333421397*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    delete rtz;
-}
-
-TEST_F (testRightTriangleZ_30, in_out_6) {
-    EXPECT_TRUE (!fail);
-    int range = 6;
-    double factor = 1;
-    std::vector < double > pos(3, 0);
-    
-    // M = 0/3
-    a1.mState = 0;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 3.2523353099*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 3.2523353099*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 0.623393953157*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 0.623393953157*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // above surface
-    pos[2] = 0.267168837067*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // safe below corner
-    pos[2] = 0.267168837067*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // M = 1/3
-    a1.mState = 1;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 1.08411176997*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 1.08411176997*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 0.207797984386*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 0.207797984386*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // above surface
-    pos[2] = 0.0890562790225*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // safe below corner
-    pos[2] = 0.0890562790225*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // M = 2/3
-    a1.mState = 2;
-    
-    // set
-    factor = 1;
-    if (a1.mState > 0) {
-        factor = a1.mState/3.0;
-    }
-    pos[0] = (ub[a1.mState][range] - lb[a1.mState][range])/2.0 + lb[a1.mState][range];
-    
-    // also safe above
-    pos[2] = 2.16822353993*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // enters energy region
-    pos[2] = 2.16822353993*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // also safe inside energy region
-    pos[2] = 0.415595968772*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, -eps*factor);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    // hits surface
-    pos[2] = 0.415595968772*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // above surface
-    pos[2] = 0.178112558045*1.01;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, NUM_INFINITY);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, false);
-    
-    // safe below corner
-    pos[2] = 0.178112558045*0.99;
-    a1.pos = pos;
-    Utest = rtz->energy(&a1, box);
-    EXPECT_EQ (Utest, 0.0);
-    io = rtz->inside(&a1, box);
-    EXPECT_EQ (io, true);
-    
-    delete rtz;
-}*/
-
-// other in_out ranges
-
-// other angles (45, 60)
-
-// repeat above for top
-
-// try one xOffset
-
-// try one zbase > 0 (both top and bottom)
-
-// superposition
-
-// run test simulations
