@@ -6,7 +6,8 @@
 
 #define SYS_FAILURE -1	//!< Returned from main the simualtion encountered a major error
 #define SAFE_EXIT 0		//!< Returned from main the simulation ran without error
-#define PI 3.14159265359
+#define PI 3.14159265359 //!< Numerical approximation of pi
+#define MAX_BARRIERS_PER_SPECIES 100 //!< Max barrier number allowed for each species in input file
 
 extern int RNG_SEED;	// defined elsewhere, but this allows other routines to access it
 

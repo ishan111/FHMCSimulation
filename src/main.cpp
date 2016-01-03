@@ -63,33 +63,122 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 
 	// Hard wall (expect parameters: {lb, ub, sigma})
     	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+            bool convention0 = false;
         	std::string dummy = "hardWallZ_" + sstr(i+1);
 	        std::vector < double > wallParams (3, 0);
         	if (doc.HasMember(dummy.c_str())) {
-			assert(doc[dummy.c_str()].IsArray());
-        	    	assert(doc[dummy.c_str()].Size() == 3);
-	            	for (unsigned int j = 0; j < 3; ++j) {
-        	        	wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-			}
+                assert(doc[dummy.c_str()].IsArray());
+                assert(doc[dummy.c_str()].Size() == 3);
+                for (unsigned int j = 0; j < 3; ++j) {
+                    wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+                }
         	   	sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
-        	}
+                convention0 = true;
+            }
+            for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
+                // alternatively allow multiple walls to specified with a suffix up to a max
+                std::string dummy = "hardWallZ_" + sstr(i+1) + "_" + sstr(j);
+                if (doc.HasMember(dummy.c_str())) {
+                    if (convention0) {
+                        std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
+                        exit(SYS_FAILURE);
+                    }
+                    if (doc.HasMember(dummy.c_str())) {
+                        assert(doc[dummy.c_str()].IsArray());
+                        assert(doc[dummy.c_str()].Size() == 3);
+                        for (unsigned int j = 0; j < 3; ++j) {
+                            wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+                        }
+                        sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
+                    }
+                }
+            }
     	}
 
     	// Square well wall (expect parameters: {lb, ub, sigma, range, eps})
     	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+            bool convention0 = false;
         	std::string dummy = "squareWellWallZ_" + sstr(i+1);
         	std::vector < double > wallParams (5, 0);
         	if (doc.HasMember(dummy.c_str())) {
-            		assert(doc[dummy.c_str()].IsArray());
-            		assert(doc[dummy.c_str()].Size() == 5);
-            		for (unsigned int j = 0; j < 5; ++j) {
-                		wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-            		}
-            		sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
+                assert(doc[dummy.c_str()].IsArray());
+                assert(doc[dummy.c_str()].Size() == 5);
+                for (unsigned int j = 0; j < 5; ++j) {
+                    wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+                }
+                sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
+                convention0 = true;
         	}
+            for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
+                // alternatively allow multiple walls to specified with a suffix up to a max
+                std::string dummy = "squareWellWallZ_" + sstr(i+1) + "_" + sstr(j);
+                if (doc.HasMember(dummy.c_str())) {
+                    if (convention0) {
+                        std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
+                        exit(SYS_FAILURE);
+                    }
+                    if (doc.HasMember(dummy.c_str())) {
+                        assert(doc[dummy.c_str()].IsArray());
+                        assert(doc[dummy.c_str()].Size() == 5);
+                        for (unsigned int j = 0; j < 5; ++j) {
+                            wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+                        }
+                        sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
+                    }
+                }
+            }
     	}
+    
+    // rightTriangleXZ (expect parameters: {width, theta, lamW, eps, sigma, sep, offset, zbase, top})
+    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+        bool convention0 = false;
+        std::string dummy = "rightTriangleXZ_" + sstr(i+1);
+        std::vector < double > wallParams (8, 0);
+        bool top = false;
+        assert(doc.HasMember("box"));
+        assert(doc["box"].IsArray());
+        assert(doc["box"].Size() == 3);
+        std::vector < double > sysBox (3, 0);
+        for (rapidjson::SizeType i = 0; i < doc["box"].Size(); ++i) {
+            assert(doc["box"][i].IsNumber());
+            sysBox[i] = doc["box"][i].GetDouble();
+        }
+        if (doc.HasMember(dummy.c_str())) {
+            assert(doc[dummy.c_str()].IsArray());
+            assert(doc[dummy.c_str()].Size() == 9);
+            for (unsigned int j = 0; j < 8; ++j) {
+                assert (doc[dummy.c_str()][j].IsDouble());
+                wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+            }
+            assert (doc[dummy.c_str()][8].IsBool());
+            top = doc[dummy.c_str()][8].GetBool();
+            sys.speciesBarriers[i].addRightTriangleXZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
+            convention0 = true;
+        }
+        for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
+            // alternatively allow multiple walls to specified with a suffix up to a max
+            std::string dummy = "rightTriangleXZ_" + sstr(i+1) + "_" + sstr(j);
+            if (doc.HasMember(dummy.c_str())) {
+                if (convention0) {
+                    std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
+                    exit(SYS_FAILURE);
+                }
+                if (doc.HasMember(dummy.c_str())) {
+                    assert(doc[dummy.c_str()].IsArray());
+                    assert(doc[dummy.c_str()].Size() == 9);
+                    for (unsigned int j = 0; j < 8; ++j) {
+                        assert (doc[dummy.c_str()][j].IsDouble());
+                        wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+                    }
+                    assert (doc[dummy.c_str()][8].IsBool());
+                    top = doc[dummy.c_str()][8].GetBool();
+                    sys.speciesBarriers[i].addRightTriangleXZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
+                }
+            }
+        }
+    }
 
-    	// in the future, can be multiple instances of the same barrier, but for the above, assume only 1	
+    	// in the future, can be multiple instances of the same barrier, but for the above, assume only 1
 }
 
 /*!

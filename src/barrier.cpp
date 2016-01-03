@@ -53,6 +53,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     xOffset_ = offset;
     top_ = top;
     M_ = M;
+    lamW_ = lamW;
     x_max_image_ = (int) round(box[0]/(sep+width)) - 1;
     
     // precompute points and trigonometry
@@ -270,7 +271,7 @@ double rightTriangleXZ::featureInteraction_ (const double dx, const double dz, c
     } else {
         lb = 0.0;
     }
-                    
+    
     if (dz >= ub) {
         U = 0.0;
     } else if (dz >= lb) {
