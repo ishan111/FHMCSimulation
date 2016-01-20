@@ -1,6 +1,7 @@
 #ifndef BARRIER_H_
 #define BARRIER_H_
 
+#include <algorithm>
 #include <cmath>
 #include <vector>
 #include "global.h"
