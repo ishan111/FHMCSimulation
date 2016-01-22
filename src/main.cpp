@@ -159,9 +159,9 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
         assert(doc["box"].IsArray());
         assert(doc["box"].Size() == 3);
         std::vector < double > sysBox (3, 0);
-        for (rapidjson::SizeType i = 0; i < doc["box"].Size(); ++i) {
-            assert(doc["box"][i].IsNumber());
-            sysBox[i] = doc["box"][i].GetDouble();
+        for (rapidjson::SizeType j = 0; j < doc["box"].Size(); ++j) {
+            assert(doc["box"][j].IsNumber());
+            sysBox[j] = doc["box"][j].GetDouble();
         }
         if (doc.HasMember(dummy.c_str())) {
             assert(doc[dummy.c_str()].IsArray());
