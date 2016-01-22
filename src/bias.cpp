@@ -204,7 +204,7 @@ const __BIAS_INT_TYPE__ tmmc::getAddress (const int Nval, const int Mval) {
 }
 
 /*!
- * Update the collection matrix.
+ * Update the collection matrix. This records the number of times a transition probability is measured with a finite, non-zero probability.  This way, when checkFullyVisited() returns true, all the lnPI values can be calculated since all transition probabilities will be finite.  Otherwise, transitions could be "sampled" but if the dU = inf, then the collection matrix is updated with a value of 0.  This could theoretically remain zero until the end of a sweep which is later caught when it creates a problem for calculating lnPI in calculatePI().
  * 
  * \param [in] Nstart Total number of atoms initially (before MC move)
  * \param [in] Nend Total number of atoms after the MC move
@@ -226,7 +226,9 @@ void tmmc::updateC (const int Nstart, const int Nend, const int Mstart, const in
 	}
 	C_[i] += pa;
 	C_[j] += (1-pa);
-	HC_[i] += 1.0; // only count the transition actually proposed, not the Nstart --> Nstart unless that was what was originally proposed
+    if (pa > 0.0) {
+        HC_[i] += 1.0; // only count the transition actually proposed, not the Nstart --> Nstart unless that was what was originally proposed, and only count when transition probability is finite.
+    }
 }
 
 /*!

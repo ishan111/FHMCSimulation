@@ -877,6 +877,25 @@ int main (int argc, char * const argv[]) {
 				std::cout << "lnF = " << sys.getWALABias()->lnF() << " at " << dummy_tmp << std::endl;
 			}
 		}
+        
+        // Report move statistics for equilibration stage
+        char eq_statName [80];
+        strftime (eq_statName,80,"%Y_%m_%d_%H_%M_%S-equilibration-stats.log",timeinfo);
+        std::ofstream eq_statFile (eq_statName);
+        std::vector < std::vector < double > > eq_stats = usedMovesEq.reportMoveStatistics();
+        eq_statFile << " ---------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
+        for (unsigned int i = 0; i < eq_stats.size(); ++i) {
+            double prod = 1.0;
+            for (unsigned int j = 0; j < eq_stats[i].size(); ++j) {
+                prod *= eq_stats[i][j];
+                eq_statFile << usedMovesEq.includedMoves()[i]->myName() << " (from M = " << j << ")\t" << eq_stats[i][j]*100.0 << std::endl;
+            }
+            if (eq_stats[i].size() > 1) {
+                eq_statFile << "-------------------------------------\nProduct of percentages (%) = " << prod*100 << "\n-------------------------------------" << std::endl;
+            }
+        }
+        eq_statFile << std::endl;
+        eq_statFile.close();
 
 		// Switch over to TMMC completely
 		sys.stopWALA();
@@ -969,12 +988,30 @@ int main (int argc, char * const argv[]) {
 		// Update biasing function from collection matrix
 		sys.getTMMCBias()->calculatePI();
 		
-		// Periodically write out checkpoints
+		// Periodically write out checkpoints and report statistics
 		if (sweep%sweepPrint == 0) {
 			printCounter++;
 			sys.getTMMCBias()->print("tmmc-Checkpoint-"+sstr(printCounter), true);
 			sys.printU("energy-Checkpoint-"+sstr(printCounter));
 			sys.printComposition("composition-Checkpoint-"+sstr(printCounter));
+            
+            char statName [80];
+            strftime (statName,80,"%Y_%m_%d_%H_%M_%S-stats.log",timeinfo);
+            std::ofstream statFile (statName);
+            std::vector < std::vector < double > > stats = usedMovesPr.reportMoveStatistics();
+            statFile << " ---------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
+            for (unsigned int i = 0; i < stats.size(); ++i) {
+                double prod = 1.0;
+                for (unsigned int j = 0; j < stats[i].size(); ++j) {
+                    prod *= stats[i][j];
+                    statFile << usedMovesPr.includedMoves()[i]->myName() << " (from M = " << j << ")\t" << stats[i][j]*100.0 << std::endl;
+                }
+                if (stats[i].size() > 1) {
+                    statFile << "-------------------------------------\nProduct of percentages (%) = " << prod*100 << "\n-------------------------------------" << std::endl;
+                }
+            }
+            statFile << std::endl;
+            statFile.close();
 		}
 
 		// also check to print out snapshots with 10% of bounds to be used for other restarts
