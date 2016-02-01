@@ -758,7 +758,7 @@ int main (int argc, char * const argv[]) {
 				std::cerr << ce.what() << std::endl;
 				exit(SYS_FAILURE);
 			}
-			std::cout << "Read initial lnPI for Wang-Lnadau from " << restartFromWALAFile << std::endl;
+			std::cout << "Read initial lnPI for Wang-Landau from " << restartFromWALAFile << std::endl;
 		}
 	
 		long long int counter = 0;
