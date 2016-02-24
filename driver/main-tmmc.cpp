@@ -28,22 +28,22 @@
 #include <fstream>
 #include <cmath>
 #include <iomanip>
-#include "system.h"
-#include "utilities.h"
-#include "global.h"
-#include "insert.h"
-#include "delete.h"
-#include "translate.h"
-#include "swap.h"
-#include "moves.h"
-#include "barrier.h"
+#include "../src/system.h"
+#include "../src/utilities.h"
+#include "../src/global.h"
+#include "../src/insert.h"
+#include "../src/delete.h"
+#include "../src/translate.h"
+#include "../src/swap.h"
+#include "../src/moves.h"
+#include "../src/barrier.h"
 
 // JSON interface from local distro of rapidjson
-#include "rapidjson/include/rapidjson/document.h"
-#include "rapidjson/include/rapidjson/writer.h"
-#include "rapidjson/include/rapidjson/stringbuffer.h"
-#include "rapidjson/include/rapidjson/filereadstream.h"
-#include "rapidjson/include/rapidjson/prettywriter.h"
+#include "../src/rapidjson/include/rapidjson/document.h"
+#include "../src/rapidjson/include/rapidjson/writer.h"
+#include "../src/rapidjson/include/rapidjson/stringbuffer.h"
+#include "../src/rapidjson/include/rapidjson/filereadstream.h"
+#include "../src/rapidjson/include/rapidjson/prettywriter.h"
 
 /*!
  * Initialize the barriers in a system by parsing the input document.  This function is defined separately since it must be done several times.

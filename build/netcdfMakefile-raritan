@@ -25,7 +25,7 @@ LIBS = -lstdc++
 # define the C source files
 SRC_DIR = ../src/
 DRIVER_DIR = ../driver/
-DRIVER_SUFFIX = tmmc
+DRIVER_SUFFIX = gcmc
 SRCS = ${SRC_DIR}aggvolbias.cpp ${SRC_DIR}barrier.cpp ${SRC_DIR}bias.cpp ${SRC_DIR}cellList.cpp ${SRC_DIR}delete.cpp ${SRC_DIR}histogram.cpp ${SRC_DIR}insert.cpp ${DRIVER_DIR}main-${DRIVER_SUFFIX}.cpp ${SRC_DIR}moves.cpp ${SRC_DIR}potentials.cpp ${SRC_DIR}swap.cpp ${SRC_DIR}system.cpp ${SRC_DIR}translate.cpp ${SRC_DIR}utilities.cpp
 
 # define the CPP object files 
@@ -41,7 +41,7 @@ ODIR = ./
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
 # define the executable file 
-MAIN = ../bin/omcs_init2_r1
+MAIN = ../bin/omcs_gcmc
 
 #
 # The following part of the makefile is generic; it can be used to 
