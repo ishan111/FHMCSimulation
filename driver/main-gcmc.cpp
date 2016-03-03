@@ -668,7 +668,7 @@ int main (int argc, char * const argv[]) {
         	}
    	}
         
-	for (unsigned int move = 0; move < eqSteps; ++move) {
+	for (unsigned long long int move = 0; move < eqSteps; ++move) {
 		try {
 			usedMovesEq.makeMove(sys);
 		} catch (customException &ce) {
@@ -703,7 +703,7 @@ int main (int argc, char * const argv[]) {
 	long double sys_U = 0.0, measure_count = 0.0, sys_ntot = 0.0;
 	std::vector < double > sys_comp (sys.nSpecies(), 0.0);
 	long long int printCounter = 0;
-	for (unsigned int move = 0; move < prSteps; ++move) {
+	for (unsigned long long int move = 0; move < prSteps; ++move) {
 		try {
 			usedMovesPr.makeMove(sys);
 		} catch (customException &ce) {
