@@ -45,6 +45,8 @@ public:
     	void printU (const std::string fileName);
     	void recordComposition ();
 	void printComposition (const std::string fileName);
+	void recordFluctuation ();
+	void printFluctuation (const std::string fileName);
 	void startWALA (const double lnF, const double g, const double s, const int Mtot); //!< Start using Wang-Landau and instantiate the bias object
    	void stopWALA () { useWALA = false; delete wlBias; } //!< Stop using Wang-Landau and free the bias object
    	void startTMMC (const long long int tmmcSweepSize, const int Mtot); //!< Start using TMMC and instantiate the bias object
@@ -98,7 +100,11 @@ private:
 	std::vector < long double > AverageU_; //!< Accumulator for U for each N_tot macrostate observed between the [min, max] ranges specified
 	std::vector < long double > numAverageU_; //!< Number of times U has been recorded at each macrostate (Ntot)
 	std::vector < long double > numAverageN_; //!< Number of times <N_i> was recorded at each macrostate (Ntot)
+	std::vector < long double > numAverageFlucts_; //!< Number of times averageFlucts was recorded at each macrostate (Ntot)
+	std::vector < long double > averageU2_; //!< Accumulator for the average square of energy observed as a function of N_tot
 	std::vector < std::vector < long double > > averageN_; //!< Accumulator for the average number of each species observed as a function of N_tot
+	std::vector < std::vector < long double > > averageUNi_; //!< Accumulator for the average square of <UN_i> observed as a function of N_tot
+	std::vector < std::vector < long double > > averageNiNj_; //!< Accumulator for the average square of <N_iN_j> observed as a function of N_tot
 	std::vector < std::vector < bool > > ppotSet_; //!< Matrix of pair potentials between type i and j
     	std::vector < std::vector < bool > > useCellList_;  //!< Matrix of whether or not to use cell lists to calculate potentials for pair type (i,j)
     	std::vector <cellList> cellLists_; // this vector stores the actual cell lists for the inserted potentials

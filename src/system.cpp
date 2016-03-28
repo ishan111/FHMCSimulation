@@ -88,16 +88,40 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
     	} catch (std::bad_alloc &ba) {
     		throw customException ("Out of memory for energy record");
     	}
+	try {
+    		averageU2_.resize(size, 0); 
+    	} catch (std::bad_alloc &ba) {
+    		throw customException ("Out of memory for energy^2 record");
+    	}
     	try {
     		numAverageU_.resize(size, 0);
     	} catch (std::bad_alloc &ba) {
         	throw customException ("Out of memory for energy record");
+    	}
+	try {
+    		numAverageFlucts_.resize(size, 0);
+    	} catch (std::bad_alloc &ba) {
+        	throw customException ("Out of memory for fluctuations record");
     	}
 	for (unsigned int i = 0; i < averageN_.size(); ++i) {
 		try {
         		averageN_[i].resize(size, 0);
     		} catch (std::bad_alloc &ba) {
         		throw customException ("Out of memory for composition histogram");
+    		}
+	}
+	for (unsigned int i = 0; i < averageUNi_.size(); ++i) {
+		try {
+        		averageUNi_[i].resize(size, 0);
+    		} catch (std::bad_alloc &ba) {
+        		throw customException ("Out of memory for <UN_i> histogram");
+    		}
+	}
+	for (unsigned int i = 0; i < averageNiNj_.size(); ++i) {
+		try {
+        		averageNiNj_[i].resize(size, 0);
+    		} catch (std::bad_alloc &ba) {
+        		throw customException ("Out of memory for <N_iN_j> histogram");
     		}
 	}
 	try {
@@ -446,12 +470,12 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		}
 	}
 	
-    // Wall potentials for each species, if there are any?
-    try {
-        speciesBarriers.resize(nSpecies);
-    } catch (std::exception &e) {
-        throw customException (e.what());
-    }
+	// Wall potentials for each species, if there are any?
+	try {
+		speciesBarriers.resize(nSpecies);
+	} catch (std::exception &e) {
+		throw customException (e.what());
+	}
     
 	// Prepare vectors and matrices for cell lists.
 	// It is crucial to reserve the correct number of cellLists in advance
@@ -520,10 +544,21 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
     	} catch (std::bad_alloc &ba) {
      		throw customException ("Out of memory for energy record");
     	}
+	try {
+        	numAverageFlucts_.resize(size, 0);
+    	} catch (std::bad_alloc &ba) {
+     		throw customException ("Out of memory for fluctuation record");
+    	}
+
     	try {
        		AverageU_.resize(size, 0);
     	} catch (std::bad_alloc &ba) {
         	throw customException ("Out of memory for energy record");
+    	}
+	try {
+       		averageU2_.resize(size, 0);
+    	} catch (std::bad_alloc &ba) {
+        	throw customException ("Out of memory for energy^2 record");
     	}
 
 	try {
@@ -536,15 +571,182 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 	} catch (std::bad_alloc &ba) {
 		throw customException ("Out of memory for particle histogram");
 	}
+	try {
+		averageUNi_.resize(nSpecies_);
+	} catch (std::bad_alloc &ba) {
+		throw customException ("Out of memory for particle histogram");
+	}
+	try {
+		averageNiNj_.resize(nSpecies_*nSpecies_);
+	} catch (std::bad_alloc &ba) {
+		throw customException ("Out of memory for <N_iN_j> histogram");
+	}
+
 	for (unsigned int i = 0; i < nSpecies_; ++i) {
 		try {
 			averageN_[i].resize(size, 0);
 		} catch (std::bad_alloc &ba) {
 			throw customException ("Out of memory for particle histogram");
 		}
+		try {
+			averageUNi_[i].resize(size, 0);
+		} catch (std::bad_alloc &ba) {
+			throw customException ("Out of memory for <UN_i> histogram");
+		}
+	}
+	for (unsigned int i = 0; i < nSpecies_*nSpecies_; ++i) {
+		try {
+			averageNiNj_[i].resize(size, 0);
+		} catch (std::bad_alloc &ba) {
+			throw customException ("Out of memory for <N_iN_j> histogram");
+		}
 	}
 }
 
+/*!
+ * Save the instantaneous fluctuation properties, e.g X_i*Y_j, for various properties, X, Y, such as energy, etc.
+ * Only records values when N_tot in range of [min, max].
+ */
+void simSystem::recordFluctuation () {
+	// only record if in range (removes equilibration stage to get in this range, if there was any)
+        if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+                const long int address = totN_-totNBounds_[0];
+		numAverageFlucts_[address] += 1.0;
+		averageU2_[address] += energy_*energy_;
+		for (unsigned int i = 0; i < nSpecies_; ++i) {
+                	averageUNi_[i][address] += numSpecies[i]*energy_;
+			for (unsigned int j = 0; j < nSpecies_; ++j) {
+				averageNiNj_[j+i*nSpecies_][address] += numSpecies[i]*numSpecies[j];			
+			}
+        	}
+	}
+}
+
+/*!
+ * Print the average properties for fluctuation calculations to file for every N_tot within range recorded. Will overwrite the file if another with that name exists. Prints in netCDF format if enabled.
+ *
+ * \param [in] fileName Name of the file to print to
+ */
+void simSystem::printFluctuation (const std::string fileName) {
+	std::vector < std::vector < long double > > ave_ninj, ave_uni;
+	std::vector < long double > ave_uu;
+	try {
+		ave_ninj.resize(averageNiNj_.size());
+	} catch (std::bad_alloc &ba) {
+		throw customException ("Out of memory for fluctuation printing");
+	}
+	for (unsigned int i = 0; i < ave_ninj.size(); ++i) {
+		try {
+                	ave_ninj[i].resize(averageNiNj_[i].size(), 0);
+        	} catch (std::bad_alloc &ba) {
+                	throw customException ("Out of memory for fluctuation printing");
+        	}
+	}
+	for (unsigned int i = 0; i < averageNiNj_.size(); ++i) {
+		for (unsigned int j = 0; j < averageNiNj_[i].size(); ++j) {
+			ave_ninj[i][j] = averageNiNj_[i][j]/numAverageFlucts_[j];
+		}	
+	}
+
+	try {
+		ave_uni.resize(averageUNi_.size());
+	} catch (std::bad_alloc &ba) {
+		throw customException ("Out of memory for fluctuation printing");
+	}
+	for (unsigned int i = 0; i < ave_uni.size(); ++i) {
+		try {
+                	ave_uni[i].resize(averageUNi_[i].size(), 0);
+        	} catch (std::bad_alloc &ba) {
+                	throw customException ("Out of memory for fluctuation printing");
+        	}
+	}
+	for (unsigned int i = 0; i < averageUNi_.size(); ++i) {
+		for (unsigned int j = 0; j < averageUNi_[i].size(); ++j) {
+			ave_uni[i][j] = averageUNi_[i][j]/numAverageFlucts_[j];
+		}	
+	}
+
+	try {
+		ave_uu.resize(averageU2_.size());
+	} catch (std::bad_alloc &ba) {
+		throw customException ("Out of memory for fluctuation printing");
+	}
+	for (unsigned int i = 0; i < averageU2_.size(); ++i) {
+		ave_uu[i] = averageU2_[i]/numAverageFlucts_[i];	
+	}
+
+#ifdef NETCDF_CAPABLE
+	// If netCDF libs are enabled, write to this format
+    	const std::string name = fileName + ".nc";
+        NcFile outFile(name.c_str(), NcFile::replace);
+        NcDim probDim = outFile.addDim("vectorized_position", averageU2_[0].size());
+        std::vector < NcVar > probVar (1+nSpecies_+nSpecies_*nSpecies_); // U^2, UN_i ..., NiNj's
+	std::string vName = "average_UU";
+	int idx = 0;
+	probVar[idx] = outFile.addVar(vName.c_str(), ncdouble, probDim); 
+	idx++;
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		vName = "average_UN_"+sstr(i+1);
+		probVar[idx] = outFile.addVar(vName.c_str(), ncdouble, probDim);
+		idx++;
+	}
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		for (unsigned int j = 0; j < nSpecies_; ++j) {
+			vName = "average_N_"+sstr(i)+"_N_"+sstr(j);
+			probVar[idx+j+i*nSpecies_] = outFile.addVar(vName.c_str(), ncdouble, probDim); 
+		}
+	}
+
+	std::string attName = "species_total_upper_bound";
+        probVar[0].putAtt(attName.c_str(), sstr(totNBounds_[1]).c_str());
+        attName = "species_total_lower_bound";
+        probVar[0].putAtt(attName.c_str(), sstr(totNBounds_[0]).c_str());
+        const std::string dummyName = "number_species";
+        probVar[0].putAtt(dummyName.c_str(), sstr(nSpecies_).c_str());
+	attName = "volume";
+        double V = box_[0]*box_[1]*box_[2];
+        probVar[0].putAtt(attName.c_str(), sstr(V).c_str());
+
+	idx = 0;
+	probVar[idx].putVar(&ave_uu);
+	idx++;
+        for (unsigned int i = 0; i < nSpecies_; ++i) {
+		probVar[idx].putVar(&ave_uni[i]);
+		idx++;
+	}
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		for (unsigned int j = 0; j < nSpecies_; ++j) {
+			probVar[idx+j+i*nSpecies_].putVar(&ave_ninj[j+i*nSpecies_]);
+		}
+	}
+
+#else
+	// Without netCDF capabilities, just print to ASCII file
+        std::ofstream of;
+        std::string name = fileName+".dat";
+        of.open(name.c_str(), std::ofstream::out);
+        of << "# <X_i*Y_i> as a function of N_tot." << std::endl;
+        of << "# Number of species: " << nSpecies_ << std::endl;
+        of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
+        of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+        double V = box_[0]*box_[1]*box_[2];
+        of << "# volume: " << std::setprecision(15) << V << std::endl;
+	of << "# <U*U>\t{<U*N_1>\t<U*N_2>\t...}\t{<N_1*N_1>\t<N_1*N_2>\t...<N_1*N_n>\t<N_2*N_1>...\t<N_2*N_n>\t...\t<N_n*N_1>\t...\t<N_n*N_n>" << std::endl;
+	for (unsigned long long int i = 0; i < ave_uu.size(); ++i) {
+		of << ave_uu[i] << "\t";
+		for (unsigned long long int j = 0; j < nSpecies_; ++j) {
+			of << ave_uni[j][i] << "\t";
+		}
+		for (unsigned long long int j = 0; j < nSpecies_; ++j) {
+			for (unsigned long long int k = 0; k < nSpecies_; ++k) {
+				of << ave_ninj[k+j*nSpecies_][i] << "\t";
+			}
+		}
+		of << std::endl;
+	}
+        of.close();
+#endif	
+}
 
 /*!
  * Save the instantaneous number of each component as a function of the total number of particles in the system.

@@ -19,5 +19,5 @@ set(CMAKE_CXX_FLAGS "-O3 -Wall -DFLUID_PHASE_SIMULATIONS")
 
 include_directories("../src/")
 include_directories("../driver/")
-add_executable(omcs ${omcs_SRC})
+add_executable(omcs_gcmc ${omcs_SRC})
 set(EXECUTABLE_OUTPUT_PATH "../bin")

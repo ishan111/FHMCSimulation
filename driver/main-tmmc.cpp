@@ -963,6 +963,9 @@ int main (int argc, char * const argv[]) {
 			
 				// record composition
 				sys.recordComposition();
+
+				// record properties to calculate fluctuation quantities
+				sys.recordFluctuation();
 			}
 	
 			// check if sweep is done
@@ -994,6 +997,7 @@ int main (int argc, char * const argv[]) {
 			sys.getTMMCBias()->print("tmmc-Checkpoint-"+sstr(printCounter), true);
 			sys.printU("energy-Checkpoint-"+sstr(printCounter));
 			sys.printComposition("composition-Checkpoint-"+sstr(printCounter));
+			sys.printFluctuation("fluctuation-Checkpoint-"+sstr(printCounter));
             
             char statName [80];
             strftime (statName,80,"%Y_%m_%d_%H_%M_%S-stats.log",timeinfo);
@@ -1100,6 +1104,9 @@ int main (int argc, char * const argv[]) {
     
    	// Print out composition histogram
     	sys.printComposition("compositionHistogram");
+
+	// Print out fluctuation property histogram
+    	sys.printFluctuation("fluctuationHistogram");
     
     	// Print out final macrostate distribution
     	sys.getTMMCBias()->print("final", false);
