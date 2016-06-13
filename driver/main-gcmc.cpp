@@ -191,9 +191,9 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
                 if (doc.HasMember(dummy.c_str())) {
                     assert(doc[dummy.c_str()].IsArray());
                     assert(doc[dummy.c_str()].Size() == 9);
-                    for (unsigned int j = 0; j < 8; ++j) {
-                        assert (doc[dummy.c_str()][j].IsDouble());
-                        wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+                    for (unsigned int k = 0; k < 8; ++k) {
+                        assert (doc[dummy.c_str()][k].IsNumber());
+                        wallParams[k] = doc[dummy.c_str()][k].GetDouble();
                     }
                     assert (doc[dummy.c_str()][8].IsBool());
                     top = doc[dummy.c_str()][8].GetBool();
