@@ -14,7 +14,7 @@
  * Complile with -DFLUID_PHASE_SIMULATIONS if simulations are purely in the fluid phase.  
  * This will allow tail corrections to be enabled which are only valid assuming a converging g(r) at large r.
  * 
- * Compile with -DNETCDF_CAPABLE if netCDF libraries are installed and can be compiled against.  Data will be output to these arrays
+ * Compile with -DNETCDF_CAPABLE if netCDF libraries are installed and can be compiled against.  Certain data will be output to these arrays
  * instead of ASCII files if so.
  * 
  * Tests compile with cmake and by default, do not link to netcdf libraries since they do not use them.  Everything tested in ASCII.
@@ -54,100 +54,100 @@
 void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 	// get Mtot, first from doc, otherwise try sys, but they should be the same
 	int Mtot = 1;
-        if (doc.HasMember("num_expanded_states")) {
-                assert(doc["num_expanded_states"].IsInt());
-                Mtot = doc["num_expanded_states"].GetInt();
-        } else {
+	if (doc.HasMember("num_expanded_states")) {
+		assert(doc["num_expanded_states"].IsInt());
+		Mtot = doc["num_expanded_states"].GetInt();
+	} else {
 		Mtot = sys.getTotalM();
 	}
 
 	// Hard wall (expect parameters: {lb, ub, sigma})
-    	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-            bool convention0 = false;
-        	std::string dummy = "hardWallZ_" + sstr(i+1);
-	        std::vector < double > wallParams (3, 0);
-        	if (doc.HasMember(dummy.c_str())) {
-                assert(doc[dummy.c_str()].IsArray());
-                assert(doc[dummy.c_str()].Size() == 3);
-                for (unsigned int j = 0; j < 3; ++j) {
-                    wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		bool convention0 = false;
+		std::string dummy = "hardWallZ_" + sstr(i+1);
+		std::vector < double > wallParams (3, 0);
+		if (doc.HasMember(dummy.c_str())) {
+			assert(doc[dummy.c_str()].IsArray());
+			assert(doc[dummy.c_str()].Size() == 3);
+			for (unsigned int j = 0; j < 3; ++j) {
+				wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+			}
+			try {
+				sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
+			} catch (customException &ce) {
+				std::cerr << ce.what() << std::endl;
+				exit(SYS_FAILURE);
+			}
+			convention0 = true;
+		}
+		for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
+			// alternatively allow multiple walls to specified with a suffix up to a max
+			std::string dummy = "hardWallZ_" + sstr(i+1) + "_" + sstr(j);
+            if (doc.HasMember(dummy.c_str())) {
+				if (convention0) {
+					std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
+					exit(SYS_FAILURE);
                 }
-                try {
-                    sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
-                } catch (customException &ce) {
-                    std::cerr << ce.what() << std::endl;
-                    exit(SYS_FAILURE);
-                }
-                convention0 = true;
-            }
-            for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
-                // alternatively allow multiple walls to specified with a suffix up to a max
-                std::string dummy = "hardWallZ_" + sstr(i+1) + "_" + sstr(j);
-                if (doc.HasMember(dummy.c_str())) {
-                    if (convention0) {
-                        std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
-                        exit(SYS_FAILURE);
+				if (doc.HasMember(dummy.c_str())) {
+					assert(doc[dummy.c_str()].IsArray());
+					assert(doc[dummy.c_str()].Size() == 3);
+					for (unsigned int j = 0; j < 3; ++j) {
+						wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+					}
+                    try {
+						sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
+					} catch (customException &ce) {
+						std::cerr << ce.what() << std::endl;
+						exit(SYS_FAILURE);
                     }
-                    if (doc.HasMember(dummy.c_str())) {
-                        assert(doc[dummy.c_str()].IsArray());
-                        assert(doc[dummy.c_str()].Size() == 3);
-                        for (unsigned int j = 0; j < 3; ++j) {
-                            wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-                        }
-                        try {
-                            sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
-                        } catch (customException &ce) {
-                            std::cerr << ce.what() << std::endl;
-                            exit(SYS_FAILURE);
-                        }
-                    }
                 }
             }
-    	}
+        }
+	}
 
-    	// Square well wall (expect parameters: {lb, ub, sigma, range, eps})
-    	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-            bool convention0 = false;
-        	std::string dummy = "squareWellWallZ_" + sstr(i+1);
-        	std::vector < double > wallParams (5, 0);
-        	if (doc.HasMember(dummy.c_str())) {
-                assert(doc[dummy.c_str()].IsArray());
-                assert(doc[dummy.c_str()].Size() == 5);
-                for (unsigned int j = 0; j < 5; ++j) {
-                    wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-                }
-                try {
-                    sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
-                } catch (customException &ce) {
-                    std::cerr << ce.what() << std::endl;
-                    exit(SYS_FAILURE);
-                }
-                convention0 = true;
-        	}
-            for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
-                // alternatively allow multiple walls to specified with a suffix up to a max
-                std::string dummy = "squareWellWallZ_" + sstr(i+1) + "_" + sstr(j);
-                if (doc.HasMember(dummy.c_str())) {
-                    if (convention0) {
-                        std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
-                        exit(SYS_FAILURE);
-                    }
-                    if (doc.HasMember(dummy.c_str())) {
-                        assert(doc[dummy.c_str()].IsArray());
-                        assert(doc[dummy.c_str()].Size() == 5);
-                        for (unsigned int j = 0; j < 5; ++j) {
-                            wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-                        }
-                        try {
-                            sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
-                        } catch (customException &ce) {
-                            std::cerr << ce.what() << std::endl;
-                            exit(SYS_FAILURE);
-                        }
-                    }
+    // Square well wall (expect parameters: {lb, ub, sigma, range, eps})
+    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		bool convention0 = false;
+		std::string dummy = "squareWellWallZ_" + sstr(i+1);
+		std::vector < double > wallParams (5, 0);
+		if (doc.HasMember(dummy.c_str())) {
+			assert(doc[dummy.c_str()].IsArray());
+			assert(doc[dummy.c_str()].Size() == 5);
+			for (unsigned int j = 0; j < 5; ++j) {
+				wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+			}
+			try {
+				sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
+            } catch (customException &ce) {
+                std::cerr << ce.what() << std::endl;
+                exit(SYS_FAILURE);
+            }
+            convention0 = true;
+		}
+		for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
+			// alternatively allow multiple walls to specified with a suffix up to a max
+			std::string dummy = "squareWellWallZ_" + sstr(i+1) + "_" + sstr(j);
+			if (doc.HasMember(dummy.c_str())) {
+				if (convention0) {
+					std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
+					exit(SYS_FAILURE);
+				}
+				if (doc.HasMember(dummy.c_str())) {
+					assert(doc[dummy.c_str()].IsArray());
+					assert(doc[dummy.c_str()].Size() == 5);
+					for (unsigned int j = 0; j < 5; ++j) {
+						wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+					}
+					try {
+						sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
+					} catch (customException &ce) {
+						std::cerr << ce.what() << std::endl;
+						exit(SYS_FAILURE);
+					}
                 }
             }
-    	}
+        }
+	}
     
     // rightTriangleXZ (expect parameters: {width, theta, lamW, eps, sigma, sep, offset, zbase, top})
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
@@ -207,12 +207,10 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
             }
         }
     }
-
-    	// in the future, can be multiple instances of the same barrier, but for the above, assume only 1
 }
 
 /*!
- * Usage: ./binary_name inputFile.json
+ * Usage: ./binary_name input.json
  */
 int main (int argc, char * const argv[]) {
 	// Get time stamp
@@ -333,6 +331,51 @@ int main (int argc, char * const argv[]) {
 	if (doc.HasMember("restart_file")) {
 		assert(doc["restart_file"].IsString());
 		restart_file = doc["restart_file"].GetString();
+	}
+
+	std::vector < int > initialization_order (sys.nSpecies(), 0), check_init (sys.nSpecies(), 0);
+	std::vector < double > init_frac (sys.nSpecies(), 1.0);
+	double sum = 0.0;
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		initialization_order[i] = i;
+		if (i > 0) init_frac[i] = 0.0;
+		sum += init_frac[i];
+	}
+	if (doc.HasMember("init_order")) {
+		assert(doc["init_order"].IsArray());
+		assert(doc["init_order"].Size() == doc["num_species"].GetInt());
+	
+		for (rapidjson::SizeType i = 0; i < doc["init_order"].Size(); ++i) {
+			assert(doc["init_order"][i].IsInt());
+			initialization_order[i] = doc["init_order"][i].GetInt();
+			if (initialization_order[i] < 0 || initialization_order[i] >= sys.nSpecies()) {
+				std::cerr << "Order of initialization goes out of bounds, should include 0 <= i < nSpec" << std::endl;
+				exit(SYS_FAILURE);		
+			}
+			if (check_init[initialization_order[i]] != 0) {
+				std::cerr << "Order of initialization repeats itself" << std::endl;
+				exit(SYS_FAILURE);
+			} else {
+				check_init[initialization_order[i]] = 1;
+			}	
+		}
+	}
+	if (doc.HasMember("init_frac")) {
+		assert(doc["init_frac"].IsArray());
+		assert(doc["init_frac"].Size() == doc["num_species"].GetInt());
+		sum = 0.0;
+		for (rapidjson::SizeType i = 0; i < doc["init_frac"].Size(); ++i) {
+			assert(doc["init_frac"][i].IsNumber());
+			init_frac[i] = doc["init_frac"][i].GetDouble();
+			if (init_frac[i] < 0 || init_frac[i] >= 1.0) {
+				std::cerr << "Initialization fraction out of bounds" << std::endl;
+				exit(SYS_FAILURE);		
+			}	
+			sum += init_frac[i];
+		}
+	}
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {	
+		init_frac[i] /= sum;
 	}
 
 	assert(doc.HasMember("tmmc_sweep_size"));
@@ -604,7 +647,7 @@ int main (int argc, char * const argv[]) {
 		}
 	} 
     
-    	// Add barriers for each species
+	// Add barriers for each species
 	initializeSystemBarriers (sys, doc);
 
 	// specify moves to use for the system
@@ -671,69 +714,71 @@ int main (int argc, char * const argv[]) {
 			exit(SYS_FAILURE);
 		}
 	} else if (restart_file == "" && sys.totNMin() > 0) {
-        	std::cout << "Automatically generating the initial configuration" << std::endl;
+		std::cout << "Automatically generating the initial configuration" << std::endl;
 		
 		// have to generate initial configuration manually - start with mu = INF
-        	std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
-        	simSystem initSys (doc["num_species"].GetInt(), 1/10., sysBox, initMu, sysMax, sysMin, Mtot, duh, max_order); // beta =  1/T, so low beta to have high T
-			if (use_ke) {
-				initSys.toggle_ke();
-				if (initSys.add_ke_correction() == false) {
-					throw customException ("Unable to set KE flag");
-				}
+        std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
+		simSystem initSys (doc["num_species"].GetInt(), 1/10., sysBox, initMu, sysMax, sysMin, Mtot, duh, max_order); // beta =  1/T, so low beta to have high T
+		if (use_ke) {
+			initSys.toggle_ke();
+			if (initSys.add_ke_correction() == false) {
+				throw customException ("Unable to set KE flag");
 			}
+		}
 			
-        	// add the same potentials
-        	int initInd = 0;
-        	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-            		for (unsigned int j = i; j < sys.nSpecies(); ++j) {
-                		initSys.addPotential (i, j, ppotArray[initInd], true); // default use of cell list even if otherwise not in main simulation
-                		initInd++;
-            		}
+        // add the same potentials
+        int initInd = 0;
+        for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+        	for (unsigned int j = i; j < sys.nSpecies(); ++j) {
+           		initSys.addPotential (i, j, ppotArray[initInd], true); // default use of cell list even if otherwise not in main simulation
+           		initInd++;
         	}
+        }
 
 		initializeSystemBarriers (initSys, doc);
 
 		// iteratively add each individual species, assume we want an equimolar mixture to start from
-		//for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		for (unsigned int i = 1; i < 2; ++i) {
+		int added = 0;
+		for (unsigned int idx = 0; idx < sys.nSpecies(); ++idx) {
+			unsigned int i = initialization_order[i];
 			std::cout << "Initializing species " << i << " configurations" << std::endl;
 			
 			// insert this species i
 			moves initMove (initSys.getTotalM());
 			insertParticle initIns (i, "insert");
-            		initMove.addMove (&initIns, 1.0);
-			std::vector < translateParticle > initTrans (i+1);
+            initMove.addMove (&initIns, 1.0);
+			std::vector < translateParticle > initTrans (idx+1);
 
 			// also add displacment moves for all species present
-			for (unsigned int j = 0; j <= i; ++j) {
-				std::cout << "Added translation moves for initialization of species " << j << std::endl;
-				translateParticle newTrans (j, "translate");
-                		newTrans.setMaxDisplacement (1.0, initSys.box()); // allow large displacements if necessary
+			for (unsigned int j = 0; j <= idx; ++j) {
+				std::cout << "Added translation moves for initialization of species " << initialization_order[j] << std::endl;
+				translateParticle newTrans (initialization_order[j], "translate");
+                newTrans.setMaxDisplacement (1.0, initSys.box()); // allow large displacements if necessary
 				initTrans[j] = newTrans;
-          			initMove.addMove (&initTrans[j], 2.0); // move more than insert so this relaxes better (qualitative observation)
+          		initMove.addMove (&initTrans[j], 2.0); // move more than insert so this relaxes better (qualitative observation)
 			}
 
 			// now do simuation until within proper range
-			int targetNum = sys.totNMin(); //sys.nSpecies();
-			/*if (i == sys.nSpecies() - 1) {
+			int targetNum = sys.totNMin()*init_frac[idx];
+			if (idx == sys.nSpecies() - 1) {
 				// to account for integer rounding
-				targetNum = sys.totNMin() - (sys.nSpecies()-1)*(sys.totNMin()/sys.nSpecies());
-			}*/
+				targetNum = sys.totNMin() - added;
+			}
+			added += targetNum;
+
 			std::cout << "Target number = " << targetNum << std::endl;
 			int tmpCounter = 0, statusPrint = 10e6;
 			while (initSys.numSpecies[i] < targetNum) {
-				// this creates an equimolar mixture
 				try {
-                    			initMove.makeMove(initSys);
-                		} catch (customException &ce) {
-                    			for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-                        			delete ppotArray[i];
-                    			}
-                    			ppotArray.clear();
-                    			std::cerr << "Failed to create an initial configuration: " << ce.what() << std::endl;
-                    			exit(SYS_FAILURE);
-                		}
+                    initMove.makeMove(initSys);
+                } catch (customException &ce) {
+                    for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+                        delete ppotArray[i];
+                    }
+                    ppotArray.clear();
+                    std::cerr << "Failed to create an initial configuration: " << ce.what() << std::endl;
+                    exit(SYS_FAILURE);
+                }
 				tmpCounter++;
 				if (tmpCounter%statusPrint == 0) {
 					tmpCounter = 0;
@@ -748,14 +793,14 @@ int main (int argc, char * const argv[]) {
 		// read into sys
 		try {
 			sys.readRestart("auto-init.xyz");
-       		} catch (customException &ce) {
-            		std::cerr << "Failed to read auto-generated initialization file: " << ce. what() << std::endl;
-            		for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-                		delete ppotArray[i];
-            		}
-            		ppotArray.clear();
-            		exit(SYS_FAILURE);
-        	}
+		} catch (customException &ce) {
+			std::cerr << "Failed to read auto-generated initialization file: " << ce. what() << std::endl;
+			for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+				delete ppotArray[i];
+ 			}
+			ppotArray.clear();
+			exit(SYS_FAILURE);
+        }
    	}
 
 	bool highSnap = false, lowSnap = false;
@@ -797,9 +842,9 @@ int main (int argc, char * const argv[]) {
 					usedMovesEq.makeMove(sys);
 				} catch (customException &ce) {
 					for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-                                                delete ppotArray[i];
-                                        }
-                                        ppotArray.clear();
+                    	delete ppotArray[i];
+                    }
+                    ppotArray.clear();
 					std::cerr << ce.what() << std::endl;
 					exit(SYS_FAILURE);
 				}	
@@ -875,13 +920,13 @@ int main (int argc, char * const argv[]) {
 					sys.getTMMCBias()->calculatePI();
 				} catch (customException &ce) {
 					std::cerr << ce.what() << std::endl;
-                                        for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-                                                delete ppotArray[i];
-                                        }
-                                        ppotArray.clear();
+                    for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+                    	delete ppotArray[i];
+					}
+                    ppotArray.clear();
 					sys.getTMMCBias()->print("tmmc-crossover-fail", true);
 					sys.getTMMCBias()->dumpVisited("tmmc-crossover-fail-visited");
-                                        exit(SYS_FAILURE);
+                    exit(SYS_FAILURE);
 				}
 				sys.getTMMCBias()->iterateForward (); // reset the counting matrix and increment total sweep number
 				timesFullyVisited = sys.getTMMCBias()->numSweeps(); 	
@@ -941,13 +986,13 @@ int main (int argc, char * const argv[]) {
 			sys.getTMMCBias()->print("tmmc-beginning-Checkpoint", true);
 		} catch (customException &ce) {
 			std::cerr << ce.what() << std::endl;
-                        for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-                        	delete ppotArray[i];
-                        }
-                        ppotArray.clear();
-                        sys.getTMMCBias()->print("tmmc-beginning-fail", true);
-                        sys.getTMMCBias()->dumpVisited("tmmc-beginning-fail-visited");
-                        exit(SYS_FAILURE);
+            for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+            	delete ppotArray[i];
+            }
+           	ppotArray.clear();
+            sys.getTMMCBias()->print("tmmc-beginning-fail", true);
+            sys.getTMMCBias()->dumpVisited("tmmc-beginning-fail-visited");
+            exit(SYS_FAILURE);
 		}
 		
 		// if doing initial WL "equilibration" re-initialize the histogram using bounds
@@ -960,7 +1005,7 @@ int main (int argc, char * const argv[]) {
 		try {
 			sys.getTMMCBias()->readC(restartFromTMMCFile); // read collection matrix
 			sys.getTMMCBias()->calculatePI();
-	                std::cout << "Restarted TMMC from collection matrix from " << restartFromTMMCFile << std::endl;
+	        std::cout << "Restarted TMMC from collection matrix from " << restartFromTMMCFile << std::endl;
 		} catch (customException &ce) {
 			sys.stopTMMC(); // deallocate
 			std::cerr << "Failed to initialize from TMMC collection matrix: " << ce.what() << std::endl;
@@ -996,15 +1041,6 @@ int main (int argc, char * const argv[]) {
 			
 			// only record properties of the system when it is NOT in an intermediate state
 			if (sys.getCurrentM() == 0) {
-				// record U
-				//sys.recordU();
-			
-				// record composition
-				//sys.recordComposition();
-
-				// record properties to calculate fluctuation quantities
-				//sys.recordFluctuation();
-				
 				// record energy histogram at each Ntot
 				sys.recordEnergyHistogram();
 				
@@ -1042,9 +1078,6 @@ int main (int argc, char * const argv[]) {
 		if (sweep%sweepPrint == 0) {
 			printCounter++;
 			sys.getTMMCBias()->print("tmmc-Checkpoint-"+sstr(printCounter), true);
-			//sys.printU("energy-Checkpoint-"+sstr(printCounter));
-			//sys.printComposition("composition-Checkpoint-"+sstr(printCounter));
-			//sys.printFluctuation("fluctuation-Checkpoint-"+sstr(printCounter));
 			sys.refine_energy_histogram_bounds();
 			sys.printEnergyHistogram("eHist-Checkpoint-"+sstr(printCounter));
             sys.refine_pk_histogram_bounds();
@@ -1087,12 +1120,12 @@ int main (int argc, char * const argv[]) {
 		
 	// Sanity checks
 	if (sys.nSpecies() != sys.atoms.size()) {
-        	std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
+        std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
 		for (unsigned int i = 0; i < ppotArray.size(); ++i) {
 			delete ppotArray[i];
 		}
 		ppotArray.clear();
-        	exit(SYS_FAILURE);
+        exit(SYS_FAILURE);
     	}
 	if (sys.getTotalM() > 1) {
 		if (sys.getFractionalAtom()->mState != sys.getCurrentM()) {
@@ -1139,36 +1172,27 @@ int main (int argc, char * const argv[]) {
 	char statName [80];
 	strftime (statName,80,"%Y_%m_%d_%H_%M_%S-stats.log",timeinfo);
 	std::ofstream statFile (statName);
-    	std::vector < std::vector < double > > stats = usedMovesPr.reportMoveStatistics();
-    	statFile << " ---------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
-    	for (unsigned int i = 0; i < stats.size(); ++i) {
-        	double prod = 1.0;
-        	for (unsigned int j = 0; j < stats[i].size(); ++j) {
-            		prod *= stats[i][j];
-            		statFile << usedMovesPr.includedMoves()[i]->myName() << " (from M = " << j << ")\t" << stats[i][j]*100.0 << std::endl;
-        	}
-        	if (stats[i].size() > 1) {
-            		statFile << "-------------------------------------\nProduct of percentages (%) = " << prod*100 << "\n-------------------------------------" << std::endl;
-        	}
-    	}
-    	statFile << std::endl;
-    	statFile.close();
+    std::vector < std::vector < double > > stats = usedMovesPr.reportMoveStatistics();
+    statFile << " ---------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
+    for (unsigned int i = 0; i < stats.size(); ++i) {
+        double prod = 1.0;
+        for (unsigned int j = 0; j < stats[i].size(); ++j) {
+            prod *= stats[i][j];
+            statFile << usedMovesPr.includedMoves()[i]->myName() << " (from M = " << j << ")\t" << stats[i][j]*100.0 << std::endl;
+        }
+        if (stats[i].size() > 1) {
+            statFile << "-------------------------------------\nProduct of percentages (%) = " << prod*100 << "\n-------------------------------------" << std::endl;
+        }
+    }
+    statFile << std::endl;
+    statFile.close();
 	
  	// print out restart file (xyz)
-    	sys.printSnapshot("final.xyz", "last configuration");
-    
-    	// Print out energy histogram
-    	//sys.printU("energyHistogram");
-    
-   	// Print out composition histogram
-    	//sys.printComposition("compositionHistogram");
-
-	// Print out fluctuation property histogram
-    	//sys.printFluctuation("fluctuationHistogram");
+    sys.printSnapshot("final.xyz", "last configuration");
     
     // Print out energy histogram at each Ntot
-    	sys.refine_energy_histogram_bounds();
-    	sys.printEnergyHistogram("final_eHist");
+    sys.refine_energy_histogram_bounds();
+    sys.printEnergyHistogram("final_eHist");
     
     // Print out pk number histogram at Ntot
     sys.refine_pk_histogram_bounds();
@@ -1177,33 +1201,33 @@ int main (int argc, char * const argv[]) {
     // Print out extensive moments
     sys.printExtMoments("final_extMom");
     
-    	// Print out final macrostate distribution
-    	sys.getTMMCBias()->print("final", false);
+    // Print out final macrostate distribution
+    sys.getTMMCBias()->print("final", false);
 	
 	// Still allow for printing of all data, even if there is an error, in order to interrogate the results anyway
 	const double tol = 1.0e-6;
 	const double scratchEnergy = sys.scratchEnergy(), incrEnergy = sys.energy();
-    	if (fabs(scratchEnergy - incrEnergy) > tol) {
-        	std::cerr << "Error: scratch energy calculation = " << std::setprecision(20) << scratchEnergy << ", but incremental = " << std::setprecision(20) << incrEnergy << ", |diff| = " << std::setprecision(20) << fabs(scratchEnergy - incrEnergy) << std::endl;
-        	for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-            		delete ppotArray[i];
-        	}
-        	ppotArray.clear();
-        	exit(SYS_FAILURE);
-    	} else {
-        	std::cout << "Passed: Final scratch energy - incremental = " << std::setprecision(20) << scratchEnergy - incrEnergy << std::endl;
-    	}
+    if (fabs(scratchEnergy - incrEnergy) > tol) {
+        std::cerr << "Error: scratch energy calculation = " << std::setprecision(20) << scratchEnergy << ", but incremental = " << std::setprecision(20) << incrEnergy << ", |diff| = " << std::setprecision(20) << fabs(scratchEnergy - incrEnergy) << std::endl;
+        for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+            	delete ppotArray[i];
+        }
+        ppotArray.clear();
+        exit(SYS_FAILURE);
+    } else {
+        std::cout << "Passed: Final scratch energy - incremental = " << std::setprecision(20) << scratchEnergy - incrEnergy << std::endl;
+    }
 
 	// Free pair potential pointers
-    	for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-        	delete ppotArray[i];
-    	}
-    	ppotArray.clear();
+    for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+        delete ppotArray[i];
+    }
+    ppotArray.clear();
 
-    	// Finished
-    	time (&rawtime);
+    // Finished
+    time (&rawtime);
  	timeinfo = localtime (&rawtime);
-    	strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
-    	std::cout << "Finished simulation at " << timestamp << std::endl;
+    strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+    std::cout << "Finished simulation at " << timestamp << std::endl;
 	return SAFE_EXIT;
 }

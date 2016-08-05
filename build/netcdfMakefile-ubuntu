@@ -4,20 +4,24 @@ CXX = g++
 # define any compile-time flags
 # -DNETCDF_CAPABLE to enable printing in netCDF formats, esle defaults to ASCII
 # -DFLUID_PHASE_SIMULATIONS to enable the possibility of tail corrections
-CXXFLAGS = -Wall -O3 -DFLUID_PHASE_SIMULATIONS -DNETCDF_CAPABLE -std=c++11
+CXXFLAGS = -Wall -O3 -DFLUID_PHASE_SIMULATIONS -std=c++11
+#-DNETCDF_CAPABLE 
 
 # define any directories containing header files other than /usr/include
-INCLUDES = -I/home/nam4_local/netCDF_c++4/4.2.1/install/include -I/home/nam4_local/netCDF/4.3.3.1/install/include 
+INCLUDES = 
+#-I/home/nam4_local/netCDF_c++4/4.2.1/install/include -I/home/nam4_local/netCDF/4.3.3.1/install/include 
 
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
 #   their path using -Lpath, something like:
-LFLAGS = -L/home/nam4_local/netCDF_c++4/4.2.1/install/lib/ -L/home/nam4_local/netCDF/4.3.3.1/install/lib/
+LFLAGS = 
+#-L/home/nam4_local/netCDF_c++4/4.2.1/install/lib/ -L/home/nam4_local/netCDF/4.3.3.1/install/lib/
 
 # define any libraries to link into executable:
 #   if I want to link in libraries (libx.so or libx.a) I use the -llibname 
 #   option, something like (this will link in libmylib.so and libm.so:
-LIBS = -lstdc++ -lnetcdf_c++4 -lnetcdf 
+LIBS = -lstdc++ 
+#-lnetcdf_c++4 -lnetcdf 
 
 # define the C source files
 SRC_DIR = ../src/
@@ -38,7 +42,7 @@ ODIR = ./
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
 # define the executable file 
-MAIN = ../bin/omcs
+MAIN = ../bin/omcs_$(DRIVER_SUFFIX)
 
 #
 # The following part of the makefile is generic; it can be used to 

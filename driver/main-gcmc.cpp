@@ -14,7 +14,7 @@
  * Complile with -DFLUID_PHASE_SIMULATIONS if simulations are purely in the fluid phase.  
  * This will allow tail corrections to be enabled which are only valid assuming a converging g(r) at large r.
  * 
- * Compile with -DNETCDF_CAPABLE if netCDF libraries are installed and can be compiled against.  Data will be output to these arrays
+ * Compile with -DNETCDF_CAPABLE if netCDF libraries are installed and can be compiled against.  Certain data will be output to these arrays
  * instead of ASCII files if so.
  * 
  * Tests compile with cmake and by default, do not link to netcdf libraries since they do not use them.  Everything tested in ASCII.
@@ -207,12 +207,10 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
             }
         }
     }
-
-    	// in the future, can be multiple instances of the same barrier, but for the above, assume only 1
 }
 
 /*!
- * Usage: ./binary_name inputFile.json
+ * Usage: ./binary_name input.json
  */
 int main (int argc, char * const argv[]) {
 	// Get time stamp
@@ -325,7 +323,52 @@ int main (int argc, char * const argv[]) {
 	assert(doc["snap_freq"].IsNumber());
 	double sfreq = doc["snap_freq"].GetDouble(); // possibly in scientific notation
 	const long long int movePrint = sfreq; // convert
+
+	std::vector < int > initialization_order (sys.nSpecies(), 0), check_init (sys.nSpecies(), 0);
+	std::vector < double > init_frac (sys.nSpecies(), 1.0);
+	double sum = 0.0;
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		initialization_order[i] = i;
+		if (i > 0) init_frac[i] = 0.0;
+		sum += init_frac[i];
+	}
+	if (doc.HasMember("init_order")) {
+		assert(doc["init_order"].IsArray());
+		assert(doc["init_order"].Size() == doc["num_species"].GetInt());
 	
+		for (rapidjson::SizeType i = 0; i < doc["init_order"].Size(); ++i) {
+			assert(doc["init_order"][i].IsInt());
+			initialization_order[i] = doc["init_order"][i].GetInt();
+			if (initialization_order[i] < 0 || initialization_order[i] >= sys.nSpecies()) {
+				std::cerr << "Order of initialization goes out of bounds, should include 0 <= i < nSpec" << std::endl;
+				exit(SYS_FAILURE);		
+			}
+			if (check_init[initialization_order[i]] != 0) {
+				std::cerr << "Order of initialization repeats itself" << std::endl;
+				exit(SYS_FAILURE);
+			} else {
+				check_init[initialization_order[i]] = 1;
+			}	
+		}
+	}
+	if (doc.HasMember("init_frac")) {
+		assert(doc["init_frac"].IsArray());
+		assert(doc["init_frac"].Size() == doc["num_species"].GetInt());
+		sum = 0.0;
+		for (rapidjson::SizeType i = 0; i < doc["init_frac"].Size(); ++i) {
+			assert(doc["init_frac"][i].IsNumber());
+			init_frac[i] = doc["init_frac"][i].GetDouble();
+			if (init_frac[i] < 0 || init_frac[i] >= 1.0) {
+				std::cerr << "Initialization fraction out of bounds" << std::endl;
+				exit(SYS_FAILURE);		
+			}	
+			sum += init_frac[i];
+		}
+	}
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {	
+		init_frac[i] /= sum;
+	}
+
 	std::vector < double > ref (sys.nSpecies(), 0);
 	std::vector < std::vector < double > > probEqSwap (sys.nSpecies(), ref), probPrSwap (sys.nSpecies(), ref);
 	std::vector < double > probPrInsDel (sys.nSpecies(), 0), probPrDisp (sys.nSpecies(), 0);
@@ -520,7 +563,7 @@ int main (int argc, char * const argv[]) {
 		}
 	} 
     
-    	// Add barriers for each species
+    // Add barriers for each species
 	initializeSystemBarriers (sys, doc);
 
 	// specify moves to use for the system
@@ -587,63 +630,65 @@ int main (int argc, char * const argv[]) {
 			exit(SYS_FAILURE);
 		}
 	} else if (restart_file == "" && sys.totNMin() > 0) {
-        	std::cout << "Automatically generating the initial configuration" << std::endl;
+		std::cout << "Automatically generating the initial configuration" << std::endl;
 		
 		// have to generate initial configuration manually - start with mu = INF
-        	std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
-        	simSystem initSys (doc["num_species"].GetInt(), 1/10., sysBox, initMu, sysMax, sysMin, Mtot); // beta =  1/T, so low beta to have high T
+        std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
+        simSystem initSys (doc["num_species"].GetInt(), 1/10., sysBox, initMu, sysMax, sysMin, Mtot); // beta =  1/T, so low beta to have high T
 
-        	// add the same potentials
-        	int initInd = 0;
-        	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-            		for (unsigned int j = i; j < sys.nSpecies(); ++j) {
-                		initSys.addPotential (i, j, ppotArray[initInd], true); // default use of cell list even if otherwise not in main simulation
-                		initInd++;
-            		}
-        	}
+        // add the same potentials
+        int initInd = 0;
+        for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+        	for (unsigned int j = i; j < sys.nSpecies(); ++j) {
+                initSys.addPotential (i, j, ppotArray[initInd], true); // default use of cell list even if otherwise not in main simulation
+                initInd++;
+            }
+        }
 
 		initializeSystemBarriers (initSys, doc);
 
 		// iteratively add each individual species, assume we want an equimolar mixture to start from
-		//for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		for (unsigned int i = 1; i < 2; ++i) {
+		int added = 0;
+		for (unsigned int idx = 0; idx < sys.nSpecies(); ++idx) {
+			unsigned int i = initialization_order[i];
 			std::cout << "Initializing species " << i << " configurations" << std::endl;
 			
 			// insert this species i
 			moves initMove (initSys.getTotalM());
 			insertParticle initIns (i, "insert");
-            		initMove.addMove (&initIns, 1.0);
-			std::vector < translateParticle > initTrans (i+1);
+            initMove.addMove (&initIns, 1.0);
+			std::vector < translateParticle > initTrans (idx+1);
 
 			// also add displacment moves for all species present
-			for (unsigned int j = 0; j <= i; ++j) {
-				std::cout << "Added translation moves for initialization of species " << j << std::endl;
-				translateParticle newTrans (j, "translate");
-                		newTrans.setMaxDisplacement (1.0, initSys.box()); // allow large displacements if necessary
+			for (unsigned int j = 0; j <= idx; ++j) {
+				std::cout << "Added translation moves for initialization of species " << initialization_order[j] << std::endl;
+				translateParticle newTrans (initialization_order[j], "translate");
+                newTrans.setMaxDisplacement (1.0, initSys.box()); // allow large displacements if necessary
 				initTrans[j] = newTrans;
-          			initMove.addMove (&initTrans[j], 2.0); // move more than insert so this relaxes better (qualitative observation)
+          		initMove.addMove (&initTrans[j], 2.0); // move more than insert so this relaxes better (qualitative observation)
 			}
 
 			// now do simuation until within proper range
-			int targetNum = sys.totNMin(); //sys.nSpecies();
-			/*if (i == sys.nSpecies() - 1) {
+			int targetNum = sys.totNMin()*init_frac[idx];
+			if (idx == sys.nSpecies() - 1) {
 				// to account for integer rounding
-				targetNum = sys.totNMin() - (sys.nSpecies()-1)*(sys.totNMin()/sys.nSpecies());
-			}*/
+				targetNum = sys.totNMin() - added;
+			}
+			added += targetNum;
+
 			std::cout << "Target number = " << targetNum << std::endl;
 			int tmpCounter = 0, statusPrint = 10e6;
 			while (initSys.numSpecies[i] < targetNum) {
-				// this creates an equimolar mixture
 				try {
-                    			initMove.makeMove(initSys);
-                		} catch (customException &ce) {
-                    			for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-                        			delete ppotArray[i];
-                    			}
-                    			ppotArray.clear();
-                    			std::cerr << "Failed to create an initial configuration: " << ce.what() << std::endl;
-                    			exit(SYS_FAILURE);
-                		}
+                    initMove.makeMove(initSys);
+                } catch (customException &ce) {
+                    for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+                        delete ppotArray[i];
+                    }
+                    ppotArray.clear();
+                    std::cerr << "Failed to create an initial configuration: " << ce.what() << std::endl;
+                    exit(SYS_FAILURE);
+                }
 				tmpCounter++;
 				if (tmpCounter%statusPrint == 0) {
 					tmpCounter = 0;
@@ -658,14 +703,14 @@ int main (int argc, char * const argv[]) {
 		// read into sys
 		try {
 			sys.readRestart("auto-init.xyz");
-       		} catch (customException &ce) {
-            		std::cerr << "Failed to read auto-generated initialization file: " << ce. what() << std::endl;
-            		for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-                		delete ppotArray[i];
-            		}
-            		ppotArray.clear();
-            		exit(SYS_FAILURE);
-        	}
+       	} catch (customException &ce) {
+            std::cerr << "Failed to read auto-generated initialization file: " << ce. what() << std::endl;
+            for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+                delete ppotArray[i];
+            }
+            ppotArray.clear();
+            exit(SYS_FAILURE);
+        }
    	}
         
 	for (unsigned long long int move = 0; move < eqSteps; ++move) {
@@ -681,24 +726,24 @@ int main (int argc, char * const argv[]) {
 		}
 	}
 
-        // Report move statistics for equilibration stage
-        char eq_statName [80];
-        strftime (eq_statName,80,"%Y_%m_%d_%H_%M_%S-equilibration-stats.log",timeinfo);
-        std::ofstream eq_statFile (eq_statName);
-        std::vector < std::vector < double > > eq_stats = usedMovesEq.reportMoveStatistics();
-        eq_statFile << " ---------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
-        for (unsigned int i = 0; i < eq_stats.size(); ++i) {
-            double prod = 1.0;
-            for (unsigned int j = 0; j < eq_stats[i].size(); ++j) {
-                prod *= eq_stats[i][j];
-                eq_statFile << usedMovesEq.includedMoves()[i]->myName() << " (from M = " << j << ")\t" << eq_stats[i][j]*100.0 << std::endl;
-            }
-            if (eq_stats[i].size() > 1) {
-                eq_statFile << "-------------------------------------\nProduct of percentages (%) = " << prod*100 << "\n-------------------------------------" << std::endl;
-            }
-        }
-        eq_statFile << std::endl;
-        eq_statFile.close();
+    // Report move statistics for equilibration stage
+    char eq_statName [80];
+    strftime (eq_statName,80,"%Y_%m_%d_%H_%M_%S-equilibration-stats.log",timeinfo);
+    std::ofstream eq_statFile (eq_statName);
+    std::vector < std::vector < double > > eq_stats = usedMovesEq.reportMoveStatistics();
+    eq_statFile << " ---------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
+    for (unsigned int i = 0; i < eq_stats.size(); ++i) {
+		double prod = 1.0;
+		for (unsigned int j = 0; j < eq_stats[i].size(); ++j) {
+			prod *= eq_stats[i][j];
+			eq_statFile << usedMovesEq.includedMoves()[i]->myName() << " (from M = " << j << ")\t" << eq_stats[i][j]*100.0 << std::endl;
+		}
+		if (eq_stats[i].size() > 1) {
+			eq_statFile << "-------------------------------------\nProduct of percentages (%) = " << prod*100 << "\n-------------------------------------" << std::endl;
+		}
+	}
+	eq_statFile << std::endl;
+	eq_statFile.close();
 	
 	long double sys_U = 0.0, measure_count = 0.0, sys_ntot = 0.0;
 	std::vector < double > sys_comp (sys.nSpecies(), 0.0);
@@ -738,13 +783,13 @@ int main (int argc, char * const argv[]) {
 	
 	// Sanity checks
 	if (sys.nSpecies() != sys.atoms.size()) {
-        	std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
+		std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
 		for (unsigned int i = 0; i < ppotArray.size(); ++i) {
 			delete ppotArray[i];
 		}
 		ppotArray.clear();
-        	exit(SYS_FAILURE);
-    	}
+			exit(SYS_FAILURE);
+	}
 	if (sys.getTotalM() > 1) {
 		if (sys.getFractionalAtom()->mState != sys.getCurrentM()) {
 			std::cerr << "Expanded ensemble state deviates between atom ("+sstr(sys.getFractionalAtom()->mState)+") and system log ("+sstr(sys.getCurrentM())+")" << std::endl;
@@ -780,27 +825,27 @@ int main (int argc, char * const argv[]) {
 		}	
 	}
 	
-    	// Report move statistics for final "production" stage
+	// Report move statistics for final "production" stage
 	char statName [80];
 	strftime (statName,80,"%Y_%m_%d_%H_%M_%S-stats.log",timeinfo);
 	std::ofstream statFile (statName);
-    	std::vector < std::vector < double > > stats = usedMovesPr.reportMoveStatistics();
-    	statFile << " ---------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
-    	for (unsigned int i = 0; i < stats.size(); ++i) {
-        	double prod = 1.0;
-        	for (unsigned int j = 0; j < stats[i].size(); ++j) {
-            		prod *= stats[i][j];
-            		statFile << usedMovesPr.includedMoves()[i]->myName() << " (from M = " << j << ")\t" << stats[i][j]*100.0 << std::endl;
-        	}
-        	if (stats[i].size() > 1) {
-            		statFile << "-------------------------------------\nProduct of percentages (%) = " << prod*100 << "\n-------------------------------------" << std::endl;
-        	}
-    	}
-    	statFile << std::endl;
-    	statFile.close();
+	std::vector < std::vector < double > > stats = usedMovesPr.reportMoveStatistics();
+	statFile << " ---------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
+	for (unsigned int i = 0; i < stats.size(); ++i) {
+		double prod = 1.0;
+		for (unsigned int j = 0; j < stats[i].size(); ++j) {
+			prod *= stats[i][j];
+			statFile << usedMovesPr.includedMoves()[i]->myName() << " (from M = " << j << ")\t" << stats[i][j]*100.0 << std::endl;
+		}
+		if (stats[i].size() > 1) {
+			statFile << "-------------------------------------\nProduct of percentages (%) = " << prod*100 << "\n-------------------------------------" << std::endl;
+		}
+	}
+	statFile << std::endl;
+	statFile.close();
 	
  	// print out restart file (xyz)
-    	sys.printSnapshot("final.xyz", "last configuration");
+	sys.printSnapshot("final.xyz", "last configuration");
     
 	std::cout << "<U> : " << sys_U/measure_count << std::endl;
 	std::cout << "<N_tot> : " << sys_ntot/measure_count << std::endl;
@@ -811,27 +856,27 @@ int main (int argc, char * const argv[]) {
 	// Still allow for printing of all data, even if there is an error, in order to interrogate the results anyway
 	const double tol = 1.0e-6;
 	const double scratchEnergy = sys.scratchEnergy(), incrEnergy = sys.energy();
-    	if (fabs(scratchEnergy - incrEnergy) > tol) {
-        	std::cerr << "Error: scratch energy calculation = " << std::setprecision(20) << scratchEnergy << ", but incremental = " << std::setprecision(20) << incrEnergy << ", |diff| = " << std::setprecision(20) << fabs(scratchEnergy - incrEnergy) << std::endl;
-        	for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-            		delete ppotArray[i];
-        	}
-        	ppotArray.clear();
-        	exit(SYS_FAILURE);
-    	} else {
-        	std::cout << "Passed: Final scratch energy - incremental = " << std::setprecision(20) << scratchEnergy - incrEnergy << std::endl;
-    	}
+	if (fabs(scratchEnergy - incrEnergy) > tol) {
+		std::cerr << "Error: scratch energy calculation = " << std::setprecision(20) << scratchEnergy << ", but incremental = " << std::setprecision(20) << incrEnergy << ", |diff| = " << std::setprecision(20) << fabs(scratchEnergy - incrEnergy) << std::endl;
+		for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+			delete ppotArray[i];
+		}
+		ppotArray.clear();
+		exit(SYS_FAILURE);
+	} else {
+		std::cout << "Passed: Final scratch energy - incremental = " << std::setprecision(20) << scratchEnergy - incrEnergy << std::endl;
+	}
 	
 	// Free pair potential pointers
-    	for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-        	delete ppotArray[i];
-    	}
-    	ppotArray.clear();
+  	for (unsigned int i = 0; i < ppotArray.size(); ++i) {
+		delete ppotArray[i];
+	}
+	ppotArray.clear();
 
-    	// Finished
-    	time (&rawtime);
+	// Finished
+	time (&rawtime);
  	timeinfo = localtime (&rawtime);
-    	strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
-    	std::cout << "Finished simulation at " << timestamp << std::endl;
+	strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+	std::cout << "Finished simulation at " << timestamp << std::endl;
 	return SAFE_EXIT;
 }
