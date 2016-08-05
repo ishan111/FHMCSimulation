@@ -83,7 +83,7 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
     	// Allocate space for energy matrix - this will only be recorded when the system is within the specific window we are looking for
     	// Because of implementation of Shen and Errington method, this syntax is the same for single and multicomponent systems
     	long long int size = totNBounds_[1] - totNBounds_[0] + 1;
-    	try {
+    	/*try {
     		AverageU_.resize(size, 0); 
     	} catch (std::bad_alloc &ba) {
     		throw customException ("Out of memory for energy record");
@@ -128,7 +128,48 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
         	numAverageN_.resize(size, 0);
     	} catch (std::bad_alloc &ba) {
         	throw customException ("Out of memory for composition histogram");
+    	}*/
+
+    energyHistogram_.resize(0);
+    energyHistogram_lb_.resize(size, -5.0);
+    energyHistogram_ub_.resize(size, 5.0);
+    for (unsigned int i = 0; i < size; ++i) {
+    	try {
+    		dynamic_one_dim_histogram dummyHist (energyHistogram_lb_[i], energyHistogram_ub_[i], energyHistDelta_);
+    		energyHistogram_.resize(i+1, dummyHist);
+    	} catch (std::bad_alloc &ba) {
+    		throw customException ("Out of memory for energy histogram for each Ntot");
     	}
+    }
+    
+    pkHistogram_.resize(0);
+    dynamic_one_dim_histogram dummyPkHist (0.0, totNBounds_[1], 1.0);
+    try {
+    	std::vector < dynamic_one_dim_histogram > tmp (totNBounds_[1]-totNBounds_[0]+1, dummyPkHist); 
+		pkHistogram_.resize(nSpecies_, tmp);
+	 } catch (std::bad_alloc &ba) {
+		throw customException ("Out of memory for particle histogram for each Ntot");
+   	}
+   	
+   	// initialize moments
+	std::vector < double > lbn (6,0), ubn(6,0);
+	std::vector < long long unsigned int > nbn (6,0);
+	ubn[0] = nSpecies_-1;
+	ubn[1] = max_order_;
+	ubn[2] = nSpecies_-1;
+	ubn[3] = max_order_;
+	ubn[4] = max_order_;
+	ubn[5] = totNBounds_[1]-totNBounds_[0];
+	
+	nbn[0] = nSpecies_;
+	nbn[1] = max_order_+1;
+	nbn[2] = nSpecies_;
+	nbn[3] = max_order_+1;
+	nbn[4] = max_order_+1;
+	nbn[5] = size;
+	
+	histogram hnn (lbn, ubn, nbn);
+	extensive_moments_ = hnn;
 }
 
 /*!
@@ -397,6 +438,17 @@ void simSystem::translateAtom (const int typeIndex, const int atomIndex, std::ve
     	}
 }
 
+/*!
+ * Toggle KE adjustment to energy setting
+ */
+void simSystem::toggle_ke() {
+	if (toggle_ke_ == false) {
+		toggle_ke_ = true; 
+	} else {
+		toggle_ke_ = false; 
+	}
+}
+
 /*
  * Destructor frees biases if used and not turned off already.
  */
@@ -408,7 +460,7 @@ simSystem::~simSystem () {
 		delete wlBias;
 	}
 }
-
+ 
 /*!
  * Initialize the system. Sets the use of both WL and TMMC biasing to false.
  * 
@@ -418,8 +470,10 @@ simSystem::~simSystem () {
  * \param [in] mu Chemical potential of each species
  * \param [in] maxSpecies Maximum number of each species to allow in the system
  * \param [in] Mtot Total number of expanded ensemble states
+ * \param [in] energyHistDelta Bin width of energy histogram at each Ntot (optional, default = 10.0)
+ * \param [in] max_order Maximum order to record correlations to (default = 2)
  */
-simSystem::simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies, const int Mtot) {
+simSystem::simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies, const int Mtot, const double energyHistDelta, const int max_order) {
 	if ((box.size() != 3) || (nSpecies != mu.size()) || (maxSpecies.size() != nSpecies)) {
 		throw customException ("Invalid system initialization parameters");
 		exit(SYS_FAILURE);
@@ -431,6 +485,18 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		mu_ = mu;
 		beta_ = beta;
 	}
+	
+	toggle_ke_ = false; //default, do NOT adjust energy by kinetic contribution of 3/2kT per atom (just record PE)
+	
+	if (max_order < 1){
+		throw customException ("max_order must be >= 1");
+	}
+	max_order_ = max_order;
+	
+	if (energyHistDelta <= 0) {
+		throw customException ("energyHistDelta must be > 0");
+	}
+	energyHistDelta_ = energyHistDelta;
 	
 	for (unsigned int i = 0; i < 3; ++i) {
 		if (box_[i] <= 0) {
@@ -539,7 +605,28 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
     	// allocate space for average U storage matrix - Shen and Errington method implies this size is always the same for
     	// both single and multicomponent mixtures
     	long long int size = totNBounds_[1] - totNBounds_[0] + 1;
-    	try {
+    	energyHistogram_lb_.resize(size, -5.0);
+    	energyHistogram_ub_.resize(size, 5.0);
+    	for (unsigned int i = 0; i < size; ++i) {
+    		energyHistogram_lb_[i] = -5.0;
+    		energyHistogram_ub_[i] = 5.0;
+    		try {
+    			dynamic_one_dim_histogram dummyHist (energyHistogram_lb_[i], energyHistogram_ub_[i], energyHistDelta_);
+    			energyHistogram_.resize(i+1, dummyHist);
+    		} catch (std::bad_alloc &ba) {
+    			throw customException ("Out of memory for energy histogram for each Ntot");
+    		}
+    	}
+    	pkHistogram_.resize(0);
+    	dynamic_one_dim_histogram dummyPkHist (0.0, totNBounds_[1], 1.0);
+		try {
+			std::vector < dynamic_one_dim_histogram > tmp (totNBounds_[1]-totNBounds_[0]+1, dummyPkHist);
+			pkHistogram_.resize(nSpecies_, tmp);
+		} catch (std::bad_alloc &ba) {
+    		throw customException ("Out of memory for particle histogram for each Ntot");
+    	} 
+
+    	/*try {
         	numAverageU_.resize(size, 0);
     	} catch (std::bad_alloc &ba) {
      		throw customException ("Out of memory for energy record");
@@ -600,14 +687,34 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		} catch (std::bad_alloc &ba) {
 			throw customException ("Out of memory for <N_iN_j> histogram");
 		}
-	}
+	}*/
+	
+	// initialize moments
+	std::vector < double > lbn (6,0), ubn(6,0);
+	std::vector < long long unsigned int > nbn (6,0);
+	ubn[0] = nSpecies_-1;
+	ubn[1] = max_order_;
+	ubn[2] = nSpecies_-1;
+	ubn[3] = max_order_;
+	ubn[4] = max_order_;
+	ubn[5] = totNBounds_[1]-totNBounds_[0];
+	
+	nbn[0] = nSpecies_;
+	nbn[1] = max_order_+1;
+	nbn[2] = nSpecies_;
+	nbn[3] = max_order_+1;
+	nbn[4] = max_order_+1;
+	nbn[5] = size;
+	
+	histogram hnn (lbn, ubn, nbn);
+	extensive_moments_ = hnn;
 }
 
 /*!
  * Save the instantaneous fluctuation properties, e.g X_i*Y_j, for various properties, X, Y, such as energy, etc.
  * Only records values when N_tot in range of [min, max].
  */
-void simSystem::recordFluctuation () {
+/*void simSystem::recordFluctuation () {
 	// only record if in range (removes equilibration stage to get in this range, if there was any)
         if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
                 const long int address = totN_-totNBounds_[0];
@@ -620,14 +727,14 @@ void simSystem::recordFluctuation () {
 			}
         	}
 	}
-}
+}*/
 
 /*!
  * Print the average properties for fluctuation calculations to file for every N_tot within range recorded. Will overwrite the file if another with that name exists. Prints in netCDF format if enabled.
  *
  * \param [in] fileName Name of the file to print to
  */
-void simSystem::printFluctuation (const std::string fileName) {
+/*void simSystem::printFluctuation (const std::string fileName) {
 	std::vector < std::vector < long double > > ave_ninj, ave_uni;
 	std::vector < long double > ave_uu;
 	try {
@@ -746,13 +853,13 @@ void simSystem::printFluctuation (const std::string fileName) {
 	}
         of.close();
 #endif	
-}
+}*/
 
 /*!
  * Save the instantaneous number of each component as a function of the total number of particles in the system.
  * Only records values when N_tot in range of [min, max].
  */
-void simSystem::recordComposition () {
+/*void simSystem::recordComposition () {
 	// only record if in range (removes equilibration stage to get in this range, if there was any)
         if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
                 const long int address = totN_-totNBounds_[0];
@@ -761,14 +868,14 @@ void simSystem::recordComposition () {
                 	averageN_[i][address] += numSpecies[i];
         	}
 	}
-}
+}*/
 
 /*!
  * Print the average composition to file, <N_i> for every N_tot within range recorded. Will overwrite the file if another with that name exists. Prints in netCDF format if enabled.
  *
  * \param [in] fileName Name of the file to print to
  */
-void simSystem::printComposition (const std::string fileName) {
+/*void simSystem::printComposition (const std::string fileName) {
 	std::vector < std::vector < double > > aveX;
 	try {
 		aveX.resize(averageN_.size());
@@ -830,27 +937,309 @@ void simSystem::printComposition (const std::string fileName) {
         }
         of.close();	
 #endif	
+}*/
+
+/*!
+ * Record the extensive moment at a given Ntot.
+ */
+void simSystem::recordExtMoments () {
+	// only record if in range (removes equilibration stage to get in this range, if there was any)
+	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+		double val = 0.0;
+		std::vector < double > coords (6,0);
+		coords[5] = totN_-totNBounds_[0];
+		for (unsigned int i = 0; i < nSpecies_; ++i) {
+			coords[0] = i;
+			for (unsigned int j = 0; j <= max_order_; ++j) {
+				coords[1] = j;
+				for (unsigned int k = 0; k < nSpecies_; ++k) {
+					coords[2] = k;
+					for (unsigned int m = 0; m <= max_order_; ++m) {
+						coords[3] = m;
+						for (unsigned int p = 0; p <= max_order_; ++p) {
+							coords[4] = p;
+							val = pow(numSpecies[i], j)*pow(numSpecies[k], m)*pow(energy_, p);
+							extensive_moments_.increment (coords, val);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+/*!
+ * Print the (normalized) extensive energy histogram for each Ntot. netCDF4 not enabled
+ * 
+ * \param [in] fileName Name of the file to print to
+ */
+void simSystem::printExtMoments (const std::string fileName) {
+#ifdef NETCDF_CAPABLE
+    throw customException ("Cannot record the extensive moments for each Ntot in netCDF4 format.");
+#else
+	// Without netCDF capabilities, just print to ASCII file
+	std::ofstream of;
+	std::string name = fileName+".dat";
+	of.open(name.c_str(), std::ofstream::out);
+	of << "# <N_i^j*N_k^m*U^p> as a function of N_tot." << std::endl;
+	of << "# number_of_species: " << nSpecies_ << std::endl;
+	of << "# max_order: " << max_order_ << std::endl;
+	of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
+	of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+	double V = box_[0]*box_[1]*box_[2];
+	of << "# volume: " << std::setprecision(15) << V << std::endl;
+	of << "#\tN_tot\t";
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		for (unsigned int j = 0; j <= max_order_; ++j) {
+			for (unsigned int k = 0; k < nSpecies_; ++k) {
+				for (unsigned int m = 0; m <= max_order_; ++m) {
+					for (unsigned int p = 0; p <= max_order_; ++p) {
+						of << "N_"+sstr(i+1)+"^"+sstr(j)+"*N_"+sstr(k+1)+"^"+sstr(m)+"*U^"+sstr(p)+"\t";
+					}
+				}
+			}
+		}
+	}
+	of << std::endl;
+	std::vector <double> h = extensive_moments_.getRawHistogram ();
+	std::vector <double> ctr = extensive_moments_.getCounter ();
+	std::vector <double> coords (6,0);
+	long unsigned int idx = 0;
+	for (unsigned int n = 0; n < totNBounds_[1]-totNBounds_[0]+1; ++n) {
+		of << n+totNBounds_[0] << "\t";
+		coords[5] = n;
+		for (unsigned int i = 0; i < nSpecies_; ++i) {
+			coords[0] = i;
+			for (unsigned int j = 0; j <= max_order_; ++j) {
+				coords[1] = j;
+				for (unsigned int k = 0; k < nSpecies_; ++k) {
+					coords[2] = k;
+					for (unsigned int m = 0; m <= max_order_; ++m) {
+						coords[3] = m;
+						for (unsigned int p = 0; p <= max_order_; ++p) {
+							coords[4] = p;
+							idx = extensive_moments_.getAddress(coords);
+							of << h[idx]/ctr[idx] << "\t";
+						}
+					}
+				}
+			}
+		}
+		of << std::endl;
+	}
+	of.close();
+#endif
+}
+
+/*!
+ * Record the energy histogram for the system at a given Ntot.
+ * Only records values when N_tot in range of [min, max].
+ */
+void simSystem::recordEnergyHistogram () {
+	// only record if in range (removes equilibration stage to get in this range, if there was any)
+	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+		const int address = totN_-totNBounds_[0];
+		energyHistogram_[address].record(energy_);
+	}
+}
+
+/*!
+ * Monitor the energy histogram bounds at each Ntot
+ */
+void simSystem::check_energy_histogram_bounds () {
+	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+		const int address = totN_-totNBounds_[0];
+		energyHistogram_lb_[address] = std::min(energyHistogram_lb_[address], energy_);
+		energyHistogram_ub_[address] = std::max(energyHistogram_ub_[address], energy_); 
+	}
+}
+
+/*!
+ * Check the histogram entries and trim off zero-valued entries and bounds
+ */
+void simSystem::refine_energy_histogram_bounds () {
+	for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_.begin(); it != energyHistogram_.end(); ++it) {
+		try {
+			it->trim_edges();
+		} catch (customException &ce) {
+			std::string a = "Unable to trim edges in energyHistogram at each Ntot: ", b = ce.what();
+			throw customException (a+b);
+		}
+	}
+}
+
+/*!
+ * Re-initialize the energy histogram with internal estimates of bounds.
+ */
+void simSystem::reInitializeEnergyHistogram () {
+	if (energyHistogram_lb_.size() != energyHistogram_ub_.size()) {
+			throw customException ("Bad energy histogram bound sizes");
+		}
+		if (energyHistogram_lb_.size() != totNMax() - totNMin() + 1) {
+			throw customException ("Bad energy histogram bound sizes");
+		}
+		for (unsigned int i = 0; i < totNMax() - totNMin() + 1; ++i) {
+			if (energyHistogram_lb_[i] > energyHistogram_ub_[i]) {
+				throw customException ("Bad energy histogram bound sizes");
+			}
+			try {
+				energyHistogram_[i].reinitialize(energyHistogram_lb_[i], energyHistogram_ub_[i], energyHistDelta_);
+			} catch (customException &ce) {
+				throw customException ("Unable to reinitialize the energyHistogram");
+			}
+		}
+}
+		
+/*!
+ * Print the (normalized) energy histogram for each Ntot. netCDF4 not enabled
+ * 
+ * \param [in] fileName Name of the file to print to
+ */
+void simSystem::printEnergyHistogram (const std::string fileName) {
+#ifdef NETCDF_CAPABLE
+    throw customException ("Cannot record the energyHistogram for each Ntot in netCDF4 format.");
+#else
+	// Without netCDF capabilities, just print to ASCII file
+	std::ofstream of;
+	std::string name = fileName+".dat";
+	of.open(name.c_str(), std::ofstream::out);
+	of << "# <P(U)> as a function of N_tot." << std::endl;
+	of << "# number_of_species: " << nSpecies_ << std::endl;
+	of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
+	of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+	double V = box_[0]*box_[1]*box_[2];
+	of << "# volume: " << std::setprecision(15) << V << std::endl;
+	of << "# Bin widths for each" << std::endl;
+	for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_.begin(); it != energyHistogram_.end(); ++it) {
+		of << it->get_delta() << "\t";
+	}
+	of << std::endl;
+	of << "# Bin lower bound for each" << std::endl;
+	for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_.begin(); it != energyHistogram_.end(); ++it) {
+		of << it->get_lb() << "\t";
+	}
+	of << std::endl;
+	of << "# Bin upper bound for each" << std::endl;
+	for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_.begin(); it != energyHistogram_.end(); ++it) {
+		of << it->get_ub() << "\t";
+	}
+	of << std::endl;
+	of << "# Normalized histogram for each" << std::endl;
+	for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_.begin(); it != energyHistogram_.end(); ++it) {
+		std::deque <double> h = it->get_hist();
+		double sum = 0.0;
+		for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
+			sum += *it2;
+		}
+		for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
+			of << *it2/sum << "\t";
+		}
+		of << std::endl;
+	}
+	of.close();
+#endif
+}
+
+/*!
+ * Record the particle number histogram for the system at a given Ntot.
+ * Only records values when N_tot in range of [min, max].
+ */
+void simSystem::recordPkHistogram () {
+	// only record if in range (removes equilibration stage to get in this range, if there was any)
+	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+		const int address = totN_-totNBounds_[0];
+		for (unsigned int i = 0; i < nSpecies_; ++i) {
+			pkHistogram_[i][address].record(numSpecies[i]);
+		}
+	}
+}
+
+/*!
+ * Check the histogram entries and trim off zero-valued entries and bounds
+ */
+void simSystem::refine_pk_histogram_bounds () {
+	for (std::vector < std::vector < dynamic_one_dim_histogram > >::iterator it = pkHistogram_.begin(); it != pkHistogram_.end(); ++it) {
+		for (std::vector < dynamic_one_dim_histogram >::iterator it2 = it->begin(); it2 != it->end(); ++it2) {
+			try {
+				it2->trim_edges();
+			} catch (customException &ce) {
+				throw customException ("Unable to trim edges in pkHistogram at each Ntot");
+			}
+		}
+	}
+}
+
+/*!
+ * Print the (normalized) particle number histogram for each Ntot. netCDF4 not enabled
+ * 
+ * \param [in] fileName Name of the file to print to
+ */
+void simSystem::printPkHistogram (const std::string fileName) {
+#ifdef NETCDF_CAPABLE
+    throw customException ("Cannot record the pkHistogram for each Ntot in netCDF4 format.");
+#else
+	// Without netCDF capabilities, just print to ASCII file
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		std::ofstream of;
+		std::string name = fileName+"_"+sstr(i+1)+".dat";
+		of.open(name.c_str(), std::ofstream::out);
+		of << "# <P(N_" << i+1 << ")> as a function of N_tot." << std::endl;
+		of << "# number_of_species: " << nSpecies_ << std::endl;
+		of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
+		of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+		double V = box_[0]*box_[1]*box_[2];
+		of << "# volume: " << std::setprecision(15) << V << std::endl;
+		of << "# Bin widths for each species index " << std::endl;
+		for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i].begin(); it != pkHistogram_[i].end(); ++it) {
+			of << it->get_delta() << "\t";
+		}
+		of << std::endl;
+		of << "# Bin lower bound for each species index " << std::endl;
+		for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i].begin(); it != pkHistogram_[i].end(); ++it) {
+			of << it->get_lb() << "\t";
+		}
+		of << std::endl;
+		of << "# Bin upper bound for each species index " << std::endl;
+		for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i].begin(); it != pkHistogram_[i].end(); ++it) {
+			of << it->get_ub() << "\t";
+		}
+		of << std::endl;
+		of << "# Normalized histogram for each species index " << std::endl;
+		for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i].begin(); it != pkHistogram_[i].end(); ++it) {
+			std::deque <double> h = it->get_hist();
+			double sum = 0.0;
+			for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
+				sum += *it2;
+			}
+			for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
+				of << *it2/sum << "\t";
+			}
+			of << std::endl;
+		}
+		of.close();
+	}
+#endif
 }
 
 /*!
  * Save the instantaneous energy of the system as a function of the number of particles in the system.
  * Only records values when N_tot in range of [min, max].
  */
-void simSystem::recordU () {
+/*void simSystem::recordU () {
 	// only record if in range (removes equilibration stage to get in this range, if there was any)
 	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
 		const int address = totN_-totNBounds_[0];
 		AverageU_[address] += energy_;
 		numAverageU_[address] += 1.0;
 	}
-}
+}*/
 
 /*!
  * Print the average energy to file, <U> for every N_tot within range is recorded.  Will overwrite the file if another with that name exists. Prints in netCDF format if enabled.
  * 
  * \param [in] fileName Name of the file to print to
  */
-void simSystem::printU (const std::string fileName) {
+/*void simSystem::printU (const std::string fileName) {
 	std::vector < double > aveU (AverageU_.size(), 0);
 	for (long long int i = 0; i < AverageU_.size(); ++i) {
 		aveU[i] = AverageU_[i]/numAverageU_[i]; 
@@ -888,7 +1277,7 @@ void simSystem::printU (const std::string fileName) {
 	}
 	of.close();
 #endif
-}
+}*/
 
 /*!
  * Add a pair potential to the system which governs the pair (spec1, spec2). However, it only stores the pointer so the object must be 
@@ -1197,6 +1586,14 @@ const double simSystem::scratchEnergy () {
         	}
     	}
     
+    	if (toggle_ke_ == true) {
+    		double ns = 0.0;
+    		for (unsigned int i = 0; i < nSpecies_; ++i) {
+    			ns += numSpecies[i];
+    		}
+    		totU += 1.5/beta_*ns; // only adjust for FULLY-INSERTED ATOMS
+    	}
+    	
     	return totU;
 }
 

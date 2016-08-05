@@ -135,6 +135,9 @@ int insertParticle::make (simSystem &sys) {
     	if (sys.getCurrentM() == sys.getTotalM()-1) {
     		nTotFinal++;
     		mFinal = 0;
+    		if (sys.add_ke_correction()) {
+    			insEnergy += 1.5/sys.beta();
+    		}
     	}
     	double bias = calculateBias(sys, nTotFinal, mFinal);
    

@@ -135,6 +135,9 @@ int deleteParticle::make (simSystem &sys) {
     	if (sys.getCurrentM() == 0) {
     		nTotFinal--;
     		mFinal = sys.getTotalM() - 1;
+    		if (sys.add_ke_correction()) {
+    			delEnergy -= 1.5/sys.beta();
+    		}
     	}
     	double bias = calculateBias(sys, nTotFinal, mFinal); 
     

@@ -2,6 +2,159 @@
 #include <iostream>
 
 /*!
+ * Trim the size of the histogram to remove leading and trailing zeros.
+ */
+void dynamic_one_dim_histogram::trim_edges () {
+	long unsigned int leading = 0, trailing = 0;
+	for (std::deque < double >::iterator it = h_.begin(); it != h_.end(); ++it) {
+		if (*it <= 0) {
+			leading++;
+		} else {
+			break;
+		}
+	}
+	for (std::deque < double >::reverse_iterator rit = h_.rbegin(); rit != h_.rend(); ++rit) {
+		if (*rit <= 0) {
+			trailing++;
+		} else {
+			break;
+		}
+	}
+
+	if (leading + trailing >= h_.size()) {
+		throw customException ("Cannot trim dynamic_one_dim_histogram because it is empty");
+	}
+	
+	nbins_ -= (leading + trailing);
+	lb_ += leading*delta_;
+	ub_ -= trailing*delta_;
+	
+	for (unsigned int i = 0; i < leading; ++i) {
+		h_.pop_front();
+	}
+	for (unsigned int i = 0; i < trailing; ++i) {
+		h_.pop_back();
+	}
+}
+
+/*!
+ * Initialize histogram and its bounds. 
+ */
+void dynamic_one_dim_histogram::initialize_ (const double lb, const double ub, const double delta) {
+	if (lb > ub) {
+        throw customException ("Lower bound >= upper bound illegal for a dynamic_one_dim_histogram");
+    }
+    if (delta <= 0) {
+        throw customException ("Bin width must be > 0 for a dynamic_one_dim_histogram");
+    }
+	delta_ = delta; 
+ 	lb_ = lb;
+ 	ub_ = ub;
+ 	nbins_ = ceil((ub - lb)/delta); 
+ 	if (fabs(round((ub - lb)/delta) - ((ub - lb)/delta)) < 1.0e-6) {
+ 		nbins_++; // include endpoint
+ 	}
+    
+    // initialize the histogram to 0
+    h_.resize(0);
+    try {
+        h_.resize(nbins_, 0);
+    } catch (std::bad_alloc &ba) {
+        throw customException ("Out of memory for dynamic_one_dim_histogram");
+    }
+}
+
+/*!
+ * Re-initialize histogram and its bounds.  All entries are zeroed.
+ */
+void dynamic_one_dim_histogram::reinitialize (const double lb, const double ub, const double delta) {
+	try {
+		initialize_ (lb, ub, delta);
+	} catch (customException &ce) {
+		throw customException ("Unable to re-initialize dynamic_one_dim_histogram");
+	}
+}
+
+/*!
+ * Instantiate a 1D histogram that grow as needed to record values.  
+ * A bin is considered "centered" on its value.
+ *
+ * \param [in] lb Lower bound
+ * \param [in] ub Upper bound
+ * \param [in] delta Bin width
+ */
+dynamic_one_dim_histogram::dynamic_one_dim_histogram (const double lb, const double ub, const double delta) {
+	try {
+		initialize_ (lb, ub, delta);
+	} catch (customException &ce) {
+		throw customException ("Unable to initialize dynamic_one_dim_histogram");
+	}
+}
+
+/*!
+ * Add a number of bins to the beginning of the histogram.
+ *
+ * \param [in] nbins Number of bins to add to the beginning
+ */
+void dynamic_one_dim_histogram::prepend_bins (const unsigned int nbins) {
+	for (unsigned int i = 0; i < nbins; i++) {
+		try {
+			h_.push_front (0.0);
+			nbins_++;
+			lb_ -= delta_;
+		} catch (std::bad_alloc &ba) {
+        	throw customException ("Out of memory for dynamic_one_dim_histogram");
+   		}
+	}
+}
+
+/*!
+ * Add a number of bins to the end of the histogram.
+ *
+ * \param [in] nbins Number of bins to add to the end
+ */
+void dynamic_one_dim_histogram::append_bins (const unsigned int nbins) {
+	for (unsigned int i = 0; i < nbins; i++) {
+		try {
+			h_.push_back (0.0);
+			nbins_++;
+			ub_ += delta_;
+		} catch (std::bad_alloc &ba) {
+        	throw customException ("Out of memory for dynamic_one_dim_histogram");
+   		}
+	}
+}
+
+/*!
+ * Record an entry in the histogram at the bin corresponding to where value falls.
+ *
+ * \param [in] value Raw value, bin this corresponds to is internally calculated
+ */
+void dynamic_one_dim_histogram::record (const double value) {
+	int bin = round((value - lb_)/delta_); // this "centers" the bin
+	if (bin < 0) {
+		// prepend and fill
+		try {
+			prepend_bins(-bin);
+		} catch (customException &ce) {
+			std::string a = "Unable to prepend dynamic_one_dim_histogram: ", b = ce.what();
+			throw customException (a+b);
+		}
+		bin = round((value - lb_)/delta_); 
+	} else if (bin >= nbins_) {
+		// append and fill
+		try {
+			append_bins (bin - nbins_ + 1);
+		} catch (customException &ce) {
+			std::string a = "Unable to append dynamic_one_dim_histogram: ", b = ce.what();
+			throw customException (a+b);
+		}
+		bin = round((value - lb_)/delta_); 
+	}
+	h_[bin] += 1.0;
+}
+
+/*!
  * Instantiate a multidimensional histogram.  Bounds and widths must be specified for each dimension.
  * A bin is considered "centered" on its value.
  *
@@ -50,6 +203,11 @@ histogram::histogram (const std::vector <double> lbound, const std::vector <doub
     	} catch (std::bad_alloc &ba) {
         	throw customException ("Out of memory for histogram");
     	}
+    	try {
+        	counter_.resize(size_, 0);
+    	} catch (std::bad_alloc &ba) {
+        	throw customException ("Out of memory for histogram");
+    	}
 }
 
 /*!
@@ -61,6 +219,7 @@ histogram::histogram (const std::vector <double> lbound, const std::vector <doub
 void histogram::increment (const long long unsigned int address, const double val) {
     	if (address < size_) {
         	h_[address] += val;
+        	counter_[address] += 1.0;
     	} else {
         	throw customException ("Histogram address out of bounds");
     	}
@@ -80,6 +239,7 @@ void histogram::increment (const std::vector <double> &coords, const double val)
         	throw customException ("Histogram address out of bounds");
     	}
     	h_[address] += val;
+    	counter_[address] += 1.0;
 }
 
 /*!

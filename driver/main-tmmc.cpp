@@ -253,6 +253,24 @@ int main (int argc, char * const argv[]) {
 		sysBox[i] = doc["box"][i].GetDouble();
 	}
 
+	double duh = 10.0;
+	if (doc.HasMember("delta_u_hist")) {
+		assert(doc["delta_u_hist"].IsNumber());
+		duh = doc["delta_u_hist"].GetDouble();
+	}
+	
+	int max_order = 2;
+	if (doc.HasMember("max_order")) {
+		assert(doc["max_order"].IsNumber());
+		max_order = doc["max_order"].GetInt();
+	}
+	
+	bool use_ke = false;
+	if (doc.HasMember("use_ke")) {
+		assert(doc["use_ke"].IsBool());
+		use_ke = doc["use_ke"].GetBool();
+	}
+	
 	assert(doc.HasMember("mu"));
 	assert(doc["mu"].IsArray());
 	assert(doc["mu"].Size() == doc["num_species"].GetInt());
@@ -290,7 +308,13 @@ int main (int argc, char * const argv[]) {
 		Mtot = doc["num_expanded_states"].GetInt();
 	}	
 	
-	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot);
+	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot, duh, max_order);
+	if (use_ke) {
+		sys.toggle_ke();
+		if (sys.add_ke_correction() == false) {
+			throw customException ("Unable to set KE flag");
+		}
+	}
 
 	std::vector < int > sysWindow;
 	if (doc.HasMember("window")) {
@@ -632,7 +656,7 @@ int main (int argc, char * const argv[]) {
 	}
 	
 	/* -------------------- END INPUT -------------------- */
-	
+
 	// Read from restart file if specified
 	if (restart_file != "") {
 		std::cout << "Reading initial configuration from " << restart_file << std::endl;
@@ -651,8 +675,14 @@ int main (int argc, char * const argv[]) {
 		
 		// have to generate initial configuration manually - start with mu = INF
         	std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
-        	simSystem initSys (doc["num_species"].GetInt(), 1/10., sysBox, initMu, sysMax, sysMin, Mtot); // beta =  1/T, so low beta to have high T
-
+        	simSystem initSys (doc["num_species"].GetInt(), 1/10., sysBox, initMu, sysMax, sysMin, Mtot, duh, max_order); // beta =  1/T, so low beta to have high T
+			if (use_ke) {
+				initSys.toggle_ke();
+				if (initSys.add_ke_correction() == false) {
+					throw customException ("Unable to set KE flag");
+				}
+			}
+			
         	// add the same potentials
         	int initInd = 0;
         	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
@@ -728,7 +758,6 @@ int main (int argc, char * const argv[]) {
         	}
    	}
 
-
 	bool highSnap = false, lowSnap = false;
 					
 	if (!restartFromTMMC) {
@@ -774,6 +803,9 @@ int main (int argc, char * const argv[]) {
 					std::cerr << ce.what() << std::endl;
 					exit(SYS_FAILURE);
 				}	
+				if (sys.getCurrentM() == 0){
+					sys.check_energy_histogram_bounds ();
+				}
 			}
 
 			// Check if bias has flattened out
@@ -831,6 +863,9 @@ int main (int argc, char * const argv[]) {
 					}
 					ppotArray.clear();
 					exit(SYS_FAILURE);
+				}
+				if (sys.getCurrentM() == 0) {
+					sys.check_energy_histogram_bounds ();
 				}
 			}
 			
@@ -914,7 +949,10 @@ int main (int argc, char * const argv[]) {
                         sys.getTMMCBias()->dumpVisited("tmmc-beginning-fail-visited");
                         exit(SYS_FAILURE);
 		}
-	}
+		
+		// if doing initial WL "equilibration" re-initialize the histogram using bounds
+		sys.reInitializeEnergyHistogram();
+	} 
 	
 	std::cout << "Beginning TMMC" << std::endl;
 	if (restartFromTMMC) {
@@ -959,13 +997,22 @@ int main (int argc, char * const argv[]) {
 			// only record properties of the system when it is NOT in an intermediate state
 			if (sys.getCurrentM() == 0) {
 				// record U
-				sys.recordU();
+				//sys.recordU();
 			
 				// record composition
-				sys.recordComposition();
+				//sys.recordComposition();
 
 				// record properties to calculate fluctuation quantities
-				sys.recordFluctuation();
+				//sys.recordFluctuation();
+				
+				// record energy histogram at each Ntot
+				sys.recordEnergyHistogram();
+				
+				// record N1, N2, etc. histogram at each Ntot
+				sys.recordPkHistogram();
+				
+				// record extensive moments
+				sys.recordExtMoments();
 			}
 	
 			// check if sweep is done
@@ -995,9 +1042,14 @@ int main (int argc, char * const argv[]) {
 		if (sweep%sweepPrint == 0) {
 			printCounter++;
 			sys.getTMMCBias()->print("tmmc-Checkpoint-"+sstr(printCounter), true);
-			sys.printU("energy-Checkpoint-"+sstr(printCounter));
-			sys.printComposition("composition-Checkpoint-"+sstr(printCounter));
-			sys.printFluctuation("fluctuation-Checkpoint-"+sstr(printCounter));
+			//sys.printU("energy-Checkpoint-"+sstr(printCounter));
+			//sys.printComposition("composition-Checkpoint-"+sstr(printCounter));
+			//sys.printFluctuation("fluctuation-Checkpoint-"+sstr(printCounter));
+			sys.refine_energy_histogram_bounds();
+			sys.printEnergyHistogram("eHist-Checkpoint-"+sstr(printCounter));
+            sys.refine_pk_histogram_bounds();
+            sys.printPkHistogram("pkHist-Checkpoint-"+sstr(printCounter));
+            sys.printExtMoments("extMom-Checkpoint-"+sstr(printCounter));
             
             char statName [80];
             strftime (statName,80,"%Y_%m_%d_%H_%M_%S-stats.log",timeinfo);
@@ -1076,6 +1128,12 @@ int main (int argc, char * const argv[]) {
 			}
 		}	
 	}
+	
+	if (use_ke) {
+		if (sys.add_ke_correction() == false) {
+			throw customException ("KE flag was unset during simulation");
+		}
+	}
 
     	// Report move statistics for final TMMC ("production") stage
 	char statName [80];
@@ -1100,13 +1158,24 @@ int main (int argc, char * const argv[]) {
     	sys.printSnapshot("final.xyz", "last configuration");
     
     	// Print out energy histogram
-    	sys.printU("energyHistogram");
+    	//sys.printU("energyHistogram");
     
    	// Print out composition histogram
-    	sys.printComposition("compositionHistogram");
+    	//sys.printComposition("compositionHistogram");
 
 	// Print out fluctuation property histogram
-    	sys.printFluctuation("fluctuationHistogram");
+    	//sys.printFluctuation("fluctuationHistogram");
+    
+    // Print out energy histogram at each Ntot
+    	sys.refine_energy_histogram_bounds();
+    	sys.printEnergyHistogram("final_eHist");
+    
+    // Print out pk number histogram at Ntot
+    sys.refine_pk_histogram_bounds();
+    sys.printPkHistogram("final_pkHist");
+    
+    // Print out extensive moments
+    sys.printExtMoments("final_extMom");
     
     	// Print out final macrostate distribution
     	sys.getTMMCBias()->print("final", false);
