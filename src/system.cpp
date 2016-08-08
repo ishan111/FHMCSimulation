@@ -1072,6 +1072,7 @@ void simSystem::refine_energy_histogram_bounds () {
  * Re-initialize the energy histogram with internal estimates of bounds.
  */
 void simSystem::reInitializeEnergyHistogram () {
+	double lb = 0.0, ub = 0.0;
 	if (energyHistogram_lb_.size() != energyHistogram_ub_.size()) {
 			throw customException ("Bad energy histogram bound sizes");
 		}
@@ -1082,8 +1083,21 @@ void simSystem::reInitializeEnergyHistogram () {
 			if (energyHistogram_lb_[i] > energyHistogram_ub_[i]) {
 				throw customException ("Bad energy histogram bound sizes");
 			}
+			// "standardize" the bounds against U = 0 for to "align" the bins, already done for pkHistogram
+			// this way the energy is reported as the limit of the edge of the aligned bins
+			if (energyHistogram_lb_[i] < 0) {
+				lb = floor((energyHistogram_lb_[i] - 0.0)/energyHistDelta_);
+			} else {
+				lb = ceil((energyHistogram_lb_[i] - 0.0)/energyHistDelta_);
+			}
+			if (energyHistogram_ub_[i] < 0) {
+				ub = floor((energyHistogram_ub_[i] - 0.0)/energyHistDelta_);
+			} else {
+				ub = ceil((energyHistogram_ub_[i] - 0.0)/energyHistDelta_);
+			}
+			
 			try {
-				energyHistogram_[i].reinitialize(energyHistogram_lb_[i], energyHistogram_ub_[i], energyHistDelta_);
+				energyHistogram_[i].reinitialize(lb,ub,energyHistDelta_);
 			} catch (customException &ce) {
 				throw customException ("Unable to reinitialize the energyHistogram");
 			}

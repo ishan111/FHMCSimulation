@@ -740,7 +740,7 @@ int main (int argc, char * const argv[]) {
 		// iteratively add each individual species, assume we want an equimolar mixture to start from
 		int added = 0;
 		for (unsigned int idx = 0; idx < sys.nSpecies(); ++idx) {
-			unsigned int i = initialization_order[i];
+			unsigned int i = initialization_order[idx];
 			std::cout << "Initializing species " << i << " configurations" << std::endl;
 			
 			// insert this species i
