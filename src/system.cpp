@@ -479,8 +479,8 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		exit(SYS_FAILURE);
 	} else {
 		nSpecies_ = nSpecies;
-        	maxSpecies_ = maxSpecies;
-        	minSpecies_ = minSpecies;
+		maxSpecies_ = maxSpecies;
+		minSpecies_ = minSpecies;
 		box_ = box;
 		mu_ = mu;
 		beta_ = beta;
@@ -521,6 +521,12 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		} catch (std::exception &e) {
 			throw customException (e.what());
 		}
+	}
+	
+	try {
+		mass_.resize(nSpecies, 1.0);
+	} catch (std::exception &e) {
+		throw customException (e.what());
 	}
 	
 	try {

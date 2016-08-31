@@ -130,7 +130,13 @@ int insertParticle::make (simSystem &sys) {
     
     	// biasing
 	double dN = 1.0/sys.getTotalM();
-    	const double p_u = pow(V/nHigh, dN)*exp(sys.beta()*(sys.mu(typeIndex_)*dN - insEnergy));
+    double p_u = 0.0;
+    if (sys.add_ke_correction()) {
+        const double Lambda3 = pow(H2_2PI*sys.beta()/sys.mass(typeIndex_), 1.5);
+        p_u = pow(V/nHigh/Lambda3, dN)*exp(sys.beta()*(sys.mu(typeIndex_)*dN - insEnergy));
+    } else {
+    	p_u = pow(V/nHigh, dN)*exp(sys.beta()*(sys.mu(typeIndex_)*dN - insEnergy));
+    }
     	int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() + 1;
     	if (sys.getCurrentM() == sys.getTotalM()-1) {
     		nTotFinal++;

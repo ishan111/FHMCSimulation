@@ -130,7 +130,14 @@ int deleteParticle::make (simSystem &sys) {
     
     	// biasing
     	double dN = 1.0/sys.getTotalM();
-    	const double p_u = pow(nHigh/V, dN)*exp(sys.beta()*(-sys.mu(typeIndex_)*dN - delEnergy));
+    double p_u = 1.0;
+    if (sys.add_ke_correction()) {
+        const double Lambda3 = pow(H2_2PI*sys.beta()/sys.mass(typeIndex_), 1.5);
+        p_u = pow(Lambda3*nHigh/V, dN)*exp(sys.beta()*(-sys.mu(typeIndex_)*dN - delEnergy));
+    } else {
+        p_u = pow(nHigh/V, dN)*exp(sys.beta()*(-sys.mu(typeIndex_)*dN - delEnergy));
+    }
+    
     	int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() - 1;
     	if (sys.getCurrentM() == 0) {
     		nTotFinal--;
