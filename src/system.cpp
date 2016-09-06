@@ -133,6 +133,7 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
     energyHistogram_.resize(0);
     energyHistogram_lb_.resize(size, -5.0);
     energyHistogram_ub_.resize(size, 5.0);
+
     for (unsigned int i = 0; i < size; ++i) {
     	try {
     		dynamic_one_dim_histogram dummyHist (energyHistogram_lb_[i], energyHistogram_ub_[i], energyHistDelta_);
@@ -141,7 +142,7 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
     		throw customException ("Out of memory for energy histogram for each Ntot");
     	}
     }
-    
+
     pkHistogram_.resize(0);
     dynamic_one_dim_histogram dummyPkHist (0.0, totNBounds_[1], 1.0);
     try {

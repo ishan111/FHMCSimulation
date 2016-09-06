@@ -176,21 +176,31 @@ histogram::histogram (const std::vector <double> lbound, const std::vector <doub
  
     	size_ = 1;
     	for (unsigned int i = 0; i < dim_; ++i) {
-        	if (lbound[i] >= ubound[i]) {
-            		throw customException ("Lower bound >= upper bound illegal for a histogram");
+        	if (lbound[i] > ubound[i]) {
+            		throw customException ("Lower bound > upper bound illegal for a histogram");
         	}
-        	if (nbins[i] <= 1) {
-            		throw customException ("Must > 1 bins for each dimensions in the histogram");
-        	}
-        	size_ *= nbins[i];
-        	delta_[i] = (ubound[i] - lbound[i])/(nbins[i]-1);
-         
-        	// build projected widths
-        	if (i == 0) {
-            		widths_[i] = 1;
-        	} else {
-            		widths_[i] = widths_[i-1]*nbins[i-1];
-        	}
+
+		if (lbound[i] < ubound[i]) {
+	        	if (nbins[i] <= 1) {
+        	    		throw customException ("Must > 1 bins for each dimensions in the histogram");
+        		}
+	        	size_ *= nbins[i];
+        		delta_[i] = (ubound[i] - lbound[i])/(nbins[i]-1);
+		} else {
+			// special case when upper and lower bound are the same (nbins = 1)
+			if (nbins[i] != 1) {
+				throw customException ("nbins must be 1 if upper and lower bounds are equal in histogram");
+			}
+			size_ *= nbins[i];
+			delta_[i] = 1.0; // arbitrary
+		}
+
+		// build projected widths
+		if (i == 0) {
+                	widths_[i] = 1;
+                } else {
+                        widths_[i] = widths_[i-1]*nbins[i-1];
+                }
     	}
         
     	lbound_ = lbound;
