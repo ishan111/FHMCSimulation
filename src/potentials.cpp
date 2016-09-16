@@ -443,7 +443,7 @@ void hardCore::setParameters (const std::vector < double > params) {
 		throw customException ("For hardCore must specify 2 parameter: {sigma, Mtot}");
 	} else {
 		if (params[0] < 0) {
-			throw customException ("For hardCore, sigma > 0");
+			throw customException ("For hardCore, sigma >= 0");
 		}
 		if (int(params[1]) < 1) {
 			throw customException ("For hardCore, total expanded ensemble state, Mtot >= 1");
