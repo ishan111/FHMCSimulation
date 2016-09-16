@@ -525,6 +525,11 @@ double hardCore::rcut () {
 	if (!paramsAreSet_) {
 		throw customException ("For hardCore parameters not set");
 	} else {
-		return (params_[0]);
+		if (fabs(params_[0]) < 1.0e-12) {
+			// in case sigma = 0 (used for ideal gas case) just return finite value for cell lists
+			return 1.0;
+		} else {
+			return (params_[0]);
+		}
 	}
 }
