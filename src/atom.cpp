@@ -11,7 +11,7 @@
 atom::atom (int ncenters, std::vector < std::vector < double > > rel_or) {
 	try {
 		std::vector < double > dummy (3, 0);
-		centers.resize(ncenters, dummy);
+		vec_to_centers.resize(ncenters, dummy);
 	} catch (std::bad_alloc &ba) {
 		throw customException ("Out of memory for atom centers");
 	}
@@ -24,7 +24,7 @@ atom::atom (int ncenters, std::vector < std::vector < double > > rel_or) {
 				throw customException ("Error - 3D atom center orientations must be in 3D");
 			}
 			for (unsigned int j = 0; j < 3; ++j) {
-				centers[i][j] = rel_or[i][j];
+				vec_to_centers[i][j] = rel_or[i][j];
 			}
 		}
 	}
@@ -37,7 +37,7 @@ atom::atom (int ncenters, std::vector < std::vector < double > > rel_or) {
  * \param [in] beta Radians to rotate centers by around y-axis
  * \param [in] gamma Radians to rotate centers by around z-axis
  */
-void atom::rotateCenters (double alpha, double beta, double gamma) {
+void atom::rotate_centers (double alpha, double beta, double gamma) {
 	// assert valid ranges - https://en.wikipedia.org/wiki/Euler_angles
 	if (alpha < -PI or alpha >= PI) {
 		throw customException ("Invalid range for alpha");
@@ -51,13 +51,13 @@ void atom::rotateCenters (double alpha, double beta, double gamma) {
 
 	std::vector < std::vector < double > > R = rotationMatrix(alpha, beta, gamma);
 
-	for (unsigned int i = 0; i < centers.size(); ++i) {
-		const double mag = sqrt(centers[i][0]*centers[i][0] + centers[i][1]*centers[i][1] + centers[i][2]*centers[i][2]);
+	for (unsigned int i = 0; i < vec_to_centers.size(); ++i) {
+		const double mag = sqrt(vec_to_centers[i][0]*vec_to_centers[i][0] + vec_to_centers[i][1]*vec_to_centers[i][1] + vec_to_centers[i][2]*vec_to_centers[i][2]);
 		std::vector < double > tmpVec (3, 0), ans (3, 0);
 
 		// scale to unit vector
 		for (unsigned int j = 0; j < 3; ++j) {
-			tmpVec[j] = centers[i][j]/mag;
+			tmpVec[j] = vec_to_centers[i][j]/mag;
 		}
 
 		// rotate
@@ -69,7 +69,7 @@ void atom::rotateCenters (double alpha, double beta, double gamma) {
 
 		// scale back
 		for (unsigned int j = 0; j < 3; ++j) {
-			centers[i][j] = mag*ans[j];
+			vec_to_centers[i][j] = mag*ans[j];
 		}
 	}
 }

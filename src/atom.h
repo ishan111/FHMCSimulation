@@ -16,9 +16,9 @@ public:
 
 	int mState; //!< State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted
 	std::vector < double > pos; //!< 3D position
-	std::vector < std::vector < double > > centers; //!< Rigid centers
+	std::vector < std::vector < double > > vec_to_centers; //!< Vectors pointing from pos to rigid centers
 
-	void rotateCenters (double alpha, double beta, double gamma); //!< Rotate centers
+	void rotate_centers (double alpha, double beta, double gamma); //!< Rotate centers
 };
 
 #endif
