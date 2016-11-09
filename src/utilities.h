@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include <sys/stat.h> 
+#include <sys/stat.h>
 #include <cstdio>
 #include <sstream>
 #include <cmath>
@@ -16,5 +16,7 @@ void pbc (std::vector < double > &pos, const std::vector < double > &box);
 double rng (int *idum);
 bool fileExists(std::string);
 std::vector < double > random3DSurfaceVector (const double magnitude);
+std::vector < std::vector < double > > rotationMatrix (const double alpha, const double beta, const double gamma);
+std::vector < std::vector < double > > matrixProduct (std::vector < std::vector < double > > &mat1, std::vector < std::vector < double > > &mat2);
 
 #endif
