@@ -5,5 +5,8 @@ compiler:
   - gcc
 os:
   - linux
+branches:
+  only:
+  - anisotropy
 script:
   - cd src/; cmake CMakeLists.txt; make; 
