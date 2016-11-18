@@ -1,0 +1,9 @@
+language: cpp
+dist: trusty
+compiler:
+  - clang
+  - gcc
+os:
+  - linux
+script:
+  - cd src/; cmake CMakeLists.txt; make; 
