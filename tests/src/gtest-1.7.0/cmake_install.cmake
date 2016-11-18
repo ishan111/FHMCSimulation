@@ -1,4 +1,4 @@
-# Install script for directory: /Users/nam4/Desktop/omcs/tests/src/gtest-1.7.0
+# Install script for directory: /Users/nam4/Desktop/FHMCSimulation/tests/src/gtest-1.7.0
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

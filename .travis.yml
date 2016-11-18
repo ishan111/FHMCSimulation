@@ -9,4 +9,4 @@ branches:
   only:
   - anisotropy
 script:
-  - cd src/; cmake CMakeLists.txt; make; 
+  - cd tests/src; cmake CMakeLists.txt; make; cd ../bin/; ./runUnitTests;

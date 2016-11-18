@@ -5,23 +5,23 @@ CXX = g++
 # -DNETCDF_CAPABLE to enable printing in netCDF formats, esle defaults to ASCII
 # -DFLUID_PHASE_SIMULATIONS to enable the possibility of tail corrections
 CXXFLAGS = -Wall -O3 -DFLUID_PHASE_SIMULATIONS -std=c++11
-#-DNETCDF_CAPABLE 
+#-DNETCDF_CAPABLE
 
 # define any directories containing header files other than /usr/include
-INCLUDES = 
-#-I/home/nam4_local/netCDF_c++4/4.2.1/install/include -I/home/nam4_local/netCDF/4.3.3.1/install/include 
+INCLUDES =
+#-I/home/nam4_local/netCDF_c++4/4.2.1/install/include -I/home/nam4_local/netCDF/4.3.3.1/install/include
 
 # define library paths in addition to /usr/lib
 #   if I wanted to include libraries not in /usr/lib I'd specify
 #   their path using -Lpath, something like:
-LFLAGS = 
+LFLAGS =
 #-L/home/nam4_local/netCDF_c++4/4.2.1/install/lib/ -L/home/nam4_local/netCDF/4.3.3.1/install/lib/
 
 # define any libraries to link into executable:
-#   if I want to link in libraries (libx.so or libx.a) I use the -llibname 
+#   if I want to link in libraries (libx.so or libx.a) I use the -llibname
 #   option, something like (this will link in libmylib.so and libm.so:
-LIBS = -lstdc++ 
-#-lnetcdf_c++4 -lnetcdf 
+LIBS = -lstdc++
+#-lnetcdf_c++4 -lnetcdf
 
 # define the C source files
 SRC_DIR = ../src/
@@ -29,7 +29,7 @@ DRIVER_DIR = ../driver/
 DRIVER_SUFFIX = tmmc
 SRCS = ${SRC_DIR}aggvolbias.cpp ${SRC_DIR}barrier.cpp ${SRC_DIR}bias.cpp ${SRC_DIR}cellList.cpp ${SRC_DIR}delete.cpp ${SRC_DIR}histogram.cpp ${SRC_DIR}insert.cpp ${DRIVER_DIR}main-${DRIVER_SUFFIX}.cpp ${SRC_DIR}moves.cpp ${SRC_DIR}potentials.cpp ${SRC_DIR}swap.cpp ${SRC_DIR}system.cpp ${SRC_DIR}translate.cpp ${SRC_DIR}utilities.cpp
 
-# define the CPP object files 
+# define the CPP object files
 #
 # This uses Suffix Replacement within a macro:
 #   $(name:string1=string2)
@@ -41,11 +41,11 @@ _OBJS = $(SRCS:.cpp=.o)
 ODIR = ./
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
-# define the executable file 
-MAIN = ../bin/omcs_$(DRIVER_SUFFIX)
+# define the executable file
+MAIN = ../bin/fhmc_$(DRIVER_SUFFIX)
 
 #
-# The following part of the makefile is generic; it can be used to 
+# The following part of the makefile is generic; it can be used to
 # build any executable just by changing the definitions above and by
 # deleting dependencies appended to the file from 'make depend'
 #
@@ -60,7 +60,7 @@ $(MAIN): $(OBJS)
 
 # this is a suffix replacement rule for building .o's from .cpp’s
 # it uses automatic variables $<: the name of the prerequisite of
-# the rule(a .cpp file) and $@: the name of the target of the rule (a .o file) 
+# the rule(a .cpp file) and $@: the name of the target of the rule (a .o file)
 # (see the gnu make manual section about automatic variables)
 .cpp.o:
 		$(CXX) $(CXXFLAGS) $(INCLUDES) -c $<  -o $@
