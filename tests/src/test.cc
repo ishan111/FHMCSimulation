@@ -10369,5 +10369,3 @@ TEST_F (testCylinderZ, energyM) {
 	U = cz.energy(&a1, box);
 	EXPECT_EQ (U, -eps);
 }
-
-// cylinderZ in compositeBarrier
