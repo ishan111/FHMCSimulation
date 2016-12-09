@@ -17,7 +17,7 @@ public:
     virtual ~barrier () {;}
     virtual bool inside (const atom *a1, const std::vector < double > &box) = 0;
     virtual double energy (const atom *a1, const std::vector < double > &box) = 0;
-    
+
 protected:
     int M_;
 };
@@ -31,7 +31,7 @@ public:
     hardWallZ (const double lb, const double ub, const double sigma, const int M = 1);
     bool inside (const atom *a1, const std::vector < double > &box);
     double energy (const atom *a1, const std::vector < double > &box);
-    
+
 private:
     double lb_; //!< Lower bound for wall in the z-direction
     double ub_; //!< Uppber bound for all in the z-direction
@@ -44,10 +44,10 @@ private:
 class squareWellWallZ : public barrier {
 public:
     ~squareWellWallZ () {};
-    squareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps,  const int M = 1);
+    squareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps, const int M = 1);
     bool inside (const atom *a1, const std::vector < double > &box);
     double energy (const atom *a1, const std::vector < double > &box);
-    
+
 private:
     double lb_; //!< Lower bound for wall in the z-direction
     double ub_; //!< Uppber bound for all in the z-direction
@@ -56,16 +56,36 @@ private:
     double sigma_; //!< Hard-sphere diameter the species this wall interacts with can approach within
 };
 
+/*!
+ * Cylinder along z = 0 axis.
+ */
+class cylinderZ : public barrier {
+public:
+    ~cylinderZ () {};
+    cylinderZ (const double radius, const double width, const double sigma, const double eps, const int M = 1);
+    bool inside (const atom *a1, const std::vector < double > &box);
+    double energy (const atom *a1, const std::vector < double > &box);
+
+private:
+    double radius_; //!< Radius^2 of the cylinder
+    double width_; //!< Width of square-well-like interaction range
+    double sigma_; //!< Molecular diameter to exclude at wall within sigma/2
+    double eps_; //!< Energy of wall interaction
+}
+
+/*
+ * Right triangle features, periodic along a wall.
+ */
 class rightTriangleXZ : public barrier {
 public:
     ~rightTriangleXZ () {};
     rightTriangleXZ (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector < double > &box, const double zbase, bool top = false, const int M = 1);
     bool inside (const atom *a1, const std::vector < double > &box);
     double energy (const atom *a1, const std::vector < double > &box);
-    
+
 private:
     double featureInteraction_ (const double dx, const double dz, const int x_shift, const int m);
-    
+
     bool top_; //!< If true, feature is on the "top", else is on the bottom (default)
     int x_max_image_; //!< Max image index of the feature along the x-direction
     double width_; //!< Width of triangle's feature
@@ -90,14 +110,15 @@ class compositeBarrier {
 public:
     compositeBarrier () {};
     ~compositeBarrier ();
-    
+
     void addHardWallZ (const double lb, const double ub, const double sigma, const int M = 1);
     void addSquareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps, const int M = 1);
+    void addCylinderZ (const double radius, const double width, const double sigma, const double eps, const int M = 1);
     void addRightTriangleXZ (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector < double > &box, const double zbase, bool top = false, const int M = 1);
-    
+
     bool inside (const atom *a1, const std::vector < double > &box);
     double energy (const atom *a1, const std::vector < double > &box);
-    
+
 private:
     std::vector < barrier* > sysBarriers_;
 };

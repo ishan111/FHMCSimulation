@@ -44,7 +44,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     if (offset >= box[0] || offset < 0) {
         throw customException ("rightTriangle offset value is out of bounds");
     }
-    
+
     // store variables internally and do conversion to conventions in which derivation was done
     zbase_ = zbase;
     width_ = width;
@@ -55,7 +55,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     M_ = M;
     lamW_ = lamW;
     x_max_image_ = (int) round(box[0]/(sep+width)) - 1;
-    
+
     // precompute points and trigonometry
     a_ = width_*cos(theta_)*sin(theta_);
     b_ = width_*sin(theta_)*cos(PI/2.0-theta_);
@@ -82,7 +82,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    
+
     try {
         ub_seg_x_.resize(M_);
     } catch (std::bad_alloc &ba) {
@@ -179,7 +179,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
             throw customException ("Out of memory");
         }
     }
-    
+
     for (unsigned int i = 0; i < M_; ++i) {
         if (i == 0) {
             sigma_[i] = sigma;
@@ -188,47 +188,47 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
             sigma_[i] = sigma_[0]/M_*i;
             eps_[i] = eps_[0]/M_*i;
         }
-        
+
         ub_seg_x_[i][0] = -lamW_*sigma_[i]*sin(theta_);
         ub_seg_x_[i][1] = c_ - lamW_*sigma_[i]*sin(theta_);
         ub_seg_x_[i][2] = c_ + lamW_*sigma_[i]*cos(theta_);
         ub_seg_x_[i][3] = width_ + lamW_*sigma_[i]*cos(theta_);
-        
+
         lb_seg_x_[i][0] = -sigma_[i]/2.0*sin(theta_);
         lb_seg_x_[i][1] = c_ - sigma_[i]/2.0*sin(theta_);
         lb_seg_x_[i][2] = c_ + sigma_[i]/2.0*cos(theta_);
         lb_seg_x_[i][3] = width_ + sigma_[i]/2.0*cos(theta_);
-        
+
         ub_seg_z_[i][0] = lamW_*sigma_[i]*cos(theta_);
         ub_seg_z_[i][1] = a_ + lamW_*sigma_[i]*cos(theta_);
         ub_seg_z_[i][2] = a_ + lamW_*sigma_[i]*sin(theta_);
         ub_seg_z_[i][3] = lamW_*sigma_[i]*sin(theta_);
-        
+
         lb_seg_z_[i][0] = sigma_[i]/2.0*cos(theta_);
         lb_seg_z_[i][1] = a_ + sigma_[i]/2.0*cos(theta_);
         lb_seg_z_[i][2] = a_ + sigma_[i]/2.0*sin(theta_);
         lb_seg_z_[i][3] = sigma_[i]/2.0*sin(theta_);
-        
+
         ub_check_[i] = *std::max_element(ub_seg_z_[i].begin(), ub_seg_z_[i].end());
-        
+
         ub_slope_[i][0] = 0.0;
         ub_slope_[i][1] = (ub_seg_z_[i][1] - ub_seg_z_[i][0])/(ub_seg_x_[i][1] - ub_seg_x_[i][0]);
         ub_slope_[i][2] = (ub_seg_z_[i][2] - ub_seg_z_[i][1])/(ub_seg_x_[i][2] - ub_seg_x_[i][1]);
         ub_slope_[i][3] = (ub_seg_z_[i][3] - ub_seg_z_[i][2])/(ub_seg_x_[i][3] - ub_seg_x_[i][2]);
         ub_slope_[i][4] = 0.0;
-        
+
         ub_int_[i][0] = 0.0;
         ub_int_[i][1] = ub_seg_z_[i][0];
         ub_int_[i][2] = ub_seg_z_[i][1];
         ub_int_[i][3] = ub_seg_z_[i][2];
         ub_int_[i][4] = 0.0;
-        
+
         lb_slope_[i][0] = 0.0;
         lb_slope_[i][1] = (lb_seg_z_[i][1] - lb_seg_z_[i][0])/(lb_seg_x_[i][1] - lb_seg_x_[i][0]);
         lb_slope_[i][2] = (lb_seg_z_[i][2] - lb_seg_z_[i][1])/(lb_seg_x_[i][2] - lb_seg_x_[i][1]);
         lb_slope_[i][3] = (lb_seg_z_[i][3] - lb_seg_z_[i][2])/(lb_seg_x_[i][3] - lb_seg_x_[i][2]);
         lb_slope_[i][4] = 0.0;
-        
+
         lb_int_[i][0] = 0.0;
         lb_int_[i][1] = lb_seg_z_[i][0];
         lb_int_[i][2] = lb_seg_z_[i][1];
@@ -247,7 +247,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
  */
 double rightTriangleXZ::featureInteraction_ (const double dx, const double dz, const int x_shift, const int m) {
     double ub = 0, lb = 0, U = 0.0;
-    
+
     if (dx < ub_seg_x_[m][0]+x_shift) {
         ub = 0.0;
     } else if (dx < ub_seg_x_[m][1]+x_shift) {
@@ -259,7 +259,7 @@ double rightTriangleXZ::featureInteraction_ (const double dx, const double dz, c
     } else {
         ub = 0.0;
     }
-  
+
     if (dx < lb_seg_x_[m][0]+x_shift) {
         lb = 0.0;
     } else if (dx < lb_seg_x_[m][1]+x_shift) {
@@ -271,7 +271,7 @@ double rightTriangleXZ::featureInteraction_ (const double dx, const double dz, c
     } else {
         lb = 0.0;
     }
-    
+
     if (dz >= ub) {
         U = 0.0;
     } else if (dz >= lb) {
@@ -279,7 +279,7 @@ double rightTriangleXZ::featureInteraction_ (const double dx, const double dz, c
     } else {
         U = NUM_INFINITY;
     }
-    
+
     return U;
 }
 
@@ -298,33 +298,33 @@ double rightTriangleXZ::energy (const atom *a1, const std::vector < double > &bo
 
     const int mv = a1->mState;
     std::vector < double > p = a1->pos;
-    
-    
+
+
     if (mv < 0 || mv > M_-1) {
         throw customException ("mState out of bounds for rightTriangleZ");
     }
-    
+
     // First find nearest feature (the one right below)
     pbc (p, box);
     double dx = p[0] - xOffset_, dz = 0.0;
     int x_image = int(floor(dx/(width_+sep_)));
     double x_shift = x_image*(width_+sep_);
-    
+
     if (top_) {
         dz = zbase_ - p[2];
     } else {
         dz = p[2] - zbase_;
     }
-    
+
     if (dz > ub_check_[mv]) {
         return 0.0;
     }
-    
+
     double U = featureInteraction_ (dx, dz, x_shift, mv);
     if (U == NUM_INFINITY) {
         return U;
     }
-    
+
     // Must check all neighboring images, including images beyond edge of each box for periodicity effects
     int x_i = x_image+1;
     if (x_i > x_max_image_+1) {
@@ -343,7 +343,7 @@ double rightTriangleXZ::energy (const atom *a1, const std::vector < double > &bo
             x_i = -1;
         }
     }
-    
+
     return U;
 }
 
@@ -365,7 +365,7 @@ bool rightTriangleXZ::inside (const atom *a1, const std::vector < double > &box)
         throw customException ("Unable to test if inside rightTriangleXZ : "+sstr(ce.what()));
         //exit (SYS_FAILURE);
     }
-    
+
     if (U < NUM_INFINITY) {
         return true;
     } else {
@@ -391,7 +391,7 @@ hardWallZ::hardWallZ (const double lb, const double ub, const double sigma, cons
     if (M < 1) {
         throw customException ("hardWallZ must have M >= 1");
     }
-    
+
     sigma_ = sigma;
     ub_ = ub;
     lb_ = lb;
@@ -407,7 +407,7 @@ hardWallZ::hardWallZ (const double lb, const double ub, const double sigma, cons
 bool hardWallZ::inside (const atom *a1, const std::vector < double > &box) {
     std::vector < double > p = a1->pos;
     pbc (p, box);
-    
+
     double sig = sigma_;
     if (a1->mState > 0) {
         sig = (sigma_/M_)*a1->mState;
@@ -432,7 +432,7 @@ bool hardWallZ::inside (const atom *a1, const std::vector < double > &box) {
 double hardWallZ::energy (const atom *a1, const std::vector < double > &box) {
     std::vector < double > p = a1->pos;
     pbc (p, box);
-    
+
     double sig = sigma_;
     if (a1->mState > 0) {
         sig = (sigma_/M_)*a1->mState;
@@ -440,7 +440,7 @@ double hardWallZ::energy (const atom *a1, const std::vector < double > &box) {
     if (a1->mState < 0 || a1->mState > M_-1) {
         throw customException ("mState out of bounds for hardWallZ");
     }
-    
+
     if (p[2] >= ub_ - sig/2.0 || p[2] <= lb_ + sig/2.0) {
         return NUM_INFINITY;
     } else {
@@ -449,7 +449,103 @@ double hardWallZ::energy (const atom *a1, const std::vector < double > &box) {
 }
 
 /*!
- * Instantiate a square well wall with boundaries in the +/- z direction. Expanded ensembles primarily scale the the magnitude of interaction.  The repulsive boundary scales with sigma at the boundary, but the attractive cutoff remains fixed relative to the boundary.
+ * Instantiate a cylinderical pore in the z-direction. Expanded ensembles primarily scale the magnitude of interaction.  The repulsive boundary scales with sigma at the boundary, but the attractive cutoff remains fixed relative to the boundary.
+ *
+ * \param [in] radius Radius of cylinder
+ * \param [in] width Width of square-well-like interaction (distance from wall)
+ * \param [in] sigma Hard-sphere diameter the species this wall interacts with can approach within
+ * \param [in] eps Magnitude of the wall interaction (U = -eps)
+ * \param [in] M Total number of expanded ensemble states possible for this atom type (defaults to 1)
+ */
+cylinderZ::cylinderZ (const double radius, const double width, const double sigma, const double eps, const int M) {
+    if (radius < sigma) {
+        throw customException ("cylinderZ radius < sigma so no particles will fit");
+    }
+    if (sigma < 0) {
+        throw customException ("cylinderZ must have sigma >= 0");
+    }
+    if (width < 0) {
+        throw customException ("cylinderZ must have range width >= 0");
+    }
+    if (eps < 0) {
+        throw customException ("cylinderZ must have eps >= 0");
+    }
+    if (sigma/2.0 >= width) {
+        throw customException ("cylinderZ must have sigma/2 < width to have a finite range of interaction");
+    }
+    if (M < 1) {
+        throw customException ("cylinderZ must have M >= 1");
+    }
+
+    eps_ = eps;
+    sigma_ = sigma;
+    width_ = width;
+    radius_ = radius;
+    M_ = M;
+}
+
+/*!
+ * Return whether or not a point falls inside the cylinder (subject to a hard-sphere exclusion radius).  Sigma is scaled linearly with expanded ensemble state.
+ *
+ * \param [in] a1 Pointer to atom with position to test - this does NOT need to be in the simulation box a priori
+ * \param [in] box Simulation box
+ */
+bool cylinderZ::inside (const atom *a1, const std::vector < double > &box) {
+    std::vector < double > p = a1->pos;
+    pbc (p, box);
+
+    double sig = sigma_;
+    if (a1->mState > 0) {
+        sig = (sigma_/M_)*a1->mState;
+    }
+    if (a1->mState < 0 || a1->mState > M_-1) {
+        throw customException ("mState out of bounds for cylinderZ");
+    }
+
+    double rv2 = p[0]*p[0] + p[1]*p[1], rc = radius_ - sig/2.0;
+    if (rv2 >= rc*rc) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+/*!
+ * Interaction energy with the cylinder. Sigma and epsilon are scaled linearly with expanded ensemble state.
+ *
+ * \param [in] a1 Pointer to atom with position to test - this does NOT need to be in the simulation box a priori
+ * \param [in] box Simulation box
+ */
+double cylinderZ::energy (const atom *a1, const std::vector < double > &box) {
+    std::vector < double > p = a1->pos;
+    pbc (p, box);
+    double U = 0.0;
+
+    double sig = sigma_, eps = eps_;
+    if (a1->mState > 0) {
+        sig = (sigma_/M_)*a1->mState;
+        eps = (eps_/M_)*a1->mState;
+    }
+    if (a1->mState < 0 || a1->mState > M_-1) {
+        throw customException ("mState out of bounds for cylinderZ");
+    }
+
+    // return infinity if out of bounds
+    double rv2 = p[0]*p[0] + p[1]*p[1], rc = radius_ - sig/2.0, ri = radius_ - width_;
+    if (rv2 >= rc*rc) {
+        return NUM_INFINITY;
+    }
+
+    // interaction with the wall - return infinity if it was out of bounds already
+    if (rv2 > ri*ri) {
+        U += -eps;
+    }
+
+    return U;
+}
+
+/*!
+ * Instantiate a square well wall with boundaries in the +/- z direction. Expanded ensembles primarily scale the magnitude of interaction.  The repulsive boundary scales with sigma at the boundary, but the attractive cutoff remains fixed relative to the boundary.
  *
  * \param [in] lb z-Position of the lower wall
  * \param [in] ub z-Position of the upper wall
@@ -477,7 +573,7 @@ squareWellWallZ::squareWellWallZ (const double lb, const double ub, const double
     if (M < 1) {
         throw customException ("squareWellWallZ must have M >= 1");
     }
-    
+
     eps_ = eps;
     sigma_ = sigma;
     range_ = range;
@@ -495,7 +591,7 @@ squareWellWallZ::squareWellWallZ (const double lb, const double ub, const double
 bool squareWellWallZ::inside (const atom *a1, const std::vector < double > &box) {
     std::vector < double > p = a1->pos;
     pbc (p, box);
-    
+
     double sig = sigma_;
     if (a1->mState > 0) {
         sig = (sigma_/M_)*a1->mState;
@@ -503,7 +599,7 @@ bool squareWellWallZ::inside (const atom *a1, const std::vector < double > &box)
     if (a1->mState < 0 || a1->mState > M_-1) {
         throw customException ("mState out of bounds for squareWellWallZ");
     }
-    
+
     if (p[2] >= ub_ - sig/2.0 || p[2] <= lb_ + sig/2.0) {
         return false;
     } else {
@@ -521,7 +617,7 @@ double squareWellWallZ::energy (const atom *a1, const std::vector < double > &bo
     std::vector < double > p = a1->pos;
     pbc (p, box);
     double U = 0.0;
-    
+
     double sig = sigma_, eps = eps_;
     if (a1->mState > 0) {
         sig = (sigma_/M_)*a1->mState;
@@ -530,22 +626,22 @@ double squareWellWallZ::energy (const atom *a1, const std::vector < double > &bo
     if (a1->mState < 0 || a1->mState > M_-1) {
         throw customException ("mState out of bounds for squareWellWallZ");
     }
-    
+
     // return infinity if out of bounds
     if (p[2] >= ub_ - sig/2.0 || p[2] <= lb_ + sig/2.0) {
         return NUM_INFINITY;
     }
-    
+
     // interaction with top wall
     if (p[2] > ub_ - range_) {
         U += -eps;
     }
-    
+
     // interaction with lower wall
     if (p[2] < lb_ + range_) {
         U += -eps;
     }
-    
+
     return U;
 }
 
@@ -606,6 +702,36 @@ void compositeBarrier::addSquareWellWallZ (const double lb, const double ub, con
         sysBarriers_[sysBarriers_.size()-1] = new squareWellWallZ (lb, ub, sigma, range, eps, M);
     } catch (customException &ce) {
         throw customException ("Cannot add squareWellWallZ to composite barrier: "+sstr(ce.what()));
+    }
+}
+
+/*!
+ * Add a cylinder along z = 0 axis wall to interact with.
+ *
+ * \param [in] radius Radius of cylinder
+ * \param [in] width Width of square-well-like interaction (distance from wall)
+ * \param [in] sigma Hard-sphere diameter the species this wall interacts with can approach within
+ * \param [in] eps Magnitude of the wall interaction (U = -eps)
+ * \param [in] M Total number of expanded ensemble states possible for this atom type (defaults to 1)
+ */
+void compositeBarrier::addCylinderZ (const double radius, const double width, const double sigma, const double eps, const int M = 1) {
+    if (sysBarriers_.begin() == sysBarriers_.end()) {
+        try {
+            sysBarriers_.resize(1);
+        } catch (std::bad_alloc &ba) {
+            throw customException ("Unable to allocate space for a new barrier");
+        }
+    } else {
+        try {
+            sysBarriers_.resize(sysBarriers_.size()+1);
+        } catch (std::bad_alloc &ba) {
+            throw customException ("Unable to allocate space for a new barrier");
+        }
+    }
+    try {
+        sysBarriers_[sysBarriers_.size()-1] = new cylinderZ (radius, width, sigma, eps, M);
+    } catch (customException &ce) {
+        throw customException ("Cannot add cylinderZ to composite barrier: "+sstr(ce.what()));
     }
 }
 
