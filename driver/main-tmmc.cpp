@@ -1,26 +1,26 @@
 /*!
  * Perform (un/)biased multicomponent GCMC.
- * 
+ *
  * \author Nathan A. Mahynski
  * \date 08/07/15
- * 
+ *
  * \mainpage
- * 
+ *
  * \section Dependencies
- * 
+ *
  * \section Compiling
  * Run tests and run main
- * 
- * Complile with -DFLUID_PHASE_SIMULATIONS if simulations are purely in the fluid phase.  
+ *
+ * Complile with -DFLUID_PHASE_SIMULATIONS if simulations are purely in the fluid phase.
  * This will allow tail corrections to be enabled which are only valid assuming a converging g(r) at large r.
- * 
+ *
  * Compile with -DNETCDF_CAPABLE if netCDF libraries are installed and can be compiled against.  Certain data will be output to these arrays
  * instead of ASCII files if so.
- * 
+ *
  * Tests compile with cmake and by default, do not link to netcdf libraries since they do not use them.  Everything tested in ASCII.
- * 
+ *
  * \section Input
- * 
+ *
  */
 
 #include <iostream>
@@ -148,7 +148,51 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
             }
         }
 	}
-    
+	
+	// cylinderZ (expect parameters: {x, y, radius, width, sigma, eps})
+    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		bool convention0 = false;
+		std::string dummy = "cylinderZ_" + sstr(i+1);
+		std::vector < double > wallParams (6, 0);
+		if (doc.HasMember(dummy.c_str())) {
+			assert(doc[dummy.c_str()].IsArray());
+			assert(doc[dummy.c_str()].Size() == 6);
+			for (unsigned int j = 0; j < 6; ++j) {
+				wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+			}
+			try {
+				sys.speciesBarriers[i].addCylinderZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], Mtot);
+            } catch (customException &ce) {
+                std::cerr << ce.what() << std::endl;
+                exit(SYS_FAILURE);
+            }
+            convention0 = true;
+		}
+		for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
+			// alternatively allow multiple walls to specified with a suffix up to a max
+			std::string dummy = "cylinderZ_" + sstr(i+1) + "_" + sstr(j);
+			if (doc.HasMember(dummy.c_str())) {
+				if (convention0) {
+					std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
+					exit(SYS_FAILURE);
+				}
+				if (doc.HasMember(dummy.c_str())) {
+					assert(doc[dummy.c_str()].IsArray());
+					assert(doc[dummy.c_str()].Size() == 6);
+					for (unsigned int j = 0; j < 6; ++j) {
+						wallParams[j] = doc[dummy.c_str()][j].GetDouble();
+					}
+					try {
+						sys.speciesBarriers[i].addCylinderZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], Mtot);
+					} catch (customException &ce) {
+						std::cerr << ce.what() << std::endl;
+						exit(SYS_FAILURE);
+					}
+                }
+            }
+        }
+	}
+
     // rightTriangleXZ (expect parameters: {width, theta, lamW, eps, sigma, sep, offset, zbase, top})
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
         bool convention0 = false;
@@ -221,27 +265,27 @@ int main (int argc, char * const argv[]) {
 	char timestamp [80];
 	strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
 	std::cout << "Beginning simulation at " << timestamp << std::endl;
-	
+
 	/* -------------------- BEGIN INPUT -------------------- */
-	
+
 	// Parse input JSON file
 	FILE* fp = fopen(argv[1], "r");
 	char readBuffer[65536];
 	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
 	rapidjson::Document doc;
-	doc.ParseStream(is);	
+	doc.ParseStream(is);
 	fclose(fp);
 	std::cout << "Parsed " << argv[1] << std::endl;
-	
+
 	// Assert that this is a JSON document
 	assert(doc.IsObject());
-	
+
 	// Check each member exists and is in the correct format
 	assert(doc.HasMember("num_species"));
 	assert(doc["num_species"].IsInt());
 	assert(doc.HasMember("beta"));
 	assert(doc["beta"].IsNumber());
-	
+
 	assert(doc.HasMember("box"));
 	assert(doc["box"].IsArray());
 	assert(doc["box"].Size() == 3);
@@ -256,19 +300,19 @@ int main (int argc, char * const argv[]) {
 		assert(doc["delta_u_hist"].IsNumber());
 		duh = doc["delta_u_hist"].GetDouble();
 	}
-	
+
 	int max_order = 2;
 	if (doc.HasMember("max_order")) {
 		assert(doc["max_order"].IsNumber());
 		max_order = doc["max_order"].GetInt();
 	}
-	
+
 	bool use_ke = false;
 	if (doc.HasMember("use_ke")) {
 		assert(doc["use_ke"].IsBool());
 		use_ke = doc["use_ke"].GetBool();
 	}
-	
+
 	assert(doc.HasMember("mu"));
 	assert(doc["mu"].IsArray());
 	assert(doc["mu"].Size() == doc["num_species"].GetInt());
@@ -281,7 +325,7 @@ int main (int argc, char * const argv[]) {
 	assert(doc.HasMember("seed"));
 	assert(doc["seed"].IsInt());
 	RNG_SEED = doc["seed"].GetInt();
-	
+
 	assert(doc.HasMember("max_N"));
 	assert(doc["max_N"].IsArray());
 	assert(doc["max_N"].Size() == doc["num_species"].GetInt());
@@ -298,14 +342,14 @@ int main (int argc, char * const argv[]) {
 	for (rapidjson::SizeType i = 0; i < doc["min_N"].Size(); ++i) {
 		assert(doc["min_N"][i].IsInt());
 		sysMin[i] = doc["min_N"][i].GetInt();
-	}	
-	
+	}
+
 	int Mtot = 1;
 	if (doc.HasMember("num_expanded_states")) {
 		assert(doc["num_expanded_states"].IsInt());
 		Mtot = doc["num_expanded_states"].GetInt();
-	}	
-	
+	}
+
 	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot, duh, max_order);
 	if (use_ke) {
 		sys.toggle_ke();
@@ -326,7 +370,7 @@ int main (int argc, char * const argv[]) {
 	if (sysWindow.begin() != sysWindow.end()) {
 		sys.setTotNBounds(sysWindow);
 	}
-	
+
 	std::string restart_file = "";
 	if (doc.HasMember("restart_file")) {
 		assert(doc["restart_file"].IsString());
@@ -344,20 +388,20 @@ int main (int argc, char * const argv[]) {
 	if (doc.HasMember("init_order")) {
 		assert(doc["init_order"].IsArray());
 		assert(doc["init_order"].Size() == doc["num_species"].GetInt());
-	
+
 		for (rapidjson::SizeType i = 0; i < doc["init_order"].Size(); ++i) {
 			assert(doc["init_order"][i].IsInt());
 			initialization_order[i] = doc["init_order"][i].GetInt();
 			if (initialization_order[i] < 0 || initialization_order[i] >= sys.nSpecies()) {
 				std::cerr << "Order of initialization goes out of bounds, should include 0 <= i < nSpec" << std::endl;
-				exit(SYS_FAILURE);		
+				exit(SYS_FAILURE);
 			}
 			if (check_init[initialization_order[i]] != 0) {
 				std::cerr << "Order of initialization repeats itself" << std::endl;
 				exit(SYS_FAILURE);
 			} else {
 				check_init[initialization_order[i]] = 1;
-			}	
+			}
 		}
 	}
 	if (doc.HasMember("init_frac")) {
@@ -369,12 +413,12 @@ int main (int argc, char * const argv[]) {
 			init_frac[i] = doc["init_frac"][i].GetDouble();
 			if (init_frac[i] < 0 || init_frac[i] >= 1.0) {
 				std::cerr << "Initialization fraction out of bounds" << std::endl;
-				exit(SYS_FAILURE);		
-			}	
+				exit(SYS_FAILURE);
+			}
 			sum += init_frac[i];
 		}
 	}
-	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {	
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		init_frac[i] /= sum;
 	}
 
@@ -400,13 +444,13 @@ int main (int argc, char * const argv[]) {
 	assert(doc.HasMember("wala_s"));
 	assert(doc["wala_s"].IsNumber());
 	const double s = doc["wala_s"].GetDouble();
-	
+
 	double lnF_start = 1.0; // default for lnF_start
 	if (doc.HasMember("lnF_start")) {
 		assert(doc["lnF_start"].IsNumber());
 		lnF_start = doc["lnF_start"].GetDouble(); // bounds are checked later
 	}
-	
+
 	double lnF_end = 2.0e-18; // default for lnF_end
 	if (doc.HasMember("lnF_end")) {
 		assert(doc["lnF_end"].IsNumber());
@@ -420,7 +464,7 @@ int main (int argc, char * const argv[]) {
 		std::cerr << "lnF_end must be < lnF_start for Wang-Landau to proceed forward" << std::endl;
 		exit(SYS_FAILURE);
 	}
-	
+
 	bool restartFromWALA = false;
 	std::string restartFromWALAFile = "";
 	if (doc.HasMember("restart_from_wala_lnPI")) {
@@ -430,7 +474,7 @@ int main (int argc, char * const argv[]) {
 			restartFromWALA = true;
 		}
 	}
-	
+
 	// restarting from TMMC overrides WL by skipping that portion altogether
 	bool restartFromTMMC = false;
 	std::string restartFromTMMCFile = "";
@@ -441,7 +485,7 @@ int main (int argc, char * const argv[]) {
 			restartFromTMMC = true;
 		}
 	}
-	
+
 	// number of times the TMMC C matrix has to be traversed during the WALA --> TMMC crossover
 	int nCrossoverVisits = 5; // default
 	if (doc.HasMember("num_crossover_visits")) {
@@ -451,7 +495,7 @@ int main (int argc, char * const argv[]) {
 			std::cerr << "Must allow the collection matrix to be traversed at least once in the crossover from Wang-Landau to TMMC" << std::cerr;
 			exit(SYS_FAILURE);
 		}
-	}	
+	}
 
 	std::vector < double > ref (sys.nSpecies(), 0);
 	std::vector < std::vector < double > > probEqSwap (sys.nSpecies(), ref), probPrSwap (sys.nSpecies(), ref);
@@ -514,7 +558,7 @@ int main (int argc, char * const argv[]) {
 			probPrSwap[j][i] = doc[moveName.c_str()].GetDouble();
 		}
 	}
-	
+
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
 			std::string name1 = "prob_eq_swap_"+sstr(i+1)+"_"+sstr(j+1);
@@ -538,7 +582,7 @@ int main (int argc, char * const argv[]) {
 			probEqSwap[i][j] = doc[moveName.c_str()].GetDouble();
 			probEqSwap[j][i] = doc[moveName.c_str()].GetDouble();
 		}
-	}	
+	}
 
 	std::vector < pairPotential* > ppotArray (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
 	std::vector < std::string > ppotType (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
@@ -571,7 +615,7 @@ int main (int argc, char * const argv[]) {
 			for (unsigned int k = 0; k < params.size()-1; ++k) {
 				assert(doc[dummy.c_str()][k].IsNumber());
 				params[k] = doc[dummy.c_str()][k].GetDouble();
-			}	
+			}
 			params[params.size()-1] = Mtot;
 
 			bool useCellList = false; // default
@@ -599,7 +643,7 @@ int main (int argc, char * const argv[]) {
 					exit(SYS_FAILURE);
 				}
 				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
-				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);				
+				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);
 			} else if (ppotType[ppotTypeIndex] == "hard_sphere") {
 				try {
 					ppotArray[ppotIndex] = new hardCore;
@@ -628,7 +672,7 @@ int main (int argc, char * const argv[]) {
 			ppotIndex++;
 		}
 	}
-	
+
 	// check all pair potentials have been set and all r_cut < L/2
 	double minL = sys.box()[0];
 	for (unsigned int i = 1; i < 3; ++i) {
@@ -645,8 +689,8 @@ int main (int argc, char * const argv[]) {
 				exit(SYS_FAILURE);
 			}
 		}
-	} 
-    
+	}
+
 	// Add barriers for each species
 	initializeSystemBarriers (sys, doc);
 
@@ -662,42 +706,42 @@ int main (int argc, char * const argv[]) {
 		insertParticle newIns (i, "insert");
 		eqInsertions[i] = newIns;
 		usedMovesEq.addMove (&eqInsertions[i], probEqInsDel[i]);
-		
+
 		deleteParticle newDel (i, "delete");
 		eqDeletions[i] = newDel;
 		usedMovesEq.addMove (&eqDeletions[i], probEqInsDel[i]);
-		
+
 		translateParticle newTranslate (i, "translate");
 		newTranslate.setMaxDisplacement (maxEqD[i], sys.box());
 		eqTranslations[i] = newTranslate;
 		usedMovesEq.addMove (&eqTranslations[i], probEqDisp[i]);
-		
+
 		insertParticle newIns2 (i, "insert");
 		prInsertions[i] = newIns2;
 		usedMovesPr.addMove (&prInsertions[i], probPrInsDel[i]);
-		
+
 		deleteParticle newDel2 (i, "delete");
 		prDeletions[i] = newDel2;
-		usedMovesPr.addMove (&prDeletions[i], probPrInsDel[i]);		
-		
+		usedMovesPr.addMove (&prDeletions[i], probPrInsDel[i]);
+
 		translateParticle newTranslate2 (i, "translate");
 		newTranslate2.setMaxDisplacement (maxPrD[i], sys.box());
 		prTranslations[i] = newTranslate2;
 		usedMovesPr.addMove (&prTranslations[i], probPrDisp[i]);
-		
+
 		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
 			swapParticles newSwap (i, j, "swap");
 			eqSwaps[swapCounter] = newSwap;
 			usedMovesEq.addMove (&eqSwaps[swapCounter], probEqSwap[i][j]);
-			
+
 			swapParticles newSwap2 (i, j, "swap");
 			prSwaps[swapCounter] = newSwap2;
 			usedMovesPr.addMove (&prSwaps[swapCounter], probPrSwap[i][j]);
-			
+
 			swapCounter++;
 		}
 	}
-	
+
 	/* -------------------- END INPUT -------------------- */
 
 	// Read from restart file if specified
@@ -715,7 +759,7 @@ int main (int argc, char * const argv[]) {
 		}
 	} else if (restart_file == "" && sys.totNMin() > 0) {
 		std::cout << "Automatically generating the initial configuration" << std::endl;
-		
+
 		// have to generate initial configuration manually - start with mu = INF
         std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
 		simSystem initSys (doc["num_species"].GetInt(), 1/10., sysBox, initMu, sysMax, sysMin, Mtot, duh, max_order); // beta =  1/T, so low beta to have high T
@@ -725,7 +769,7 @@ int main (int argc, char * const argv[]) {
 				throw customException ("Unable to set KE flag");
 			}
 		}
-			
+
         // add the same potentials
         int initInd = 0;
         for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
@@ -742,7 +786,7 @@ int main (int argc, char * const argv[]) {
 		for (unsigned int idx = 0; idx < sys.nSpecies(); ++idx) {
 			unsigned int i = initialization_order[idx];
 			std::cout << "Initializing species " << i << " configurations" << std::endl;
-			
+
 			// insert this species i
 			moves initMove (initSys.getTotalM());
 			insertParticle initIns (i, "insert");
@@ -804,15 +848,15 @@ int main (int argc, char * const argv[]) {
    	}
 
 	bool highSnap = false, lowSnap = false;
-					
+
 	if (!restartFromTMMC) {
 		std::cout << "Beginning Wang-Landau portion" << std::endl;
-		
+
 		// Initially do a WL simulation
 		bool flat = false;
 		double lnF = lnF_start;
 		sys.startWALA (lnF, g, s, sys.getTotalM()); //!< Using Shen and Errington method this syntax is same for single and multicomponent
-		
+
 		time_t rawtime_t;
 		time (&rawtime_t);
 		struct tm * timeinfo_t;
@@ -820,7 +864,7 @@ int main (int argc, char * const argv[]) {
 		char dummy_t [80];
 		strftime (dummy_t,80,"%d/%m/%Y %H:%M:%S",timeinfo_t);
 		std::cout << "Initial lnF = " << lnF_start << " at " << dummy_t << std::endl;
-		
+
 		if (restartFromWALA) {
 			try {
 				sys.getWALABias()->readlnPI(restartFromWALAFile);
@@ -834,7 +878,7 @@ int main (int argc, char * const argv[]) {
 			}
 			std::cout << "Read initial lnPI for Wang-Landau from " << restartFromWALAFile << std::endl;
 		}
-	
+
 		long long int counter = 0;
 		while (lnF > lnF_end) {
 			for (unsigned int move = 0; move < wlSweepSize; ++move) {
@@ -847,7 +891,7 @@ int main (int argc, char * const argv[]) {
                     ppotArray.clear();
 					std::cerr << ce.what() << std::endl;
 					exit(SYS_FAILURE);
-				}	
+				}
 				if (sys.getCurrentM() == 0){
 					sys.check_energy_histogram_bounds ();
 				}
@@ -857,15 +901,15 @@ int main (int argc, char * const argv[]) {
 			flat = sys.getWALABias()->evaluateFlatness();
 			if (flat) {
 				counter++;
-				
+
 				// Periodically write out checkpoints - before iterateForward() which destroys H matrix
 				sys.getWALABias()->print("wl-Checkpoint-"+sstr(counter), true);
-						
+
 				// if flat, need to reset H and reduce lnF
 				sys.getWALABias()->iterateForward();
 				lnF = sys.getWALABias()->lnF();
 				flat = false;
-				
+
 				time_t rawtime_tmp;
 				time (&rawtime_tmp);
 				struct tm * timeinfo_tmp;
@@ -874,7 +918,7 @@ int main (int argc, char * const argv[]) {
 				strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
 				std::cout << "lnF = " << lnF << " at " << dummy_tmp << std::endl;
 			}
-		
+
 			// also check to print out snapshots with 10% of bounds to be used for other restarts
 			if (!highSnap) {
 				if (sys.getTotN() > sys.totNMax() - (sys.totNMax()-sys.totNMin())*0.1) {
@@ -889,12 +933,12 @@ int main (int argc, char * const argv[]) {
 				}
 			}
 		}
-	
+
 		std::cout << "Crossing over to build TMMC matrix" << std::endl;
-	
+
 		// After a while, combine to initialize TMMC collection matrix
 		sys.startTMMC (tmmcSweepSize, sys.getTotalM());
-	
+
 		// actually this should run until all elements of the collection matrix have been populated
 		int timesFullyVisited = 0;
 		while (timesFullyVisited < nCrossoverVisits) {
@@ -913,7 +957,7 @@ int main (int argc, char * const argv[]) {
 					sys.check_energy_histogram_bounds ();
 				}
 			}
-			
+
 			// Check if collection matrix is ready to take over, not necessarily at points where WL is flat
 			if (sys.getTMMCBias()->checkFullyVisited()) {
 				try {
@@ -929,7 +973,7 @@ int main (int argc, char * const argv[]) {
                     exit(SYS_FAILURE);
 				}
 				sys.getTMMCBias()->iterateForward (); // reset the counting matrix and increment total sweep number
-				timesFullyVisited = sys.getTMMCBias()->numSweeps(); 	
+				timesFullyVisited = sys.getTMMCBias()->numSweeps();
 				sys.getWALABias()->print("wl-crossover-Checkpoint-"+sstr(timesFullyVisited), true);
 				sys.getTMMCBias()->print("tmmc-crossover-Checkpoint-"+sstr(timesFullyVisited), true);
 
@@ -957,7 +1001,7 @@ int main (int argc, char * const argv[]) {
 				std::cout << "lnF = " << sys.getWALABias()->lnF() << " at " << dummy_tmp << std::endl;
 			}
 		}
-        
+
         // Report move statistics for equilibration stage
         char eq_statName [80];
         strftime (eq_statName,80,"%Y_%m_%d_%H_%M_%S-equilibration-stats.log",timeinfo);
@@ -979,7 +1023,7 @@ int main (int argc, char * const argv[]) {
 
 		// Switch over to TMMC completely
 		sys.stopWALA();
-		
+
 		std::cout << "Switching over to TMMC completely, ending Wang-Landau" << std::endl;
 		try {
 			sys.getTMMCBias()->calculatePI();
@@ -994,11 +1038,11 @@ int main (int argc, char * const argv[]) {
             sys.getTMMCBias()->dumpVisited("tmmc-beginning-fail-visited");
             exit(SYS_FAILURE);
 		}
-		
+
 		// if doing initial WL "equilibration" re-initialize the histogram using bounds
 		sys.reInitializeEnergyHistogram();
-	} 
-	
+	}
+
 	std::cout << "Beginning TMMC" << std::endl;
 	if (restartFromTMMC) {
 		sys.startTMMC (tmmcSweepSize, sys.getTotalM()); // this was otherwise started during the crossover phase if WL was used
@@ -1016,7 +1060,7 @@ int main (int argc, char * const argv[]) {
 			exit(SYS_FAILURE);
 		}
 	}
-	
+
 	long long int sweep = 0;
 	int sweepPrint = totalTMMCSweeps, numSweepSnaps = 100, printCounter = 0;
 	if (totalTMMCSweeps > numSweepSnaps) {
@@ -1038,19 +1082,19 @@ int main (int argc, char * const argv[]) {
 				ppotArray.clear();
 				exit(SYS_FAILURE);
 			}
-			
+
 			// only record properties of the system when it is NOT in an intermediate state
 			if (sys.getCurrentM() == 0) {
 				// record energy histogram at each Ntot
 				sys.recordEnergyHistogram();
-				
+
 				// record N1, N2, etc. histogram at each Ntot
 				sys.recordPkHistogram();
-				
+
 				// record extensive moments
 				sys.recordExtMoments();
 			}
-	
+
 			// check if sweep is done
 			if (counter%checkPoint == 0) {
 				done = sys.getTMMCBias()->checkFullyVisited();
@@ -1059,10 +1103,10 @@ int main (int argc, char * const argv[]) {
 
 			counter++;
 		}
-		
+
 		sys.getTMMCBias()->iterateForward (); // reset the counting matrix and increment total sweep number
 		sweep++;
-				
+
 		time_t rawtime_tmp;
 		time (&rawtime_tmp);
 		struct tm * timeinfo_tmp;
@@ -1070,10 +1114,10 @@ int main (int argc, char * const argv[]) {
 		char dummy_tmp [80];
 		strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
 		std::cout << "Finished " << sweep << "/" << totalTMMCSweeps << " total TMMC sweeps at " << dummy_tmp << std::endl;
-		
+
 		// Update biasing function from collection matrix
 		sys.getTMMCBias()->calculatePI();
-		
+
 		// Periodically write out checkpoints and report statistics
 		if (sweep%sweepPrint == 0) {
 			printCounter++;
@@ -1083,7 +1127,7 @@ int main (int argc, char * const argv[]) {
             sys.refine_pk_histogram_bounds();
             sys.printPkHistogram("pkHist-Checkpoint-"+sstr(printCounter));
             sys.printExtMoments("extMom-Checkpoint-"+sstr(printCounter));
-            
+
             char statName [80];
             strftime (statName,80,"%Y_%m_%d_%H_%M_%S-stats.log",timeinfo);
             std::ofstream statFile (statName);
@@ -1117,7 +1161,7 @@ int main (int argc, char * const argv[]) {
 			}
 		}
 	}
-		
+
 	// Sanity checks
 	if (sys.nSpecies() != sys.atoms.size()) {
         std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
@@ -1134,20 +1178,20 @@ int main (int argc, char * const argv[]) {
 			for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 				int end = sys.numSpecies[i];
 				if (i == sys.getFractionalAtomType()) {
-					end++;			
+					end++;
 				}
 				for (unsigned int j = 0; j < end; ++j) {
 					if (&sys.atoms[i][j] != sys.getFractionalAtom()) {
 						if (sys.atoms[i][j].mState != 0) {
-							std::cerr << "Atom ("+sstr(i)+", "+sstr(j)+") has non-zero expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+")" << std::endl;	
-							exit(SYS_FAILURE);				
-						}				
+							std::cerr << "Atom ("+sstr(i)+", "+sstr(j)+") has non-zero expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+")" << std::endl;
+							exit(SYS_FAILURE);
+						}
 					} else {
 						if (sys.atoms[i][j].mState != sys.getCurrentM()) {
-							std::cerr << "Fractional atom ("+sstr(i)+", "+sstr(j)+")'s expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+") does not match system's ("+sstr(sys.getCurrentM())+")" << std::endl;	
-							exit(SYS_FAILURE);				
+							std::cerr << "Fractional atom ("+sstr(i)+", "+sstr(j)+")'s expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+") does not match system's ("+sstr(sys.getCurrentM())+")" << std::endl;
+							exit(SYS_FAILURE);
 						}
-					}								
+					}
 				}
 			}
 		}
@@ -1155,13 +1199,13 @@ int main (int argc, char * const argv[]) {
 		for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 			for (unsigned int j = 0; j < sys.numSpecies[i]; ++j) {
 				if (sys.atoms[i][j].mState != 0) {
-					std::cerr << "Atom ("+sstr(i)+", "+sstr(j)+") has non-zero expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+")" << std::endl;	
-					exit(SYS_FAILURE);				
-				}												
+					std::cerr << "Atom ("+sstr(i)+", "+sstr(j)+") has non-zero expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+")" << std::endl;
+					exit(SYS_FAILURE);
+				}
 			}
-		}	
+		}
 	}
-	
+
 	if (use_ke) {
 		if (sys.add_ke_correction() == false) {
 			throw customException ("KE flag was unset during simulation");
@@ -1186,24 +1230,24 @@ int main (int argc, char * const argv[]) {
     }
     statFile << std::endl;
     statFile.close();
-	
+
  	// print out restart file (xyz)
     sys.printSnapshot("final.xyz", "last configuration");
-    
+
     // Print out energy histogram at each Ntot
     sys.refine_energy_histogram_bounds();
     sys.printEnergyHistogram("final_eHist");
-    
+
     // Print out pk number histogram at Ntot
     sys.refine_pk_histogram_bounds();
     sys.printPkHistogram("final_pkHist");
-    
+
     // Print out extensive moments
     sys.printExtMoments("final_extMom");
-    
+
     // Print out final macrostate distribution
     sys.getTMMCBias()->print("final", false);
-	
+
 	// Still allow for printing of all data, even if there is an error, in order to interrogate the results anyway
 	const double tol = 1.0e-6;
 	const double scratchEnergy = sys.scratchEnergy(), incrEnergy = sys.energy();
