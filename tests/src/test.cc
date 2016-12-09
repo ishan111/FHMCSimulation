@@ -10148,45 +10148,139 @@ TEST_F (testCylinderZ, inside) {
 	inside = cz.inside(&a1, box);
 	EXPECT_TRUE (!inside);
 }
-/*
+
 TEST_F (testCylinderZ, energy) {
-    squareWellWallZ sqz (0, H, sigma, range, eps); // M defaults to 1
+    cylinderZ cz (xc, yc, radius, width, sigma, eps, M);
+	double U = 0.0;
 
-    double zpos = a1.pos[2]; // at the border
+	// test U = 0 along entire z-axis at center of cylinder
+	const double dz = box[2]/10.0;
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, 0);
+	}
+	a1.pos[2] = xc;
 
-    // test bottom wall
-    a1.pos[2] = zpos*1.01; // inside (not overlapping wall)
-    double U = sqz.energy (&a1, box);
-    EXPECT_EQ (U, -eps);
+	// test U = -eps along entire z-axis
+	a1.pos[0] = xc + (radius - width*0.99);
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, -eps);
+	}
+	a1.pos[0] = xc;
+	a1.pos[2] = xc;
 
-    a1.pos[2] = zpos*0.99; // outside (overlapping wall)
-    U = sqz.energy (&a1, box);
-    EXPECT_EQ (U, NUM_INFINITY);
+	// test U = 0 along entire z-axis
+	a1.pos[0] = xc + (radius - width*1.001);
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, 0);
+	}
+	a1.pos[0] = xc;
+	a1.pos[2] = xc;
 
-    a1.pos[2] = range*0.99; // inside range
-    U = sqz.energy (&a1, box);
-    EXPECT_EQ (U, -eps);
+	// test U = INF along entire z-axis
+	a1.pos[0] = xc + (radius - sigma/2.0*0.99);
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, NUM_INFINITY);
+	}
+	a1.pos[0] = xc;
+	a1.pos[2] = xc;
 
-    a1.pos[2] = range*1.01; // outside range
-    U = sqz.energy (&a1, box);
-    EXPECT_EQ (U, 0);
+	// test U = -eps along entire z-axis
+	a1.pos[0] = xc - (radius - width*0.99);
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, -eps);
+	}
+	a1.pos[0] = xc;
+	a1.pos[2] = xc;
 
-    // test top wall
-    a1.pos[2] = H-zpos*1.01; // inside (not overlapping wall)
-    U = sqz.energy (&a1, box);
-    EXPECT_EQ (U, -eps);
+	// test U = 0 along entire z-axis
+	a1.pos[0] = xc - (radius - width*1.001);
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, 0);
+	}
+	a1.pos[0] = xc;
+	a1.pos[2] = xc;
 
-    a1.pos[2] = H-zpos*0.99; // outside (overlapping wall)
-    U = sqz.energy (&a1, box);
-    EXPECT_EQ (U, NUM_INFINITY);
+	// test U = INF along entire z-axis
+	a1.pos[0] = xc - (radius - sigma/2.0*0.99);
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, NUM_INFINITY);
+	}
+	a1.pos[0] = xc;
+	a1.pos[2] = xc;
 
-    a1.pos[2] = H-range*0.99; // inside range
-    U = sqz.energy (&a1, box);
-    EXPECT_EQ (U, -eps);
+	// test U = -eps along entire z-axis
+	a1.pos[1] = yc + (radius - width*0.99);
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, -eps);
+	}
+	a1.pos[1] = yc;
+	a1.pos[2] = xc;
 
-    a1.pos[2] = H-range*1.01; // outside range
-    U = sqz.energy (&a1, box);
-    EXPECT_EQ (U, 0);
-}*/
+	// test U = 0 along entire z-axis
+	a1.pos[1] = yc + (radius - width*1.001);
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, 0);
+	}
+	a1.pos[1] = yc;
+	a1.pos[2] = xc;
+
+	// test U = INF along entire z-axis
+	a1.pos[1] = yc + (radius - sigma/2.0*0.99);
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, NUM_INFINITY);
+	}
+	a1.pos[1] = yc;
+	a1.pos[2] = xc;
+
+	// test U = -eps along entire z-axis
+	a1.pos[1] = yc - (radius - width*0.99);
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, -eps);
+	}
+	a1.pos[1] = yc;
+	a1.pos[2] = xc;
+
+	// test U = 0 along entire z-axis
+	a1.pos[1] = yc - (radius - width*1.001);
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, 0);
+	}
+	a1.pos[1] = yc;
+	a1.pos[2] = xc;
+
+	// test U = INF along entire z-axis
+	a1.pos[1] = yc - (radius - sigma/2.0*0.99);
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, NUM_INFINITY);
+	}
+	a1.pos[1] = yc;
+	a1.pos[2] = xc;
+}
 
 // cylinderZ in compositeBarrier
