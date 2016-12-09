@@ -9947,7 +9947,7 @@ TEST_F (testCompositeRightTriangleXZ, bottom_bottom_sep) {
 class testCylinderZ : public ::testing::Test {
 protected:
     atom a1;
-    double eps, sigma, radius, width;
+    double eps, sigma, radius, width, xc, yc;
     int M;
     std::vector < double > box;
 
@@ -9960,6 +9960,8 @@ protected:
 		radius = 4.0*sigma;
         box.resize(3, 5*sigma);
 		M = 1;
+		xc = 5.0/2.0; // center of box
+		yc = 5.0/2.0; // center of box
     }
 };
 
@@ -9969,7 +9971,7 @@ TEST_F (testCylinderZ, badInit) {
     // safe init
     bool caught = false;
     try {
-        cz = new cylinderZ (radius, width, sigma, eps, M);
+        cz = new cylinderZ (xc, yc, radius, width, sigma, eps, M);
     } catch (customException &ce) {
         caught = true;
     }
@@ -9978,7 +9980,7 @@ TEST_F (testCylinderZ, badInit) {
     // bad sigma
     caught = false;
     try {
-        cz = new cylinderZ (radius, width, -1.0, eps, M);
+        cz = new cylinderZ (xc, yc, radius, width, -1.0, eps, M);
     } catch (customException &ce) {
         caught = true;
     }
@@ -9986,7 +9988,7 @@ TEST_F (testCylinderZ, badInit) {
 
     caught = false;
     try {
-        cz = new cylinderZ (radius, width, width*2.0, eps, M);
+        cz = new cylinderZ (xc, yc, radius, width, width*2.0, eps, M);
     } catch (customException &ce) {
         caught = true;
     }
@@ -9995,7 +9997,7 @@ TEST_F (testCylinderZ, badInit) {
 	// bad radius
 	caught = false;
     try {
-        cz = new cylinderZ (sigma, width, sigma, eps, M);
+        cz = new cylinderZ (xc, yc, sigma, width, sigma, eps, M);
     } catch (customException &ce) {
         caught = true;
     }
@@ -10004,7 +10006,7 @@ TEST_F (testCylinderZ, badInit) {
     // bad M
     caught = false;
     try {
-        cz = new cylinderZ (radius, width, sigma, eps, 0);
+        cz = new cylinderZ (xc, yc, radius, width, sigma, eps, 0);
     } catch (customException &ce) {
         caught = true;
     }
@@ -10013,7 +10015,7 @@ TEST_F (testCylinderZ, badInit) {
     // bad width
     caught = false;
     try {
-        cz = new cylinderZ (radius, -0.001, sigma, eps, M);
+        cz = new cylinderZ (xc, yc, radius, -0.001, sigma, eps, M);
     } catch (customException &ce) {
         caught = true;
     }
@@ -10022,32 +10024,80 @@ TEST_F (testCylinderZ, badInit) {
     // bad eps
     caught = false;
     try {
-        cz = new cylinderZ (radius, width, sigma, -0.001, M);
+        cz = new cylinderZ (xc, yc, radius, width, sigma, -0.001, M);
     } catch (customException &ce) {
         caught = true;
     }
     EXPECT_TRUE (caught);
 }
-
+/*
 TEST_F (testCylinderZ, inside) {
  	cylinderZ cz (radius, width, sigma, eps, M);
+	bool inside;
 
 	// test valid along entire z-axis
 	const double dz = box[2]/10.0;
 	for (double z = 0; z <= box[2]; z += dz) {
 		a1.pos[2] = z;
-		bool inside = cz.inside(&a1, box);
+		inside = cz.inside(&a1, box);
 		EXPECT_TRUE (inside);
 	}
 	a1.pos[2] = 0.0;
 
-	// test x, y axis bounds
+	// test x
+	a1.pos[0] = radius;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+
+	a1.pos[0] = (radius - sigma/2.0);
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+
+	a1.pos[0] = (radius - sigma/2.0)*0.99;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (inside);
+
+	a1.pos[0] = 0.0;
+
+	// test y
+	a1.pos[1] = radius;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+
+	a1.pos[1] = (radius - sigma/2.0);
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+
+	a1.pos[1] = (radius - sigma/2.0)*0.99;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (inside);
+
+	a1.pos[1] = 0.0;
 
 	// test 45 degrees
+	a1.pos[0] = (radius - sigma/2.0)/sqrt(2)*1.0001;
+	a1.pos[1] = (radius - sigma/2.0)/sqrt(2)*1.0001;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+
+	a1.pos[0] = (radius - sigma/2.0)/sqrt(2)*0.99;
+	a1.pos[1] = (radius - sigma/2.0)/sqrt(2)*0.99;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (inside);
+
+	a1.pos[0] = -(radius - sigma/2.0)/sqrt(2)*1.0001;
+	a1.pos[1] = -(radius - sigma/2.0)/sqrt(2)*1.0001;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+
+	a1.pos[0] = -(radius - sigma/2.0)/sqrt(2)*0.9;
+	a1.pos[1] = -(radius - sigma/2.0)/sqrt(2)*0.9;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (inside);
 
 	// test pbc inside cylinder
 
 	// test pbc outside of cylinder
 
-}
+}*/
 // cylinderZ in compositeBarrier
