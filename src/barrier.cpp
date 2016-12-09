@@ -714,7 +714,7 @@ void compositeBarrier::addSquareWellWallZ (const double lb, const double ub, con
  * \param [in] eps Magnitude of the wall interaction (U = -eps)
  * \param [in] M Total number of expanded ensemble states possible for this atom type (defaults to 1)
  */
-void compositeBarrier::addCylinderZ (const double radius, const double width, const double sigma, const double eps, const int M = 1) {
+void compositeBarrier::addCylinderZ (const double radius, const double width, const double sigma, const double eps, const int M) {
     if (sysBarriers_.begin() == sysBarriers_.end()) {
         try {
             sysBarriers_.resize(1);

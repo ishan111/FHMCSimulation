@@ -71,7 +71,7 @@ private:
     double width_; //!< Width of square-well-like interaction range
     double sigma_; //!< Molecular diameter to exclude at wall within sigma/2
     double eps_; //!< Energy of wall interaction
-}
+};
 
 /*
  * Right triangle features, periodic along a wall.
