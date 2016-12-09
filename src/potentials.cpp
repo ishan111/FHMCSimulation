@@ -47,7 +47,7 @@ void fsLennardJones::setParameters (const std::vector < double > params) {
 		if (params[2] < 0) {
 			throw customException ("For fsLennardJones, r_cut > 0");
 		}
-		if (int(params[4]) < 1) {
+		if (int(params[3]) < 1) {
 			throw customException ("For fsLennardJones, total expanded ensemble states, Mtot >= 1");
 		}
 

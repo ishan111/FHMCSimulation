@@ -275,7 +275,7 @@ TEST_F (fsLennardJonesTest, badParams2) {
 	EXPECT_TRUE (caught);
 	delete fslj;
 }
-/*
+
 TEST_F (fsLennardJonesTest, StandardParams) {
 	eps = 1.0;
 	sigma = 1.0;
@@ -283,55 +283,30 @@ TEST_F (fsLennardJonesTest, StandardParams) {
 	params[0] = eps;
 	params[1] = sigma;
 	params[2] = rcut;
-	lj->setParameters(params);
+	fslj->setParameters(params);
 	atom a1, a2;
 	std::vector < double > box(3, 2.1*rcut);
 
 	a2.pos[2] = pow(2.0, 1./6.);
-	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - -eps) < tol );
+	EXPECT_TRUE ( fabs(fslj->energy(&a1, &a2, box) - -0.973973102) < tol );
 
 	a2.pos[2] = 1.0001*rcut;
-	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	EXPECT_TRUE ( fabs(fslj->energy(&a1, &a2, box) - 0) < tol );
 
-	a2.pos[2] = 0.9999*rcut;
-	EXPECT_TRUE ( lj->energy(&a1, &a2, box) < 0.0 );
+	a2.pos[2] = 2.99;
+	EXPECT_TRUE ( fabs(fslj->energy(&a1, &a2, box) - -0.0000012851) < tol );
 
 	a2.pos[2] = sigma;
-	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+	EXPECT_TRUE ( fabs(fslj->energy(&a1, &a2, box) - 0.0273671019) < tol );
 
-	a2.pos[2] = 1.234;
-	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - -0.812008901) < tol );
+	a2.pos[2] = 1.4;
+	EXPECT_TRUE ( fabs(fslj->energy(&a1, &a2, box) - -0.4376973523) < tol );
 
-	delete lj;
+	a2.pos[2] = 0.9;
+	EXPECT_TRUE ( fabs(fslj->energy(&a1, &a2, box) - 6.6645804382) < tol );
+	
+	delete fslj;
 }
-
-TEST_F (lennardJonesTest, WCAparams) {
-	eps = 1.0;
-	sigma = 1.0;
-	rcut = pow(2.0, 1./6.);
-	ushift = 1.0;
-	params[0] = eps;
-	params[1] = sigma;
-	params[2] = rcut;
-	params[3] = ushift;
-	lj->setParameters(params);
-	atom a1, a2;
-	std::vector < double > box(3, 2.1*rcut);
-
-	a2.pos[2] = pow(2.0, 1./6.);
-	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0.0) < tol );
-
-	a2.pos[2] = 1.0001*rcut;
-	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
-
-	a2.pos[2] = 0.9999*rcut;
-	EXPECT_TRUE ( lj->energy(&a1, &a2, box) > 0.0 );
-
-	a2.pos[2] = 0.987;
-	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 1.353386603) < tol );
-
-	delete lj;
-}*/
 
 class squareWellTest : public ::testing::Test {
 protected:
