@@ -210,6 +210,129 @@ TEST_F (lennardJonesTest, WCAparams) {
 	delete lj;
 }
 
+class fsLennardJonesTest : public ::testing::Test {
+protected:
+	pairPotential* fslj;
+
+	double eps, sigma, rcut, tol;
+	std::vector < double > params;
+
+	virtual void SetUp() {
+		fslj = new fsLennardJones;
+		params.resize(4, 0);
+		params[3] = 1;
+		tol = 1.0e-9;
+	}
+};
+
+TEST_F (fsLennardJonesTest, badParams0) {
+	eps = -1.0;
+	sigma = 1.0;
+	rcut = 3.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	bool caught = false;
+	try {
+		fslj->setParameters(params);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+	delete fslj;
+}
+
+TEST_F (fsLennardJonesTest, badParams1) {
+	eps = 1.0;
+	sigma = -1.0;
+	rcut = 3.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	bool caught = false;
+	try {
+		fslj->setParameters(params);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+	delete fslj;
+}
+
+TEST_F (fsLennardJonesTest, badParams2) {
+	eps = 1.0;
+	sigma = 1.0;
+	rcut = -2.5;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	bool caught = false;
+	try {
+		fslj->setParameters(params);
+	} catch (customException &ce) {
+		caught = true;
+	}
+	EXPECT_TRUE (caught);
+	delete fslj;
+}
+/*
+TEST_F (fsLennardJonesTest, StandardParams) {
+	eps = 1.0;
+	sigma = 1.0;
+	rcut = 3.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	lj->setParameters(params);
+	atom a1, a2;
+	std::vector < double > box(3, 2.1*rcut);
+
+	a2.pos[2] = pow(2.0, 1./6.);
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - -eps) < tol );
+
+	a2.pos[2] = 1.0001*rcut;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+
+	a2.pos[2] = 0.9999*rcut;
+	EXPECT_TRUE ( lj->energy(&a1, &a2, box) < 0.0 );
+
+	a2.pos[2] = sigma;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+
+	a2.pos[2] = 1.234;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - -0.812008901) < tol );
+
+	delete lj;
+}
+
+TEST_F (lennardJonesTest, WCAparams) {
+	eps = 1.0;
+	sigma = 1.0;
+	rcut = pow(2.0, 1./6.);
+	ushift = 1.0;
+	params[0] = eps;
+	params[1] = sigma;
+	params[2] = rcut;
+	params[3] = ushift;
+	lj->setParameters(params);
+	atom a1, a2;
+	std::vector < double > box(3, 2.1*rcut);
+
+	a2.pos[2] = pow(2.0, 1./6.);
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0.0) < tol );
+
+	a2.pos[2] = 1.0001*rcut;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 0) < tol );
+
+	a2.pos[2] = 0.9999*rcut;
+	EXPECT_TRUE ( lj->energy(&a1, &a2, box) > 0.0 );
+
+	a2.pos[2] = 0.987;
+	EXPECT_TRUE ( fabs(lj->energy(&a1, &a2, box) - 1.353386603) < tol );
+
+	delete lj;
+}*/
+
 class squareWellTest : public ::testing::Test {
 protected:
 	squareWell *sw;
@@ -10345,7 +10468,6 @@ TEST_F (testCylinderZ, energyM) {
 		U = cz.energy(&a1, box);
 		EXPECT_EQ (U, -eps/mm*a1.mState);
 	}
-
 
 	a1.mState = 0;
 
