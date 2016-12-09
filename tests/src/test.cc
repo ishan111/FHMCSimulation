@@ -10317,4 +10317,57 @@ TEST_F (testCylinderZ, insideM) {
 	EXPECT_TRUE (inside);
 }
 
+TEST_F (testCylinderZ, energyM) {
+	int mm = 3;
+	double U = 0.0;
+    cylinderZ cz (xc, yc, radius, width, sigma, eps, mm);
+
+	for (int mx = 1; mx <= mm-1; ++mx) {
+		a1.mState = mx;
+
+		a1.pos[0] = xc + (radius - (a1.mState*sigma)/mm/2.0)*1.0001;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, NUM_INFINITY);
+
+		a1.pos[0] = xc + (radius - (a1.mState*sigma)/mm/2.0)*0.9999;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, -eps/mm*a1.mState);
+
+		a1.pos[0] = xc;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, 0);
+
+		a1.pos[0] = xc + (radius - width)*0.999;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, 0);
+
+		a1.pos[0] = xc + (radius - width)*1.0001;
+		U = cz.energy(&a1, box);
+		EXPECT_EQ (U, -eps/mm*a1.mState);
+	}
+
+
+	a1.mState = 0;
+
+	a1.pos[0] = xc + (radius - sigma/2.0)*1.0001;
+	U = cz.energy(&a1, box);
+	EXPECT_EQ (U, NUM_INFINITY);
+
+	a1.pos[0] = xc + (radius - sigma/2.0)*0.9999;
+	U = cz.energy(&a1, box);
+	EXPECT_EQ (U, -eps);
+
+	a1.pos[0] = xc;
+	U = cz.energy(&a1, box);
+	EXPECT_EQ (U, 0);
+
+	a1.pos[0] = xc + (radius - width)*0.999;
+	U = cz.energy(&a1, box);
+	EXPECT_EQ (U, 0);
+
+	a1.pos[0] = xc + (radius - width)*1.0001;
+	U = cz.energy(&a1, box);
+	EXPECT_EQ (U, -eps);
+}
+
 // cylinderZ in compositeBarrier
