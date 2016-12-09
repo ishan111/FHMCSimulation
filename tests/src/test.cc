@@ -9947,21 +9947,22 @@ TEST_F (testCompositeRightTriangleXZ, bottom_bottom_sep) {
 class testCylinderZ : public ::testing::Test {
 protected:
     atom a1;
-    double eps, sigma, radius, width, xc, yc;
+    double eps, sigma, radius, width, xc, yc, L;
     int M;
     std::vector < double > box;
 
     virtual void SetUp() {
-        std::vector < double > coords (3, 0);
-        sigma = 1.234;
+		sigma = 1.234;
+		radius = 2.0*sigma;
+		L = 2*radius+sigma;
+		xc = L/2.0; // center of box
+		yc = L/2.0; // center of box
+        std::vector < double > coords (3, L/2.0);
         a1.pos = coords;
         eps = 2.345;
         width = 1.5*sigma;
-		radius = 4.0*sigma;
-        box.resize(3, 5*sigma);
+        box.resize(3, L);
 		M = 1;
-		xc = 5.0/2.0; // center of box
-		yc = 5.0/2.0; // center of box
     }
 };
 
@@ -10030,9 +10031,9 @@ TEST_F (testCylinderZ, badInit) {
     }
     EXPECT_TRUE (caught);
 }
-/*
+
 TEST_F (testCylinderZ, inside) {
- 	cylinderZ cz (radius, width, sigma, eps, M);
+ 	cylinderZ cz (xc, yc, radius, width, sigma, eps, M);
 	bool inside;
 
 	// test valid along entire z-axis
@@ -10042,62 +10043,150 @@ TEST_F (testCylinderZ, inside) {
 		inside = cz.inside(&a1, box);
 		EXPECT_TRUE (inside);
 	}
-	a1.pos[2] = 0.0;
+	a1.pos[2] = xc;
 
 	// test x
-	a1.pos[0] = radius;
+	a1.pos[0] = radius+xc;
 	inside = cz.inside(&a1, box);
 	EXPECT_TRUE (!inside);
 
-	a1.pos[0] = (radius - sigma/2.0);
+	a1.pos[0] = (radius+xc - sigma/2.0);
 	inside = cz.inside(&a1, box);
 	EXPECT_TRUE (!inside);
 
-	a1.pos[0] = (radius - sigma/2.0)*0.99;
+	a1.pos[0] = (radius+xc - sigma/2.0)*0.99;
 	inside = cz.inside(&a1, box);
 	EXPECT_TRUE (inside);
 
-	a1.pos[0] = 0.0;
+	a1.pos[0] = xc;
 
 	// test y
-	a1.pos[1] = radius;
+	a1.pos[1] = radius+yc;
 	inside = cz.inside(&a1, box);
 	EXPECT_TRUE (!inside);
 
-	a1.pos[1] = (radius - sigma/2.0);
+	a1.pos[1] = (radius+yc - sigma/2.0);
 	inside = cz.inside(&a1, box);
 	EXPECT_TRUE (!inside);
 
-	a1.pos[1] = (radius - sigma/2.0)*0.99;
+	a1.pos[1] = (radius+yc - sigma/2.0)*0.99;
 	inside = cz.inside(&a1, box);
 	EXPECT_TRUE (inside);
 
-	a1.pos[1] = 0.0;
+	a1.pos[1] = yc;
 
 	// test 45 degrees
-	a1.pos[0] = (radius - sigma/2.0)/sqrt(2)*1.0001;
-	a1.pos[1] = (radius - sigma/2.0)/sqrt(2)*1.0001;
+	a1.pos[0] = xc + (radius - sigma/2.0)/sqrt(2)*1.0001;
+	a1.pos[1] = yc + (radius - sigma/2.0)/sqrt(2)*1.0001;
 	inside = cz.inside(&a1, box);
 	EXPECT_TRUE (!inside);
 
-	a1.pos[0] = (radius - sigma/2.0)/sqrt(2)*0.99;
-	a1.pos[1] = (radius - sigma/2.0)/sqrt(2)*0.99;
+	a1.pos[0] = xc + (radius - sigma/2.0)/sqrt(2)*0.99;
+	a1.pos[1] = yc + (radius - sigma/2.0)/sqrt(2)*0.99;
 	inside = cz.inside(&a1, box);
 	EXPECT_TRUE (inside);
 
-	a1.pos[0] = -(radius - sigma/2.0)/sqrt(2)*1.0001;
-	a1.pos[1] = -(radius - sigma/2.0)/sqrt(2)*1.0001;
+	a1.pos[0] = xc - (radius - sigma/2.0)/sqrt(2)*1.0001;
+	a1.pos[1] = yc - (radius - sigma/2.0)/sqrt(2)*1.0001;
 	inside = cz.inside(&a1, box);
 	EXPECT_TRUE (!inside);
 
-	a1.pos[0] = -(radius - sigma/2.0)/sqrt(2)*0.9;
-	a1.pos[1] = -(radius - sigma/2.0)/sqrt(2)*0.9;
+	a1.pos[0] = xc - (radius - sigma/2.0)/sqrt(2)*0.99;
+	a1.pos[1] = yc - (radius - sigma/2.0)/sqrt(2)*0.99;
 	inside = cz.inside(&a1, box);
 	EXPECT_TRUE (inside);
 
 	// test pbc inside cylinder
+	a1.pos[0] = xc + L;
+	a1.pos[1] = yc;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (inside);
+
+	a1.pos[0] = xc + (radius - sigma/2.0)*0.9999 + L;
+	a1.pos[1] = yc;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (inside);
+
+	a1.pos[0] = xc - (radius - sigma/2.0)*0.9999 - L;
+	a1.pos[1] = yc;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (inside);
+
+	a1.pos[0] = xc;
+	a1.pos[1] = yc + (radius - sigma/2.0)*0.9999 + L;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (inside);
+
+	a1.pos[0] = xc;
+	a1.pos[1] = yc - (radius - sigma/2.0)*0.9999 - L;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (inside);
 
 	// test pbc outside of cylinder
+	a1.pos[0] = 2*L;
+	a1.pos[1] = yc;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
 
+	a1.pos[0] = xc + (radius - sigma/2.0)*1.0001 + L;
+	a1.pos[1] = yc;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+
+	a1.pos[0] = xc - (radius - sigma/2.0)*1.0001 - L;
+	a1.pos[1] = yc;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+
+	a1.pos[0] = xc;
+	a1.pos[1] = yc + (radius - sigma/2.0)*1.0001 + L;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+
+	a1.pos[0] = xc;
+	a1.pos[1] = yc - (radius - sigma/2.0)*1.0001 - L;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+}
+/*
+TEST_F (testCylinderZ, energy) {
+    squareWellWallZ sqz (0, H, sigma, range, eps); // M defaults to 1
+
+    double zpos = a1.pos[2]; // at the border
+
+    // test bottom wall
+    a1.pos[2] = zpos*1.01; // inside (not overlapping wall)
+    double U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, -eps);
+
+    a1.pos[2] = zpos*0.99; // outside (overlapping wall)
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+
+    a1.pos[2] = range*0.99; // inside range
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, -eps);
+
+    a1.pos[2] = range*1.01; // outside range
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, 0);
+
+    // test top wall
+    a1.pos[2] = H-zpos*1.01; // inside (not overlapping wall)
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, -eps);
+
+    a1.pos[2] = H-zpos*0.99; // outside (overlapping wall)
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, NUM_INFINITY);
+
+    a1.pos[2] = H-range*0.99; // inside range
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, -eps);
+
+    a1.pos[2] = H-range*1.01; // outside range
+    U = sqz.energy (&a1, box);
+    EXPECT_EQ (U, 0);
 }*/
+
 // cylinderZ in compositeBarrier
