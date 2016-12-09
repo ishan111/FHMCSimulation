@@ -9942,3 +9942,112 @@ TEST_F (testCompositeRightTriangleXZ, bottom_bottom_sep) {
         EXPECT_EQ (U, -eps);
     }
 }
+
+// cylinderZ on its own
+class testCylinderZ : public ::testing::Test {
+protected:
+    atom a1;
+    double eps, sigma, radius, width;
+    int M;
+    std::vector < double > box;
+
+    virtual void SetUp() {
+        std::vector < double > coords (3, 0);
+        sigma = 1.234;
+        a1.pos = coords;
+        eps = 2.345;
+        width = 1.5*sigma;
+		radius = 4.0*sigma;
+        box.resize(3, 5*sigma);
+		M = 1;
+    }
+};
+
+TEST_F (testCylinderZ, badInit) {
+    cylinderZ *cz;
+
+    // safe init
+    bool caught = false;
+    try {
+        cz = new cylinderZ (radius, width, sigma, eps, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (!caught);
+
+    // bad sigma
+    caught = false;
+    try {
+        cz = new cylinderZ (radius, width, -1.0, eps, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+
+    caught = false;
+    try {
+        cz = new cylinderZ (radius, width, width*2.0, eps, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+
+	// bad radius
+	caught = false;
+    try {
+        cz = new cylinderZ (sigma, width, sigma, eps, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+
+    // bad M
+    caught = false;
+    try {
+        cz = new cylinderZ (radius, width, sigma, eps, 0);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+
+    // bad width
+    caught = false;
+    try {
+        cz = new cylinderZ (radius, -0.001, sigma, eps, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+
+    // bad eps
+    caught = false;
+    try {
+        cz = new cylinderZ (radius, width, sigma, -0.001, M);
+    } catch (customException &ce) {
+        caught = true;
+    }
+    EXPECT_TRUE (caught);
+}
+
+TEST_F (testCylinderZ, inside) {
+ 	cylinderZ cz (radius, width, sigma, eps, M);
+
+	// test valid along entire z-axis
+	const double dz = box[2]/10.0;
+	for (double z = 0; z <= box[2]; z += dz) {
+		a1.pos[2] = z;
+		bool inside = cz.inside(&a1, box);
+		EXPECT_TRUE (inside);
+	}
+	a1.pos[2] = 0.0;
+
+	// test x, y axis bounds
+
+	// test 45 degrees
+
+	// test pbc inside cylinder
+
+	// test pbc outside of cylinder
+
+}
+// cylinderZ in compositeBarrier
