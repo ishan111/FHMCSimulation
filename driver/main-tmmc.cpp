@@ -148,7 +148,7 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
             }
         }
 	}
-	
+
 	// cylinderZ (expect parameters: {x, y, radius, width, sigma, eps})
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		bool convention0 = false;
@@ -637,6 +637,16 @@ int main (int argc, char * const argv[]) {
 			} else if (ppotType[ppotTypeIndex] == "lennard_jones") {
 				try {
 					ppotArray[ppotIndex] = new lennardJones;
+					ppotArray[ppotIndex]->setParameters(params);
+				} catch (customException &ce) {
+					std::cerr << ce.what() << std::endl;
+					exit(SYS_FAILURE);
+				}
+				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
+				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);
+			} else if (ppotType[ppotTypeIndex] == "fs_lennard_jones") {
+				try {
+					ppotArray[ppotIndex] = new fsLennardJones;
 					ppotArray[ppotIndex]->setParameters(params);
 				} catch (customException &ce) {
 					std::cerr << ce.what() << std::endl;

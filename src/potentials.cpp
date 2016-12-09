@@ -147,27 +147,6 @@ double fsLennardJones::rcut () {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*!
  * Set the parameters in the Lennard-Jones equation.
  *
