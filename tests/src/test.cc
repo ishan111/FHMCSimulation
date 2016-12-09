@@ -10283,4 +10283,38 @@ TEST_F (testCylinderZ, energy) {
 	a1.pos[2] = xc;
 }
 
+TEST_F (testCylinderZ, insideM) {
+	int mm = 3;
+	bool inside = false;
+    cylinderZ cz (xc, yc, radius, width, sigma, eps, mm);
+    a1.mState = mm-1;
+
+    // test edge
+	a1.pos[0] = xc + (radius - (a1.mState*sigma)/mm/2.0)*1.0001;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+
+	a1.pos[0] = xc + (radius - (a1.mState*sigma)/mm/2.0)*0.9999;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (inside);
+
+	a1.mState = mm-2;
+	a1.pos[0] = xc + (radius - (a1.mState*sigma)/mm/2.0)*1.0001;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+
+	a1.pos[0] = xc + (radius - (a1.mState*sigma)/mm/2.0)*0.9999;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (inside);
+
+	a1.mState = 0;
+	a1.pos[0] = xc + (radius - sigma/2.0)*1.0001;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (!inside);
+
+	a1.pos[0] = xc + (radius - sigma/2.0)*0.9999;
+	inside = cz.inside(&a1, box);
+	EXPECT_TRUE (inside);
+}
+
 // cylinderZ in compositeBarrier
