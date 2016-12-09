@@ -451,15 +451,17 @@ double hardWallZ::energy (const atom *a1, const std::vector < double > &box) {
 /*!
  * Instantiate a cylinderical pore in the z-direction. Expanded ensembles primarily scale the magnitude of interaction.  The repulsive boundary scales with sigma at the boundary, but the attractive cutoff remains fixed relative to the boundary.
  *
+ * \param [in] x x-coordinate of cylinder's center
+ * \param [in] y y-coordinate of cylinder's center
  * \param [in] radius Radius of cylinder
  * \param [in] width Width of square-well-like interaction (distance from wall)
  * \param [in] sigma Hard-sphere diameter the species this wall interacts with can approach within
  * \param [in] eps Magnitude of the wall interaction (U = -eps)
  * \param [in] M Total number of expanded ensemble states possible for this atom type (defaults to 1)
  */
-cylinderZ::cylinderZ (const double radius, const double width, const double sigma, const double eps, const int M) {
-    if (radius < sigma) {
-        throw customException ("cylinderZ radius < sigma so no particles will fit");
+cylinderZ::cylinderZ (const double x, const double y, const double radius, const double width, const double sigma, const double eps, const int M) {
+    if (radius <= sigma) {
+        throw customException ("cylinderZ radius <= sigma so practically no particles will fit");
     }
     if (sigma < 0) {
         throw customException ("cylinderZ must have sigma >= 0");
@@ -482,6 +484,10 @@ cylinderZ::cylinderZ (const double radius, const double width, const double sigm
     width_ = width;
     radius_ = radius;
     M_ = M;
+
+    center_.resize(3, 0);
+    center_[0] = x;
+    center_[1] = y;
 }
 
 /*!
@@ -491,8 +497,8 @@ cylinderZ::cylinderZ (const double radius, const double width, const double sigm
  * \param [in] box Simulation box
  */
 bool cylinderZ::inside (const atom *a1, const std::vector < double > &box) {
-    std::vector < double > p = a1->pos;
-    pbc (p, box);
+    center_[2] = a1->pos[2]; // same z-plane
+    double rv2 = pbc_dist2 (a1->pos, center_, box);
 
     double sig = sigma_;
     if (a1->mState > 0) {
@@ -501,8 +507,8 @@ bool cylinderZ::inside (const atom *a1, const std::vector < double > &box) {
     if (a1->mState < 0 || a1->mState > M_-1) {
         throw customException ("mState out of bounds for cylinderZ");
     }
-
-    double rv2 = p[0]*p[0] + p[1]*p[1], rc = radius_ - sig/2.0;
+    
+    double rc = radius_ - sig/2.0;
     if (rv2 >= rc*rc) {
         return false;
     } else {
@@ -517,11 +523,10 @@ bool cylinderZ::inside (const atom *a1, const std::vector < double > &box) {
  * \param [in] box Simulation box
  */
 double cylinderZ::energy (const atom *a1, const std::vector < double > &box) {
-    std::vector < double > p = a1->pos;
-    pbc (p, box);
-    double U = 0.0;
+    center_[2] = a1->pos[2]; // same z-plane
+    double rv2 = pbc_dist2 (a1->pos, center_, box);
+    double U = 0.0, sig = sigma_, eps = eps_;
 
-    double sig = sigma_, eps = eps_;
     if (a1->mState > 0) {
         sig = (sigma_/M_)*a1->mState;
         eps = (eps_/M_)*a1->mState;
@@ -531,7 +536,7 @@ double cylinderZ::energy (const atom *a1, const std::vector < double > &box) {
     }
 
     // return infinity if out of bounds
-    double rv2 = p[0]*p[0] + p[1]*p[1], rc = radius_ - sig/2.0, ri = radius_ - width_;
+    double rc = radius_ - sig/2.0, ri = radius_ - width_;
     if (rv2 >= rc*rc) {
         return NUM_INFINITY;
     }
@@ -708,13 +713,15 @@ void compositeBarrier::addSquareWellWallZ (const double lb, const double ub, con
 /*!
  * Add a cylinder along z = 0 axis wall to interact with.
  *
+ * \param [in] x x-coordinate of cylinder's center
+ * \param [in] y y-coordinate of cylinder's center
  * \param [in] radius Radius of cylinder
  * \param [in] width Width of square-well-like interaction (distance from wall)
  * \param [in] sigma Hard-sphere diameter the species this wall interacts with can approach within
  * \param [in] eps Magnitude of the wall interaction (U = -eps)
  * \param [in] M Total number of expanded ensemble states possible for this atom type (defaults to 1)
  */
-void compositeBarrier::addCylinderZ (const double radius, const double width, const double sigma, const double eps, const int M) {
+void compositeBarrier::addCylinderZ (const double x, const double y, const double radius, const double width, const double sigma, const double eps, const int M) {
     if (sysBarriers_.begin() == sysBarriers_.end()) {
         try {
             sysBarriers_.resize(1);
@@ -729,7 +736,7 @@ void compositeBarrier::addCylinderZ (const double radius, const double width, co
         }
     }
     try {
-        sysBarriers_[sysBarriers_.size()-1] = new cylinderZ (radius, width, sigma, eps, M);
+        sysBarriers_[sysBarriers_.size()-1] = new cylinderZ (x, y, radius, width, sigma, eps, M);
     } catch (customException &ce) {
         throw customException ("Cannot add cylinderZ to composite barrier: "+sstr(ce.what()));
     }

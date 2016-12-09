@@ -57,12 +57,12 @@ private:
 };
 
 /*!
- * Cylinder along z = 0 axis.
+ * Cylinder along z = 0 axis at a given (x,y) coordinate.
  */
 class cylinderZ : public barrier {
 public:
     ~cylinderZ () {};
-    cylinderZ (const double radius, const double width, const double sigma, const double eps, const int M = 1);
+    cylinderZ (const double x, const double y, const double radius, const double width, const double sigma, const double eps, const int M = 1);
     bool inside (const atom *a1, const std::vector < double > &box);
     double energy (const atom *a1, const std::vector < double > &box);
 
@@ -71,6 +71,7 @@ private:
     double width_; //!< Width of square-well-like interaction range
     double sigma_; //!< Molecular diameter to exclude at wall within sigma/2
     double eps_; //!< Energy of wall interaction
+    std::vector < double > center_; //!< x and y centers (in xy-plane) for cylinder
 };
 
 /*
@@ -113,7 +114,7 @@ public:
 
     void addHardWallZ (const double lb, const double ub, const double sigma, const int M = 1);
     void addSquareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps, const int M = 1);
-    void addCylinderZ (const double radius, const double width, const double sigma, const double eps, const int M = 1);
+    void addCylinderZ (const double x, const double y, const double radius, const double width, const double sigma, const double eps, const int M = 1);
     void addRightTriangleXZ (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector < double > &box, const double zbase, bool top = false, const int M = 1);
 
     bool inside (const atom *a1, const std::vector < double > &box);

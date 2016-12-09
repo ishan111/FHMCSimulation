@@ -166,19 +166,19 @@ void pbc (std::vector < double > &pos, const std::vector < double > &box) {
  * \return d2 (distance squared)
  */
 double pbc_dist2 (const std::vector < double > &p1, const std::vector < double > &p2, const std::vector < double > &box) {
-    	double d2 = 0.0;
-    	for (unsigned int i = 0; i < p2.size(); ++i) {
-    		double dr = p2[i] - p1[i];
-		while (dr < -box[i]/2.0) {
-			dr += box[i];
-		}
+    double d2 = 0.0;
+    for (unsigned int i = 0; i < p2.size(); ++i) {
+        double dr = p2[i] - p1[i];
+        while (dr < -box[i]/2.0) {
+            dr += box[i];
+        }
 		while (dr > box[i]/2.0) {
 			dr -= box[i];
 		}
 		d2 += dr*dr;
 	}
 
-    	return d2;
+    return d2;
 }
 
 /*!
