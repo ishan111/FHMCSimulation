@@ -304,7 +304,7 @@ TEST_F (fsLennardJonesTest, StandardParams) {
 
 	a2.pos[2] = 0.9;
 	EXPECT_TRUE ( fabs(fslj->energy(&a1, &a2, box) - 6.6645804382) < tol );
-	
+
 	delete fslj;
 }
 
@@ -10465,4 +10465,822 @@ TEST_F (testCylinderZ, energyM) {
 	a1.pos[0] = xc + (radius - width)*1.0001;
 	U = cz.energy(&a1, box);
 	EXPECT_EQ (U, -eps);
+}
+
+/* Check potentials */
+class quaternionTest : public ::testing::Test {
+protected:
+	quaternion* q;
+	std::vector < double > val;
+	double tol;
+
+	virtual void SetUp() {
+		q = new quaternion;
+		val.resize(4, 0);
+		tol = 1.0e-9;
+	}
+};
+
+TEST_F (quaternionTest, set_get) {
+	val[0] = 1.234;
+	val[1] = 2.345;
+	val[2] = 3.456;
+	val[3] = 4.567;
+	q->set(val);
+
+	std::vector < double > is (4);
+	is = q->get();
+
+	for (unsigned int i = 0; i < 4; ++i) {
+		EXPECT_EQ (is[i], val[i]);
+	}
+}
+
+TEST_F (quaternionTest, conjugate) {
+	val[0] = 1.234;
+	val[1] = 2.345;
+	val[2] = 3.456;
+	val[3] = 4.567;
+	q->set(val);
+	q->conjugate();
+
+	std::vector < double > is (4);
+	is = q->get();
+
+	EXPECT_EQ (is[0], val[0]);
+	for (unsigned int i = 1; i < 4; ++i) {
+		EXPECT_EQ (is[i], -val[i]);
+	}
+}
+
+TEST_F (quaternionTest, getNorm) {
+	val[0] = 1.234;
+	val[1] = 2.345;
+	val[2] = 3.456;
+	val[3] = 4.567;
+	std::vector < double > is (4);
+
+	q->set(val);
+	is = q->get();
+
+	const double norm = q->getNorm();
+	EXPECT_EQ (norm, sqrt(val[0]*val[0]+val[1]*val[1]+val[2]*val[2]+val[3]*val[3]));
+
+	q->conjugate();
+	const double norm2 = q->getNorm();
+	EXPECT_EQ (norm, norm2);
+}
+
+TEST_F (quaternionTest, translate) {
+	val[0] = 1.234;
+	val[1] = 2.345;
+	val[2] = 3.456;
+	val[3] = 4.567;
+	std::vector < double > is (4), t (3, -1.0);
+
+	q->set(val);
+	q->translate(t);
+	is = q->get();
+
+	EXPECT_EQ (is[0], val[0]);
+	for (unsigned int i = 1; i < 4; ++i) {
+		EXPECT_EQ (is[i], val[i]-1.0);
+	}
+}
+
+TEST_F (quaternionTest, normalize) {
+	val[0] = 1.234;
+	val[1] = 2.345;
+	val[2] = 3.456;
+	val[3] = 4.567;
+
+	q->set(val);
+	q->normalize();
+	double new_norm = q->getNorm();
+
+	EXPECT_EQ (new_norm, 1.0);
+}
+
+TEST_F (quaternionTest, inverse) {
+	val[0] = 1.234;
+	val[1] = 2.345;
+	val[2] = 3.456;
+	val[3] = 4.567;
+
+	q->set(val);
+	q->inverse();
+	std::vector< double > is (4);
+	is = q->get();
+
+	double n2 = 0.0;
+	for (unsigned int i = 0; i < 4; ++i) {
+		n2 += val[i]*val[i];
+	}
+	EXPECT_EQ (is[0], val[0]/n2);
+	for (unsigned int i = 1; i < 4; ++i) {
+		EXPECT_EQ (is[i], -val[i]/n2);
+	}
+}
+
+TEST_F (quaternionTest, add1) {
+	val[0] = 1.234;
+	val[1] = 2.345;
+	val[2] = 3.456;
+	val[3] = 4.567;
+
+	q->set(val);
+
+	quaternion p;
+	val[0] = -1.234;
+	val[1] = -2.345;
+	val[2] = -3.456;
+	val[3] = -4.567;
+
+	p.set(val);
+
+	quaternion r;
+	r = p + (*q);
+	std::vector <double> sum = r.get();
+
+	for (unsigned int i = 0; i < 4; ++i) {
+		EXPECT_EQ (sum[i], 0.0);
+	}
+}
+
+TEST_F (quaternionTest, add2) {
+	val[0] = 1.234;
+	val[1] = 2.345;
+	val[2] = 3.456;
+	val[3] = 4.567;
+
+	q->set(val);
+
+	quaternion p;
+	p.set(val);
+
+	quaternion r;
+	r = p + (*q);
+	std::vector <double> sum = r.get();
+
+	for (unsigned int i = 0; i < 4; ++i) {
+		EXPECT_EQ (sum[i], val[i]*2);
+	}
+}
+
+TEST_F (quaternionTest, subtract1) {
+	val[0] = 1.234;
+	val[1] = 2.345;
+	val[2] = 3.456;
+	val[3] = 4.567;
+
+	q->set(val);
+
+	quaternion p;
+	val[0] = -1.234;
+	val[1] = -2.345;
+	val[2] = -3.456;
+	val[3] = -4.567;
+
+	p.set(val);
+
+	quaternion r;
+	r = p - (*q);
+	std::vector <double> sum = r.get();
+
+	for (unsigned int i = 0; i < 4; ++i) {
+		EXPECT_EQ (sum[i], 2*val[i]);
+	}
+}
+
+TEST_F (quaternionTest, subtract2) {
+	val[0] = 1.234;
+	val[1] = 2.345;
+	val[2] = 3.456;
+	val[3] = 4.567;
+
+	q->set(val);
+
+	quaternion p;
+	p.set(val);
+
+	quaternion r;
+	r = p - (*q);
+	std::vector <double> sum = r.get();
+
+	for (unsigned int i = 0; i < 4; ++i) {
+		EXPECT_EQ (sum[i], 0.0);
+	}
+}
+
+TEST_F (quaternionTest, quatProd) {
+	double w0, w1, x0, x1, y0, y1, z0, z1;
+	w0 = 1;
+	x0 = 2;
+	y0 = 3;
+	z0 = 4;
+	w1 = 5;
+	x1 = 6;
+	y1 = 7;
+	z1 = 8;
+
+	std::vector < double > v1 (4, 0), v2 (4, 0), res(4, 0);
+	v1[0] = w0; v1[1] = x0; v1[2] = y0; v1[3] = z0;
+	v2[0] = w1; v2[1] = x1; v2[2] = y1; v2[3] = z1;
+
+	quaternion a, b, c;
+
+	a.set(v1);
+	b.set(v2);
+
+	c = a*b;
+	res = c.get();
+
+	EXPECT_EQ (res[0], w0*w1-x0*x1-y0*y1-z0*z1);
+	EXPECT_EQ (res[1], w0*x1+x0*w1+y0*z1-z0*y1);
+	EXPECT_EQ (res[2], w0*y1-x0*z1+y0*w1+z0*x1);
+	EXPECT_EQ (res[3], w0*z1+x0*y1-y0*x1+z0*w1);
+}
+
+TEST_F (quaternionTest, vecRotatePosX) {
+	std::vector < double > a (4, 0), p (3, 0), pp (3, 0);
+	double theta = 0.0, c, s;
+
+	theta = 90.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 1.0*s;
+	a[2] = 0.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+
+	p[1] = 1.0;
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 1.0) < tol);
+
+	// 180
+	theta = 180.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 1.0*s;
+	a[2] = 0.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - -1.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+
+	// 270
+	theta = 270.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 1.0*s;
+	a[2] = 0.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - -1.0) < tol);
+
+	// 360
+	theta = 360.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 1.0*s;
+	a[2] = 0.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 1.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+}
+
+TEST_F (quaternionTest, vecRotateNegX) {
+	std::vector < double > a (4, 0), p (3, 0), pp (3, 0);
+	double theta = 0.0, c, s;
+
+	theta = -90.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 1.0*s;
+	a[2] = 0.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+
+	p[1] = 1.0;
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - -1.0) < tol);
+
+	// 180
+	theta = 180.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 1.0*s;
+	a[2] = 0.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - -1.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+
+	// 270
+	theta = -270.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 1.0*s;
+	a[2] = 0.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 1.0) < tol);
+
+	// 360
+	theta = -360.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 1.0*s;
+	a[2] = 0.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 1.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+}
+
+TEST_F (quaternionTest, vecRotatePosY) {
+	std::vector < double > a (4, 0), p (3, 0), pp (3, 0);
+	double theta = 0.0, c, s;
+
+	theta = 90.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 1.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+
+	p[0] = 1.0;
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - -1.0) < tol);
+
+	// 180
+	theta = 180.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 1.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - -1.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+
+	// 270
+	theta = 270.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 1.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 1.0) < tol);
+
+	// 360
+	theta = 360.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 1.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 1.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+}
+
+TEST_F (quaternionTest, vecRotateNegY) {
+	std::vector < double > a (4, 0), p (3, 0), pp (3, 0);
+	double theta = 0.0, c, s;
+
+	theta = -90.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 1.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+
+	p[0] = 1.0;
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 1.0) < tol);
+
+	// 180
+	theta = -180.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 1.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - -1.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+
+	// 270
+	theta = -270.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 1.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - -1.0) < tol);
+
+	// 360
+	theta = -360.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 1.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 1.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+}
+
+TEST_F (quaternionTest, vecRotatePosZ) {
+	std::vector < double > a (4, 0), p (3, 0), pp (3, 0);
+	double theta = 0.0, c, s;
+
+	theta = 90.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 0.0*s;
+	a[3] = 1.0*s;
+	q->set(a);
+
+	p[0] = 1.0;
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 1.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+
+	// 180
+	theta = 180.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 0.0*s;
+	a[3] = 1.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - -1.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+
+	// 270
+	theta = 270.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 0.0*s;
+	a[3] = 1.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - -1.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+
+	// 360
+	theta = 360.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 0.0*s;
+	a[3] = 1.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 1.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+}
+
+TEST_F (quaternionTest, vecRotateNegZ) {
+	std::vector < double > a (4, 0), p (3, 0), pp (3, 0);
+	double theta = 0.0, c, s;
+
+	theta = -90.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 0.0*s;
+	a[3] = 1.0*s;
+	q->set(a);
+
+	p[0] = 1.0;
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - -1.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+
+	// 180
+	theta = -180.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 0.0*s;
+	a[3] = 1.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - -1.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+
+	// 270
+	theta = -270.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 0.0*s;
+	a[3] = 1.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 1.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+
+	// 360
+	theta = -360.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 0.0*s;
+	a[3] = 1.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 1.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+}
+
+TEST_F (quaternionTest, vecRotateYZ) {
+	std::vector < double > a (4, 0), p (3, 0), pp (3, 0);
+	double theta = 0.0, c, s;
+
+	// (1, 0, 0) about Y then Z
+	p[0] = 1.0;
+
+	theta = 180.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 1.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+
+	quaternion q2;
+	theta = 90.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 0.0*s;
+	a[3] = 1.0*s;
+	q2.set(a);
+
+	// composite rotation, first q, then q2
+	quaternion r = q2*(*q);
+	pp = r.rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - -1.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+}
+
+TEST_F (quaternionTest, vecRotateXZ) {
+	std::vector < double > a (4, 0), p (3, 0), pp (3, 0);
+	double theta = 0.0, c, s;
+
+	// (0, 1, 0) about X then Z
+	p[1] = 1.0;
+
+	theta = 180.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 1.0*s;
+	a[2] = 0.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+
+	quaternion q2;
+	theta = 90.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 0.0*s;
+	a[3] = 1.0*s;
+	q2.set(a);
+
+	// composite rotation, first q, then q2
+	quaternion r = q2*(*q);
+	pp = r.rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 1.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+}
+
+TEST_F (quaternionTest, vecRotateXY) {
+	std::vector < double > a (4, 0), p (3, 0), pp (3, 0);
+	double theta = 0.0, c, s;
+
+	// (0, 0, -1) about X then Y
+	p[2] = -1.0;
+
+	theta = 180.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 1.0*s;
+	a[2] = 0.0*s;
+	a[3] = 0.0*s;
+	q->set(a);
+
+	quaternion q2;
+	theta = 90.0*(PI/180.0);
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 1.0*s;
+	a[3] = 0.0*s;
+	q2.set(a);
+
+	// composite rotation, first q, then q2
+	quaternion r = q2*(*q);
+	pp = r.rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 1.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 0.0) < tol);
+}
+
+TEST_F (quaternionTest, vecRotateOn) {
+	std::vector < double > a (4, 0), p (3, 3.1415), pp (3, 0);
+	double theta = 0.0, c, s;
+
+	// 3.1415*(1, 1, 1) when lies on axis of rotation
+
+	theta = 1.23456*(PI/180.0); // rotation should be irrelevant
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 1.0*s;
+	a[2] = 1.0*s;
+	a[3] = 1.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 3.1415) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 3.1415) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 3.1415) < tol);
+}
+
+TEST_F (quaternionTest, vecRotate45) {
+	std::vector < double > a (4, 0), p (3, 1), pp (3, 0);
+	double theta = 0.0, c, s;
+
+	p[1] = 0;
+
+	theta = 180*(PI/180.0); // rotation should be irrelevant
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 0.0*s;
+	a[3] = 1.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - -1.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 1.0) < tol);
+
+	theta = -90*(PI/180.0); // rotation should be irrelevant
+	c = std::cos(theta/2.0); s = std::sin(theta/2.0);
+	a[0] = c;
+	a[1] = 0.0*s;
+	a[2] = 0.0*s;
+	a[3] = 1.0*s;
+	q->set(a);
+	pp = q->rotateVec(p);
+
+	EXPECT_TRUE (fabs(pp[0] - 0.0) < tol);
+	EXPECT_TRUE (fabs(pp[1] - -1.0) < tol);
+	EXPECT_TRUE (fabs(pp[2] - 1.0) < tol);
+}
+
+TEST_F (quaternionTest, axisAngle) {
+	quaternion q;
+	std::vector < double > axis (3, 1), res (4, 0);
+	double angle = 90.0*(PI/180.0);
+
+	q.setAxisAngle (axis, angle);
+	res = q.get();
+
+	EXPECT_TRUE (fabs(res[0] - sqrt(2)/2.0) < tol);
+	EXPECT_TRUE (fabs(res[1] - sqrt(2)/2.0) < tol);
+	EXPECT_TRUE (fabs(res[0] - sqrt(2)/2.0) < tol);
+	EXPECT_TRUE (fabs(res[0] - sqrt(2)/2.0) < tol);
+}
+
+TEST_F (quaternionTest, randomInit) {
+	std::vector < double > last (4, 0);
+
+	// just generate a bunch of trials and make sure each is different
+	for (unsigned int i = 0; i < 10; ++i) {
+		quaternion q1;
+		std::vector < double > v = q1.get();
+		for (unsigned int j = 0; j < 4; ++j) {
+			EXPECT_TRUE (v[j] != last[j]);
+			last[j] = v[j];
+		}
+	}
+}
+
+TEST_F (quaternionTest, equal) {
+	quaternion a, b;
+	val[0] = 1.234;
+	val[1] = 2.345;
+	val[2] = 3.456;
+	val[3] = 4.567;
+
+	a.set(val);
+	b.set(val);
+	EXPECT_TRUE (a == b);
+
+	val[3] = 5.678;
+	b.set(val);
+	EXPECT_TRUE (!(a == b));
+}
+
+TEST_F (quaternionTest, notEqual) {
+	quaternion a, b;
+	val[0] = 1.234;
+	val[1] = 2.345;
+	val[2] = 3.456;
+	val[3] = 4.567;
+
+	a.set(val);
+	b.set(val);
+	EXPECT_TRUE (!(a != b));
+
+	val[3] = 5.678;
+	b.set(val);
+	EXPECT_TRUE (a != b);
 }

@@ -20,7 +20,7 @@ public:
 	const char* what() const throw() {return msg_.c_str();}	//!< Return the user's message
 	customException (std::string m="custom exception occurred"):msg_(m){} //!< Instantiate an exeption with a user-defined error message
 	~customException () throw() {};	//!< Throw the message to the user
-	
+
 private:
 	std::string msg_;
 };
