@@ -23,6 +23,6 @@ public:
 
 private:
     std::vector < double >  q_; //!< Quanternion vector
-}
+};
 
 #endif

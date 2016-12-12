@@ -10,6 +10,6 @@ void quaternion::set (std::vector < double > &q) {
         throw customException ("Quaternion must have 4 elements");
     }
     for (unsigned int i = 0; i < q.size(); ++i) {
-        q_[i] = q;
+        q_[i] = q[i];
     }
 }
