@@ -6,38 +6,38 @@
  * Instantiate an atom with centers oriented relative to the center.
  *
  * \param [in] ncenters Number of centers
- * /param [in] rel_or Vectors pointing to rigid centers from atom's pos
+ * /param [in] relOr Vectors pointing to rigid centers from atom's pos
  */
-atom::atom (int ncenters, std::vector < std::vector < double > > rel_or) {
+atom::atom (int ncenters, std::vector < std::vector < double > > relOr) {
 	try {
 		std::vector < double > dummy (3, 0);
-		vec_to_centers.resize(ncenters, dummy);
+		vecToCenters.resize(ncenters, dummy);
 	} catch (std::bad_alloc &ba) {
 		throw customException ("Out of memory for atom centers");
 	}
 
-	if (rel_or.size() != ncenters) {
+	if (relOr.size() != ncenters) {
 		throw customException ("Must specify exactly one 3D orientation for each center");
 	} else {
 		for (unsigned int i = 0; i < ncenters; ++i) {
-			if (rel_or[i].size() != 3) {
+			if (relOr[i].size() != 3) {
 				throw customException ("Error - 3D atom center orientations must be in 3D");
 			}
 			for (unsigned int j = 0; j < 3; ++j) {
-				vec_to_centers[i][j] = rel_or[i][j];
+				vecToCenters[i][j] = relOr[i][j];
 			}
 		}
 	}
 }
 
 /*!
- * Rotate centers
+ * Rotate centers with Euler angles.
  *
  * \param [in] alpha Radians to rotate centers by around x-axis
  * \param [in] beta Radians to rotate centers by around y-axis
  * \param [in] gamma Radians to rotate centers by around z-axis
  */
-void atom::rotate_centers (double alpha, double beta, double gamma) {
+/*void atom::rotateCenters (double alpha, double beta, double gamma) {
 	// assert valid ranges - https://en.wikipedia.org/wiki/Euler_angles
 	if (alpha < -PI or alpha >= PI) {
 		throw customException ("Invalid range for alpha");
@@ -51,13 +51,13 @@ void atom::rotate_centers (double alpha, double beta, double gamma) {
 
 	std::vector < std::vector < double > > R = rotationMatrix(alpha, beta, gamma);
 
-	for (unsigned int i = 0; i < vec_to_centers.size(); ++i) {
-		const double mag = sqrt(vec_to_centers[i][0]*vec_to_centers[i][0] + vec_to_centers[i][1]*vec_to_centers[i][1] + vec_to_centers[i][2]*vec_to_centers[i][2]);
+	for (unsigned int i = 0; i < vecToCenters.size(); ++i) {
+		const double mag = sqrt(vecToCenters[i][0]*vecToCenters[i][0] + vecToCenters[i][1]*vecToCenters[i][1] + vecToCenters[i][2]*vecToCenters[i][2]);
 		std::vector < double > tmpVec (3, 0), ans (3, 0);
 
 		// scale to unit vector
 		for (unsigned int j = 0; j < 3; ++j) {
-			tmpVec[j] = vec_to_centers[i][j]/mag;
+			tmpVec[j] = vecToCenters[i][j]/mag;
 		}
 
 		// rotate
@@ -72,4 +72,4 @@ void atom::rotate_centers (double alpha, double beta, double gamma) {
 			vec_to_centers[i][j] = mag*ans[j];
 		}
 	}
-}
+}*/
