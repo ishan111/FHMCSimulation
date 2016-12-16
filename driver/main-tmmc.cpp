@@ -60,7 +60,8 @@ int main (int argc, char * const argv[]) {
 
 	// TODO: add moves object to perform* functions
 	// add functionality where each perfomr* saves the state of the system
-	
+	// finish adding restarting information so system knows how to pick up where it left off
+
 	if (!res->walaDone) {
 		// perform Wang-Landau simulation
 		performWALA (sys, res);
