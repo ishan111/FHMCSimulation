@@ -19,6 +19,22 @@ int RNG_SEED = -1024;	//!< Default RNG seed
 #define RNMX (1.0-EPS)
 
 /*!
+ * Obtain instantaneous timestamp.
+ *
+ * \return char* timestamp
+ */
+std::string getTimeStamp () {
+    time_t rawtime;
+    time (&rawtime);
+    struct tm * timeinfo;
+    timeinfo = localtime (&rawtime);
+    char timestamp [80];
+    strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+    std::string ans (timestamp);
+    return ans;
+}
+
+/*!
  * Compute product of 2 matrices, W = UV
  *
  * \param [in] mat1 Matrix U

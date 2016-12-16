@@ -33,11 +33,11 @@ class simSystem {
 public:
 	simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies, const int Mtot, const double energyHistDelta = 10.0, const int max_order = 2);
 	~simSystem ();
-    
+
     bool add_ke_correction () { return toggle_ke_; }
     void toggle_ke ();
 	void incrementEnergy (const double dU) { energy_ += dU; } //!< Increment the system's energy
-	void addPotential (const int spec1, const int spec2, pairPotential *pp, bool useCellList=false);
+	void addPotential (const int spec1, const int spec2, const std::string ppot_name, const std::vector < double > &params, const bool useCellList=false); //(const int spec1, const int spec2, pairPotential *pp, bool useCellList=false);
 	void printSnapshot (std::string filename, std::string comment);
 	void insertAtom (const int typeIndex, atom *newAtom, bool override=false);
 	void deleteAtom (const int typeIndex, const int atomIndex, bool override=false);
@@ -69,7 +69,7 @@ public:
 	const int getTotN () { return totN_; } //!< Return a sum of the total number of atoms currently in the system
 	const int getCurrentM () { return Mcurrent_; } //!< Return the system's current expanded ensemble fractional state
 	const int getTotalM () { return Mtot_; } //!< Return the total number of fractional states available to species in the expanded ensemble
-	const int getFractionalAtomType () { return fractionalAtomType_; } //!< Return the atom type of the fractional atom 
+	const int getFractionalAtomType () { return fractionalAtomType_; } //!< Return the atom type of the fractional atom
 	const double energy () { return energy_; } //!< Return the system's instantaneous energy
 	const double scratchEnergy ();
 	const double beta () { return beta_; } //!< Return 1/kT
@@ -78,9 +78,9 @@ public:
 	const std::vector < double > box () { return box_; } //!< Return the system box dimensions
 	std::vector < atom* > getNeighborAtoms (const unsigned int typeIndexA, const unsigned int typeIndexB, atom* _atom);
 	tmmc* getTMMCBias (); //!< Return pointer to the TMMC bias
-	wala* getWALABias (); //!< Return pointer to the Wang-Landau bias	
+	wala* getWALABias (); //!< Return pointer to the Wang-Landau bias
 	atom* getFractionalAtom () { return fractionalAtom_; } //!< Returns a pointer the atom in the system that is currently only fractionally inserted/deleted
-    
+
 	bool useTMMC; //!< Logical stating whether or not to use TMMC biasing
 	bool useWALA; //!< Logical stating whether or not to use Wang-Landau biasing
 	tmmc* tmmcBias; //!< TMMC biasing function
@@ -89,7 +89,7 @@ public:
 	std::vector < std::vector < atom > > atoms;	//!< Atoms in a matrix by type, and particle index, respectively that a system CAN hold but not all are actually "in" the system
 	std::vector < std::vector < pairPotential* > > ppot;	//!< Matrix of pair potentials for atom types i, j
 	std::vector < compositeBarrier > speciesBarriers; //!< Barriers, if any, for each species
-    
+
 private:
 	atom* fractionalAtom_; //!< Pointer to the atom in the system that is currently only fractionally inserted/deleted
 	bool toggle_ke_; //!< Flag for the use of kinetic energy corrections
