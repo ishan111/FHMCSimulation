@@ -6,7 +6,7 @@
  * \param [in] sys System to simulate
  * \param [in] res Restart information
  */
-void performTMMC (simSystem &sys, const restartInfo &res) {
+void performTMMC (simSystem &sys, restartInfo &res) {
     std::cout << "Beginning TMMC" << std::endl;
 	if (restartFromTMMC) {
 		sys.startTMMC (tmmcSweepSize, sys.getTotalM()); // this was otherwise started during the crossover phase if WL was used

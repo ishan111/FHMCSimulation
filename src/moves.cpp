@@ -16,8 +16,27 @@ moves::~moves () {
 	;
 }
 
+/*!
+ * Print move information to file.
+ *
+ * \param [in] filename Name of file to print to.
+ */
 void moves::print (const std::string filename) {
-	
+	std::ofstream statFile (filename.c_str());
+    std::vector < std::vector < double > > stats = reportMoveStatistics();
+    statFile << " ---------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
+    for (unsigned int i = 0; i < stats.size(); ++i) {
+        double prod = 1.0;
+        for (unsigned int j = 0; j < stats[i].size(); ++j) {
+            prod *= stats[i][j];
+            statFile << includedMoves()[i]->myName() << " (from M = " << j << ")\t" << stats[i][j]*100.0 << std::endl;
+        }
+        if (stats[i].size() > 1) {
+            statFile << "-------------------------------------\nProduct of percentages (%) = " << prod*100 << "\n-------------------------------------" << std::endl;
+        }
+    }
+    statFile << std::endl;
+    statFile.close();
 }
 
 /*!

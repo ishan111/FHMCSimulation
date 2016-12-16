@@ -6,7 +6,7 @@
  * \param [in] sys System to simulate
  * \param [in] res Restart information
  */
-void performCrossover (simSystem &sys, const restartInfo &res) {
+void performCrossover (simSystem &sys, restartInfo &res) {
     std::cout << "Crossing over to build TMMC matrix" << std::endl;
 
     char *timestamp;

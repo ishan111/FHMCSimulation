@@ -4,6 +4,6 @@
 #include "system.h"
 #include "restart.h"
 
-void performWALA (simSystem &sys, const restartInfo &res);
+void performWALA (simSystem &sys, restartInfo &res);
 
 #endif

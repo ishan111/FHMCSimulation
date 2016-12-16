@@ -4,6 +4,6 @@
 #include "system.h"
 #include "restart.h"
 
-void performTMMC (simSystem &sys, const restartInfo &res);
+void performTMMC (simSystem &sys, restartInfo &res);
 
 #endif

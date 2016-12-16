@@ -29,8 +29,10 @@ void checkBounds (simSystem &sys) {
  * Parse a json input file and initialize system object accordingly.
  *
  * \params [in] filename Input JSON document's filename
+ * \params [in] eqMoves Pointer to move object that will be used during "equilibration" (WL)
+ * \params [in] prMoves Pointer to move object that will be used during "production" (TMMC)
  */
-simSystem initialize (const std::string filename) {
+simSystem initialize (const std::string filename, moves *eqMoves, moves *prMoves) {
 
 	// Parse input JSON file
 	FILE* fp = fopen(filename.c_str(), "r");

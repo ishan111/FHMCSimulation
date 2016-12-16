@@ -20,6 +20,6 @@ void checkBounds (simSystem &sys);
 void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc);
 void setPairPotentials (simSystem &sys, const rapidjson::Document &doc);
 void setup (simSystem &sys, const std::string filename);
-simSystem initialize (const std::string filename);
+simSystem initialize (const std::string filename, moves *eqMoves, moves *prMoves);
 
 #endif

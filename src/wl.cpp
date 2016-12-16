@@ -6,7 +6,7 @@
  * \param [in] sys System to simulate
  * \param [in] res Restart information
  */
-void performWALA (simSystem &sys, const restartInfo &res) {
+void performWALA (simSystem &sys, restartInfo &res) {
     std::cout << "Beginning Wang-Landau portion" << std::endl;
 
     char *timestamp;
