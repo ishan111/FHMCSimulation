@@ -267,6 +267,30 @@ home/nam4/Desktop/sandbox/FHMCSimulation/src/histogram.cpp.s:
 	$(MAKE) -f CMakeFiles/runUnitTests.dir/build.make CMakeFiles/runUnitTests.dir/home/nam4/Desktop/sandbox/FHMCSimulation/src/histogram.cpp.s
 .PHONY : home/nam4/Desktop/sandbox/FHMCSimulation/src/histogram.cpp.s
 
+home/nam4/Desktop/sandbox/FHMCSimulation/src/input.o: home/nam4/Desktop/sandbox/FHMCSimulation/src/input.cpp.o
+.PHONY : home/nam4/Desktop/sandbox/FHMCSimulation/src/input.o
+
+# target to build an object file
+home/nam4/Desktop/sandbox/FHMCSimulation/src/input.cpp.o:
+	$(MAKE) -f CMakeFiles/runUnitTests.dir/build.make CMakeFiles/runUnitTests.dir/home/nam4/Desktop/sandbox/FHMCSimulation/src/input.cpp.o
+.PHONY : home/nam4/Desktop/sandbox/FHMCSimulation/src/input.cpp.o
+
+home/nam4/Desktop/sandbox/FHMCSimulation/src/input.i: home/nam4/Desktop/sandbox/FHMCSimulation/src/input.cpp.i
+.PHONY : home/nam4/Desktop/sandbox/FHMCSimulation/src/input.i
+
+# target to preprocess a source file
+home/nam4/Desktop/sandbox/FHMCSimulation/src/input.cpp.i:
+	$(MAKE) -f CMakeFiles/runUnitTests.dir/build.make CMakeFiles/runUnitTests.dir/home/nam4/Desktop/sandbox/FHMCSimulation/src/input.cpp.i
+.PHONY : home/nam4/Desktop/sandbox/FHMCSimulation/src/input.cpp.i
+
+home/nam4/Desktop/sandbox/FHMCSimulation/src/input.s: home/nam4/Desktop/sandbox/FHMCSimulation/src/input.cpp.s
+.PHONY : home/nam4/Desktop/sandbox/FHMCSimulation/src/input.s
+
+# target to generate assembly for a file
+home/nam4/Desktop/sandbox/FHMCSimulation/src/input.cpp.s:
+	$(MAKE) -f CMakeFiles/runUnitTests.dir/build.make CMakeFiles/runUnitTests.dir/home/nam4/Desktop/sandbox/FHMCSimulation/src/input.cpp.s
+.PHONY : home/nam4/Desktop/sandbox/FHMCSimulation/src/input.cpp.s
+
 home/nam4/Desktop/sandbox/FHMCSimulation/src/insert.o: home/nam4/Desktop/sandbox/FHMCSimulation/src/insert.cpp.o
 .PHONY : home/nam4/Desktop/sandbox/FHMCSimulation/src/insert.o
 
@@ -510,6 +534,9 @@ help:
 	@echo "... home/nam4/Desktop/sandbox/FHMCSimulation/src/histogram.o"
 	@echo "... home/nam4/Desktop/sandbox/FHMCSimulation/src/histogram.i"
 	@echo "... home/nam4/Desktop/sandbox/FHMCSimulation/src/histogram.s"
+	@echo "... home/nam4/Desktop/sandbox/FHMCSimulation/src/input.o"
+	@echo "... home/nam4/Desktop/sandbox/FHMCSimulation/src/input.i"
+	@echo "... home/nam4/Desktop/sandbox/FHMCSimulation/src/input.s"
 	@echo "... home/nam4/Desktop/sandbox/FHMCSimulation/src/insert.o"
 	@echo "... home/nam4/Desktop/sandbox/FHMCSimulation/src/insert.i"
 	@echo "... home/nam4/Desktop/sandbox/FHMCSimulation/src/insert.s"

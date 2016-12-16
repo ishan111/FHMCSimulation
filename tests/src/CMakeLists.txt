@@ -33,6 +33,7 @@ file(GLOB omcs_SRC
 	"../../src/translate.cpp"
 	"../../src/utilities.cpp"
 	"../../src/quaternion.cpp"
+	"../../src/input.cpp"
 )
 
 ################################
