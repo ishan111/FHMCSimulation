@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "global.h"
+#include "quaternion.h"
 
 /*!
  * Atom class with rigid internal degrees of freedom besides its center of mass.
@@ -14,11 +15,12 @@ public:
 	atom (int ncenters, std::vector < std::vector < double > > rel_or); // Instantiate with rigid centers oriented according to these vectors
 	~atom () {};
 
+	//void rotateCenters (double alpha, double beta, double gamma); // Rotate centers
+	void rotateCenters (const quaternion &q); // Rotate the atom's center(s) using quaternions
+
 	int mState; //!< State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted
 	std::vector < double > pos; //!< 3D position
-	std::vector < std::vector < double > > vec_to_centers; //!< Vectors pointing from pos to rigid centers
-
-	void rotate_centers (double alpha, double beta, double gamma); //!< Rotate centers
+	std::vector < std::vector < double > > vecToCenters; //!< Vectors pointing from pos to rigid centers
 };
 
 #endif
