@@ -103,7 +103,7 @@ double fsLennardJones::energy (const atom* a1, const atom* a2, const std::vector
 		throw customException ("For fsLennardJones parameters not set");
 	}
 
-	const double r_sq = pbc_dist2(a1->pos, a2->pos, box);
+	const double r_sq = pbcDist2(a1->pos, a2->pos, box);
 
 	// only one of these atoms (at most) should be "partially" inserted
 	int mState = 0;
@@ -232,7 +232,7 @@ double lennardJones::energy (const atom* a1, const atom* a2, const std::vector <
 		throw customException ("For lennardJones parameters not set");
 	}
 
-	const double r_sq = pbc_dist2(a1->pos, a2->pos, box);
+	const double r_sq = pbcDist2(a1->pos, a2->pos, box);
 
 	// only one of these atoms (at most) should be "partially" inserted
 	int mState = 0;
@@ -380,7 +380,7 @@ double tabulated::energy (const atom* a1, const atom* a2, const std::vector < do
 		throw customException ("For tabulated parameters not set");
 	}
 
-	const double r = sqrt(pbc_dist2(a1->pos, a2->pos, box));
+	const double r = sqrt(pbcDist2(a1->pos, a2->pos, box));
 
 	// only one of these atoms (at most) should be "partially" inserted
 	int mState = 0;
@@ -508,7 +508,7 @@ double squareWell::energy (const atom* a1, const atom* a2, const std::vector < d
 		throw customException ("For squareWell parameters not set");
 	}
 
-	const double r = sqrt(pbc_dist2(a1->pos, a2->pos, box));
+	const double r = sqrt(pbcDist2(a1->pos, a2->pos, box));
 
 	int mState = 0;
 	if (a1->mState != 0) {
@@ -614,7 +614,7 @@ double hardCore::energy (const atom* a1, const atom* a2, const std::vector < dou
 		mState = a2->mState;
 	}
 
-	const double r = sqrt(pbc_dist2(a1->pos, a2->pos, box));
+	const double r = sqrt(pbcDist2(a1->pos, a2->pos, box));
 
 	if (r < sigmaM_[mState]) {
 		return NUM_INFINITY;

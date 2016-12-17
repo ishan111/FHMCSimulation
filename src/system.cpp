@@ -442,11 +442,11 @@ void simSystem::translateAtom (const int typeIndex, const int atomIndex, std::ve
 /*!
  * Toggle KE adjustment to energy setting
  */
-void simSystem::toggle_ke() {
-	if (toggle_ke_ == false) {
-		toggle_ke_ = true;
+void simSystem::toggleKE() {
+	if (toggleKE_ == false) {
+		toggleKE_ = true;
 	} else {
-		toggle_ke_ = false;
+		toggleKE_ = false;
 	}
 }
 
@@ -496,7 +496,7 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 
 	lnF_start = 1.0; // default for lnF_start
 	lnF_end = 2.0e-18; // default for lnF_end
-	toggle_ke_ = false; //default, do NOT adjust energy by kinetic contribution of 3/2kT per atom (just record PE)
+	toggleKE_ = false; //default, do NOT adjust energy by kinetic contribution of 3/2kT per atom (just record PE)
 	totalTMMCSweeps = 0;
 	wlSweepSize = 0;
 	wala_g = 0.5;
@@ -1067,7 +1067,7 @@ void simSystem::recordEnergyHistogram () {
 /*!
  * Monitor the energy histogram bounds at each Ntot
  */
-void simSystem::check_energy_histogram_bounds () {
+void simSystem::checkEnergyHistogramBounds () {
 	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
 		const int address = totN_-totNBounds_[0];
 		energyHistogram_lb_[address] = std::min(energyHistogram_lb_[address], energy_);
@@ -1078,7 +1078,7 @@ void simSystem::check_energy_histogram_bounds () {
 /*!
  * Check the histogram entries and trim off zero-valued entries and bounds
  */
-void simSystem::refine_energy_histogram_bounds () {
+void simSystem::refineEnergyHistogramBounds () {
 	for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_.begin(); it != energyHistogram_.end(); ++it) {
 		try {
 			it->trim_edges();
@@ -1192,7 +1192,7 @@ void simSystem::recordPkHistogram () {
 /*!
  * Check the histogram entries and trim off zero-valued entries and bounds
  */
-void simSystem::refine_pk_histogram_bounds () {
+void simSystem::refinePkHistogramBounds () {
 	for (std::vector < std::vector < dynamic_one_dim_histogram > >::iterator it = pkHistogram_.begin(); it != pkHistogram_.end(); ++it) {
 		for (std::vector < dynamic_one_dim_histogram >::iterator it2 = it->begin(); it2 != it->end(); ++it2) {
 			try {
@@ -1677,7 +1677,7 @@ const double simSystem::scratchEnergy () {
         	}
     	}
 
-    	if (toggle_ke_ == true) {
+    	if (toggleKE_ == true) {
     		double ns = 0.0;
     		for (unsigned int i = 0; i < nSpecies_; ++i) {
     			ns += numSpecies[i];

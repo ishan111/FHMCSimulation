@@ -498,7 +498,7 @@ cylinderZ::cylinderZ (const double x, const double y, const double radius, const
  */
 bool cylinderZ::inside (const atom *a1, const std::vector < double > &box) {
     center_[2] = a1->pos[2]; // same z-plane
-    double rv2 = pbc_dist2 (a1->pos, center_, box);
+    double rv2 = pbcDist2 (a1->pos, center_, box);
 
     double sig = sigma_;
     if (a1->mState > 0) {
@@ -507,7 +507,7 @@ bool cylinderZ::inside (const atom *a1, const std::vector < double > &box) {
     if (a1->mState < 0 || a1->mState > M_-1) {
         throw customException ("mState out of bounds for cylinderZ");
     }
-    
+
     double rc = radius_ - sig/2.0;
     if (rv2 >= rc*rc) {
         return false;
@@ -524,7 +524,7 @@ bool cylinderZ::inside (const atom *a1, const std::vector < double > &box) {
  */
 double cylinderZ::energy (const atom *a1, const std::vector < double > &box) {
     center_[2] = a1->pos[2]; // same z-plane
-    double rv2 = pbc_dist2 (a1->pos, center_, box);
+    double rv2 = pbcDist2 (a1->pos, center_, box);
     double U = 0.0, sig = sigma_, eps = eps_;
 
     if (a1->mState > 0) {

@@ -71,9 +71,9 @@ void performTMMC (simSystem &sys, restartInfo &res, moves *usedMovesPr) {
 		if (sweep%sweepPrint == 0) {
 			printCounter++;
 			sys.getTMMCBias()->print("tmmc-Checkpoint-"+sstr(printCounter), true);
-			sys.refine_energy_histogram_bounds();
+			sys.refineEnergyHistogramBounds();
 			sys.printEnergyHistogram("eHist-Checkpoint-"+sstr(printCounter));
-            sys.refine_pk_histogram_bounds();
+            sys.refinePkHistogramBounds();
             sys.printPkHistogram("pkHist-Checkpoint-"+sstr(printCounter));
             sys.printExtMoments("extMom-Checkpoint-"+sstr(printCounter));
             usedMovesPr->print("tmmc.stats");

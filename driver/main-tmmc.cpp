@@ -23,78 +23,52 @@
  *
  */
 
-#include <iostream>
-#include <time.h>
-#include <fstream>
-#include <cmath>
-#include <iomanip>
-#include "../src/system.h"
-#include "../src/utilities.h"
-#include "../src/global.h"
-#include "../src/insert.h"
-#include "../src/delete.h"
-#include "../src/translate.h"
-#include "../src/swap.h"
-#include "../src/moves.h"
-#include "../src/barrier.h"
-#include "../src/input.h"
-#include "../src/restart.h"
+
+#include "../src/fhmc.h"
 
 /*!
  * Usage: ./binary_name input.json
  */
 int main (int argc, char * const argv[]) {
+	const std::string restartFile = "restart/state.json";
 	std::cout << "Beginning simulation at " << getTimeStamp() << std::endl;
 
-	moves *usedMovesEq, *usedMovesPr;
+	moves *usedMovesEq = NULL, *usedMovesPr = NULL;
 	simSystem sys = initialize (argv[1], usedMovesEq, usedMovesPr); // read json file and create system class
 
 	// if restart/ exists, default to use this information to restart the simulation
-	restartInfo *res;
-    if (fileExists("restart/sys.state")) {
-        res = new restartInfo ("restart/sys.state");
-    } else {
-        // otherwise generate initial configuarion
+	restartInfo res (restartFile, 900);
+    if (!res.hasCheckpoint) {
         setup (sys, argv[1]);
     }
 
-	// TODO: add moves object to perform* functions
-	// add functionality where each perfomr* saves the state of the system
-	// finish adding restarting information so system knows how to pick up where it left off
+	// TODO: finish adding restarting information so system knows how to pick up where it left off
 
-	if (!res->walaDone) {
+	if (!res.walaDone) {
 		// perform Wang-Landau simulation
-		performWALA (sys, res);
-		performCrossover (sys, res);
-		performTMMC (sys, res);
-	} else if (!res->crossoverDone) {
+		performWALA (sys, res, usedMovesEq);
+		performCrossover (sys, res, usedMovesEq);
+		performTMMC (sys, res, usedMovesEq);
+	} else if (!res.crossoverDone) {
 		// crossover to TMMC
-		performCrossover (sys, res);
-		performTMMC (sys, res);
-	} else if (!res->tmmcDone) {
+		performCrossover (sys, res, usedMovesEq);
+		performTMMC (sys, res, usedMovesEq);
+	} else if (!res.tmmcDone) {
 		// perform tmmc portion of the simulation
-		performTMMC (sys, res);
+		performTMMC (sys, res, usedMovesEq);
 	}
 
-	usedMovesPr.print("tmmc_stats.log");
-
     sys.printSnapshot("final.xyz", "last configuration");
-    sys.refine_energy_histogram_bounds();
+    sys.refineEnergyHistogramBounds();
     sys.printEnergyHistogram("final_eHist");
-    sys.refine_pk_histogram_bounds();
+    sys.refinePkHistogramBounds();
     sys.printPkHistogram("final_pkHist");
     sys.printExtMoments("final_extMom");
     sys.getTMMCBias()->print("final", false);
 
-	if (fileExists("restart/sys.state")) {
-        delete res;
-    }
 	delete usedMovesEq;
 	delete usedMovesPr;
 
-    time (&rawtime);
- 	timeinfo = localtime (&rawtime);
-    strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
-    std::cout << "Finished simulation at " << timestamp << std::endl;
+    std::cout << "Finished simulation at " << getTimeStamp() << std::endl;
 	return SAFE_EXIT;
 }

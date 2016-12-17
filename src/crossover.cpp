@@ -25,7 +25,7 @@ void performCrossover (simSystem &sys, restartInfo &res, moves *usedMovesEq) {
                 exit(SYS_FAILURE);
             }
             if (sys.getCurrentM() == 0) {
-                sys.check_energy_histogram_bounds ();
+                sys.checkEnergyHistogramBounds ();
             }
         }
 

@@ -118,8 +118,8 @@ simSystem initialize (const std::string filename, moves *usedMovesEq, moves *use
 
 	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot, duh, max_order);
 	if (use_ke) {
-		sys.toggle_ke();
-		if (sys.add_ke_correction() == false) {
+		sys.toggleKE();
+		if (sys.addKECorrection() == false) {
 			throw customException ("Unable to set KE flag");
 		}
 	}
@@ -590,8 +590,8 @@ void setup (simSystem &sys, const std::string filename) {
         std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
 		simSystem initSys (doc["num_species"].GetInt(), 1/10., sysBox, initMu, sysMax, sysMin, Mtot, duh, max_order); // beta =  1/T, so low beta to have high T
 		if (use_ke) {
-			initSys.toggle_ke();
-			if (initSys.add_ke_correction() == false) {
+			initSys.toggleKE();
+			if (initSys.addKECorrection() == false) {
 				throw customException ("Unable to set KE flag");
 			}
 		}

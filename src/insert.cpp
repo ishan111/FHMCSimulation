@@ -2,28 +2,28 @@
 
 /*!
  * Insert a particle into the system.  All other information is stored in the simSystem object.
- * 
+ *
  * \param [in] sys System object to attempt to insert a particle into.
- * 
+ *
  * \return MOVE_SUCCESS if inserted a particle, otherwise MOVE_FAILURE if did not.  Will throw exceptions if there was an error.
  */
 int insertParticle::make (simSystem &sys) {
 	bool earlyReject = false;
-	
+
 	// check if at upper bound for this specific species type
 	if (sys.numSpecies[typeIndex_] >= sys.maxSpecies(typeIndex_)) {
-        	earlyReject = true;	
+        	earlyReject = true;
 	}
 
 	// also check if at upper bound for total number of atoms
 	if (sys.getTotN() >= sys.totNMax()) {
 		earlyReject = true;
  	}
-    
+
 	// updates to biasing functions must be done even if at bounds
 	if (earlyReject) {
 		if (sys.useWALA) {
-			 sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());		
+			 sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
 		}
 		if (sys.useTMMC) {
             		int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() + 1;
@@ -41,14 +41,14 @@ int insertParticle::make (simSystem &sys) {
 	for (unsigned int i = 0; i < box.size(); ++i) {
 		V *= box[i];
 	}
-	
+
 	double insEnergy = 0.0;
 	int origState = 0;
 	bool createdAtom = false;
 
 	// reference N state
 	long long int nHigh = sys.numSpecies[typeIndex_]+1;
-	
+
     	atom* newAtom;
     	if (sys.getCurrentM() == 0) {
     		// attempt to insert a brand new one
@@ -64,7 +64,7 @@ int insertParticle::make (simSystem &sys) {
     	} else {
     		// continue to try to insert the partially inserted one
 	    	// don't increment the state yet
-    		newAtom = sys.getFractionalAtom(); // mcMove object guarantees we are only making this move if the fractional atom if type typeIndex_ 
+    		newAtom = sys.getFractionalAtom(); // mcMove object guarantees we are only making this move if the fractional atom if type typeIndex_
 	    	origState = newAtom->mState;
 
 	    	// if doing expanded ensemble and one is already partially inserted, have to get baseline, else this baseline is 0
@@ -73,7 +73,7 @@ int insertParticle::make (simSystem &sys) {
         		std::vector < atom* > neighborAtoms = sys.getNeighborAtoms (spec, typeIndex_, newAtom);
 	            	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
     				try {
-    					insEnergy -= sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], newAtom, box);	
+    					insEnergy -= sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], newAtom, box);
     				} catch (customException& ce) {
     					std::string a = "Cannot insert because of energy error: ", b = ce.what();
 	    				if (createdAtom) {
@@ -84,23 +84,23 @@ int insertParticle::make (simSystem &sys) {
             		}
             		// neglect all tail corrections for partially inserted particles
         	}
-            
+
             // account for any wall or barrier interactions
             insEnergy -= sys.speciesBarriers[typeIndex_].energy(newAtom, box);
-        
+
         	// now increment the expanded ensemble state after baseline has been calculated
         	newAtom->mState += 1;
         	if (newAtom->mState == sys.getTotalM()) {
         		newAtom->mState = 0;
         	}
     	}
-    
+
     	for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
     		// get positions of neighboring atoms around newAtom
     		std::vector < atom* > neighborAtoms = sys.getNeighborAtoms (spec, typeIndex_, newAtom);
         	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
 			try {
-				insEnergy += sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], newAtom, box);	
+				insEnergy += sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], newAtom, box);
 			} catch (customException& ce) {
 				std::string a = "Cannot insert because of energy error: ", b = ce.what();
 				if (createdAtom) {
@@ -121,17 +121,17 @@ int insertParticle::make (simSystem &sys) {
         	}
 #endif
     	}
-    
+
         // account for any wall or barrier interaction
         insEnergy += sys.speciesBarriers[typeIndex_].energy(newAtom, box);
-    
+
     	// restore the original mState of the newAtom
     	newAtom->mState = origState;
-    
+
     	// biasing
 	double dN = 1.0/sys.getTotalM();
     double p_u = 0.0;
-    if (sys.add_ke_correction()) {
+    if (sys.addKECorrection()) {
         const double Lambda3 = pow(H2_2PI*sys.beta()/sys.mass(typeIndex_), 1.5);
         p_u = pow(V/nHigh/Lambda3, dN)*exp(sys.beta()*(sys.mu(typeIndex_)*dN - insEnergy));
     } else {
@@ -141,17 +141,17 @@ int insertParticle::make (simSystem &sys) {
     	if (sys.getCurrentM() == sys.getTotalM()-1) {
     		nTotFinal++;
     		mFinal = 0;
-    		if (sys.add_ke_correction()) {
+    		if (sys.addKECorrection()) {
     			insEnergy += 1.5/sys.beta();
     		}
     	}
     	double bias = calculateBias(sys, nTotFinal, mFinal);
-   
+
     	// tmmc gets updated the same way, regardless of whether the move gets accepted
     	if (sys.useTMMC) {
-    		sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, sys.getCurrentM(), mFinal, std::min(1.0, p_u)); 
+    		sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, sys.getCurrentM(), mFinal, std::min(1.0, p_u));
     	}
-    
+
 	// metropolis criterion
 	if (rng (&RNG_SEED) < p_u*bias) {
         	try {
@@ -164,27 +164,27 @@ int insertParticle::make (simSystem &sys) {
             		throw customException (a+b);
         	}
 		sys.incrementEnergy(insEnergy);
-		
+
 		// update Wang-Landau bias, if used
 		if (sys.useWALA) {
 			sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
 		}
-		
+
 		if (createdAtom) {
 			delete newAtom;
 		}
-		
+
         	return MOVE_SUCCESS;
     	}
-    
+
 	// update Wang-Landau bias (even if moved failed), if used
 	if (sys.useWALA) {
 		sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
 	}
-	
+
 	if (createdAtom) {
 		delete newAtom;
 	}
-	
+
 	return MOVE_FAILURE;
 }

@@ -34,8 +34,8 @@ public:
 	simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies, const int Mtot, const double energyHistDelta = 10.0, const int max_order = 2);
 	~simSystem ();
 
-    bool add_ke_correction () { return toggle_ke_; }
-    void toggle_ke ();
+    bool addKECorrection () { return toggleKE_; }
+    void toggleKE ();
 	void incrementEnergy (const double dU) { energy_ += dU; } //!< Increment the system's energy
 	void addPotential (const int spec1, const int spec2, const std::string ppot_name, const std::vector < double > &params, const bool useCellList=false); //(const int spec1, const int spec2, pairPotential *pp, bool useCellList=false);
 	void printSnapshot (std::string filename, std::string comment);
@@ -57,9 +57,9 @@ public:
 	void setTotNBounds (const std::vector < int > &bounds);
    	void incrementMState ();
    	void decrementMState ();
-   	void check_energy_histogram_bounds ();
-   	void refine_energy_histogram_bounds ();
-   	void refine_pk_histogram_bounds ();
+   	void checkEnergyHistogramBounds ();
+   	void refineEnergyHistogramBounds ();
+   	void refinePkHistogramBounds ();
 	bool potentialIsSet (const int spec1, const int spec2) { return ppotSet_[spec1][spec2]; }	//!< Boolean which returns whether or not a pair has had its potential specified by the user yet
 	const int nSpecies () { return nSpecies_; } //!< Return the number of different species in the system
 	const int maxSpecies (const int index);
@@ -98,7 +98,7 @@ public:
 
 private:
 	atom* fractionalAtom_; //!< Pointer to the atom in the system that is currently only fractionally inserted/deleted
-	bool toggle_ke_; //!< Flag for the use of kinetic energy corrections
+	bool toggleKE_; //!< Flag for the use of kinetic energy corrections
 	int fractionalAtomType_; //!< Type of atom that is currently fractionally inserted
 	int nSpecies_; //!< Number of species types allowed in the simulation (single component = 1, multicomponent > 1)
    	int Mcurrent_; //!< Fractional level of insertion of the current atom in an "expanded" state, all species have the same Mtot_
