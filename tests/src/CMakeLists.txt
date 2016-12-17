@@ -20,20 +20,27 @@ add_definitions(-D_GLIBCXX_DEBUG)
 include_directories("../../src/")
 file(GLOB omcs_SRC
 	"../../src/*.h"
+	"../../srd/atom.h"
 	"../../src/barrier.cpp"
 	"../../src/bias.cpp"
 	"../../src/cellList.cpp"
+	"../../src/crossover.cpp"
 	"../../src/delete.cpp"
 	"../../src/histogram.cpp"
+	"../../src/input.cpp"
 	"../../src/insert.cpp"
+	"../../src/mover.cpp"
 	"../../src/moves.cpp"
 	"../../src/potentials.cpp"
+	"../../src/quaternion.cpp"
+	"../../src/restart.cpp"
+	"../../src/sanity.cpp"
 	"../../src/swap.cpp"
 	"../../src/system.cpp"
+	"../../src/tmmc.cpp"
 	"../../src/translate.cpp"
 	"../../src/utilities.cpp"
-	"../../src/quaternion.cpp"
-	"../../src/input.cpp"
+	"../../src/wala.cpp"	
 )
 
 ################################
