@@ -2,19 +2,7 @@
 #include <vector>
 #include <iostream>
 #include <limits>
-#include "../../src/atom.h"
-#include "../../src/bias.h"
-#include "../../src/cellList.h"
-#include "../../src/delete.h"
-#include "../../src/global.h"
-#include "../../src/histogram.h"
-#include "../../src/insert.h"
-#include "../../src/moves.h"
-#include "../../src/potentials.h"
-#include "../../src/swap.h"
-#include "../../src/system.h"
-#include "../../src/translate.h"
-#include "../../src/utilities.h"
+#include "../../src/fhmc.h"
 
 /* Test Atom Class to be 3D */
 TEST (Initialize, Atom) {
@@ -63,9 +51,9 @@ TEST (Adding, Moves) {
 TEST (PBC, TwoVectors) {
 	double tol = 1.0e-9, L = 10;
 	std::vector < double > p1(3, 0), p2 (3, 1), p3 (3, L/2.0), p4 (3, 0.75*L), box(3, L);
-	EXPECT_TRUE (fabs(pbc_dist2(p1, p2, box) - 3.0) < tol );
-	EXPECT_TRUE (fabs(pbc_dist2(p1, p3, box) - (3.0*L*L/4.0)) < tol );
-	EXPECT_TRUE (fabs(pbc_dist2(p1, p4, box) - (0.25*L*0.25*L*3.0)) < tol );
+	EXPECT_TRUE (fabs(pbcDist2(p1, p2, box) - 3.0) < tol );
+	EXPECT_TRUE (fabs(pbcDist2(p1, p3, box) - (3.0*L*L/4.0)) < tol );
+	EXPECT_TRUE (fabs(pbcDist2(p1, p4, box) - (0.25*L*0.25*L*3.0)) < tol );
 }
 
 /* moving across periodic boundaries */
@@ -607,8 +595,8 @@ TEST_F (InitializeSystem, incrementEnergy) {
 
 TEST_F (InitializeSystem, addPotential) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
-	lennardJones ljtest;
-	mysys.addPotential(0, 0, &ljtest);
+	std::vector < double > params(5, 1);
+	mysys.addPotential(0, 0, "lennard_jones", params, true);
 	EXPECT_EQ (mysys.potentialIsSet (0, 0), true);
 	EXPECT_EQ (mysys.potentialIsSet (0, 1), false);
 	EXPECT_EQ (mysys.potentialIsSet (1, 1), false);
@@ -695,7 +683,6 @@ TEST_F (InitializeSystem, deleteAtom) {
 
 TEST_F (InitializeSystem, scratchEnergy) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
-	lennardJones ljtest;
 	std::vector < double > params (5), p1(3, 0.0), p2(3, 0.0);
 
 	// wca
@@ -704,8 +691,7 @@ TEST_F (InitializeSystem, scratchEnergy) {
 	params[2] = pow(2.0, 1./6.);
 	params[3] = 1.0;
 	params[4] = 1; // Mtot
-	ljtest.setParameters(params);
-	mysys.addPotential(0, 0, &ljtest);
+	mysys.addPotential(0, 0, "lennard_jones", params, true);
 
 	atom a, b;
 	p2[2] = 1.01*pow(2.0, 1./6.);
@@ -723,7 +709,7 @@ TEST_F (InitializeSystem, scratchEnergy) {
 	params[1] = 1.0;
 	params[2] = 2.5;
 	params[3] = 0.0;
-	ljtest.setParameters(params);
+	mysys.ppot[0][0]->setParameters(params);
 
 	mysys.atoms[0][1].pos[2] = pow(2.0, 1./6.);
 	EXPECT_TRUE (fabs(mysys.scratchEnergy() - -1.0) < tol);
@@ -731,7 +717,6 @@ TEST_F (InitializeSystem, scratchEnergy) {
 	mysys.atoms[0][1].pos[2] = 1.0;
 	EXPECT_TRUE (fabs(mysys.scratchEnergy() - 0.0) < tol);
 }
-
 
 TEST (testTMMC, tmmcGoodInit) {
 	const int Nmax = 100, Nmin = 10, sweepSize = 100;
@@ -1327,10 +1312,8 @@ TEST_F (testComputeBias, testInSituWALASingleComponent) {
 	mysys.startWALA (lnF, 0.5, 0.8, 1);
 	EXPECT_TRUE (mysys.useWALA);
 
-	hardCore hc;
 	std::vector < double > params (2, 1.0);
-	hc.setParameters (params);
-	mysys.addPotential (0, 0, &hc, false);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
 
 	moves usedMoves;
 	insertParticle newIns (0, "insert");
@@ -1357,16 +1340,16 @@ TEST_F (testComputeBias, testInSituWALAMultiComponent) {
 	mysys.startWALA (lnF, 0.5, 0.8, 1);
 	EXPECT_TRUE (mysys.useWALA);
 
-	hardCore hc11, hc12, hc22;
+	//hardCore hc11, hc12, hc22;
 	std::vector < double > params (2, 1.0);
-	hc11.setParameters (params);
+	//hc11.setParameters (params);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
 	params[0] = 0.0; // ergo 1 and 2 can sit on top of each other
-	hc12.setParameters (params);
+	//hc12.setParameters (params);
+	mysys.addPotential (0, 1, "hard_sphere", params, false);
 	params[1] = 2.0;
-	hc22.setParameters (params);
-	mysys.addPotential (0, 0, &hc11, false);
-	mysys.addPotential (0, 1, &hc12, false);
-	mysys.addPotential (1, 1, &hc22, false);
+	//hc22.setParameters (params);
+	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves usedMoves;
 	insertParticle newIns (0, "insert");
@@ -1413,10 +1396,10 @@ TEST_F (testComputeBias, testInSituTMMCSingleComponent) {
 	mysys.startTMMC (tmmcSweepSize, 1);
 	EXPECT_TRUE (mysys.useTMMC);
 
-	hardCore hc;
+	//hardCore hc;
 	std::vector < double > params (2, 1.0);
-	hc.setParameters (params);
-	mysys.addPotential (0, 0, &hc, false);
+	//hc.setParameters (params);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
 
 	moves usedMoves;
 	insertParticle newIns (0, "insert");
@@ -1460,16 +1443,16 @@ TEST_F (testComputeBias, testInSituTMMCMultiComponent) {
 	mysys.startTMMC (tmmcSweepSize, 1);
 	EXPECT_TRUE (mysys.useTMMC);
 
-	hardCore hc11, hc12, hc22;
+	//hardCore hc11, hc12, hc22;
 	std::vector < double > params (2, 1.0);
-	hc11.setParameters (params);
+	//hc11.setParameters (params);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
 	params[0] = 0.0;
-	hc12.setParameters (params);
+	//hc12.setParameters (params);
+	mysys.addPotential (0, 1, "hard_sphere", params, false);
 	params[0] = 0.0;
-	hc22.setParameters (params);
-	mysys.addPotential (0, 0, &hc11, false);
-	mysys.addPotential (0, 1, &hc12, false);
-	mysys.addPotential (1, 1, &hc22, false);
+	//hc22.setParameters (params);
+	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves usedMoves;
 	insertParticle newIns (0, "insert");
@@ -1537,17 +1520,17 @@ TEST (testSwapMove, twoComponents) {
 	std::vector <int> nmax (3, 3), nmin (3, 0);
 	simSystem mysys (3, 1.0, ib, mu, nmax, nmin, 1);
 
-	squareWell sw12, sw13, sw23; // only bother to set cross interactions here
+	//squareWell sw12, sw13, sw23; // only bother to set cross interactions here
 	std::vector < double > params (4, 0.0);
 	params[0] = 1.0; params[1] = 0.5; params[2] = 1.0, params[3] = 1;
-	sw12.setParameters (params);
+	//sw12.setParameters (params);
+	mysys.addPotential (0, 1, "square_well", params, true);
 	params[0] = 1.0; params[1] = 0.5; params[2] = 0.3, params[3] = 1;
-	sw13.setParameters (params);
+	//sw13.setParameters (params);
+	mysys.addPotential (0, 2, "square_well", params, true);
 	params[0] = 1.0; params[1] = 0.5; params[2] = 2.0, params[3] = 1;
-	sw23.setParameters (params);
-	mysys.addPotential (0, 1, &sw12, true);
-	mysys.addPotential (0, 2, &sw13, true);
-	mysys.addPotential (1, 2, &sw23, true);
+	//sw23.setParameters (params);
+	mysys.addPotential (1, 2, "square_well", params, true);
 
 	atom a1, a2, a3;
 	a1.pos[0] = 2.5;
@@ -1600,8 +1583,6 @@ TEST (testSwapMove, twoComponents) {
 		lastAns = ans[0][0];
 	}
 	EXPECT_TRUE (fabs(mysys.scratchEnergy() - -0.3) < 1.0e-9); // only 1-3 interaction remains
-
-
 
 	// swap a1 and a3 which are now an isolated pair
 	moves usedMoves3;
@@ -2632,16 +2613,16 @@ TEST_F (testMulticomponentExpandedMCMove, selectSpec1) {
 	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
 	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
 
-	hardCore hc11, hc12, hc22;
+	//hardCore hc11, hc12, hc22;
 	std::vector < double > params (2, Mtot);
-	hc11.setParameters (params);
+	//hc11.setParameters (params);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
 	params[0] = 1.0;
-	hc12.setParameters (params);
+	//hc12.setParameters (params);
+	mysys.addPotential (0, 1, "hard_sphere", params, false);
 	params[0] = 2.0;
-	hc22.setParameters (params);
-	mysys.addPotential (0, 0, &hc11, false);
-	mysys.addPotential (0, 1, &hc12, false);
-	mysys.addPotential (1, 1, &hc22, false);
+	//hc22.setParameters (params);
+	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves mover (Mtot);
 
@@ -2703,16 +2684,16 @@ TEST_F (testMulticomponentExpandedMCMove, selectSpec1_moved) {
 	std::vector < double > ib (3, 10), mu (Nspec, 1.0);
 	simSystem mysys (Nspec, 1.0, ib, mu, specNmax, specNmin, Mtot);
 
-	hardCore hc11, hc12, hc22;
+	//hardCore hc11, hc12, hc22;
 	std::vector < double > params (2, Mtot);
-	hc11.setParameters (params);
+	//hc11.setParameters (params);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
 	params[0] = 1.0;
-	hc12.setParameters (params);
+	//hc12.setParameters (params);
+	mysys.addPotential (0, 1, "hard_sphere", params, false);
 	params[0] = 2.0;
-	hc22.setParameters (params);
-	mysys.addPotential (0, 0, &hc11, false);
-	mysys.addPotential (0, 1, &hc12, false);
-	mysys.addPotential (1, 1, &hc22, false);
+	//hc22.setParameters (params);
+	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves mover (Mtot);
 
@@ -2989,10 +2970,10 @@ TEST_F (testComputeBiasExpanded, testInSituWALASingleComponent) {
 	mysys.startWALA (lnF, 0.5, 0.8, Mtot);
 	EXPECT_TRUE (mysys.useWALA);
 
-	hardCore hc;
+	//hardCore hc;
 	std::vector < double > params (2, 1.0);
-	hc.setParameters (params);
-	mysys.addPotential (0, 0, &hc, false);
+	//hc.setParameters (params);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
 
 	moves usedMoves (Mtot);
 	insertParticle newIns (0, "insert");
@@ -3025,16 +3006,16 @@ TEST_F (testComputeBiasExpanded, testInSituWALAMultiComponent) {
 	mysys.startWALA (lnF, 0.5, 0.8, Mtot);
 	EXPECT_TRUE (mysys.useWALA);
 
-	hardCore hc11, hc12, hc22;
+	//hardCore hc11, hc12, hc22;
 	std::vector < double > params (2, Mtot);
-	hc11.setParameters (params);
+	//hc11.setParameters (params);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
 	params[0] = 0.0; // ergo 1 and 2 can sit on top of each other
-	hc12.setParameters (params);
+	//hc12.setParameters (params);
+	mysys.addPotential (0, 1, "hard_sphere", params, false);
 	params[1] = 2.0;
-	hc22.setParameters (params);
-	mysys.addPotential (0, 0, &hc11, false);
-	mysys.addPotential (0, 1, &hc12, false);
-	mysys.addPotential (1, 1, &hc22, false);
+	//hc22.setParameters (params);
+	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves usedMoves (Mtot);
 	insertParticle newIns (0, "insert");
@@ -3101,10 +3082,10 @@ TEST_F (testComputeBiasExpanded, testInSituTMMCSingleComponent) {
 	mysys.startTMMC (tmmcSweepSize, Mtot);
 	EXPECT_TRUE (mysys.useTMMC);
 
-	hardCore hc;
+	//hardCore hc;
 	std::vector < double > params (2, Mtot);
-	hc.setParameters (params);
-	mysys.addPotential (0, 0, &hc, false);
+	//hc.setParameters (params);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
 
 	moves usedMoves (Mtot);
 	insertParticle newIns (0, "insert");
@@ -3168,16 +3149,16 @@ TEST_F (testComputeBiasExpanded, testInSituTMMCMultiComponent) {
 	mysys.startTMMC (tmmcSweepSize, Mtot);
 	EXPECT_TRUE (mysys.useTMMC);
 
-	hardCore hc11, hc12, hc22;
+	//hardCore hc11, hc12, hc22;
 	std::vector < double > params (2, Mtot);
-	hc11.setParameters (params);
+	//hc11.setParameters (params);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
 	params[0] = 0.0;
-	hc12.setParameters (params);
+	//hc12.setParameters (params);
+	mysys.addPotential (0, 1, "hard_sphere", params, false);
 	params[0] = 0.0;
-	hc22.setParameters (params);
-	mysys.addPotential (0, 0, &hc11, false);
-	mysys.addPotential (0, 1, &hc12, false);
-	mysys.addPotential (1, 1, &hc22, false);
+	//hc22.setParameters (params);
+	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves usedMoves (Mtot);
 	insertParticle newIns (0, "insert");
@@ -3927,17 +3908,17 @@ TEST (testExpandedSwapMove, multicomponentNoSwapTwoFullyInserted) {
 	std::vector <int> nmax (2, 3), nmin (2, 0);
 	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, Mtot);
 
-	squareWell sw11, sw12, sw22;
+	//squareWell sw11, sw12, sw22;
 	std::vector < double > params (4, 0.0);
 	params[0] = 1.0; params[1] = 0.1; params[2] = 1.0, params[3] = Mtot;
-	sw11.setParameters (params);
+	//sw11.setParameters (params);
+	mysys.addPotential (0, 0, "square_well", params, true);
 	params[0] = 1.5; params[1] = 0.1; params[2] = 1.5, params[3] = Mtot;
-	sw12.setParameters (params);
+	//sw12.setParameters (params);
+	mysys.addPotential (0, 1, "square_well", params, true);
 	params[0] = 2.0; params[1] = 0.1; params[2] = 2.0, params[3] = Mtot;
-	sw22.setParameters (params);
-	mysys.addPotential (0, 0, &sw11, true);
-	mysys.addPotential (0, 1, &sw12, true);
-	mysys.addPotential (1, 1, &sw22, true);
+	//sw22.setParameters (params);
+	mysys.addPotential (1, 1, "square_well", params, true);
 
 	atom a1, a2, a3, a4;
 
@@ -4005,17 +3986,17 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapTwoFullyInserted) {
 	std::vector <int> nmax (2, 3), nmin (2, 0);
 	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, Mtot);
 
-	squareWell sw11, sw12, sw22;
+	//squareWell sw11, sw12, sw22;
 	std::vector < double > params (4, 0.0);
 	params[0] = 1.0; params[1] = 0.1; params[2] = 1.0, params[3] = Mtot;
-	sw11.setParameters (params);
+	//sw11.setParameters (params);
+	mysys.addPotential (0, 0, "square_well", params, true);
 	params[0] = 1.5; params[1] = 0.1; params[2] = 1.5, params[3] = Mtot;
-	sw12.setParameters (params);
+	//sw12.setParameters (params);
+	mysys.addPotential (0, 1, "square_well", params, true);
 	params[0] = 2.0; params[1] = 0.1; params[2] = 2.0, params[3] = Mtot;
-	sw22.setParameters (params);
-	mysys.addPotential (0, 0, &sw11, true);
-	mysys.addPotential (0, 1, &sw12, true);
-	mysys.addPotential (1, 1, &sw22, true);
+	//sw22.setParameters (params);
+	mysys.addPotential (1, 1, "square_well", params, true);
 
 	atom a1, a2, a3, a4;
 
@@ -4083,17 +4064,17 @@ TEST (testExpandedSwapMove, multicomponentAllowSingleSwapTwoFullyInserted) {
 	std::vector <int> nmax (2, 3), nmin (2, 0);
 	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, Mtot);
 
-	squareWell sw11, sw12, sw22;
+	//squareWell sw11, sw12, sw22;
 	std::vector < double > params (4, 0.0);
 	params[0] = 1.0; params[1] = 0.1; params[2] = 1.0, params[3] = Mtot;
-	sw11.setParameters (params);
+	//sw11.setParameters (params);
+	mysys.addPotential (0, 0, "square_well", params, true);
 	params[0] = 1.5; params[1] = 0.1; params[2] = NUM_INFINITY, params[3] = Mtot; // once 1-2 come together they won't separate
-	sw12.setParameters (params);
+	//sw12.setParameters (params);
+	mysys.addPotential (0, 1, "square_well", params, true);
 	params[0] = 2.0; params[1] = 0.1; params[2] = 2.0, params[3] = Mtot;
-	sw22.setParameters (params);
-	mysys.addPotential (0, 0, &sw11, true);
-	mysys.addPotential (0, 1, &sw12, true);
-	mysys.addPotential (1, 1, &sw22, true);
+	//sw22.setParameters (params);
+	mysys.addPotential (1, 1, "square_well", params, true);
 
 	atom a1, a2, a3, a4;
 
@@ -4170,17 +4151,17 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	std::vector <int> nmax (2, 3), nmin (2, 0);
 	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, Mtot);
 
-	squareWell sw11, sw12, sw22;
+	//squareWell sw11, sw12, sw22;
 	std::vector < double > params (4, 0.0);
 	params[0] = 1.0; params[1] = 0.1; params[2] = 1.0, params[3] = Mtot;
-	sw11.setParameters (params);
+	//sw11.setParameters (params);
+	mysys.addPotential (0, 0, "square_well", params, true);
 	params[0] = 1.5; params[1] = 0.1; params[2] = NUM_INFINITY, params[3] = Mtot; // once 1-2 come together they won't separate
-	sw12.setParameters (params);
+	//sw12.setParameters (params);
+	mysys.addPotential (0, 1, "square_well", params, true);
 	params[0] = 2.0; params[1] = 0.1; params[2] = 2.0, params[3] = Mtot;
-	sw22.setParameters (params);
-	mysys.addPotential (0, 0, &sw11, true);
-	mysys.addPotential (0, 1, &sw12, true);
-	mysys.addPotential (1, 1, &sw22, true);
+	//sw22.setParameters (params);
+	mysys.addPotential (1, 1, "square_well", params, true);
 
 	atom a1, a2, a3, a4;
 
