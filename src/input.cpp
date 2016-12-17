@@ -41,7 +41,7 @@ simSystem initialize (const std::string filename, moves *usedMovesEq, moves *use
 	rapidjson::Document doc;
 	doc.ParseStream(is);
 	fclose(fp);
-	std::cout << "Parsed " << filename << std::endl;
+	std::cout << "Parsed " << filename << " at " << getTimeStamp() << std::endl;
 
 	// Assert that this is a JSON document
 	assert(doc.IsObject());
@@ -136,51 +136,6 @@ simSystem initialize (const std::string filename, moves *usedMovesEq, moves *use
 	if (sysWindow.begin() != sysWindow.end()) {
 		sys.setTotNBounds(sysWindow);
 	}
-
-	/*std::vector < int > initialization_order (sys.nSpecies(), 0), check_init (sys.nSpecies(), 0);
-	std::vector < double > init_frac (sys.nSpecies(), 1.0);
-	double sum = 0.0;
-	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		initialization_order[i] = i;
-		if (i > 0) init_frac[i] = 0.0;
-		sum += init_frac[i];
-	}
-	if (doc.HasMember("init_order")) {
-		assert(doc["init_order"].IsArray());
-		assert(doc["init_order"].Size() == doc["num_species"].GetInt());
-
-		for (rapidjson::SizeType i = 0; i < doc["init_order"].Size(); ++i) {
-			assert(doc["init_order"][i].IsInt());
-			initialization_order[i] = doc["init_order"][i].GetInt();
-			if (initialization_order[i] < 0 || initialization_order[i] >= sys.nSpecies()) {
-				std::cerr << "Order of initialization goes out of bounds, should include 0 <= i < nSpec" << std::endl;
-				exit(SYS_FAILURE);
-			}
-			if (check_init[initialization_order[i]] != 0) {
-				std::cerr << "Order of initialization repeats itself" << std::endl;
-				exit(SYS_FAILURE);
-			} else {
-				check_init[initialization_order[i]] = 1;
-			}
-		}
-	}
-	if (doc.HasMember("init_frac")) {
-		assert(doc["init_frac"].IsArray());
-		assert(doc["init_frac"].Size() == doc["num_species"].GetInt());
-		sum = 0.0;
-		for (rapidjson::SizeType i = 0; i < doc["init_frac"].Size(); ++i) {
-			assert(doc["init_frac"][i].IsNumber());
-			init_frac[i] = doc["init_frac"][i].GetDouble();
-			if (init_frac[i] < 0 || init_frac[i] >= 1.0) {
-				std::cerr << "Initialization fraction out of bounds" << std::endl;
-				exit(SYS_FAILURE);
-			}
-			sum += init_frac[i];
-		}
-	}
-	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		init_frac[i] /= sum;
-	}*/
 
 	assert(doc.HasMember("tmmc_sweep_size"));
 	assert(doc["tmmc_sweep_size"].IsNumber());
@@ -345,6 +300,7 @@ simSystem initialize (const std::string filename, moves *usedMovesEq, moves *use
 
     usedMovesEq = new moves (sys.getTotalM());
     usedMovesPr = new moves (sys.getTotalM());
+
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
         usedMovesEq->addInsert(i, probEqInsDel[i]);
         usedMovesPr->addInsert(i, probPrInsDel[i]);
@@ -361,63 +317,20 @@ simSystem initialize (const std::string filename, moves *usedMovesEq, moves *use
         }
     }
 
-    /*
-    // specify moves to use for the system
-	moves usedMovesEq (sys.getTotalM()), usedMovesPr (sys.getTotalM());
-	std::vector < insertParticle > eqInsertions (sys.nSpecies()), prInsertions (sys.nSpecies());
-	std::vector < deleteParticle > eqDeletions (sys.nSpecies()), prDeletions (sys.nSpecies());
-	std::vector < translateParticle > eqTranslations (sys.nSpecies()), prTranslations (sys.nSpecies());
-	std::vector < swapParticles > eqSwaps (sys.nSpecies()*(sys.nSpecies()-1)/2), prSwaps (sys.nSpecies()*(sys.nSpecies()-1)/2);
-
-	int swapCounter = 0;
-	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		insertParticle newIns (i, "insert");
-		eqInsertions[i] = newIns;
-		usedMovesEq.addMove (&eqInsertions[i], probEqInsDel[i]);
-
-		deleteParticle newDel (i, "delete");
-		eqDeletions[i] = newDel;
-		usedMovesEq.addMove (&eqDeletions[i], probEqInsDel[i]);
-
-		translateParticle newTranslate (i, "translate");
-		newTranslate.setMaxDisplacement (maxEqD[i], sys.box());
-		eqTranslations[i] = newTranslate;
-		usedMovesEq.addMove (&eqTranslations[i], probEqDisp[i]);
-
-		insertParticle newIns2 (i, "insert");
-		prInsertions[i] = newIns2;
-		usedMovesPr.addMove (&prInsertions[i], probPrInsDel[i]);
-
-		deleteParticle newDel2 (i, "delete");
-		prDeletions[i] = newDel2;
-		usedMovesPr.addMove (&prDeletions[i], probPrInsDel[i]);
-
-		translateParticle newTranslate2 (i, "translate");
-		newTranslate2.setMaxDisplacement (maxPrD[i], sys.box());
-		prTranslations[i] = newTranslate2;
-		usedMovesPr.addMove (&prTranslations[i], probPrDisp[i]);
-
-		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
-			swapParticles newSwap (i, j, "swap");
-			eqSwaps[swapCounter] = newSwap;
-			usedMovesEq.addMove (&eqSwaps[swapCounter], probEqSwap[i][j]);
-
-			swapParticles newSwap2 (i, j, "swap");
-			prSwaps[swapCounter] = newSwap2;
-			usedMovesPr.addMove (&prSwaps[swapCounter], probPrSwap[i][j]);
-
-			swapCounter++;
-		}
-	}*/
-
     checkBounds (sys);
+    std::cout << filename << " passed bounds checks at " << getTimeStamp() << std::endl;
 	initializeSystemBarriers (sys, doc);
+    std::cout << "Initialized barriers from " << filename << " at " << getTimeStamp() << std::endl;
 
+    std::cout << "Successfully read valid parameters from " << filename << " at " << getTimeStamp() << std::endl;
     return sys;
 }
 
 void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
-    int Mtot = doc["num_expanded_states"].GetInt();
+    int Mtot = 1;
+    if (doc.HasMember("num_expanded_states")) {
+        Mtot = doc["num_expanded_states"].GetInt();
+    }
 
     //std::vector < pairPotential* > ppotArray (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
 	std::vector < std::string > ppotType (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
@@ -552,10 +465,29 @@ void setup (simSystem &sys, const std::string filename) {
 		sysBox[i] = doc["box"][i].GetDouble();
 	}
 
-	int max_order = doc["max_order"].GetInt();
-    double duh = doc["delta_u_hist"].GetDouble();
-	bool use_ke = doc["use_ke"].GetBool();
-    int Mtot = doc["num_expanded_states"].GetInt();
+    double duh = 10.0;
+	if (doc.HasMember("delta_u_hist")) {
+		assert(doc["delta_u_hist"].IsNumber());
+		duh = doc["delta_u_hist"].GetDouble();
+	}
+
+	int max_order = 2;
+	if (doc.HasMember("max_order")) {
+		assert(doc["max_order"].IsNumber());
+		max_order = doc["max_order"].GetInt();
+	}
+
+	bool use_ke = false;
+	if (doc.HasMember("use_ke")) {
+		assert(doc["use_ke"].IsBool());
+		use_ke = doc["use_ke"].GetBool();
+	}
+
+    int Mtot = 1;
+	if (doc.HasMember("num_expanded_states")) {
+		assert(doc["num_expanded_states"].IsInt());
+		Mtot = doc["num_expanded_states"].GetInt();
+	}
 
 	std::vector < double > sysMu (doc["mu"].Size(), 0);
 	for (rapidjson::SizeType i = 0; i < doc["mu"].Size(); ++i) {
