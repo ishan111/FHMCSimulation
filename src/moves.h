@@ -9,6 +9,10 @@
 #include "system.h"
 #include "utilities.h"
 #include "global.h"
+#include "insert.h"
+#include "delete.h"
+#include "swap.h"
+#include "translate.h"
 
 /*!
  * Virtual base class for all Monte Carlo moves.
@@ -44,6 +48,11 @@ public:
 	const std::vector < mcMove* > includedMoves () { return moves_; } //!< Returns a vector of pointers to move objects currently being used
 	void print (const std::string filename);
 
+	void addInsert (const int index, const double prob);
+	void addDelete (const int index, const double prob);
+	void addSwap(const int index1, const int index2, const double prob);
+	void addTranslate (const int index, const double prob);
+
 private:
     std::vector < double > normProbabilities_; //!< Sum of un-normalized probability of each move included
     std::vector < double > rawProbabilities_; //!< Un-normalized probabilty of each move
@@ -51,6 +60,12 @@ private:
     std::vector < std::vector < double > > attempted_; //!< Number of times each move was attempted
     std::vector < mcMove* > moves_; //!< Vector of pointers to all moves used
     int M_; //!< Number of stages for insert/delete moves
+
+	std::vector < insertParticle > insert_;
+	std::vector < deleteParticle > delete_;
+	std::vector < translateParticle > translate_;
+	std::vector < swapParticles > swap_;
+
 };
 
 #endif

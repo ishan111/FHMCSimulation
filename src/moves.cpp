@@ -6,10 +6,11 @@ mcMove::~mcMove () {
 
 moves::moves (const int M) {
 	if (M > 0) {
-        	M_ = M;
+        M_ = M;
 	} else {
-        	throw customException ("Error, number of expanded ensemble stages must be > 0");
+        throw customException ("Error, number of expanded ensemble stages must be > 0");
 	}
+
 }
 
 moves::~moves () {
@@ -37,6 +38,58 @@ void moves::print (const std::string filename) {
     }
     statFile << std::endl;
     statFile.close();
+}
+
+/*!
+ * Add insertion move.
+ *
+ * \param [in] index Particle index to operate on
+ * \param [in] prob Probability
+ */
+void moves::addInsert (const int index, const double prob) {
+	insertParticle newIns (index, "insert");
+	insert_.push_back(newIns);
+	addMove(&insert_[insert_.size()-1], prob);
+}
+
+/*!
+ * Add deletion move.
+ *
+ * \param [in] index Particle index to operate on
+ * \param [in] prob Probability
+ */
+void moves::addDelete (const int index, const double prob) {
+	deleteParticle newDel (index, "delete");
+	delete_.push_back(newDel);
+	addMove(&delete_[delete_.size()-1], prob);
+}
+
+/*!
+ * Add swap move.
+ *
+ * \param [in] index1 Particle index 1 to operate on
+ * \param [in] index2 Particle index 2 to operate on
+ * \param [in] prob Probability
+ */
+void moves::addSwap (const int index1, const int index2, const double prob) {
+	swapParticles newSwap (index1, index2, "swap");
+	swap_.push_back(newSwap);
+	addMove(&swap_[swap_.size()-1], prob);
+}
+
+/*!
+ * Add swap move.
+ *
+ * \param [in] index Particle index to operate on
+ * \param [in] prob Probability
+ * \param [in] maxD Maximium displacement
+ * \param [in] box Box dimensions
+ */
+void moves::addTranslate (const int index, const double prob, const double maxD, const std::vector < double > &box) {
+	translateParticle newTranslate (index, "translate");
+	newTranslate.setMaxDisplacement (maxD, box);
+	translate_.push_back(newTranslate);
+	addMove(&translate_[translate_.size()-1], prob);
 }
 
 /*!

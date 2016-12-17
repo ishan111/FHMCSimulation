@@ -29,10 +29,10 @@ void checkBounds (simSystem &sys) {
  * Parse a json input file and initialize system object accordingly.
  *
  * \params [in] filename Input JSON document's filename
- * \params [in] eqMoves Pointer to move object that will be used during "equilibration" (WL)
- * \params [in] prMoves Pointer to move object that will be used during "production" (TMMC)
+ * \params [in] usedMovesEq Pointer to move object that will be used during "equilibration" (WL)
+ * \params [in] usedMovesPr Pointer to move object that will be used during "production" (TMMC)
  */
-simSystem initialize (const std::string filename, moves *eqMoves, moves *prMoves) {
+simSystem initialize (const std::string filename, moves *usedMovesEq, moves *usedMovesPr) {
 
 	// Parse input JSON file
 	FILE* fp = fopen(filename.c_str(), "r");
@@ -346,6 +346,25 @@ simSystem initialize (const std::string filename, moves *eqMoves, moves *prMoves
 
     setPairPotentials (sys, doc);
 
+    usedMovesEq = new moves (sys.getTotalM());
+    usedMovesPr = new moves (sys.getTotalM());
+    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+        usedMovesEq->addInsert(i, probEqInsDel[i]);
+        usedMovesPr->addInsert(i, probPrInsDel[i]);
+
+        usedMovesEq->addDelete(i, probEqInsDel[i]);
+        usedMovesPr->addDelete(i, probPrInsDel[i]);
+
+        usedMovesEq->addTranslate(i, probEqDisp[i], maxEqD[i], sys.box());
+        usedMovesPr->addTranslate(i, probPrDisp[i], maxPrD[i], sys.box());
+
+        for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
+            usedMovesEq->addSwap(i, j, probEqSwap[i][j]);
+            usedMovesPr->addSwap(i, j, probPrSwap[i][j]);
+        }
+    }
+
+    /*
     // specify moves to use for the system
 	moves usedMovesEq (sys.getTotalM()), usedMovesPr (sys.getTotalM());
 	std::vector < insertParticle > eqInsertions (sys.nSpecies()), prInsertions (sys.nSpecies());
@@ -392,7 +411,7 @@ simSystem initialize (const std::string filename, moves *eqMoves, moves *prMoves
 
 			swapCounter++;
 		}
-	}
+	}*/
 
     checkBounds (sys);
 	initializeSystemBarriers (sys, doc);
