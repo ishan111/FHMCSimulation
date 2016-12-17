@@ -1,32 +1,23 @@
-#include "wl.h"
+#include "wala.h"
 
 /*!
  * Perform Wang-Landau stage of simulation
  *
  * \param [in] sys System to simulate
  * \param [in] res Restart information
+ * \param [in] usedMovesEq Move class to use
  */
-void performWALA (simSystem &sys, restartInfo &res) {
+void performWALA (simSystem &sys, restartInfo &res, const move *usedMovesEq) {
     std::cout << "Beginning Wang-Landau portion" << std::endl;
-
-    char *timestamp;
-	time_t rawtime;
-	struct tm * timeinfo;
 
     bool highSnap = false, lowSnap = false;
 
     // Initially do a WL simulation
     bool flat = false;
     double lnF = lnF_start;
-    sys.startWALA (lnF, g, s, sys.getTotalM()); //!< Using Shen and Errington method this syntax is same for single and multicomponent
+    sys.startWALA (lnF, g, s, sys.getTotalM());
 
-    time_t rawtime_t;
-    time (&rawtime_t);
-    struct tm * timeinfo_t;
-    timeinfo_t = localtime (&rawtime_t);
-    char dummy_t [80];
-    strftime (dummy_t,80,"%d/%m/%Y %H:%M:%S",timeinfo_t);
-    std::cout << "Initial lnF = " << lnF_start << " at " << dummy_t << std::endl;
+    std::cout << "Initial lnF = " << lnF_start << " at " << getTimeStamp() << std::endl;
 
     if (restartFromWALA) {
         try {
@@ -65,13 +56,7 @@ void performWALA (simSystem &sys, restartInfo &res) {
             lnF = sys.getWALABias()->lnF();
             flat = false;
 
-            time_t rawtime_tmp;
-            time (&rawtime_tmp);
-            struct tm * timeinfo_tmp;
-            timeinfo_tmp = localtime (&rawtime_tmp);
-            char dummy_tmp [80];
-            strftime (dummy_tmp,80,"%d/%m/%Y %H:%M:%S",timeinfo_tmp);
-            std::cout << "lnF = " << lnF << " at " << dummy_tmp << std::endl;
+            std::cout << "lnF = " << lnF << " at " << getTimeStamp() << std::endl;
         }
 
         // also check to print out snapshots with 10% of bounds to be used for other restarts

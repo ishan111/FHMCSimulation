@@ -2,7 +2,7 @@
 #define RESTART_H_
 
 #include <string>
-#include <direct.h>
+#include <direct>
 #include "system.h"
 #include "utilities.h"
 
@@ -19,7 +19,7 @@ public:
 	void load (const std::string filename);
 
     bool tmmcDone, crossoverDone, walaDone;
-	int freq;
+	long int freq;
 	std::string fname;
 };
 
