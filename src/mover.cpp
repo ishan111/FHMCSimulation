@@ -1,12 +1,23 @@
 #include "mover.h"
 
 moves::moves (const int M) {
+	try {
+		setM (M);
+	} catch (customException &ce) {
+		std::cerr << ce.what() << std::endl;
+		exit(SYS_FAILURE);
+	}
+}
+
+/*!
+ * Set the value of M.
+ */
+void moves::setM (const int M) {
 	if (M > 0) {
         M_ = M;
 	} else {
         throw customException ("Error, number of expanded ensemble stages must be > 0");
 	}
-
 }
 
 moves::~moves () {
@@ -140,8 +151,8 @@ void moves::addMove (mcMove *newMove, const double probability) {
  */
 void moves::makeMove (simSystem &sys) {
 	if (sys.getTotalM() != M_) {
-        	throw customException ("Error, M in system different from M in moves class operating on the system");
-    	}
+        throw customException ("Error, M in system different from M in moves class operating on the system");
+    }
 
 	int moveChosen = -1, succ = 0, mIndex = 0;
 	bool done = false;
@@ -157,10 +168,10 @@ void moves::makeMove (simSystem &sys) {
 						done = false;
 						break;
 					} else {
-                        			// get M before move happens which can change the state of the system
-                        			if (moves_[i]->changeN()) {
-                            				mIndex = sys.getCurrentM();
-                        			}
+                        // get M before move happens which can change the state of the system
+                        if (moves_[i]->changeN()) {
+                            mIndex = sys.getCurrentM();
+                        }
 						try {
 							succ = moves_[i]->make(sys);
 						} catch (customException &ce) {
@@ -169,22 +180,25 @@ void moves::makeMove (simSystem &sys) {
 							throw customException(a+b);
 						}
 						done = true;
-			    			moveChosen = i;
-			    			break;
+			    		moveChosen = i;
+			    		break;
 					}
 				} else {
 					// without expanded ensemble, inserts/deletes can proceed unchecked
+					std::cout << "chose: " << i << std::endl;
 					try {
+						std::cout << "try\n";
 						succ = moves_[i]->make(sys);
+						std::cout << "done\n";
 					} catch (customException &ce) {
 						std::string a = "Failed to make a move properly: ";
 						std::string b = ce.what();
 						throw customException(a+b);
 					}
 					done = true;
-                    			moveChosen = i;
-                    			mIndex = 0;
-                    			break;
+                    moveChosen = i;
+                    mIndex = 0;
+                    break;
 				}
 			}
 		}

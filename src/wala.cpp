@@ -33,12 +33,15 @@ void performWALA (simSystem &sys, restartInfo &res, moves *usedMovesEq) {
     long long int counter = 0;
     while (lnF > sys.lnF_end) {
         for (unsigned int move = 0; move < sys.wlSweepSize; ++move) {
+            std::cout << "cp00\n";
             try {
                 usedMovesEq->makeMove(sys);
             } catch (customException &ce) {
                 std::cerr << ce.what() << std::endl;
                 exit(SYS_FAILURE);
             }
+            std::cout << "cp01\n";
+
             if (sys.getCurrentM() == 0){
                 sys.checkEnergyHistogramBounds ();
             }

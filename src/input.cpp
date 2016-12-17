@@ -32,7 +32,7 @@ void checkBounds (simSystem &sys) {
  * \params [in] usedMovesEq Pointer to move object that will be used during "equilibration" (WL)
  * \params [in] usedMovesPr Pointer to move object that will be used during "production" (TMMC)
  */
-simSystem initialize (const std::string filename, moves *usedMovesEq, moves *usedMovesPr) {
+simSystem initialize (const std::string filename, moves* usedMovesEq, moves* usedMovesPr) {
 
 	// Parse input JSON file
 	FILE* fp = fopen(filename.c_str(), "r");
@@ -298,9 +298,8 @@ simSystem initialize (const std::string filename, moves *usedMovesEq, moves *use
 
     setPairPotentials (sys, doc);
 
-    usedMovesEq = new moves (sys.getTotalM());
-    usedMovesPr = new moves (sys.getTotalM());
-
+    /*usedMovesEq->setM(sys.getTotalM());
+    usedMovesPr->setM(sys.getTotalM());
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
         usedMovesEq->addInsert(i, probEqInsDel[i]);
         usedMovesPr->addInsert(i, probPrInsDel[i]);
@@ -315,7 +314,7 @@ simSystem initialize (const std::string filename, moves *usedMovesEq, moves *use
             usedMovesEq->addSwap(i, j, probEqSwap[i][j]);
             usedMovesPr->addSwap(i, j, probPrSwap[i][j]);
         }
-    }
+    }*/
 
     checkBounds (sys);
     std::cout << filename << " passed bounds checks at " << getTimeStamp() << std::endl;

@@ -33,6 +33,9 @@ public:
 	void addSwap(const int index1, const int index2, const double prob);
 	void addTranslate (const int index, const double prob, const double maxD, const std::vector < double > &box);
 
+    int getM () { return M_; }
+    void setM (const int M);
+
 private:
     std::vector < double > normProbabilities_; //!< Sum of un-normalized probability of each move included
     std::vector < double > rawProbabilities_; //!< Un-normalized probabilty of each move
@@ -45,7 +48,6 @@ private:
 	std::vector < deleteParticle > delete_;
 	std::vector < translateParticle > translate_;
 	std::vector < swapParticles > swap_;
-
 };
 
 #endif
