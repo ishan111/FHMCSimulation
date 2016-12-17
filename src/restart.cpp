@@ -10,20 +10,30 @@ restartInfo::restartInfo (const std::string filename, const int frequency) {
     crossoverDone = false;
     walaDone = false;
     hasCheckpoint = false;
+    restartFromTMMC = false;
+    restartFromWALA = false;
 
     fname = filename;
-    assert (frequency >= 1);
+    if (frequency < 1) {
+        throw customException ("Invalid restart save frequency");
+    }
     freq = frequency;
 
     if (fileExists(fname)) {
         load (fname);
     } else {
-        mkdir(fname);
+        std::vector < std::string > xplode = splitstr(fname, '/');
+        std::string xyz = "";
+        for (unsigned int i = 0; i < xplode.size()-1; ++i) {
+            xyz += xplode[i]+"/";
+        }
+        std::string command = "mkdir -p "+xyz+" && touch "+fname;
+        system(command.c_str());
     }
 }
 
 /*!
- * Read state of a system.
+ * Read state of a system from a json file.
  *
  * \param [in] filename Filename of where system state was saved
  */
@@ -32,7 +42,7 @@ void restartInfo::load (const std::string filename) {
 }
 
 /*!
- * Save the state of a system.
+ * Save the state of a system to a json file.
  *
  * \param [in] filename Filename of where system state is to be saved
  */

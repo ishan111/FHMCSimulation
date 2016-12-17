@@ -4,8 +4,8 @@
 #include "system.h"
 #include "restart.h"
 #include "utilities.h"
-#include "moves.h"
+#include "mover.h"
 
-void performWALA (simSystem &sys, restartInfo &res, const move *usedMovesEq);
+void performWALA (simSystem &sys, restartInfo &res, moves *usedMovesEq);
 
 #endif

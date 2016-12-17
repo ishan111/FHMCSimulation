@@ -494,7 +494,14 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		beta_ = beta;
 	}
 
+	lnF_start = 1.0; // default for lnF_start
+	lnF_end = 2.0e-18; // default for lnF_end
 	toggle_ke_ = false; //default, do NOT adjust energy by kinetic contribution of 3/2kT per atom (just record PE)
+	totalTMMCSweeps = 0;
+	wlSweepSize = 0;
+	wala_g = 0.5;
+	wala_s = 0.8;
+	nCrossoverVisits = 5;
 
 	if (max_order < 1){
 		throw customException ("max_order must be >= 1");

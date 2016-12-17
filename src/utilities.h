@@ -14,12 +14,13 @@
 #define sstr( x ) dynamic_cast< std::ostringstream & >( ( std::ostringstream() << std::dec << x ) ).str()
 
 void pbc (std::vector < double > &pos, const std::vector < double > &box);
-bool fileExists(std::string);
+bool fileExists(std::string fileName);
 std::string getTimeStamp ();
 double rng (int *idum);
 double pbc_dist2 (const std::vector < double > &p1, const std::vector < double > &p2, const std::vector < double > &box);
 std::vector < double > random3DSurfaceVector (const double magnitude);
 std::vector < std::vector < double > > rotationMatrix (const double alpha, const double beta, const double gamma);
 std::vector < std::vector < double > > matrixProduct (std::vector < std::vector < double > > &mat1, std::vector < std::vector < double > > &mat2);
+std::vector < std::string > splitstr (const std::string &s, char delim);
 
 #endif

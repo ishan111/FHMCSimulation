@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
 #include "system.h"
 #include "insert.h"
 #include "delete.h"
@@ -30,7 +31,7 @@ public:
 	void addInsert (const int index, const double prob);
 	void addDelete (const int index, const double prob);
 	void addSwap(const int index1, const int index2, const double prob);
-	void addTranslate (const int index, const double prob);
+	void addTranslate (const int index, const double prob, const double maxD, const std::vector < double > &box);
 
 private:
     std::vector < double > normProbabilities_; //!< Sum of un-normalized probability of each move included

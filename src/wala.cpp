@@ -7,33 +7,34 @@
  * \param [in] res Restart information
  * \param [in] usedMovesEq Move class to use
  */
-void performWALA (simSystem &sys, restartInfo &res, const move *usedMovesEq) {
-    std::cout << "Beginning Wang-Landau portion" << std::endl;
+void performWALA (simSystem &sys, restartInfo &res, moves *usedMovesEq) {
+    std::cout << "Beginning Wang-Landau portion at " << getTimeStamp() << std::endl;
+    res.walaDone = false;
 
-    bool highSnap = false, lowSnap = false;
+    //bool highSnap = false, lowSnap = false;
 
     // Initially do a WL simulation
     bool flat = false;
-    double lnF = lnF_start;
-    sys.startWALA (lnF, g, s, sys.getTotalM());
+    double lnF = sys.lnF_start;
+    sys.startWALA (lnF, sys.wala_g, sys.wala_s, sys.getTotalM());
 
-    std::cout << "Initial lnF = " << lnF_start << " at " << getTimeStamp() << std::endl;
+    std::cout << "Initial lnF = " << sys.lnF_start << " at " << getTimeStamp() << std::endl;
 
-    if (restartFromWALA) {
+    if (res.restartFromWALA) {
         try {
-            sys.getWALABias()->readlnPI(restartFromWALAFile);
+            sys.getWALABias()->readlnPI(res.restartFromWALAFile);
         } catch (customException &ce) {
             std::cerr << ce.what() << std::endl;
             exit(SYS_FAILURE);
         }
-        std::cout << "Read initial lnPI for Wang-Landau from " << restartFromWALAFile << std::endl;
+        std::cout << "Read initial lnPI for Wang-Landau from " << res.restartFromWALAFile << std::endl;
     }
 
     long long int counter = 0;
-    while (lnF > lnF_end) {
-        for (unsigned int move = 0; move < wlSweepSize; ++move) {
+    while (lnF > sys.lnF_end) {
+        for (unsigned int move = 0; move < sys.wlSweepSize; ++move) {
             try {
-                usedMovesEq.makeMove(sys);
+                usedMovesEq->makeMove(sys);
             } catch (customException &ce) {
                 std::cerr << ce.what() << std::endl;
                 exit(SYS_FAILURE);
@@ -50,9 +51,7 @@ void performWALA (simSystem &sys, restartInfo &res, const move *usedMovesEq) {
 
             // Periodically write out checkpoints - before iterateForward() which destroys H matrix
             sys.getWALABias()->print("wl-Checkpoint-"+sstr(counter), true);
-
-            // if flat, need to reset H and reduce lnF
-            sys.getWALABias()->iterateForward();
+            sys.getWALABias()->iterateForward(); // if flat, need to reset H and reduce lnF
             lnF = sys.getWALABias()->lnF();
             flat = false;
 
@@ -60,7 +59,7 @@ void performWALA (simSystem &sys, restartInfo &res, const move *usedMovesEq) {
         }
 
         // also check to print out snapshots with 10% of bounds to be used for other restarts
-        if (!highSnap) {
+        /*if (!highSnap) {
             if (sys.getTotN() > sys.totNMax() - (sys.totNMax()-sys.totNMin())*0.1) {
                 sys.printSnapshot("high.xyz", "snapshot near upper bound");
                 highSnap = true;
@@ -71,6 +70,9 @@ void performWALA (simSystem &sys, restartInfo &res, const move *usedMovesEq) {
                 sys.printSnapshot("low.xyz", "snapshot near lower bound");
                 lowSnap = true;
             }
-        }
+        }*/
     }
+
+    res.walaDone = true;
+    usedMovesEq->print("wala.stats");
 }

@@ -19,6 +19,19 @@ int RNG_SEED = -1024;	//!< Default RNG seed
 #define RNMX (1.0-EPS)
 
 /*!
+ * C++ explode a string.
+ */
+std::vector < std::string > splitstr (const std::string &s, char delim) {
+    std::stringstream ss(s);
+    std::string item;
+    std::vector <std::string> tokens;
+    while (std::getline(ss, item, delim)) {
+        tokens.push_back(item);
+    }
+    return tokens;
+}
+
+/*!
  * Obtain instantaneous timestamp.
  *
  * \return char* timestamp

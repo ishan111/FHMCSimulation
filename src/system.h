@@ -83,6 +83,12 @@ public:
 
 	bool useTMMC; //!< Logical stating whether or not to use TMMC biasing
 	bool useWALA; //!< Logical stating whether or not to use Wang-Landau biasing
+	double lnF_start, lnF_end; //!< Starting and ending lnF for Wang-Landau
+	double wala_g, wala_s;
+	long long int tmmcSweepSize;
+	long long int totalTMMCSweeps;
+	long long int wlSweepSize;
+	int nCrossoverVisits;
 	tmmc* tmmcBias; //!< TMMC biasing function
 	wala* wlBias; //!< WL biasing function
 	std::vector < int > numSpecies;		//!< Total number of each type of atom the system contains

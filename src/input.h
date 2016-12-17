@@ -2,7 +2,7 @@
 #define INPUT_H_
 
 #include <string>
-#include "moves.h"
+#include "mover.h"
 #include "system.h"
 #include "insert.h"
 #include "delete.h"

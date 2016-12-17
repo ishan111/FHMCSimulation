@@ -14,12 +14,12 @@ moves::~moves () {
 }
 
 /*!
- * Print move information to file.
+ * Print move information to file.  Appends by default.
  *
  * \param [in] filename Name of file to print to.
  */
 void moves::print (const std::string filename) {
-	std::ofstream statFile (filename.c_str());
+	std::ofstream statFile (filename.c_str(), std::ofstream::out | std::ofstream::app);
     std::vector < std::vector < double > > stats = reportMoveStatistics();
     statFile << " ---------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
     for (unsigned int i = 0; i < stats.size(); ++i) {

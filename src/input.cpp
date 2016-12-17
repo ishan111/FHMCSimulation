@@ -185,42 +185,40 @@ simSystem initialize (const std::string filename, moves *usedMovesEq, moves *use
 	assert(doc.HasMember("tmmc_sweep_size"));
 	assert(doc["tmmc_sweep_size"].IsNumber());
 	double tmpT = doc["tmmc_sweep_size"].GetDouble(); // possibly in scientific notation
-	const long long int tmmcSweepSize = tmpT; // convert
+	sys.tmmcSweepSize = tmpT; // convert
 
 	assert(doc.HasMember("total_tmmc_sweeps"));
 	assert(doc["total_tmmc_sweeps"].IsNumber());
 	double tmpS = doc["total_tmmc_sweeps"].GetDouble(); // possibly in scientific notation
-	const long long int totalTMMCSweeps = tmpS; // convert
+	sys.totalTMMCSweeps = tmpS; // convert
 
 	assert(doc.HasMember("wala_sweep_size"));
 	assert(doc["wala_sweep_size"].IsNumber());
 	double tmpW = doc["wala_sweep_size"].GetDouble(); // possibly in scientific notation
-	const long long int wlSweepSize = tmpW; // convert
+	sys.wlSweepSize = tmpW; // convert
 
 	assert(doc.HasMember("wala_g"));
 	assert(doc["wala_g"].IsNumber());
-	const double g = doc["wala_g"].GetDouble();
+	sys.wala_g = doc["wala_g"].GetDouble();
 
 	assert(doc.HasMember("wala_s"));
 	assert(doc["wala_s"].IsNumber());
-	const double s = doc["wala_s"].GetDouble();
+	sys.wala_s = doc["wala_s"].GetDouble();
 
-	double lnF_start = 1.0; // default for lnF_start
 	if (doc.HasMember("lnF_start")) {
 		assert(doc["lnF_start"].IsNumber());
-		lnF_start = doc["lnF_start"].GetDouble(); // bounds are checked later
+		sys.lnF_start = doc["lnF_start"].GetDouble(); // bounds are checked later
 	}
 
-	double lnF_end = 2.0e-18; // default for lnF_end
 	if (doc.HasMember("lnF_end")) {
 		assert(doc["lnF_end"].IsNumber());
-		lnF_end = doc["lnF_end"].GetDouble();
-		if (lnF_end >= 1.0) {
+		sys.lnF_end = doc["lnF_end"].GetDouble();
+		if (sys.lnF_end >= 1.0) {
 			std::cerr << "Terminal lnF factor for Wang-Landau must be < 1" << std::endl;
 			exit(SYS_FAILURE);
 		}
 	}
-	if (lnF_end >= lnF_start) {
+	if (sys.lnF_end >= sys.lnF_start) {
 		std::cerr << "lnF_end must be < lnF_start for Wang-Landau to proceed forward" << std::endl;
 		exit(SYS_FAILURE);
 	}
@@ -247,11 +245,10 @@ simSystem initialize (const std::string filename, moves *usedMovesEq, moves *use
 	}
 
 	// number of times the TMMC C matrix has to be traversed during the WALA --> TMMC crossover
-	int nCrossoverVisits = 5; // default
 	if (doc.HasMember("num_crossover_visits")) {
 		assert(doc["num_crossover_visits"].IsInt());
-		nCrossoverVisits = doc["num_crossover_visits"].GetInt();
-		if (nCrossoverVisits < 1) {
+		sys.nCrossoverVisits = doc["num_crossover_visits"].GetInt();
+		if (sys.nCrossoverVisits < 1) {
 			std::cerr << "Must allow the collection matrix to be traversed at least once in the crossover from Wang-Landau to TMMC" << std::cerr;
 			exit(SYS_FAILURE);
 		}
