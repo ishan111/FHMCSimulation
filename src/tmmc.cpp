@@ -70,12 +70,12 @@ void performTMMC (simSystem &sys, restartInfo &res, moves *usedMovesPr) {
 		// Periodically write out checkpoints and report statistics
 		if (sweep%sweepPrint == 0) {
 			printCounter++;
-			sys.getTMMCBias()->print("tmmc-Checkpoint-"+sstr(printCounter), true);
+			sys.getTMMCBias()->print("tmmc-Checkpoint-"+std::to_string(printCounter), true);
 			sys.refineEnergyHistogramBounds();
-			sys.printEnergyHistogram("eHist-Checkpoint-"+sstr(printCounter));
+			sys.printEnergyHistogram("eHist-Checkpoint-"+std::to_string(printCounter));
             sys.refinePkHistogramBounds();
-            sys.printPkHistogram("pkHist-Checkpoint-"+sstr(printCounter));
-            sys.printExtMoments("extMom-Checkpoint-"+sstr(printCounter));
+            sys.printPkHistogram("pkHist-Checkpoint-"+std::to_string(printCounter));
+            sys.printExtMoments("extMom-Checkpoint-"+std::to_string(printCounter));
             usedMovesPr->print("tmmc.stats");
 		}
 	}

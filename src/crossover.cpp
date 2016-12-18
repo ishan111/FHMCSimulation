@@ -41,8 +41,8 @@ void performCrossover (simSystem &sys, restartInfo &res, moves *usedMovesEq) {
             }
             sys.getTMMCBias()->iterateForward (); // reset the counting matrix and increment total sweep number
             timesFullyVisited = sys.getTMMCBias()->numSweeps();
-            sys.getWALABias()->print("wl-crossover-Checkpoint-"+sstr(timesFullyVisited), true);
-            sys.getTMMCBias()->print("tmmc-crossover-Checkpoint-"+sstr(timesFullyVisited), true);
+            sys.getWALABias()->print("wl-crossover-Checkpoint-"+std::to_string(timesFullyVisited), true);
+            sys.getTMMCBias()->print("tmmc-crossover-Checkpoint-"+std::to_string(timesFullyVisited), true);
 
             std::cout << "Times C fully visited = " << timesFullyVisited << " at " << getTimeStamp() << std::endl;
         }

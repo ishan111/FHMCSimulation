@@ -267,8 +267,7 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
                 		}
         		}
         	} else {
-            		std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
-            		throw customException ("Reached upper bound, cannot insert an atom of type index "+index);
+            		throw customException ("Reached upper bound, cannot insert an atom of type index "+std::to_string(typeIndex));
         	}
 	} else {
         	throw customException ("That species index does not exist, cannot insert an atom");
@@ -404,8 +403,7 @@ void simSystem::deleteAtom (const int typeIndex, const int atomIndex, bool overr
         			}
         		}
        		} else {
-            		std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
-           		throw customException ("System going below minimum allowable number of atoms, cannot delete an atom of type index "+index);
+           		throw customException ("System going below minimum allowable number of atoms, cannot delete an atom of type index "+std::to_string(typeIndex));
        		}
     	} else {
         	throw customException ("That species index does not exist, cannot delete an atom");
@@ -431,8 +429,7 @@ void simSystem::translateAtom (const int typeIndex, const int atomIndex, std::ve
         	    		}
             		}
         	} else {
-            		std::string index = static_cast<std::ostringstream*>( &(std::ostringstream() << typeIndex) )->str();
-            		throw customException ("Number of those atoms in system is out of bounds, cannot translate an atom of type index "+index);
+            		throw customException ("Number of those atoms in system is out of bounds, cannot translate an atom of type index "+std::to_string(typeIndex));
         	}
     	} else {
        		throw customException ("That species index does not exist, cannot translate the atom");
@@ -814,26 +811,26 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 	probVar[idx] = outFile.addVar(vName.c_str(), ncdouble, probDim);
 	idx++;
 	for (unsigned int i = 0; i < nSpecies_; ++i) {
-		vName = "average_UN_"+sstr(i+1);
+		vName = "average_UN_"+std::to_string(i+1);
 		probVar[idx] = outFile.addVar(vName.c_str(), ncdouble, probDim);
 		idx++;
 	}
 	for (unsigned int i = 0; i < nSpecies_; ++i) {
 		for (unsigned int j = 0; j < nSpecies_; ++j) {
-			vName = "average_N_"+sstr(i)+"_N_"+sstr(j);
+			vName = "average_N_"+std::to_string(i)+"_N_"+std::to_string(j);
 			probVar[idx+j+i*nSpecies_] = outFile.addVar(vName.c_str(), ncdouble, probDim);
 		}
 	}
 
 	std::string attName = "species_total_upper_bound";
-        probVar[0].putAtt(attName.c_str(), sstr(totNBounds_[1]).c_str());
+        probVar[0].putAtt(attName.c_str(), std::to_string(totNBounds_[1]).c_str());
         attName = "species_total_lower_bound";
-        probVar[0].putAtt(attName.c_str(), sstr(totNBounds_[0]).c_str());
+        probVar[0].putAtt(attName.c_str(), std::to_string(totNBounds_[0]).c_str());
         const std::string dummyName = "number_species";
-        probVar[0].putAtt(dummyName.c_str(), sstr(nSpecies_).c_str());
+        probVar[0].putAtt(dummyName.c_str(), std::to_string(nSpecies_).c_str());
 	attName = "volume";
         double V = box_[0]*box_[1]*box_[2];
-        probVar[0].putAtt(attName.c_str(), sstr(V).c_str());
+        probVar[0].putAtt(attName.c_str(), std::to_string(V).c_str());
 
 	idx = 0;
 	probVar[idx].putVar(&ave_uu);
@@ -923,18 +920,18 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
         NcDim probDim = outFile.addDim("vectorized_position", averageN_[0].size());
         std::vector < NcVar > probVar (nSpecies_);
 	for (unsigned int i = 0; i < nSpecies_; ++i) {
-		std::string vName = "average_N_"+sstr(i+1);
+		std::string vName = "average_N_"+std::to_string(i+1);
 		probVar[i] = outFile.addVar(vName.c_str(), ncdouble, probDim);
 	}
 	std::string attName = "species_total_upper_bound";
-        probVar[0].putAtt(attName.c_str(), sstr(totNBounds_[1]).c_str());
+        probVar[0].putAtt(attName.c_str(), std::to_string(totNBounds_[1]).c_str());
         attName = "species_total_lower_bound";
-        probVar[0].putAtt(attName.c_str(), sstr(totNBounds_[0]).c_str());
+        probVar[0].putAtt(attName.c_str(), std::to_string(totNBounds_[0]).c_str());
         const std::string dummyName = "number_species";
-        probVar[0].putAtt(dummyName.c_str(), sstr(nSpecies_).c_str());
+        probVar[0].putAtt(dummyName.c_str(), std::to_string(nSpecies_).c_str());
 	attName = "volume";
         double V = box_[0]*box_[1]*box_[2];
-        probVar[0].putAtt(attName.c_str(), sstr(V).c_str());
+        probVar[0].putAtt(attName.c_str(), std::to_string(V).c_str());
         for (unsigned int i = 0; i < nSpecies_; ++i) {
 		probVar[i].putVar(&aveX[i]);
 	}
@@ -1015,7 +1012,7 @@ void simSystem::printExtMoments (const std::string fileName) {
 			for (unsigned int k = 0; k < nSpecies_; ++k) {
 				for (unsigned int m = 0; m <= max_order_; ++m) {
 					for (unsigned int p = 0; p <= max_order_; ++p) {
-						of << "N_"+sstr(i+1)+"^"+sstr(j)+"*N_"+sstr(k+1)+"^"+sstr(m)+"*U^"+sstr(p)+"\t";
+						of << "N_"+std::to_string(i+1)+"^"+std::to_string(j)+"*N_"+std::to_string(k+1)+"^"+std::to_string(m)+"*U^"+std::to_string(p)+"\t";
 					}
 				}
 			}
@@ -1216,7 +1213,7 @@ void simSystem::printPkHistogram (const std::string fileName) {
 	// Without netCDF capabilities, just print to ASCII file
 	for (unsigned int i = 0; i < nSpecies_; ++i) {
 		std::ofstream of;
-		std::string name = fileName+"_"+sstr(i+1)+".dat";
+		std::string name = fileName+"_"+std::to_string(i+1)+".dat";
 		of.open(name.c_str(), std::ofstream::out);
 		of << "# <P(N_" << i+1 << ")> as a function of N_tot." << std::endl;
 		of << "# number_of_species: " << nSpecies_ << std::endl;
@@ -1287,14 +1284,14 @@ void simSystem::printPkHistogram (const std::string fileName) {
 	NcDim probDim = outFile.addDim("vectorized_position", aveU.size());
 	NcVar probVar = outFile.addVar("averageU", ncDouble, probDim);
 	const std::string dummyName = "number_species";
-	probVar.putAtt(dummyName.c_str(), sstr(nSpecies_).c_str());
+	probVar.putAtt(dummyName.c_str(), std::to_string(nSpecies_).c_str());
 	std::string attName = "species_total_upper_bound";
-	probVar.putAtt(attName.c_str(), sstr(totNBounds_[1]).c_str());
+	probVar.putAtt(attName.c_str(), std::to_string(totNBounds_[1]).c_str());
 	attName = "species_total_lower_bound";
-	probVar.putAtt(attName.c_str(), sstr(totNBounds_[0]).c_str());
+	probVar.putAtt(attName.c_str(), std::to_string(totNBounds_[0]).c_str());
 	attName = "volume";
 	double V = box_[0]*box_[1]*box_[2];
-	probVar.putAtt(attName.c_str(), sstr(V).c_str());
+	probVar.putAtt(attName.c_str(), std::to_string(V).c_str());
 	probVar.putVar(&aveU[0]);
 #else
 	// Without netCDF capabilities, just print to ASCII file
@@ -1482,7 +1479,7 @@ void simSystem::readRestart (std::string filename) {
 
 	// check if within global bounds
 	if (sysatoms.size() > totNBounds_[1] || sysatoms.size() < totNBounds_[0]) {
-		throw customException ("Number of particles ("+sstr(sysatoms.size())+") in the restart file out of target range ["+sstr(totNBounds_[0])+", "+sstr(totNBounds_[1])+"]");
+		throw customException ("Number of particles ("+std::to_string(sysatoms.size())+") in the restart file out of target range ["+std::to_string(totNBounds_[0])+", "+std::to_string(totNBounds_[1])+"]");
 	}
 
 	// sort by type
@@ -1763,7 +1760,7 @@ void simSystem::startWALA (const double lnF, const double g, const double s, con
 	try {
 		wlBias = new wala (lnF, g, s, totNBounds_[1], totNBounds_[0], Mtot, box_);
 	} catch (customException& ce) {
-		throw customException ("Cannot start Wang-Landau biasing in system: "+sstr(ce.what()));
+		throw customException ("Cannot start Wang-Landau biasing in system: "+std::to_string(*ce.what()));
 	}
 
 	useWALA = true;
@@ -1780,7 +1777,7 @@ void simSystem::startTMMC (const long long int tmmcSweepSize, const int Mtot) {
 	try {
 		tmmcBias = new tmmc (totNBounds_[1], totNBounds_[0], Mtot, tmmcSweepSize, box_);
 	} catch (customException& ce) {
-		throw customException ("Cannot start TMMC biasing in system: "+sstr(ce.what()));
+		throw customException ("Cannot start TMMC biasing in system: "+std::to_string(*ce.what()));
 	}
 
 	useTMMC = true;

@@ -9,6 +9,7 @@
  */
 int insertParticle::make (simSystem &sys) {
 	bool earlyReject = false;
+	std::cout << "ins\n";
 	
 	// check if at upper bound for this specific species type
 	if (sys.numSpecies[typeIndex_] >= sys.maxSpecies(typeIndex_)) {

@@ -15,7 +15,7 @@
 class mcMove {
 public:
 	mcMove () {};
-	mcMove (const int typeIndex, const std::string tag) { typeIndex_ = typeIndex; name_ = tag+sstr(typeIndex); }
+	mcMove (const int typeIndex, const std::string tag) { typeIndex_ = typeIndex; name_ = tag+std::to_string(typeIndex); }
    	virtual ~mcMove () = 0;
     virtual int make (simSystem &sys) = 0; //!< Make a MC move, return MOVE_SUCCESS or MOVE_FAILURE
 	const bool changeN () { return changeN_; }	//!< Returns whether or not the move has the ability to change the net number of particles in the system

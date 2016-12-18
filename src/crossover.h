@@ -1,6 +1,7 @@
 #ifndef CROSSOVER_H_
 #define CROSSOVER_H_
 
+#include <string>
 #include "system.h"
 #include "restart.h"
 #include "utilities.h"

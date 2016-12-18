@@ -48,6 +48,8 @@ int main (int argc, char * const argv[]) {
 
 	// cellLists.... -> rely on atoms not moving in system, preallocated to max_atoms, cellLists are reserved so ok
 
+	// 1. start with making ppot's shared_ptr so they can be stored locally in system
+
 	// if restart/ exists, default to use this information to restart the simulation
 	restartInfo res (restartFile, 900);
     if (!res.hasCheckpoint) {

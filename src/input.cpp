@@ -204,7 +204,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		assert(doc["num_crossover_visits"].IsInt());
 		sys.nCrossoverVisits = doc["num_crossover_visits"].GetInt();
 		if (sys.nCrossoverVisits < 1) {
-			std::cerr << "Must allow the collection matrix to be traversed at least once in the crossover from Wang-Landau to TMMC" << std::cerr;
+			std::cerr << "Must allow the collection matrix to be traversed at least once in the crossover from Wang-Landau to TMMC" << std::endl;
 			exit(SYS_FAILURE);
 		}
 	}
@@ -215,41 +215,41 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 	std::vector < double > probEqInsDel (sys.nSpecies(), 0), probEqDisp (sys.nSpecies(), 0);
 	std::vector < double > maxPrD (sys.nSpecies(), 0), maxEqD (sys.nSpecies(), 0);
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		std::string dummy = "prob_pr_ins_del_" + sstr(i+1);
+		std::string dummy = "prob_pr_ins_del_" + std::to_string(i+1);
 		assert(doc.HasMember(dummy.c_str()));
 		assert(doc[dummy.c_str()].IsNumber());
 		probPrInsDel[i] = doc[dummy.c_str()].GetDouble();
 	}
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		std::string dummy = "prob_pr_displace_" + sstr(i+1);
+		std::string dummy = "prob_pr_displace_" + std::to_string(i+1);
 		assert(doc.HasMember(dummy.c_str()));
 		assert(doc[dummy.c_str()].IsNumber());
 		probPrDisp[i] = doc[dummy.c_str()].GetDouble();
-		dummy = "max_pr_displacement_" + sstr(i+1);
+		dummy = "max_pr_displacement_" + std::to_string(i+1);
 		assert(doc.HasMember(dummy.c_str()));
 		assert(doc[dummy.c_str()].IsNumber());
 		maxPrD[i] = doc[dummy.c_str()].GetDouble();
 	}
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		std::string dummy = "prob_eq_ins_del_" + sstr(i+1);
+		std::string dummy = "prob_eq_ins_del_" + std::to_string(i+1);
 		assert(doc.HasMember(dummy.c_str()));
 		assert(doc[dummy.c_str()].IsNumber());
 		probEqInsDel[i] = doc[dummy.c_str()].GetDouble();
 	}
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		std::string dummy = "prob_eq_displace_" + sstr(i+1);
+		std::string dummy = "prob_eq_displace_" + std::to_string(i+1);
 		assert(doc.HasMember(dummy.c_str()));
 		assert(doc[dummy.c_str()].IsNumber());
 		probEqDisp[i] = doc[dummy.c_str()].GetDouble();
-		dummy = "max_eq_displacement_" + sstr(i+1);
+		dummy = "max_eq_displacement_" + std::to_string(i+1);
 		assert(doc.HasMember(dummy.c_str()));
 		assert(doc[dummy.c_str()].IsNumber());
 		maxEqD[i] = doc[dummy.c_str()].GetDouble();
 	}
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
-			std::string name1 = "prob_pr_swap_"+sstr(i+1)+"_"+sstr(j+1);
-			std::string name2 = "prob_pr_swap_"+sstr(j+1)+"_"+sstr(i+1);
+			std::string name1 = "prob_pr_swap_"+std::to_string(i+1)+"_"+std::to_string(j+1);
+			std::string name2 = "prob_pr_swap_"+std::to_string(j+1)+"_"+std::to_string(i+1);
 			std::string moveName = "";
 			bool foundIJ = false;
 			if (doc.HasMember(name1.c_str())) {
@@ -259,10 +259,10 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 				moveName = name2;
 				foundIJ = true;
 			} else if (doc.HasMember(name2.c_str()) && foundIJ) {
-				std::cerr << "Input file doubly specifies production swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+				std::cerr << "Input file doubly specifies production swap move probability for species pair ("+std::to_string(i+1)+", "+std::to_string(j+1)+")" << std::endl;
 				exit(SYS_FAILURE);
 			} else {
-				std::cerr << "Input file does not specify production swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+				std::cerr << "Input file does not specify production swap move probability for species pair ("+std::to_string(i+1)+", "+std::to_string(j+1)+")" << std::endl;
 				exit(SYS_FAILURE);
 			}
 			assert(doc[moveName.c_str()].IsNumber());
@@ -273,8 +273,8 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
-			std::string name1 = "prob_eq_swap_"+sstr(i+1)+"_"+sstr(j+1);
-			std::string name2 = "prob_eq_swap_"+sstr(j+1)+"_"+sstr(i+1);
+			std::string name1 = "prob_eq_swap_"+std::to_string(i+1)+"_"+std::to_string(j+1);
+			std::string name2 = "prob_eq_swap_"+std::to_string(j+1)+"_"+std::to_string(i+1);
 			std::string moveName = "";
 			bool foundIJ = false;
 			if (doc.HasMember(name1.c_str())) {
@@ -284,10 +284,10 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 				moveName = name2;
 				foundIJ = true;
 			} else if (doc.HasMember(name2.c_str()) && foundIJ) {
-				std::cerr << "Input file doubly specifies equilibration swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+				std::cerr << "Input file doubly specifies equilibration swap move probability for species pair ("+std::to_string(i+1)+", "+std::to_string(j+1)+")" << std::endl;
 				exit(SYS_FAILURE);
 			} else {
-				std::cerr << "Input file does not specify equilibration swap move probability for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+				std::cerr << "Input file does not specify equilibration swap move probability for species pair ("+std::to_string(i+1)+", "+std::to_string(j+1)+")" << std::endl;
 				exit(SYS_FAILURE);
 			}
 			assert(doc[moveName.c_str()].IsNumber());
@@ -298,7 +298,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 
     setPairPotentials (sys, doc);
 
-    /*usedMovesEq->setM(sys.getTotalM());
+    usedMovesEq->setM(sys.getTotalM());
     usedMovesPr->setM(sys.getTotalM());
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
         usedMovesEq->addInsert(i, probEqInsDel[i]);
@@ -314,7 +314,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
             usedMovesEq->addSwap(i, j, probEqSwap[i][j]);
             usedMovesPr->addSwap(i, j, probPrSwap[i][j]);
         }
-    }*/
+    }
 
     checkBounds (sys);
     std::cout << filename << " passed bounds checks at " << getTimeStamp() << std::endl;
@@ -336,7 +336,7 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
 	int ppotIndex = 0, ppotTypeIndex = 0;
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		for (unsigned int j = i; j < sys.nSpecies(); ++j) {
-			std::string name1 = "ppot_"+sstr(i+1)+"_"+sstr(j+1), name2 = "ppot_"+sstr(j+1)+"_"+sstr(i+1);
+			std::string name1 = "ppot_"+std::to_string(i+1)+"_"+std::to_string(j+1), name2 = "ppot_"+std::to_string(j+1)+"_"+std::to_string(i+1);
 			std::string ppotName = "", dummy = "";
 			bool foundIJ = false;
 			if (doc.HasMember(name1.c_str())) {
@@ -346,10 +346,10 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
 				ppotName = name2;
 				foundIJ = true;
 			} else if (doc.HasMember(name2.c_str()) && foundIJ) {
-				std::cerr << "Input file doubly specifies pair potential for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+				std::cerr << "Input file doubly specifies pair potential for species pair ("+std::to_string(i+1)+", "+std::to_string(j+1)+")" << std::endl;
 				exit(SYS_FAILURE);
 			} else {
-				std::cerr << "Input file does not specify pair potential for species pair ("+sstr(i+1)+", "+sstr(j+1)+")" << std::endl;
+				std::cerr << "Input file does not specify pair potential for species pair ("+std::to_string(i+1)+", "+std::to_string(j+1)+")" << std::endl;
 				exit(SYS_FAILURE);
 			}
 			assert(doc[ppotName.c_str()].IsString());
@@ -670,7 +670,7 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 	// Hard wall (expect parameters: {lb, ub, sigma})
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		bool convention0 = false;
-		std::string dummy = "hardWallZ_" + sstr(i+1);
+		std::string dummy = "hardWallZ_" + std::to_string(i+1);
 		std::vector < double > wallParams (3, 0);
 		if (doc.HasMember(dummy.c_str())) {
 			assert(doc[dummy.c_str()].IsArray());
@@ -688,7 +688,7 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 		}
 		for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
 			// alternatively allow multiple walls to specified with a suffix up to a max
-			std::string dummy = "hardWallZ_" + sstr(i+1) + "_" + sstr(j);
+			std::string dummy = "hardWallZ_" + std::to_string(i+1) + "_" + std::to_string(j);
             if (doc.HasMember(dummy.c_str())) {
 				if (convention0) {
 					std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
@@ -714,7 +714,7 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
     // Square well wall (expect parameters: {lb, ub, sigma, range, eps})
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		bool convention0 = false;
-		std::string dummy = "squareWellWallZ_" + sstr(i+1);
+		std::string dummy = "squareWellWallZ_" + std::to_string(i+1);
 		std::vector < double > wallParams (5, 0);
 		if (doc.HasMember(dummy.c_str())) {
 			assert(doc[dummy.c_str()].IsArray());
@@ -732,7 +732,7 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 		}
 		for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
 			// alternatively allow multiple walls to specified with a suffix up to a max
-			std::string dummy = "squareWellWallZ_" + sstr(i+1) + "_" + sstr(j);
+			std::string dummy = "squareWellWallZ_" + std::to_string(i+1) + "_" + std::to_string(j);
 			if (doc.HasMember(dummy.c_str())) {
 				if (convention0) {
 					std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
@@ -758,7 +758,7 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 	// cylinderZ (expect parameters: {x, y, radius, width, sigma, eps})
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		bool convention0 = false;
-		std::string dummy = "cylinderZ_" + sstr(i+1);
+		std::string dummy = "cylinderZ_" + std::to_string(i+1);
 		std::vector < double > wallParams (6, 0);
 		if (doc.HasMember(dummy.c_str())) {
 			assert(doc[dummy.c_str()].IsArray());
@@ -776,7 +776,7 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 		}
 		for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
 			// alternatively allow multiple walls to specified with a suffix up to a max
-			std::string dummy = "cylinderZ_" + sstr(i+1) + "_" + sstr(j);
+			std::string dummy = "cylinderZ_" + std::to_string(i+1) + "_" + std::to_string(j);
 			if (doc.HasMember(dummy.c_str())) {
 				if (convention0) {
 					std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
@@ -802,7 +802,7 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
     // rightTriangleXZ (expect parameters: {width, theta, lamW, eps, sigma, sep, offset, zbase, top})
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
         bool convention0 = false;
-        std::string dummy = "rightTriangleXZ_" + sstr(i+1);
+        std::string dummy = "rightTriangleXZ_" + std::to_string(i+1);
         std::vector < double > wallParams (8, 0);
         bool top = false;
         assert(doc.HasMember("box"));
@@ -832,7 +832,7 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
         }
         for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
             // alternatively allow multiple walls to specified with a suffix up to a max
-            std::string dummy = "rightTriangleXZ_" + sstr(i+1) + "_" + sstr(j);
+            std::string dummy = "rightTriangleXZ_" + std::to_string(i+1) + "_" + std::to_string(j);
             if (doc.HasMember(dummy.c_str())) {
                 if (convention0) {
                     std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
