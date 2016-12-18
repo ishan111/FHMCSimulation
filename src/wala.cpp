@@ -36,7 +36,6 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
                 std::cerr << ce.what() << std::endl;
                 exit(SYS_FAILURE);
             }
-
             if (sys.getCurrentM() == 0){
                 sys.checkEnergyHistogramBounds ();
             }

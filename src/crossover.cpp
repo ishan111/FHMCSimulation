@@ -11,10 +11,8 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
     std::cout << "Crossing over to build TMMC matrix at " << getTimeStamp() << std::endl;
     res.crossoverDone = false;
 
-    // After a while, combine to initialize TMMC collection matrix
     sys.startTMMC (sys.tmmcSweepSize, sys.getTotalM());
 
-    // actually this should run until all elements of the collection matrix have been populated
     int timesFullyVisited = 0;
     while (timesFullyVisited < sys.nCrossoverVisits) {
         for (unsigned int move = 0; move < sys.wlSweepSize; ++move) {
@@ -29,7 +27,6 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             }
         }
 
-        // Check if collection matrix is ready to take over, not necessarily at points where WL is flat
         if (sys.getTMMCBias()->checkFullyVisited()) {
             try {
                 sys.getTMMCBias()->calculatePI();
@@ -41,8 +38,8 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             }
             sys.getTMMCBias()->iterateForward (); // reset the counting matrix and increment total sweep number
             timesFullyVisited = sys.getTMMCBias()->numSweeps();
-            sys.getWALABias()->print("wl-crossover-Checkpoint-"+std::to_string(timesFullyVisited), true);
-            sys.getTMMCBias()->print("tmmc-crossover-Checkpoint-"+std::to_string(timesFullyVisited), true);
+            //sys.getWALABias()->print("wl-crossover-Checkpoint-"+std::to_string(timesFullyVisited), true);
+            //sys.getTMMCBias()->print("tmmc-crossover-Checkpoint-"+std::to_string(timesFullyVisited), true);
 
             std::cout << "Times C fully visited = " << timesFullyVisited << " at " << getTimeStamp() << std::endl;
         }
