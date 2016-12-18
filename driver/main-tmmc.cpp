@@ -36,20 +36,6 @@ int main (int argc, char * const argv[]) {
 	moves usedMovesEq, usedMovesPr;
 	simSystem sys = initialize (argv[1], &usedMovesEq, &usedMovesPr); // read json file and create system class
 
-	// usedMovesEq, usedMovesPr need to be global variables so they are static in memory (or atleast the vectors of moves need to be)
-	// pair potentials also need to be static somewhow - compare against gcmc (old) driver
-	// maybe used a reserve statement somewhow
-	// shared pointers? -->  must move to heap!! example: http://stackoverflow.com/questions/23060406/does-stdmove-invalidate-pointers
-
-	// in mover, make moves_ --> shared pointer to the vectors of each move type?
-	// in system, ppot needs to be share_ptr? to potential classes, which should be made_shared when created by addPotential()
-	// wl, tmmc biases in system? consider replacing new/delete with just simple asigniments so tmmc* tmmcBias; --> tmmc tmmcBias; e.g.
-	//http://stackoverflow.com/questions/25405034/stdshared-ptr-of-abstract-class-to-instantiate-derived-class
-
-	// cellLists.... -> rely on atoms not moving in system, preallocated to max_atoms, cellLists are reserved so ok
-
-	// 1. start with making ppot's shared_ptr so they can be stored locally in system
-
 	// if restart/ exists, default to use this information to restart the simulation
 	restartInfo res (restartFile, 900);
     if (!res.hasCheckpoint) {
@@ -57,6 +43,7 @@ int main (int argc, char * const argv[]) {
     }
 
 	// TODO: finish adding restarting information so system knows how to pick up where it left off
+	// make ppot also use shared pointers (even though pre-alloc seems to work ok so far)
 
 	if (!res.walaDone) {
 		// perform Wang-Landau simulation
