@@ -25,7 +25,6 @@ public:
     void makeMove (simSystem &sys);
     std::vector < std::vector < double > > reportMoveStatistics ();
     std::vector < double > reportProbabilities () { return normProbabilities_; } //!< Echo the normalized probabilities of each move in the object
-	const std::vector < mcMove* > includedMoves () { return moves_; } //!< Returns a vector of pointers to move objects currently being used
 	void print (const std::string filename);
 	void addInsert (const int index, const double prob);
 	void addDelete (const int index, const double prob);
@@ -34,8 +33,9 @@ public:
     int getM () { return M_; }
     void setM (const int M);
 
-    void addMove (mcMove *newMove, const double probability); //DEPR
-
+    //void addMove (mcMove *newMove, const double probability); //DEPR
+    //const std::vector < mcMove* > includedMoves () { return moves_; } //!< Returns a vector of pointers to move objects currently being used //DEPR
+    
 private:
     std::vector < double > normProbabilities_; //!< Sum of un-normalized probability of each move included
     std::vector < double > rawProbabilities_; //!< Un-normalized probabilty of each move
@@ -43,11 +43,11 @@ private:
     std::vector < std::vector < double > > attempted_; //!< Number of times each move was attempted
     int M_; //!< Number of stages for insert/delete moves
 
-    std::vector < mcMove* > moves_; //!< Vector of pointers to all moves used //DEPR
+    /*std::vector < mcMove* > moves_; //!< Vector of pointers to all moves used //DEPR
 	std::vector < insertParticle > insert_; //DEPR
 	std::vector < deleteParticle > delete_; //DEPR
 	std::vector < translateParticle > translate_; //DEPR
-	std::vector < swapParticles > swap_; //DEPR
+	std::vector < swapParticles > swap_; //DEPR*/
 
     std::vector < std::shared_ptr < mcMove > > ownedMoves_;
     void addOn_ (bool changeN, const double probability);

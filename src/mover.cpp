@@ -32,18 +32,19 @@ moves::~moves () {
 void moves::print (const std::string filename) {
 	std::ofstream statFile (filename.c_str(), std::ofstream::out | std::ofstream::app);
     std::vector < std::vector < double > > stats = reportMoveStatistics();
-    statFile << " ---------- Move Statistics --------- " << std::endl << " Move\t\% Success" << std::endl;
+	statFile << "Time: " << getTimeStamp() << std::endl;
+    statFile << "---------- Move Statistics --------- " << std::endl << "Move\t\% Success" << std::endl;
     for (unsigned int i = 0; i < stats.size(); ++i) {
         double prod = 1.0;
         for (unsigned int j = 0; j < stats[i].size(); ++j) {
             prod *= stats[i][j];
-            statFile << includedMoves()[i]->myName() << " (from M = " << j << ")\t" << stats[i][j]*100.0 << std::endl;
+            statFile << ownedMoves_[i]->myName() << " (from M = " << j << ")\t" << stats[i][j]*100.0 << std::endl;
         }
         if (stats[i].size() > 1) {
             statFile << "-------------------------------------\nProduct of percentages (%) = " << prod*100 << "\n-------------------------------------" << std::endl;
         }
     }
-    statFile << std::endl;
+	statFile << "------------------------------------ " << std::endl;
     statFile.close();
 }
 
@@ -159,7 +160,7 @@ void moves::addOn_ (bool changeN, const double probability) {
  * \param [in] newMove Pointer to a newly instantiated move.  This is stored as a pointer, so the move cannot be moved in memory later.
  * \param [in] probability Unnormalized probability of making this move.
  */
-void moves::addMove (mcMove *newMove, const double probability) {
+/*void moves::addMove (mcMove *newMove, const double probability) {
 	// add new move to the class
 	moves_.push_back(newMove);
 	rawProbabilities_.push_back(probability);
@@ -195,7 +196,7 @@ void moves::addMove (mcMove *newMove, const double probability) {
 
 	// for exactness, specify the upper bound
 	normProbabilities_[normProbabilities_.size()-1] = 1.0;
-}
+}*/
 
 /*!
  * Choose a move to make. If in an expanded ensemble, will restrict moves which change the number of particles to the atom type
@@ -204,18 +205,14 @@ void moves::addMove (mcMove *newMove, const double probability) {
  * \param [in] sys simSystem object to make a move in.
  */
 void moves::makeMove (simSystem &sys) {
-	std::cout << "b00\n";
 	if (sys.getTotalM() != M_) {
         throw customException ("Error, M in system different from M in moves class operating on the system");
     }
-	std::cout << "b01\n";
 	int moveChosen = -1, succ = 0, mIndex = 0;
 	bool done = false;
 	while (!done) {
 		const double ran = rng (&RNG_SEED);
-		std::cout << "b02 "<<normProbabilities_.size() << std::endl;
 		for (unsigned int i = 0; i < normProbabilities_.size(); ++i) {
-			std::cout << "i = " << i << std::endl;
 			if (ran < normProbabilities_[i]) {
 				if (sys.getTotalM() > 1) {
 					// expanded ensemble has to check the moves because have to only work on the partially inserted atom
@@ -242,11 +239,8 @@ void moves::makeMove (simSystem &sys) {
 					}
 				} else {
 					// without expanded ensemble, inserts/deletes can proceed unchecked
-					std::cout << "chose: " << i << std::endl;
 					try {
-						std::cout << "try " << ownedMoves_[i]->myName() << std::endl;
 						succ = ownedMoves_[i]->make(sys);
-						std::cout << "done\n";
 					} catch (customException &ce) {
 						std::string a = "Failed to make a move properly: ";
 						std::string b = ce.what();

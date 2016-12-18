@@ -592,17 +592,20 @@ void setup (simSystem &sys, const std::string filename) {
 
 			// insert this species i
 			moves initMove (initSys.getTotalM());
-			insertParticle initIns (i, "insert");
+			/*insertParticle initIns (i, "insert");
             initMove.addMove (&initIns, 1.0);
-			std::vector < translateParticle > initTrans (idx+1);
+			std::vector < translateParticle > initTrans (idx+1);*/
+            initMove.addInsert(i, 1.0);
 
 			// also add displacment moves for all species present
 			for (unsigned int j = 0; j <= idx; ++j) {
 				std::cout << "Added translation moves for initialization of species " << initialization_order[j] << std::endl;
-				translateParticle newTrans (initialization_order[j], "translate");
+				/*translateParticle newTrans (initialization_order[j], "translate");
                 newTrans.setMaxDisplacement (1.0, initSys.box()); // allow large displacements if necessary
 				initTrans[j] = newTrans;
           		initMove.addMove (&initTrans[j], 2.0); // move more than insert so this relaxes better (qualitative observation)
+                */
+                initMove.addTranslate(initialization_order[j], 2.0, 1.0, initSys.box());
 			}
 
 			// now do simuation until within proper range
