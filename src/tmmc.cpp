@@ -4,10 +4,10 @@
  * Perform TMMC stage of simulation
  *
  * \param [in] sys System to simulate
- * \param [in] res Restart information
+ * \param [in] res Restart/checkpoint information
  * \param [in] usedMovesPr Move class to use
  */
-void performTMMC (simSystem &sys, restartInfo &res, moves *usedMovesPr) {
+void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
     std::cout << "Beginning TMMC at " << getTimeStamp() << std::endl;
     res.tmmcDone = false;
 

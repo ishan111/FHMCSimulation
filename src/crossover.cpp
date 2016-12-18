@@ -4,10 +4,10 @@
  * Perform crossover from Wang-Landau stage of simulation to TMMC
  *
  * \param [in] sys System to simulate
- * \param [in] res Restart information
+ * \param [in] res Restart/checkpoint information
  * \param [in] usedMovesEq Move class to use
  */
-void performCrossover (simSystem &sys, restartInfo &res, moves *usedMovesEq) {
+void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
     std::cout << "Crossing over to build TMMC matrix at " << getTimeStamp() << std::endl;
     res.crossoverDone = false;
 

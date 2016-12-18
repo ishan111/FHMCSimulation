@@ -14,7 +14,7 @@
 #include "moves.h"
 #include "potentials.h"
 #include "quaternion.h"
-#include "restart.h"
+#include "checkpoint.h"
 #include "sanity.h"
 #include "swap.h"
 #include "system.h"

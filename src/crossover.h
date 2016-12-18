@@ -3,10 +3,10 @@
 
 #include <string>
 #include "system.h"
-#include "restart.h"
+#include "checkpoint.h"
 #include "utilities.h"
 #include "mover.h"
 
-void performCrossover (simSystem &sys, restartInfo &res, moves *usedMovesEq);
+void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq);
 
 #endif

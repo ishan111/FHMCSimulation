@@ -1,11 +1,12 @@
-#include "restart.h"
+#include "checkpoint.h"
 
 /*!
  * Read system state from a file.
  *
- * \param [in] filename Filename of where system state was saved
+ * \param [in] dir Directory where system state was saved
+ * \param [in] frequency Frquency to take snapshots/checkpoints of the system
  */
-restartInfo::restartInfo (const std::string filename, const int frequency) {
+checkpoint::checkpoint (const std::string directory, const int frequency) {
     tmmcDone = false;
     crossoverDone = false;
     walaDone = false;
@@ -13,21 +14,17 @@ restartInfo::restartInfo (const std::string filename, const int frequency) {
     restartFromTMMC = false;
     restartFromWALA = false;
 
-    fname = filename;
+    dir = directory;
     if (frequency < 1) {
         throw customException ("Invalid restart save frequency");
     }
     freq = frequency;
 
-    if (fileExists(fname)) {
-        load (fname);
+    chkptName = dir+"/state.json";
+    if (fileExists(chkptName)) {
+        load (chkptName);
     } else {
-        std::vector < std::string > xplode = splitstr(fname, '/');
-        std::string xyz = "";
-        for (unsigned int i = 0; i < xplode.size()-1; ++i) {
-            xyz += xplode[i]+"/";
-        }
-        std::string command = "mkdir -p "+xyz+" && touch "+fname;
+        std::string command = "mkdir -p "+dir+" && touch "+chkptName;
         system(command.c_str());
     }
 }
@@ -37,7 +34,7 @@ restartInfo::restartInfo (const std::string filename, const int frequency) {
  *
  * \param [in] filename Filename of where system state was saved
  */
-void restartInfo::load (const std::string filename) {
+void checkpoint::load (const std::string filename) {
     hasCheckpoint = true;
 }
 
@@ -46,6 +43,6 @@ void restartInfo::load (const std::string filename) {
  *
  * \param [in] filename Filename of where system state is to be saved
  */
-void restartInfo::dump (const simSystem &sys) {
+void checkpoint::dump (const simSystem &sys) {
     hasCheckpoint = true;
 }

@@ -1,5 +1,5 @@
-#ifndef RESTART_H_
-#define RESTART_H_
+#ifndef CHECKPOINT_H_
+#define CHECKPOINT_H_
 
 #include <string>
 #include <vector>
@@ -15,13 +15,13 @@
 #include "rapidjson/include/rapidjson/prettywriter.h"
 
 /*!
- * Information to restart the simulation
+ * Information to restart/checkpoint the simulation
  */
-class restartInfo {
+class checkpoint {
 public:
-	restartInfo () { tmmcDone = false; crossoverDone = false; walaDone = false; hasCheckpoint = false; restartFromTMMC = false; restartFromWALA = false; };
-	restartInfo (const std::string filename, const int frequency);
-    ~restartInfo () {};
+	checkpoint () { tmmcDone = false; crossoverDone = false; walaDone = false; hasCheckpoint = false; restartFromTMMC = false; restartFromWALA = false; };
+	checkpoint (const std::string directory, const int frequency);
+    ~checkpoint () {};
 
 	void dump (const simSystem &sys);
 	void load (const std::string filename);
@@ -29,7 +29,8 @@ public:
 	bool hasCheckpoint; //!< At least one checkpoint has been made that the system can restart from
     bool tmmcDone, crossoverDone, walaDone; //!< Progress of each stage
 	long int freq; //!< Frequency (in seconds) that the system should print a new instantaneous snapshot of itself
-	std::string fname; //!< Name of the restart snaphot file containing the information to reinitialize the system (json)
+	std::string dir; //!< Name of the checkpoint directory containing the information to reinitialize the system (json)
+	std::string chkptName; //!< Name of checkpoint file
 
 	// Manual TMMC restarts
 	bool restartFromTMMC; //!< Flag to signal manual restart from beginning of TMMC

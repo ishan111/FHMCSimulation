@@ -33,7 +33,7 @@ file(GLOB omcs_SRC
 	"../../src/moves.cpp"
 	"../../src/potentials.cpp"
 	"../../src/quaternion.cpp"
-	"../../src/restart.cpp"
+	"../../src/checkpoint.cpp"
 	"../../src/sanity.cpp"
 	"../../src/swap.cpp"
 	"../../src/system.cpp"

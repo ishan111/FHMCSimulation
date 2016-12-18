@@ -30,34 +30,35 @@
  * Usage: ./binary_name input.json
  */
 int main (int argc, char * const argv[]) {
-	const std::string restartFile = "restart/state.json";
 	std::cout << "Beginning simulation at " << getTimeStamp() << std::endl;
 
 	moves usedMovesEq, usedMovesPr;
 	simSystem sys = initialize (argv[1], &usedMovesEq, &usedMovesPr); // read json file and create system class
 
 	// if restart/ exists, default to use this information to restart the simulation
-	restartInfo res (restartFile, 900);
-    if (!res.hasCheckpoint) {
+	checkpoint cpt ("checkpt", 900);
+    if (!cpt.hasCheckpoint) {
         setup (sys, argv[1]);
     }
 
 	// TODO: finish adding restarting information so system knows how to pick up where it left off
 	// make ppot also use shared pointers (even though pre-alloc seems to work ok so far)
 
-	if (!res.walaDone) {
+	if (!cpt.walaDone) {
 		// perform Wang-Landau simulation
-		performWALA (sys, res, &usedMovesEq);
-		performCrossover (sys, res, &usedMovesEq);
-		performTMMC (sys, res, &usedMovesPr);
-	} else if (!res.crossoverDone) {
+		performWALA (sys, cpt, &usedMovesEq);
+		performCrossover (sys, cpt, &usedMovesEq);
+		performTMMC (sys, cpt, &usedMovesPr);
+	} else if (!cpt.crossoverDone) {
 		// crossover to TMMC
-		performCrossover (sys, res, &usedMovesEq);
-		performTMMC (sys, res, &usedMovesPr);
-	} else if (!res.tmmcDone) {
+		performCrossover (sys, cpt, &usedMovesEq);
+		performTMMC (sys, cpt, &usedMovesPr);
+	} else if (!cpt.tmmcDone) {
 		// perform tmmc portion of the simulation
-		performTMMC (sys, res, &usedMovesPr);
+		performTMMC (sys, cpt, &usedMovesPr);
 	}
+
+	sanityChecks(sys);
 
     sys.printSnapshot("final.xyz", "last configuration");
     sys.refineEnergyHistogramBounds();
