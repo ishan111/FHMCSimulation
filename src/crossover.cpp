@@ -8,9 +8,13 @@
  * \param [in] usedMovesEq Move class to use
  */
 void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
-    std::cout << "Crossing over to build TMMC matrix at " << getTimeStamp() << std::endl;
-    res.crossoverDone = false;
+    if (!sys.useWALA) {
+        throw customException ("WALA not configured, cannot proceeed with crossover");
+    }
 
+    std::cout << "Crossing over to build TMMC matrix at " << getTimeStamp() << std::endl;
+
+    res.crossoverDone = false;
     sys.startTMMC (sys.tmmcSweepSize, sys.getTotalM());
 
     int timesFullyVisited = 0;
@@ -49,7 +53,6 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
         if (flat) {
             // If flat, need to reset H and reduce lnF
             sys.getWALABias()->iterateForward();
-
             std::cout << "lnF = " << sys.getWALABias()->lnF() << " at " << getTimeStamp() << std::endl;
         }
     }
@@ -60,7 +63,7 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
     std::cout << "Switching over to TMMC completely, ending Wang-Landau" << std::endl;
     try {
         sys.getTMMCBias()->calculatePI();
-        sys.getTMMCBias()->print("tmmc-beginning-Checkpoint", true);
+        //sys.getTMMCBias()->print("tmmc-beginning-Checkpoint", true);
     } catch (customException &ce) {
         std::cerr << ce.what() << std::endl;
         sys.getTMMCBias()->print("tmmc-beginning-fail", true);

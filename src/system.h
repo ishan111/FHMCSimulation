@@ -93,7 +93,8 @@ public:
 	wala* wlBias; //!< WL biasing function
 	std::vector < int > numSpecies;		//!< Total number of each type of atom the system contains
 	std::vector < std::vector < atom > > atoms;	//!< Atoms in a matrix by type, and particle index, respectively that a system CAN hold but not all are actually "in" the system
-	std::vector < std::vector < pairPotential* > > ppot;	//!< Matrix of pair potentials for atom types i, j
+	std::vector < std::vector < std::shared_ptr <pairPotential> > > ppot;
+	//std::vector < std::vector < pairPotential* > > ppot;	//!< Matrix of pair potentials for atom types i, j
 	std::vector < compositeBarrier > speciesBarriers; //!< Barriers, if any, for each species
 
 private:

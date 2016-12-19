@@ -8,9 +8,13 @@
  * \param [in] usedMovesEq Move class to use
  */
 void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
-    std::cout << "Beginning Wang-Landau portion at " << getTimeStamp() << std::endl;
-    res.walaDone = false;
+    if (sys.useTMMC or sys.useWALA) {
+        throw customException ("WALA or TMMC already active, cannot proceeed with WALA");
+    }
 
+    std::cout << "Beginning Wang-Landau portion at " << getTimeStamp() << std::endl;
+
+    res.walaDone = false;
     bool flat = false;
     double lnF = sys.lnF_start;
     sys.startWALA (lnF, sys.wala_g, sys.wala_s, sys.getTotalM());

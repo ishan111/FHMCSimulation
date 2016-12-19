@@ -8,6 +8,10 @@
  * \param [in] usedMovesPr Move class to use
  */
 void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
+    if (!sys.useTMMC or sys.useWALA) {
+        throw customException ("TMMC not configured for this system or WALA not deactivated, cannot proceeed with TMMC");
+    }
+
     std::cout << "Beginning TMMC at " << getTimeStamp() << std::endl;
     res.tmmcDone = false;
 

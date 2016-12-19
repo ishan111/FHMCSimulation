@@ -19,7 +19,7 @@
  */
 class checkpoint {
 public:
-	checkpoint () { tmmcDone = false; crossoverDone = false; walaDone = false; hasCheckpoint = false; restartFromTMMC = false; restartFromWALA = false; frequency = -1; }
+	checkpoint () { tmmcDone = false; crossoverDone = false; walaDone = false; hasCheckpoint = false; restartFromTMMC = false; restartFromWALA = false; freq = -1; dir = "checkpt"; }
 	checkpoint (const std::string directory, const int frequency);
     ~checkpoint () {};
 

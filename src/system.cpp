@@ -457,13 +457,13 @@ simSystem::~simSystem () {
 	if (useWALA) {
 		delete wlBias;
 	}
-	for (unsigned int i = 0; i < ppot.size(); ++i) {
+	/*for (unsigned int i = 0; i < ppot.size(); ++i) {
 		for (unsigned int j = 0; j < ppot[i].size(); ++j) {
 			delete ppot[i][j];
 		}
 		ppot[i].clear();
 	}
-	ppot.clear();
+	ppot.clear();*/
 }
 
 /*!
@@ -643,69 +643,6 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		} catch (std::bad_alloc &ba) {
     		throw customException ("Out of memory for particle histogram for each Ntot");
     	}
-
-    	/*try {
-        	numAverageU_.resize(size, 0);
-    	} catch (std::bad_alloc &ba) {
-     		throw customException ("Out of memory for energy record");
-    	}
-	try {
-        	numAverageFlucts_.resize(size, 0);
-    	} catch (std::bad_alloc &ba) {
-     		throw customException ("Out of memory for fluctuation record");
-    	}
-
-    	try {
-       		AverageU_.resize(size, 0);
-    	} catch (std::bad_alloc &ba) {
-        	throw customException ("Out of memory for energy record");
-    	}
-	try {
-       		averageU2_.resize(size, 0);
-    	} catch (std::bad_alloc &ba) {
-        	throw customException ("Out of memory for energy^2 record");
-    	}
-
-	try {
-                numAverageN_.resize(size, 0);
-        } catch (std::bad_alloc &ba) {
-                throw customException ("Out of memory for particle histogram");
-        }
-	try {
-		averageN_.resize(nSpecies_);
-	} catch (std::bad_alloc &ba) {
-		throw customException ("Out of memory for particle histogram");
-	}
-	try {
-		averageUNi_.resize(nSpecies_);
-	} catch (std::bad_alloc &ba) {
-		throw customException ("Out of memory for particle histogram");
-	}
-	try {
-		averageNiNj_.resize(nSpecies_*nSpecies_);
-	} catch (std::bad_alloc &ba) {
-		throw customException ("Out of memory for <N_iN_j> histogram");
-	}
-
-	for (unsigned int i = 0; i < nSpecies_; ++i) {
-		try {
-			averageN_[i].resize(size, 0);
-		} catch (std::bad_alloc &ba) {
-			throw customException ("Out of memory for particle histogram");
-		}
-		try {
-			averageUNi_[i].resize(size, 0);
-		} catch (std::bad_alloc &ba) {
-			throw customException ("Out of memory for <UN_i> histogram");
-		}
-	}
-	for (unsigned int i = 0; i < nSpecies_*nSpecies_; ++i) {
-		try {
-			averageNiNj_[i].resize(size, 0);
-		} catch (std::bad_alloc &ba) {
-			throw customException ("Out of memory for <N_iN_j> histogram");
-		}
-	}*/
 
 	// initialize moments
 	std::vector < double > lbn (6,0), ubn(6,0);
@@ -1334,50 +1271,85 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 
 	if (ppot_name == "square_well") {
 		try {
+			auto pp1 = std::make_shared < squareWell > ();
+			pp1->setParameters(params);
+			ppot[spec1][spec2] = pp1;
+			auto pp2 = std::make_shared < squareWell > ();
+			pp2->setParameters(params);
+			ppot[spec2][spec1] = pp2;
+			/*
 			ppot[spec1][spec2] = new squareWell;
 			ppot[spec1][spec2]->setParameters(params);
 			ppot[spec2][spec1] = new squareWell;
-			ppot[spec2][spec1]->setParameters(params);
+			ppot[spec2][spec1]->setParameters(params);*/
 		} catch (customException &ce) {
 			std::cerr << ce.what() << std::endl;
 			exit(SYS_FAILURE);
 		}
 	} else if (ppot_name == "lennard_jones") {
 		try {
+			auto pp1 = std::make_shared < lennardJones > ();
+			pp1->setParameters(params);
+			ppot[spec1][spec2] = pp1;
+			auto pp2 = std::make_shared < lennardJones > ();
+			pp2->setParameters(params);
+			ppot[spec2][spec1] = pp2;
+			/*
 			ppot[spec1][spec2] = new lennardJones;
 			ppot[spec1][spec2]->setParameters(params);
 			ppot[spec2][spec1] = new lennardJones;
-			ppot[spec2][spec1]->setParameters(params);
+			ppot[spec2][spec1]->setParameters(params);*/
 		} catch (customException &ce) {
 			std::cerr << ce.what() << std::endl;
 			exit(SYS_FAILURE);
 		}
 	} else if (ppot_name == "fs_lennard_jones") {
 		try {
+			auto pp1 = std::make_shared < fsLennardJones > ();
+			pp1->setParameters(params);
+			ppot[spec1][spec2] = pp1;
+			auto pp2 = std::make_shared < fsLennardJones > ();
+			pp2->setParameters(params);
+			ppot[spec2][spec1] = pp2;
+			/*
 			ppot[spec1][spec2] = new fsLennardJones;
 			ppot[spec1][spec2]->setParameters(params);
 			ppot[spec2][spec1] = new fsLennardJones;
-			ppot[spec2][spec1]->setParameters(params);
+			ppot[spec2][spec1]->setParameters(params);*/
 		} catch (customException &ce) {
 			std::cerr << ce.what() << std::endl;
 			exit(SYS_FAILURE);
 		}
 	} else if (ppot_name == "hard_sphere") {
 		try {
+			auto pp1 = std::make_shared < hardCore > ();
+			pp1->setParameters(params);
+			ppot[spec1][spec2] = pp1;
+			auto pp2 = std::make_shared < hardCore > ();
+			pp2->setParameters(params);
+			ppot[spec2][spec1] = pp2;
+			/*
 			ppot[spec1][spec2] = new hardCore;
 			ppot[spec1][spec2]->setParameters(params);
 			ppot[spec2][spec1] = new hardCore;
-			ppot[spec2][spec1]->setParameters(params);
+			ppot[spec2][spec1]->setParameters(params);*/
 		} catch (customException &ce) {
 			std::cerr << ce.what() << std::endl;
 			exit(SYS_FAILURE);
 		}
 	} else if (ppot_name == "tabulated") {
 		try {
+			auto pp1 = std::make_shared < tabulated > ();
+			pp1->setParameters(params);
+			ppot[spec1][spec2] = pp1;
+			auto pp2 = std::make_shared < tabulated > ();
+			pp2->setParameters(params);
+			ppot[spec2][spec1] = pp2;
+			/*
 			ppot[spec1][spec2] = new tabulated;
 			ppot[spec1][spec2]->setParameters(params);
 			ppot[spec2][spec1] = new tabulated;
-			ppot[spec2][spec1]->setParameters(params);
+			ppot[spec2][spec1]->setParameters(params);*/
 		} catch (customException &ce) {
 			std::cerr << ce.what() << std::endl;
 			exit(SYS_FAILURE);
