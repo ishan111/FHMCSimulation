@@ -41,8 +41,8 @@ int main (int argc, char * const argv[]) {
     }
 
 	// TODO: finish adding restarting information so system knows how to pick up where it left off
-	// make ppot also use shared pointers (even though pre-alloc seems to work ok so far)
-
+	// update tests
+	
 	if (!cpt.walaDone) {
 		// perform Wang-Landau simulation
 		performWALA (sys, cpt, &usedMovesEq);

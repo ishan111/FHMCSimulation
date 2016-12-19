@@ -2,13 +2,13 @@
 
 cellList::cellList (std::vector < double > _box, double _cellSize, std::vector< atom* > _atoms) {
 	box = _box;
-		
+
 	cellCountX = floor(_box[0]/_cellSize);
 	cellCountY = floor(_box[1]/_cellSize);
 	cellCountZ = floor(_box[2]/_cellSize);
 	cellCountXY = cellCountX*cellCountY;
 	cellCount = cellCountXY*cellCountZ;
-	
+
 	cellSize.resize(3);
 	cellSize[0] = _box[0]/cellCountX;
 	cellSize[1] = _box[1]/cellCountY;
@@ -17,17 +17,17 @@ cellList::cellList (std::vector < double > _box, double _cellSize, std::vector< 
 	// init neighbour list
 	neighbours.assign(cellCount, std::vector < unsigned int > (26));
 	initNeighbours();
-	
+
 	// init cell list
 	cells.assign(cellCount, std::vector < atom* > (0));
-	
+
 	// clear all cells
 	const unsigned int reserveCount = ceil(cellSize[0]*cellSize[1]*cellSize[2]);
 	for (unsigned int i = 0; i < cells.size(); i++) {
 		cells[i].reserve(reserveCount);
 		cells[i].clear();
 	}
-	
+
 	if (_atoms.size() > 0) {
 		//std::cout << "Sorting particles into cells." << std::endl;
 		sortIntoCells(_atoms);
@@ -102,10 +102,10 @@ void cellList::insertParticle (atom* _a) {
 void cellList::swapAndDeleteParticle (atom* _a, atom* _b) {
 	const unsigned indexA = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
 	const unsigned indexB = calcIndex(_b->pos[0], _b->pos[1], _b->pos[2]);
-	
+
 	unsigned int cellIndexA = 0, cellIndexB = 0;
 	bool foundCellIndexA = false, foundCellIndexB = false;
-	
+
 	// locate position of atom _a in its cell
 	for (unsigned int i = 0; i < cells[indexA].size(); i++) { // error?
 		if (cells[indexA][i] == _a) {
@@ -114,7 +114,7 @@ void cellList::swapAndDeleteParticle (atom* _a, atom* _b) {
 			break;
 		}
 	}
-	
+
 	// locate position of atom _b in its cell
 	for (unsigned int i = 0; i < cells[indexB].size(); i++) { // error ?
 		if (cells[indexB][i] == _b) {
@@ -123,14 +123,14 @@ void cellList::swapAndDeleteParticle (atom* _a, atom* _b) {
 			break;
 		}
 	}
-	
+
 	if (!foundCellIndexA || !foundCellIndexB) {
 		throw customException ("Failed to locate index in cell list properly");
 	}
-	
+
 	// swap addresses
 	cells[indexB][cellIndexB] = cells[indexA][cellIndexA];
-	
+
 	// remove _a from its cell
 	cells[indexA].erase(cells[indexA].begin()+cellIndexA);
 }
@@ -139,11 +139,11 @@ void cellList::swapAndDeleteParticle (atom* _a, atom* _b) {
 void cellList::translateParticle (atom* _a, std::vector < double > _oldPos) {
 	const unsigned indexOld = calcIndex(_oldPos[0], _oldPos[1], _oldPos[2]);
 	const unsigned indexNew = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
-	
+
 	if (indexOld != indexNew) {
 		unsigned int cellIndexOld = 0;
 		bool foundCellIndexOld = false;
-	
+
 		// locate position of atom _a in its cell
 		for (unsigned int i = 0; i < cells[indexOld].size(); i++) { //error?
 			if (cells[indexOld][i] == _a) {
@@ -152,14 +152,14 @@ void cellList::translateParticle (atom* _a, std::vector < double > _oldPos) {
 				break;
 			}
 		}
-		
+
 		if (!foundCellIndexOld) {
 			throw customException ("Failed to locate cell index properly");
 		}
-		
+
 		// remove _a from its cell
 		cells[indexOld].erase(cells[indexOld].begin()+cellIndexOld);
-		
+
 		// insert _a into new cell
 		cells[indexNew].push_back(_a);
 	}
