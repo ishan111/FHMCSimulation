@@ -8,13 +8,14 @@ ADD_SUBDIRECTORY (gtest-1.7.0)
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-
 if(CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-std=gnu++0x)
 endif()
 
 add_definitions(-D_GLIBCXX_DEBUG)
 #add_definitions(-fsanitize=address -mllvm -asan-stack)
+
+set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -stdlib=libc++")
 
 # do not include main.cpp
 include_directories("../../src/")

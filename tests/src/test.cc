@@ -37,11 +37,10 @@ TEST (Initialize, MoveIndex) {
 TEST (Adding, Moves) {
 	moves test;
 	double prob1 = 0.4, prob2 = 0.6, tol = 1.0e-9;
-	insertParticle insTest (0, "insert");
-	test.addMove(&insTest, prob1);
+	test.addInsert(0, prob1);
 	std::vector < double > pr = test.reportProbabilities();
 	EXPECT_TRUE (fabs(pr[0] - 1.0) < tol);
-	test.addMove(&insTest, prob2);
+	test.addInsert(0, prob2);
 	std::vector < double > pr2 = test.reportProbabilities();
 	EXPECT_TRUE (fabs(pr2[0] - prob1) < tol);
 	EXPECT_TRUE (fabs(pr2[1] - (prob1+prob2)) < tol);
@@ -1316,8 +1315,7 @@ TEST_F (testComputeBias, testInSituWALASingleComponent) {
 	mysys.addPotential (0, 0, "hard_sphere", params, false);
 
 	moves usedMoves;
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert
 	usedMoves.makeMove(mysys);
@@ -1352,8 +1350,7 @@ TEST_F (testComputeBias, testInSituWALAMultiComponent) {
 	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves usedMoves;
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert first species
 	usedMoves.makeMove(mysys);
@@ -1371,9 +1368,7 @@ TEST_F (testComputeBias, testInSituWALAMultiComponent) {
 
 	// will insert the second species
 	moves usedMoves2;
-	insertParticle newIns2 (1, "insert");
-	usedMoves2.addMove(&newIns2, 1.0);
-
+	usedMoves2.addInsert(1, 1.0);
 	usedMoves2.makeMove(mysys);
 
 	// check WALA properties - should have incremented where the system ENDED (at N_tot = 2)
@@ -1402,8 +1397,7 @@ TEST_F (testComputeBias, testInSituTMMCSingleComponent) {
 	mysys.addPotential (0, 0, "hard_sphere", params, false);
 
 	moves usedMoves;
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert
 	usedMoves.makeMove(mysys);
@@ -1455,8 +1449,7 @@ TEST_F (testComputeBias, testInSituTMMCMultiComponent) {
 	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves usedMoves;
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert first species
 	usedMoves.makeMove(mysys);
@@ -1489,8 +1482,7 @@ TEST_F (testComputeBias, testInSituTMMCMultiComponent) {
 
 	// do insertions with the other species
 	moves usedMoves2;
-	insertParticle newIns2 (1, "insert");
-	usedMoves2.addMove(&newIns2, 1.0);
+	usedMoves2.addInsert(1, 1.0);
 
 	// insert 1 atom from second species
 	usedMoves2.makeMove(mysys);
@@ -1550,8 +1542,7 @@ TEST (testSwapMove, twoComponents) {
 	mysys.insertAtom(2, &a3);
 
 	moves usedMoves;
-	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
-	usedMoves.addMove(&newSwap, 1.0);
+	usedMoves.addSwap(0,1,1.0); // only can swap a1 and a2
 
 	// swap a1 & a2 should result in no change since they are an isolated pair
 	bool noMove = true;
@@ -1569,8 +1560,7 @@ TEST (testSwapMove, twoComponents) {
 
 	// now try to swap a1 and a3 after swapping a1 and a2
 	moves usedMoves2;
-	swapParticles newSwap2 (1, 2, "swap"); // swap a2 and a3
-	usedMoves2.addMove(&newSwap2, 1.0);
+	usedMoves2.addSwap(1,2,1.0); // swap a2 and a3
 	noMove = true;
 	lastAns = 0;
 	U_save = mysys.scratchEnergy();
@@ -1586,8 +1576,7 @@ TEST (testSwapMove, twoComponents) {
 
 	// swap a1 and a3 which are now an isolated pair
 	moves usedMoves3;
-	swapParticles newSwap3 (0, 2, "swap"); // only can swap a1 and a3
-	usedMoves3.addMove(&newSwap3, 1.0);
+	usedMoves3.addSwap(0,2,1.0); // only can swap a1 and a3
 	noMove = true;
 	lastAns = 0;
 	U_save = mysys.scratchEnergy();
@@ -1935,10 +1924,6 @@ protected:
 		tmmcBias->updateC(Nmin+1, Nmin+1, 2, 2, pu);
 		tmmcBias->updateC(Nmin+1, Nmin+2, 2, 0, pu);
 		tmmcBias->updateC(Nmin+1, Nmin+1, 2, 1, pu);
-
-		// "missing states"
-		/*tmmcBias->updateC(Nmin+2, Nmin+2, 0, 0, pu);
-		tmmcBias->updateC(Nmin+2, Nmin+1, 0, 2, pu);*/
 	}
 };
 
@@ -2251,7 +2236,6 @@ TEST_F (testExpandedWalaBias, checkEvaluateFlatnessYes) {
 }
 
 /* Expanded Ensemble Single Component Insertion/Deletion */
-
 class testBookkeepingExpanded : public ::testing::Test {
 protected:
 	//double s, g, lnF, pu;
@@ -2625,14 +2609,10 @@ TEST_F (testMulticomponentExpandedMCMove, selectSpec1) {
 	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves mover (Mtot);
-
-	insertParticle insOne (0, "in1"), insTwo (1, "in2");
-	deleteParticle delOne (0, "del1"), delTwo (1, "del2");
-
-	mover.addMove (&insOne, 1.0);
-	mover.addMove (&insTwo, 1.0);
-	mover.addMove (&delOne, 1.0);
-	mover.addMove (&delTwo, 1.0);
+	mover.addInsert(0,1.0);
+	mover.addInsert(1,1.0);
+	mover.addDelete(0,1.0);
+	mover.addDelete(1,1.0);
 
 	// manually insert two particles of each into the system
 	atom a1;
@@ -2696,14 +2676,10 @@ TEST_F (testMulticomponentExpandedMCMove, selectSpec1_moved) {
 	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves mover (Mtot);
-
-	insertParticle insOne (0, "in1"), insTwo (1, "in2");
-	deleteParticle delOne (0, "del1"), delTwo (1, "del2");
-
-	mover.addMove (&insOne, 1.0);
-	mover.addMove (&insTwo, 1.0);
-	mover.addMove (&delOne, 1.0);
-	mover.addMove (&delTwo, 1.0);
+	mover.addInsert(0,1.0);
+	mover.addInsert(1,1.0);
+	mover.addDelete(0,1.0);
+	mover.addDelete(1,1.0);
 
 	// manually insert two particles of each into the system
 	atom a1;
@@ -2976,8 +2952,7 @@ TEST_F (testComputeBiasExpanded, testInSituWALASingleComponent) {
 	mysys.addPotential (0, 0, "hard_sphere", params, false);
 
 	moves usedMoves (Mtot);
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert
 	usedMoves.makeMove(mysys);
@@ -3018,8 +2993,7 @@ TEST_F (testComputeBiasExpanded, testInSituWALAMultiComponent) {
 	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves usedMoves (Mtot);
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0,1.0);
 
 	// will insert first species
 	usedMoves.makeMove(mysys);
@@ -3046,8 +3020,7 @@ TEST_F (testComputeBiasExpanded, testInSituWALAMultiComponent) {
 
 	// will insert the second species
 	moves usedMoves2 (Mtot);
-	insertParticle newIns2 (1, "insert");
-	usedMoves2.addMove(&newIns2, 1.0);
+	usedMoves2.addInsert(1,1.0);
 
 	usedMoves2.makeMove(mysys);
 
@@ -3088,8 +3061,7 @@ TEST_F (testComputeBiasExpanded, testInSituTMMCSingleComponent) {
 	mysys.addPotential (0, 0, "hard_sphere", params, false);
 
 	moves usedMoves (Mtot);
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert
 	usedMoves.makeMove(mysys);
@@ -3161,8 +3133,7 @@ TEST_F (testComputeBiasExpanded, testInSituTMMCMultiComponent) {
 	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves usedMoves (Mtot);
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert first species
 	usedMoves.makeMove(mysys);
@@ -3215,8 +3186,7 @@ TEST_F (testComputeBiasExpanded, testInSituTMMCMultiComponent) {
 
 	// do insertions with the other species
 	moves usedMoves2 (Mtot);
-	insertParticle newIns2 (1, "insert");
-	usedMoves2.addMove(&newIns2, 1.0);
+	usedMoves2.addInsert(1,1.0);
 
 	// insert 1 atom from second species
 	usedMoves2.makeMove(mysys);
@@ -3959,8 +3929,7 @@ TEST (testExpandedSwapMove, multicomponentNoSwapTwoFullyInserted) {
 	EXPECT_TRUE (fabs(U_save - -(1.0+2.0)) < 1.0e-9);
 
 	moves usedMoves (Mtot);
-	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
-	usedMoves.addMove(&newSwap, 1.0);
+	usedMoves.addSwap(0,1,1.0); // only can swap a1 and a2
 
 	bool noMove = true;
 	double lastAns = 0;
@@ -4037,8 +4006,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapTwoFullyInserted) {
 	EXPECT_TRUE (fabs(U_save - -(0.0+2.0)) < 1.0e-9);
 
 	moves usedMoves (Mtot);
-	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
-	usedMoves.addMove(&newSwap, 1.0);
+	usedMoves.addSwap(0,1,1.0); // only can swap a1 and a2
 
 	bool noMove = true;
 	double lastAns = 0;
@@ -4115,8 +4083,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSingleSwapTwoFullyInserted) {
 	EXPECT_TRUE (fabs(U_save - -(0.0+2.0)) < 1.0e-9);
 
 	moves usedMoves (Mtot);
-	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
-	usedMoves.addMove(&newSwap, 1.0);
+	usedMoves.addSwap(0,1,1.0); // only can swap a1 and a2
 
 	bool done = false, badSwap = true;
 	double lastAns = 0;
@@ -4209,8 +4176,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	EXPECT_TRUE (fabs(U_save - -(0.0+2.0)) < 1.0e-9);
 
 	moves usedMoves (Mtot);
-	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
-	usedMoves.addMove(&newSwap, 1.0);
+	usedMoves.addSwap(0,1,1.0); // only can swap a1 and a2
 
 	bool badSwap = true;
 	double lastAns = 0;
@@ -5113,8 +5079,6 @@ TEST_F (testCompositeBarrier, pairSquareWellWallZ) {
 TEST_F (testCompositeBarrier, hardWallInsideSquareWell) {
     cB.addSquareWellWallZ (0, H, sigma, range1, eps); // M defaults to 1
     cB.addHardWallZ (H/2-sigma/2*1.01, H/2+sigma/2*1.01, sigma); // M defaults to 1
-
-    double zpos = a1.pos[2]; // at the border
 
     // test bottom wall
     a1.pos[2] = 0;
