@@ -19,12 +19,13 @@
  */
 class checkpoint {
 public:
-	checkpoint () { tmmcDone = false; crossoverDone = false; walaDone = false; hasCheckpoint = false; restartFromTMMC = false; restartFromWALA = false; };
+	checkpoint () { tmmcDone = false; crossoverDone = false; walaDone = false; hasCheckpoint = false; restartFromTMMC = false; restartFromWALA = false; frequency = -1; }
 	checkpoint (const std::string directory, const int frequency);
     ~checkpoint () {};
 
 	void dump (const simSystem &sys);
 	void load (const std::string filename);
+	void check (const simSystem &sys);
 
 	bool hasCheckpoint; //!< At least one checkpoint has been made that the system can restart from
     bool tmmcDone, crossoverDone, walaDone; //!< Progress of each stage

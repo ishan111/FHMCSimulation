@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "../src/fhmc.h"
 
 /*!

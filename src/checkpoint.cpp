@@ -4,7 +4,7 @@
  * Read system state from a file.
  *
  * \param [in] dir Directory where system state was saved
- * \param [in] frequency Frquency to take snapshots/checkpoints of the system
+ * \param [in] frequency Frquency to take snapshots/checkpoints of the system (< 0 disables)
  */
 checkpoint::checkpoint (const std::string directory, const int frequency) {
     tmmcDone = false;
@@ -15,9 +15,6 @@ checkpoint::checkpoint (const std::string directory, const int frequency) {
     restartFromWALA = false;
 
     dir = directory;
-    if (frequency < 1) {
-        throw customException ("Invalid restart save frequency");
-    }
     freq = frequency;
 
     chkptName = dir+"/state.json";
@@ -46,3 +43,11 @@ void checkpoint::load (const std::string filename) {
 void checkpoint::dump (const simSystem &sys) {
     hasCheckpoint = true;
 }
+
+/*!
+ * Check how long it has been since last checkpoint, and write new one if has exceeded frequency.
+ */
+ void checkpoint::check (const simSystem &sys) {
+     
+     dump(sys);
+ }
