@@ -39,17 +39,9 @@ private:
     std::vector < double > rawProbabilities_; //!< Un-normalized probabilty of each move
     std::vector < std::vector < double > > succeeded_; //!< Number of times each move was successful
     std::vector < std::vector < double > > attempted_; //!< Number of times each move was attempted
-    std::vector < std::shared_ptr < mcMove > > ownedMoves_;
+    std::vector < std::shared_ptr < mcMove > > ownedMoves_; //!< Moves which belong to this class
 
-    void addOn_ (bool changeN, const double probability);
-
-    /*std::vector < mcMove* > moves_; //!< Vector of pointers to all moves used //DEPR
-	std::vector < insertParticle > insert_; //DEPR
-	std::vector < deleteParticle > delete_; //DEPR
-	std::vector < translateParticle > translate_; //DEPR
-	std::vector < swapParticles > swap_; //DEPR*/
-    //void addMove (mcMove *newMove, const double probability); //DEPR
-    //const std::vector < mcMove* > includedMoves () { return moves_; } //!< Returns a vector of pointers to move objects currently being used //DEPR    
+    void addOn_ (bool changeN, const double probability); 
 };
 
 #endif

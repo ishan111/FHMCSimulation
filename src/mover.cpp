@@ -1,5 +1,10 @@
 #include "mover.h"
 
+/*!
+ * Instantiate moves class.
+ *
+ * \param in M Number of expanded ensemble stages for insert/delete moves
+ */
 moves::moves (const int M) {
 	try {
 		setM (M);
@@ -11,6 +16,8 @@ moves::moves (const int M) {
 
 /*!
  * Set the value of M.
+ *
+ * \param in M Number of expanded ensemble stages for insert/delete moves
  */
 void moves::setM (const int M) {
 	if (M > 0) {
@@ -20,6 +27,9 @@ void moves::setM (const int M) {
 	}
 }
 
+/*!
+ * Destructor for moves class.
+ */
 moves::~moves () {
 	;
 }
@@ -55,13 +65,9 @@ void moves::print (const std::string filename) {
  * \param [in] prob Probability
  */
 void moves::addInsert (const int index, const double prob) {
-	//ownedMoves_.push_back(new insertParticle (index, "insert"));
 	auto om = std::make_shared < insertParticle > (index, "insert");
 	ownedMoves_.push_back(om);
 	addOn_(ownedMoves_.back()->changeN(), prob);
-	/*insertParticle newIns (index, "insert");
-	insert_.push_back(newIns);
-	addMove(&insert_[insert_.size()-1], prob);*/
 }
 
 /*!
@@ -71,13 +77,9 @@ void moves::addInsert (const int index, const double prob) {
  * \param [in] prob Probability
  */
 void moves::addDelete (const int index, const double prob) {
-	//ownedMoves_.push_back(new deleteParticle (index, "delete"));
 	auto om = std::make_shared < deleteParticle > (index, "delete");
 	ownedMoves_.push_back(om);
 	addOn_(ownedMoves_.back()->changeN(), prob);
-	/*deleteParticle newDel (index, "delete");
-	delete_.push_back(newDel);
-	addMove(&delete_[delete_.size()-1], prob);*/
 }
 
 /*!
@@ -88,13 +90,9 @@ void moves::addDelete (const int index, const double prob) {
  * \param [in] prob Probability
  */
 void moves::addSwap (const int index1, const int index2, const double prob) {
-	//ownedMoves_.push_back(new swapParticles (index1, index2, "swap"));
 	auto om = std::make_shared < swapParticles > (index1, index2, "swap");
 	ownedMoves_.push_back(om);
 	addOn_(ownedMoves_.back()->changeN(), prob);
-	/*swapParticles newSwap (index1, index2, "swap");
-	swap_.push_back(newSwap);
-	addMove(&swap_[swap_.size()-1], prob);*/
 }
 
 /*!
@@ -106,15 +104,10 @@ void moves::addSwap (const int index1, const int index2, const double prob) {
  * \param [in] box Box dimensions
  */
 void moves::addTranslate (const int index, const double prob, const double maxD, const std::vector < double > &box) {
-	//ownedMoves_.push_back(new newTranslate (index, "translate"));
 	auto om = std::make_shared < translateParticle > (index, "translate");
 	om->setMaxDisplacement (maxD, box);
 	ownedMoves_.push_back(om);
 	addOn_(ownedMoves_.back()->changeN(), prob);
-	/*translateParticle newTranslate (index, "translate");
-	newTranslate.setMaxDisplacement (maxD, box);
-	translate_.push_back(newTranslate);
-	addMove(&translate_[translate_.size()-1], prob);*/
 }
 
 void moves::addOn_ (bool changeN, const double probability) {
@@ -153,50 +146,6 @@ void moves::addOn_ (bool changeN, const double probability) {
 	// for exactness, specify the upper bound
 	normProbabilities_[normProbabilities_.size()-1] = 1.0;
 }
-
-/*!
- * Add a new move to the object.
- *
- * \param [in] newMove Pointer to a newly instantiated move.  This is stored as a pointer, so the move cannot be moved in memory later.
- * \param [in] probability Unnormalized probability of making this move.
- */
-/*void moves::addMove (mcMove *newMove, const double probability) {
-	// add new move to the class
-	moves_.push_back(newMove);
-	rawProbabilities_.push_back(probability);
-	normProbabilities_.resize(rawProbabilities_.size());
-    int size = 0;
-    if (newMove->changeN()) {
-      	size = M_;
-    } else {
-        size = 1;
-    }
-    if (succeeded_.end() == succeeded_.begin()) {
-    	succeeded_.resize(1);
-    	attempted_.resize(1);
-    	succeeded_[0].resize(size, 0.0);
-    	attempted_[0].resize(size, 0.0);
-    } else {
-    	succeeded_.resize(succeeded_.size()+1);
-    	attempted_.resize(attempted_.size()+1);
-    	succeeded_[succeeded_.size()-1].resize(size, 0.0);
-    	attempted_[attempted_.size()-1].resize(size, 0.0);
-    }
-
-	// update move probabilities
-	double sum = 0.0;
-	for (unsigned int i = 0; i < rawProbabilities_.size(); ++i) {
-		sum += rawProbabilities_[i];
-	}
-
-	normProbabilities_[0] = rawProbabilities_[0]/sum;
-	for (unsigned int i = 1; i < rawProbabilities_.size(); ++i) {
-		normProbabilities_[i] = rawProbabilities_[i]/sum + normProbabilities_[i-1];
-	}
-
-	// for exactness, specify the upper bound
-	normProbabilities_[normProbabilities_.size()-1] = 1.0;
-}*/
 
 /*!
  * Choose a move to make. If in an expanded ensemble, will restrict moves which change the number of particles to the atom type
@@ -273,11 +222,11 @@ std::vector < std::vector < double > > moves::reportMoveStatistics () {
 	std::vector < std::vector < double > > ans = succeeded_;
 	if (attempted_.begin() == attempted_.end()) {
 		throw customException ("No moves added to system");
+    }
+    for (unsigned int i = 0; i < attempted_.size(); ++i) {
+    	for (unsigned int j = 0; j < attempted_[i].size(); ++j) {
+        	ans[i][j] /= attempted_[i][j];
     	}
-    	for (unsigned int i = 0; i < attempted_.size(); ++i) {
-        	for (unsigned int j = 0; j < attempted_[i].size(); ++j) {
-            	ans[i][j] /= attempted_[i][j];
-        	}
-    	}
-    	return ans;
+    }
+    return ans;
 }
