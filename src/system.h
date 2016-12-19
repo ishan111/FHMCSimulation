@@ -11,6 +11,7 @@
 #include <map>
 #include <cmath>
 #include <iomanip>
+#include <memory>
 #include "potentials.h"
 #include "atom.h"
 #include "cellList.h"

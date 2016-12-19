@@ -1,6 +1,7 @@
 #ifndef TMMC_H_
 #define TMMC_H_
 
+#include <memory>
 #include "system.h"
 #include "checkpoint.h"
 #include "utilities.h"
