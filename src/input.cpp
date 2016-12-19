@@ -333,7 +333,7 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
 
     //std::vector < pairPotential* > ppotArray (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
 	std::vector < std::string > ppotType (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
-	int ppotIndex = 0, ppotTypeIndex = 0;
+	int ppotTypeIndex = 0;
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		for (unsigned int j = i; j < sys.nSpecies(); ++j) {
 			std::string name1 = "ppot_"+std::to_string(i+1)+"_"+std::to_string(j+1), name2 = "ppot_"+std::to_string(j+1)+"_"+std::to_string(i+1);
@@ -374,64 +374,7 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
             sys.addPotential(i, j, ppotType[ppotTypeIndex], params, useCellList);
             sys.ppot[i][j]->savePotential(ppotName+".dat", 0.01, 0.01);
 
-            /*
-            if (ppotType[ppotTypeIndex] == "square_well") {
-				try {
-					ppotArray[ppotIndex] = new squareWell;
-					ppotArray[ppotIndex]->setParameters(params);
-				} catch (customException &ce) {
-					std::cerr << ce.what() << std::endl;
-					exit(SYS_FAILURE);
-				}
-				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
-				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);
-			} else if (ppotType[ppotTypeIndex] == "lennard_jones") {
-				try {
-					ppotArray[ppotIndex] = new lennardJones;
-					ppotArray[ppotIndex]->setParameters(params);
-				} catch (customException &ce) {
-					std::cerr << ce.what() << std::endl;
-					exit(SYS_FAILURE);
-				}
-				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
-				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);
-			} else if (ppotType[ppotTypeIndex] == "fs_lennard_jones") {
-				try {
-					ppotArray[ppotIndex] = new fsLennardJones;
-					ppotArray[ppotIndex]->setParameters(params);
-				} catch (customException &ce) {
-					std::cerr << ce.what() << std::endl;
-					exit(SYS_FAILURE);
-				}
-				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
-				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);
-			} else if (ppotType[ppotTypeIndex] == "hard_sphere") {
-				try {
-					ppotArray[ppotIndex] = new hardCore;
-					ppotArray[ppotIndex]->setParameters(params);
-				} catch (customException &ce) {
-					std::cerr << ce.what() << std::endl;
-					exit(SYS_FAILURE);
-				}
-				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
-				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);
-			} else if (ppotType[ppotTypeIndex] == "tabulated") {
-				try {
-					ppotArray[ppotIndex] = new tabulated;
-					ppotArray[ppotIndex]->setParameters(params);
-				} catch (customException &ce) {
-					std::cerr << ce.what() << std::endl;
-					exit(SYS_FAILURE);
-				}
-				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
-				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);
-			} else {
-				std::cerr << "Unrecognized pair potential name for species "<< ppotTypeIndex << std::endl;
-				exit(SYS_FAILURE);
-			}
-            */
 			ppotTypeIndex++;
-			ppotIndex++;
 		}
 	}
 }
@@ -508,11 +451,6 @@ void setup (simSystem &sys, const std::string filename) {
 			sys.readRestart(restart_file);
 		} catch (customException &ce) {
 			std::cerr << ce. what() << std::endl;
-			/*for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-				delete ppotArray[i];
-			}
-			ppotArray.clear();
-			exit(SYS_FAILURE);*/
 		}
 	} else if (restart_file == "" && sys.totNMin() > 0) {
 		std::cout << "Automatically generating the initial configuration" << std::endl;
@@ -529,14 +467,6 @@ void setup (simSystem &sys, const std::string filename) {
 
         // add the same potentials
         setPairPotentials (initSys, doc);
-        /*int initInd = 0;
-        for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-        	for (unsigned int j = i; j < sys.nSpecies(); ++j) {
-           		initSys.addPotential (i, j, ppotArray[initInd], true); // default use of cell list even if otherwise not in main simulation
-           		initInd++;
-        	}
-        }*/
-
 		initializeSystemBarriers (initSys, doc);
 
         std::vector < int > initialization_order (sys.nSpecies(), 0), check_init (sys.nSpecies(), 0);
@@ -592,19 +522,11 @@ void setup (simSystem &sys, const std::string filename) {
 
 			// insert this species i
 			moves initMove (initSys.getTotalM());
-			/*insertParticle initIns (i, "insert");
-            initMove.addMove (&initIns, 1.0);
-			std::vector < translateParticle > initTrans (idx+1);*/
             initMove.addInsert(i, 1.0);
 
 			// also add displacment moves for all species present
 			for (unsigned int j = 0; j <= idx; ++j) {
 				std::cout << "Added translation moves for initialization of species " << initialization_order[j] << std::endl;
-				/*translateParticle newTrans (initialization_order[j], "translate");
-                newTrans.setMaxDisplacement (1.0, initSys.box()); // allow large displacements if necessary
-				initTrans[j] = newTrans;
-          		initMove.addMove (&initTrans[j], 2.0); // move more than insert so this relaxes better (qualitative observation)
-                */
                 initMove.addTranslate(initialization_order[j], 2.0, 1.0, initSys.box());
 			}
 
@@ -622,10 +544,6 @@ void setup (simSystem &sys, const std::string filename) {
 				try {
                     initMove.makeMove(initSys);
                 } catch (customException &ce) {
-                    /*for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-                        delete ppotArray[i];
-                    }
-                    ppotArray.clear();*/
                     std::cerr << "Failed to create an initial configuration: " << ce.what() << std::endl;
                     exit(SYS_FAILURE);
                 }
@@ -645,11 +563,6 @@ void setup (simSystem &sys, const std::string filename) {
 			sys.readRestart("auto-init.xyz");
 		} catch (customException &ce) {
 			std::cerr << "Failed to read auto-generated initialization file: " << ce. what() << std::endl;
-			/*for (unsigned int i = 0; i < ppotArray.size(); ++i) {
-				delete ppotArray[i];
- 			}
-			ppotArray.clear();
-			exit(SYS_FAILURE);*/
         }
    	}
 }

@@ -1031,31 +1031,56 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
  *
  * \param [in] filename File to store XYZ coordinates to
  * \param [in] comment Comment line for the file
+ * \param [in] overwrite Flag to overwrite file if it already exists or to append (default = true, overwrite)
  */
-void simSystem::printSnapshot (std::string filename, std::string comment) {
-	std::ofstream outfile (filename.c_str());
+void simSystem::printSnapshot (std::string filename, std::string comment, bool overwrite) {
+	if (overwrite) {
+		std::ofstream outfile (filename.c_str(), std::ofstream::trunc);
+		int tot = 0;
+	    for (unsigned int j = 0; j < nSpecies_; ++j) {
+	        tot += numSpecies[j]; // only count fully inserted species
+	    }
 
-    int tot = 0;
-    for (unsigned int j = 0; j < nSpecies_; ++j) {
-        tot += numSpecies[j]; // only count fully inserted species
-    }
+	    outfile << tot << std::endl;
+	    outfile << comment << std::endl;
 
-    outfile << tot << std::endl;
-    outfile << comment << std::endl;
-
-    for (unsigned int j = 0; j < nSpecies_; ++j) {
-    	long long int num = numSpecies[j];
-		if (Mcurrent_ > 1 && fractionalAtomType_ == j) {
-    		num += 1; // account for partially inserted atom
+	    for (unsigned int j = 0; j < nSpecies_; ++j) {
+	    	long long int num = numSpecies[j];
+			if (Mcurrent_ > 1 && fractionalAtomType_ == j) {
+	    		num += 1; // account for partially inserted atom
+			}
+			for (unsigned int i = 0; i < num; ++i) {
+				if (atoms[j][i].mState == 0) { // only print fully inserted atoms
+	        		outfile << j << "\t" <<  std::setprecision(15) << atoms[j][i].pos[0] << "\t" << std::setprecision(15) << atoms[j][i].pos[1] << "\t" << std::setprecision(15) << atoms[j][i].pos[2] << std::endl;
+	    		}
+			}
 		}
-		for (unsigned int i = 0; i < num; ++i) {
-			if (atoms[j][i].mState == 0) { // only print fully inserted atoms
-        		outfile << j << "\t" <<  std::setprecision(15) << atoms[j][i].pos[0] << "\t" << std::setprecision(15) << atoms[j][i].pos[1] << "\t" << std::setprecision(15) << atoms[j][i].pos[2] << std::endl;
-    		}
+
+	    outfile.close();
+	} else {
+		std::ofstream outfile (filename.c_str(), std::ofstream::out | std::ofstream::app);
+		int tot = 0;
+	    for (unsigned int j = 0; j < nSpecies_; ++j) {
+	        tot += numSpecies[j]; // only count fully inserted species
+	    }
+
+	    outfile << tot << std::endl;
+	    outfile << comment << std::endl;
+
+	    for (unsigned int j = 0; j < nSpecies_; ++j) {
+	    	long long int num = numSpecies[j];
+			if (Mcurrent_ > 1 && fractionalAtomType_ == j) {
+	    		num += 1; // account for partially inserted atom
+			}
+			for (unsigned int i = 0; i < num; ++i) {
+				if (atoms[j][i].mState == 0) { // only print fully inserted atoms
+	        		outfile << j << "\t" <<  std::setprecision(15) << atoms[j][i].pos[0] << "\t" << std::setprecision(15) << atoms[j][i].pos[1] << "\t" << std::setprecision(15) << atoms[j][i].pos[2] << std::endl;
+	    		}
+			}
 		}
+
+	    outfile.close();
 	}
-
-    outfile.close();
 }
 
 /*!

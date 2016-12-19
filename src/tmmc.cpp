@@ -8,15 +8,18 @@
  * \param [in] usedMovesPr Move class to use
  */
 void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
-    if (!sys.useTMMC or sys.useWALA) {
-        throw customException ("TMMC not configured for this system or WALA not deactivated, cannot proceeed with TMMC");
+    if (sys.useWALA) {
+        throw customException ("WALA not deactivated, cannot proceeed with TMMC");
     }
 
     std::cout << "Beginning TMMC at " << getTimeStamp() << std::endl;
     res.tmmcDone = false;
 
 	if (res.restartFromTMMC) {
-		sys.startTMMC (sys.tmmcSweepSize, sys.getTotalM()); // this was otherwise started during the crossover phase if WL was used
+        if (!sys.useTMMC) {
+            // if restating, may not have done crossover stage so TMMC not activated yet
+            sys.startTMMC (sys.tmmcSweepSize, sys.getTotalM());
+        }
 		try {
 			sys.getTMMCBias()->readC(res.restartFromTMMCFile); // read collection matrix
 			sys.getTMMCBias()->calculatePI();

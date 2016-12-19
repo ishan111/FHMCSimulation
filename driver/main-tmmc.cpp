@@ -40,9 +40,18 @@ int main (int argc, char * const argv[]) {
         setup (sys, argv[1]);
     }
 
-	// TODO: finish adding restarting information so system knows how to pick up where it left off
-	// update tests
-	
+	// 1.
+	// get checlpoint to write vals it has to json
+	// 2.
+	// from input parsing, if restart from TMMC or another one, set previous stages to completion so it goes right to it?
+	// store this into cpt object
+	// move restartFromWALA reading, etc. in input sfrom inistialize to setup and then store in cpt
+	// remove double reading from setup (like box) and just set values read from initialize
+	// 3.
+	// make reader
+	// 4.
+	// restore extMom and eHist and pkHist also from snapshot?
+
 	if (!cpt.walaDone) {
 		// perform Wang-Landau simulation
 		performWALA (sys, cpt, &usedMovesEq);
@@ -57,8 +66,10 @@ int main (int argc, char * const argv[]) {
 		performTMMC (sys, cpt, &usedMovesPr);
 	}
 
+	// Perform sanity checks
 	sanityChecks(sys);
 
+	// Print final results
     sys.printSnapshot("final.xyz", "last configuration");
     sys.refineEnergyHistogramBounds();
     sys.printEnergyHistogram("final_eHist");
@@ -66,6 +77,9 @@ int main (int argc, char * const argv[]) {
     sys.printPkHistogram("final_pkHist");
     sys.printExtMoments("final_extMom");
     sys.getTMMCBias()->print("final", false);
+
+	// Dump a final checkpoint
+	cpt.dump(sys);
 
     std::cout << "Finished simulation at " << getTimeStamp() << std::endl;
 	return SAFE_EXIT;
