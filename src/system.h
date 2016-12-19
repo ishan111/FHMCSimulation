@@ -46,11 +46,11 @@ public:
    	void readRestart (std::string filename);
 	void recordEnergyHistogram ();
 	void reInitializeEnergyHistogram ();
-	void printEnergyHistogram (const std::string fileName);
+	void printEnergyHistogram (const std::string fileName, const bool normalize=true);
 	void recordPkHistogram ();
-	void printPkHistogram (const std::string fileName);
+	void printPkHistogram (const std::string fileName, const bool normalize=true);
 	void recordExtMoments ();
-	void printExtMoments (const std::string fileName);
+	void printExtMoments (const std::string fileName, const bool normalize=true);
 	void startWALA (const double lnF, const double g, const double s, const int Mtot); //!< Start using Wang-Landau and instantiate the bias object
    	void stopWALA () { useWALA = false; delete wlBias; } //!< Stop using Wang-Landau and free the bias object
    	void startTMMC (const long long int tmmcSweepSize, const int Mtot); //!< Start using TMMC and instantiate the bias object
@@ -76,7 +76,10 @@ public:
 	const double beta () { return beta_; } //!< Return 1/kT
 	const double mu (const int index) { return mu_[index]; } //!< Return the chemical potential for a given species' index
     const double mass (const int index) { return mass_[index]; } //!< Return the mass of a given species' index
+	const std::vector < double > extMomCounter () { return extensive_moments_.getCounter(); } //!< Get counter for extensive moments needed for restarting system from a checkpoint
 	const std::vector < double > box () { return box_; } //!< Return the system box dimensions
+	std::vector < double > getELB () { return energyHistogram_lb_; } //!< Returns current tally of energy min at each Ntot for checkpointing
+	std::vector < double > getEUB () { return energyHistogram_ub_; } //!< Returns current tally of energy max at each Ntot for checkpointing
 	std::vector < atom* > getNeighborAtoms (const unsigned int typeIndexA, const unsigned int typeIndexB, atom* _atom);
 	tmmc* getTMMCBias (); //!< Return pointer to the TMMC bias
 	wala* getWALABias (); //!< Return pointer to the Wang-Landau bias

@@ -645,8 +645,9 @@ void simSystem::recordExtMoments () {
  * Print the (normalized) extensive energy histogram for each Ntot. netCDF4 not enabled
  *
  * \param [in] fileName Name of the file to print to
+ * \param [in] normalize Whether or not to normalize the histogram (default=true)
  */
-void simSystem::printExtMoments (const std::string fileName) {
+void simSystem::printExtMoments (const std::string fileName, const bool normalize) {
 #ifdef NETCDF_CAPABLE
     throw customException ("Cannot record the extensive moments for each Ntot in netCDF4 format.");
 #else
@@ -678,27 +679,52 @@ void simSystem::printExtMoments (const std::string fileName) {
 	std::vector <double> ctr = extensive_moments_.getCounter ();
 	std::vector <double> coords (6,0);
 	long unsigned int idx = 0;
-	for (unsigned int n = 0; n < totNBounds_[1]-totNBounds_[0]+1; ++n) {
-		of << n+totNBounds_[0] << "\t";
-		coords[5] = n;
-		for (unsigned int i = 0; i < nSpecies_; ++i) {
-			coords[0] = i;
-			for (unsigned int j = 0; j <= max_order_; ++j) {
-				coords[1] = j;
-				for (unsigned int k = 0; k < nSpecies_; ++k) {
-					coords[2] = k;
-					for (unsigned int m = 0; m <= max_order_; ++m) {
-						coords[3] = m;
-						for (unsigned int p = 0; p <= max_order_; ++p) {
-							coords[4] = p;
-							idx = extensive_moments_.getAddress(coords);
-							of << h[idx]/ctr[idx] << "\t";
+	if (normalize) {
+		for (unsigned int n = 0; n < totNBounds_[1]-totNBounds_[0]+1; ++n) {
+			of << n+totNBounds_[0] << "\t";
+			coords[5] = n;
+			for (unsigned int i = 0; i < nSpecies_; ++i) {
+				coords[0] = i;
+				for (unsigned int j = 0; j <= max_order_; ++j) {
+					coords[1] = j;
+					for (unsigned int k = 0; k < nSpecies_; ++k) {
+						coords[2] = k;
+						for (unsigned int m = 0; m <= max_order_; ++m) {
+							coords[3] = m;
+							for (unsigned int p = 0; p <= max_order_; ++p) {
+								coords[4] = p;
+								idx = extensive_moments_.getAddress(coords);
+								of << std::setprecision(15) << h[idx]/ctr[idx] << "\t";
+							}
 						}
 					}
 				}
 			}
+			of << std::endl;
 		}
-		of << std::endl;
+	} else {
+		for (unsigned int n = 0; n < totNBounds_[1]-totNBounds_[0]+1; ++n) {
+			of << n+totNBounds_[0] << "\t";
+			coords[5] = n;
+			for (unsigned int i = 0; i < nSpecies_; ++i) {
+				coords[0] = i;
+				for (unsigned int j = 0; j <= max_order_; ++j) {
+					coords[1] = j;
+					for (unsigned int k = 0; k < nSpecies_; ++k) {
+						coords[2] = k;
+						for (unsigned int m = 0; m <= max_order_; ++m) {
+							coords[3] = m;
+							for (unsigned int p = 0; p <= max_order_; ++p) {
+								coords[4] = p;
+								idx = extensive_moments_.getAddress(coords);
+								of << std::setprecision(15) << h[idx] << "\t";
+							}
+						}
+					}
+				}
+			}
+			of << std::endl;
+		}
 	}
 	of.close();
 #endif
@@ -781,8 +807,9 @@ void simSystem::reInitializeEnergyHistogram () {
  * Print the (normalized) energy histogram for each Ntot. netCDF4 not enabled
  *
  * \param [in] fileName Name of the file to print to
+ * \param [in] normalize Whether or not to normalize the histogram (default=true)
  */
-void simSystem::printEnergyHistogram (const std::string fileName) {
+void simSystem::printEnergyHistogram (const std::string fileName, const bool normalize) {
 #ifdef NETCDF_CAPABLE
     throw customException ("Cannot record the energyHistogram for each Ntot in netCDF4 format.");
 #else
@@ -811,17 +838,28 @@ void simSystem::printEnergyHistogram (const std::string fileName) {
 		of << it->get_ub() << "\t";
 	}
 	of << std::endl;
-	of << "# Normalized histogram for each" << std::endl;
-	for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_.begin(); it != energyHistogram_.end(); ++it) {
-		std::deque <double> h = it->get_hist();
-		double sum = 0.0;
-		for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
-			sum += *it2;
+	if (normalize) {
+		of << "# Normalized histogram for each" << std::endl;
+		for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_.begin(); it != energyHistogram_.end(); ++it) {
+			std::deque <double> h = it->get_hist();
+			double sum = 0.0;
+			for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
+				sum += *it2;
+			}
+			for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
+				of << std::setprecision(15) << *it2/sum << "\t";
+			}
+			of << std::endl;
 		}
-		for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
-			of << *it2/sum << "\t";
+	} else {
+		of << "# Unnormalized histogram for each" << std::endl;
+		for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_.begin(); it != energyHistogram_.end(); ++it) {
+			std::deque <double> h = it->get_hist();
+			for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
+				of << std::setprecision(15) << *it2 << "\t";
+			}
+			of << std::endl;
 		}
-		of << std::endl;
 	}
 	of.close();
 #endif
@@ -860,8 +898,9 @@ void simSystem::refinePkHistogramBounds () {
  * Print the (normalized) particle number histogram for each Ntot. netCDF4 not enabled
  *
  * \param [in] fileName Name of the file to print to
+ * \param [in] normalize Whether or not to normalize the histogram (default=true)
  */
-void simSystem::printPkHistogram (const std::string fileName) {
+void simSystem::printPkHistogram (const std::string fileName, const bool normalize) {
 #ifdef NETCDF_CAPABLE
     throw customException ("Cannot record the pkHistogram for each Ntot in netCDF4 format.");
 #else
@@ -891,17 +930,28 @@ void simSystem::printPkHistogram (const std::string fileName) {
 			of << it->get_ub() << "\t";
 		}
 		of << std::endl;
-		of << "# Normalized histogram for each species index " << std::endl;
-		for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i].begin(); it != pkHistogram_[i].end(); ++it) {
-			std::deque <double> h = it->get_hist();
-			double sum = 0.0;
-			for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
-				sum += *it2;
+		if (normalize) {
+			of << "# Normalized histogram for each species index " << std::endl;
+			for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i].begin(); it != pkHistogram_[i].end(); ++it) {
+				std::deque <double> h = it->get_hist();
+				double sum = 0.0;
+				for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
+					sum += *it2;
+				}
+				for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
+					of << std::setprecision(15) << *it2/sum << "\t";
+				}
+				of << std::endl;
 			}
-			for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
-				of << *it2/sum << "\t";
+		} else {
+			of << "# Unnormalized histogram for each species index " << std::endl;
+			for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i].begin(); it != pkHistogram_[i].end(); ++it) {
+				std::deque <double> h = it->get_hist();
+				for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
+					of << std::setprecision(15) << *it2 << "\t";
+				}
+				of << std::endl;
 			}
-			of << std::endl;
 		}
 		of.close();
 	}

@@ -24,7 +24,10 @@ checkpoint::checkpoint (const std::string directory, const int frequency, bool s
         load (chkptName);
     } else {
         std::string command = "mkdir -p "+dir+" && touch "+chkptName;
-        system(command.c_str());
+        const int succ = system(command.c_str());
+        if (succ != 0) {
+            throw customException("Unable to remove previous checkpoint file");
+        }
     }
 
     time(&lastCheckPt_); // take time when object was instantiated as initial time
@@ -45,31 +48,94 @@ void checkpoint::load (const std::string filename) {
  * \param [in] sys System to checkpoint
  */
 void checkpoint::dump (simSystem &sys) {
-    FILE* fp = fopen(chkptName.c_str(), "r");
-    char writeBuffer[65536];
-	rapidjson::FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
+    rapidjson::StringBuffer s;
+    rapidjson::PrettyWriter < rapidjson::StringBuffer > writer(s);
 
-	rapidjson::Document doc;
-    rapidjson::Value _tmmcDone(tmmcDone), _crossoverDone(crossoverDone), _walaDone(walaDone);
-    rapidjson::Value _restartFromTMMC(restartFromTMMC), _restartFromWALA(restartFromWALA);
-    rapidjson::Value _hasCheckpoint(hasCheckpoint), _takeSnaps(takeSnaps);
-    rapidjson::Value _freq(freq), _restartFromTMMCFile, _restartFromWALAFile, _dir;
+    // Write restart/checkpoint options
+    writer.StartObject();
+    writer.String("tmmcDone");
+    writer.Bool(tmmcDone);
 
-    char bufferT[300], bufferW[300], bufferD[300];
-    int len = sprintf(bufferT, "%s", restartFromTMMCFile.c_str());
-    _restartFromTMMCFile.SetString(bufferT, len, doc.GetAllocator());
-    len = sprintf(bufferW, "%s", restartFromWALAFile.c_str());
-    _restartFromWALAFile.SetString(bufferW, len, doc.GetAllocator());
-    len = sprintf(bufferD, "%s", dir.c_str());
-    _dir.SetString(bufferD, len, doc.GetAllocator());
+    writer.String("crossoverDone");
+    writer.Bool(crossoverDone);
 
-    // also need info to restore extMom, etc.
+    writer.String("walaDone");
+    writer.Bool(walaDone);
 
-    rapidjson::Writer < rapidjson::FileWriteStream > writer(os);
-    doc.Accept(writer);
-    fclose(fp);
+    writer.String("restartFromTMMC");
+    writer.Bool(restartFromTMMC);
+
+    writer.String("restartFromWALA");
+    writer.Bool(restartFromWALA);
+
+    writer.String("hasCheckpoint");
+    writer.Bool(hasCheckpoint);
+
+    writer.String("takeSnaps");
+    writer.Bool(takeSnaps);
+
+    writer.String("freq");
+    writer.Int(freq);
+
+    writer.String("dir");
+    writer.String(dir.c_str());
+
+    if (walaDone && crossoverDone) {
+        // in final TMMC stage or just finished the TMMC (end of simulation)
+        sys.getTMMCBias()->print(dir+"/tmmc", true);
+        sys.printEnergyHistogram(dir+"/eHist", false); // Un-normalized Energy histogram
+        sys.printPkHistogram(dir+"/pkHist", false); // Un-normalized Particle histogram
+        sys.printExtMoments(dir+"/extMom", false); // Un-normalized Extensive moments, plus counter (number of times each recorded)
+        writer.String("extMomCounter");
+        std::vector < double > ctr = sys.extMomCounter();
+        writer.StartArray();
+        for (std::vector < double >::iterator it = ctr.begin(); it < ctr.end(); ++it) {
+            writer.Double(*it);
+        }
+        writer.EndArray();
+    } else if (walaDone && !crossoverDone && !tmmcDone) {
+        // in crossover stage
+        sys.getTMMCBias()->print(dir+"/tmmc", true);
+        sys.getWALABias()->print(dir+"/wala", true);
+        // energy upper and lower bounds for histogram
+        std::vector < double > elb = sys.getELB(), eub = sys.getEUB();
+        writer.String("energyHistogramLB");
+        writer.StartArray();
+        for (std::vector < double >::iterator it = elb.begin(); it < elb.end(); ++it) {
+            writer.Double(*it);
+        }
+        writer.EndArray();
+        writer.String("energyHistogramUB");
+        for (std::vector < double >::iterator it = eub.begin(); it < eub.end(); ++it) {
+            writer.Double(*it);
+        }
+        writer.EndArray();
+    } else if (!walaDone && !crossoverDone && !tmmcDone) {
+        // in WALA stage
+        sys.getWALABias()->print(dir+"/wala", true);
+        // energy upper and lower bounds for histogram
+        std::vector < double > elb = sys.getELB(), eub = sys.getEUB();
+        writer.String("energyHistogramLB");
+        writer.StartArray();
+        for (std::vector < double >::iterator it = elb.begin(); it < elb.end(); ++it) {
+            writer.Double(*it);
+        }
+        writer.EndArray();
+        writer.String("energyHistogramUB");
+        for (std::vector < double >::iterator it = eub.begin(); it < eub.end(); ++it) {
+            writer.Double(*it);
+        }
+        writer.EndArray();
+    } else {
+        throw customException ("Uncertain which stage simulation is in, so cannot checkpoint");
+    }
+
+    writer.EndObject();
+    std::ofstream outData(chkptName.c_str());
+    outData << s.GetString() << std::endl;
 
     if (takeSnaps) {
+        // this only prints M = 0 atoms (fully inserted)
         sys.printSnapshot(dir+"/snaps.xyz", getTimeStamp(), false);
     }
 

@@ -40,8 +40,6 @@ int main (int argc, char * const argv[]) {
         setup (sys, argv[1]);
     }
 
-	// 1.
-	// get checlpoint to write vals it has to json
 	// 2.
 	// from input parsing, if restart from TMMC or another one, set previous stages to completion so it goes right to it?
 	// store this into cpt object
@@ -50,9 +48,12 @@ int main (int argc, char * const argv[]) {
 	// 3.
 	// make reader
 	// 4.
-	// restore extMom and eHist and pkHist also from snapshot?
-	// perhaps just add read() member in addition to print() ones for histogram classes - no need to add to checkpoint class
-	// just have checkpoint class use native print() function then
+	// histogram classes need restart() members to restart from raw, Unnormalized data
+	// in cpt load(), have these called to restart these classes
+	// 5.
+	// checkpointing needs to be added to each stage of the code (after each move attempt, not check flat, etc.)
+	// 6.
+	// add instantaneous snapshot + M state of any atom? not sure if that is possible
 
 	if (!cpt.walaDone) {
 		// perform Wang-Landau simulation
