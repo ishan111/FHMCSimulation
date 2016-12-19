@@ -84,17 +84,16 @@ public:
 	bool useTMMC; //!< Logical stating whether or not to use TMMC biasing
 	bool useWALA; //!< Logical stating whether or not to use Wang-Landau biasing
 	double lnF_start, lnF_end; //!< Starting and ending lnF for Wang-Landau
-	double wala_g, wala_s;
-	long long int tmmcSweepSize;
-	long long int totalTMMCSweeps;
-	long long int wlSweepSize;
-	int nCrossoverVisits;
+	double wala_g, wala_s; //!< Wang-Landau g and s factors
+	long long int tmmcSweepSize; //!< Size of a sweep in TMMC
+	long long int totalTMMCSweeps; //!< Total number of sweeps to perform during TMMC
+	long long int wlSweepSize; //!< Size of Wang-Landau sweep
+	int nCrossoverVisits; //!< Numner of crossovers that must occur before switching from WALA to TMMC
 	tmmc* tmmcBias; //!< TMMC biasing function
 	wala* wlBias; //!< WL biasing function
-	std::vector < int > numSpecies;		//!< Total number of each type of atom the system contains
+	std::vector < int > numSpecies;	//!< Total number of each type of atom the system contains
 	std::vector < std::vector < atom > > atoms;	//!< Atoms in a matrix by type, and particle index, respectively that a system CAN hold but not all are actually "in" the system
-	std::vector < std::vector < std::shared_ptr <pairPotential> > > ppot;
-	//std::vector < std::vector < pairPotential* > > ppot;	//!< Matrix of pair potentials for atom types i, j
+	std::vector < std::vector < std::shared_ptr < pairPotential > > > ppot; //!< Matrix of pair potentials for atom types i, j
 	std::vector < compositeBarrier > speciesBarriers; //!< Barriers, if any, for each species
 
 private:
@@ -119,8 +118,8 @@ private:
 	std::vector < double > energyHistogram_ub_; //!< Upper bound for each energy histogram at each Ntot
 	std::vector < std::vector < bool > > ppotSet_; //!< Matrix of pair potentials between type i and j
 	std::vector < std::vector < bool > > useCellList_;  //!< Matrix of whether or not to use cell lists to calculate potentials for pair type (i,j)
-	std::vector <cellList> cellLists_; // this vector stores the actual cell lists for the inserted potentials
-	std::vector < std::vector <cellList*> > cellListsByPairType_; // this matrix stores pointers to the actual cell lists for all pair types
+	std::vector < cellList > cellLists_; // this vector stores the actual cell lists for the inserted potentials
+	std::vector < std::vector < cellList* > > cellListsByPairType_; // this matrix stores pointers to the actual cell lists for all pair types
 	std::vector < dynamic_one_dim_histogram > energyHistogram_; //!< Histogram of energy at each Ntot
 	std::vector < std::vector < dynamic_one_dim_histogram > > pkHistogram_; //!< Histogram of particle numbers at each Ntot [species_idx][Ntot]
 	histogram extensive_moments_; //<! N_i^jN_k^mU^p[Ntot] matrix
