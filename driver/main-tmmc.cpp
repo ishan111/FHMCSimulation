@@ -51,6 +51,8 @@ int main (int argc, char * const argv[]) {
 	// make reader
 	// 4.
 	// restore extMom and eHist and pkHist also from snapshot?
+	// perhaps just add read() member in addition to print() ones for histogram classes - no need to add to checkpoint class
+	// just have checkpoint class use native print() function then
 
 	if (!cpt.walaDone) {
 		// perform Wang-Landau simulation
