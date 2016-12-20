@@ -35,8 +35,9 @@ public:
 
 	void updateC (const int Nstart, const int Nend, const int Mstart, const int Mend, const double pa);
 	void calculatePI ();
-	void print (const std::string fileName, bool printC = false);
+	void print (const std::string fileName, bool printC = false, bool printHC = false);
 	void readC (const std::string fileName);
+	void readHC (const std::string fileName);
 	void setlnPI (const std::vector < double > &lnPIguess) { if (lnPIguess.size() == lnPI_.size()) lnPI_ = lnPIguess; } //!< Blindly assign a guess of the macrostate distribution
 	void iterateForward ();
 	void dumpVisited (const std::string fileName);
@@ -71,6 +72,7 @@ public:
 	void iterateForward ();
 	void print (const std::string fileName, const bool printH = false);
 	void readlnPI (const std::string fileName);
+	void readH (const std::string fileName);
 	void setlnPI (const std::vector < double > &lnPIguess) { if (lnPIguess.size() == lnPI_.size()) lnPI_ = lnPIguess; } //!< Blindly assign a guess of the macrostate distribution
 	bool evaluateFlatness ();
 	const __BIAS_INT_TYPE__ getAddress (const int Nval, const int Mval);
@@ -78,7 +80,7 @@ public:
 	const double getBias (const int address) { return -lnPI_[address]; }
 	const std::vector <double> getlnPI () { return lnPI_; } //!< Return the current estimate of the macrostate distribution
 	const std::vector <double> getH () { return H_; } //!< Return the visited-states histogram
-	
+
 private:
 	int Mtot_; //!< Total number of expanded ensemble states in a simulation
 	double lnF_; //!< Factor to add to the macrostate density matrix each time a state is visited

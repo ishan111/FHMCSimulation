@@ -60,7 +60,7 @@ void checkpoint::load (simSystem &sys) {
             // in final TMMC stage or just finished the TMMC (end of simulation)
             sys.startTMMC(sys.tmmcSweepSize, sys.getTotalM());
             sys.getTMMCBias()->readC(dir+"/tmmc_C.dat");
-            sys.getTMMCBias()->readH(dir+"/tmmc_HC.dat");
+            sys.getTMMCBias()->readHC(dir+"/tmmc_HC.dat");
             sys.getTMMCBias()->calculatePI();
 
             std::vector < double > ctr (doc["extMomCounter"].Size(), 0);
@@ -77,7 +77,7 @@ void checkpoint::load (simSystem &sys) {
             sys.startWALA (currentLnF, sys.wala_g, sys.wala_s, sys.getTotalM());
 
             sys.getTMMCBias()->readC(dir+"/tmmc_C.dat");
-            sys.getTMMCBias()->readH(dir+"/tmmc_HC.dat");
+            sys.getTMMCBias()->readHC(dir+"/tmmc_HC.dat");
             sys.getWALABias()->readlnPI(dir+"/wala_lnPI.dat");
             sys.getWALABias()->readH(dir+"/wala_H.dat");
 
@@ -116,7 +116,7 @@ void checkpoint::load (simSystem &sys) {
         } else {
             throw customException ("Uncertain which stage simulation is in, so cannot checkpoint");
         }
-        
+
         sys.readRestart(dir+"/snap.xyz");
     } catch () {
         throw customException ("Unable to load checkppoint");
@@ -165,7 +165,7 @@ void checkpoint::dump (simSystem &sys) {
 
     if (walaDone && crossoverDone) {
         // in final TMMC stage or just finished the TMMC (end of simulation)
-        sys.getTMMCBias()->print(dir+"/tmmc", true);
+        sys.getTMMCBias()->print(dir+"/tmmc", true, true);
         sys.printEnergyHistogram(dir+"/eHist", false); // Un-normalized Energy histogram
         sys.printPkHistogram(dir+"/pkHist", false); // Un-normalized Particle histogram
         sys.printExtMoments(dir+"/extMom", false); // Un-normalized Extensive moments, plus counter (number of times each recorded)
@@ -178,7 +178,7 @@ void checkpoint::dump (simSystem &sys) {
         writer.EndArray();
     } else if (walaDone && !crossoverDone && !tmmcDone) {
         // in crossover stage
-        sys.getTMMCBias()->print(dir+"/tmmc", true);
+        sys.getTMMCBias()->print(dir+"/tmmc", true, true);
         sys.getWALABias()->print(dir+"/wala", true);
 
         writer.String("wala_lnF");
