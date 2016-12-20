@@ -1,11 +1,11 @@
 #include "checkpoint.h"
 
 /*!
- * Read system state from a file.
+ * Read system state from a file.  If checkpoint directory is found, data is loaded from it.
  *
  * \param [in] dir Directory where system state was saved
  * \param [in] frequency Frquency to take snapshots/checkpoints of the system (< 0 disables)
- * \param [in] snaps Take snapshots each time a record is made? (default = false)
+ * \param [in] snaps Take snapshots each time a record is made to make a movie? (default = false)
  */
 checkpoint::checkpoint (const std::string directory, const int frequency, bool snaps) {
     tmmcDone = false;
@@ -15,7 +15,6 @@ checkpoint::checkpoint (const std::string directory, const int frequency, bool s
     restartFromTMMC = false;
     restartFromWALA = false;
     takeSnaps = snaps;
-
     dir = directory;
     freq = frequency;
 
@@ -36,10 +35,94 @@ checkpoint::checkpoint (const std::string directory, const int frequency, bool s
 /*!
  * Read state of a system from a json file.
  *
- * \param [in] filename Filename of where system state was saved
+ * \param [in] sys System to checkpoint
  */
-void checkpoint::load (const std::string filename) {
-    hasCheckpoint = true;
+void checkpoint::load (simSystem &sys) {
+    rapidjson::Document doc;
+    try {
+        FILE* fp = fopen(chkptName.c_str(), "r");
+    	char readBuffer[65536];
+    	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+    	doc.ParseStream(is);
+    	fclose(fp);
+
+        tmmcDone = doc["tmmcDone"].GetBool();
+        crossoverDone = doc["crossoverDone"].GetBool();
+        walaDone = doc["walaDone"].GetBool();
+        restartFromTMMC = doc["restartFromTMMC"].GetBool();
+        restartFromWALA = doc["restartFromWALA"].GetBool();
+        hasCheckpoint = doc["hasCheckpoint"].GetBool();
+        takeSnaps = doc["takeSnaps"].GetBool();
+        freq = doc["freq"].GetInt();
+        dir = doc["dir"].GetString();
+
+        if (walaDone && crossoverDone) {
+            // in final TMMC stage or just finished the TMMC (end of simulation)
+            sys.startTMMC(sys.tmmcSweepSize, sys.getTotalM());
+            sys.getTMMCBias()->readC(dir+"/tmmc_C.dat");
+            sys.getTMMCBias()->readH(dir+"/tmmc_HC.dat");
+            sys.getTMMCBias()->calculatePI();
+
+            std::vector < double > ctr (doc["extMomCounter"].Size(), 0);
+            for (unsigned int i = 0; i < doc["extMomCounter"].Size(); ++i) {
+                ctr[i] = doc["extMomCounter"][i].GetDouble();
+            }
+            sys.restartEnergyHistogram(dir+"/eHist");
+            sys.restartPkHistogram(dir+"/pkHist");
+            sys.restartExtMoments(dir+"/extMom", ctr);
+        } else if (walaDone && !crossoverDone && !tmmcDone) {
+            // in crossover stage
+            sys.startTMMC(sys.tmmcSweepSize, sys.getTotalM());
+            currentLnF = doc["wala_lnF"].GetDouble()
+            sys.startWALA (currentLnF, sys.wala_g, sys.wala_s, sys.getTotalM());
+
+            sys.getTMMCBias()->readC(dir+"/tmmc_C.dat");
+            sys.getTMMCBias()->readH(dir+"/tmmc_HC.dat");
+            sys.getWALABias()->readlnPI(dir+"/wala_lnPI.dat");
+            sys.getWALABias()->readH(dir+"/wala_H.dat");
+
+            // energy upper and lower bounds for histogram
+            elb.resize(doc["energyHistogramLB"].Size(), 0);
+            for (unsigned int i = 0; i < doc["energyHistogramLB"].Size(); ++i) {
+                elb[i] = doc["energyHistogramLB"][i].GetDouble();
+            }
+            sys.setELB(elb);
+
+            eub.resize(doc["energyHistogramUB"].Size(), 0);
+            for (unsigned int i = 0; i < doc["energyHistogramUB"].Size(); ++i) {
+                eub[i] = doc["energyHistogramUB"][i].GetDouble();
+            }
+            sys.setEUB(eub);
+        } else if (!walaDone && !crossoverDone && !tmmcDone) {
+            // in WALA stage
+            currentLnF = doc["wala_lnF"].GetDouble()
+            sys.startWALA (currentLnF, sys.wala_g, sys.wala_s, sys.getTotalM());
+
+            sys.getWALABias()->readlnPI(dir+"/wala_lnPI.dat");
+            sys.getWALABias()->readH(dir+"/wala_H.dat");
+
+            // energy upper and lower bounds for histogram
+            elb.resize(doc["energyHistogramLB"].Size(), 0);
+            for (unsigned int i = 0; i < doc["energyHistogramLB"].Size(); ++i) {
+                elb[i] = doc["energyHistogramLB"][i].GetDouble();
+            }
+            sys.setELB(elb);
+
+            eub.resize(doc["energyHistogramUB"].Size(), 0);
+            for (unsigned int i = 0; i < doc["energyHistogramUB"].Size(); ++i) {
+                eub[i] = doc["energyHistogramUB"][i].GetDouble();
+            }
+            sys.setEUB(eub);
+        } else {
+            throw customException ("Uncertain which stage simulation is in, so cannot checkpoint");
+        }
+        
+        sys.readRestart(dir+"/snap.xyz");
+    } catch () {
+        throw customException ("Unable to load checkppoint");
+    } else {
+        hasCheckpoint = true;
+    }
 }
 
 /*!
@@ -97,6 +180,10 @@ void checkpoint::dump (simSystem &sys) {
         // in crossover stage
         sys.getTMMCBias()->print(dir+"/tmmc", true);
         sys.getWALABias()->print(dir+"/wala", true);
+
+        writer.String("wala_lnF");
+        writer.Double(sys.getWALABias()->lnF());
+
         // energy upper and lower bounds for histogram
         std::vector < double > elb = sys.getELB(), eub = sys.getEUB();
         writer.String("energyHistogramLB");
@@ -134,9 +221,10 @@ void checkpoint::dump (simSystem &sys) {
     std::ofstream outData(chkptName.c_str());
     outData << s.GetString() << std::endl;
 
+    sys.printSnapshot(dir+"/snap.xyz", getTimeStamp(), true); // instantaneous snapshot
     if (takeSnaps) {
-        // this only prints M = 0 atoms (fully inserted)
-        sys.printSnapshot(dir+"/snaps.xyz", getTimeStamp(), false);
+        // this only prints M = 0 atoms (fully inserted) to create a movie
+        sys.printSnapshot(dir+"/movie.xyz", getTimeStamp(), false);
     }
 
     time(&lastCheckPt_);

@@ -61,6 +61,8 @@ public:
    	void checkEnergyHistogramBounds ();
    	void refineEnergyHistogramBounds ();
    	void refinePkHistogramBounds ();
+	void setEUB (const std::vector < double > eub) { energyHistogram_ub_ = eub; } //!< Assign energy upper bound from restart
+	void setELB (const std::vector < double > elb) { energyHistogram_lb_ = elb; } //!< Assign energy lower bound from restart
 	bool potentialIsSet (const int spec1, const int spec2) { return ppotSet_[spec1][spec2]; }	//!< Boolean which returns whether or not a pair has had its potential specified by the user yet
 	const int nSpecies () { return nSpecies_; } //!< Return the number of different species in the system
 	const int maxSpecies (const int index);

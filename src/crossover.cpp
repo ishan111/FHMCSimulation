@@ -29,6 +29,7 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             if (sys.getCurrentM() == 0) {
                 sys.checkEnergyHistogramBounds ();
             }
+            res.check();
         }
 
         if (sys.getTMMCBias()->checkFullyVisited()) {

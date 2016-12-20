@@ -43,6 +43,7 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             if (sys.getCurrentM() == 0){
                 sys.checkEnergyHistogramBounds ();
             }
+            res.check();
         }
 
         // Check if bias has flattened out

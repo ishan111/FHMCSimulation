@@ -24,7 +24,7 @@ public:
 	checkpoint (const std::string directory, const int frequency, bool snaps=false);
     ~checkpoint () {};
 
-	void load (const std::string filename);
+	void load (simSystem &sys);
 	void dump (simSystem &sys);
 	void check (simSystem &sys);
 
@@ -43,6 +43,9 @@ public:
 	std::string restartFromWALAFile; //!< Filename to manual restart from beginning of WALA with a given lnPI matrix
 
 	bool takeSnaps; //!< Save snapshot of the system each time a record is made
+	double currentLnF; //!< Current value of lnF from WALA
+
+	std::vector < double > elb, eub; //!< Upper and lower energy bounds for energy histogram
 
 private:
 	time_t lastCheckPt_, now; //!< Time last checkpoint was taken and current time

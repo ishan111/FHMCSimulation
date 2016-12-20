@@ -290,7 +290,9 @@ const std::vector <double> histogram::getCoords (long long unsigned int address)
 }
 
 /*!
- * Print RAW (UN-NORMALIZED) histogram to file
+ * Print RAW (UN-NORMALIZED) histogram to file.
+ *
+ * \param [in] fileName Name of file to print to
  */
 void histogram::print (const std::string fileName) {
 	// Print histogram

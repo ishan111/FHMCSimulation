@@ -50,10 +50,18 @@ int main (int argc, char * const argv[]) {
 	// 4.
 	// histogram classes need restart() members to restart from raw, Unnormalized data
 	// in cpt load(), have these called to restart these classes
-	// 5.
-	// checkpointing needs to be added to each stage of the code (after each move attempt, not check flat, etc.)
+	// unit test dump and restarts (to different files, then diff the files to make sure nothing)
+	//5.
+	// startWALA, startTMMC must be deactivated conditionally from each stage if already activated from checkpoint
+	// in addition lnF, etc. for these loops must be set to checkpoint values, not defaults
 	// 6.
-	// add instantaneous snapshot + M state of any atom? not sure if that is possible
+	// tmmc also has to store HC, also readH()
+	// 7.
+	// restartEnergyHistogram, restartPkHistogram, restartExtMoments
+
+	// sysRestart ok to call twice? what if from file initilize() and then from checppoint
+
+	// forgo M state, dont use often, and not saving RNG state anyway so....
 
 	if (!cpt.walaDone) {
 		// perform Wang-Landau simulation

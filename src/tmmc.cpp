@@ -63,6 +63,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 				counter = 0;
 			}
 
+            res.check();
 			counter++;
 		}
 
