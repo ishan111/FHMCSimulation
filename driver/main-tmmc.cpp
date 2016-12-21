@@ -46,16 +46,14 @@ int main (int argc, char * const argv[]) {
 		return SAFE_EXIT;
 	}
 
-	sys.readConfig("snap.xyz");
-	sys.readConfig("final.xyz");
-	sys.readConfig("snap.xyz");
-
 	// consider using better RNG from C++ to allow for checkpointing of this - even if it doesn't work for M != 1, don't use often anyway...
 
 	// Unittest:
 	// 1. move and sweep counter in each stage: res(sys, move, sweep) ?
 	// 2. dump/restart to ensure they generate same files
 	// 3. restart from configs multiple times to ensure done correctly
+
+	// Test lambda = 1.5 fluid (subcritical) if halted in WL, Crossover, and TMMC stages
 
 	// Choose stage based on what is completed, not where restart is from in case not restarting from checkpoint
 	if (!cpt.walaDone) {
