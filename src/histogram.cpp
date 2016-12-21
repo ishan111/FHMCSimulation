@@ -65,6 +65,19 @@ void dynamic_one_dim_histogram::initialize_ (const double lb, const double ub, c
 }
 
 /*!
+ * Set the histogram.  Intended to be used to restart from a checkpoint.
+ *
+ * \param [in] h Histogram to set to.
+ */
+void dynamic_one_dim_histogram::set_hist (const std::deque < double > h) {
+	if (h.size() != h_.size()) {
+		throw customException ("Histogram using to set is not the same as inherent, aborting");
+	} else {
+		h_ = (std::deque < double >)h;
+	}
+}
+
+/*!
  * Re-initialize histogram and its bounds.  All entries are zeroed.
  */
 void dynamic_one_dim_histogram::reinitialize (const double lb, const double ub, const double delta) {

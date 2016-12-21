@@ -1,7 +1,7 @@
 #include "checkpoint.h"
 
 /*!
- * Read system state from a file.  If checkpoint directory is found, data is loaded from it.
+ * Read system state from a file.  If checkpoint directory is found and json file is valid, data is loaded from it.
  *
  * \param [in] dir Directory where system state was saved
  * \param [in] frequency Frquency to take snapshots/checkpoints of the system (< 0 disables)
@@ -24,8 +24,16 @@ checkpoint::checkpoint (const std::string directory, const int frequency, simSys
 
     chkptName = dir+"/state.json";
     if (fileExists(chkptName)) {
-        // if checkpoint exists, use this information
-        load(sys);
+        // if checkpoint exists, and is a valid json file, use this information
+        FILE* fp = fopen(chkptName.c_str(), "r");
+    	char readBuffer[65536];
+    	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer) );
+        rapidjson::Document doc;
+    	doc.ParseStream(is);
+    	fclose(fp);
+        if (doc.IsObject()) {
+            load(sys);
+        }
     } else {
         std::string command = "mkdir -p "+dir+" && touch "+chkptName;
         const int succ = system(command.c_str());

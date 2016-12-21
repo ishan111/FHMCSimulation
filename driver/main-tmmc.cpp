@@ -46,6 +46,11 @@ int main (int argc, char * const argv[]) {
 		return SAFE_EXIT;
 	}
 
+	sys.restartPkHistogram("pkHist");
+	sys.printPkHistogram("test_pk", false);
+	return 0;
+
+
 	// histogram classes need restart() members to restart from raw, Unnormalized data
 	// restartEnergyHistogram, restartPkHistogram, restartExtMoments --> restart from raw, Unnormalized data
 

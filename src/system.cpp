@@ -647,7 +647,7 @@ void simSystem::recordExtMoments () {
 }
 
 /*!
- * Print the (normalized) extensive energy histogram for each Ntot. netCDF4 not enabled
+ * Print the (normalized by default) extensive energy histogram for each Ntot. netCDF4 not enabled
  *
  * \param [in] fileName Name of the file to print to
  * \param [in] normalize Whether or not to normalize the histogram (default=true)
@@ -736,6 +736,16 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 }
 
 /*!
+ * Restart the extensive energy histogram for each Ntot from unnormalized checkpoint. netCDF4 not enabled
+ *
+ * \param [in] fileName Name of the file to load from
+ * \param [in] ctr Counter for each point in the histogram
+ */
+void simSystem::restartExtMoments (const std::string fileName, const std::vector < double > &ctr) {
+	;
+}
+
+/*!
  * Record the energy histogram for the system at a given Ntot.
  * Only records values when N_tot in range of [min, max].
  */
@@ -809,9 +819,9 @@ void simSystem::reInitializeEnergyHistogram () {
 }
 
 /*!
- * Print the (normalized) energy histogram for each Ntot. netCDF4 not enabled
+ * Print the (normalized by default) energy histogram for each Ntot. netCDF4 not enabled
  *
- * \param [in] fileName Name of the file to print to
+ * \param [in] fileName Prefix of the filename to load from
  * \param [in] normalize Whether or not to normalize the histogram (default=true)
  */
 void simSystem::printEnergyHistogram (const std::string fileName, const bool normalize) {
@@ -871,6 +881,73 @@ void simSystem::printEnergyHistogram (const std::string fileName, const bool nor
 }
 
 /*!
+ * Restart the energy histogram for each Ntot from unnormalized checkpoint. netCDF4 not enabled
+ *
+ * \param [in] prefix Prefix of the filename to load from
+ */
+void simSystem::restartEnergyHistogram (const std::string prefix) {
+	int minBound = 0, maxBound = totNMax() - totNMin() + 1;
+	std::vector < double > lb(maxBound - minBound, 0), ub(maxBound - minBound, 0), delta(maxBound - minBound, 0);
+	std::string fileName = prefix+".dat";
+
+	std::ifstream infile (fileName.c_str());
+	std::string line, tmp = "";
+	int lineIndex = 0;
+	while(std::getline(infile,line)) {
+		std::stringstream lineStream(line);
+		if (lineIndex == 2) {
+			// get upper bound
+			std::getline(lineStream, tmp, ':');
+			std::getline(lineStream, tmp, ':');
+			int high = atoi(tmp.c_str());
+			if (high != totNMax()) {
+				throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax("+std::to_string(totNMax())+"), cannot restart energy histogram from "+fileName);
+			}
+		} else if (lineIndex == 3) {
+			// get lower bound
+			std::getline(lineStream, tmp, ':');
+			std::getline(lineStream, tmp, ':');
+			int low = atoi(tmp.c_str());
+			if (low != totNMin()) {
+				throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin("+std::to_string(totNMin())+"), cannot restart energy histogram from "+fileName);
+			}
+		} else if (lineIndex == 6) {
+			// delta
+			for (unsigned int i = 0; i < maxBound-minBound; ++i) {
+				lineStream >> delta[i];
+			}
+		} else if (lineIndex == 8) {
+			// lower bound
+			for (unsigned int i = 0; i < maxBound-minBound; ++i) {
+				lineStream >> lb[i];
+			}
+		} else if (lineIndex == 10) {
+			// upper bound
+			for (unsigned int i = 0; i < maxBound-minBound; ++i) {
+				lineStream >> ub[i];
+			}
+			// now can reinitialize the histogram
+			for (unsigned int i = minBound; i < maxBound; ++i) {
+				try {
+					energyHistogram_[i-minBound].reinitialize(lb[i-minBound], ub[i-minBound], delta[i-minBound]);
+				} catch (...) {
+					throw customException ("Unable to restart energy histogram from "+fileName);
+				}
+			}
+		} else if (lineIndex >= 12) {
+			// histogram itself
+			std::deque <double> h = energyHistogram_[lineIndex-12].get_hist();
+			for (std::deque <double>::iterator it = h.begin(); it != h.end(); ++it) {
+				lineStream >> *it;
+			}
+			energyHistogram_[lineIndex-12].set_hist(h);
+		}
+		lineIndex++;
+	}
+	infile.close();
+}
+
+/*!
  * Record the particle number histogram for the system at a given Ntot.
  * Only records values when N_tot in range of [min, max].
  */
@@ -900,9 +977,9 @@ void simSystem::refinePkHistogramBounds () {
 }
 
 /*!
- * Print the (normalized) particle number histogram for each Ntot. netCDF4 not enabled
+ * Print the (normalized by default) particle number histogram for each Ntot. netCDF4 not enabled
  *
- * \param [in] fileName Name of the file to print to
+ * \param [in] fileName Prefix of filename to print to
  * \param [in] normalize Whether or not to normalize the histogram (default=true)
  */
 void simSystem::printPkHistogram (const std::string fileName, const bool normalize) {
@@ -961,6 +1038,83 @@ void simSystem::printPkHistogram (const std::string fileName, const bool normali
 		of.close();
 	}
 #endif
+}
+
+/*!
+ * Restart the particle histogram for each Ntot from unnormalized checkpoint. netCDF4 not enabled
+ *
+ * \param [in] prefix Prefix of the filename to load from
+ */
+void simSystem::restartPkHistogram (const std::string prefix) {
+	for (unsigned int spec = 0; spec < nSpecies_; ++spec) {
+		int minBound = 0, maxBound = totNMax() - totNMin() + 1;
+		std::vector < double > lb(maxBound - minBound, 0), ub(maxBound - minBound, 0), delta(maxBound - minBound, 0);
+		std::string fileName = prefix+"_"+std::to_string(spec+1)+".dat";
+
+		std::ifstream infile (fileName.c_str());
+		std::string line, tmp = "";
+		int lineIndex = 0;
+		while(std::getline(infile,line)) {
+			std::stringstream lineStream(line);
+			if (lineIndex == 2) {
+				// get upper bound
+				std::getline(lineStream, tmp, ':');
+				std::getline(lineStream, tmp, ':');
+				int high = atoi(tmp.c_str());
+				if (high != totNMax()) {
+					throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax("+std::to_string(totNMax())+"), cannot restart particle histogram from "+fileName);
+				}
+			} else if (lineIndex == 3) {
+				// get lower bound
+				std::getline(lineStream, tmp, ':');
+				std::getline(lineStream, tmp, ':');
+				int low = atoi(tmp.c_str());
+				if (low != totNMin()) {
+					throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin("+std::to_string(totNMin())+"), cannot restart particle histogram from "+fileName);
+				}
+			} else if (lineIndex == 1) {
+				// check the number of species is correct
+				std::getline(lineStream, tmp, ':');
+				std::getline(lineStream, tmp, ':');
+				int ns = atoi(tmp.c_str());
+				if (ns != nSpecies_) {
+					throw customException ("Number of speces in restart file ("+ std::to_string(ns)+") is not the same as provided in input ("+std::to_string(nSpecies_)+"), cannot restart particle histogram from "+fileName);
+				}
+			} else if (lineIndex == 6) {
+				// delta
+				for (unsigned int i = 0; i < maxBound-minBound; ++i) {
+					lineStream >> delta[i];
+				}
+			} else if (lineIndex == 8) {
+				// lower bound
+				for (unsigned int i = 0; i < maxBound-minBound; ++i) {
+					lineStream >> lb[i];
+				}
+			} else if (lineIndex == 10) {
+				// upper bound
+				for (unsigned int i = 0; i < maxBound-minBound; ++i) {
+					lineStream >> ub[i];
+				}
+				// now can reinitialize the histogram
+				for (unsigned int i = minBound; i < maxBound; ++i) {
+					try {
+						pkHistogram_[spec][i-minBound].reinitialize(lb[i-minBound], ub[i-minBound], delta[i-minBound]);
+					} catch (...) {
+						throw customException ("Unable to restart particle histogram from "+fileName);
+					}
+				}
+			} else if (lineIndex >= 12) {
+				// histogram itself
+				std::deque <double> h = pkHistogram_[spec][lineIndex-12].get_hist();
+				for (std::deque <double>::iterator it = h.begin(); it != h.end(); ++it) {
+					lineStream >> *it;
+				}
+				pkHistogram_[spec][lineIndex-12].set_hist(h);
+			}
+			lineIndex++;
+		}
+		infile.close();
+	}
 }
 
 /*!

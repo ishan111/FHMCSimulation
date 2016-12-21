@@ -47,6 +47,7 @@ class dynamic_one_dim_histogram {
 		void prepend_bins (const unsigned int nbins);
 		void append_bins (const unsigned int nbins);
 		void record (const double value);
+		void set_hist (const std::deque < double > h);
 		const double get_delta () { return delta_; }
 		const double get_lb () { return lb_; }
 		const double get_ub () { return ub_; }
