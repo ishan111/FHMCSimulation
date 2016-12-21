@@ -46,6 +46,10 @@ int main (int argc, char * const argv[]) {
 		return SAFE_EXIT;
 	}
 
+	sys.readRestart("snap.xyz");
+	sys.readRestart("final.xyz");
+	sys.readRestart("snap.xyz");
+
 	// sysRestart ok to call twice? what if from file initilize() and then from checppoint
 	// forgo M state, dont use often, and not saving RNG state anyway so....
 

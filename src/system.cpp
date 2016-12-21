@@ -1325,7 +1325,7 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 }
 
 /*!
- * Print an XYZ file of the instantaneous system configuration.  This can be read in at a later time via readRestart() function.
+ * Print an XYZ file of the instantaneous system configuration.  This can be read in at a later time via estart() function.
  *
  * \param [in] filename File to store XYZ coordinates to
  * \param [in] comment Comment line for the file
@@ -1388,6 +1388,8 @@ void simSystem::printSnapshot (std::string filename, std::string comment, bool o
  * \param [in] filename File to read XYZ coordinates from
  */
 void simSystem::readRestart (std::string filename) {
+	std::cout << "Reading initial configuration from " << filename << std::endl;
+
 	std::ifstream infile (filename.c_str());
 	std::string line;
 	std::vector < atom > sysatoms;
@@ -1438,8 +1440,31 @@ void simSystem::readRestart (std::string filename) {
 		}
 	}
 
-	energy_ = 0.0;
+	// empty out the system before adding new atoms in - all atoms "fully inserted" so no partial ones to worry about
+	if (Mcurrent_ != 0) {
+		throw customException ("System cannot be restarted from "+filename+", for some reason current expanded state != 0");
+	}
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		const int ns = numSpecies[i];
+		for (int j = ns-1; j >=0; --j) {
+			for (int k = 0; k < Mtot_; ++k) {
+				deleteAtom (i, j, true);
+			}
+		}
+	}
+	if (totN_ != 0) {
+		throw customException ("total N = "+std::to_string(totN_)+" != 0 after system supposedly emptied");
+	}
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+		if (numSpecies[i] != 0) {
+			throw customException ("Number of molecules of species #"+std::to_string(i+1)+" = "+std::to_string(numSpecies[i])+" != 0 after system supposedly emptied");
+		}
+	}
+	if (Mcurrent_ != 0) {
+		throw customException ("M state != 0 after system supposedly emptied");
+	}
 
+	energy_ = 0.0;
 	for (unsigned int j = 0; j < sysatoms.size(); ++j) {
 		try {
 			// "partially" insert each atom so it goes through all the stages
@@ -1455,6 +1480,7 @@ void simSystem::readRestart (std::string filename) {
 
 	// recalculate system's initial energy
 	energy_ = scratchEnergy();
+	std::cout << "Successfully loaded initial configuration from " << filename << " at " << getTimeStamp() << std::endl;
 }
 
 /*!

@@ -7,7 +7,7 @@
 	"max_N" : [200, 200],
 	"min_N" : [0, 0],
 	"window" : [0, 20],
-	"restart_file" : "",
+	"restart_file" : "final.xyz",
 	"num_crossover_visits" : 2,
 	"tmmc_sweep_size" : 1e3,
 	"total_tmmc_sweeps" : 3,

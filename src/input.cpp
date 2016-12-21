@@ -434,7 +434,6 @@ void setup (simSystem &sys, const std::string filename) {
 
     // Read from restart file if specified
 	if (restart_file != "") {
-		std::cout << "Reading initial configuration from " << restart_file << std::endl;
 		try {
 			sys.readRestart(restart_file);
 		} catch (customException &ce) {
@@ -543,7 +542,7 @@ void setup (simSystem &sys, const std::string filename) {
 			}
 		}
 
-		// print snapshot from initSys
+		// print snapshot from Reading initial configuration
 		initSys.printSnapshot("auto-init.xyz", "auto-generated initial configuration");
 
 		// read into sys
