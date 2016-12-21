@@ -11229,3 +11229,29 @@ TEST_F (quaternionTest, notEqual) {
 	b.set(val);
 	EXPECT_TRUE (a != b);
 }
+
+class checkpointTest : public ::testing::Test {
+protected:
+	moves usedMovesEq, usedMovesPr;
+	simSystem sys;
+
+	virtual void SetUp() {
+		sys = initialize ("../data/cpt_input.json", &usedMovesEq, &usedMovesPr);
+	}
+};
+
+TEST_F (checkpointTest, restarts) {
+	// test that system can restart from multiple configurations without error
+	;
+}
+
+// Unittest:
+// checkpoint: load, dump, check
+// 1. move and sweep counter in each stage: res(sys, move, sweep)
+// 2. dump/load (snaps and json) to ensure they generate same files
+// 3. restart from configs multiple times to ensure done correctly
+// sys.restartEnergyHistogram
+// sys.restartPkHistogram
+// sys.restartExtMoments
+// tmmc read HC (read C already tested above somewhere?)
+// wala read H

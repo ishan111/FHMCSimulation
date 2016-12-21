@@ -32,6 +32,7 @@ using namespace netCDF::exceptions;
  */
 class simSystem {
 public:
+	simSystem () {;}
 	simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies, const int Mtot, const double energyHistDelta = 10.0, const int max_order = 2);
 	~simSystem ();
 

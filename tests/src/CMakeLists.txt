@@ -8,14 +8,30 @@ ADD_SUBDIRECTORY (gtest-1.7.0)
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
+set(CMAKE_CXX_STANDARD 11)
+
+# check that C++11 is supported
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+if(COMPILER_SUPPORTS_CXX11)
+    message(STATUS "${COMPILER_SUPPORTS_CXX11}")
+else(COMPILER_SUPPORTS_CXX11)
+    message(FATAL_ERROR "${COMPILER_SUPPORTS_CXX11}")
+endif(COMPILER_SUPPORTS_CXX11)
+
+# C++11 support for each compiler
 if(CMAKE_COMPILER_IS_GNUCXX)
-    add_definitions(-std=gnu++0x)
+	# gcc
+	add_definitions(-std=c++11)
+else()
+	# clang
+	add_definitions(-std=c++11 -stdlib=libc++)
 endif()
 
 add_definitions(-D_GLIBCXX_DEBUG)
 #add_definitions(-fsanitize=address -mllvm -asan-stack)
 
-set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -stdlib=libc++")
+set(CMAKE_CXX_FLAGS "-Wall -Wno-sign-compare")# -std=c++11 -stdlib=libc++")
 
 # do not include main.cpp
 include_directories("../../src/")
