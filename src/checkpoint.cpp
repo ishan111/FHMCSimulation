@@ -150,7 +150,7 @@ void checkpoint::load (simSystem &sys) {
         throw customException ("Unable to load checkppoint");
     }
 
-    std::cout << "Checkpoint loaded from " << fileName << " on " << getTimeStamp() << std::endl;
+    std::cout << "Checkpoint loaded from " << chkptName << " on " << getTimeStamp() << std::endl;
 }
 
 /*!

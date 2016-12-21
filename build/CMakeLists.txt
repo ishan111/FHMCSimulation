@@ -31,7 +31,7 @@ file(GLOB fhmc_SRC
 set (fhmc_VERSION_MAJOR 2)
 set (fhmc_VERSION_MINOR 1)
 
-set(CMAKE_CXX_FLAGS "-O3 -Wall -DFLUID_PHASE_SIMULATIONS")
+set(CMAKE_CXX_FLAGS "-O3 -Wno-sign-compare -Wall -DFLUID_PHASE_SIMULATIONS")
 
 include_directories("../src/")
 include_directories("../driver/")
