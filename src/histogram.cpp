@@ -325,3 +325,20 @@ void histogram::print (const std::string fileName) {
 	}
 	of.close();
 }
+
+/*!
+ * Assign the histogram and its corresponding counter.
+ *
+ * \param [in] h histogram
+ * \param [in] ctr Counter
+ */
+void histogram::set (const std::vector <double> &h, const std::vector <double> &ctr) {
+	if (h.size() != ctr.size()) {
+		throw customException ("Cannot set the histogram since counter and histogram have different lengths");
+	}
+	if (h.size() != h_.size()) {
+		throw customException ("Cannot set the histogram since new counter and histogram have different length compared to current status");
+	}
+	h_ = h;
+	counter_ = ctr;
+}

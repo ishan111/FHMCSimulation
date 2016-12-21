@@ -19,6 +19,7 @@ public:
     	void print (const std::string fileName);
     	void increment (const long long unsigned int address, const double val);
     	void increment (const std::vector <double> &coords, const double val);
+		void set (const std::vector <double> &h, const std::vector <double> &ctr);
     	const long long unsigned int getAddress (const std::vector <double> &coords);
     	const std::vector <double> getCoords (long long unsigned int address);
     	std::vector <double> getRawHistogram () { return h_; } //!< Return the current histogram

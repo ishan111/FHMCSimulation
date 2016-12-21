@@ -741,8 +741,97 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
  * \param [in] fileName Name of the file to load from
  * \param [in] ctr Counter for each point in the histogram
  */
-void simSystem::restartExtMoments (const std::string fileName, const std::vector < double > &ctr) {
-	;
+void simSystem::restartExtMoments (const std::string prefix, const std::vector < double > &ctr){
+	std::string fileName = prefix+".dat";
+
+	std::ifstream infile (fileName.c_str());
+	std::string line, tmp = "";
+	int lineIndex = 0, dummy;
+	long long unsigned int idx;
+	std::vector < double > h = extensive_moments_.getRawHistogram (), coords (6, 0);
+
+	while(std::getline(infile,line)) {
+		std::stringstream lineStream(line);
+		if (lineIndex == 1) {
+			std::getline(lineStream, tmp, ':');
+			std::getline(lineStream, tmp, ':');
+			int ns = atoi(tmp.c_str());
+			if (ns != nSpecies_) {
+				throw customException ("Number of speces in restart file ("+ std::to_string(ns)+") is not the same as provided in input ("+std::to_string(nSpecies_)+"), cannot restart extMom histogram from "+fileName);
+			}
+		} else if (lineIndex == 2) {
+			std::getline(lineStream, tmp, ':');
+			std::getline(lineStream, tmp, ':');
+			int mo = atoi(tmp.c_str());
+			if (mo != getMaxOrder()) {
+				throw customException ("Max order ("+ std::to_string(mo)+") is not the same as provided in input ("+std::to_string(getMaxOrder())+"), cannot restart extMom histogram from "+fileName);
+			}
+		} if (lineIndex == 3) {
+			std::getline(lineStream, tmp, ':');
+			std::getline(lineStream, tmp, ':');
+			int high = atoi(tmp.c_str());
+			if (high != totNMax()) {
+				throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax ("+std::to_string(totNMax())+"), cannot restart extMom histogram from "+fileName);
+			}
+		} else if (lineIndex == 4) {
+			std::getline(lineStream, tmp, ':');
+			std::getline(lineStream, tmp, ':');
+			int low = atoi(tmp.c_str());
+			if (low != totNMin()) {
+				throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin ("+std::to_string(totNMin())+"), cannot restart extMom histogram from "+fileName);
+			}
+
+			// now reinstantiate the histogram
+			std::vector < double > lbn (6,0), ubn(6,0);
+			std::vector < long long unsigned int > nbn (6,0);
+			ubn[0] = nSpecies_-1;
+			ubn[1] = max_order_;
+			ubn[2] = nSpecies_-1;
+			ubn[3] = max_order_;
+			ubn[4] = max_order_;
+			ubn[5] = totNMax()-totNMin();
+
+			nbn[0] = nSpecies_;
+			nbn[1] = max_order_+1;
+			nbn[2] = nSpecies_;
+			nbn[3] = max_order_+1;
+			nbn[4] = max_order_+1;
+			nbn[5] = totNMax()-totNMin()+1;
+
+			histogram hnn (lbn, ubn, nbn);
+			extensive_moments_ = hnn;
+		} else if (lineIndex >= 7) {
+			// histogram itself
+			lineStream >> dummy;
+			coords[5] = lineIndex-7;
+			for (unsigned int i = 0; i < nSpecies_; ++i) {
+				coords[0] = i;
+				for (unsigned int j = 0; j <= max_order_; ++j) {
+					coords[1] = j;
+					for (unsigned int k = 0; k < nSpecies_; ++k) {
+						coords[2] = k;
+						for (unsigned int m = 0; m <= max_order_; ++m) {
+							coords[3] = m;
+							for (unsigned int p = 0; p <= max_order_; ++p) {
+								coords[4] = p;
+								idx = extensive_moments_.getAddress(coords);
+								lineStream >> h[idx];
+							}
+						}
+					}
+				}
+			}
+		}
+		lineIndex++;
+	}
+	infile.close();
+
+	try {
+		// this checks h and ctr same size, and by extension that h from file has same size as h in system
+		extensive_moments_.set(h, ctr);
+	} catch (...) {
+		throw customException ("Unable to restart extMom histogram from "+fileName);
+	}
 }
 
 /*!

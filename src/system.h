@@ -81,6 +81,7 @@ public:
 	const int totNMax () { return totNBounds_[1]; } //!< Return upper bound on the total number of atoms in the system
 	const int totNMin () { return totNBounds_[0]; } //!< Return lower bound on the total number of atoms in the system
 	const int getTotN () { return totN_; } //!< Return a sum of the total number of atoms currently in the system
+	const int getMaxOrder () { return max_order_; } //!< Return the max order the extensive moments are being stored out to
 
 	const int getCurrentM () { return Mcurrent_; } //!< Return the system's current expanded ensemble fractional state
 	const int getTotalM () { return Mtot_; } //!< Return the total number of fractional states available to species in the expanded ensemble
