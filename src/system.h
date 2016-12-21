@@ -94,13 +94,16 @@ public:
 	long long int tmmcSweepSize; //!< Size of a sweep in TMMC
 	long long int totalTMMCSweeps; //!< Total number of sweeps to perform during TMMC
 	long long int wlSweepSize; //!< Size of Wang-Landau sweep
-	int nCrossoverVisits; //!< Numner of crossovers that must occur before switching from WALA to TMMC
+	long long int nCrossoverVisits; //!< Number of crossovers that must occur before switching from WALA to TMMC
 	tmmc* tmmcBias; //!< TMMC biasing function
 	wala* wlBias; //!< WL biasing function
 	std::vector < int > numSpecies;	//!< Total number of each type of atom the system contains
 	std::vector < std::vector < atom > > atoms;	//!< Atoms in a matrix by type, and particle index, respectively that a system CAN hold but not all are actually "in" the system
 	std::vector < std::vector < std::shared_ptr < pairPotential > > > ppot; //!< Matrix of pair potentials for atom types i, j
 	std::vector < compositeBarrier > speciesBarriers; //!< Barriers, if any, for each species
+
+	bool restartFromWALA, restartFromTMMC; //!< Flags to restart from WALA or TMMC initially
+	std::string restartFromWALAFile, restartFromTMMCFile; //!< Files to restart from WALA or TMMC initially
 
 private:
 	atom* fractionalAtom_; //!< Pointer to the atom in the system that is currently only fractionally inserted/deleted

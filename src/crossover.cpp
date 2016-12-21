@@ -8,18 +8,25 @@
  * \param [in] usedMovesEq Move class to use
  */
 void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
-    if (!sys.useWALA) {
-        throw customException ("WALA not configured, cannot proceeed with crossover");
+    if (res.crossoverDone) {
+        throw customException ("Checkpoint indicates crossover already finished");
     }
-
     std::cout << "Crossing over to build TMMC matrix at " << getTimeStamp() << std::endl;
 
     res.crossoverDone = false;
-    sys.startTMMC (sys.tmmcSweepSize, sys.getTotalM());
+    long long int timesFullyVisited = 0, moveStart = 0;
+    if (!res.resFromCross) {
+        if (!sys.useWALA) {
+            throw customException ("WALA not configured, cannot proceeed with crossover");
+        }
+        sys.startTMMC (sys.tmmcSweepSize, sys.getTotalM());
+    } else {
+        timesFullyVisited = res.sweepCounter;
+        moveStart = res.moveCounter;
+    }
 
-    int timesFullyVisited = 0;
     while (timesFullyVisited < sys.nCrossoverVisits) {
-        for (unsigned int move = 0; move < sys.wlSweepSize; ++move) {
+        for (unsigned long long int move = moveStart; move < sys.wlSweepSize; ++move) {
             try {
                 usedMovesEq->makeMove(sys);
             } catch (customException &ce) {
@@ -29,7 +36,7 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             if (sys.getCurrentM() == 0) {
                 sys.checkEnergyHistogramBounds ();
             }
-            res.check();
+            res.check(sys, move, timesFullyVisited);
         }
 
         if (sys.getTMMCBias()->checkFullyVisited()) {
@@ -46,7 +53,7 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             std::cout << "Times C fully visited = " << timesFullyVisited << " at " << getTimeStamp() << std::endl;
         }
 
-        // Check if bias has flattened out
+        // Check if bias has flattened out, just for continuous improvement
         bool flat = sys.getWALABias()->evaluateFlatness();
         if (flat) {
             // If flat, need to reset H and reduce lnF

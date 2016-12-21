@@ -178,31 +178,31 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		exit(SYS_FAILURE);
 	}
 
-	bool restartFromWALA = false;
-	std::string restartFromWALAFile = "";
+	sys.restartFromWALA = false;
+	sys.restartFromWALAFile = "";
 	if (doc.HasMember("restart_from_wala_lnPI")) {
 		assert(doc["restart_from_wala_lnPI"].IsString());
-		restartFromWALAFile = doc["restart_from_wala_lnPI"].GetString();
-		if (restartFromWALAFile != "") {
-			restartFromWALA = true;
+		sys.restartFromWALAFile = doc["restart_from_wala_lnPI"].GetString();
+		if (sys.restartFromWALAFile != "") {
+			sys.restartFromWALA = true;
 		}
 	}
 
 	// restarting from TMMC overrides WL by skipping that portion altogether
-	bool restartFromTMMC = false;
-	std::string restartFromTMMCFile = "";
+	sys.restartFromTMMC = false;
+	sys.restartFromTMMCFile = "";
 	if (doc.HasMember("restart_from_tmmc_C")) {
 		assert(doc["restart_from_tmmc_C"].IsString());
-		restartFromTMMCFile = doc["restart_from_tmmc_C"].GetString();
-		if (restartFromTMMCFile != "") {
-			restartFromTMMC = true;
+		sys.restartFromTMMCFile = doc["restart_from_tmmc_C"].GetString();
+		if (sys.restartFromTMMCFile != "") {
+			sys.restartFromTMMC = true;
 		}
 	}
 
 	// number of times the TMMC C matrix has to be traversed during the WALA --> TMMC crossover
 	if (doc.HasMember("num_crossover_visits")) {
-		assert(doc["num_crossover_visits"].IsInt());
-		sys.nCrossoverVisits = doc["num_crossover_visits"].GetInt();
+		assert(doc["num_crossover_visits"].IsNumber());
+		sys.nCrossoverVisits = doc["num_crossover_visits"].GetDouble(); // convert
 		if (sys.nCrossoverVisits < 1) {
 			std::cerr << "Must allow the collection matrix to be traversed at least once in the crossover from Wang-Landau to TMMC" << std::endl;
 			exit(SYS_FAILURE);
@@ -402,10 +402,7 @@ void setup (simSystem &sys, const std::string filename) {
 		restart_file = doc["restart_file"].GetString();
 	}
 
-	std::vector < double > sysBox (3, 0);
-	for (rapidjson::SizeType i = 0; i < doc["box"].Size(); ++i) {
-		sysBox[i] = doc["box"][i].GetDouble();
-	}
+	std::vector < double > sysBox = sys.box();
 
     double duh = 10.0;
 	if (doc.HasMember("delta_u_hist")) {
@@ -419,17 +416,8 @@ void setup (simSystem &sys, const std::string filename) {
 		max_order = doc["max_order"].GetInt();
 	}
 
-	bool use_ke = false;
-	if (doc.HasMember("use_ke")) {
-		assert(doc["use_ke"].IsBool());
-		use_ke = doc["use_ke"].GetBool();
-	}
-
-    int Mtot = 1;
-	if (doc.HasMember("num_expanded_states")) {
-		assert(doc["num_expanded_states"].IsInt());
-		Mtot = doc["num_expanded_states"].GetInt();
-	}
+	bool use_ke = sys.addKECorrection();
+    int Mtot = sys.getTotalM();
 
 	std::vector < double > sysMu (doc["mu"].Size(), 0);
 	for (rapidjson::SizeType i = 0; i < doc["mu"].Size(); ++i) {

@@ -32,49 +32,50 @@ int main (int argc, char * const argv[]) {
 	std::cout << "Beginning simulation at " << getTimeStamp() << std::endl;
 
 	moves usedMovesEq, usedMovesPr;
-	simSystem sys = initialize (argv[1], &usedMovesEq, &usedMovesPr); // read json file and create system class
+	simSystem sys = initialize (argv[1], &usedMovesEq, &usedMovesPr);
 
-	// if restart/ exists, default to use this information to restart the simulation
-	checkpoint cpt ("checkpt", 900);
+	// If checkpoint exists, default to use this information to restart the simulation
+	checkpoint cpt ("checkpt", 900, sys);
     if (!cpt.hasCheckpoint) {
         setup (sys, argv[1]);
     }
 
-	// 2.
-	// from input parsing, if restart from TMMC or another one, set previous stages to completion so it goes right to it?
-	// store this into cpt object
-	// move restartFromWALA reading, etc. in input sfrom inistialize to setup and then store in cpt
-	// remove double reading from setup (like box) and just set values read from initialize
-	// 3.
-	// make reader
+	// Check not falsely restarting the simulation
+	if (cpt.tmmcDone) {
+		std::cerr << "TMMC stage already finished, terminating" << std::endl;
+		return SAFE_EXIT;
+	}
+
 	// 4.
-	// histogram classes need restart() members to restart from raw, Unnormalized data
 	// in cpt load(), have these called to restart these classes
-	// unit test dump and restarts (to different files, then diff the files to make sure nothing)
-	//5.
-	// startWALA, startTMMC must be deactivated conditionally from each stage if already activated from checkpoint
-	// in addition lnF, etc. for these loops must be set to checkpoint values, not defaults
-	// 6.
-	// tmmc also has to store HC, also readH()
 	// 7.
-	// restartEnergyHistogram, restartPkHistogram, restartExtMoments
+	// histogram classes need restart() members to restart from raw, Unnormalized data
+	// restartEnergyHistogram, restartPkHistogram, restartExtMoments --> restart from raw, Unnormalized data
 
 	// sysRestart ok to call twice? what if from file initilize() and then from checppoint
 
 	// forgo M state, dont use often, and not saving RNG state anyway so....
 
+	// Unittest:
+	// 1. move and sweep counter in each stage: res(sys, move, sweep) ?
+	// 2. dump/restart to ensure they generate same files
+
+	// Choose stage based on what is completed, not where restart is from in case not restarting from checkpoint
 	if (!cpt.walaDone) {
-		// perform Wang-Landau simulation
+		// Perform Wang-Landau simulation
 		performWALA (sys, cpt, &usedMovesEq);
 		performCrossover (sys, cpt, &usedMovesEq);
 		performTMMC (sys, cpt, &usedMovesPr);
 	} else if (!cpt.crossoverDone) {
-		// crossover to TMMC
+		// Crossover to TMMC simulation
 		performCrossover (sys, cpt, &usedMovesEq);
 		performTMMC (sys, cpt, &usedMovesPr);
 	} else if (!cpt.tmmcDone) {
-		// perform tmmc portion of the simulation
+		// Perform TMMC portion of the simulation
 		performTMMC (sys, cpt, &usedMovesPr);
+	} else {
+		std::cerr << "Error in establishing which stage to begin from" << std::endl;
+		return SYS_FAILURE;
 	}
 
 	// Perform sanity checks

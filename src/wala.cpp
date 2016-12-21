@@ -8,32 +8,40 @@
  * \param [in] usedMovesEq Move class to use
  */
 void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
-    if (sys.useTMMC or sys.useWALA) {
-        throw customException ("WALA or TMMC already active, cannot proceeed with WALA");
+    if (res.walaDone) {
+        throw customException ("Checkpoint indicates WALA already finished");
     }
-
     std::cout << "Beginning Wang-Landau portion at " << getTimeStamp() << std::endl;
 
-    res.walaDone = false;
     bool flat = false;
     double lnF = sys.lnF_start;
-    sys.startWALA (lnF, sys.wala_g, sys.wala_s, sys.getTotalM());
+    long long int moveStart = 0;
 
-    std::cout << "Initial lnF = " << sys.lnF_start << " at " << getTimeStamp() << std::endl;
-
-    if (res.restartFromWALA) {
-        try {
-            sys.getWALABias()->readlnPI(res.restartFromWALAFile);
-        } catch (customException &ce) {
-            std::cerr << ce.what() << std::endl;
-            exit(SYS_FAILURE);
+    if (!res.resFromWALA) {
+        if (sys.useTMMC or sys.useWALA) {
+            throw customException ("WALA or TMMC already active, cannot proceeed with WALA");
         }
-        std::cout << "Read initial lnPI for Wang-Landau from " << res.restartFromWALAFile << std::endl;
+
+        sys.startWALA (lnF, sys.wala_g, sys.wala_s, sys.getTotalM());
+        if (sys.restartFromWALA) {
+            // specified to start WALA from a lnPI guess, and this is not a restart from a checkpoint
+            try {
+                sys.getWALABias()->readlnPI(sys.restartFromWALAFile);
+            } catch (customException &ce) {
+                std::cerr << ce.what() << std::endl;
+                exit(SYS_FAILURE);
+            }
+            std::cout << "Read initial lnPI for Wang-Landau from " << sys.restartFromWALAFile << std::endl;
+        }
+    } else {
+        lnF = sys.getWALABias()->lnF(); // checkpoint re-initialized to starting value
+        moveStart = res.moveCounter;
     }
 
-    //long long int counter = 0;
+    std::cout << "Initial lnF = " << sys.getWALABias()->lnF() << " at " << getTimeStamp() << std::endl;
+
     while (lnF > sys.lnF_end) {
-        for (unsigned int move = 0; move < sys.wlSweepSize; ++move) {
+        for (unsigned long long int move = moveStart; move < sys.wlSweepSize; ++move) {
             try {
                 usedMovesEq->makeMove(sys);
             } catch (customException &ce) {
@@ -43,20 +51,15 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             if (sys.getCurrentM() == 0){
                 sys.checkEnergyHistogramBounds ();
             }
-            res.check();
+            res.check(sys, move);
         }
 
         // Check if bias has flattened out
         flat = sys.getWALABias()->evaluateFlatness();
         if (flat) {
-            //counter++;
-
-            // Periodically write out checkpoints - before iterateForward() which destroys H matrix
-            //sys.getWALABias()->print("wl-Checkpoint-"+std::to_string(counter), true);
             sys.getWALABias()->iterateForward(); // if flat, need to reset H and reduce lnF
             lnF = sys.getWALABias()->lnF();
             flat = false;
-
             std::cout << "lnF = " << lnF << " at " << getTimeStamp() << std::endl;
         }
     }

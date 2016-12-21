@@ -5,27 +5,38 @@
  *
  * \param [in] dir Directory where system state was saved
  * \param [in] frequency Frquency to take snapshots/checkpoints of the system (< 0 disables)
+ * \param [in] sys System to checkpoint
  * \param [in] snaps Take snapshots each time a record is made to make a movie? (default = false)
  */
-checkpoint::checkpoint (const std::string directory, const int frequency, bool snaps) {
+checkpoint::checkpoint (const std::string directory, const int frequency, simSystem &sys, bool snaps) {
     tmmcDone = false;
     crossoverDone = false;
     walaDone = false;
     hasCheckpoint = false;
-    restartFromTMMC = false;
-    restartFromWALA = false;
     takeSnaps = snaps;
     dir = directory;
     freq = frequency;
+    moveCounter = 0;
+    sweepCounter = 0;
+    resFromWALA = false;
+    resFromCross = false;
+    resFromTMMC = false;
 
     chkptName = dir+"/state.json";
     if (fileExists(chkptName)) {
-        load (chkptName);
+        // if checkpoint exists, use this information
+        load(sys);
     } else {
         std::string command = "mkdir -p "+dir+" && touch "+chkptName;
         const int succ = system(command.c_str());
         if (succ != 0) {
-            throw customException("Unable to remove previous checkpoint file");
+            throw customException("Unable to initialize checkpoint");
+        }
+
+        // Forcible skip to TMMC stage if want to manually start TMMC
+        if (sys.restartFromTMMC){
+            walaDone = true;
+            crossoverDone = true;
         }
     }
 
@@ -38,26 +49,31 @@ checkpoint::checkpoint (const std::string directory, const int frequency, bool s
  * \param [in] sys System to checkpoint
  */
 void checkpoint::load (simSystem &sys) {
+    if (!fileExists(chkptName)) {
+        throw customException ("No checkpoint by the name: "+chkptName);
+    }
+
     rapidjson::Document doc;
     try {
         FILE* fp = fopen(chkptName.c_str(), "r");
     	char readBuffer[65536];
-    	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+    	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer) );
     	doc.ParseStream(is);
     	fclose(fp);
 
         tmmcDone = doc["tmmcDone"].GetBool();
         crossoverDone = doc["crossoverDone"].GetBool();
         walaDone = doc["walaDone"].GetBool();
-        restartFromTMMC = doc["restartFromTMMC"].GetBool();
-        restartFromWALA = doc["restartFromWALA"].GetBool();
         hasCheckpoint = doc["hasCheckpoint"].GetBool();
         takeSnaps = doc["takeSnaps"].GetBool();
         freq = doc["freq"].GetInt();
         dir = doc["dir"].GetString();
+        moveCounter = (long long int)doc["moveCounter"].GetDouble();
+        sweepCounter = (long long int)doc["sweepCounter"].GetDouble();
 
         if (walaDone && crossoverDone) {
             // in final TMMC stage or just finished the TMMC (end of simulation)
+            resFromTMMC = true;
             sys.startTMMC(sys.tmmcSweepSize, sys.getTotalM());
             sys.getTMMCBias()->readC(dir+"/tmmc_C.dat");
             sys.getTMMCBias()->readHC(dir+"/tmmc_HC.dat");
@@ -72,9 +88,10 @@ void checkpoint::load (simSystem &sys) {
             sys.restartExtMoments(dir+"/extMom", ctr);
         } else if (walaDone && !crossoverDone && !tmmcDone) {
             // in crossover stage
+            resFromCross = true;
             sys.startTMMC(sys.tmmcSweepSize, sys.getTotalM());
-            currentLnF = doc["wala_lnF"].GetDouble()
-            sys.startWALA (currentLnF, sys.wala_g, sys.wala_s, sys.getTotalM());
+            wala_lnF = doc["wala_lnF"].GetDouble();
+            sys.startWALA (wala_lnF, sys.wala_g, sys.wala_s, sys.getTotalM());
 
             sys.getTMMCBias()->readC(dir+"/tmmc_C.dat");
             sys.getTMMCBias()->readHC(dir+"/tmmc_HC.dat");
@@ -95,8 +112,9 @@ void checkpoint::load (simSystem &sys) {
             sys.setEUB(eub);
         } else if (!walaDone && !crossoverDone && !tmmcDone) {
             // in WALA stage
-            currentLnF = doc["wala_lnF"].GetDouble()
-            sys.startWALA (currentLnF, sys.wala_g, sys.wala_s, sys.getTotalM());
+            resFromWALA = true;
+            wala_lnF = doc["wala_lnF"].GetDouble();
+            sys.startWALA (wala_lnF, sys.wala_g, sys.wala_s, sys.getTotalM());
 
             sys.getWALABias()->readlnPI(dir+"/wala_lnPI.dat");
             sys.getWALABias()->readH(dir+"/wala_H.dat");
@@ -118,10 +136,10 @@ void checkpoint::load (simSystem &sys) {
         }
 
         sys.readRestart(dir+"/snap.xyz");
-    } catch () {
-        throw customException ("Unable to load checkppoint");
-    } else {
         hasCheckpoint = true;
+    } catch (...) {
+        hasCheckpoint = false;
+        throw customException ("Unable to load checkppoint");
     }
 }
 
@@ -129,8 +147,10 @@ void checkpoint::load (simSystem &sys) {
  * Save the state of a system to a json file.
  *
  * \param [in] sys System to checkpoint
+ * \param [in] moveCounter Number of moves out of a given sweep that have executed
+ * \param [in] sweepCounter Number of loops/sweeps that have executed
  */
-void checkpoint::dump (simSystem &sys) {
+void checkpoint::dump (simSystem &sys, const long long int moveCounter, const long long int sweepCounter) {
     rapidjson::StringBuffer s;
     rapidjson::PrettyWriter < rapidjson::StringBuffer > writer(s);
 
@@ -145,12 +165,6 @@ void checkpoint::dump (simSystem &sys) {
     writer.String("walaDone");
     writer.Bool(walaDone);
 
-    writer.String("restartFromTMMC");
-    writer.Bool(restartFromTMMC);
-
-    writer.String("restartFromWALA");
-    writer.Bool(restartFromWALA);
-
     writer.String("hasCheckpoint");
     writer.Bool(hasCheckpoint);
 
@@ -162,6 +176,12 @@ void checkpoint::dump (simSystem &sys) {
 
     writer.String("dir");
     writer.String(dir.c_str());
+
+    writer.String("moveCounter");
+    writer.Double(moveCounter);
+
+    writer.String("sweepCounter");
+    writer.Double(sweepCounter);
 
     if (walaDone && crossoverDone) {
         // in final TMMC stage or just finished the TMMC (end of simulation)
@@ -200,6 +220,8 @@ void checkpoint::dump (simSystem &sys) {
     } else if (!walaDone && !crossoverDone && !tmmcDone) {
         // in WALA stage
         sys.getWALABias()->print(dir+"/wala", true);
+        writer.String("wala_lnF");
+        writer.Double(sys.getWALABias()->lnF());
         // energy upper and lower bounds for histogram
         std::vector < double > elb = sys.getELB(), eub = sys.getEUB();
         writer.String("energyHistogramLB");
@@ -235,11 +257,13 @@ void checkpoint::dump (simSystem &sys) {
  * Check how long it has been since last checkpoint, and write new one if has exceeded frequency.
  *
  * \param [in] sys System to checkpoint
+ * \param [in] moveCounter Number of moves out of a given sweep that have executed
+ * \param [in] sweepCounter Number of loops/sweeps that have executed
  */
-void checkpoint::check (simSystem &sys) {
+void checkpoint::check (simSystem &sys, const long long int moveCounter, const long long int sweepCounter) {
     if (freq > 0) {
-        if (std::abs(difftime(time(&now), lastCheckPt_)) >= freq) {
-            dump(sys);
+        if (std::abs(difftime(time(&now_), lastCheckPt_)) >= freq) {
+            dump(sys, moveCounter, sweepCounter);
         }
     }
 }

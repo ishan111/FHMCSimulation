@@ -610,6 +610,11 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 
 	histogram hnn (lbn, ubn, nbn);
 	extensive_moments_ = hnn;
+
+	restartFromWALA = false;
+	restartFromTMMC = false;
+	restartFromWALAFile = "";
+	restartFromTMMCFile = "";
 }
 
 /*!
