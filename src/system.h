@@ -43,7 +43,7 @@ public:
 	void insertAtom (const unsigned int typeIndex, atom *newAtom, bool override=false);
 	void deleteAtom (const unsigned int typeIndex, const unsigned int atomIndex, bool override=false);
 	void translateAtom (const int typeIndex, const int atomIndex, std::vector<double> oldPos);
-   	void readRestart (std::string filename);
+   	void readConfig (std::string filename);
 
 	void setEUB (const std::vector < double > eub) { energyHistogram_ub_ = eub; } //!< Assign energy upper bound from restart
 	void setELB (const std::vector < double > elb) { energyHistogram_lb_ = elb; } //!< Assign energy lower bound from restart

@@ -1387,7 +1387,7 @@ void simSystem::printSnapshot (std::string filename, std::string comment, bool o
  *
  * \param [in] filename File to read XYZ coordinates from
  */
-void simSystem::readRestart (std::string filename) {
+void simSystem::readConfig (std::string filename) {
 	std::cout << "Reading initial configuration from " << filename << std::endl;
 
 	std::ifstream infile (filename.c_str());

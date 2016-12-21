@@ -46,16 +46,16 @@ int main (int argc, char * const argv[]) {
 		return SAFE_EXIT;
 	}
 
-	sys.readRestart("snap.xyz");
-	sys.readRestart("final.xyz");
-	sys.readRestart("snap.xyz");
+	sys.readConfig("snap.xyz");
+	sys.readConfig("final.xyz");
+	sys.readConfig("snap.xyz");
 
-	// sysRestart ok to call twice? what if from file initilize() and then from checppoint
-	// forgo M state, dont use often, and not saving RNG state anyway so....
+	// consider using better RNG from C++ to allow for checkpointing of this - even if it doesn't work for M != 1, don't use often anyway...
 
 	// Unittest:
 	// 1. move and sweep counter in each stage: res(sys, move, sweep) ?
 	// 2. dump/restart to ensure they generate same files
+	// 3. restart from configs multiple times to ensure done correctly
 
 	// Choose stage based on what is completed, not where restart is from in case not restarting from checkpoint
 	if (!cpt.walaDone) {

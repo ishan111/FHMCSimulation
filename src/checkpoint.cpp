@@ -143,7 +143,7 @@ void checkpoint::load (simSystem &sys) {
             throw customException ("Uncertain which stage simulation is in, so cannot checkpoint");
         }
 
-        sys.readRestart(dir+"/snap.xyz");
+        sys.readConfig(dir+"/snap.xyz");
         hasCheckpoint = true;
     } catch (...) {
         hasCheckpoint = false;

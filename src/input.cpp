@@ -435,7 +435,7 @@ void setup (simSystem &sys, const std::string filename) {
     // Read from restart file if specified
 	if (restart_file != "") {
 		try {
-			sys.readRestart(restart_file);
+			sys.readConfig(restart_file);
 		} catch (customException &ce) {
 			std::cerr << ce. what() << std::endl;
 		}
@@ -547,7 +547,7 @@ void setup (simSystem &sys, const std::string filename) {
 
 		// read into sys
 		try {
-			sys.readRestart("auto-init.xyz");
+			sys.readConfig("auto-init.xyz");
 		} catch (customException &ce) {
 			std::cerr << "Failed to read auto-generated initialization file: " << ce. what() << std::endl;
         }
