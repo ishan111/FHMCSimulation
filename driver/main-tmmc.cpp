@@ -46,14 +46,10 @@ int main (int argc, char * const argv[]) {
 		return SAFE_EXIT;
 	}
 
-	// 4.
-	// in cpt load(), have these called to restart these classes
-	// 7.
 	// histogram classes need restart() members to restart from raw, Unnormalized data
 	// restartEnergyHistogram, restartPkHistogram, restartExtMoments --> restart from raw, Unnormalized data
 
 	// sysRestart ok to call twice? what if from file initilize() and then from checppoint
-
 	// forgo M state, dont use often, and not saving RNG state anyway so....
 
 	// Unittest:
