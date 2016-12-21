@@ -46,14 +46,6 @@ int main (int argc, char * const argv[]) {
 		return SAFE_EXIT;
 	}
 
-	sys.restartPkHistogram("pkHist");
-	sys.printPkHistogram("test_pk", false);
-	return 0;
-
-
-	// histogram classes need restart() members to restart from raw, Unnormalized data
-	// restartEnergyHistogram, restartPkHistogram, restartExtMoments --> restart from raw, Unnormalized data
-
 	// sysRestart ok to call twice? what if from file initilize() and then from checppoint
 	// forgo M state, dont use often, and not saving RNG state anyway so....
 

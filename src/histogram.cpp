@@ -337,7 +337,10 @@ void histogram::set (const std::vector <double> &h, const std::vector <double> &
 		throw customException ("Cannot set the histogram since counter and histogram have different lengths");
 	}
 	if (h.size() != h_.size()) {
-		throw customException ("Cannot set the histogram since new counter and histogram have different length compared to current status");
+		throw customException ("Cannot set the histogram since new histogram has different length compared to current one");
+	}
+	if (ctr.size() != counter_.size()) {
+		throw customException ("Cannot set the histogram since new counter has different length compared to current one");
 	}
 	h_ = h;
 	counter_ = ctr;
