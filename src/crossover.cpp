@@ -26,7 +26,7 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
     }
 
     while (timesFullyVisited < sys.nCrossoverVisits) {
-        for (unsigned long long int move = moveStart; move < sys.wlSweepSize; ++move) {
+        for (long long int move = moveStart; move < sys.wlSweepSize; ++move) {
             try {
                 usedMovesEq->makeMove(sys);
             } catch (customException &ce) {

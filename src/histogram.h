@@ -26,7 +26,7 @@ public:
     	std::vector <double> getCounter () { return counter_; } //!< Return the current histogram counter
 
 private:
-    	int dim_; //!< Dimensionality of the histogram
+    	unsigned int dim_; //!< Dimensionality of the histogram
     	long long unsigned int size_; //!< Total size of histogram
     	std::vector <long long unsigned int> nbins_; //!< Number of bins along each dimension
     	std::vector <long long unsigned int> widths_; //!< Total widths (number of bins) of each iteratively projected dimension

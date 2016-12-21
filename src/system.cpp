@@ -73,7 +73,7 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
 		} catch (std::exception &e) {
 			throw customException (e.what());
 		}
-		if (numSpecies[i] > atoms[i].size()) {
+		if (numSpecies[i] > (int)atoms[i].size()) {
 			numSpecies[i] = atoms.size();
 		}
 		tmpTot += numSpecies[i];
@@ -134,7 +134,7 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
  * \param [in] newAtom Pointer to new atom.  A copy is stored in the system so the original may be destroyed.
  * \param [in] override Override command that prevents the expanded ensemble state from being changed.  Used during swap moves where "insertions" are temporary.
  */
-void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
+void simSystem::insertAtom (const unsigned int typeIndex, atom *newAtom, bool override) {
 	if (typeIndex < nSpecies_ && typeIndex >= 0) {
 		if (numSpecies[typeIndex] < maxSpecies_[typeIndex]) {
 			if (Mtot_ > 1 && !override) {
@@ -235,7 +235,7 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
  * \param [in] atomIndex Which atom *index* of type typeIndex to destroy (>= 0)
  * \param [in] Optional override command which allows the system to delete a particle even it goes below the minimum allowed. E.g. during a swap move.
  */
-void simSystem::deleteAtom (const int typeIndex, const int atomIndex, bool override) {
+void simSystem::deleteAtom (const unsigned int typeIndex, const unsigned int atomIndex, bool override) {
 	if (typeIndex < nSpecies_ && typeIndex >= 0) {
        	if ((numSpecies[typeIndex] > minSpecies_[typeIndex]) || ((numSpecies[typeIndex] == minSpecies_[typeIndex]) && (Mcurrent_ > 0)) || override) {
         	if (override) {

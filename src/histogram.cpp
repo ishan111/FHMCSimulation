@@ -177,28 +177,28 @@ void dynamic_one_dim_histogram::record (const double value) {
  */
 histogram::histogram (const std::vector <double> lbound, const std::vector <double> ubound, const std::vector <long long unsigned int> nbins) {
 	if (lbound.size() != ubound.size()) {
-        	throw customException ("Upper and lower bounds for histogram do have the same size");
-    	}
-    	if (nbins.size() != lbound.size()) {
-        	throw customException ("Number of bins for histogram's dimensions does not have the same size as its bounds");
-    	}
+		throw customException ("Upper and lower bounds for histogram do have the same size");
+    }
+    if (nbins.size() != lbound.size()) {
+    	throw customException ("Number of bins for histogram's dimensions does not have the same size as its bounds");
+    }
 
-    	dim_ = nbins.size();
-    	widths_.resize(dim_, 0);
-    	delta_.resize(dim_, 0);
+    dim_ = nbins.size();
+    widths_.resize(dim_, 0);
+    delta_.resize(dim_, 0);
 
-    	size_ = 1;
-    	for (unsigned int i = 0; i < dim_; ++i) {
-        	if (lbound[i] > ubound[i]) {
-            		throw customException ("Lower bound > upper bound illegal for a histogram");
-        	}
+	size_ = 1;
+	for (unsigned int i = 0; i < dim_; ++i) {
+    	if (lbound[i] > ubound[i]) {
+        	throw customException ("Lower bound > upper bound illegal for a histogram");
+    	}
 
 		if (lbound[i] < ubound[i]) {
-	        	if (nbins[i] <= 1) {
-        	    		throw customException ("Must > 1 bins for each dimensions in the histogram");
-        		}
-	        	size_ *= nbins[i];
-        		delta_[i] = (ubound[i] - lbound[i])/(nbins[i]-1);
+	        if (nbins[i] <= 1) {
+        		throw customException ("Must > 1 bins for each dimensions in the histogram");
+        	}
+	        size_ *= nbins[i];
+        	delta_[i] = (ubound[i] - lbound[i])/(nbins[i]-1);
 		} else {
 			// special case when upper and lower bound are the same (nbins = 1)
 			if (nbins[i] != 1) {
@@ -210,27 +210,27 @@ histogram::histogram (const std::vector <double> lbound, const std::vector <doub
 
 		// build projected widths
 		if (i == 0) {
-                	widths_[i] = 1;
-                } else {
-                        widths_[i] = widths_[i-1]*nbins[i-1];
-                }
-    	}
+            widths_[i] = 1;
+        } else {
+            widths_[i] = widths_[i-1]*nbins[i-1];
+        }
+    }
 
-    	lbound_ = lbound;
-    	ubound_ = ubound;
-    	nbins_ = nbins;
+    lbound_ = lbound;
+    ubound_ = ubound;
+    nbins_ = nbins;
 
-    	// initialize the histogram to 0
-    	try {
-        	h_.resize(size_, 0);
-    	} catch (std::bad_alloc &ba) {
-        	throw customException ("Out of memory for histogram");
-    	}
-    	try {
-        	counter_.resize(size_, 0);
-    	} catch (std::bad_alloc &ba) {
-        	throw customException ("Out of memory for histogram");
-    	}
+    // initialize the histogram to 0
+    try {
+    	h_.resize(size_, 0);
+    } catch (std::bad_alloc &ba) {
+    	throw customException ("Out of memory for histogram");
+    }
+    try {
+    	counter_.resize(size_, 0);
+    } catch (std::bad_alloc &ba) {
+    	throw customException ("Out of memory for histogram");
+    }
 }
 
 /*!

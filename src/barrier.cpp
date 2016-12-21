@@ -88,7 +88,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             ub_seg_x_[i].resize(4);
         } catch (std::bad_alloc &ba) {
@@ -100,7 +100,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             lb_seg_x_[i].resize(4);
         } catch (std::bad_alloc &ba) {
@@ -112,7 +112,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             ub_seg_z_[i].resize(4);
         } catch (std::bad_alloc &ba) {
@@ -124,7 +124,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             lb_seg_z_[i].resize(4);
         } catch (std::bad_alloc &ba) {
@@ -136,7 +136,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             ub_slope_[i].resize(5);
         } catch (std::bad_alloc &ba) {
@@ -148,7 +148,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             lb_slope_[i].resize(5);
         } catch (std::bad_alloc &ba) {
@@ -160,7 +160,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             ub_int_[i].resize(5);
         } catch (std::bad_alloc &ba) {
@@ -172,7 +172,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             lb_int_[i].resize(5);
         } catch (std::bad_alloc &ba) {
@@ -180,7 +180,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
         }
     }
 
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         if (i == 0) {
             sigma_[i] = sigma;
             eps_[i] = eps;

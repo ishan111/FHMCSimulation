@@ -40,8 +40,8 @@ public:
 	void incrementEnergy (const double dU) { energy_ += dU; } //!< Increment the system's energy
 	void addPotential (const int spec1, const int spec2, const std::string ppot_name, const std::vector < double > &params, const bool useCellList=false); //(const int spec1, const int spec2, pairPotential *pp, bool useCellList=false);
 	void printSnapshot (std::string filename, std::string comment, bool overwrite=true);
-	void insertAtom (const int typeIndex, atom *newAtom, bool override=false);
-	void deleteAtom (const int typeIndex, const int atomIndex, bool override=false);
+	void insertAtom (const unsigned int typeIndex, atom *newAtom, bool override=false);
+	void deleteAtom (const unsigned int typeIndex, const unsigned int atomIndex, bool override=false);
 	void translateAtom (const int typeIndex, const int atomIndex, std::vector<double> oldPos);
    	void readRestart (std::string filename);
 
@@ -75,7 +75,7 @@ public:
 
 	bool potentialIsSet (const int spec1, const int spec2) { return ppotSet_[spec1][spec2]; }	//!< Boolean which returns whether or not a pair has had its potential specified by the user yet
 
-	const int nSpecies () { return nSpecies_; } //!< Return the number of different species in the system
+	const unsigned int nSpecies () { return nSpecies_; } //!< Return the number of different species in the system
 	const int maxSpecies (const int index);
 	const int minSpecies (const int index);
 	const int totNMax () { return totNBounds_[1]; } //!< Return upper bound on the total number of atoms in the system
@@ -85,7 +85,7 @@ public:
 
 	const int getCurrentM () { return Mcurrent_; } //!< Return the system's current expanded ensemble fractional state
 	const int getTotalM () { return Mtot_; } //!< Return the total number of fractional states available to species in the expanded ensemble
-	const int getFractionalAtomType () { return fractionalAtomType_; } //!< Return the atom type of the fractional atom
+	const unsigned int getFractionalAtomType () { return fractionalAtomType_; } //!< Return the atom type of the fractional atom
 
 	const double energy () { return energy_; } //!< Return the system's instantaneous energy
 	const double scratchEnergy ();
@@ -130,8 +130,8 @@ private:
 
 	bool toggleKE_; //!< Flag for the use of kinetic energy corrections
 
-	int fractionalAtomType_; //!< Type of atom that is currently fractionally inserted
-	int nSpecies_; //!< Number of species types allowed in the simulation (single component = 1, multicomponent > 1)
+	unsigned int fractionalAtomType_; //!< Type of atom that is currently fractionally inserted
+	unsigned int nSpecies_; //!< Number of species types allowed in the simulation (single component = 1, multicomponent > 1)
    	int Mcurrent_; //!< Fractional level of insertion of the current atom in an "expanded" state, all species have the same Mtot_
 	int Mtot_; //!< Number of fractional states available to each atom of each species in the expanded ensemble, all species are identical
 	int totN_; //!< Sum total of all atoms in the system
