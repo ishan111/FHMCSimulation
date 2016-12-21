@@ -31,8 +31,8 @@ public:
 
 	bool hasCheckpoint; //!< At least one checkpoint has been made that the system can restart from
 	bool takeSnaps; //!< Save snapshot of the system each time a record is made
-	bool tmmcDone, crossoverDone, walaDone; //!< Progress of each stage
-	bool resFromWALA, resFromCross, resFromTMMC; //!< Flags corresponding to which stage the checkpoint indicated to start from
+	bool tmmcDone, crossoverDone, walaDone; //!< Progress of each stage, regardless of where the checkpoint indicated to start from
+	bool resFromWALA, resFromCross, resFromTMMC; //!< Flags corresponding to which stage the checkpoint indicated to restart from
 
 	int freq; //!< Frequency (in seconds) that the system should print a new instantaneous snapshot of itself
 	long long int moveCounter; //!< Tracks the number of moves in a given sweep that have executed
