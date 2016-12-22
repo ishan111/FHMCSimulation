@@ -3,9 +3,7 @@ CXX = icpc
 
 # -DNETCDF_CAPABLE to enable printing in netCDF formats, esle defaults to ASCII
 # -DFLUID_PHASE_SIMULATIONS to enable the possibility of tail corrections
-CXXFLAGS = -O3 -DFLUID_PHASE_SIMULATIONS
-#-std=c++11
-#-DNETCDF_CAPABLE
+CXXFLAGS = -O3 -DFLUID_PHASE_SIMULATIONS -std=c++11
 
 # define any directories containing header files other than /usr/include
 #INCLUDES = -I/home/nam4_local/netCDF_c++4/4.2.1/install/include -I/home/nam4_local/netCDF/4.3.3.1/install/include
