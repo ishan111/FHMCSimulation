@@ -1,15 +1,102 @@
-Perform (un/)biased multicomponent G\-C\-M\-C.\begin{DoxyAuthor}{Author}
+Perform (un/)biased multicomponent G\-C\-M\-C. \begin{DoxyAuthor}{Author}
 Nathan A. Mahynski 
 \end{DoxyAuthor}
 \begin{DoxyDate}{Date}
 08/07/15
 \end{DoxyDate}
 \hypertarget{index_Dependencies}{}\section{Dependencies}\label{index_Dependencies}
-\hypertarget{index_Compiling}{}\section{Compiling}\label{index_Compiling}
+
+\begin{DoxyEnumerate}
+\item G\-C\-C
+\item C++11 support required
+\end{DoxyEnumerate}\hypertarget{index_Compiling}{}\section{Compiling}\label{index_Compiling}
 Run tests and run main
 
 Complile with -\/\-D\-F\-L\-U\-I\-D\-\_\-\-P\-H\-A\-S\-E\-\_\-\-S\-I\-M\-U\-L\-A\-T\-I\-O\-N\-S if simulations are purely in the fluid phase. This will allow tail corrections to be enabled which are only valid assuming a converging g(r) at large r.
 
 Compile with -\/\-D\-N\-E\-T\-C\-D\-F\-\_\-\-C\-A\-P\-A\-B\-L\-E if net\-C\-D\-F libraries are installed and can be compiled against. Certain data will be output to these arrays instead of A\-S\-C\-I\-I files if so.
 
-Tests compile with cmake and by default, do not link to netcdf libraries since they do not use them. Everything tested in A\-S\-C\-I\-I.\hypertarget{main-tmmc.cpp_Input}{}\section{Input}\label{main-tmmc.cpp_Input}
+Tests compile with cmake and by default, do not link to netcdf libraries since they do not use them. Everything tested in A\-S\-C\-I\-I.\hypertarget{index_Input}{}\section{Input}\label{index_Input}
+This is a sample input json file for a binary system.
+
+\{ \char`\"{}num\-\_\-species\char`\"{} \-: 2, \# 2 species
+
+\char`\"{}beta\char`\"{} \-: 0.\-89, \# 1/\-T$\ast$ = 0.\-89
+
+\char`\"{}box\char`\"{} \-: \mbox{[}9.\-0, 9.\-0, 9.\-0\mbox{]}, \# Box = \mbox{[}9, 9, 9\mbox{]} with a corner at (0,0,0)
+
+\char`\"{}mu\char`\"{} \-: \mbox{[}1.\-234, 2.\-345\mbox{]}, \# (Excess) Chemical potential of each species
+
+\char`\"{}seed\char`\"{} \-: -\/10, \# R\-N\-G seed
+
+\char`\"{}max\-\_\-\-N\char`\"{} \-: \mbox{[}200, 200\mbox{]}, \# Maximum number of each species type to allow
+
+\char`\"{}min\-\_\-\-N\char`\"{} \-: \mbox{[}0, 0\mbox{]}, \# Minimum number of each species type to allow
+
+\char`\"{}window\char`\"{} \-: \mbox{[}10, 30\mbox{]}, \# Window to sample, \mbox{[}N\-\_\-tot,min , N\-\_\-tot,max\mbox{]}
+
+\char`\"{}restart\-\_\-file\char`\"{} \-: \char`\"{}\char`\"{}, \# File to read configuration from
+
+\char`\"{}num\-\_\-crossover\-\_\-visits\char`\"{} \-: 50, \# Number of times for the T\-M\-M\-C to sample each point in C matrix before taking over from W\-L
+
+\char`\"{}tmmc\-\_\-sweep\-\_\-size\char`\"{} \-: 1e3, \# Number of times each point in C matrix must be visited per sweep
+
+\char`\"{}total\-\_\-tmmc\-\_\-sweeps\char`\"{} \-: 300, \# Total number of sweeps to perform during T\-M\-M\-C stage
+
+\char`\"{}wala\-\_\-sweep\-\_\-size\char`\"{} \-: 10e4, \# Number of Monte Carlo moves per sweep in W\-L stage (after each sweep) flatness is checked for
+
+\char`\"{}wala\-\_\-g\char`\"{}\-: 0.\-5, \# W\-L reduction factor
+
+\char`\"{}wala\-\_\-s\char`\"{} \-: 0.\-8, \# W\-L flatness criterion
+
+\char`\"{}ln\-F\-\_\-start\char`\"{} \-: 1.\-0, \# Where to start W\-L
+
+\char`\"{}ln\-F\-\_\-end\char`\"{} \-: 1.\-0e-\/5, \# Where to end W\-L
+
+\char`\"{}prob\-\_\-pr\-\_\-ins\-\_\-del\-\_\-1\char`\"{} \-: 0.\-1, \# Relative weight to apply to insert/delete moves during production (T\-M\-M\-C) for species 1
+
+\char`\"{}prob\-\_\-pr\-\_\-swap\-\_\-1\-\_\-2\char`\"{} \-: 0.\-2, \# Relative weight to apply to swap moves during production (T\-M\-M\-C) for species 1 and 2
+
+\char`\"{}prob\-\_\-pr\-\_\-displace\-\_\-1\char`\"{} \-: 0.\-7, \# Relative weight to apply to displacement moves during production (T\-M\-M\-C) for species 1
+
+\char`\"{}prob\-\_\-pr\-\_\-ins\-\_\-del\-\_\-2\char`\"{} \-: 0.\-7, \# Relative weight to apply to insert/delete moves during production (T\-M\-M\-C) for species 2
+
+\char`\"{}prob\-\_\-pr\-\_\-displace\-\_\-2\char`\"{} \-: 0.\-1, \# Relative weight to apply to displacement moves during production (T\-M\-M\-C) for species 2
+
+\char`\"{}prob\-\_\-eq\-\_\-ins\-\_\-del\-\_\-1\char`\"{} \-: 0.\-25, \# Relative weight to apply to insert/delete moves during equilibration (W\-L/\-Crossover) for species 1
+
+\char`\"{}prob\-\_\-eq\-\_\-swap\-\_\-1\-\_\-2\char`\"{} \-: 0.\-15, \# Relative weight to apply to swap moves during equilibration (W\-L/\-Crossover) for species 1 and 2
+
+\char`\"{}prob\-\_\-eq\-\_\-displace\-\_\-1\char`\"{} \-: 0.\-6, \# Relative weight to apply to displacement moves during equilibration (W\-L/\-Crossover) for species 1
+
+\char`\"{}prob\-\_\-eq\-\_\-ins\-\_\-del\-\_\-2\char`\"{} \-: 0.\-4, \# Relative weight to apply to insert/delete moves during equilibration (W\-L/\-Crossover) for species 2
+
+\char`\"{}prob\-\_\-eq\-\_\-displace\-\_\-2\char`\"{} \-: 0.\-6, \# Relative weight to apply to displacement moves during equilibration (W\-L/\-Crossover) for species 2
+
+\char`\"{}max\-\_\-pr\-\_\-displacement\-\_\-1\char`\"{} \-: 0.\-5, \# Maximum displacement for species 1 during production (T\-M\-M\-C)
+
+\char`\"{}max\-\_\-eq\-\_\-displacement\-\_\-1\char`\"{} \-: 0.\-6, \# Maximum displacement for species 1 during equilibration (W\-L/\-Crossover)
+
+\char`\"{}max\-\_\-pr\-\_\-displacement\-\_\-2\char`\"{} \-: 0.\-4, \# Maximum displacement for species 2 during production (T\-M\-M\-C)
+
+\char`\"{}max\-\_\-eq\-\_\-displacement\-\_\-2\char`\"{} \-: 0.\-7, \# Maximum displacement for species 2 during equilibration (W\-L/\-Crossover)
+
+\char`\"{}ppot\-\_\-1\-\_\-1\char`\"{} \-: \char`\"{}square\-\_\-well\char`\"{}, \# 1-\/1 interaction, in this case, square well
+
+\char`\"{}ppot\-\_\-1\-\_\-1\-\_\-params\char`\"{} \-: \mbox{[}1.\-0, 0.\-3, 1.\-0\mbox{]}, \# 1-\/1 interaction parameters
+
+\char`\"{}ppot\-\_\-1\-\_\-1\-\_\-use\-\_\-cell\-\_\-list\char`\"{} \-: true, \# use cell list for this potential to accelerate
+
+\char`\"{}ppot\-\_\-1\-\_\-2\char`\"{} \-: \char`\"{}square\-\_\-well\char`\"{},
+
+\char`\"{}ppot\-\_\-1\-\_\-2\-\_\-params\char`\"{} \-: \mbox{[}1.\-1, 0.\-4, 1.\-1\mbox{]},
+
+\char`\"{}ppot\-\_\-1\-\_\-2\-\_\-use\-\_\-cell\-\_\-list\char`\"{} \-: true,
+
+\char`\"{}ppot\-\_\-2\-\_\-2\char`\"{} \-: \char`\"{}square\-\_\-well\char`\"{},
+
+\char`\"{}ppot\-\_\-2\-\_\-2\-\_\-params\char`\"{} \-: \mbox{[}1.\-2, 0.\-5, 1.\-2\mbox{]},
+
+\char`\"{}ppot\-\_\-2\-\_\-2\-\_\-use\-\_\-cell\-\_\-list\char`\"{} \-: true
+
+\} 
