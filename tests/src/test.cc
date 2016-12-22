@@ -753,6 +753,20 @@ TEST (testTMMC, tmmcBadInitOrder) {
 	EXPECT_TRUE(!pass);
 }
 
+TEST (testTMMC, checkReadHCGetHC) {
+	std::vector < double > dummyBox (3, 0);
+	tmmc* tmmcBias2 = new tmmc (20, 0, 1, 100, dummyBox);
+	tmmcBias2->readHC("../data/tmmc_HC.dat");
+	const std::vector < double > hc = tmmcBias2->getHC();
+	EXPECT_EQ (hc.size(), 3*21);
+	for (unsigned int i = 0; i < 5; ++i) {
+		EXPECT_EQ ((1+i)*10, hc[i]);
+	}
+	for (unsigned int i = 5; i < hc.size(); ++i) {
+		EXPECT_EQ (hc[i], 0);
+	}
+}
+
 class tmmBiasC : public ::testing::Test {
 protected:
 	tmmc* tmmcBias;
@@ -1049,6 +1063,20 @@ TEST (testWALA, walaInitNegLowerBound) {
 	EXPECT_TRUE (caught);
 }
 
+TEST (testWala, checkReadHGetH) {
+	std::vector < double > dummyBox (3, 0);
+	wala walaBias (1.0, 0.5, 0.8, 20, 0, 1, dummyBox);
+	walaBias.readH("../data/wala_H.dat");
+	const std::vector < double > h = walaBias.getH();
+	EXPECT_EQ (h.size(), 21);
+	for (unsigned int i = 0; i < 5; ++i) {
+		EXPECT_EQ (h[i], (1+i)*10);
+	}
+	for (unsigned int i = 5; i < h.size(); ++i) {
+		EXPECT_EQ (h[i], 0);
+	}
+}
+
 class testWalaBias : public ::testing::Test {
 protected:
 	wala* walaBias;
@@ -1072,6 +1100,7 @@ TEST_F (testWalaBias, testMatrixSizes) {
 	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
 	EXPECT_EQ (H.size(), 3);
 	EXPECT_EQ (lnPI.size(), 3);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, testUpdateSame) {
@@ -1081,6 +1110,7 @@ TEST_F (testWalaBias, testUpdateSame) {
 	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
 	EXPECT_TRUE (fabs(H[0] - 3.0) < 1.0e-9);
 	EXPECT_TRUE (fabs(lnPI[0] - 3.0*lnF) < 1.0e-9);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, testUpdateDiff) {
@@ -1094,12 +1124,14 @@ TEST_F (testWalaBias, testUpdateDiff) {
 	EXPECT_TRUE (fabs(lnPI[0] - lnF) < 1.0e-9);
 	EXPECT_TRUE (fabs(lnPI[1] - lnF) < 1.0e-9);
 	EXPECT_TRUE (fabs(lnPI[2] - lnF) < 1.0e-9);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, GetGoodAddress) {
 	EXPECT_EQ (walaBias->getAddress(Nmin, 0), 0);
 	EXPECT_EQ (walaBias->getAddress(Nmin+1, 0), 1);
 	EXPECT_EQ (walaBias->getAddress(Nmin+2, 0), 2);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, GetBadAddress) {
@@ -1110,6 +1142,7 @@ TEST_F (testWalaBias, GetBadAddress) {
 		caught = true;
 	}
 	EXPECT_TRUE (caught);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, getBias) {
@@ -1119,6 +1152,7 @@ TEST_F (testWalaBias, getBias) {
 	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin, 0)) - -lnF) < 1.0e-9);
 	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin+1, 0)) - -lnF) < 1.0e-9);
 	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin+2, 0)) - -lnF) < 1.0e-9);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, checkIterateForward) {
@@ -1141,6 +1175,7 @@ TEST_F (testWalaBias, checkIterateForward) {
 		EXPECT_TRUE (fabs(H2[i] - 0) < 1.0e-9);
 	}
 	EXPECT_TRUE (fabs(lnF1*g - lnF2) < 1.0e-9);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, checkPrintReadlnPI) {
@@ -1171,6 +1206,7 @@ TEST_F (testWalaBias, checkPrintReadlnPI) {
 	for (unsigned int i = 0; i < lnPI_new.size(); ++i) {
 		EXPECT_TRUE (fabs(lnPI_new[i] - lnPI_ref[i]) < 1.0e-6); // read loses precision
 	}
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, checkEvaluateFlatnessNo) {
@@ -1181,6 +1217,7 @@ TEST_F (testWalaBias, checkEvaluateFlatnessNo) {
 	// average of [1, 2, 1] = 1.333, average * s (=0.8) = 1.06 > min (=1)
 	bool flat = walaBias->evaluateFlatness();
 	EXPECT_TRUE (!flat);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, checkEvaluateFlatnessYes) {
@@ -1190,6 +1227,7 @@ TEST_F (testWalaBias, checkEvaluateFlatnessYes) {
 	// average of [1, 1, 1] = 1, average * s (=0.8) = 0.8 < min (=1)
 	bool flat = walaBias->evaluateFlatness();
 	EXPECT_TRUE (flat);
+	delete walaBias;
 }
 
 TEST_F (InitializeSystem, setWALAbias) {
@@ -11300,13 +11338,130 @@ TEST_F (checkpointTest, restarts) {
 	EXPECT_TRUE (!failed);
 }
 
+TEST_F (checkpointTest, load) {
+	// test the system can load info from checkpoint
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+	checkpoint cpt ("../data/checkpt", 900, sys);
+
+	EXPECT_EQ(cpt.hasCheckpoint, true);
+	EXPECT_EQ(cpt.takeSnaps, false);
+	EXPECT_EQ(cpt.tmmcDone, true);
+	EXPECT_EQ(cpt.crossoverDone, true);
+	EXPECT_EQ(cpt.walaDone, true);
+	EXPECT_EQ(cpt.resFromTMMC, true); // sample was taken from completed sim, but should still flag as in tmmc stage
+	EXPECT_EQ(cpt.freq, 900);
+	EXPECT_EQ(cpt.moveCounter, 0.0);
+	EXPECT_EQ(cpt.sweepCounter, 0.0);
+	EXPECT_EQ(cpt.dir, "../data/checkpt");
+}
+
+TEST_F (checkpointTest, dump) {
+	// test the system can dump
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+	checkpoint cpt ("../data/checkpt", 900, sys);
+
+	bool failed = false;
+	try {
+		cpt.dump(sys);
+	} catch (...) {
+		failed = true;
+	}
+	EXPECT_TRUE(!failed);
+}
+
+TEST_F (checkpointTest, loadDump) {
+	// test that system can load,dump same info
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+	checkpoint cpt ("../data/checkpt", 900, sys);
+
+	// use one system to write a copy of its checkpoint
+	cpt.dir = "../data/checkpt2/";
+	cpt.chkptName = "../data/checkpt2/state.json"; // dumps a diff checkpoint
+	cpt.dump(sys);
+
+	// use a second checkpoint to load
+	checkpoint cpt2 ("../data/checkpt2", 900, sys);
+
+	EXPECT_EQ(cpt.hasCheckpoint, cpt2.hasCheckpoint);
+	EXPECT_EQ(cpt.takeSnaps, cpt2.takeSnaps);
+	EXPECT_EQ(cpt.tmmcDone, cpt2.tmmcDone);
+	EXPECT_EQ(cpt.crossoverDone, cpt2.crossoverDone);
+	EXPECT_EQ(cpt.walaDone, cpt2.walaDone);
+	EXPECT_EQ(cpt.resFromWALA, cpt2.resFromWALA);
+	EXPECT_EQ(cpt.resFromCross, cpt2.resFromCross);
+	EXPECT_EQ(cpt.resFromTMMC, cpt2.resFromTMMC);
+	EXPECT_EQ(cpt.freq, cpt2.freq);
+	EXPECT_EQ(cpt.moveCounter, cpt2.moveCounter);
+	EXPECT_EQ(cpt.sweepCounter, cpt2.sweepCounter);
+
+	EXPECT_EQ(cpt.dir, cpt2.dir);
+
+	FILE* fp = fopen("../data/checkpt/state.json", "r");
+	char readBuffer[65536];
+	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer) );
+	rapidjson::Document doc;
+	doc.ParseStream(is);
+	fclose(fp);
+
+	std::vector < double > ctr1 (doc["extMomCounter"].Size(), 0);
+	for (unsigned int i = 0; i < doc["extMomCounter"].Size(); ++i) {
+		ctr1[i] = doc["extMomCounter"][i].GetDouble();
+	}
+
+	FILE* fp2 = fopen("../data/checkpt2/state.json", "r");
+	char readBuffer2[65536];
+	rapidjson::FileReadStream is2(fp, readBuffer2, sizeof(readBuffer2) );
+	rapidjson::Document doc2;
+	doc2.ParseStream(is2);
+	fclose(fp2);
+
+	std::vector < double > ctr2 (doc["extMomCounter"].Size(), 0);
+	for (unsigned int i = 0; i < doc["extMomCounter"].Size(); ++i) {
+		ctr2[i] = doc["extMomCounter"][i].GetDouble();
+	}
+
+	EXPECT_EQ (ctr2.size(), ctr1.size());
+	const double tol = 1.0e-9;
+	for (unsigned int i = 0; i < ctr1.size(); ++i) {
+		EXPECT_TRUE(fabs(ctr1[i] - ctr2[i]) < tol);
+	}
+}
+
+TEST_F (checkpointTest, check) {
+	// test the system can check timing correctly
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+	checkpoint cpt ("../data/checkpt", 2, sys);
+
+	std::cout << "Patience: testing checkpoint timing ..." << std::endl;
+
+	pauseCode(1);
+	std::cout << " ... 1/4 ... " << std::endl;
+	cpt.dir = "../data/checkpt2/";
+	cpt.chkptName = "../data/checkpt2/state.json";
+	bool now = cpt.check(sys);
+	EXPECT_TRUE (!now);
+
+	pauseCode(1);
+	std::cout << " ... 2/4 ... " << std::endl;
+	now = cpt.check(sys);
+	EXPECT_TRUE(now);
+
+	pauseCode(1);
+	std::cout << " ... 3/4 ... " << std::endl;
+	now = cpt.check(sys);
+	EXPECT_TRUE(!now);
+
+	pauseCode(1);
+	std::cout << " ... 4/4 ... " << std::endl;
+	now = cpt.check(sys);
+	EXPECT_TRUE(now);
+}
+
 // Unittest:
-// checkpoint: load, dump, check
-// 1. move and sweep counter in each stage: res(sys, move, sweep)
-// 2. dump/load (snaps and json) to ensure they generate same files
-// 3. restart from configs multiple times to ensure done correctly
 // sys.restartEnergyHistogram
 // sys.restartPkHistogram
 // sys.restartExtMoments
-// tmmc read HC (read C already tested above somewhere?)
-// wala read H

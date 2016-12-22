@@ -64,6 +64,8 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
         }
     }
 
+    sanityChecks(sys);
+    
     res.walaDone = true;
     usedMovesEq->print("wala.stats");
 }

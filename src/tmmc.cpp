@@ -98,6 +98,8 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 		}
 	}
 
+    sanityChecks(sys);
+    
     res.tmmcDone = true;
     usedMovesPr->print("tmmc.stats");
 }

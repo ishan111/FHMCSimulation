@@ -79,6 +79,8 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
     // if doing initial WL "equilibration" re-initialize the histogram using bounds
     sys.reInitializeEnergyHistogram();
 
+    sanityChecks(sys);
+    
     res.crossoverDone = true;
     usedMovesEq->print("crossover.stats");
 }

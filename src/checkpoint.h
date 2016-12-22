@@ -22,19 +22,19 @@
 class checkpoint {
 public:
 	checkpoint () { tmmcDone = false; crossoverDone = false; walaDone = false; hasCheckpoint = false; resFromTMMC = false; resFromWALA = false; resFromCross = false; takeSnaps = false; freq = -1; dir = "checkpt"; }
-	checkpoint (const std::string directory, const int frequency, simSystem &sys, bool snaps=false);
+	checkpoint (const std::string directory, const long int frequency, simSystem &sys, bool snaps=false);
     ~checkpoint () {};
 
 	void load (simSystem &sys);
 	void dump (simSystem &sys, const long long int moveCounter=0, const long long int sweepCounter=0);
-	void check (simSystem &sys, const long long int moveCounter=0, const long long int sweepCounter=0);
+	bool check (simSystem &sys, const long long int moveCounter=0, const long long int sweepCounter=0);
 
 	bool hasCheckpoint; //!< At least one checkpoint has been made that the system can restart from
 	bool takeSnaps; //!< Save snapshot of the system each time a record is made
 	bool tmmcDone, crossoverDone, walaDone; //!< Progress of each stage, regardless of where the checkpoint indicated to start from
 	bool resFromWALA, resFromCross, resFromTMMC; //!< Flags corresponding to which stage the checkpoint indicated to restart from
 
-	int freq; //!< Frequency (in seconds) that the system should print a new instantaneous snapshot of itself
+	long int freq; //!< Frequency (in seconds) that the system should print a new instantaneous snapshot of itself, does not load from checkpoints but is assigned when instantiated (is dumped though)
 	long long int moveCounter; //!< Tracks the number of moves in a given sweep that have executed
 	long long int sweepCounter; //!< Tracks the number of sweeps that have executed
 	double wala_lnF; //!< Current value of lnF from WALA

@@ -8,6 +8,7 @@
 #include <sstream>
 #include <cmath>
 #include <iomanip>
+#include <ctime>
 #include <time.h>
 
 //! For converting to string
@@ -16,6 +17,7 @@
 
 std::vector < std::string > splitstr (const std::string &s, char delim);
 
+void pauseCode (long int dur);
 void pbc (std::vector < double > &pos, const std::vector < double > &box);
 bool fileExists(std::string fileName);
 std::string getTimeStamp ();

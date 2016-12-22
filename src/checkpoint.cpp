@@ -8,7 +8,7 @@
  * \param [in] sys System to checkpoint
  * \param [in] snaps Take snapshots each time a record is made to make a movie? (default = false)
  */
-checkpoint::checkpoint (const std::string directory, const int frequency, simSystem &sys, bool snaps) {
+checkpoint::checkpoint (const std::string directory, const long int frequency, simSystem &sys, bool snaps) {
     tmmcDone = false;
     crossoverDone = false;
     walaDone = false;
@@ -74,7 +74,6 @@ void checkpoint::load (simSystem &sys) {
         walaDone = doc["walaDone"].GetBool();
         hasCheckpoint = doc["hasCheckpoint"].GetBool();
         takeSnaps = doc["takeSnaps"].GetBool();
-        freq = doc["freq"].GetInt();
         dir = doc["dir"].GetString();
         moveCounter = (long long int)doc["moveCounter"].GetDouble();
         sweepCounter = (long long int)doc["sweepCounter"].GetDouble();
@@ -86,7 +85,6 @@ void checkpoint::load (simSystem &sys) {
             sys.getTMMCBias()->readC(dir+"/tmmc_C.dat");
             sys.getTMMCBias()->readHC(dir+"/tmmc_HC.dat");
             sys.getTMMCBias()->calculatePI();
-
             std::vector < double > ctr (doc["extMomCounter"].Size(), 0);
             for (unsigned int i = 0; i < doc["extMomCounter"].Size(); ++i) {
                 ctr[i] = doc["extMomCounter"][i].GetDouble();
@@ -140,14 +138,16 @@ void checkpoint::load (simSystem &sys) {
             }
             sys.setEUB(eub);
         } else {
-            throw customException ("Uncertain which stage simulation is in, so cannot checkpoint");
+            std::cerr << "Uncertain which stage simulation is in, so cannot checkpoint" << std::endl;
+            exit(SYS_FAILURE);
         }
 
         sys.readConfig(dir+"/snap.xyz");
         hasCheckpoint = true;
-    } catch (...) {
+    } catch (std::exception &ex) {
         hasCheckpoint = false;
-        throw customException ("Unable to load checkppoint");
+        std::cerr << "Unable to load checkpoint: " << ex.what() << std::endl;
+        exit(SYS_FAILURE);
     }
 
     std::cout << "Checkpoint loaded from " << chkptName << " on " << getTimeStamp() << std::endl;
@@ -163,6 +163,7 @@ void checkpoint::load (simSystem &sys) {
 void checkpoint::dump (simSystem &sys, const long long int moveCounter, const long long int sweepCounter) {
     rapidjson::StringBuffer s;
     rapidjson::PrettyWriter < rapidjson::StringBuffer > writer(s);
+    hasCheckpoint = true;
 
     // Write restart/checkpoint options
     writer.StartObject();
@@ -182,7 +183,7 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
     writer.Bool(takeSnaps);
 
     writer.String("freq");
-    writer.Int(freq);
+    writer.Int64(freq);
 
     writer.String("dir");
     writer.String(dir.c_str());
@@ -260,7 +261,6 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
     }
 
     time(&lastCheckPt_);
-    hasCheckpoint = true;
 }
 
 /*!
@@ -269,11 +269,15 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
  * \param [in] sys System to checkpoint
  * \param [in] moveCounter Number of moves out of a given sweep that have executed
  * \param [in] sweepCounter Number of loops/sweeps that have executed
+ *
+ * \returns bool Is a checkpoint being generated or not
  */
-void checkpoint::check (simSystem &sys, const long long int moveCounter, const long long int sweepCounter) {
+bool checkpoint::check (simSystem &sys, const long long int moveCounter, const long long int sweepCounter) {
     if (freq > 0) {
         if (std::abs(difftime(time(&now_), lastCheckPt_)) >= freq) {
             dump(sys, moveCounter, sweepCounter);
+            return true;
         }
     }
+    return false;
 }

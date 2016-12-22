@@ -46,21 +46,15 @@ int main (int argc, char * const argv[]) {
 		return SAFE_EXIT;
 	}
 
-	// consider using better RNG from C++ to allow for checkpointing of this - even if it doesn't work for M != 1, don't use often anyway...
-	// Test lambda = 1.5 fluid (subcritical) if halted in WL, Crossover, and TMMC stages
-
 	// Choose stage based on what is completed, not where restart is from in case not restarting from checkpoint
 	if (!cpt.walaDone) {
 		// Perform Wang-Landau simulation
 		performWALA (sys, cpt, &usedMovesEq);
-		sanityChecks(sys);
 		performCrossover (sys, cpt, &usedMovesEq);
-		sanityChecks(sys);
 		performTMMC (sys, cpt, &usedMovesPr);
 	} else if (!cpt.crossoverDone) {
 		// Crossover to TMMC simulation
 		performCrossover (sys, cpt, &usedMovesEq);
-		sanityChecks(sys);
 		performTMMC (sys, cpt, &usedMovesPr);
 	} else if (!cpt.tmmcDone) {
 		// Perform TMMC portion of the simulation
@@ -69,9 +63,6 @@ int main (int argc, char * const argv[]) {
 		std::cerr << "Error in establishing which stage to begin from" << std::endl;
 		return SYS_FAILURE;
 	}
-
-	// Perform sanity checks
-	sanityChecks(sys);
 
 	// Print final results
     sys.printSnapshot("final.xyz", "last configuration");

@@ -78,20 +78,20 @@ tmmc::tmmc (const int Nmax, const int Nmin,  const int Mtot, const long long int
  */
 void tmmc::dumpVisited (const std::string fileName) {
 	std::ofstream of;
-        std::string name = fileName+".dat";
-        of.open(name.c_str(), std::ofstream::out);
-        if (!of.is_open()) {
-        	throw customException ("Unable to write TMMC collection matrix to "+fileName+"_C.dat");
-        }
-        of << "# TMMC visited states counter in single row (vectorized) notation." << std::endl;
-        of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-        of << "# species_total_lower_bound: " << Nmin_ << std::endl;
-        double V = box_[0]*box_[1]*box_[2];
-        of << "# volume: " << std::setprecision(15) << V << std::endl;
-        for (long long int i = 0; i < HC_.size(); ++i) {
-        	of << std::setprecision(15) << HC_[i] << std::endl;
-        }
-        of.close();
+	std::string name = fileName+".dat";
+	of.open(name.c_str(), std::ofstream::out);
+	if (!of.is_open()) {
+    	throw customException ("Unable to write TMMC visited states matrix to "+name);
+    }
+    of << "# TMMC visited states counter in single row (vectorized) notation." << std::endl;
+    of << "# species_total_upper_bound: " << Nmax_ << std::endl;
+    of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+    double V = box_[0]*box_[1]*box_[2];
+    of << "# volume: " << std::setprecision(15) << V << std::endl;
+    for (long long int i = 0; i < HC_.size(); ++i) {
+    	of << std::setprecision(15) << HC_[i] << std::endl;
+    }
+    of.close();
 }
 
 /*!
@@ -389,21 +389,7 @@ void tmmc::print (const std::string fileName, bool printC, bool printHC) {
 	// Print visited states matrix
 	if (printHC) {
 		// print all states, including partial ones, so this can be used to restart from, etc.
-		std::ofstream of;
-		std::string name = fileName+"_HC.dat";
-		of.open(name.c_str(), std::ofstream::out);
-		if (!of.is_open()) {
-			throw customException ("Unable to write TMMC visited states matrix to "+name);
-		}
-		of << "# Visited states matrix in single row (vectorized) notation." << std::endl;
-		of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-		of << "# species_total_lower_bound: " << Nmin_ << std::endl;
-		double V = box_[0]*box_[1]*box_[2];
-		of << "# volume: " << std::setprecision(15) << V << std::endl;
-		for (long long int i = 0; i < HC_.size(); ++i) {
-			of << std::setprecision(15) << HC_[i] << std::endl;
-		}
-		of.close();
+		dumpVisited(fileName+"_HC");
 	}
 
 	// Print lnPI (bias) matrix
