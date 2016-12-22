@@ -1,8 +1,8 @@
-.TH "/Users/nam4/Desktop/omcs/src/system.h" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/system.h" 3 "Thu Dec 22 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-/Users/nam4/Desktop/omcs/src/system.h \- 
+/home/nam4/Desktop/sandbox/FHMCSimulation/src/system.h \- 
 .SH SYNOPSIS
 .br
 .PP
@@ -24,6 +24,10 @@
 .br
 \fC#include <cmath>\fP
 .br
+\fC#include <iomanip>\fP
+.br
+\fC#include <memory>\fP
+.br
 \fC#include 'potentials\&.h'\fP
 .br
 \fC#include 'atom\&.h'\fP
@@ -34,8 +38,12 @@
 .br
 \fC#include 'global\&.h'\fP
 .br
+\fC#include 'histogram\&.h'\fP
+.br
+\fC#include 'barrier\&.h'\fP
+.br
 
-.SS "Classes"
+.SS "Data Structures"
 
 .in +1c
 .ti -1c
@@ -47,13 +55,13 @@
 
 .in +1c
 .ti -1c
-.RI "const double \fBcalculateBias\fP (\fBsimSystem\fP &sys, const int nTotFinal, const double p_u)"
+.RI "const double \fBcalculateBias\fP (\fBsimSystem\fP &sys, const int nTotFinal, const int mFinal)"
 .br
 .RI "\fICalculate the bias based on a systems current state and the next state being proposed\&. \fP"
 .in -1c
 .SH "Function Documentation"
 .PP 
-.SS "const double calculateBias (\fBsimSystem\fP & sys, const int nTotFinal, const double p_u)"
+.SS "const double calculateBias (\fBsimSystem\fP &sys, const intnTotFinal, const intmFinal)"
 
 .PP
 Calculate the bias based on a systems current state and the next state being proposed\&. 
@@ -63,6 +71,8 @@ Calculate the bias based on a systems current state and the next state being pro
 \fIsys\fP System object containing the current state of the system\&. 
 .br
 \fInTotFinal\fP Total atoms in the proposed final state\&. 
+.br
+\fImFinal\fP Final value of the expanded ensemble state of the system\&. 
 .br
 \fIp_u\fP Ratio of the system's partition in the final and initial state (e\&.g\&. unbiased p_acc = min(1, p_u))\&.
 .RE
@@ -74,41 +84,39 @@ rel_bias The value of the relative bias to apply in the metropolis criteria duri
 .PP
 
 .PP
-Definition at line 759 of file system\&.cpp\&.
+Definition at line 1758 of file system\&.cpp\&.
 .PP
-References __BIAS_INT_TYPE__, tmmc::getAddress(), wala::getAddress(), tmmc::getBias(), wala::getBias(), simSystem::getTotN(), simSystem::tmmcBias, tmmc::updateC(), simSystem::useTMMC, simSystem::useWALA, and simSystem::wlBias\&.
+References __BIAS_INT_TYPE__, tmmc::getAddress(), wala::getAddress(), tmmc::getBias(), wala::getBias(), simSystem::getCurrentM(), simSystem::getTotN(), simSystem::tmmcBias, simSystem::useTMMC, simSystem::useWALA, and simSystem::wlBias\&.
 .PP
-Referenced by deleteParticle::make(), translateParticle::make(), swapParticles::make(), and insertParticle::make()\&.
+Referenced by aggVolBias3::make(), translateParticle::make(), deleteParticle::make(), insertParticle::make(), and swapParticles::make()\&.
 .PP
 .nf
-759                                                                                    {
-760                 double rel_bias = 1\&.0;
-761                 
-762                 if (sys\&.useTMMC && !sys\&.useWALA) {
-763                                 // TMMC biasing
-764                                 const __BIAS_INT_TYPE__ address1 = sys\&.tmmcBias->getAddress(sys\&.getTotN()), address2 = sys\&.tmmcBias->getAddress(nTotFinal);
-765                                 const double b1 = sys\&.tmmcBias->getBias (address1), b2 = sys\&.tmmcBias->getBias (address2);
-766                                 rel_bias = exp(b2-b1);
-767                                 sys\&.tmmcBias->updateC (sys\&.getTotN(), nTotFinal, std::min(1\&.0, p_u)); 
-768     } else if (!sys\&.useTMMC && sys\&.useWALA) {
-769                 // Wang-Landau Biasing
-770                 const __BIAS_INT_TYPE__ address1 = sys\&.wlBias->getAddress(sys\&.getTotN()), address2 = sys\&.wlBias->getAddress(nTotFinal);                
-771                 const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
-772                 rel_bias = exp(b2-b1);
-773     } else if (sys\&.useTMMC && sys\&.useWALA) {
-774                 // Crossover phase where we use WL but update TMMC collection matrix
-775                 const int address1 = sys\&.wlBias->getAddress(sys\&.getTotN()), address2 = sys\&.wlBias->getAddress(nTotFinal);
-776                 const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
-777                 rel_bias = exp(b2-b1);
-778                 sys\&.tmmcBias->updateC (sys\&.getTotN(), nTotFinal, std::min(1\&.0, p_u)); 
-779     } else {
-780                 // No biasing
-781                 rel_bias = 1\&.0;
-782     }
-783                 
-784                 return rel_bias;
-785 }
+1758                                                                                    {
+1759     double rel_bias = 1\&.0;
+1760 
+1761     if (sys\&.useTMMC && !sys\&.useWALA) {
+1762         // TMMC biasing
+1763         const __BIAS_INT_TYPE__ address1 = sys\&.tmmcBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.tmmcBias->getAddress(nTotFinal, mFinal);
+1764         const double b1 = sys\&.tmmcBias->getBias (address1), b2 = sys\&.tmmcBias->getBias (address2);
+1765         rel_bias = exp(b2-b1);
+1766     } else if (!sys\&.useTMMC && sys\&.useWALA) {
+1767         // Wang-Landau Biasing
+1768         const __BIAS_INT_TYPE__ address1 = sys\&.wlBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.wlBias->getAddress(nTotFinal, mFinal);
+1769         const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
+1770         rel_bias = exp(b2-b1);
+1771     } else if (sys\&.useTMMC && sys\&.useWALA) {
+1772         // Crossover phase where we use WL but update TMMC collection matrix
+1773         const int address1 = sys\&.wlBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.wlBias->getAddress(nTotFinal, mFinal);
+1774         const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
+1775         rel_bias = exp(b2-b1);
+1776     } else {
+1777         // No biasing
+1778         rel_bias = 1\&.0;
+1779     }
+1780 
+1781     return rel_bias;
+1782 }
 .fi
 .SH "Author"
 .PP 
-Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

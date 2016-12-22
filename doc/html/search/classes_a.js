@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['wala',['wala',['../classwala.html',1,'']]]
+  ['quaternion',['quaternion',['../classquaternion.html',1,'']]]
 ];

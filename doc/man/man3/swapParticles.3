@@ -1,4 +1,4 @@
-.TH "swapParticles" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.TH "swapParticles" 3 "Thu Dec 22 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -28,28 +28,30 @@ Inherits \fBmcMove\fP\&.
 .SS "Additional Inherited Members"
 .SH "Detailed Description"
 .PP 
-Definition at line 12 of file swap\&.h\&.
+Definition at line 14 of file swap\&.h\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "swapParticles::swapParticles ()\fC [inline]\fP"
 
 .PP
-Definition at line 14 of file swap\&.h\&.
+Definition at line 16 of file swap\&.h\&.
+.PP
+References mcMove::changeN_\&.
 .PP
 .nf
-14 {};
+16 { changeN_ = false; }
 .fi
-.SS "swapParticles::swapParticles (const int typeIndex1, const int typeIndex2, const std::string tag)\fC [inline]\fP"
+.SS "swapParticles::swapParticles (const inttypeIndex1, const inttypeIndex2, const std::stringtag)\fC [inline]\fP"
 
 .PP
 Instantiate a new move, also give a name which is the combination of a user-defined tag + the particle indices it operates on\&. 
 .PP
-Definition at line 15 of file swap\&.h\&.
+Definition at line 17 of file swap\&.h\&.
 .PP
-References mcMove::name_, and mcMove::typeIndex_\&.
+References mcMove::changeN_, mcMove::name_, and mcMove::typeIndex_\&.
 .SH "Member Function Documentation"
 .PP 
-.SS "int swapParticles::make (\fBsimSystem\fP & sys)\fC [virtual]\fP"
+.SS "int swapParticles::make (\fBsimSystem\fP &sys)\fC [virtual]\fP"
 
 .PP
 Swap two particles of different types in the system\&. All other information is stored in the \fBsimSystem\fP object\&.
@@ -70,204 +72,281 @@ Implements \fBmcMove\fP\&.
 .PP
 Definition at line 10 of file swap\&.cpp\&.
 .PP
-References simSystem::atoms, simSystem::beta(), simSystem::box(), calculateBias(), simSystem::deleteAtom(), simSystem::getNeighborPositions(), simSystem::getTotN(), simSystem::getWALABias(), simSystem::incrementEnergy(), simSystem::insertAtom(), MOVE_FAILURE, MOVE_SUCCESS, simSystem::nSpecies(), simSystem::numSpecies, atom::pos, simSystem::ppot, rng(), RNG_SEED, mcMove::typeIndex_, wala::update(), simSystem::useWALA, and customException::what()\&.
+References simSystem::atoms, simSystem::beta(), simSystem::box(), calculateBias(), simSystem::deleteAtom(), simSystem::getCurrentM(), simSystem::getFractionalAtom(), simSystem::getFractionalAtomType(), simSystem::getNeighborAtoms(), simSystem::getTotN(), simSystem::getWALABias(), simSystem::incrementEnergy(), simSystem::insertAtom(), MOVE_FAILURE, MOVE_SUCCESS, simSystem::nSpecies(), simSystem::numSpecies, atom::pos, simSystem::ppot, rng(), RNG_SEED, simSystem::speciesBarriers, simSystem::tmmcBias, mcMove::typeIndex_, wala::update(), tmmc::updateC(), simSystem::useTMMC, simSystem::useWALA, and customException::what()\&.
 .PP
 .nf
 10                                        {
-11                 // Choose an atom of each type to try to exchange
-12                 if (sys\&.numSpecies[typeIndex_] < 1 || sys\&.numSpecies[typeIndex2_] < 1) {
-13                                 return MOVE_FAILURE;
-14                 }
-15                 const int a1 = (int) floor(rng (&RNG_SEED) * sys\&.numSpecies[typeIndex_]);
-16                 const int a2 = (int) floor(rng (&RNG_SEED) * sys\&.numSpecies[typeIndex2_]);
-17                 atom a1_orig = sys\&.atoms[typeIndex_][a1];
-18                 atom a2_orig = sys\&.atoms[typeIndex2_][a2];
-19 
-20                 const std::vector < double > box = sys\&.box();
-21                 double V = 1\&.0;
-22                 for (unsigned int i = 0; i < box\&.size(); ++i) {
-23         V *= box[i];
-24     }
-25                     
-26                 // Swapping = delete both, one at a time, then add both at opposite positions, one at a time
-27                 // Delete a1
-28     double delEnergy = 0\&.0;
-29     for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
-30         // get positions of neighboring atoms around a1
-31         std::vector < std::vector< double > > neighborPositions = sys\&.getNeighborPositions(spec, typeIndex_, &sys\&.atoms[typeIndex_][a1]);
-32         for (unsigned int i = 0; i < neighborPositions\&.size(); ++i) {
-33             try {
-34                                                                 delEnergy += sys\&.ppot[spec][typeIndex_]->energy(neighborPositions[i], sys\&.atoms[typeIndex_][a1]\&.pos, box);
-35                                                 }
-36                                                 catch (customException& ce) {
-37                                                                 std::string a = "Cannot delete because of energy error: ", b = ce\&.what();
-38                                                                 throw customException (a+b);
-39                                                 }
-40         }
-41         // add tail correction to potential energy -- only enable for fluid phase simulations
-42 #ifdef FLUID_PHASE_SIMULATIONS
-43         if (sys\&.ppot[spec][typeIndex_]->useTailCorrection) {
-44                 if (spec == typeIndex_) {
-45                                                                 delEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection((sys\&.numSpecies[spec]-1)/V);
-46                                                 }
-47                                                 else {
-48                                                                 delEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection((sys\&.numSpecies[spec])/V);
-49                                                 }
-50                                 }
-51 #endif
-52     }
-53     
-54     // Remove a1 from cell lists, etc\&.
-55     try {
-56                 sys\&.deleteAtom(typeIndex_, a1, true);
-57     } catch (customException &ce) {
-58                 std::string a = "Failed to delete atom during swapping: ", b = ce\&.what();
-59                 throw customException (a+b);
-60     }
-61     
-62                 // Delete a2
-63     for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
-64         // get positions of neighboring atoms around a2
-65         std::vector < std::vector< double > > neighborPositions = sys\&.getNeighborPositions(spec, typeIndex2_, &sys\&.atoms[typeIndex2_][a2]);
-66         for (unsigned int i = 0; i < neighborPositions\&.size(); ++i) {
-67             try {
-68                                                                 delEnergy += sys\&.ppot[spec][typeIndex2_]->energy(neighborPositions[i], sys\&.atoms[typeIndex2_][a2]\&.pos, box);
-69                                                 }
-70                                                 catch (customException& ce) {
-71                                                                 std::string a = "Cannot delete because of energy error: ", b = ce\&.what();
-72                                                                 throw customException (a+b);
-73                                                 }
-74         }
-75         // add tail correction to potential energy -- only enable for fluid phase simulations
-76 #ifdef FLUID_PHASE_SIMULATIONS
-77         if (sys\&.ppot[spec][typeIndex2_]->useTailCorrection) {
-78                 if (spec == typeIndex2_) {
-79                                                                 delEnergy += sys\&.ppot[spec][typeIndex2_]->tailCorrection((sys\&.numSpecies[spec]-1)/V);
-80                                                 }
-81                                                 else {
-82                                                                 delEnergy += sys\&.ppot[spec][typeIndex2_]->tailCorrection((sys\&.numSpecies[spec])/V);
-83                                                 }
-84                                 }
-85 #endif
-86     }
-87 
-88     // Remove a2 from cell lists, etc\&.
-89     try {
-90                 sys\&.deleteAtom(typeIndex2_, a2, true);
-91     } catch (customException &ce) {
-92                 std::string a = "Failed to delete atom during swapping: ", b = ce\&.what();
-93                 throw customException (a+b);
-94     }
-95 
-96                 // Insert a1 at a2's original location
-97     double insEnergy = 0\&.0;
-98     for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
-99                 // get positions of neighboring atoms around a1's (a2's) new (old) location
-100                 std::vector < std::vector < double > > neighborPositions = sys\&.getNeighborPositions(spec, typeIndex_, &a2_orig);
-101         for (unsigned int i = 0; i < neighborPositions\&.size(); ++i) {
-102                                                 try {
-103                                                                 insEnergy += sys\&.ppot[spec][typeIndex_]->energy(neighborPositions[i], a2_orig\&.pos, box);          
-104                                                 } catch (customException& ce) {
-105                                                                 std::string a = "Cannot insert because of energy error: ", b = ce\&.what();
-106                                                                 throw customException (a+b);
-107                                                 }
-108         }
-109         // add tail correction to potential energy -- only enable for fluid phase simulations
-110 #ifdef FLUID_PHASE_SIMULATIONS
-111         if (sys\&.ppot[spec][typeIndex_]->useTailCorrection){
-112                                                 insEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection(sys\&.numSpecies[spec]/V);
-113                                 }
-114 #endif
-115     }
-116     
-117     // Add a1 to the system
-118     try {
-119                 sys\&.insertAtom(typeIndex_, &a2_orig);
-120     } catch (customException &ce) {
-121                 std::string a = "Failed to insert atom during swapping: ", b = ce\&.what();
-122                 throw customException (a+b);
-123     }
+11     // Choose an atom of each type to try to exchange
+12     int n1Avail = sys\&.numSpecies[typeIndex_];
+13     if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == typeIndex_) {
+14         n1Avail++;
+15     }
+16 
+17     int n2Avail = sys\&.numSpecies[typeIndex2_];
+18     if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == typeIndex2_) {
+19         n2Avail++;
+20     }
+21 
+22     if (n1Avail < 1 || n2Avail < 1) {
+23         // updates to biasing functions must be done even if at bounds
+24         if (sys\&.useWALA) {
+25             sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+26         }
+27         if (sys\&.useTMMC) {
+28             sys\&.tmmcBias->updateC (sys\&.getTotN(), sys\&.getTotN(), sys\&.getCurrentM(), sys\&.getCurrentM(), 0\&.0);
+29         }
+30         return MOVE_FAILURE;
+31     }
+32 
+33     // because the locations are effectively being swapped, it is fair to select a partially inserted atom to be involved
+34     const int a1 = (int) floor(rng (&RNG_SEED) * n1Avail);
+35     const int a2 = (int) floor(rng (&RNG_SEED) * n2Avail);
+36     atom a1_orig = sys\&.atoms[typeIndex_][a1], a1_new = a1_orig;
+37     atom a2_orig = sys\&.atoms[typeIndex2_][a2], a2_new = a2_orig;
+38 
+39     // positions will be exchanged, but no other property should change
+40     a1_new\&.pos = a2_orig\&.pos;
+41     a2_new\&.pos = a1_orig\&.pos;
+42 
+43     const std::vector < double > box = sys\&.box();
+44     double V = 1\&.0;
+45     for (unsigned int i = 0; i < box\&.size(); ++i) {
+46             V *= box[i];
+47         }
+48 
+49         double delEnergy = 0\&.0;
+50         for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
+51             // get positions of neighboring atoms around a1
+52             std::vector < atom* > neighborAtoms = sys\&.getNeighborAtoms(spec, typeIndex_, &sys\&.atoms[typeIndex_][a1]);
+53             for (unsigned int i = 0; i < neighborAtoms\&.size(); ++i) {
+54                 if (neighborAtoms[i] == &sys\&.atoms[typeIndex2_][a2]) {
+55                     // skip their interaction as they were already deleted - this is fine because their net pairwise interaction doesn't change over the
+56                     // course of the simulation - this means we don't have to actually re-insert the other atom / get its interation somehow later
+57                     continue;
+58                 } else {
+59                 try {
+60                     delEnergy += sys\&.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &sys\&.atoms[typeIndex_][a1], box);
+61                 } catch (customException& ce) {
+62                     std::string a = "Cannot delete because of energy error: ", b = ce\&.what();
+63                     throw customException (a+b);
+64                 }
+65                 }
+66             }
+67             // add tail correction to potential energy -- only enable for fluid phase simulations
+68 #ifdef FLUID_PHASE_SIMULATIONS
+69             if (sys\&.ppot[spec][typeIndex_]->useTailCorrection) {
+70                 if (!(sys\&.getCurrentM() > 0 && sys\&.getFractionalAtom () == &sys\&.atoms[typeIndex_][a1])) {
+71                     // then a1 is not the partially inserted particle and tail interactions must be included
+72                     if (spec == typeIndex_) {
+73                                 if (sys\&.numSpecies[spec]-1 > 0) {
+74                                     delEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection((sys\&.numSpecies[spec]-1)/V);
+75                                 }
+76                     } else {
+77                                 if (sys\&.numSpecies[spec] > 0) {
+78                                     delEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection(sys\&.numSpecies[spec]/V);
+79                                 }
+80                     }
+81                 }
+82             }
+83 #endif
+84     }
+85 
+86     // account for wall interaction energy
+87     delEnergy += sys\&.speciesBarriers[typeIndex_]\&.energy(&sys\&.atoms[typeIndex_][a1], box);
+88 
+89         for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
+90             // get positions of neighboring atoms around a2
+91             std::vector < atom* > neighborAtoms = sys\&.getNeighborAtoms(spec, typeIndex2_, &sys\&.atoms[typeIndex2_][a2]);
+92             for (unsigned int i = 0; i < neighborAtoms\&.size(); ++i) {
+93                 if (neighborAtoms[i] == &sys\&.atoms[typeIndex_][a1]) {
+94                     // skip their interaction as they were already deleted - this is fine because their net pairwise interaction doesn't change over the
+95                     // course of the simulation - this means we don't have to actually re-insert the other atom / get its interation somehow later
+96                     continue;
+97                 } else {
+98                 try {
+99                     delEnergy += sys\&.ppot[spec][typeIndex2_]->energy(neighborAtoms[i], &sys\&.atoms[typeIndex2_][a2], box);
+100                 } catch (customException& ce) {
+101                     std::string a = "Cannot delete because of energy error: ", b = ce\&.what();
+102                     throw customException (a+b);
+103                 }
+104                 }
+105             }
+106             // add tail correction to potential energy -- only enable for fluid phase simulations
+107 #ifdef FLUID_PHASE_SIMULATIONS
+108             if (sys\&.ppot[spec][typeIndex2_]->useTailCorrection) {
+109                 if (!(sys\&.getCurrentM() > 0 && sys\&.getFractionalAtom () == &sys\&.atoms[typeIndex2_][a2])) {
+110                     // then a2 is not the partially inserted particle and tail interactions must be included
+111                     if (spec == typeIndex2_) {
+112                                 if (sys\&.numSpecies[spec]-1 > 0) {
+113                                     delEnergy += sys\&.ppot[spec][typeIndex2_]->tailCorrection((sys\&.numSpecies[spec]-1)/V);
+114                                 }
+115                     } else {
+116                                 if (sys\&.numSpecies[spec] > 0) {
+117                                     delEnergy += sys\&.ppot[spec][typeIndex2_]->tailCorrection(sys\&.numSpecies[spec]/V);
+118                                 }
+119                     }
+120                 }
+121             }
+122 #endif
+123         }
 124 
-125                 // Insert a2 at a1's original location
-126     for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
-127                 // get positions of neighboring atoms around a2's (a1's) new (old) location
-128                 std::vector < std::vector < double > > neighborPositions = sys\&.getNeighborPositions(spec, typeIndex2_, &a1_orig);
-129         for (unsigned int i = 0; i < neighborPositions\&.size(); ++i) {
-130                                                 try {
-131                                                                 insEnergy += sys\&.ppot[spec][typeIndex2_]->energy(neighborPositions[i], a1_orig\&.pos, box);         
-132                                                 } catch (customException& ce) {
-133                                                                 std::string a = "Cannot insert because of energy error: ", b = ce\&.what();
-134                                                                 throw customException (a+b);
-135                                                 }
-136         }
-137         // add tail correction to potential energy -- only enable for fluid phase simulations
-138 #ifdef FLUID_PHASE_SIMULATIONS
-139         if (sys\&.ppot[spec][typeIndex2_]->useTailCorrection){
-140                                                 insEnergy += sys\&.ppot[spec][typeIndex2_]->tailCorrection(sys\&.numSpecies[spec]/V);
-141                                 }
-142 #endif
-143     }
-144 
-145     // Add a2 to the system
-146     try {
-147                 sys\&.insertAtom(typeIndex2_, &a1_orig);
-148     } catch (customException &ce) {
-149                 std::string a = "Failed to insert atom during swapping: ", b = ce\&.what();
-150                 throw customException (a+b);
-151     }
-152        
-153     // Biasing
-154     const double p_u = exp(-sys\&.beta()*(insEnergy - delEnergy));
-155     double bias = calculateBias(sys, sys\&.getTotN(), p_u); // sys\&.numSpecies already contains the currently proposed modifications
-156     
-157                 if (rng (&RNG_SEED) < p_u*bias) {
-158                    sys\&.incrementEnergy(insEnergy - delEnergy);   
-159                                 
-160                                 // update Wang-Landau bias, if used
-161                                 if (sys\&.useWALA) {
-162                                                 sys\&.getWALABias()->update(sys\&.getTotN());
-163                                 }
-164                                                 
-165         return MOVE_SUCCESS;
-166     }
-167                 
-168                 // Undo to the swap if move was rejected
-169                 // The "new" atoms are now at the ends of each of the vector for each type
-170                 try {
-171                 sys\&.deleteAtom(typeIndex_, sys\&.numSpecies[typeIndex_]-1);
-172     } catch (customException &ce) {
-173                 std::string a = "Failed to delete atom during swapping: ", b = ce\&.what();
-174                 throw customException (a+b);
-175     }
-176     try {
-177         sys\&.deleteAtom(typeIndex2_, sys\&.numSpecies[typeIndex2_]-1);
-178     } catch (customException &ce) {
-179                 std::string a = "Failed to delete atom during swapping: ", b = ce\&.what();
-180         throw customException (a+b);
-181     }
-182     try {
-183                 sys\&.insertAtom(typeIndex_, &a1_orig);
-184     } catch (customException &ce) {
-185         std::string a = "Failed to insert atom during swapping: ", b = ce\&.what();
-186         throw customException (a+b);
-187     }
-188     try {
-189                 sys\&.insertAtom(typeIndex2_, &a2_orig);
-190     } catch (customException &ce) {
-191         std::string a = "Failed to insert atom during swapping: ", b = ce\&.what();
-192         throw customException (a+b);
-193     }
-194         
-195                 // update Wang-Landau bias (even if moved failed), if used
-196                 if (sys\&.useWALA) {
-197                                 sys\&.getWALABias()->update(sys\&.getTotN());
-198                 }
-199                 
-200                 return MOVE_FAILURE;
-201 }
+125         // account for wall interaction energy
+126         delEnergy += sys\&.speciesBarriers[typeIndex2_]\&.energy(&sys\&.atoms[typeIndex2_][a2], box);
+127 
+128         double insEnergy = 0\&.0;
+129         for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
+130             // get positions of neighboring atoms around a1's (a2's) new (old) location
+131             std::vector < atom* > neighborAtoms = sys\&.getNeighborAtoms(spec, typeIndex_, &a1_new);
+132             for (unsigned int i = 0; i < neighborAtoms\&.size(); ++i) {
+133                 // with these new "copy atoms" getNeighborAtoms can't guarantee it doesn't point to old self, so must check
+134                 if ((neighborAtoms[i] == &sys\&.atoms[typeIndex2_][a2]) || (neighborAtoms[i] == &sys\&.atoms[typeIndex_][a1])) {
+135                     continue;
+136                 } else {
+137                 try {
+138                     insEnergy += sys\&.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &a1_new, box);
+139                 } catch (customException& ce) {
+140                     std::string a = "Cannot insert because of energy error: ", b = ce\&.what();
+141                     throw customException (a+b);
+142                 }
+143                 }
+144             }
+145             // add tail correction to potential energy -- only enable for fluid phase simulations
+146 #ifdef FLUID_PHASE_SIMULATIONS
+147             if (sys\&.ppot[spec][typeIndex_]->useTailCorrection) {
+148                 if (!(sys\&.getCurrentM() > 0 && sys\&.getFractionalAtom () == &sys\&.atoms[typeIndex_][a1])) {
+149                     // then a1 is not the partially inserted particle and tail interactions must be included
+150                     if (spec == typeIndex_) {
+151                                 if (sys\&.numSpecies[spec]-1 > 0) {
+152                                     insEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection((sys\&.numSpecies[spec]-1)/V);
+153                             }
+154                     } else {
+155                                 if (sys\&.numSpecies[spec] > 0) {
+156                                     insEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection(sys\&.numSpecies[spec]/V);
+157                                 }
+158                     }
+159                 }
+160             }
+161 #endif
+162         }
+163         // account for wall interaction energy
+164         insEnergy += sys\&.speciesBarriers[typeIndex_]\&.energy(&a1_new, box);
+165 
+166         for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
+167             // get positions of neighboring atoms around a2's (a1's) new (old) location
+168             std::vector < atom* > neighborAtoms = sys\&.getNeighborAtoms(spec, typeIndex2_, &a2_new);
+169             for (unsigned int i = 0; i < neighborAtoms\&.size(); ++i) {
+170                 if ((neighborAtoms[i] == &sys\&.atoms[typeIndex_][a1]) || (neighborAtoms[i] == &sys\&.atoms[typeIndex2_][a2])) {
+171                     continue;
+172                 } else {
+173                 try {
+174                     insEnergy += sys\&.ppot[spec][typeIndex2_]->energy(neighborAtoms[i], &a2_new, box);
+175                 } catch (customException& ce) {
+176                     std::string a = "Cannot insert because of energy error: ", b = ce\&.what();
+177                     throw customException (a+b);
+178                 }
+179                 }
+180             }
+181             // add tail correction to potential energy -- only enable for fluid phase simulations
+182 #ifdef FLUID_PHASE_SIMULATIONS
+183             if (sys\&.ppot[spec][typeIndex2_]->useTailCorrection) {
+184                 if (!(sys\&.getCurrentM() > 0 && sys\&.getFractionalAtom () == &sys\&.atoms[typeIndex2_][a2])) {
+185                     // then a2 is not the partially inserted particle and tail interactions must be included
+186                     if (spec == typeIndex2_) {
+187                                 if (sys\&.numSpecies[spec]-1 > 0) {
+188                                     insEnergy += sys\&.ppot[spec][typeIndex2_]->tailCorrection((sys\&.numSpecies[spec]-1)/V);
+189                                 }
+190                     } else {
+191                                 if (sys\&.numSpecies[spec] > 0) {
+192                                     insEnergy += sys\&.ppot[spec][typeIndex2_]->tailCorrection(sys\&.numSpecies[spec]/V);
+193                                 }
+194                     }
+195                 }
+196             }
+197 #endif
+198         }
+199         // account for wall interaction energy
+200         insEnergy += sys\&.speciesBarriers[typeIndex2_]\&.energy(&a2_new, box);
+201 
+202     // Biasing
+203         const double p_u = exp(-sys\&.beta()*(insEnergy - delEnergy));
+204         double bias = calculateBias(sys, sys\&.getTotN(), sys\&.getCurrentM());
+205 
+206         // tmmc gets updated the same way, regardless of whether the move gets accepted
+207         if (sys\&.useTMMC) {
+208             sys\&.tmmcBias->updateC (sys\&.getTotN(), sys\&.getTotN(), sys\&.getCurrentM(), sys\&.getCurrentM(), std::min(1\&.0, p_u));
+209         }
+210 
+211     if (rng (&RNG_SEED) < p_u*bias) {
+212         sys\&.incrementEnergy(insEnergy - delEnergy);
+213 
+214         // swap the particles by deleting/reinserting
+215 
+216         // could probably make this faster by using translateAtom instead of full insert/delete?
+217 
+218         // -a1 completely
+219         try {
+220             sys\&.deleteAtom(typeIndex_, a1, true);
+221         } catch (customException &ce) {
+222             std::string a = "Failed to delete atom during swapping: ", b = ce\&.what();
+223             throw customException (a+b);
+224         }
+225 
+226         // -a2 completely
+227         try {
+228             sys\&.deleteAtom(typeIndex2_, a2, true);
+229         } catch (customException &ce) {
+230             std::string a = "Failed to delete atom during swapping: ", b = ce\&.what();
+231             throw customException (a+b);
+232         }
+233 
+234         // +a1_new completely
+235         try {
+236             sys\&.insertAtom(typeIndex_, &a1_new, true);
+237         } catch (customException &ce) {
+238             std::string a = "Failed to insert atom during swapping: ", b = ce\&.what();
+239             throw customException (a+b);
+240         }
+241 
+242         // +a2_new completely
+243         try {
+244             sys\&.insertAtom(typeIndex2_, &a2_new, true);
+245         } catch (customException &ce) {
+246             std::string a = "Failed to insert atom during swapping: ", b = ce\&.what();
+247             throw customException (a+b);
+248         }
+249 
+250         // update Wang-Landau bias, if used
+251         if (sys\&.useWALA) {
+252             sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+253         }
+254 
+255         // double check
+256         /*if (n1_orig != sys\&.numSpecies[typeIndex_]) {
+257             throw customException ("Number of species 1 atoms do not match before and after swap move");
+258         }
+259         if (n2_orig != sys\&.numSpecies[typeIndex2_]) {
+260             throw customException ("Number of species 2 atoms do not match before and after swap move");
+261         }
+262         if (fracType != sys\&.getFractionalAtomType()) {
+263             throw customException ("Fractional type has changed during course of swap move");
+264         }
+265         if (m_orig != sys\&.getCurrentM()) {
+266             throw customException ("Expanded ensemble state of system has changed during course of swap move");
+267         }*/
+268 
+269     return MOVE_SUCCESS;
+270         }
+271 
+272     // update Wang-Landau bias (even if moved failed), if used
+273     if (sys\&.useWALA) {
+274         sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+275     }
+276 
+277     return MOVE_FAILURE;
+278 }
 .fi
 
 
 .SH "Author"
 .PP 
-Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

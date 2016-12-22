@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['insertparticle',['insertParticle',['../classinsert_particle.html',1,'']]]
+  ['fslennardjones',['fsLennardJones',['../classfs_lennard_jones.html',1,'']]]
 ];

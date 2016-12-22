@@ -1,5 +1,28 @@
 var searchData=
 [
-  ['update',['update',['../classwala.html#a5eb2622be6a9e89f5e59ba0b15aca4bd',1,'wala']]],
-  ['updatec',['updateC',['../classtmmc.html#ab648f1ba2767c07fdccf9ac0e2eec8f6',1,'tmmc']]]
+  ['random3dsurfacevector',['random3DSurfaceVector',['../utilities_8cpp.html#af1bc480936b7436d4e679abc5a837815',1,'random3DSurfaceVector(const double magnitude):&#160;utilities.cpp'],['../utilities_8h.html#af1bc480936b7436d4e679abc5a837815',1,'random3DSurfaceVector(const double magnitude):&#160;utilities.cpp']]],
+  ['rcut',['rcut',['../classpair_potential.html#abf4f8d231c5e2e36d72916d33dcd75f0',1,'pairPotential::rcut()'],['../classlennard_jones.html#a6ab5b04c385544da0de985e9635a6e8c',1,'lennardJones::rcut()'],['../classfs_lennard_jones.html#aaee77a863f5e681c43fdc67fecf10345',1,'fsLennardJones::rcut()'],['../classtabulated.html#a1826f920afd53d74e17c8fa5253a2d2b',1,'tabulated::rcut()'],['../classsquare_well.html#a82e1cc1009bd8e42e79e3c5f856f1b3b',1,'squareWell::rcut()'],['../classhard_core.html#a3cbf5ecde18b2f2798a4b1aba1801ca5',1,'hardCore::rcut()']]],
+  ['readc',['readC',['../classtmmc.html#a7d9ee0505dc801cbff55bc35c3654a61',1,'tmmc']]],
+  ['readconfig',['readConfig',['../classsim_system.html#a3161d95bbb800d5d95a732ac5fc32b95',1,'simSystem']]],
+  ['readh',['readH',['../classwala.html#a0b8df0fb2b7722fc4a458e527a478b6f',1,'wala']]],
+  ['readhc',['readHC',['../classtmmc.html#ab51a593d041a65c4ca47e6c4e0c26992',1,'tmmc']]],
+  ['readlnpi',['readlnPI',['../classwala.html#ae04916f49c11b0636e813787a3906570',1,'wala']]],
+  ['record',['record',['../classdynamic__one__dim__histogram.html#a2ae28c147c2dfc624ece9102603dd667',1,'dynamic_one_dim_histogram']]],
+  ['recordenergyhistogram',['recordEnergyHistogram',['../classsim_system.html#aa0eae4d523b5649be273e0419e9f799f',1,'simSystem']]],
+  ['recordextmoments',['recordExtMoments',['../classsim_system.html#a74ce0ab8151fd0501abf853a16cc8e58',1,'simSystem']]],
+  ['recordpkhistogram',['recordPkHistogram',['../classsim_system.html#a71bbc9d8bdbb5042e4fa817c3e71fe53',1,'simSystem']]],
+  ['refineenergyhistogrambounds',['refineEnergyHistogramBounds',['../classsim_system.html#afe05cba714a032b445cfb1a529547833',1,'simSystem']]],
+  ['refinepkhistogrambounds',['refinePkHistogramBounds',['../classsim_system.html#a1e462fcb63389d59419ff6135b2d802e',1,'simSystem']]],
+  ['reinitialize',['reinitialize',['../classdynamic__one__dim__histogram.html#a899b4d0ab90f83506d12bc00c88a060a',1,'dynamic_one_dim_histogram']]],
+  ['reinitializeenergyhistogram',['reInitializeEnergyHistogram',['../classsim_system.html#a861dd81718ef1c069fa7cfb9b7efe83c',1,'simSystem']]],
+  ['reportmovestatistics',['reportMoveStatistics',['../classmoves.html#ad3e937628d85cdbbe02732648cb533e2',1,'moves']]],
+  ['reportprobabilities',['reportProbabilities',['../classmoves.html#a84f8198bd43c0f6b8b52dce3abdfa6a4',1,'moves']]],
+  ['restartenergyhistogram',['restartEnergyHistogram',['../classsim_system.html#ae073008ed44e551f0d008b2f5a0fc06f',1,'simSystem']]],
+  ['restartextmoments',['restartExtMoments',['../classsim_system.html#a999556fea891765c5ed4d979706665af',1,'simSystem']]],
+  ['restartpkhistogram',['restartPkHistogram',['../classsim_system.html#a3239a23e35f30e40eeecf8795386c164',1,'simSystem']]],
+  ['righttrianglexz',['rightTriangleXZ',['../classright_triangle_x_z.html#a8f252f8cb6cbe2861d05565484accc17',1,'rightTriangleXZ']]],
+  ['rng',['rng',['../utilities_8cpp.html#a0f9542af4b475ac79cb679d7a8d14db0',1,'rng(int *idum):&#160;utilities.cpp'],['../utilities_8h.html#a0f9542af4b475ac79cb679d7a8d14db0',1,'rng(int *idum):&#160;utilities.cpp']]],
+  ['rotatecenters',['rotateCenters',['../classatom.html#a37cbc8cef7998850dc635b4dcbee724c',1,'atom']]],
+  ['rotatevec',['rotateVec',['../classquaternion.html#a618cce42beeb9ab3c724c4a9e6f37f55',1,'quaternion']]],
+  ['rotationmatrix',['rotationMatrix',['../utilities_8cpp.html#a2b3e32432e13d1a3feeb00de5466e456',1,'rotationMatrix(const double alpha, const double beta, const double gamma):&#160;utilities.cpp'],['../utilities_8h.html#a2b3e32432e13d1a3feeb00de5466e456',1,'rotationMatrix(const double alpha, const double beta, const double gamma):&#160;utilities.cpp']]]
 ];

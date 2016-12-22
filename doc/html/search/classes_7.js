@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['pairpotential',['pairPotential',['../classpair_potential.html',1,'']]]
+  ['lennardjones',['lennardJones',['../classlennard_jones.html',1,'']]]
 ];

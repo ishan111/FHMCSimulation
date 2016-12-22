@@ -1,8 +1,10 @@
-.TH "tabulated" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.TH "tabulated" 3 "Thu Dec 22 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-tabulated \- Tabulated Potential Parameters should be specified in the following order: { r_cut, r_shift, u_shift, u_infinity }\&.  
+tabulated \- 
+.PP
+Tabulated Potential Parameters should be specified in the following order: { r_cut, r_shift, u_shift, u_infinity, Mtot }\&.  
 
 .SH SYNOPSIS
 .br
@@ -26,9 +28,9 @@ Inherits \fBpairPotential\fP\&.
 .br
 .RI "\fILoad a tabulated potential from an external file and store it internally\&. \fP"
 .ti -1c
-.RI "double \fBenergy\fP (const double r)"
+.RI "double \fBenergy\fP (const \fBatom\fP *a1, const \fBatom\fP *a2, const std::vector< double > &box)"
 .br
-.RI "\fIReturn the energy of two particles separate by a distance r\&. \fP"
+.RI "\fIReturn the energy of two particles\&. \fP"
 .ti -1c
 .RI "double \fBtailCorrection\fP (const double rhoBath)"
 .br
@@ -41,61 +43,83 @@ Inherits \fBpairPotential\fP\&.
 .SS "Additional Inherited Members"
 .SH "Detailed Description"
 .PP 
-Tabulated Potential Parameters should be specified in the following order: { r_cut, r_shift, u_shift, u_infinity }\&. 
+Tabulated Potential Parameters should be specified in the following order: { r_cut, r_shift, u_shift, u_infinity, Mtot }\&. 
 .PP
-Definition at line 50 of file potentials\&.h\&.
+Definition at line 77 of file potentials\&.h\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "tabulated::~tabulated ()\fC [inline]\fP"
 
 .PP
-Definition at line 56 of file potentials\&.h\&.
+Definition at line 79 of file potentials\&.h\&.
 .PP
 .nf
-56 {;}
+79 {;}
 .fi
 .SH "Member Function Documentation"
 .PP 
-.SS "double tabulated::energy (const double r)\fC [virtual]\fP"
+.SS "double tabulated::energy (const \fBatom\fP *a1, const \fBatom\fP *a2, const std::vector< double > &box)\fC [virtual]\fP"
 
 .PP
-Return the energy of two particles separate by a distance r\&. Use linear interpolation to calculate energy from tabulated values
+Return the energy of two particles\&. Use linear interpolation to calculate energy from tabulated values
 .PP
 \fBParameters:\fP
 .RS 4
-\fIr\fP Scalar separation, needs to be the minimum image 
+\fIa1\fP Atom 1 
+.br
+\fIa2\fP Atom 2 
+.br
+\fIbox\fP Simulation box dimensions
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+U(r) 
 .RE
 .PP
 
 .PP
 Implements \fBpairPotential\fP\&.
 .PP
-Definition at line 180 of file potentials\&.cpp\&.
+Definition at line 378 of file potentials\&.cpp\&.
 .PP
-References pairPotential::params_, and pairPotential::paramsAreSet_\&.
+References atom::mState, pairPotential::params_, pairPotential::paramsAreSet_, pbcDist2(), and atom::pos\&.
 .PP
 .nf
-180                                         {
-181                 if (!paramsAreSet_) {
-182                                 throw customException ("For tabulated parameters not set");
-183                 }
-184                 
-185                 if (r < params_[1]) {
-186                                 std::cerr<<"distance r too small in energy calculation in tabulated potential\&. Returning value at r="<<start<<std::endl;
-187                 } else if (r > params_[0]) {
-188                                 return params_[3];
-189                 } else {
-190                                 const unsigned int lowerIndex = floor((r-params_[1])/dr);
-191                                 const unsigned int upperIndex = ceil((r-params_[1])/dr);
-192                                 
-193                                 const double upperFraction = (r-params_[1])/dr-lowerIndex;
-194                                 const double lowerFraction = 1\&.0-upperFraction;
-195                                 
-196                                 return (lowerFraction*table[lowerIndex] + upperFraction*table[upperIndex] + params_[2]);
-197                 }
-198 }
+378                                                                                          {
+379     if (!paramsAreSet_) {
+380         throw customException ("For tabulated parameters not set");
+381     }
+382 
+383     const double r = sqrt(pbcDist2(a1->pos, a2->pos, box));
+384     double en = 0\&.0;
+385 
+386     // only one of these atoms (at most) should be "partially" inserted
+387     int mState = 0;
+388     if (a1->mState != 0) {
+389         mState = a1->mState;
+390     }
+391     if (a2->mState != 0) {
+392         mState = a2->mState;
+393     }
+394 
+395     if (r < params_[1]) {
+396         std::cerr << "Distance r too small in energy calculation in tabulated potential\&. Returning value at r = " << start << std::endl;
+397         en = table[0];
+398     } else if (r > params_[0]) {
+399         en = params_[3];
+400     } else {
+401         const unsigned int lowerIndex = floor((r-params_[1])/dr);
+402         const unsigned int upperIndex = ceil((r-params_[1])/dr);
+403         const double upperFraction = (r-params_[1])/dr-lowerIndex;
+404         const double lowerFraction = 1\&.0-upperFraction;
+405         en = (lowerFraction*table[lowerIndex] + upperFraction*table[upperIndex] + params_[2])*mScale[mState];
+406     }
+407 
+408     return en;
+409 }
 .fi
-.SS "void tabulated::loadPotential (std::string filename)"
+.SS "void tabulated::loadPotential (std::stringfilename)"
 
 .PP
 Load a tabulated potential from an external file and store it internally\&. 
@@ -107,56 +131,54 @@ Load a tabulated potential from an external file and store it internally\&.
 .PP
 
 .PP
-Definition at line 127 of file potentials\&.cpp\&.
+Definition at line 324 of file potentials\&.cpp\&.
 .PP
 References fileExists(), pairPotential::params_, and pairPotential::paramsAreSet_\&.
 .PP
 .nf
-128 {
-129                 std::cout<<"Loading pair potential from file: "<<filename<<std::endl;
-130                 // first check, if file exists
-131                 if (fileExists(filename))
-132                 {
-133                                 std::cout<<"File found, processing\&."<<std::endl;
-134                                 table\&.clear();
-135                                 double r, pot;
-136                                 unsigned int lineCounter = 0;
-137                                 
-138                                 std::ifstream inputData(filename\&.c_str());
-139                                 while (inputData>>r>>pot) {
-140                                                 if (lineCounter == 0) {
-141                                                                 start = r;
-142                                                 }
-143                                                 else if (lineCounter == 1) {
-144                                                                 dr = r - start;
-145                                                 }
-146                                                 
-147                                                 table\&.push_back(pot);
-148                                                 lineCounter++;
-149                                 }
-150                                 inputData\&.close();
-151                                 
-152                                 if (lineCounter < 2) {
-153                                                 paramsAreSet_ = false;
-154                                                 std::cerr<<"Tabulated potential "<<filename<<" needs at least 2 entries, cannot setup potential\&."<<std::endl;
-155                                                 return;
-156                                 }
-157                                 
-158                                 // if parameters are not set, set default parameters
-159                                 if (!paramsAreSet_) {
-160                                                 params_\&.assign(4, 0\&.0);
-161                                                 params_[0] = start + (table\&.size()-1)*dr;
-162                                                 params_[1] = start;
-163                                                 params_[2] = 0\&.0;
-164                                                 params_[3] = 0\&.0;
-165                                                 paramsAreSet_ = true;
-166                                 }
-167                 }
-168                 else {
-169                                 std::cerr<<"File "<<filename<<" not found, cannot setup potential\&."<<std::endl;
-170                                 paramsAreSet_ = false;
-171                 }
-172 }
+324                                                 {
+325     std::cout << "Loading pair potential from file: " << filename<<std::endl;
+326     // first check, if file exists
+327     if (fileExists(filename)) {
+328         std::cout << "File found, processing\&." << std::endl;
+329         table\&.clear();
+330         double r, pot;
+331         unsigned int lineCounter = 0;
+332 
+333         std::ifstream inputData(filename\&.c_str());
+334         while (inputData >> r >> pot) {
+335             if (lineCounter == 0) {
+336                 start = r;
+337             }
+338             else if (lineCounter == 1) {
+339                 dr = r - start;
+340             }
+341 
+342             table\&.push_back(pot);
+343             lineCounter++;
+344         }
+345         inputData\&.close();
+346 
+347         if (lineCounter < 2) {
+348             paramsAreSet_ = false;
+349             std::cerr << "Tabulated potential " << filename << " needs at least 2 entries, cannot setup potential\&." << std::endl;
+350             return;
+351         }
+352 
+353         // if parameters are not set, set default parameters
+354         if (!paramsAreSet_) {
+355             params_\&.assign(4, 0\&.0);
+356             params_[0] = start + (table\&.size()-1)*dr;
+357             params_[1] = start;
+358             params_[2] = 0\&.0;
+359             params_[3] = 0\&.0;
+360             paramsAreSet_ = true;
+361         }
+362     } else {
+363         std::cerr<<"File "<<filename<<" not found, cannot setup potential\&."<<std::endl;
+364         paramsAreSet_ = false;
+365     }
+366 }
 .fi
 .SS "double tabulated::rcut ()\fC [virtual]\fP"
 
@@ -172,56 +194,67 @@ rcut
 .PP
 Implements \fBpairPotential\fP\&.
 .PP
-Definition at line 216 of file potentials\&.cpp\&.
+Definition at line 427 of file potentials\&.cpp\&.
 .PP
 References pairPotential::params_, and pairPotential::paramsAreSet_\&.
 .PP
 .nf
-216                         {
-217                 if (!paramsAreSet_) {
-218                                 throw customException ("For tabulated parameters not set");
-219                 } else {
-220                                 return params_[0];
-221                 }
-222 }
+427                         {
+428     if (!paramsAreSet_) {
+429         throw customException ("For tabulated parameters not set");
+430     } else {
+431         return params_[0];
+432     }
+433 }
 .fi
-.SS "void tabulated::setParameters (const std::vector< double > params)\fC [virtual]\fP"
+.SS "void tabulated::setParameters (const std::vector< double >params)\fC [virtual]\fP"
 
 .PP
 Set the parameters in the tabulated potential\&. 
 .PP
 \fBParameters:\fP
 .RS 4
-\fIparams\fP Vector of inputs: {r_cut, r_shift, u_shift, u_infinity} 
+\fIparams\fP Vector of inputs: {r_cut, r_shift, u_shift, u_infinity, Mtot} 
 .RE
 .PP
 
 .PP
 Implements \fBpairPotential\fP\&.
 .PP
-Definition at line 107 of file potentials\&.cpp\&.
+Definition at line 291 of file potentials\&.cpp\&.
 .PP
 References pairPotential::params_, pairPotential::paramsAreSet_, and pairPotential::useTailCorrection\&.
 .PP
-Referenced by main()\&.
-.PP
 .nf
-107                                                                 {
-108                 if (params\&.size() != 4) {
-109                                 throw customException ("For tabulated must specify 4 parameters: r_cut, r_shift, u_shift, u_infinity");
-110                 } else {
-111                                 if (params[0] < 0) {
-112                                                 throw customException ("For tabulated, r_cut > 0");
-113                                 }
-114                                 
-115                                 paramsAreSet_ = true;
-116                                 params_ = params;
-117                                 
-118                                 useTailCorrection = false;
-119                 }
-120 }
+291                                                                 {
+292     if (params\&.size() != 5) {
+293         throw customException ("For tabulated must specify 5 parameters: r_cut, r_shift, u_shift, u_infinity, Mtot");
+294     } else {
+295         if (params[0] < 0) {
+296             throw customException ("For tabulated, r_cut > 0");
+297         }
+298         if (int(params[4]) < 1) {
+299             throw customException ("For tabulated, total expanded ensemble states, Mtot >= 1");
+300         }
+301 
+302         paramsAreSet_ = true;
+303         params_ = params;
+304 
+305         useTailCorrection = false;
+306 
+307         // scale energy by a constant factor
+308         mScale\&.resize(int(params[4]), 0);
+309         for (int i = 0; i < mScale\&.size(); ++i) {
+310             if (i == 0) {
+311                 mScale[i] = 1\&.0;
+312             } else {
+313                 mScale[i] = 1\&.0/int(params[4])*i;
+314             }
+315         }
+316     }
+317 }
 .fi
-.SS "double tabulated::tailCorrection (const double rhoBath)\fC [virtual]\fP"
+.SS "double tabulated::tailCorrection (const doublerhoBath)\fC [virtual]\fP"
 
 .PP
 Tail correction for a tabulated potential always returns 0 since no information about what the potential is after its cutoff radius\&. 
@@ -240,15 +273,15 @@ U_tail
 .PP
 Implements \fBpairPotential\fP\&.
 .PP
-Definition at line 207 of file potentials\&.cpp\&.
+Definition at line 418 of file potentials\&.cpp\&.
 .PP
 .nf
-207                                                      {
-208                 return 0\&.0;
-209 }
+418                                                      {
+419     return 0\&.0;
+420 }
 .fi
 
 
 .SH "Author"
 .PP 
-Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

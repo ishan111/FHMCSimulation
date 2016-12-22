@@ -1,8 +1,8 @@
-.TH "/Users/nam4/Desktop/omcs/src/utilities.cpp" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/utilities.cpp" 3 "Thu Dec 22 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-/Users/nam4/Desktop/omcs/src/utilities.cpp \- 
+/home/nam4/Desktop/sandbox/FHMCSimulation/src/utilities.cpp \- 
 .SH SYNOPSIS
 .br
 .PP
@@ -22,7 +22,7 @@
 .RI "#define \fBAM\fP   (1\&.0/\fBIM1\fP)"
 .br
 .ti -1c
-.RI "#define \fBIMM1\fP   (\fBIM1\fP\-1)"
+.RI "#define \fBIMM1\fP   (\fBIM1\fP-1)"
 .br
 .ti -1c
 .RI "#define \fBIA1\fP   40014"
@@ -49,15 +49,43 @@
 .RI "#define \fBNDIV\fP   (1+\fBIMM1\fP/\fBNTAB\fP)"
 .br
 .ti -1c
-.RI "#define \fBEPS\fP   1\&.2e\-7"
+.RI "#define \fBEPS\fP   1\&.2e-7"
 .br
 .ti -1c
-.RI "#define \fBRNMX\fP   (1\&.0\-\fBEPS\fP)"
+.RI "#define \fBRNMX\fP   (1\&.0-\fBEPS\fP)"
 .br
 .in -1c
 .SS "Functions"
 
 .in +1c
+.ti -1c
+.RI "void \fBpauseCode\fP (long int dur)"
+.br
+.RI "\fIPause the code for a certain time\&. \fP"
+.ti -1c
+.RI "std::vector< std::string > \fBsplitstr\fP (const std::string &s, char delim)"
+.br
+.RI "\fIC++ explode a string\&. \fP"
+.ti -1c
+.RI "std::string \fBgetTimeStamp\fP ()"
+.br
+.RI "\fIObtain instantaneous timestamp\&. \fP"
+.ti -1c
+.RI "std::vector< std::vector
+.br
+< double > > \fBmatrixProduct\fP (std::vector< std::vector< double > > &mat1, std::vector< std::vector< double > > &mat2)"
+.br
+.RI "\fICompute product of 2 matrices, W = UV\&. \fP"
+.ti -1c
+.RI "std::vector< std::vector
+.br
+< double > > \fBrotationMatrix\fP (const double alpha, const double beta, const double gamma)"
+.br
+.RI "\fICreate 3D rotation matrix from angles (x, then y, then z) \fP"
+.ti -1c
+.RI "std::vector< double > \fBrandom3DSurfaceVector\fP (const double magnitude)"
+.br
+.RI "\fIChose a random vector sampled from a random distribution on the surface of a sphere\&. \fP"
 .ti -1c
 .RI "double \fBrng\fP (int *idum)"
 .br
@@ -67,7 +95,7 @@
 .br
 .RI "\fIReplace a position inside a box assuming periodic boundary conditions\&. \fP"
 .ti -1c
-.RI "double \fBpbc_dist2\fP (const std::vector< double > &p1, const std::vector< double > &p2, const std::vector< double > &box)"
+.RI "double \fBpbcDist2\fP (const std::vector< double > &p1, const std::vector< double > &p2, const std::vector< double > &box)"
 .br
 .RI "\fICalculate the minimum image distance squared between two coordinates assuming periodic boundary conditions\&. \fP"
 .ti -1c
@@ -79,7 +107,7 @@
 
 .in +1c
 .ti -1c
-.RI "int \fBRNG_SEED\fP = \-1024"
+.RI "int \fBRNG_SEED\fP = -1024"
 .br
 .RI "\fIDefault RNG seed\&. \fP"
 .in -1c
@@ -91,7 +119,7 @@
 Definition at line 8 of file utilities\&.cpp\&.
 .PP
 Referenced by rng()\&.
-.SS "#define EPS   1\&.2e\-7"
+.SS "#define EPS   1\&.2e-7"
 
 .PP
 Definition at line 18 of file utilities\&.cpp\&.
@@ -119,7 +147,7 @@ Referenced by rng()\&.
 Definition at line 7 of file utilities\&.cpp\&.
 .PP
 Referenced by rng()\&.
-.SS "#define IMM1   (\fBIM1\fP\-1)"
+.SS "#define IMM1   (\fBIM1\fP-1)"
 
 .PP
 Definition at line 9 of file utilities\&.cpp\&.
@@ -161,7 +189,7 @@ Referenced by rng()\&.
 Definition at line 16 of file utilities\&.cpp\&.
 .PP
 Referenced by rng()\&.
-.SS "#define RNMX   (1\&.0\-\fBEPS\fP)"
+.SS "#define RNMX   (1\&.0-\fBEPS\fP)"
 
 .PP
 Definition at line 19 of file utilities\&.cpp\&.
@@ -169,7 +197,7 @@ Definition at line 19 of file utilities\&.cpp\&.
 Referenced by rng()\&.
 .SH "Function Documentation"
 .PP 
-.SS "bool fileExists (std::string fileName)"
+.SS "bool fileExists (std::stringfileName)"
 
 .PP
 Function to check whether a given file exists or not\&. 
@@ -186,21 +214,106 @@ If file exists
 .PP
 
 .PP
-Definition at line 111 of file utilities\&.cpp\&.
+Definition at line 230 of file utilities\&.cpp\&.
 .PP
-Referenced by tabulated::loadPotential()\&.
+Referenced by checkpoint::checkpoint(), checkpoint::load(), and tabulated::loadPotential()\&.
 .PP
 .nf
-112 {
-113                 struct stat stFileInfo;
-114                 
-115                 if (stat(fileName\&.c_str(),&stFileInfo) == 0)
-116                                 return true;
-117                 else 
-118                                 return false;
-119 }
+230                                     {
+231     struct stat stFileInfo;
+232 
+233     if (stat(fileName\&.c_str(),&stFileInfo) == 0)
+234         return true;
+235     else
+236         return false;
+237 }
 .fi
-.SS "void pbc (std::vector< double > & pos, const std::vector< double > & box)"
+.SS "std::string getTimeStamp ()"
+
+.PP
+Obtain instantaneous timestamp\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+char* timestamp 
+.RE
+.PP
+
+.PP
+Definition at line 49 of file utilities\&.cpp\&.
+.PP
+Referenced by checkpoint::dump(), initialize(), checkpoint::load(), main(), performCrossover(), performTMMC(), performWALA(), moves::print(), and simSystem::readConfig()\&.
+.PP
+.nf
+49                           {
+50     time_t rawtime;
+51     time (&rawtime);
+52     struct tm * timeinfo;
+53     timeinfo = localtime (&rawtime);
+54     char timestamp [80];
+55     strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+56     std::string ans (timestamp);
+57     return ans;
+58 }
+.fi
+.SS "std::vector< std::vector < double > > matrixProduct (std::vector< std::vector< double > > &mat1, std::vector< std::vector< double > > &mat2)"
+
+.PP
+Compute product of 2 matrices, W = UV\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImat1\fP Matrix U 
+.br
+\fImat2\fP Matrix V 
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+W 
+.RE
+.PP
+
+.PP
+Definition at line 67 of file utilities\&.cpp\&.
+.PP
+Referenced by rotationMatrix()\&.
+.PP
+.nf
+67                                                                                                                                       {
+68     std::vector < double > dummy (3, 0);
+69     std::vector < std::vector < double > > W (3, dummy);
+70 
+71     for (unsigned int i = 0; i < 3; ++i) {
+72         for (unsigned int j = 0; j < 3; ++j) {
+73             W[i][j] = mat1[i][j]*mat2[j][i];
+74         }
+75     }
+76 
+77     return W;
+78 }
+.fi
+.SS "void pauseCode (long intdur)"
+
+.PP
+Pause the code for a certain time\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIdur\fP Number of seconds to pause for 
+.RE
+.PP
+
+.PP
+Definition at line 26 of file utilities\&.cpp\&.
+.PP
+.nf
+26                               {
+27     long int temp = time(NULL) + dur;
+28     while(temp > time(NULL));
+29 }
+.fi
+.SS "void pbc (std::vector< double > &pos, const std::vector< double > &box)"
 
 .PP
 Replace a position inside a box assuming periodic boundary conditions\&. 
@@ -214,54 +327,106 @@ Replace a position inside a box assuming periodic boundary conditions\&.
 .PP
 
 .PP
-Definition at line 67 of file utilities\&.cpp\&.
+Definition at line 186 of file utilities\&.cpp\&.
+.PP
+Referenced by hardWallZ::energy(), squareWellWallZ::energy(), rightTriangleXZ::energy(), hardWallZ::inside(), and squareWellWallZ::inside()\&.
 .PP
 .nf
-67                                                                       {
-68                 // generally while loops are faster than round statements
-69                 for (unsigned int i = 0; i < pos\&.size(); ++i) {
-70                                 while (pos[i] < 0\&.0) {
-71                                                 pos[i] += box[i];
-72                                 }
-73                                 while (pos[i] >= box[i]) {
-74                                                 pos[i] -= box[i];
-75                                 }
-76                 }
-77 }
+186                                                                       {
+187     // generally while loops are faster than round statements
+188     for (unsigned int i = 0; i < pos\&.size(); ++i) {
+189         while (pos[i] < 0\&.0) {
+190             pos[i] += box[i];
+191         }
+192         while (pos[i] >= box[i]) {
+193             pos[i] -= box[i];
+194         }
+195     }
+196 }
 .fi
-.SS "double pbc_dist2 (const std::vector< double > & p1, const std::vector< double > & p2, const std::vector< double > & box)"
+.SS "double pbcDist2 (const std::vector< double > &p1, const std::vector< double > &p2, const std::vector< double > &box)"
 
 .PP
 Calculate the minimum image distance squared between two coordinates assuming periodic boundary conditions\&. Coordinates do not have to be in the box to begin with\&.
 .PP
 \fBParameters:\fP
 .RS 4
-\fI\fP .RE
+\fI\\p1\fP Position 1 
+.br
+\fI\\p1\fP Position 2 
+.br
+\fI\\box\fP Box size
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+d2 (distance squared) 
+.RE
 .PP
 
 .PP
-Definition at line 88 of file utilities\&.cpp\&.
+Definition at line 207 of file utilities\&.cpp\&.
 .PP
-Referenced by pairPotential::energy()\&.
+Referenced by lennardJones::energy(), fsLennardJones::energy(), cylinderZ::energy(), tabulated::energy(), squareWell::energy(), hardCore::energy(), cylinderZ::inside(), and aggVolBias3::make()\&.
 .PP
 .nf
-88                                                                                                                    {
-89     double d2 = 0\&.0;
-90     for (unsigned int i = 0; i < p2\&.size(); ++i) {
-91                 double dr = p2[i] - p1[i];
-92                                 while (dr < -box[i]/2\&.0) {
-93                                                 dr += box[i];
-94                                 }
-95                                 while (dr > box[i]/2\&.0) {
-96                                                 dr -= box[i];
-97                                 }
-98                                 d2 += dr*dr;
-99                 }
-100     
-101     return d2;
-102 }
+207                                                                                                                   {
+208     double d2 = 0\&.0;
+209     for (unsigned int i = 0; i < p2\&.size(); ++i) {
+210         double dr = p2[i] - p1[i];
+211         while (dr < -box[i]/2\&.0) {
+212             dr += box[i];
+213         }
+214         while (dr > box[i]/2\&.0) {
+215             dr -= box[i];
+216         }
+217         d2 += dr*dr;
+218     }
+219 
+220     return d2;
+221 }
 .fi
-.SS "double rng (int * idum)"
+.SS "std::vector< double > random3DSurfaceVector (const doublemagnitude)"
+
+.PP
+Chose a random vector sampled from a random distribution on the surface of a sphere\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fImagnitude\fP Mangitude of the vector (radius of sphere)
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+ans double3 containing coordinates of vector 
+.RE
+.PP
+
+.PP
+Definition at line 124 of file utilities\&.cpp\&.
+.PP
+References rng(), and RNG_SEED\&.
+.PP
+Referenced by aggVolBias3::make()\&.
+.PP
+.nf
+124                                                                     {
+125     int success = 0;
+126     std::vector < double > ans (3, 0);
+127     while (success == 0) {
+128         double r1 = rng(&RNG_SEED), r2 = rng(&RNG_SEED), x1 = 1\&.0-2\&.0*r1, x2 = 1\&.0-2\&.0*r2;
+129         double sum2 = x1*x1+x2*x2;
+130         if (sum2 < 1\&.0) {
+131             ans[0] = 2*x1*sqrt(1-sum2)*magnitude;
+132             ans[1] = 2*x2*sqrt(1-sum2)*magnitude;
+133             ans[2] = (1-2\&.0*sum2)*magnitude;
+134             success = 1;
+135         }
+136     }
+137     return ans;
+138 }
+.fi
+.SS "double rng (int *idum)"
 
 .PP
 Random number generator (from Numerical Recipes) 
@@ -278,56 +443,125 @@ temp Pseudo-random number between [0, 1)
 .PP
 
 .PP
-Definition at line 28 of file utilities\&.cpp\&.
+Definition at line 147 of file utilities\&.cpp\&.
 .PP
 References AM, IA1, IA2, IM1, IM2, IMM1, IQ1, IQ2, IR1, IR2, NDIV, NTAB, and RNMX\&.
 .PP
-Referenced by deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), and moves::makeMove()\&.
+Referenced by aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), moves::makeMove(), random3DSurfaceVector(), and quaternion::setRandomRot()\&.
 .PP
 .nf
-28                        {
-29                 int j;
-30                 long k;
-31                 static long idum2=123456789;
-32                 static long iy=0;
-33                 static long iv[NTAB];
-34                 double temp;
-35 
-36                 if (*idum <= 0) {
-37                                 if (-(*idum) < 1) *idum=1;
-38                                 else *idum = -(*idum);
-39                                 idum2=(*idum);
-40                                 for (j=NTAB+7;j>=0;j--) {
-41                                                 k=(*idum)/IQ1;
-42                                                 *idum=IA1*(*idum-k*IQ1)-k*IR1;
-43                                                 if (*idum < 0) *idum += IM1;
-44                                                 if (j < NTAB) iv[j] = *idum;
-45                                 } iy=iv[0];
-46                 }
-47                 k=(*idum)/IQ1;
-48                 *idum=IA1*(*idum-k*IQ1)-k*IR1;
-49                 if (*idum < 0) *idum += IM1;
-50                 k=idum2/IQ2;
-51                 idum2=IA2*(idum2-k*IQ2)-k*IR2;
-52                 if (idum2 < 0) idum2 += IM2;
-53                 j=iy/NDIV;
-54                 iy=iv[j]-idum2;
-55                 iv[j] = *idum;
-56                 if (iy < 1) iy += IMM1;
-57                 if ((temp=AM*iy) > RNMX) return RNMX;
-58                 else return temp;
-59 }
+147                        {
+148     int j;
+149     long k;
+150     static long idum2=123456789;
+151     static long iy=0;
+152     static long iv[NTAB];
+153     double temp;
+154 
+155     if (*idum <= 0) {
+156         if (-(*idum) < 1) *idum=1;
+157         else *idum = -(*idum);
+158         idum2=(*idum);
+159         for (j=NTAB+7;j>=0;j--) {
+160             k=(*idum)/IQ1;
+161             *idum=IA1*(*idum-k*IQ1)-k*IR1;
+162             if (*idum < 0) *idum += IM1;
+163             if (j < NTAB) iv[j] = *idum;
+164         } iy=iv[0];
+165     }
+166     k=(*idum)/IQ1;
+167     *idum=IA1*(*idum-k*IQ1)-k*IR1;
+168     if (*idum < 0) *idum += IM1;
+169     k=idum2/IQ2;
+170     idum2=IA2*(idum2-k*IQ2)-k*IR2;
+171     if (idum2 < 0) idum2 += IM2;
+172     j=iy/NDIV;
+173     iy=iv[j]-idum2;
+174     iv[j] = *idum;
+175     if (iy < 1) iy += IMM1;
+176     if ((temp=AM*iy) > RNMX) return RNMX;
+177     else return temp;
+178 }
+.fi
+.SS "std::vector< std::vector < double > > rotationMatrix (const doublealpha, const doublebeta, const doublegamma)"
+
+.PP
+Create 3D rotation matrix from angles (x, then y, then z) 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIalpha\fP Radians to rotate centers by around x-axis 
+.br
+\fIbeta\fP Radians to rotate centers by around y-axis 
+.br
+\fIgamma\fP Radians to rotate centers by around z-axis 
+.RE
+.PP
+
+.PP
+Definition at line 87 of file utilities\&.cpp\&.
+.PP
+References matrixProduct()\&.
+.PP
+.nf
+87                                                                                                               {
+88 
+89     std::vector < double > dummy (3, 0);
+90     std::vector < std::vector < double > > Rx (3, dummy), Ry(3, dummy), Rz(3, dummy), Ryx, Rzyx;
+91 
+92     // https://en\&.wikipedia\&.org/wiki/Rotation_matrix#General_rotations
+93     Rx[0][0] = 1\&.0;
+94     Rx[1][1] = cos(alpha);
+95     Rx[1][2] = -sin(alpha);
+96     Rx[2][1] = sin(alpha);
+97     Rx[2][2] = cos(alpha);
+98 
+99     Ry[0][0] = cos(beta);
+100     Ry[0][2] = sin(beta);
+101     Ry[1][1] = 1\&.0;
+102     Ry[2][0] = -sin(beta);
+103     Ry[2][2] = cos(beta);
+104 
+105     Rz[0][0] = cos(gamma);
+106     Rz[0][1] = -sin(gamma);
+107     Rz[1][0] = sin(gamma);
+108     Rz[1][1] = cos(gamma);
+109     Rz[2][2] = 1\&.0;
+110 
+111     Ryx = matrixProduct(Ry, Rx);
+112     Rzyx = matrixProduct(Rz, Ryx);
+113 
+114     return Rzyx;
+115 }
+.fi
+.SS "std::vector< std::string > splitstr (const std::string &s, chardelim)"
+
+.PP
+C++ explode a string\&. For converting to string\&. 
+.PP
+Definition at line 34 of file utilities\&.cpp\&.
+.PP
+.nf
+34                                                                   {
+35     std::stringstream ss(s);
+36     std::string item;
+37     std::vector <std::string> tokens;
+38     while (std::getline(ss, item, delim)) {
+39         tokens\&.push_back(item);
+40     }
+41     return tokens;
+42 }
 .fi
 .SH "Variable Documentation"
 .PP 
-.SS "int RNG_SEED = \-1024"
+.SS "int RNG_SEED = -1024"
 
 .PP
 Default RNG seed\&. 
 .PP
 Definition at line 3 of file utilities\&.cpp\&.
 .PP
-Referenced by main(), translateParticle::make(), swapParticles::make(), insertParticle::make(), deleteParticle::make(), and moves::makeMove()\&.
+Referenced by initialize(), aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), insertParticle::make(), swapParticles::make(), moves::makeMove(), random3DSurfaceVector(), and quaternion::setRandomRot()\&.
 .SH "Author"
 .PP 
-Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

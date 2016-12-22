@@ -1,22 +1,46 @@
-\hypertarget{potentials_8h}{}\section{/\+Users/nam4/\+Desktop/omcs/src/potentials.h File Reference}
-\label{potentials_8h}\index{/\+Users/nam4/\+Desktop/omcs/src/potentials.\+h@{/\+Users/nam4/\+Desktop/omcs/src/potentials.\+h}}
+\hypertarget{potentials_8h}{\section{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/potentials.h File Reference}
+\label{potentials_8h}\index{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/potentials.\-h@{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/potentials.\-h}}
+}
 {\ttfamily \#include $<$cmath$>$}\\*
 {\ttfamily \#include $<$vector$>$}\\*
 {\ttfamily \#include $<$string$>$}\\*
 {\ttfamily \#include $<$iostream$>$}\\*
 {\ttfamily \#include $<$fstream$>$}\\*
-{\ttfamily \#include \char`\"{}global.\+h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}utilities.\+h\char`\"{}}\\*
-\subsection*{Classes}
+{\ttfamily \#include $<$limits$>$}\\*
+{\ttfamily \#include \char`\"{}global.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}utilities.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}atom.\-h\char`\"{}}\\*
+\subsection*{Data Structures}
 \begin{DoxyCompactItemize}
 \item 
-class \hyperlink{classpair_potential}{pair\+Potential}
+class \hyperlink{classpair_potential}{pair\-Potential}
 \begin{DoxyCompactList}\small\item\em Abstract base class which defines all pair potentials. \end{DoxyCompactList}\item 
-class \hyperlink{classlennard_jones}{lennard\+Jones}
-\begin{DoxyCompactList}\small\item\em Lennard-\/\+Jones Potential Parameters should be specified in the following order\+: \{ epsilon, sigma, r\+\_\+cut, u\+\_\+shift \}. \end{DoxyCompactList}\item 
+class \hyperlink{classlennard_jones}{lennard\-Jones}
+\begin{DoxyCompactList}\small\item\em Lennard-\/\-Jones Potential Parameters should be specified in the following order\-: \{ epsilon, sigma, r\-\_\-cut, u\-\_\-shift, Mtot \}. \end{DoxyCompactList}\item 
+class \hyperlink{classfs_lennard_jones}{fs\-Lennard\-Jones}
+\begin{DoxyCompactList}\small\item\em Force-\/\-Shifted Lennard-\/\-Jones Potential Parameters should be specified in the following order\-: \{ epsilon, sigma, r\-\_\-cut, Mtot \}. \end{DoxyCompactList}\item 
 class \hyperlink{classtabulated}{tabulated}
-\begin{DoxyCompactList}\small\item\em Tabulated Potential Parameters should be specified in the following order\+: \{ r\+\_\+cut, r\+\_\+shift, u\+\_\+shift, u\+\_\+infinity \}. \end{DoxyCompactList}\item 
-class \hyperlink{classsquare_well}{square\+Well}
-\begin{DoxyCompactList}\small\item\em Square-\/well potential Parameters should be specified in the following order\+: \{ sigma, wellwidth, welldepth \}. \end{DoxyCompactList}\item 
-class \hyperlink{classhard_core}{hard\+Core}
-\begin{DoxyCompactList}\small\item\em Hard-\/core potential Parameters should be specified in the following order\+: \{ sigma \}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Tabulated Potential Parameters should be specified in the following order\-: \{ r\-\_\-cut, r\-\_\-shift, u\-\_\-shift, u\-\_\-infinity, Mtot \}. \end{DoxyCompactList}\item 
+class \hyperlink{classsquare_well}{square\-Well}
+\begin{DoxyCompactList}\small\item\em Square-\/well potential Parameters should be specified in the following order\-: \{ sigma, wellwidth, welldepth, Mtot \}. \end{DoxyCompactList}\item 
+class \hyperlink{classhard_core}{hard\-Core}
+\begin{DoxyCompactList}\small\item\em Hard-\/core potential Parameters should be specified in the following order\-: \{ sigma, Mtot \}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y}~std\-::numeric\-\_\-limits$<$double$>$\-::max()
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\hypertarget{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{\index{potentials.\-h@{potentials.\-h}!N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y@{N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y}}
+\index{N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y@{N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y}!potentials.h@{potentials.\-h}}
+\subsubsection[{N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y}]{\setlength{\rightskip}{0pt plus 5cm}\#define N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y~std\-::numeric\-\_\-limits$<$double$>$\-::max()}}\label{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}
+
+
+Definition at line 14 of file potentials.\-h.
+
+
+
+Referenced by hard\-Wall\-Z\-::energy(), square\-Well\-Wall\-Z\-::energy(), cylinder\-Z\-::energy(), right\-Triangle\-X\-Z\-::energy(), square\-Well\-::energy(), hard\-Core\-::energy(), composite\-Barrier\-::energy(), right\-Triangle\-X\-Z\-::inside(), right\-Triangle\-X\-Z\-::right\-Triangle\-X\-Z(), and sim\-System\-::scratch\-Energy().
+

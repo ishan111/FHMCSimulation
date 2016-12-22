@@ -1,8 +1,10 @@
-.TH "pairPotential" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.TH "pairPotential" 3 "Thu Dec 22 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-pairPotential \- Abstract base class which defines all pair potentials\&.  
+pairPotential \- 
+.PP
+Abstract base class which defines all pair potentials\&.  
 
 .SH SYNOPSIS
 .br
@@ -10,7 +12,7 @@ pairPotential \- Abstract base class which defines all pair potentials\&.
 .PP
 \fC#include <potentials\&.h>\fP
 .PP
-Inherited by \fBhardCore\fP, \fBlennardJones\fP, \fBsquareWell\fP, and \fBtabulated\fP\&.
+Inherited by \fBfsLennardJones\fP, \fBhardCore\fP, \fBlennardJones\fP, \fBsquareWell\fP, and \fBtabulated\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
@@ -21,7 +23,7 @@ Inherited by \fBhardCore\fP, \fBlennardJones\fP, \fBsquareWell\fP, and \fBtabula
 .RI "virtual \fB~pairPotential\fP ()"
 .br
 .ti -1c
-.RI "virtual double \fBenergy\fP (const double r)=0"
+.RI "virtual double \fBenergy\fP (const \fBatom\fP *a1, const \fBatom\fP *a2, const std::vector< double > &box)=0"
 .br
 .ti -1c
 .RI "virtual double \fBtailCorrection\fP (const double rhoBath)=0"
@@ -34,15 +36,11 @@ Inherited by \fBhardCore\fP, \fBlennardJones\fP, \fBsquareWell\fP, and \fBtabula
 .br
 .RI "\fIAll potentials should be able to return their r_{cut} values so neighbor lists, etc\&. \fP"
 .ti -1c
-.RI "double \fBenergy\fP (const std::vector< double > &p1, const std::vector< double > &p2, const std::vector< double > &box)"
-.br
-.RI "\fICalculates the minimum image distance and invokes the energy call\&. \fP"
-.ti -1c
 .RI "void \fBsavePotential\fP (std::string filename, double start, double dr)"
 .br
 .RI "\fIFunction for saving arbitrary potential into ASCII file\&. \fP"
 .in -1c
-.SS "Public Attributes"
+.SS "Data Fields"
 
 .in +1c
 .ti -1c
@@ -60,55 +58,47 @@ Inherited by \fBhardCore\fP, \fBlennardJones\fP, \fBsquareWell\fP, and \fBtabula
 .SH "Detailed Description"
 .PP 
 Abstract base class which defines all pair potentials\&. 
+
+Note that tail corrections should be 'double' the 'standard tail corrections' which try to account for double-counting ahead of time\&. The system only iterates over unique pairs, so do NOT do this\&. Also, when doing MC insertions/deletions this double counting is never a problem so easier to do it this way\&. 
 .PP
-Definition at line 15 of file potentials\&.h\&.
+Definition at line 22 of file potentials\&.h\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "pairPotential::pairPotential ()\fC [inline]\fP"
 
 .PP
-Definition at line 17 of file potentials\&.h\&.
+Definition at line 24 of file potentials\&.h\&.
 .PP
 References paramsAreSet_\&.
 .PP
 .nf
-17 { paramsAreSet_ = false; }
+24 { paramsAreSet_ = false; }
 .fi
 .SS "virtual pairPotential::~pairPotential ()\fC [inline]\fP, \fC [virtual]\fP"
 
 .PP
-Definition at line 18 of file potentials\&.h\&.
+Definition at line 25 of file potentials\&.h\&.
 .PP
 .nf
-18 {;}
+25 {;}
 .fi
 .SH "Member Function Documentation"
 .PP 
-.SS "virtual double pairPotential::energy (const double r)\fC [pure virtual]\fP"
+.SS "virtual double pairPotential::energy (const \fBatom\fP *a1, const \fBatom\fP *a2, const std::vector< double > &box)\fC [pure virtual]\fP"
 
 .PP
-Implemented in \fBhardCore\fP, \fBsquareWell\fP, \fBtabulated\fP, and \fBlennardJones\fP\&.
+Implemented in \fBhardCore\fP, \fBsquareWell\fP, \fBtabulated\fP, \fBfsLennardJones\fP, and \fBlennardJones\fP\&.
 .PP
 Referenced by savePotential()\&.
-.SS "double pairPotential::energy (const std::vector< double > & p1, const std::vector< double > & p2, const std::vector< double > & box)\fC [inline]\fP"
-
-.PP
-Calculates the minimum image distance and invokes the energy call\&. 
-.PP
-Definition at line 26 of file potentials\&.h\&.
-.PP
-References energy(), and pbc_dist2()\&.
-.PP
-Referenced by energy()\&.
 .SS "virtual double pairPotential::rcut ()\fC [pure virtual]\fP"
 
 .PP
 All potentials should be able to return their r_{cut} values so neighbor lists, etc\&. can use them 
 .PP
-Implemented in \fBhardCore\fP, \fBsquareWell\fP, \fBtabulated\fP, and \fBlennardJones\fP\&.
+Implemented in \fBhardCore\fP, \fBsquareWell\fP, \fBtabulated\fP, \fBfsLennardJones\fP, and \fBlennardJones\fP\&.
 .PP
-Referenced by simSystem::addPotential(), and savePotential()\&.
-.SS "void pairPotential::savePotential (std::string filename, double start, double dr)"
+Referenced by savePotential()\&.
+.SS "void pairPotential::savePotential (std::stringfilename, doublestart, doubledr)"
 
 .PP
 Function for saving arbitrary potential into ASCII file\&. 
@@ -129,55 +119,61 @@ Definition at line 10 of file potentials\&.cpp\&.
 References energy(), and rcut()\&.
 .PP
 .nf
-11 {
-12                 if (dr <= 0\&.0) {
-13                                 throw customException("The value for dr must be positive");
-14                 }
-15                 
-16                 double r = start;
-17                 std::ofstream outData(filename\&.c_str());
-18                                 
-19                 while (r < rcut()) {
-20                                 outData<<r<<"\t"<<energy(r)<<std::endl;                         
-21                                 r += dr;
-22                 }
-23                 
-24                 outData\&.close();
-25 }
+10                                                                              {
+11     if (dr <= 0\&.0) {
+12         throw customException("The value for dr must be positive");
+13     }
+14 
+15     double r = start;
+16     std::ofstream outData(filename\&.c_str());
+17 
+18     atom a1, a2;
+19     std::vector <double> p1 (3, 0), box(3, 2\&.1*rcut()); // box must be atleast 2 rcut, +0\&.1 for good measure
+20     a1\&.pos = p1;
+21     a2\&.pos = p1;
+22 
+23     while (r < rcut()) {
+24         a2\&.pos[2] = r;
+25         outData << r << "\t" << energy(&a1, &a2, box) << std::endl;
+26         r += dr;
+27     }
+28 
+29     outData\&.close();
+30 }
 .fi
-.SS "virtual void pairPotential::setParameters (const std::vector< double > params)\fC [pure virtual]\fP"
+.SS "virtual void pairPotential::setParameters (const std::vector< double >params)\fC [pure virtual]\fP"
 
 .PP
-Implemented in \fBhardCore\fP, \fBsquareWell\fP, \fBtabulated\fP, and \fBlennardJones\fP\&.
-.SS "virtual double pairPotential::tailCorrection (const double rhoBath)\fC [pure virtual]\fP"
+Implemented in \fBhardCore\fP, \fBsquareWell\fP, \fBtabulated\fP, \fBfsLennardJones\fP, and \fBlennardJones\fP\&.
+.SS "virtual double pairPotential::tailCorrection (const doublerhoBath)\fC [pure virtual]\fP"
 
 .PP
-Implemented in \fBhardCore\fP, \fBsquareWell\fP, \fBtabulated\fP, and \fBlennardJones\fP\&.
-.SH "Member Data Documentation"
+Implemented in \fBhardCore\fP, \fBsquareWell\fP, \fBtabulated\fP, \fBfsLennardJones\fP, and \fBlennardJones\fP\&.
+.SH "Field Documentation"
 .PP 
 .SS "std::vector< double > pairPotential::params_"
 
 .PP
 Parameters (constants) that are needed to calculate U(r) 
 .PP
-Definition at line 29 of file potentials\&.h\&.
+Definition at line 34 of file potentials\&.h\&.
 .PP
-Referenced by lennardJones::energy(), tabulated::energy(), squareWell::energy(), hardCore::energy(), tabulated::loadPotential(), lennardJones::rcut(), tabulated::rcut(), squareWell::rcut(), hardCore::rcut(), lennardJones::setParameters(), tabulated::setParameters(), squareWell::setParameters(), hardCore::setParameters(), and lennardJones::tailCorrection()\&.
+Referenced by lennardJones::energy(), fsLennardJones::energy(), tabulated::energy(), tabulated::loadPotential(), lennardJones::rcut(), fsLennardJones::rcut(), tabulated::rcut(), squareWell::rcut(), hardCore::rcut(), lennardJones::setParameters(), fsLennardJones::setParameters(), tabulated::setParameters(), squareWell::setParameters(), hardCore::setParameters(), and lennardJones::tailCorrection()\&.
 .SS "bool pairPotential::paramsAreSet_"
 
 .PP
 Logical check if the paramters for this potential have been specified by the user\&. 
 .PP
-Definition at line 30 of file potentials\&.h\&.
+Definition at line 35 of file potentials\&.h\&.
 .PP
-Referenced by lennardJones::energy(), tabulated::energy(), squareWell::energy(), hardCore::energy(), tabulated::loadPotential(), pairPotential(), lennardJones::rcut(), tabulated::rcut(), squareWell::rcut(), hardCore::rcut(), lennardJones::setParameters(), tabulated::setParameters(), squareWell::setParameters(), and hardCore::setParameters()\&.
+Referenced by lennardJones::energy(), fsLennardJones::energy(), tabulated::energy(), squareWell::energy(), hardCore::energy(), tabulated::loadPotential(), pairPotential(), lennardJones::rcut(), fsLennardJones::rcut(), tabulated::rcut(), squareWell::rcut(), hardCore::rcut(), lennardJones::setParameters(), fsLennardJones::setParameters(), tabulated::setParameters(), squareWell::setParameters(), and hardCore::setParameters()\&.
 .SS "bool pairPotential::useTailCorrection"
 
 .PP
-Definition at line 20 of file potentials\&.h\&.
+Definition at line 27 of file potentials\&.h\&.
 .PP
-Referenced by lennardJones::setParameters(), tabulated::setParameters(), squareWell::setParameters(), and hardCore::setParameters()\&.
+Referenced by lennardJones::setParameters(), fsLennardJones::setParameters(), tabulated::setParameters(), squareWell::setParameters(), and hardCore::setParameters()\&.
 
 .SH "Author"
 .PP 
-Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

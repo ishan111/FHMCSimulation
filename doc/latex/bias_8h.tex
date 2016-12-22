@@ -1,5 +1,6 @@
-\hypertarget{bias_8h}{}\section{/\+Users/nam4/\+Desktop/omcs/src/bias.h File Reference}
-\label{bias_8h}\index{/\+Users/nam4/\+Desktop/omcs/src/bias.\+h@{/\+Users/nam4/\+Desktop/omcs/src/bias.\+h}}
+\hypertarget{bias_8h}{\section{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/bias.h File Reference}
+\label{bias_8h}\index{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/bias.\-h@{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/bias.\-h}}
+}
 {\ttfamily \#include $<$vector$>$}\\*
 {\ttfamily \#include $<$string$>$}\\*
 {\ttfamily \#include $<$climits$>$}\\*
@@ -7,57 +8,58 @@
 {\ttfamily \#include $<$cmath$>$}\\*
 {\ttfamily \#include $<$iostream$>$}\\*
 {\ttfamily \#include $<$fstream$>$}\\*
-{\ttfamily \#include \char`\"{}global.\+h\char`\"{}}\\*
-{\ttfamily \#include \char`\"{}utilities.\+h\char`\"{}}\\*
-\subsection*{Classes}
+{\ttfamily \#include $<$iomanip$>$}\\*
+{\ttfamily \#include \char`\"{}global.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}utilities.\-h\char`\"{}}\\*
+\subsection*{Data Structures}
 \begin{DoxyCompactItemize}
 \item 
 class \hyperlink{classtmmc}{tmmc}
 \begin{DoxyCompactList}\small\item\em Transition Matrix Monte Carlo biasing class. \end{DoxyCompactList}\item 
 class \hyperlink{classwala}{wala}
-\begin{DoxyCompactList}\small\item\em Wang-\/\+Landau biasing class. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Wang-\/\-Landau biasing class. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Macros}
 \begin{DoxyCompactItemize}
 \item 
-\#define \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+}~long long int
+\#define \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-}~long long int
 \begin{DoxyCompactList}\small\item\em For biasing, need to address things with large indices. \end{DoxyCompactList}\item 
-\#define \hyperlink{bias_8h_a9f1e113b6454173bd61677519ec34c3a}{spec\+Exp}(a,  b)~std\+::max(a, b) + log(1.\+0 + exp(-\/std\+::abs(a-\/b)))
-\begin{DoxyCompactList}\small\item\em Jacobi method for evaluating natural logarithm of a sum of exponentials E.\+g. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\#define \hyperlink{bias_8h_a9f1e113b6454173bd61677519ec34c3a}{spec\-Exp}(a, b)~std\-::max(a, b) + log(1.\-0 + exp(-\/std\-::fabs(a-\/b)))
+\begin{DoxyCompactList}\small\item\em Jacobi method for evaluating natural logarithm of a sum of exponentials E.\-g. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Macro Definition Documentation}
-\hypertarget{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{}\index{bias.\+h@{bias.\+h}!\+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+@{\+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+}}
-\index{\+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+@{\+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+}!bias.\+h@{bias.\+h}}
-\subsubsection[{\+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+}]{\setlength{\rightskip}{0pt plus 5cm}\#define \+\_\+\+\_\+\+B\+I\+A\+S\+\_\+\+I\+N\+T\+\_\+\+T\+Y\+P\+E\+\_\+\+\_\+~long long int}\label{bias_8h_a1ceb524363fcb94da0c64d297ea27438}
+\hypertarget{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\index{bias.\-h@{bias.\-h}!\-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-@{\-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-}}
+\index{\-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-@{\-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-}!bias.h@{bias.\-h}}
+\subsubsection[{\-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}\#define \-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-~long long int}}\label{bias_8h_a1ceb524363fcb94da0c64d297ea27438}
 
 
 For biasing, need to address things with large indices. 
 
 
 
-Definition at line 15 of file bias.\+h.
+Definition at line 23 of file bias.\-h.
 
 
 
-Referenced by calculate\+Bias(), tmmc\+::calculate\+P\+I(), tmmc\+::check\+Fully\+Visited(), tmmc\+::get\+Address(), wala\+::get\+Address(), tmmc\+::get\+Transition\+Address(), tmmc\+::read\+C(), wala\+::readln\+P\+I(), tmmc\+::tmmc(), wala\+::update(), and wala\+::wala().
+Referenced by calculate\-Bias(), tmmc\-::calculate\-P\-I(), tmmc\-::check\-Fully\-Visited(), tmmc\-::get\-Transition\-Address(), tmmc\-::tmmc(), wala\-::update(), and wala\-::wala().
 
-\hypertarget{bias_8h_a9f1e113b6454173bd61677519ec34c3a}{}\index{bias.\+h@{bias.\+h}!spec\+Exp@{spec\+Exp}}
-\index{spec\+Exp@{spec\+Exp}!bias.\+h@{bias.\+h}}
-\subsubsection[{spec\+Exp}]{\setlength{\rightskip}{0pt plus 5cm}\#define spec\+Exp(
+\hypertarget{bias_8h_a9f1e113b6454173bd61677519ec34c3a}{\index{bias.\-h@{bias.\-h}!spec\-Exp@{spec\-Exp}}
+\index{spec\-Exp@{spec\-Exp}!bias.h@{bias.\-h}}
+\subsubsection[{spec\-Exp}]{\setlength{\rightskip}{0pt plus 5cm}\#define spec\-Exp(
 \begin{DoxyParamCaption}
 \item[{}]{a, }
 \item[{}]{b}
 \end{DoxyParamCaption}
-)~std\+::max(a, b) + log(1.\+0 + exp(-\/std\+::abs(a-\/b)))}\label{bias_8h_a9f1e113b6454173bd61677519ec34c3a}
+)~std\-::max(a, b) + log(1.\-0 + exp(-\/std\-::fabs(a-\/b)))}}\label{bias_8h_a9f1e113b6454173bd61677519ec34c3a}
 
 
-Jacobi method for evaluating natural logarithm of a sum of exponentials E.\+g. 
+Jacobi method for evaluating natural logarithm of a sum of exponentials E.\-g. 
 
-ln( exp(a) + exp(b) ) = \hyperlink{bias_8h_a9f1e113b6454173bd61677519ec34c3a}{spec\+Exp(a, b)} 
+ln( exp(a) + exp(b) ) = \hyperlink{bias_8h_a9f1e113b6454173bd61677519ec34c3a}{spec\-Exp(a, b)} 
 
-Definition at line 20 of file bias.\+h.
+Definition at line 28 of file bias.\-h.
 
 
 
-Referenced by wala\+::evaluate\+Flatness().
+Referenced by wala\-::evaluate\-Flatness().
 

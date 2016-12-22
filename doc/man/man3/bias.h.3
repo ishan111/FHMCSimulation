@@ -1,8 +1,8 @@
-.TH "/Users/nam4/Desktop/omcs/src/bias.h" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/bias.h" 3 "Thu Dec 22 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-/Users/nam4/Desktop/omcs/src/bias.h \- 
+/home/nam4/Desktop/sandbox/FHMCSimulation/src/bias.h \- 
 .SH SYNOPSIS
 .br
 .PP
@@ -20,12 +20,14 @@
 .br
 \fC#include <fstream>\fP
 .br
+\fC#include <iomanip>\fP
+.br
 \fC#include 'global\&.h'\fP
 .br
 \fC#include 'utilities\&.h'\fP
 .br
 
-.SS "Classes"
+.SS "Data Structures"
 
 .in +1c
 .ti -1c
@@ -45,7 +47,7 @@
 .br
 .RI "\fIFor biasing, need to address things with large indices\&. \fP"
 .ti -1c
-.RI "#define \fBspecExp\fP(a,  b)   std::max(a, b) + log(1\&.0 + exp(\-std::abs(a\-b)))"
+.RI "#define \fBspecExp\fP(a, b)   std::max(a, b) + log(1\&.0 + exp(-std::fabs(a-b)))"
 .br
 .RI "\fIJacobi method for evaluating natural logarithm of a sum of exponentials E\&.g\&. \fP"
 .in -1c
@@ -56,17 +58,17 @@
 .PP
 For biasing, need to address things with large indices\&. 
 .PP
-Definition at line 15 of file bias\&.h\&.
+Definition at line 23 of file bias\&.h\&.
 .PP
-Referenced by calculateBias(), tmmc::calculatePI(), tmmc::checkFullyVisited(), tmmc::getAddress(), wala::getAddress(), tmmc::getTransitionAddress(), tmmc::readC(), wala::readlnPI(), tmmc::tmmc(), wala::update(), and wala::wala()\&.
-.SS "#define specExp(a, b)   std::max(a, b) + log(1\&.0 + exp(\-std::abs(a\-b)))"
+Referenced by calculateBias(), tmmc::calculatePI(), tmmc::checkFullyVisited(), tmmc::getTransitionAddress(), tmmc::tmmc(), wala::update(), and wala::wala()\&.
+.SS "#define specExp(a, b)   std::max(a, b) + log(1\&.0 + exp(-std::fabs(a-b)))"
 
 .PP
 Jacobi method for evaluating natural logarithm of a sum of exponentials E\&.g\&. ln( exp(a) + exp(b) ) = \fBspecExp(a, b)\fP 
 .PP
-Definition at line 20 of file bias\&.h\&.
+Definition at line 28 of file bias\&.h\&.
 .PP
 Referenced by wala::evaluateFlatness()\&.
 .SH "Author"
 .PP 
-Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

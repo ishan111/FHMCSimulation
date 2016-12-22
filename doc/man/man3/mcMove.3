@@ -1,8 +1,10 @@
-.TH "mcMove" 3 "Mon Aug 10 2015" "Version v0.0.1" "Multicomponent  Monte Carlo Simulation" \" -*- nroff -*-
+.TH "mcMove" 3 "Thu Dec 22 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
-mcMove \- Virtual base class for all Monte Carlo moves\&.  
+mcMove \- 
+.PP
+Virtual base class for all Monte Carlo moves\&.  
 
 .SH SYNOPSIS
 .br
@@ -10,7 +12,7 @@ mcMove \- Virtual base class for all Monte Carlo moves\&.
 .PP
 \fC#include <moves\&.h>\fP
 .PP
-Inherited by \fBdeleteParticle\fP, \fBinsertParticle\fP, \fBswapParticles\fP, and \fBtranslateParticle\fP\&.
+Inherited by \fBaggVolBias3\fP, \fBaggVolBiasDelete\fP, \fBaggVolBiasInsert\fP, \fBdeleteParticle\fP, \fBinsertParticle\fP, \fBswapParticles\fP, and \fBtranslateParticle\fP\&.
 .SS "Public Member Functions"
 
 .in +1c
@@ -28,6 +30,10 @@ Inherited by \fBdeleteParticle\fP, \fBinsertParticle\fP, \fBswapParticles\fP, an
 .br
 .RI "\fIMake a MC move, return MOVE_SUCCESS or MOVE_FAILURE\&. \fP"
 .ti -1c
+.RI "const bool \fBchangeN\fP ()"
+.br
+.RI "\fIReturns whether or not the move has the ability to change the net number of particles in the system\&. \fP"
+.ti -1c
 .RI "const int \fBwhatType\fP ()"
 .br
 .RI "\fIReturns the index referring to the atom type this move operates on\&. \fP"
@@ -39,6 +45,10 @@ Inherited by \fBdeleteParticle\fP, \fBinsertParticle\fP, \fBswapParticles\fP, an
 .SS "Protected Attributes"
 
 .in +1c
+.ti -1c
+.RI "bool \fBchangeN_\fP"
+.br
+.RI "\fIDoes this move have the capacity to create a net change in the total number of particles? \fP"
 .ti -1c
 .RI "int \fBtypeIndex_\fP"
 .br
@@ -52,26 +62,26 @@ Inherited by \fBdeleteParticle\fP, \fBinsertParticle\fP, \fBswapParticles\fP, an
 .PP 
 Virtual base class for all Monte Carlo moves\&. 
 .PP
-Definition at line 17 of file moves\&.h\&.
+Definition at line 15 of file moves\&.h\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "mcMove::mcMove ()\fC [inline]\fP"
 
 .PP
-Definition at line 19 of file moves\&.h\&.
+Definition at line 17 of file moves\&.h\&.
 .PP
 .nf
-19 {};
+17 {};
 .fi
-.SS "mcMove::mcMove (const int typeIndex, const std::string tag)\fC [inline]\fP"
+.SS "mcMove::mcMove (const inttypeIndex, const std::stringtag)\fC [inline]\fP"
 
 .PP
-Definition at line 20 of file moves\&.h\&.
+Definition at line 18 of file moves\&.h\&.
 .PP
 References name_, and typeIndex_\&.
 .PP
 .nf
-20 { typeIndex_ = typeIndex; name_ = tag + boost::lexical_cast<std::string>(typeIndex); }  
+18 { typeIndex_ = typeIndex; name_ = tag+std::to_string(typeIndex); }
 .fi
 .SS "mcMove::~mcMove ()\fC [pure virtual]\fP"
 
@@ -85,18 +95,26 @@ Definition at line 3 of file moves\&.cpp\&.
 .fi
 .SH "Member Function Documentation"
 .PP 
-.SS "virtual int mcMove::make (\fBsimSystem\fP & sys)\fC [pure virtual]\fP"
+.SS "const bool mcMove::changeN ()\fC [inline]\fP"
+
+.PP
+Returns whether or not the move has the ability to change the net number of particles in the system\&. 
+.PP
+Definition at line 21 of file moves\&.h\&.
+.PP
+References changeN_\&.
+.SS "virtual int mcMove::make (\fBsimSystem\fP &sys)\fC [pure virtual]\fP"
 
 .PP
 Make a MC move, return MOVE_SUCCESS or MOVE_FAILURE\&. 
 .PP
-Implemented in \fBdeleteParticle\fP, \fBinsertParticle\fP, \fBswapParticles\fP, and \fBtranslateParticle\fP\&.
+Implemented in \fBaggVolBiasDelete\fP, \fBaggVolBiasInsert\fP, \fBinsertParticle\fP, \fBswapParticles\fP, \fBdeleteParticle\fP, \fBtranslateParticle\fP, and \fBaggVolBias3\fP\&.
 .SS "const std::string mcMove::myName ()\fC [inline]\fP"
 
 .PP
 Return the name of this move\&. 
 .PP
-Definition at line 24 of file moves\&.h\&.
+Definition at line 23 of file moves\&.h\&.
 .PP
 References name_\&.
 .SS "const int mcMove::whatType ()\fC [inline]\fP"
@@ -104,11 +122,19 @@ References name_\&.
 .PP
 Returns the index referring to the atom type this move operates on\&. 
 .PP
-Definition at line 23 of file moves\&.h\&.
+Definition at line 22 of file moves\&.h\&.
 .PP
 References typeIndex_\&.
-.SH "Member Data Documentation"
+.SH "Field Documentation"
 .PP 
+.SS "bool mcMove::changeN_\fC [protected]\fP"
+
+.PP
+Does this move have the capacity to create a net change in the total number of particles? 
+.PP
+Definition at line 26 of file moves\&.h\&.
+.PP
+Referenced by aggVolBias3::aggVolBias3(), aggVolBiasDelete::aggVolBiasDelete(), aggVolBiasInsert::aggVolBiasInsert(), changeN(), deleteParticle::deleteParticle(), insertParticle::insertParticle(), swapParticles::swapParticles(), and translateParticle::translateParticle()\&.
 .SS "std::string mcMove::name_\fC [protected]\fP"
 
 .PP
@@ -116,7 +142,7 @@ Move name\&.
 .PP
 Definition at line 28 of file moves\&.h\&.
 .PP
-Referenced by deleteParticle::deleteParticle(), insertParticle::insertParticle(), mcMove(), myName(), swapParticles::swapParticles(), and translateParticle::translateParticle()\&.
+Referenced by aggVolBias3::aggVolBias3(), aggVolBiasDelete::aggVolBiasDelete(), aggVolBiasInsert::aggVolBiasInsert(), deleteParticle::deleteParticle(), insertParticle::insertParticle(), mcMove(), myName(), swapParticles::swapParticles(), and translateParticle::translateParticle()\&.
 .SS "int mcMove::typeIndex_\fC [protected]\fP"
 
 .PP
@@ -124,8 +150,8 @@ Species index this move will operate on\&.
 .PP
 Definition at line 27 of file moves\&.h\&.
 .PP
-Referenced by deleteParticle::deleteParticle(), insertParticle::insertParticle(), deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), mcMove(), swapParticles::swapParticles(), translateParticle::translateParticle(), and whatType()\&.
+Referenced by aggVolBias3::aggVolBias3(), aggVolBiasDelete::aggVolBiasDelete(), aggVolBiasInsert::aggVolBiasInsert(), deleteParticle::deleteParticle(), insertParticle::insertParticle(), aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), mcMove(), swapParticles::swapParticles(), translateParticle::translateParticle(), and whatType()\&.
 
 .SH "Author"
 .PP 
-Generated automatically by Doxygen for Multicomponent Monte Carlo Simulation from the source code\&.
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

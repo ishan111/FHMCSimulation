@@ -1,5 +1,8 @@
 var searchData=
 [
+  ['barrier',['barrier',['../classbarrier.html',1,'']]],
+  ['barrier_2ecpp',['barrier.cpp',['../barrier_8cpp.html',1,'']]],
+  ['barrier_2eh',['barrier.h',['../barrier_8h.html',1,'']]],
   ['beta',['beta',['../classsim_system.html#a3eeec9678902f8d7fce4dad6064aaf4c',1,'simSystem']]],
   ['bias_2ecpp',['bias.cpp',['../bias_8cpp.html',1,'']]],
   ['bias_2eh',['bias.h',['../bias_8h.html',1,'']]],

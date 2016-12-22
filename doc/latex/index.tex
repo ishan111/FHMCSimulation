@@ -1,4 +1,4 @@
-Perform (un/)biased multicomponent G\+C\+M\+C.\begin{DoxyAuthor}{Author}
+Perform (un/)biased multicomponent G\-C\-M\-C.\begin{DoxyAuthor}{Author}
 Nathan A. Mahynski 
 \end{DoxyAuthor}
 \begin{DoxyDate}{Date}
@@ -6,4 +6,10 @@ Nathan A. Mahynski
 \end{DoxyDate}
 \hypertarget{index_Dependencies}{}\section{Dependencies}\label{index_Dependencies}
 \hypertarget{index_Compiling}{}\section{Compiling}\label{index_Compiling}
-Run tests and run main\hypertarget{main.cpp_Input}{}\section{Input}\label{main.cpp_Input}
+Run tests and run main
+
+Complile with -\/\-D\-F\-L\-U\-I\-D\-\_\-\-P\-H\-A\-S\-E\-\_\-\-S\-I\-M\-U\-L\-A\-T\-I\-O\-N\-S if simulations are purely in the fluid phase. This will allow tail corrections to be enabled which are only valid assuming a converging g(r) at large r.
+
+Compile with -\/\-D\-N\-E\-T\-C\-D\-F\-\_\-\-C\-A\-P\-A\-B\-L\-E if net\-C\-D\-F libraries are installed and can be compiled against. Certain data will be output to these arrays instead of A\-S\-C\-I\-I files if so.
+
+Tests compile with cmake and by default, do not link to netcdf libraries since they do not use them. Everything tested in A\-S\-C\-I\-I.\hypertarget{main-tmmc.cpp_Input}{}\section{Input}\label{main-tmmc.cpp_Input}
