@@ -53,11 +53,14 @@ int main (int argc, char * const argv[]) {
 	if (!cpt.walaDone) {
 		// Perform Wang-Landau simulation
 		performWALA (sys, cpt, &usedMovesEq);
+		sanityChecks(sys);
 		performCrossover (sys, cpt, &usedMovesEq);
+		sanityChecks(sys);
 		performTMMC (sys, cpt, &usedMovesPr);
 	} else if (!cpt.crossoverDone) {
 		// Crossover to TMMC simulation
 		performCrossover (sys, cpt, &usedMovesEq);
+		sanityChecks(sys);
 		performTMMC (sys, cpt, &usedMovesPr);
 	} else if (!cpt.tmmcDone) {
 		// Perform TMMC portion of the simulation

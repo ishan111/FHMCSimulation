@@ -11,6 +11,15 @@ void sanityChecks (simSystem &sys) {
         std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
         exit(SYS_FAILURE);
 	}
+	long long int ns = 0;
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		ns += sys.numSpecies[i];
+	}
+	if (ns != sys.getTotN()) {
+		std::cerr << "Sum of fully inserted atoms deviates from total counter" << std::endl;
+		exit(SYS_FAILURE);
+	}
+		
 	if (sys.getTotalM() > 1) {
 		if (sys.getFractionalAtom()->mState != sys.getCurrentM()) {
 			std::cerr << "Expanded ensemble state deviates between atom ("+std::to_string(sys.getFractionalAtom()->mState)+") and system log ("+std::to_string(sys.getCurrentM())+")" << std::endl;
