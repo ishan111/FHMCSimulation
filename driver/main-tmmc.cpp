@@ -35,7 +35,7 @@ int main (int argc, char * const argv[]) {
 	simSystem sys = initialize (argv[1], &usedMovesEq, &usedMovesPr);
 
 	// If checkpoint exists, default to use this information to restart the simulation
-	checkpoint cpt ("checkpt", 900, sys);
+	checkpoint cpt ("checkpt", 1, sys);
     if (!cpt.hasCheckpoint) {
         setup (sys, argv[1]);
     }
@@ -64,16 +64,7 @@ int main (int argc, char * const argv[]) {
 		return SYS_FAILURE;
 	}
 
-	// Print final results
-    sys.printSnapshot("final.xyz", "last configuration");
-    sys.refineEnergyHistogramBounds();
-    sys.printEnergyHistogram("final_eHist");
-    sys.refinePkHistogramBounds();
-    sys.printPkHistogram("final_pkHist");
-    sys.printExtMoments("final_extMom");
-    sys.getTMMCBias()->print("final", false);
-
-	// Dump a final checkpoint
+	// Dump a final checkpoint to indicate the simulation has finished, so do not restart it
 	cpt.dump(sys);
 
     std::cout << "Finished simulation at " << getTimeStamp() << std::endl;

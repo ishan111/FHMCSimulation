@@ -54,7 +54,7 @@ void dynamic_one_dim_histogram::initialize_ (const double lb, const double ub, c
  	if (fabs(round((ub - lb)/delta) - ((ub - lb)/delta)) < 1.0e-6) {
  		nbins_++; // include endpoint
  	}
-
+	
     // initialize the histogram to 0
     h_.resize(0);
     try {

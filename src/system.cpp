@@ -1391,6 +1391,11 @@ void simSystem::readConfig (std::string filename) {
 	std::cout << "Reading initial configuration from " << filename << std::endl;
 
 	std::ifstream infile (filename.c_str());
+	if (!infile.is_open()) {
+		std::cerr << "Cannot open " << filename << std::endl;
+		exit(SYS_FAILURE);
+	}
+
 	std::string line;
 	std::vector < atom > sysatoms;
 	std::vector < int > index;

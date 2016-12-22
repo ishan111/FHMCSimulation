@@ -39,6 +39,7 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
     }
 
     std::cout << "Initial lnF = " << sys.getWALABias()->lnF() << " at " << getTimeStamp() << std::endl;
+    std::cout << "Starting from " << moveStart << " moves at " << getTimeStamp() << std::endl;
 
     while (lnF > sys.lnF_end) {
         for (unsigned long long int move = moveStart; move < sys.wlSweepSize; ++move) {
@@ -60,12 +61,11 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             sys.getWALABias()->iterateForward(); // if flat, need to reset H and reduce lnF
             lnF = sys.getWALABias()->lnF();
             flat = false;
-            std::cout << "lnF = " << lnF << " at " << getTimeStamp() << std::endl;
+            std::cout << "Wang-Landau is now flat, new lnF = " << lnF << " at " << getTimeStamp() << std::endl;
+            usedMovesEq->print("wala.stats");
         }
     }
 
     sanityChecks(sys);
-    
     res.walaDone = true;
-    usedMovesEq->print("wala.stats");
 }

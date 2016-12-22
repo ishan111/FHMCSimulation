@@ -25,6 +25,10 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
         moveStart = res.moveCounter;
     }
 
+    std::cout << "Starting from lnF = " << sys.getWALABias()->lnF() << " at " << getTimeStamp() << std::endl;
+    std::cout << "Starting from " << moveStart << " moves in current sweep at " << getTimeStamp() << std::endl;
+    std::cout << "Starting from " << timesFullyVisited << " out of " << sys.nCrossoverVisits << " sweeps at " << getTimeStamp() << std::endl;
+
     while (timesFullyVisited < sys.nCrossoverVisits) {
         for (long long int move = moveStart; move < sys.wlSweepSize; ++move) {
             try {
@@ -51,6 +55,7 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             sys.getTMMCBias()->iterateForward (); // reset the counting matrix and increment total sweep number
             timesFullyVisited = sys.getTMMCBias()->numSweeps();
             std::cout << "Times C fully visited = " << timesFullyVisited << " at " << getTimeStamp() << std::endl;
+            usedMovesEq->print("crossover.stats");
         }
 
         // Check if bias has flattened out, just for continuous improvement
@@ -58,14 +63,13 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
         if (flat) {
             // If flat, need to reset H and reduce lnF
             sys.getWALABias()->iterateForward();
-            std::cout << "lnF = " << sys.getWALABias()->lnF() << " at " << getTimeStamp() << std::endl;
+            std::cout << "Wang-Landau is now flat, new lnF = " << sys.getWALABias()->lnF() << " at " << getTimeStamp() << std::endl;
         }
     }
 
     // Switch over to TMMC completely
-    sys.stopWALA();
-
     std::cout << "Switching over to TMMC completely, ending Wang-Landau" << std::endl;
+    sys.stopWALA();
     try {
         sys.getTMMCBias()->calculatePI();
         //sys.getTMMCBias()->print("tmmc-beginning-Checkpoint", true);
@@ -80,7 +84,5 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
     sys.reInitializeEnergyHistogram();
 
     sanityChecks(sys);
-    
     res.crossoverDone = true;
-    usedMovesEq->print("crossover.stats");
 }

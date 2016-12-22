@@ -14,7 +14,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
     std::cout << "Beginning TMMC at " << getTimeStamp() << std::endl;
 
     // Specifically for printing progress every 1% of the simulation
-    const int numSweepSnaps = 100;
+    const long long int numSweepSnaps = 100;
 	unsigned long long int sweepPrint = sys.totalTMMCSweeps, printCounter = 0;
 	if (sys.totalTMMCSweeps > numSweepSnaps) {
 		sweepPrint /= numSweepSnaps;
@@ -46,6 +46,9 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
         printCounter = res.moveCounter;
         sweep = res.sweepCounter;
     }
+
+    std::cout << "Starting progress stage from " << printCounter << "/" << std::min(numSweepSnaps, sys.totalTMMCSweeps) << " at " << getTimeStamp() << std::endl;
+    std::cout << "Starting from " << sweep << "/" << sys.totalTMMCSweeps << " total TMMC sweeps at " << getTimeStamp() << std::endl;
 
     unsigned long long int checkPoint = sys.tmmcSweepSize*(sys.totNMax() - sys.totNMin() + 1)*3; // how often to check full traversal of collection matrix
 	while (sweep < sys.totalTMMCSweeps) {
@@ -85,10 +88,10 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 		// Update biasing function from collection matrix
 		sys.getTMMCBias()->calculatePI();
 
-		// Periodically write out checkpoints and report statistics
+		// Periodically write out checkpoints to monitor convergence properties later - all are used in FHMCAnalysis at this point (12/22/16)
 		if (sweep%sweepPrint == 0) {
 			printCounter++;
-			sys.getTMMCBias()->print("tmmc-Checkpoint-"+std::to_string(printCounter), true);
+			sys.getTMMCBias()->print("tmmc-Checkpoint-"+std::to_string(printCounter), false, false); //true, false);
 			sys.refineEnergyHistogramBounds();
 			sys.printEnergyHistogram("eHist-Checkpoint-"+std::to_string(printCounter));
             sys.refinePkHistogramBounds();
@@ -98,8 +101,16 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 		}
 	}
 
-    sanityChecks(sys);
-    
-    res.tmmcDone = true;
+    // Print final results
+    sys.getTMMCBias()->print("final", false, false);
+    sys.refineEnergyHistogramBounds();
+    sys.printEnergyHistogram("final_eHist");
+    sys.refinePkHistogramBounds();
+    sys.printPkHistogram("final_pkHist");
+    sys.printExtMoments("final_extMom");
+    sys.printSnapshot("final.xyz", "last configuration");
     usedMovesPr->print("tmmc.stats");
+
+    sanityChecks(sys);
+    res.tmmcDone = true;
 }

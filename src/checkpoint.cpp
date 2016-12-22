@@ -224,6 +224,7 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
         }
         writer.EndArray();
         writer.String("energyHistogramUB");
+        writer.StartArray();
         for (std::vector < double >::iterator it = eub.begin(); it < eub.end(); ++it) {
             writer.Double(*it);
         }
@@ -231,8 +232,10 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
     } else if (!walaDone && !crossoverDone && !tmmcDone) {
         // in WALA stage
         sys.getWALABias()->print(dir+"/wala", true);
+
         writer.String("wala_lnF");
         writer.Double(sys.getWALABias()->lnF());
+
         // energy upper and lower bounds for histogram
         std::vector < double > elb = sys.getELB(), eub = sys.getEUB();
         writer.String("energyHistogramLB");
@@ -242,6 +245,7 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
         }
         writer.EndArray();
         writer.String("energyHistogramUB");
+        writer.StartArray();
         for (std::vector < double >::iterator it = eub.begin(); it < eub.end(); ++it) {
             writer.Double(*it);
         }
@@ -249,7 +253,6 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
     } else {
         throw customException ("Uncertain which stage simulation is in, so cannot checkpoint");
     }
-
     writer.EndObject();
     std::ofstream outData(chkptName.c_str());
     outData << s.GetString() << std::endl;
