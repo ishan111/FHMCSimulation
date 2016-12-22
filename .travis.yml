@@ -6,6 +6,6 @@ os:
   - linux
 branches:
   only:
-  - anisotropy
+  - master
 script:
   - cd tests/src; cmake CMakeLists.txt; make; cd ../bin/; ./runUnitTests;
