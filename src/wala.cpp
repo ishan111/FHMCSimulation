@@ -4,78 +4,68 @@
  * Perform Wang-Landau stage of simulation
  *
  * \param [in] sys System to simulate
- * \param [in] res Restart information
+ * \param [in] res Restart/checkpoint information
  * \param [in] usedMovesEq Move class to use
  */
-void performWALA (simSystem &sys, restartInfo &res, moves *usedMovesEq) {
+void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
+    if (res.walaDone) {
+        throw customException ("Checkpoint indicates WALA already finished");
+    }
     std::cout << "Beginning Wang-Landau portion at " << getTimeStamp() << std::endl;
-    res.walaDone = false;
 
-    //bool highSnap = false, lowSnap = false;
-
-    // Initially do a WL simulation
     bool flat = false;
     double lnF = sys.lnF_start;
-    sys.startWALA (lnF, sys.wala_g, sys.wala_s, sys.getTotalM());
+    long long int moveStart = 0;
 
-    std::cout << "Initial lnF = " << sys.lnF_start << " at " << getTimeStamp() << std::endl;
-
-    if (res.restartFromWALA) {
-        try {
-            sys.getWALABias()->readlnPI(res.restartFromWALAFile);
-        } catch (customException &ce) {
-            std::cerr << ce.what() << std::endl;
-            exit(SYS_FAILURE);
+    if (!res.resFromWALA) {
+        if (sys.useTMMC or sys.useWALA) {
+            throw customException ("WALA or TMMC already active, cannot proceeed with WALA");
         }
-        std::cout << "Read initial lnPI for Wang-Landau from " << res.restartFromWALAFile << std::endl;
+
+        sys.startWALA (lnF, sys.wala_g, sys.wala_s, sys.getTotalM());
+        if (sys.restartFromWALA) {
+            // specified to start WALA from a lnPI guess, and this is not a restart from a checkpoint
+            try {
+                sys.getWALABias()->readlnPI(sys.restartFromWALAFile);
+            } catch (customException &ce) {
+                std::cerr << ce.what() << std::endl;
+                exit(SYS_FAILURE);
+            }
+            std::cout << "Read initial lnPI for Wang-Landau from " << sys.restartFromWALAFile << std::endl;
+        }
+    } else {
+        lnF = sys.getWALABias()->lnF(); // checkpoint re-initialized to starting value
+        moveStart = res.moveCounter;
     }
 
-    long long int counter = 0;
+    std::cout << "Initial lnF = " << sys.getWALABias()->lnF() << " at " << getTimeStamp() << std::endl;
+    std::cout << "Starting from " << moveStart << " moves at " << getTimeStamp() << std::endl;
+
     while (lnF > sys.lnF_end) {
-        for (unsigned int move = 0; move < sys.wlSweepSize; ++move) {
-            std::cout << "cp00\n";
+        for (unsigned long long int move = moveStart; move < sys.wlSweepSize; ++move) {
             try {
                 usedMovesEq->makeMove(sys);
             } catch (customException &ce) {
                 std::cerr << ce.what() << std::endl;
                 exit(SYS_FAILURE);
             }
-            std::cout << "cp01\n";
-
             if (sys.getCurrentM() == 0){
                 sys.checkEnergyHistogramBounds ();
             }
+            res.check(sys, move);
         }
 
         // Check if bias has flattened out
         flat = sys.getWALABias()->evaluateFlatness();
         if (flat) {
-            counter++;
-
-            // Periodically write out checkpoints - before iterateForward() which destroys H matrix
-            sys.getWALABias()->print("wl-Checkpoint-"+sstr(counter), true);
             sys.getWALABias()->iterateForward(); // if flat, need to reset H and reduce lnF
             lnF = sys.getWALABias()->lnF();
             flat = false;
-
-            std::cout << "lnF = " << lnF << " at " << getTimeStamp() << std::endl;
+            std::cout << "Wang-Landau is now flat, new lnF = " << lnF << " at " << getTimeStamp() << std::endl;
+            usedMovesEq->print("wala.stats");
         }
-
-        // also check to print out snapshots with 10% of bounds to be used for other restarts
-        /*if (!highSnap) {
-            if (sys.getTotN() > sys.totNMax() - (sys.totNMax()-sys.totNMin())*0.1) {
-                sys.printSnapshot("high.xyz", "snapshot near upper bound");
-                highSnap = true;
-            }
-        }
-        if (!lowSnap) {
-            if (sys.getTotN() < sys.totNMin() + (sys.totNMax()-sys.totNMin())*0.1 && sys.getTotN() > 0) {
-                sys.printSnapshot("low.xyz", "snapshot near lower bound");
-                lowSnap = true;
-            }
-        }*/
     }
 
+    sanityChecks(sys);
     res.walaDone = true;
-    usedMovesEq->print("wala.stats");
 }

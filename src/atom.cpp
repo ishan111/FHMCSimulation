@@ -8,7 +8,7 @@
  * \param [in] ncenters Number of centers
  * /param [in] relOr Vectors pointing to rigid centers from atom's pos
  */
-atom::atom (int ncenters, std::vector < std::vector < double > > relOr) {
+atom::atom (unsigned int ncenters, std::vector < std::vector < double > > relOr) {
 	try {
 		std::vector < double > dummy (3, 0);
 		vecToCenters.resize(ncenters, dummy);

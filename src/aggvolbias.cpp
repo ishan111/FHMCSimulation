@@ -28,7 +28,7 @@ aggVolBiasInsert::aggVolBiasInsert (const int typeIndex, const double pBias, con
                 rcmax_ = rc[1];
         }
 
-        name_ = tag + sstr(typeIndex);
+        name_ = tag + std::to_string(typeIndex);
         changeN_ = true;
 }
 
@@ -71,7 +71,7 @@ aggVolBiasDelete::aggVolBiasDelete (const int typeIndex, const double pBias, con
                 rcmax_ = rc[1];
         }
 
-        name_ = tag + sstr(typeIndex);
+        name_ = tag + std::to_string(typeIndex);
         changeN_ = true;
 }
 
@@ -128,7 +128,7 @@ aggVolBias3::aggVolBias3 (const int typeIndex, const int typeIndex2, const doubl
                 rc2max_ = rc2[1];
         }
 
-    	name_ = tag + sstr(typeIndex) + "_" + sstr(typeIndex2);
+    	name_ = tag + std::to_string(typeIndex) + "_" + std::to_string(typeIndex2);
 	changeN_ = false;
 }
 

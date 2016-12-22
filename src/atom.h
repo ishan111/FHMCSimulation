@@ -12,7 +12,7 @@
 class atom {
 public:
 	atom () { pos.resize(3, 0); mState = 0; } // assumes no centers
-	atom (int ncenters, std::vector < std::vector < double > > rel_or); // Instantiate with rigid centers oriented according to these vectors
+	atom (unsigned int ncenters, std::vector < std::vector < double > > rel_or); // Instantiate with rigid centers oriented according to these vectors
 	~atom () {};
 
 	//void rotateCenters (double alpha, double beta, double gamma); // Rotate centers

@@ -24,11 +24,11 @@ void dynamic_one_dim_histogram::trim_edges () {
 	if (leading + trailing >= h_.size()) {
 		throw customException ("Cannot trim dynamic_one_dim_histogram because it is empty");
 	}
-	
+
 	nbins_ -= (leading + trailing);
 	lb_ += leading*delta_;
 	ub_ -= trailing*delta_;
-	
+
 	for (unsigned int i = 0; i < leading; ++i) {
 		h_.pop_front();
 	}
@@ -38,7 +38,7 @@ void dynamic_one_dim_histogram::trim_edges () {
 }
 
 /*!
- * Initialize histogram and its bounds. 
+ * Initialize histogram and its bounds.
  */
 void dynamic_one_dim_histogram::initialize_ (const double lb, const double ub, const double delta) {
 	if (lb > ub) {
@@ -47,14 +47,14 @@ void dynamic_one_dim_histogram::initialize_ (const double lb, const double ub, c
     if (delta <= 0) {
         throw customException ("Bin width must be > 0 for a dynamic_one_dim_histogram");
     }
-	delta_ = delta; 
+	delta_ = delta;
  	lb_ = lb;
  	ub_ = ub;
- 	nbins_ = ceil((ub - lb)/delta); 
+ 	nbins_ = ceil((ub - lb)/delta);
  	if (fabs(round((ub - lb)/delta) - ((ub - lb)/delta)) < 1.0e-6) {
  		nbins_++; // include endpoint
  	}
-    
+	
     // initialize the histogram to 0
     h_.resize(0);
     try {
@@ -62,6 +62,19 @@ void dynamic_one_dim_histogram::initialize_ (const double lb, const double ub, c
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory for dynamic_one_dim_histogram");
     }
+}
+
+/*!
+ * Set the histogram.  Intended to be used to restart from a checkpoint.
+ *
+ * \param [in] h Histogram to set to.
+ */
+void dynamic_one_dim_histogram::set_hist (const std::deque < double > h) {
+	if (h.size() != h_.size()) {
+		throw customException ("Histogram using to set is not the same as inherent, aborting");
+	} else {
+		h_ = (std::deque < double >)h;
+	}
 }
 
 /*!
@@ -76,7 +89,7 @@ void dynamic_one_dim_histogram::reinitialize (const double lb, const double ub, 
 }
 
 /*!
- * Instantiate a 1D histogram that grow as needed to record values.  
+ * Instantiate a 1D histogram that grow as needed to record values.
  * A bin is considered "centered" on its value.
  *
  * \param [in] lb Lower bound
@@ -140,7 +153,7 @@ void dynamic_one_dim_histogram::record (const double value) {
 			std::string a = "Unable to prepend dynamic_one_dim_histogram: ", b = ce.what();
 			throw customException (a+b);
 		}
-		bin = round((value - lb_)/delta_); 
+		bin = round((value - lb_)/delta_);
 	} else if (bin >= nbins_) {
 		// append and fill
 		try {
@@ -149,7 +162,7 @@ void dynamic_one_dim_histogram::record (const double value) {
 			std::string a = "Unable to append dynamic_one_dim_histogram: ", b = ce.what();
 			throw customException (a+b);
 		}
-		bin = round((value - lb_)/delta_); 
+		bin = round((value - lb_)/delta_);
 	}
 	h_[bin] += 1.0;
 }
@@ -164,28 +177,28 @@ void dynamic_one_dim_histogram::record (const double value) {
  */
 histogram::histogram (const std::vector <double> lbound, const std::vector <double> ubound, const std::vector <long long unsigned int> nbins) {
 	if (lbound.size() != ubound.size()) {
-        	throw customException ("Upper and lower bounds for histogram do have the same size");
-    	}
-    	if (nbins.size() != lbound.size()) {
-        	throw customException ("Number of bins for histogram's dimensions does not have the same size as its bounds");
-    	}
+		throw customException ("Upper and lower bounds for histogram do have the same size");
+    }
+    if (nbins.size() != lbound.size()) {
+    	throw customException ("Number of bins for histogram's dimensions does not have the same size as its bounds");
+    }
 
-    	dim_ = nbins.size();
-    	widths_.resize(dim_, 0);
-    	delta_.resize(dim_, 0);
- 
-    	size_ = 1;
-    	for (unsigned int i = 0; i < dim_; ++i) {
-        	if (lbound[i] > ubound[i]) {
-            		throw customException ("Lower bound > upper bound illegal for a histogram");
-        	}
+    dim_ = nbins.size();
+    widths_.resize(dim_, 0);
+    delta_.resize(dim_, 0);
+
+	size_ = 1;
+	for (unsigned int i = 0; i < dim_; ++i) {
+    	if (lbound[i] > ubound[i]) {
+        	throw customException ("Lower bound > upper bound illegal for a histogram");
+    	}
 
 		if (lbound[i] < ubound[i]) {
-	        	if (nbins[i] <= 1) {
-        	    		throw customException ("Must > 1 bins for each dimensions in the histogram");
-        		}
-	        	size_ *= nbins[i];
-        		delta_[i] = (ubound[i] - lbound[i])/(nbins[i]-1);
+	        if (nbins[i] <= 1) {
+        		throw customException ("Must > 1 bins for each dimensions in the histogram");
+        	}
+	        size_ *= nbins[i];
+        	delta_[i] = (ubound[i] - lbound[i])/(nbins[i]-1);
 		} else {
 			// special case when upper and lower bound are the same (nbins = 1)
 			if (nbins[i] != 1) {
@@ -197,27 +210,27 @@ histogram::histogram (const std::vector <double> lbound, const std::vector <doub
 
 		// build projected widths
 		if (i == 0) {
-                	widths_[i] = 1;
-                } else {
-                        widths_[i] = widths_[i-1]*nbins[i-1];
-                }
-    	}
-        
-    	lbound_ = lbound;
-    	ubound_ = ubound;
-    	nbins_ = nbins;
-    
-    	// initialize the histogram to 0
-    	try {
-        	h_.resize(size_, 0);
-    	} catch (std::bad_alloc &ba) {
-        	throw customException ("Out of memory for histogram");
-    	}
-    	try {
-        	counter_.resize(size_, 0);
-    	} catch (std::bad_alloc &ba) {
-        	throw customException ("Out of memory for histogram");
-    	}
+            widths_[i] = 1;
+        } else {
+            widths_[i] = widths_[i-1]*nbins[i-1];
+        }
+    }
+
+    lbound_ = lbound;
+    ubound_ = ubound;
+    nbins_ = nbins;
+
+    // initialize the histogram to 0
+    try {
+    	h_.resize(size_, 0);
+    } catch (std::bad_alloc &ba) {
+    	throw customException ("Out of memory for histogram");
+    }
+    try {
+    	counter_.resize(size_, 0);
+    } catch (std::bad_alloc &ba) {
+    	throw customException ("Out of memory for histogram");
+    }
 }
 
 /*!
@@ -278,19 +291,21 @@ const std::vector <double> histogram::getCoords (long long unsigned int address)
     	if (address >= size_) {
        		throw customException ("Histogram address out of bounds");
     	}
-    
+
     	for (unsigned int i = dim_-1; i > 0; --i) {
         	long long int diff = floor(address/widths_[i]);
         	coords[i] = diff*delta_[i] + lbound_[i];
         	address -= diff*widths_[i];
     	}
     	coords[0] = address*delta_[0] + lbound_[0];
-    
+
     	return coords;
 }
 
 /*!
- * Print a histogram to file
+ * Print RAW (UN-NORMALIZED) histogram to file.
+ *
+ * \param [in] fileName Name of file to print to
  */
 void histogram::print (const std::string fileName) {
 	// Print histogram
@@ -301,13 +316,32 @@ void histogram::print (const std::string fileName) {
 	}
 	of << "# Histogram in single row (vectorized) notation." << std::endl;
 	for (unsigned int i = 0; i < dim_; ++i) {
-		of << "# dim_"+sstr(i+1)+"_upper_bound:" << ubound_[i] << std::endl;
-		of << "# dim_"+sstr(i+1)+"_lower_bound:" << lbound_[i] << std::endl;
-		of << "# dim_"+sstr(i+1)+"_number_of_bins:" << nbins_[i] << std::endl;
+		of << "# dim_"+std::to_string(i+1)+"_upper_bound:" << ubound_[i] << std::endl;
+		of << "# dim_"+std::to_string(i+1)+"_lower_bound:" << lbound_[i] << std::endl;
+		of << "# dim_"+std::to_string(i+1)+"_number_of_bins:" << nbins_[i] << std::endl;
 	}
 	for (unsigned long long int i = 0; i < h_.size(); ++i) {
 		of << h_[i] << std::endl;
 	}
 	of.close();
 }
- 
+
+/*!
+ * Assign the histogram and its corresponding counter.
+ *
+ * \param [in] h histogram
+ * \param [in] ctr Counter
+ */
+void histogram::set (const std::vector <double> &h, const std::vector <double> &ctr) {
+	if (h.size() != ctr.size()) {
+		throw customException ("Cannot set the histogram since counter and histogram have different lengths");
+	}
+	if (h.size() != h_.size()) {
+		throw customException ("Cannot set the histogram since new histogram has different length compared to current one");
+	}
+	if (ctr.size() != counter_.size()) {
+		throw customException ("Cannot set the histogram since new counter has different length compared to current one");
+	}
+	h_ = h;
+	counter_ = ctr;
+}

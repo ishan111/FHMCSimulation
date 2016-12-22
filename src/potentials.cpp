@@ -322,16 +322,16 @@ void tabulated::setParameters (const std::vector < double > params) {
  * \param [in] filename Name of ASCII file to read (r, U(r)) from
  */
 void tabulated::loadPotential(std::string filename) {
-	std::cout<<"Loading pair potential from file: "<<filename<<std::endl;
+	std::cout << "Loading pair potential from file: " << filename<<std::endl;
 	// first check, if file exists
 	if (fileExists(filename)) {
-		std::cout<<"File found, processing."<<std::endl;
+		std::cout << "File found, processing." << std::endl;
 		table.clear();
 		double r, pot;
 		unsigned int lineCounter = 0;
 
 		std::ifstream inputData(filename.c_str());
-		while (inputData>>r>>pot) {
+		while (inputData >> r >> pot) {
 			if (lineCounter == 0) {
 				start = r;
 			}
@@ -346,7 +346,7 @@ void tabulated::loadPotential(std::string filename) {
 
 		if (lineCounter < 2) {
 			paramsAreSet_ = false;
-			std::cerr<<"Tabulated potential "<<filename<<" needs at least 2 entries, cannot setup potential."<<std::endl;
+			std::cerr << "Tabulated potential " << filename << " needs at least 2 entries, cannot setup potential." << std::endl;
 			return;
 		}
 
@@ -381,6 +381,7 @@ double tabulated::energy (const atom* a1, const atom* a2, const std::vector < do
 	}
 
 	const double r = sqrt(pbcDist2(a1->pos, a2->pos, box));
+	double en = 0.0;
 
 	// only one of these atoms (at most) should be "partially" inserted
 	int mState = 0;
@@ -392,18 +393,19 @@ double tabulated::energy (const atom* a1, const atom* a2, const std::vector < do
 	}
 
 	if (r < params_[1]) {
-		std::cerr<<"distance r too small in energy calculation in tabulated potential. Returning value at r="<<start<<std::endl;
+		std::cerr << "Distance r too small in energy calculation in tabulated potential. Returning value at r = " << start << std::endl;
+		en = table[0];
 	} else if (r > params_[0]) {
-		return params_[3];
+		en = params_[3];
 	} else {
 		const unsigned int lowerIndex = floor((r-params_[1])/dr);
 		const unsigned int upperIndex = ceil((r-params_[1])/dr);
-
 		const double upperFraction = (r-params_[1])/dr-lowerIndex;
 		const double lowerFraction = 1.0-upperFraction;
-
-		return (lowerFraction*table[lowerIndex] + upperFraction*table[upperIndex] + params_[2])*mScale[mState];
+		en = (lowerFraction*table[lowerIndex] + upperFraction*table[upperIndex] + params_[2])*mScale[mState];
 	}
+
+	return en;
 }
 
 /*!

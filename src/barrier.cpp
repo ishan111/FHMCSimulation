@@ -88,7 +88,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             ub_seg_x_[i].resize(4);
         } catch (std::bad_alloc &ba) {
@@ -100,7 +100,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             lb_seg_x_[i].resize(4);
         } catch (std::bad_alloc &ba) {
@@ -112,7 +112,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             ub_seg_z_[i].resize(4);
         } catch (std::bad_alloc &ba) {
@@ -124,7 +124,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             lb_seg_z_[i].resize(4);
         } catch (std::bad_alloc &ba) {
@@ -136,7 +136,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             ub_slope_[i].resize(5);
         } catch (std::bad_alloc &ba) {
@@ -148,7 +148,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             lb_slope_[i].resize(5);
         } catch (std::bad_alloc &ba) {
@@ -160,7 +160,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             ub_int_[i].resize(5);
         } catch (std::bad_alloc &ba) {
@@ -172,7 +172,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory");
     }
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         try {
             lb_int_[i].resize(5);
         } catch (std::bad_alloc &ba) {
@@ -180,7 +180,7 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
         }
     }
 
-    for (unsigned int i = 0; i < M_; ++i) {
+    for (int i = 0; i < M_; ++i) {
         if (i == 0) {
             sigma_[i] = sigma;
             eps_[i] = eps;
@@ -362,7 +362,7 @@ bool rightTriangleXZ::inside (const atom *a1, const std::vector < double > &box)
     try {
         U = energy (a1, box); // takes care of pbc internally
     } catch (customException &ce) {
-        throw customException ("Unable to test if inside rightTriangleXZ : "+sstr(ce.what()));
+        throw customException ("Unable to test if inside rightTriangleXZ : "+std::to_string(*ce.what()));
         //exit (SYS_FAILURE);
     }
 
@@ -675,7 +675,7 @@ void compositeBarrier::addHardWallZ (const double lb, const double ub, const dou
     try {
         sysBarriers_[sysBarriers_.size()-1] = new hardWallZ (lb, ub, sigma, M);
     } catch (customException &ce) {
-        throw customException ("Cannot add hardWallZ to composite barrier: "+sstr(ce.what()));
+        throw customException ("Cannot add hardWallZ to composite barrier: "+std::to_string(*ce.what()));
     }
 }
 
@@ -706,7 +706,7 @@ void compositeBarrier::addSquareWellWallZ (const double lb, const double ub, con
     try {
         sysBarriers_[sysBarriers_.size()-1] = new squareWellWallZ (lb, ub, sigma, range, eps, M);
     } catch (customException &ce) {
-        throw customException ("Cannot add squareWellWallZ to composite barrier: "+sstr(ce.what()));
+        throw customException ("Cannot add squareWellWallZ to composite barrier: "+std::to_string(*ce.what()));
     }
 }
 
@@ -738,7 +738,7 @@ void compositeBarrier::addCylinderZ (const double x, const double y, const doubl
     try {
         sysBarriers_[sysBarriers_.size()-1] = new cylinderZ (x, y, radius, width, sigma, eps, M);
     } catch (customException &ce) {
-        throw customException ("Cannot add cylinderZ to composite barrier: "+sstr(ce.what()));
+        throw customException ("Cannot add cylinderZ to composite barrier: "+std::to_string(*ce.what()));
     }
 }
 
@@ -774,7 +774,7 @@ void compositeBarrier::addRightTriangleXZ (const double width, const double thet
     try {
         sysBarriers_[sysBarriers_.size()-1] = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
     } catch (customException &ce) {
-        throw customException ("Cannot add rightTriangleXZ to composite barrier: "+sstr(ce.what()));
+        throw customException ("Cannot add rightTriangleXZ to composite barrier: "+std::to_string(*ce.what()));
     }
 }
 

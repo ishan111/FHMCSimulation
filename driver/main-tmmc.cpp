@@ -23,60 +23,49 @@
  *
  */
 
-
 #include "../src/fhmc.h"
 
 /*!
  * Usage: ./binary_name input.json
  */
 int main (int argc, char * const argv[]) {
-	const std::string restartFile = "restart/state.json";
 	std::cout << "Beginning simulation at " << getTimeStamp() << std::endl;
 
 	moves usedMovesEq, usedMovesPr;
-	simSystem sys = initialize (argv[1], &usedMovesEq, &usedMovesPr); // read json file and create system class
+	simSystem sys = initialize (argv[1], &usedMovesEq, &usedMovesPr);
 
-	// usedMovesEq, usedMovesPr need to be global variables so they are static in memory (or atleast the vectors of moves need to be)
-	// pair potentials also need to be static somewhow - compare against gcmc (old) driver
-	// maybe used a reserve statement somewhow
-	// shared pointers? -->  must move to heap!! example: http://stackoverflow.com/questions/23060406/does-stdmove-invalidate-pointers
-
-	// in mover, make moves_ --> shared pointer to the vectors of each move type?
-	// in system, ppot needs to be share_ptr? to potential classes, which should be made_shared when created by addPotential()
-	// wl, tmmc biases in system? consider replacing new/delete with just simple asigniments so tmmc* tmmcBias; --> tmmc tmmcBias; e.g.
-	//http://stackoverflow.com/questions/25405034/stdshared-ptr-of-abstract-class-to-instantiate-derived-class
-
-	// cellLists.... -> rely on atoms not moving in system, preallocated to max_atoms, cellLists are reserved so ok
-
-	// if restart/ exists, default to use this information to restart the simulation
-	restartInfo res (restartFile, 900);
-    if (!res.hasCheckpoint) {
+	// If checkpoint exists, default to use this information to restart the simulation
+	checkpoint cpt ("checkpt", 1, sys);
+    if (!cpt.hasCheckpoint) {
         setup (sys, argv[1]);
     }
 
-	// TODO: finish adding restarting information so system knows how to pick up where it left off
-
-	if (!res.walaDone) {
-		// perform Wang-Landau simulation
-		performWALA (sys, res, &usedMovesEq);
-		performCrossover (sys, res, &usedMovesEq);
-		performTMMC (sys, res, &usedMovesPr);
-	} else if (!res.crossoverDone) {
-		// crossover to TMMC
-		performCrossover (sys, res, &usedMovesEq);
-		performTMMC (sys, res, &usedMovesPr);
-	} else if (!res.tmmcDone) {
-		// perform tmmc portion of the simulation
-		performTMMC (sys, res, &usedMovesPr);
+	// Check not falsely restarting the simulation
+	if (cpt.tmmcDone) {
+		std::cerr << "TMMC stage already finished, terminating" << std::endl;
+		return SAFE_EXIT;
 	}
 
-    sys.printSnapshot("final.xyz", "last configuration");
-    sys.refineEnergyHistogramBounds();
-    sys.printEnergyHistogram("final_eHist");
-    sys.refinePkHistogramBounds();
-    sys.printPkHistogram("final_pkHist");
-    sys.printExtMoments("final_extMom");
-    sys.getTMMCBias()->print("final", false);
+	// Choose stage based on what is completed, not where restart is from in case not restarting from checkpoint
+	if (!cpt.walaDone) {
+		// Perform Wang-Landau simulation
+		performWALA (sys, cpt, &usedMovesEq);
+		performCrossover (sys, cpt, &usedMovesEq);
+		performTMMC (sys, cpt, &usedMovesPr);
+	} else if (!cpt.crossoverDone) {
+		// Crossover to TMMC simulation
+		performCrossover (sys, cpt, &usedMovesEq);
+		performTMMC (sys, cpt, &usedMovesPr);
+	} else if (!cpt.tmmcDone) {
+		// Perform TMMC portion of the simulation
+		performTMMC (sys, cpt, &usedMovesPr);
+	} else {
+		std::cerr << "Error in establishing which stage to begin from" << std::endl;
+		return SYS_FAILURE;
+	}
+
+	// Dump a final checkpoint to indicate the simulation has finished, so do not restart it
+	cpt.dump(sys);
 
     std::cout << "Finished simulation at " << getTimeStamp() << std::endl;
 	return SAFE_EXIT;

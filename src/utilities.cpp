@@ -19,6 +19,16 @@ int RNG_SEED = -1024;	//!< Default RNG seed
 #define RNMX (1.0-EPS)
 
 /*!
+ * Pause the code for a certain time.
+ *
+ * \param [in] dur Number of seconds to pause for
+ */
+void pauseCode (long int dur) {
+    long int temp = time(NULL) + dur;
+    while(temp > time(NULL));
+}
+
+/*!
  * C++ explode a string.
  */
 std::vector < std::string > splitstr (const std::string &s, char delim) {

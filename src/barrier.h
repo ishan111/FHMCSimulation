@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cmath>
 #include <vector>
+#include <string>
 #include "global.h"
 #include "utilities.h"
 #include "potentials.h"

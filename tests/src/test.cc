@@ -37,11 +37,10 @@ TEST (Initialize, MoveIndex) {
 TEST (Adding, Moves) {
 	moves test;
 	double prob1 = 0.4, prob2 = 0.6, tol = 1.0e-9;
-	insertParticle insTest (0, "insert");
-	test.addMove(&insTest, prob1);
+	test.addInsert(0, prob1);
 	std::vector < double > pr = test.reportProbabilities();
 	EXPECT_TRUE (fabs(pr[0] - 1.0) < tol);
-	test.addMove(&insTest, prob2);
+	test.addInsert(0, prob2);
 	std::vector < double > pr2 = test.reportProbabilities();
 	EXPECT_TRUE (fabs(pr2[0] - prob1) < tol);
 	EXPECT_TRUE (fabs(pr2[1] - (prob1+prob2)) < tol);
@@ -754,6 +753,20 @@ TEST (testTMMC, tmmcBadInitOrder) {
 	EXPECT_TRUE(!pass);
 }
 
+TEST (testTMMC, checkReadHCGetHC) {
+	std::vector < double > dummyBox (3, 0);
+	tmmc* tmmcBias2 = new tmmc (20, 0, 1, 100, dummyBox);
+	tmmcBias2->readHC("../data/tmmc_HC.dat");
+	const std::vector < double > hc = tmmcBias2->getHC();
+	EXPECT_EQ (hc.size(), 3*21);
+	for (unsigned int i = 0; i < 5; ++i) {
+		EXPECT_EQ ((1+i)*10, hc[i]);
+	}
+	for (unsigned int i = 5; i < hc.size(); ++i) {
+		EXPECT_EQ (hc[i], 0);
+	}
+}
+
 class tmmBiasC : public ::testing::Test {
 protected:
 	tmmc* tmmcBias;
@@ -1050,6 +1063,20 @@ TEST (testWALA, walaInitNegLowerBound) {
 	EXPECT_TRUE (caught);
 }
 
+TEST (testWala, checkReadHGetH) {
+	std::vector < double > dummyBox (3, 0);
+	wala walaBias (1.0, 0.5, 0.8, 20, 0, 1, dummyBox);
+	walaBias.readH("../data/wala_H.dat");
+	const std::vector < double > h = walaBias.getH();
+	EXPECT_EQ (h.size(), 21);
+	for (unsigned int i = 0; i < 5; ++i) {
+		EXPECT_EQ (h[i], (1+i)*10);
+	}
+	for (unsigned int i = 5; i < h.size(); ++i) {
+		EXPECT_EQ (h[i], 0);
+	}
+}
+
 class testWalaBias : public ::testing::Test {
 protected:
 	wala* walaBias;
@@ -1073,6 +1100,7 @@ TEST_F (testWalaBias, testMatrixSizes) {
 	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
 	EXPECT_EQ (H.size(), 3);
 	EXPECT_EQ (lnPI.size(), 3);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, testUpdateSame) {
@@ -1082,6 +1110,7 @@ TEST_F (testWalaBias, testUpdateSame) {
 	std::vector < double > H = walaBias->getH(), lnPI = walaBias->getlnPI();
 	EXPECT_TRUE (fabs(H[0] - 3.0) < 1.0e-9);
 	EXPECT_TRUE (fabs(lnPI[0] - 3.0*lnF) < 1.0e-9);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, testUpdateDiff) {
@@ -1095,12 +1124,14 @@ TEST_F (testWalaBias, testUpdateDiff) {
 	EXPECT_TRUE (fabs(lnPI[0] - lnF) < 1.0e-9);
 	EXPECT_TRUE (fabs(lnPI[1] - lnF) < 1.0e-9);
 	EXPECT_TRUE (fabs(lnPI[2] - lnF) < 1.0e-9);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, GetGoodAddress) {
 	EXPECT_EQ (walaBias->getAddress(Nmin, 0), 0);
 	EXPECT_EQ (walaBias->getAddress(Nmin+1, 0), 1);
 	EXPECT_EQ (walaBias->getAddress(Nmin+2, 0), 2);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, GetBadAddress) {
@@ -1111,6 +1142,7 @@ TEST_F (testWalaBias, GetBadAddress) {
 		caught = true;
 	}
 	EXPECT_TRUE (caught);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, getBias) {
@@ -1120,6 +1152,7 @@ TEST_F (testWalaBias, getBias) {
 	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin, 0)) - -lnF) < 1.0e-9);
 	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin+1, 0)) - -lnF) < 1.0e-9);
 	EXPECT_TRUE (fabs(walaBias->getBias(walaBias->getAddress(Nmin+2, 0)) - -lnF) < 1.0e-9);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, checkIterateForward) {
@@ -1142,6 +1175,7 @@ TEST_F (testWalaBias, checkIterateForward) {
 		EXPECT_TRUE (fabs(H2[i] - 0) < 1.0e-9);
 	}
 	EXPECT_TRUE (fabs(lnF1*g - lnF2) < 1.0e-9);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, checkPrintReadlnPI) {
@@ -1172,6 +1206,7 @@ TEST_F (testWalaBias, checkPrintReadlnPI) {
 	for (unsigned int i = 0; i < lnPI_new.size(); ++i) {
 		EXPECT_TRUE (fabs(lnPI_new[i] - lnPI_ref[i]) < 1.0e-6); // read loses precision
 	}
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, checkEvaluateFlatnessNo) {
@@ -1182,6 +1217,7 @@ TEST_F (testWalaBias, checkEvaluateFlatnessNo) {
 	// average of [1, 2, 1] = 1.333, average * s (=0.8) = 1.06 > min (=1)
 	bool flat = walaBias->evaluateFlatness();
 	EXPECT_TRUE (!flat);
+	delete walaBias;
 }
 
 TEST_F (testWalaBias, checkEvaluateFlatnessYes) {
@@ -1191,6 +1227,7 @@ TEST_F (testWalaBias, checkEvaluateFlatnessYes) {
 	// average of [1, 1, 1] = 1, average * s (=0.8) = 0.8 < min (=1)
 	bool flat = walaBias->evaluateFlatness();
 	EXPECT_TRUE (flat);
+	delete walaBias;
 }
 
 TEST_F (InitializeSystem, setWALAbias) {
@@ -1316,8 +1353,7 @@ TEST_F (testComputeBias, testInSituWALASingleComponent) {
 	mysys.addPotential (0, 0, "hard_sphere", params, false);
 
 	moves usedMoves;
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert
 	usedMoves.makeMove(mysys);
@@ -1352,8 +1388,7 @@ TEST_F (testComputeBias, testInSituWALAMultiComponent) {
 	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves usedMoves;
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert first species
 	usedMoves.makeMove(mysys);
@@ -1371,9 +1406,7 @@ TEST_F (testComputeBias, testInSituWALAMultiComponent) {
 
 	// will insert the second species
 	moves usedMoves2;
-	insertParticle newIns2 (1, "insert");
-	usedMoves2.addMove(&newIns2, 1.0);
-
+	usedMoves2.addInsert(1, 1.0);
 	usedMoves2.makeMove(mysys);
 
 	// check WALA properties - should have incremented where the system ENDED (at N_tot = 2)
@@ -1402,8 +1435,7 @@ TEST_F (testComputeBias, testInSituTMMCSingleComponent) {
 	mysys.addPotential (0, 0, "hard_sphere", params, false);
 
 	moves usedMoves;
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert
 	usedMoves.makeMove(mysys);
@@ -1455,8 +1487,7 @@ TEST_F (testComputeBias, testInSituTMMCMultiComponent) {
 	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves usedMoves;
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert first species
 	usedMoves.makeMove(mysys);
@@ -1489,8 +1520,7 @@ TEST_F (testComputeBias, testInSituTMMCMultiComponent) {
 
 	// do insertions with the other species
 	moves usedMoves2;
-	insertParticle newIns2 (1, "insert");
-	usedMoves2.addMove(&newIns2, 1.0);
+	usedMoves2.addInsert(1, 1.0);
 
 	// insert 1 atom from second species
 	usedMoves2.makeMove(mysys);
@@ -1550,8 +1580,7 @@ TEST (testSwapMove, twoComponents) {
 	mysys.insertAtom(2, &a3);
 
 	moves usedMoves;
-	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
-	usedMoves.addMove(&newSwap, 1.0);
+	usedMoves.addSwap(0,1,1.0); // only can swap a1 and a2
 
 	// swap a1 & a2 should result in no change since they are an isolated pair
 	bool noMove = true;
@@ -1569,8 +1598,7 @@ TEST (testSwapMove, twoComponents) {
 
 	// now try to swap a1 and a3 after swapping a1 and a2
 	moves usedMoves2;
-	swapParticles newSwap2 (1, 2, "swap"); // swap a2 and a3
-	usedMoves2.addMove(&newSwap2, 1.0);
+	usedMoves2.addSwap(1,2,1.0); // swap a2 and a3
 	noMove = true;
 	lastAns = 0;
 	U_save = mysys.scratchEnergy();
@@ -1586,8 +1614,7 @@ TEST (testSwapMove, twoComponents) {
 
 	// swap a1 and a3 which are now an isolated pair
 	moves usedMoves3;
-	swapParticles newSwap3 (0, 2, "swap"); // only can swap a1 and a3
-	usedMoves3.addMove(&newSwap3, 1.0);
+	usedMoves3.addSwap(0,2,1.0); // only can swap a1 and a3
 	noMove = true;
 	lastAns = 0;
 	U_save = mysys.scratchEnergy();
@@ -1935,10 +1962,6 @@ protected:
 		tmmcBias->updateC(Nmin+1, Nmin+1, 2, 2, pu);
 		tmmcBias->updateC(Nmin+1, Nmin+2, 2, 0, pu);
 		tmmcBias->updateC(Nmin+1, Nmin+1, 2, 1, pu);
-
-		// "missing states"
-		/*tmmcBias->updateC(Nmin+2, Nmin+2, 0, 0, pu);
-		tmmcBias->updateC(Nmin+2, Nmin+1, 0, 2, pu);*/
 	}
 };
 
@@ -2251,7 +2274,6 @@ TEST_F (testExpandedWalaBias, checkEvaluateFlatnessYes) {
 }
 
 /* Expanded Ensemble Single Component Insertion/Deletion */
-
 class testBookkeepingExpanded : public ::testing::Test {
 protected:
 	//double s, g, lnF, pu;
@@ -2625,14 +2647,10 @@ TEST_F (testMulticomponentExpandedMCMove, selectSpec1) {
 	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves mover (Mtot);
-
-	insertParticle insOne (0, "in1"), insTwo (1, "in2");
-	deleteParticle delOne (0, "del1"), delTwo (1, "del2");
-
-	mover.addMove (&insOne, 1.0);
-	mover.addMove (&insTwo, 1.0);
-	mover.addMove (&delOne, 1.0);
-	mover.addMove (&delTwo, 1.0);
+	mover.addInsert(0,1.0);
+	mover.addInsert(1,1.0);
+	mover.addDelete(0,1.0);
+	mover.addDelete(1,1.0);
 
 	// manually insert two particles of each into the system
 	atom a1;
@@ -2696,14 +2714,10 @@ TEST_F (testMulticomponentExpandedMCMove, selectSpec1_moved) {
 	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves mover (Mtot);
-
-	insertParticle insOne (0, "in1"), insTwo (1, "in2");
-	deleteParticle delOne (0, "del1"), delTwo (1, "del2");
-
-	mover.addMove (&insOne, 1.0);
-	mover.addMove (&insTwo, 1.0);
-	mover.addMove (&delOne, 1.0);
-	mover.addMove (&delTwo, 1.0);
+	mover.addInsert(0,1.0);
+	mover.addInsert(1,1.0);
+	mover.addDelete(0,1.0);
+	mover.addDelete(1,1.0);
 
 	// manually insert two particles of each into the system
 	atom a1;
@@ -2976,8 +2990,7 @@ TEST_F (testComputeBiasExpanded, testInSituWALASingleComponent) {
 	mysys.addPotential (0, 0, "hard_sphere", params, false);
 
 	moves usedMoves (Mtot);
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert
 	usedMoves.makeMove(mysys);
@@ -3018,8 +3031,7 @@ TEST_F (testComputeBiasExpanded, testInSituWALAMultiComponent) {
 	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves usedMoves (Mtot);
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0,1.0);
 
 	// will insert first species
 	usedMoves.makeMove(mysys);
@@ -3046,8 +3058,7 @@ TEST_F (testComputeBiasExpanded, testInSituWALAMultiComponent) {
 
 	// will insert the second species
 	moves usedMoves2 (Mtot);
-	insertParticle newIns2 (1, "insert");
-	usedMoves2.addMove(&newIns2, 1.0);
+	usedMoves2.addInsert(1,1.0);
 
 	usedMoves2.makeMove(mysys);
 
@@ -3088,8 +3099,7 @@ TEST_F (testComputeBiasExpanded, testInSituTMMCSingleComponent) {
 	mysys.addPotential (0, 0, "hard_sphere", params, false);
 
 	moves usedMoves (Mtot);
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert
 	usedMoves.makeMove(mysys);
@@ -3161,8 +3171,7 @@ TEST_F (testComputeBiasExpanded, testInSituTMMCMultiComponent) {
 	mysys.addPotential (1, 1, "hard_sphere", params, false);
 
 	moves usedMoves (Mtot);
-	insertParticle newIns (0, "insert");
-	usedMoves.addMove(&newIns, 1.0);
+	usedMoves.addInsert(0, 1.0);
 
 	// will insert first species
 	usedMoves.makeMove(mysys);
@@ -3215,8 +3224,7 @@ TEST_F (testComputeBiasExpanded, testInSituTMMCMultiComponent) {
 
 	// do insertions with the other species
 	moves usedMoves2 (Mtot);
-	insertParticle newIns2 (1, "insert");
-	usedMoves2.addMove(&newIns2, 1.0);
+	usedMoves2.addInsert(1,1.0);
 
 	// insert 1 atom from second species
 	usedMoves2.makeMove(mysys);
@@ -3959,8 +3967,7 @@ TEST (testExpandedSwapMove, multicomponentNoSwapTwoFullyInserted) {
 	EXPECT_TRUE (fabs(U_save - -(1.0+2.0)) < 1.0e-9);
 
 	moves usedMoves (Mtot);
-	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
-	usedMoves.addMove(&newSwap, 1.0);
+	usedMoves.addSwap(0,1,1.0); // only can swap a1 and a2
 
 	bool noMove = true;
 	double lastAns = 0;
@@ -4037,8 +4044,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapTwoFullyInserted) {
 	EXPECT_TRUE (fabs(U_save - -(0.0+2.0)) < 1.0e-9);
 
 	moves usedMoves (Mtot);
-	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
-	usedMoves.addMove(&newSwap, 1.0);
+	usedMoves.addSwap(0,1,1.0); // only can swap a1 and a2
 
 	bool noMove = true;
 	double lastAns = 0;
@@ -4115,8 +4121,7 @@ TEST (testExpandedSwapMove, multicomponentAllowSingleSwapTwoFullyInserted) {
 	EXPECT_TRUE (fabs(U_save - -(0.0+2.0)) < 1.0e-9);
 
 	moves usedMoves (Mtot);
-	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
-	usedMoves.addMove(&newSwap, 1.0);
+	usedMoves.addSwap(0,1,1.0); // only can swap a1 and a2
 
 	bool done = false, badSwap = true;
 	double lastAns = 0;
@@ -4209,10 +4214,8 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	EXPECT_TRUE (fabs(U_save - -(0.0+2.0)) < 1.0e-9);
 
 	moves usedMoves (Mtot);
-	swapParticles newSwap (0, 1, "swap"); // only can swap a1 and a2
-	usedMoves.addMove(&newSwap, 1.0);
+	usedMoves.addSwap(0,1,1.0); // only can swap a1 and a2
 
-	bool badSwap = true;
 	double lastAns = 0;
 	int iterMax = 1000, iter = 0;
 	while (iter < iterMax) {
@@ -4250,7 +4253,6 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	EXPECT_EQ (mysys.getTotN(), 3);
 	EXPECT_EQ (mysys.getCurrentM(), 2);
 
-	badSwap = true;
 	lastAns = 0;
 	iterMax = 1000;
 	iter = 0;
@@ -4289,7 +4291,6 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	EXPECT_EQ (mysys.getTotN(), 3);
 	EXPECT_EQ (mysys.getCurrentM(), 2);
 
-	badSwap = true;
 	lastAns = 0;
 	iterMax = 1000;
 	iter = 0;
@@ -4327,7 +4328,6 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	EXPECT_EQ (mysys.getTotN(), 3);
 	EXPECT_EQ (mysys.getCurrentM(), 2);
 
-	badSwap = true;
 	lastAns = 0;
 	iterMax = 1000;
 	iter = 0;
@@ -4606,6 +4606,9 @@ TEST_F (testHardWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete hwz;
+	}
 
     // bad sigma
     caught = false;
@@ -4615,6 +4618,9 @@ TEST_F (testHardWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete hwz;
+	}
 
     // bad M
     caught = false;
@@ -4624,6 +4630,9 @@ TEST_F (testHardWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete hwz;
+	}
 }
 
 TEST_F (testHardWallZ, inside) {
@@ -4751,6 +4760,9 @@ TEST_F (testSquareWellWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete sqz;
+	}
 
     // bad sigma
     caught = false;
@@ -4760,6 +4772,9 @@ TEST_F (testSquareWellWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete sqz;
+	}
 
     caught = false;
     try {
@@ -4768,6 +4783,9 @@ TEST_F (testSquareWellWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete sqz;
+	}
 
     // bad M
     caught = false;
@@ -4777,6 +4795,9 @@ TEST_F (testSquareWellWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete sqz;
+	}
 
     // bad range
     caught = false;
@@ -4786,6 +4807,9 @@ TEST_F (testSquareWellWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete sqz;
+	}
 
     // bad eps
     caught = false;
@@ -4795,6 +4819,9 @@ TEST_F (testSquareWellWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete sqz;
+	}
 }
 
 TEST_F (testSquareWellWallZ, inside) {
@@ -5113,8 +5140,6 @@ TEST_F (testCompositeBarrier, pairSquareWellWallZ) {
 TEST_F (testCompositeBarrier, hardWallInsideSquareWell) {
     cB.addSquareWellWallZ (0, H, sigma, range1, eps); // M defaults to 1
     cB.addHardWallZ (H/2-sigma/2*1.01, H/2+sigma/2*1.01, sigma); // M defaults to 1
-
-    double zpos = a1.pos[2]; // at the border
 
     // test bottom wall
     a1.pos[2] = 0;
@@ -10056,6 +10081,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (!caught);
+	if (!caught) {
+		delete cz;
+	}
 
     // bad sigma
     caught = false;
@@ -10065,6 +10093,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete cz;
+	}
 
     caught = false;
     try {
@@ -10073,6 +10104,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete cz;
+	}
 
 	// bad radius
 	caught = false;
@@ -10082,6 +10116,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete cz;
+	}
 
     // bad M
     caught = false;
@@ -10091,6 +10128,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete cz;
+	}
 
     // bad width
     caught = false;
@@ -10100,6 +10140,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete cz;
+	}
 
     // bad eps
     caught = false;
@@ -10109,6 +10152,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete cz;
+	}
 }
 
 TEST_F (testCylinderZ, inside) {
@@ -11264,4 +11310,255 @@ TEST_F (quaternionTest, notEqual) {
 	val[3] = 5.678;
 	b.set(val);
 	EXPECT_TRUE (a != b);
+}
+
+class checkpointTest : public ::testing::Test {
+protected:
+	moves usedMovesEq, usedMovesPr;
+	std::string fname;
+
+	virtual void SetUp() {
+		fname = "../data/cpt_input.json";
+	}
+};
+
+TEST_F (checkpointTest, restarts) {
+	// test that system can restart from multiple configurations without error
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+
+	bool failed = false;
+	try {
+		sys.readConfig("../data/res2.xyz");
+		sys.readConfig("../data/res3.xyz");
+		sys.readConfig("../data/res1.xyz");
+	} catch (...) {
+		failed = true;
+	}
+	EXPECT_TRUE (!failed);
+}
+
+TEST_F (checkpointTest, load) {
+	// test the system can load info from checkpoint
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+	checkpoint cpt ("../data/checkpt", 900, sys);
+
+	EXPECT_EQ(cpt.hasCheckpoint, true);
+	EXPECT_EQ(cpt.takeSnaps, false);
+	EXPECT_EQ(cpt.tmmcDone, true);
+	EXPECT_EQ(cpt.crossoverDone, true);
+	EXPECT_EQ(cpt.walaDone, true);
+	EXPECT_EQ(cpt.resFromTMMC, true); // sample was taken from completed sim, but should still flag as in tmmc stage
+	EXPECT_EQ(cpt.freq, 900);
+	EXPECT_EQ(cpt.moveCounter, 0.0);
+	EXPECT_EQ(cpt.sweepCounter, 0.0);
+	EXPECT_EQ(cpt.dir, "../data/checkpt");
+}
+
+TEST_F (checkpointTest, dump) {
+	// test the system can dump
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+	checkpoint cpt ("../data/checkpt", 900, sys);
+
+	bool failed = false;
+	try {
+		cpt.dump(sys);
+	} catch (...) {
+		failed = true;
+	}
+	EXPECT_TRUE(!failed);
+}
+
+TEST_F (checkpointTest, loadDump) {
+	// test that system can load,dump same info
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+	checkpoint cpt ("../data/checkpt", 900, sys);
+
+	// use one system to write a copy of its checkpoint
+	cpt.dir = "../data/checkpt2/";
+	cpt.chkptName = "../data/checkpt2/state.json"; // dumps a diff checkpoint
+	cpt.dump(sys);
+
+	// use a second checkpoint to load
+	checkpoint cpt2 ("../data/checkpt2", 900, sys);
+
+	EXPECT_EQ(cpt.hasCheckpoint, cpt2.hasCheckpoint);
+	EXPECT_EQ(cpt.takeSnaps, cpt2.takeSnaps);
+	EXPECT_EQ(cpt.tmmcDone, cpt2.tmmcDone);
+	EXPECT_EQ(cpt.crossoverDone, cpt2.crossoverDone);
+	EXPECT_EQ(cpt.walaDone, cpt2.walaDone);
+	EXPECT_EQ(cpt.resFromWALA, cpt2.resFromWALA);
+	EXPECT_EQ(cpt.resFromCross, cpt2.resFromCross);
+	EXPECT_EQ(cpt.resFromTMMC, cpt2.resFromTMMC);
+	EXPECT_EQ(cpt.freq, cpt2.freq);
+	EXPECT_EQ(cpt.moveCounter, cpt2.moveCounter);
+	EXPECT_EQ(cpt.sweepCounter, cpt2.sweepCounter);
+
+	EXPECT_EQ(cpt.dir, cpt2.dir);
+
+	FILE* fp = fopen("../data/checkpt/state.json", "r");
+	char readBuffer[65536];
+	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer) );
+	rapidjson::Document doc;
+	doc.ParseStream(is);
+	fclose(fp);
+
+	std::vector < double > ctr1 (doc["extMomCounter"].Size(), 0);
+	for (unsigned int i = 0; i < doc["extMomCounter"].Size(); ++i) {
+		ctr1[i] = doc["extMomCounter"][i].GetDouble();
+	}
+
+	FILE* fp2 = fopen("../data/checkpt2/state.json", "r");
+	char readBuffer2[65536];
+	rapidjson::FileReadStream is2(fp, readBuffer2, sizeof(readBuffer2) );
+	rapidjson::Document doc2;
+	doc2.ParseStream(is2);
+	fclose(fp2);
+
+	std::vector < double > ctr2 (doc["extMomCounter"].Size(), 0);
+	for (unsigned int i = 0; i < doc["extMomCounter"].Size(); ++i) {
+		ctr2[i] = doc["extMomCounter"][i].GetDouble();
+	}
+
+	EXPECT_EQ (ctr2.size(), ctr1.size());
+	const double tol = 1.0e-9;
+	for (unsigned int i = 0; i < ctr1.size(); ++i) {
+		EXPECT_TRUE(fabs(ctr1[i] - ctr2[i]) < tol);
+	}
+}
+
+TEST_F (checkpointTest, check) {
+	// test the system can check timing correctly
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+	checkpoint cpt ("../data/checkpt", 2, sys);
+
+	std::cout << "Patience: testing checkpoint timing ..." << std::endl;
+
+	pauseCode(1);
+	std::cout << " ... 1/4 ... " << std::endl;
+	cpt.dir = "../data/checkpt2/";
+	cpt.chkptName = "../data/checkpt2/state.json";
+	bool now = cpt.check(sys);
+	EXPECT_TRUE (!now);
+
+	pauseCode(1);
+	std::cout << " ... 2/4 ... " << std::endl;
+	now = cpt.check(sys);
+	EXPECT_TRUE(now);
+
+	pauseCode(1);
+	std::cout << " ... 3/4 ... " << std::endl;
+	now = cpt.check(sys);
+	EXPECT_TRUE(!now);
+
+	pauseCode(1);
+	std::cout << " ... 4/4 ... " << std::endl;
+	now = cpt.check(sys);
+	EXPECT_TRUE(now);
+}
+
+TEST_F (checkpointTest, restartEnergyHistogram) {
+	// test that system can load,dump restartEnergyHistogram info
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+
+	sys.restartEnergyHistogram("../data/eHist");
+	sys.printEnergyHistogram("eHist_test", false);
+
+	// compare the two files
+	int result = system("diff ../data/eHist.dat eHist_test.dat > dmp");
+	EXPECT_EQ (result, 0);
+
+	sys.restartEnergyHistogram("../data/eHist");
+	sys.printEnergyHistogram("eHist_test", true);
+
+	// normalization changes the result
+	result = system("diff ../data/eHist.dat eHist_test.dat > dmp");
+	EXPECT_TRUE (result != 0);
+}
+
+TEST_F (checkpointTest, restartPkHistogram) {
+	// test that system can load,dump restartEnergyHistogram info
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+
+	sys.restartPkHistogram("../data/pkHist");
+	sys.printPkHistogram("pkHist_test", false);
+
+	// compare the two files
+	int result = system("diff ../data/pkHist_1.dat pkHist_test_1.dat > dmp");
+	EXPECT_EQ (result, 0);
+	result = system("diff ../data/pkHist_2.dat pkHist_test_2.dat > dmp");
+	EXPECT_EQ (result, 0);
+
+	sys.restartPkHistogram("../data/pkHist");
+	sys.printPkHistogram("pkHist_test", true);
+
+	// normalization changes the result
+	result = system("diff ../data/pkHist_1.dat pkHist_test_1.dat > dmp");
+	EXPECT_TRUE (result != 0);
+	result = system("diff ../data/pkHist_2.dat pkHist_test_2.dat > dmp");
+	EXPECT_TRUE (result != 0);
+}
+
+TEST_F (checkpointTest, restartExtMoments) {
+	// test that system can load,dump restartEnergyHistogram info
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+
+	FILE* fp = fopen("../data/checkpt/state.json", "r");
+	char readBuffer[65536];
+	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer) );
+	rapidjson::Document doc;
+	doc.ParseStream(is);
+	fclose(fp);
+
+	std::vector < double > ctr (doc["extMomCounter"].Size(), 0);
+	for (unsigned int i = 0; i < doc["extMomCounter"].Size(); ++i) {
+		ctr[i] = doc["extMomCounter"][i].GetDouble();
+	}
+
+	// compare the two files
+	sys.restartExtMoments("../data/extMom", ctr);
+	sys.printExtMoments("extMom_test", false);
+	int result = system("diff ../data/extMom.dat extMom_test.dat > dmp");
+	EXPECT_EQ (result, 0);
+
+	// normalization changes result, when ctr != 1 for all members of ctr
+	sys.restartExtMoments("../data/extMom", ctr);
+	sys.printExtMoments("extMom_test", true);
+	result = system("diff ../data/extMom.dat extMom_test.dat > dmp");
+	EXPECT_TRUE (result != 0);
+
+	// when ctr = 1 for all, normalization should not not changes
+	std::fill(ctr.begin(), ctr.end(), 1);
+	sys.restartExtMoments("../data/extMom", ctr);
+	sys.printExtMoments("extMom_test", false);
+	result = system("diff ../data/extMom.dat extMom_test.dat > dmp");
+	EXPECT_EQ (result, 0);
+}
+
+TEST (testNone, cleanUp) {
+	// cleanup after other tests
+	int res;
+	res = system("rm ppot_*");
+	EXPECT_EQ (res, 0);
+	res = system("rm tmmBias*");
+	EXPECT_EQ (res, 0);
+	res = system("rm walaBias*");
+	EXPECT_EQ (res, 0);
+	res = system("rm dmp eHist_test.dat");
+	EXPECT_EQ (res, 0);
+	res = system("rm ../data/checkpt2/e* ../data/checkpt2/pk* ../data/checkpt2/snap.xyz ../data/checkpt2/tmmc* ");
+	EXPECT_EQ (res, 0);
+	res = system("rm ../data/checkpt/e* ../data/checkpt/pk* ../data/checkpt/snap.xyz ../data/checkpt/tmmc_lnPI.dat ");
+	EXPECT_EQ (res, 0);
+	res = system("rm pkHist_test_1.dat pkHist_test_2.dat");
+	EXPECT_EQ (res, 0);
+	res = system("rm extMom_test.dat");
+	EXPECT_EQ (res, 0);
 }

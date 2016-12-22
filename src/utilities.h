@@ -8,12 +8,16 @@
 #include <sstream>
 #include <cmath>
 #include <iomanip>
+#include <ctime>
 #include <time.h>
 
 //! For converting to string
-#define sstr( x ) dynamic_cast< std::ostringstream & >( ( std::ostringstream() << std::dec << x ) ).str()
+//#define sstr( x ) dynamic_cast< std::ostringstream & >( ( std::ostringstream() << std::dec << x ) ).str()
+//#define sstr( x ) std::to_string(x)
+
 std::vector < std::string > splitstr (const std::string &s, char delim);
 
+void pauseCode (long int dur);
 void pbc (std::vector < double > &pos, const std::vector < double > &box);
 bool fileExists(std::string fileName);
 std::string getTimeStamp ();
