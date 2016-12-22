@@ -2,6 +2,8 @@
 
 /*!
  * Read system state from a file.  If checkpoint directory is found and json file is valid, data is loaded from it.
+ * Note that although this stores the frequency, it does not use the value it dumps to file.
+ * This class always uses the frequency given when the class is instantiated.
  *
  * \param [in] dir Directory where system state was saved
  * \param [in] frequency Frquency to take snapshots/checkpoints of the system (< 0 disables)
