@@ -6,11 +6,13 @@
  * \param [in] sys System that was simulated
  */
 void sanityChecks (simSystem &sys) {
-    // Sanity checks
 	if (sys.nSpecies() != sys.atoms.size()) {
         std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
         exit(SYS_FAILURE);
+	} else {
+		std::cout << "Passed: Number of species present check" << std::endl;
 	}
+
 	long long int ns = 0;
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		ns += sys.numSpecies[i];
@@ -18,11 +20,13 @@ void sanityChecks (simSystem &sys) {
 	if (ns != sys.getTotN()) {
 		std::cerr << "Sum of fully inserted atoms deviates from total counter" << std::endl;
 		exit(SYS_FAILURE);
+	} else {
+		std::cout << "Passed: Sum of atoms consistent with total counter" << std::endl;
 	}
-		
+
 	if (sys.getTotalM() > 1) {
 		if (sys.getFractionalAtom()->mState != sys.getCurrentM()) {
-			std::cerr << "Expanded ensemble state deviates between atom ("+std::to_string(sys.getFractionalAtom()->mState)+") and system log ("+std::to_string(sys.getCurrentM())+")" << std::endl;
+			std::cerr << "Expanded ensemble state deviates between atom ("+std::to_string(sys.getFractionalAtom()->mState)+") and system ("+std::to_string(sys.getCurrentM())+")" << std::endl;
 			exit(SYS_FAILURE);
 			for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 				int end = sys.numSpecies[i];
@@ -54,8 +58,8 @@ void sanityChecks (simSystem &sys) {
 			}
 		}
 	}
+	std::cout << "Passed: Expanded ensemble state check for all atoms" << std::endl;
 
-    // Still allow for printing of all data, even if there is an error, in order to interrogate the results anyway
 	const double tol = 1.0e-6;
 	const double scratchEnergy = sys.scratchEnergy(), incrEnergy = sys.energy();
     if (fabs(scratchEnergy - incrEnergy) > tol) {
