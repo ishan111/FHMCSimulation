@@ -2,7 +2,6 @@
 
 cellList::cellList (std::vector < double > _box, double _cellSize, std::vector< atom* > _atoms) {
 	box = _box;
-
 	cellCountX = floor(_box[0]/_cellSize);
 	cellCountY = floor(_box[1]/_cellSize);
 	cellCountZ = floor(_box[2]/_cellSize);

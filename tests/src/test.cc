@@ -4178,7 +4178,6 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	moves usedMoves (Mtot);
 	usedMoves.addSwap(0,1,1.0); // only can swap a1 and a2
 
-	bool badSwap = true;
 	double lastAns = 0;
 	int iterMax = 1000, iter = 0;
 	while (iter < iterMax) {
@@ -4216,7 +4215,6 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	EXPECT_EQ (mysys.getTotN(), 3);
 	EXPECT_EQ (mysys.getCurrentM(), 2);
 
-	badSwap = true;
 	lastAns = 0;
 	iterMax = 1000;
 	iter = 0;
@@ -4255,7 +4253,6 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	EXPECT_EQ (mysys.getTotN(), 3);
 	EXPECT_EQ (mysys.getCurrentM(), 2);
 
-	badSwap = true;
 	lastAns = 0;
 	iterMax = 1000;
 	iter = 0;
@@ -4293,7 +4290,6 @@ TEST (testExpandedSwapMove, multicomponentAllowSwapsNotFullyInserted) {
 	EXPECT_EQ (mysys.getTotN(), 3);
 	EXPECT_EQ (mysys.getCurrentM(), 2);
 
-	badSwap = true;
 	lastAns = 0;
 	iterMax = 1000;
 	iter = 0;
@@ -4572,6 +4568,9 @@ TEST_F (testHardWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete hwz;
+	}
 
     // bad sigma
     caught = false;
@@ -4581,6 +4580,9 @@ TEST_F (testHardWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete hwz;
+	}
 
     // bad M
     caught = false;
@@ -4590,6 +4592,9 @@ TEST_F (testHardWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete hwz;
+	}
 }
 
 TEST_F (testHardWallZ, inside) {
@@ -4717,6 +4722,9 @@ TEST_F (testSquareWellWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete sqz;
+	}
 
     // bad sigma
     caught = false;
@@ -4726,6 +4734,9 @@ TEST_F (testSquareWellWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete sqz;
+	}
 
     caught = false;
     try {
@@ -4734,6 +4745,9 @@ TEST_F (testSquareWellWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete sqz;
+	}
 
     // bad M
     caught = false;
@@ -4743,6 +4757,9 @@ TEST_F (testSquareWellWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete sqz;
+	}
 
     // bad range
     caught = false;
@@ -4752,6 +4769,9 @@ TEST_F (testSquareWellWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete sqz;
+	}
 
     // bad eps
     caught = false;
@@ -4761,6 +4781,9 @@ TEST_F (testSquareWellWallZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete sqz;
+	}
 }
 
 TEST_F (testSquareWellWallZ, inside) {
@@ -10020,6 +10043,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (!caught);
+	if (!caught) {
+		delete cz;
+	}
 
     // bad sigma
     caught = false;
@@ -10029,6 +10055,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete cz;
+	}
 
     caught = false;
     try {
@@ -10037,6 +10066,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete cz;
+	}
 
 	// bad radius
 	caught = false;
@@ -10046,6 +10078,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete cz;
+	}
 
     // bad M
     caught = false;
@@ -10055,6 +10090,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete cz;
+	}
 
     // bad width
     caught = false;
@@ -10064,6 +10102,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete cz;
+	}
 
     // bad eps
     caught = false;
@@ -10073,6 +10114,9 @@ TEST_F (testCylinderZ, badInit) {
         caught = true;
     }
     EXPECT_TRUE (caught);
+	if (!caught) {
+		delete cz;
+	}
 }
 
 TEST_F (testCylinderZ, inside) {
@@ -11233,16 +11277,27 @@ TEST_F (quaternionTest, notEqual) {
 class checkpointTest : public ::testing::Test {
 protected:
 	moves usedMovesEq, usedMovesPr;
-	simSystem sys;
+	std::string fname;
 
 	virtual void SetUp() {
-		sys = initialize ("../data/cpt_input.json", &usedMovesEq, &usedMovesPr);
+		fname = "../data/cpt_input.json";
 	}
 };
 
 TEST_F (checkpointTest, restarts) {
 	// test that system can restart from multiple configurations without error
-	;
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+
+	bool failed = false;
+	try {
+		sys.readConfig("../data/res2.xyz");
+		sys.readConfig("../data/res3.xyz");
+		sys.readConfig("../data/res1.xyz");
+	} catch (...) {
+		failed = true;
+	}
+	EXPECT_TRUE (!failed);
 }
 
 // Unittest:
