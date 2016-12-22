@@ -11461,7 +11461,104 @@ TEST_F (checkpointTest, check) {
 	EXPECT_TRUE(now);
 }
 
-// Unittest:
-// sys.restartEnergyHistogram
-// sys.restartPkHistogram
-// sys.restartExtMoments
+TEST_F (checkpointTest, restartEnergyHistogram) {
+	// test that system can load,dump restartEnergyHistogram info
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+
+	sys.restartEnergyHistogram("../data/eHist");
+	sys.printEnergyHistogram("eHist_test", false);
+
+	// compare the two files
+	int result = system("diff ../data/eHist.dat eHist_test.dat > dmp");
+	EXPECT_EQ (result, 0);
+
+	sys.restartEnergyHistogram("../data/eHist");
+	sys.printEnergyHistogram("eHist_test", true);
+
+	// normalization changes the result
+	result = system("diff ../data/eHist.dat eHist_test.dat > dmp");
+	EXPECT_TRUE (result != 0);
+}
+
+TEST_F (checkpointTest, restartPkHistogram) {
+	// test that system can load,dump restartEnergyHistogram info
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+
+	sys.restartPkHistogram("../data/pkHist");
+	sys.printPkHistogram("pkHist_test", false);
+
+	// compare the two files
+	int result = system("diff ../data/pkHist_1.dat pkHist_test_1.dat > dmp");
+	EXPECT_EQ (result, 0);
+	result = system("diff ../data/pkHist_2.dat pkHist_test_2.dat > dmp");
+	EXPECT_EQ (result, 0);
+
+	sys.restartPkHistogram("../data/pkHist");
+	sys.printPkHistogram("pkHist_test", true);
+
+	// normalization changes the result
+	result = system("diff ../data/pkHist_1.dat pkHist_test_1.dat > dmp");
+	EXPECT_TRUE (result != 0);
+	result = system("diff ../data/pkHist_2.dat pkHist_test_2.dat > dmp");
+	EXPECT_TRUE (result != 0);
+}
+
+TEST_F (checkpointTest, restartExtMoments) {
+	// test that system can load,dump restartEnergyHistogram info
+	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
+	setup (sys, fname);
+
+	FILE* fp = fopen("../data/checkpt/state.json", "r");
+	char readBuffer[65536];
+	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer) );
+	rapidjson::Document doc;
+	doc.ParseStream(is);
+	fclose(fp);
+
+	std::vector < double > ctr (doc["extMomCounter"].Size(), 0);
+	for (unsigned int i = 0; i < doc["extMomCounter"].Size(); ++i) {
+		ctr[i] = doc["extMomCounter"][i].GetDouble();
+	}
+
+	// compare the two files
+	sys.restartExtMoments("../data/extMom", ctr);
+	sys.printExtMoments("extMom_test", false);
+	int result = system("diff ../data/extMom.dat extMom_test.dat > dmp");
+	EXPECT_EQ (result, 0);
+
+	// normalization changes result, when ctr != 1 for all members of ctr
+	sys.restartExtMoments("../data/extMom", ctr);
+	sys.printExtMoments("extMom_test", true);
+	result = system("diff ../data/extMom.dat extMom_test.dat > dmp");
+	EXPECT_TRUE (result != 0);
+
+	// when ctr = 1 for all, normalization should not not changes
+	std::fill(ctr.begin(), ctr.end(), 1);
+	sys.restartExtMoments("../data/extMom", ctr);
+	sys.printExtMoments("extMom_test", false);
+	result = system("diff ../data/extMom.dat extMom_test.dat > dmp");
+	EXPECT_EQ (result, 0);
+}
+
+TEST (testNone, cleanUp) {
+	// cleanup after other tests
+	int res;
+	res = system("rm ppot_*");
+	EXPECT_EQ (res, 0);
+	res = system("rm tmmBias*");
+	EXPECT_EQ (res, 0);
+	res = system("rm walaBias*");
+	EXPECT_EQ (res, 0);
+	res = system("rm dmp eHist_test.dat");
+	EXPECT_EQ (res, 0);
+	res = system("rm ../data/checkpt2/e* ../data/checkpt2/pk* ../data/checkpt2/snap.xyz ../data/checkpt2/tmmc* ");
+	EXPECT_EQ (res, 0);
+	res = system("rm ../data/checkpt/e* ../data/checkpt/pk* ../data/checkpt/snap.xyz ../data/checkpt/tmmc_lnPI.dat ");
+	EXPECT_EQ (res, 0);
+	res = system("rm pkHist_test_1.dat pkHist_test_2.dat");
+	EXPECT_EQ (res, 0);
+	res = system("rm extMom_test.dat");
+	EXPECT_EQ (res, 0);
+}
