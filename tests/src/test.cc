@@ -11555,7 +11555,7 @@ TEST (testNone, cleanUp) {
 	EXPECT_EQ (res, 0);
 	res = system("rm ../data/checkpt2/e* ../data/checkpt2/pk* ../data/checkpt2/snap.xyz ../data/checkpt2/tmmc* ");
 	EXPECT_EQ (res, 0);
-	res = system("rm ../data/checkpt/e* ../data/checkpt/pk* ../data/checkpt/snap.xyz ../data/checkpt/tmmc_lnPI.dat ");
+	res = system("rm ../data/checkpt/e* ../data/checkpt/pk* ../data/checkpt/tmmc_lnPI.dat ");
 	EXPECT_EQ (res, 0);
 	res = system("rm pkHist_test_1.dat pkHist_test_2.dat");
 	EXPECT_EQ (res, 0);
