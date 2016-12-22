@@ -33,3 +33,4 @@ $ cd ../bin; ./runUnitTests
 ### Dependencies
 
 1. GCC
+2. C++11 support required
