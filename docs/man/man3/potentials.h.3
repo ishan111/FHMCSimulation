@@ -1,0 +1,73 @@
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/potentials.h" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/nam4/Desktop/sandbox/FHMCSimulation/src/potentials.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <cmath>\fP
+.br
+\fC#include <vector>\fP
+.br
+\fC#include <string>\fP
+.br
+\fC#include <iostream>\fP
+.br
+\fC#include <fstream>\fP
+.br
+\fC#include <limits>\fP
+.br
+\fC#include 'global\&.h'\fP
+.br
+\fC#include 'utilities\&.h'\fP
+.br
+\fC#include 'atom\&.h'\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "class \fBpairPotential\fP"
+.br
+.RI "\fIAbstract base class which defines all pair potentials\&. \fP"
+.ti -1c
+.RI "class \fBlennardJones\fP"
+.br
+.RI "\fILennard-Jones Potential Parameters should be specified in the following order: { epsilon, sigma, r_cut, u_shift, Mtot }\&. \fP"
+.ti -1c
+.RI "class \fBfsLennardJones\fP"
+.br
+.RI "\fIForce-Shifted Lennard-Jones Potential Parameters should be specified in the following order: { epsilon, sigma, r_cut, Mtot }\&. \fP"
+.ti -1c
+.RI "class \fBtabulated\fP"
+.br
+.RI "\fITabulated Potential Parameters should be specified in the following order: { r_cut, r_shift, u_shift, u_infinity, Mtot }\&. \fP"
+.ti -1c
+.RI "class \fBsquareWell\fP"
+.br
+.RI "\fISquare-well potential Parameters should be specified in the following order: { sigma, wellwidth, welldepth, Mtot }\&. \fP"
+.ti -1c
+.RI "class \fBhardCore\fP"
+.br
+.RI "\fIHard-core potential Parameters should be specified in the following order: { sigma, Mtot }\&. \fP"
+.in -1c
+.SS "Macros"
+
+.in +1c
+.ti -1c
+.RI "#define \fBNUM_INFINITY\fP   std::numeric_limits<double>::max()"
+.br
+.in -1c
+.SH "Macro Definition Documentation"
+.PP 
+.SS "#define NUM_INFINITY   std::numeric_limits<double>::max()"
+
+.PP
+Definition at line 14 of file potentials\&.h\&.
+.PP
+Referenced by hardWallZ::energy(), squareWellWallZ::energy(), cylinderZ::energy(), rightTriangleXZ::energy(), squareWell::energy(), hardCore::energy(), compositeBarrier::energy(), rightTriangleXZ::inside(), rightTriangleXZ::rightTriangleXZ(), and simSystem::scratchEnergy()\&.
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

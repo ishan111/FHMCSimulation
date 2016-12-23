@@ -1,0 +1,289 @@
+.TH "translateParticle" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+translateParticle \- 
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <translate\&.h>\fP
+.PP
+Inherits \fBmcMove\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBtranslateParticle\fP ()"
+.br
+.ti -1c
+.RI "\fBtranslateParticle\fP (const int typeIndex, const std::string tag)"
+.br
+.RI "\fIInstantiate a new move, also give a name which is the combination of auser-defined tag + the particle index it operates on\&. \fP"
+.ti -1c
+.RI "int \fBmake\fP (\fBsimSystem\fP &sys)"
+.br
+.RI "\fITranslate a particle in the system\&. \fP"
+.ti -1c
+.RI "void \fBsetMaxDisplacement\fP (const double maxD, const std::vector< double > &box)"
+.br
+.RI "\fISet the maximum displacement in any single move\&. \fP"
+.ti -1c
+.RI "const double \fBgetMaxDisplacement\fP ()"
+.br
+.RI "\fIReturn the max displacement allowed in a single move\&. \fP"
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Definition at line 13 of file translate\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "translateParticle::translateParticle ()\fC [inline]\fP"
+
+.PP
+Definition at line 15 of file translate\&.h\&.
+.PP
+References mcMove::changeN_\&.
+.PP
+.nf
+15 { changeN_ = false; }
+.fi
+.SS "translateParticle::translateParticle (const inttypeIndex, const std::stringtag)\fC [inline]\fP"
+
+.PP
+Instantiate a new move, also give a name which is the combination of auser-defined tag + the particle index it operates on\&. 
+.PP
+Definition at line 16 of file translate\&.h\&.
+.PP
+References mcMove::changeN_, mcMove::name_, and mcMove::typeIndex_\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "const double translateParticle::getMaxDisplacement ()\fC [inline]\fP"
+
+.PP
+Return the max displacement allowed in a single move\&. 
+.PP
+Definition at line 19 of file translate\&.h\&.
+.SS "int translateParticle::make (\fBsimSystem\fP &sys)\fC [virtual]\fP"
+
+.PP
+Translate a particle in the system\&. All other information is stored in the \fBsimSystem\fP object\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsys\fP System object to attempt to remove a particle from\&.
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+MOVE_SUCCESS if translated a particle, otherwise MOVE_FAILURE if did not\&. Will throw exceptions if there was an error\&. 
+.RE
+.PP
+
+.PP
+Implements \fBmcMove\fP\&.
+.PP
+Definition at line 10 of file translate\&.cpp\&.
+.PP
+References simSystem::atoms, simSystem::beta(), simSystem::box(), calculateBias(), simSystem::getCurrentM(), simSystem::getFractionalAtom(), simSystem::getFractionalAtomType(), simSystem::getNeighborAtoms(), simSystem::getTotN(), simSystem::getWALABias(), simSystem::incrementEnergy(), MOVE_FAILURE, MOVE_SUCCESS, simSystem::nSpecies(), simSystem::numSpecies, simSystem::ppot, rng(), RNG_SEED, simSystem::speciesBarriers, simSystem::tmmcBias, simSystem::translateAtom(), mcMove::typeIndex_, wala::update(), tmmc::updateC(), simSystem::useTMMC, simSystem::useWALA, and customException::what()\&.
+.PP
+.nf
+10                                            {
+11     bool earlyReject = false;
+12 
+13     // check if any exist to be translated
+14     if (sys\&.getFractionalAtomType() == typeIndex_) {
+15         if (sys\&.numSpecies[typeIndex_] == 0 && sys\&.getCurrentM() == 0) {
+16                 earlyReject = true;
+17             }
+18     } else {
+19         if (sys\&.numSpecies[typeIndex_] == 0) {
+20             earlyReject = true;
+21         }
+22     }
+23 
+24     // updates to biasing functions must be done even if at bounds
+25     if (earlyReject) {
+26             if (sys\&.useWALA) {
+27                     sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+28             }
+29             if (sys\&.useTMMC) {
+30                     sys\&.tmmcBias->updateC (sys\&.getTotN(), sys\&.getTotN(), sys\&.getCurrentM(), sys\&.getCurrentM(), 0\&.0);
+31             }
+32             return MOVE_FAILURE;
+33         }
+34 
+35     // choose a random particle of that type
+36     int chosenAtom = 0;
+37     if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == typeIndex_) {
+38         // we are moving a species that has a partially inserted atom, so account for that in the choice
+39         chosenAtom = (int) floor(rng (&RNG_SEED) * (sys\&.numSpecies[typeIndex_]+1));
+40     } else {
+41         // all atoms of this type are fully inserted
+42         chosenAtom = (int) floor(rng (&RNG_SEED) * sys\&.numSpecies[typeIndex_]);
+43     }
+44 
+45     // attempt to translate that one
+46     const std::vector < double > box = sys\&.box();
+47         double V = 1\&.0;
+48         for (unsigned int i = 0; i < box\&.size(); ++i) {
+49             V *= box[i];
+50         }
+51 
+52         double oldEnergy = 0\&.0;
+53         for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
+54             // get positions of neighboring atoms around chosenAtom
+55             std::vector < atom* > neighborAtoms = sys\&.getNeighborAtoms(spec, typeIndex_, &sys\&.atoms[typeIndex_][chosenAtom]);
+56             for (unsigned int i = 0; i < neighborAtoms\&.size(); ++i) {
+57             try {
+58                 oldEnergy += sys\&.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &sys\&.atoms[typeIndex_][chosenAtom], box);
+59             } catch (customException& ce) {
+60                 std::string a = "Cannot translate because of energy error: ", b = ce\&.what();
+61                 throw customException (a+b);
+62             }
+63             }
+64             // add tail correction to potential energy
+65 #ifdef FLUID_PHASE_SIMULATIONS
+66             if (sys\&.ppot[spec][typeIndex_]->useTailCorrection) {
+67                 if (!(sys\&.getCurrentM() > 0 && sys\&.getFractionalAtom () == &sys\&.atoms[typeIndex_][chosenAtom])) {
+68                     // then chosenAtom is not a partially inserted particle and tail interactions must be included
+69                     if (spec == typeIndex_) {
+70                                 if (sys\&.numSpecies[spec]-1 > 0) {
+71                                     oldEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection((sys\&.numSpecies[spec]-1)/V);
+72                                 }
+73                     } else {
+74                                 if (sys\&.numSpecies[spec] > 0) {
+75                                     oldEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection(sys\&.numSpecies[spec]/V);
+76                                 }
+77                     }
+78                 }
+79             }
+80 #endif
+81         }
+82 
+83         // account for wall or barrier interactions
+84         oldEnergy += sys\&.speciesBarriers[typeIndex_]\&.energy(&sys\&.atoms[typeIndex_][chosenAtom], box);
+85 
+86         // store old position and move particle along random direction in interval [-maxD_:maxD_]
+87         std::vector<double> oldPos = sys\&.atoms[typeIndex_][chosenAtom]\&.pos;
+88         for (unsigned int i = 0; i< sys\&.atoms[typeIndex_][chosenAtom]\&.pos\&.size(); ++i) {
+89             sys\&.atoms[typeIndex_][chosenAtom]\&.pos[i] += 2\&.0*maxD_*(0\&.5-rng (&RNG_SEED));
+90 
+91             // apply periodic boundary conditions
+92             if (sys\&.atoms[typeIndex_][chosenAtom]\&.pos[i] >= box[i]) {
+93                 sys\&.atoms[typeIndex_][chosenAtom]\&.pos[i] -= box[i];
+94             } else if (sys\&.atoms[typeIndex_][chosenAtom]\&.pos[i] < 0) {
+95                 sys\&.atoms[typeIndex_][chosenAtom]\&.pos[i] += box[i];
+96             }
+97         }
+98 
+99     // calculate energy at new position
+100         double newEnergy = 0\&.0;
+101         for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
+102             // get positions of neighboring atoms around chosenAtom
+103             std::vector< atom* > neighborAtoms = sys\&.getNeighborAtoms(spec, typeIndex_, &sys\&.atoms[typeIndex_][chosenAtom]);
+104             for (unsigned int i = 0; i < neighborAtoms\&.size(); ++i) {
+105             try {
+106                 newEnergy += sys\&.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &sys\&.atoms[typeIndex_][chosenAtom], box);
+107             } catch (customException& ce) {
+108                 std::string a = "Cannot delete because of energy error: ", b = ce\&.what();
+109                 throw customException (a+b);
+110             }
+111             }
+112             // add tail correction to potential energy
+113 #ifdef FLUID_PHASE_SIMULATIONS
+114             if (sys\&.ppot[spec][typeIndex_]->useTailCorrection) {
+115                 if (!(sys\&.getCurrentM() > 0 && sys\&.getFractionalAtom () == &sys\&.atoms[typeIndex_][chosenAtom])) {
+116                     // then chosenAtom is not a partially inserted particle and tail interactions must be included
+117                     if (spec == typeIndex_) {
+118                                 if (sys\&.numSpecies[spec]-1 > 0) {
+119                                     newEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection((sys\&.numSpecies[spec]-1)/V);
+120                                 }
+121                     } else {
+122                                 if (sys\&.numSpecies[spec] > 0) {
+123                                     newEnergy += sys\&.ppot[spec][typeIndex_]->tailCorrection(sys\&.numSpecies[spec]/V);
+124                                     }
+125                     }
+126                 }
+127             }
+128 #endif
+129         }
+130 
+131         // account for wall or barrier interactions
+132     newEnergy += sys\&.speciesBarriers[typeIndex_]\&.energy(&sys\&.atoms[typeIndex_][chosenAtom], box);
+133 
+134     // biasing
+135     const double p_u = exp(-sys\&.beta()*(newEnergy - oldEnergy));
+136     double bias = calculateBias(sys, sys\&.getTotN(), sys\&.getCurrentM()); // N_tot doesn't change throughout this move
+137 
+138     // tmmc gets updated the same way, regardless of whether the move gets accepted
+139         if (sys\&.useTMMC) {
+140             sys\&.tmmcBias->updateC (sys\&.getTotN(), sys\&.getTotN(), sys\&.getCurrentM(), sys\&.getCurrentM(), std::min(1\&.0, p_u)); // since the total number of atoms isn't changing, can use getTotN() as both initial and final states
+141         }
+142 
+143     if (rng (&RNG_SEED) < p_u*bias) {
+144         try {
+145                 sys\&.translateAtom(typeIndex_, chosenAtom, oldPos);
+146             } catch (customException &ce) {
+147                 std::string a = "Failed to translate atom: ", b = ce\&.what();
+148                 throw customException (a+b);
+149             }
+150         sys\&.incrementEnergy(newEnergy - oldEnergy);
+151 
+152         // update Wang-Landau bias, if used
+153         if (sys\&.useWALA) {
+154             sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+155         }
+156 
+157             return MOVE_SUCCESS;
+158         }
+159 
+160     // if move failed, reset position
+161         for (unsigned int i = 0; i < sys\&.atoms[typeIndex_][chosenAtom]\&.pos\&.size(); ++i) {
+162             sys\&.atoms[typeIndex_][chosenAtom]\&.pos[i] = oldPos[i];
+163         }
+164 
+165         // update Wang-Landau bias (even if moved failed), if used
+166     if (sys\&.useWALA) {
+167         sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+168         }
+169 
+170     return MOVE_FAILURE;
+171 }
+.fi
+.SS "void translateParticle::setMaxDisplacement (const doublemaxD, const std::vector< double > &box)"
+
+.PP
+Set the maximum displacement in any single move\&. Should be postive number lss than half the box size\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fImaxD\fP Maximium displacement 
+.br
+\fIbox\fP Box dimensions 
+.RE
+.PP
+
+.PP
+Definition at line 179 of file translate\&.cpp\&.
+.PP
+.nf
+179                                                                                               {
+180     for (unsigned int i = 0; i < box\&.size(); ++i) {
+181         if (maxD >= box[i]/2\&.) {
+182             throw customException ("Max displacement too large");
+183         }
+184     }
+185     if (maxD > 0) {
+186         maxD_ = maxD;
+187     } else {
+188         throw customException ("Max displacement must be positive");
+189     }
+190 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

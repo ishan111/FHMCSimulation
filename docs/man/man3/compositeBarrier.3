@@ -1,0 +1,345 @@
+.TH "compositeBarrier" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+compositeBarrier \- 
+.PP
+Class which tracks all barriers (superimposed) which interact with a given species\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <barrier\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBcompositeBarrier\fP ()"
+.br
+.ti -1c
+.RI "\fB~compositeBarrier\fP ()"
+.br
+.RI "\fIDeallocate any system barriers present\&. \fP"
+.ti -1c
+.RI "void \fBaddHardWallZ\fP (const double lb, const double ub, const double sigma, const int M=1)"
+.br
+.RI "\fIAdd a hard wall to interact with\&. \fP"
+.ti -1c
+.RI "void \fBaddSquareWellWallZ\fP (const double lb, const double ub, const double sigma, const double range, const double eps, const int M=1)"
+.br
+.RI "\fIAdd a square well wall to interact with\&. \fP"
+.ti -1c
+.RI "void \fBaddCylinderZ\fP (const double x, const double y, const double radius, const double width, const double sigma, const double eps, const int M=1)"
+.br
+.RI "\fIAdd a cylinder along z = 0 axis wall to interact with\&. \fP"
+.ti -1c
+.RI "void \fBaddRightTriangleXZ\fP (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector< double > &box, const double zbase, bool top=false, const int M=1)"
+.br
+.RI "\fIAdd a rightTriangleZ feature to interact with\&. \fP"
+.ti -1c
+.RI "bool \fBinside\fP (const \fBatom\fP *a1, const std::vector< double > &box)"
+.br
+.RI "\fITest if inside ALL the barriers\&. \fP"
+.ti -1c
+.RI "double \fBenergy\fP (const \fBatom\fP *a1, const std::vector< double > &box)"
+.br
+.RI "\fIFind the total energy of interaction from ALL the barriers\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Class which tracks all barriers (superimposed) which interact with a given species\&. 
+.PP
+Definition at line 111 of file barrier\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "compositeBarrier::compositeBarrier ()\fC [inline]\fP"
+
+.PP
+Definition at line 113 of file barrier\&.h\&.
+.PP
+.nf
+113 {};
+.fi
+.SS "compositeBarrier::~compositeBarrier ()"
+
+.PP
+Deallocate any system barriers present\&. 
+.PP
+Definition at line 784 of file barrier\&.cpp\&.
+.PP
+.nf
+784                                      {
+785     if (sysBarriers_\&.begin() != sysBarriers_\&.end()) {
+786         for (unsigned int i = 0; i < sysBarriers_\&.size(); ++i) {
+787             delete sysBarriers_[i];
+788         }
+789         sysBarriers_\&.clear();
+790     }
+791 }
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "void compositeBarrier::addCylinderZ (const doublex, const doubley, const doubleradius, const doublewidth, const doublesigma, const doubleeps, const intM = \fC1\fP)"
+
+.PP
+Add a cylinder along z = 0 axis wall to interact with\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIx\fP x-coordinate of cylinder's center 
+.br
+\fIy\fP y-coordinate of cylinder's center 
+.br
+\fIradius\fP Radius of cylinder 
+.br
+\fIwidth\fP Width of square-well-like interaction (distance from wall) 
+.br
+\fIsigma\fP Hard-sphere diameter the species this wall interacts with can approach within 
+.br
+\fIeps\fP Magnitude of the wall interaction (U = -eps) 
+.br
+\fIM\fP Total number of expanded ensemble states possible for this atom type (defaults to 1) 
+.RE
+.PP
+
+.PP
+Definition at line 724 of file barrier\&.cpp\&.
+.PP
+References customException::what()\&.
+.PP
+.nf
+724                                                                                                                                                                {
+725     if (sysBarriers_\&.begin() == sysBarriers_\&.end()) {
+726         try {
+727             sysBarriers_\&.resize(1);
+728         } catch (std::bad_alloc &ba) {
+729             throw customException ("Unable to allocate space for a new barrier");
+730         }
+731     } else {
+732         try {
+733             sysBarriers_\&.resize(sysBarriers_\&.size()+1);
+734         } catch (std::bad_alloc &ba) {
+735             throw customException ("Unable to allocate space for a new barrier");
+736         }
+737     }
+738     try {
+739         sysBarriers_[sysBarriers_\&.size()-1] = new cylinderZ (x, y, radius, width, sigma, eps, M);
+740     } catch (customException &ce) {
+741         throw customException ("Cannot add cylinderZ to composite barrier: "+std::to_string(*ce\&.what()));
+742     }
+743 }
+.fi
+.SS "void compositeBarrier::addHardWallZ (const doublelb, const doubleub, const doublesigma, const intM = \fC1\fP)"
+
+.PP
+Add a hard wall to interact with\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlb\fP z-Position of the lower wall 
+.br
+\fIub\fP z-Position of the upper wall 
+.br
+\fIsigma\fP Hard-sphere diameter the species this wall interacts with can approach within 
+.br
+\fIM\fP Total number of expanded ensemble states possible for this atom type (defaults to 1) 
+.RE
+.PP
+
+.PP
+Definition at line 661 of file barrier\&.cpp\&.
+.PP
+References customException::what()\&.
+.PP
+.nf
+661                                                                                                       {
+662     if (sysBarriers_\&.begin() == sysBarriers_\&.end()) {
+663         try {
+664             sysBarriers_\&.resize(1);
+665         } catch (std::bad_alloc &ba) {
+666             throw customException ("Unable to allocate space for a new barrier");
+667         }
+668     } else {
+669         try {
+670             sysBarriers_\&.resize(sysBarriers_\&.size()+1);
+671         } catch (std::bad_alloc &ba) {
+672             throw customException ("Unable to allocate space for a new barrier");
+673         }
+674     }
+675     try {
+676         sysBarriers_[sysBarriers_\&.size()-1] = new hardWallZ (lb, ub, sigma, M);
+677     } catch (customException &ce) {
+678         throw customException ("Cannot add hardWallZ to composite barrier: "+std::to_string(*ce\&.what()));
+679     }
+680 }
+.fi
+.SS "void compositeBarrier::addRightTriangleXZ (const doublewidth, const doubletheta, const doublelamW, const doubleeps, const doublesigma, const doublesep, const doubleoffset, const std::vector< double > &box, const doublezbase, booltop = \fCfalse\fP, const intM = \fC1\fP)"
+
+.PP
+Add a rightTriangleZ feature to interact with\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIwidth\fP Width of triangle's feature 
+.br
+\fItheta\fP Elevation angle of the feature in radians (0, PI) 
+.br
+\fIlamW\fP Attractive range ratio relative to hard sphere in contact with the feature (akin to square well), must be >= 1 
+.br
+\fIeps\fP Attraction strength to feature 
+.br
+\fIsigma\fP Hard sphere diameter of interaction with the feature 
+.br
+\fIsep\fP Distance between features 
+.br
+\fIoffset\fP Offset from x = 0 position of the first feature 
+.br
+\fIbox\fP System box size to check the feature (as specified) is periodic in the box 
+.br
+\fIzbase\fP Z-coordinate of XY plane that defines the base of the feature\&. To avoid periodicity effects be sure it is > 0 and less than Lz, but this depends on other interactions so it cannot be checked automatically here\&. 
+.br
+\fItop\fP If true, feature is on the 'top', else is on the bottom (default) 
+.br
+\fINumber\fP of expanded ensemble states to recognize (default = 1) 
+.RE
+.PP
+
+.PP
+Definition at line 760 of file barrier\&.cpp\&.
+.PP
+References customException::what()\&.
+.PP
+.nf
+760                                                                                                                                                                                                                                                              {
+761     if (sysBarriers_\&.begin() == sysBarriers_\&.end()) {
+762         try {
+763             sysBarriers_\&.resize(1);
+764         } catch (std::bad_alloc &ba) {
+765             throw customException ("Unable to allocate space for a new barrier");
+766         }
+767     } else {
+768         try {
+769             sysBarriers_\&.resize(sysBarriers_\&.size()+1);
+770         } catch (std::bad_alloc &ba) {
+771             throw customException ("Unable to allocate space for a new barrier");
+772         }
+773     }
+774     try {
+775         sysBarriers_[sysBarriers_\&.size()-1] = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+776     } catch (customException &ce) {
+777         throw customException ("Cannot add rightTriangleXZ to composite barrier: "+std::to_string(*ce\&.what()));
+778     }
+779 }
+.fi
+.SS "void compositeBarrier::addSquareWellWallZ (const doublelb, const doubleub, const doublesigma, const doublerange, const doubleeps, const intM = \fC1\fP)"
+
+.PP
+Add a square well wall to interact with\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlb\fP z-Position of the lower wall 
+.br
+\fIub\fP z-Position of the upper wall 
+.br
+\fIsigma\fP Hard-sphere diameter the species this wall interacts with can approach within 
+.br
+\fIrange\fP Distance normal to the wall's surface where there is an interaction 
+.br
+\fIeps\fP Magnitude of the wall interaction (U = -eps) 
+.br
+\fIM\fP Total number of expanded ensemble states possible for this atom type (defaults to 1) 
+.RE
+.PP
+
+.PP
+Definition at line 692 of file barrier\&.cpp\&.
+.PP
+References customException::what()\&.
+.PP
+.nf
+692                                                                                                                                                   {
+693     if (sysBarriers_\&.begin() == sysBarriers_\&.end()) {
+694         try {
+695             sysBarriers_\&.resize(1);
+696         } catch (std::bad_alloc &ba) {
+697             throw customException ("Unable to allocate space for a new barrier");
+698         }
+699     } else {
+700         try {
+701             sysBarriers_\&.resize(sysBarriers_\&.size()+1);
+702         } catch (std::bad_alloc &ba) {
+703             throw customException ("Unable to allocate space for a new barrier");
+704         }
+705     }
+706     try {
+707         sysBarriers_[sysBarriers_\&.size()-1] = new squareWellWallZ (lb, ub, sigma, range, eps, M);
+708     } catch (customException &ce) {
+709         throw customException ("Cannot add squareWellWallZ to composite barrier: "+std::to_string(*ce\&.what()));
+710     }
+711 }
+.fi
+.SS "double compositeBarrier::energy (const \fBatom\fP *a1, const std::vector< double > &box)"
+
+.PP
+Find the total energy of interaction from ALL the barriers\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIa1\fP Pointer to atom with position to test - this does NOT need to be in the simulation box a priori 
+.br
+\fIbox\fP Simulation box 
+.RE
+.PP
+
+.PP
+Definition at line 814 of file barrier\&.cpp\&.
+.PP
+References NUM_INFINITY\&.
+.PP
+.nf
+814                                                                                 {
+815     double U = 0\&.0;
+816     for (std::vector < barrier* >::iterator it = sysBarriers_\&.begin(); it != sysBarriers_\&.end(); ++it) {
+817         double dU = (*it)->energy (a1, box);
+818         if (dU < NUM_INFINITY) {
+819             U += dU;
+820         } else {
+821             return NUM_INFINITY;
+822         }
+823     }
+824     return U;
+825 }
+.fi
+.SS "bool compositeBarrier::inside (const \fBatom\fP *a1, const std::vector< double > &box)"
+
+.PP
+Test if inside ALL the barriers\&. Returns false if outside any single one, but defaults to true (infinitely far away walls/barriers)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIa1\fP Pointer to atom with position to test - this does NOT need to be in the simulation box a priori 
+.br
+\fIbox\fP Simulation box 
+.RE
+.PP
+
+.PP
+Definition at line 799 of file barrier\&.cpp\&.
+.PP
+.nf
+799                                                                               {
+800     for (std::vector < barrier* >::iterator it = sysBarriers_\&.begin(); it != sysBarriers_\&.end(); ++it) {
+801         if (!(*it)->inside (a1, box)) {
+802             return false;
+803         }
+804     }
+805     return true;
+806 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

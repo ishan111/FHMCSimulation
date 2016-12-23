@@ -1,0 +1,122 @@
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/system.h" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/nam4/Desktop/sandbox/FHMCSimulation/src/system.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <string>\fP
+.br
+\fC#include <vector>\fP
+.br
+\fC#include <fstream>\fP
+.br
+\fC#include <sstream>\fP
+.br
+\fC#include <iostream>\fP
+.br
+\fC#include <stdlib\&.h>\fP
+.br
+\fC#include <exception>\fP
+.br
+\fC#include <map>\fP
+.br
+\fC#include <cmath>\fP
+.br
+\fC#include <iomanip>\fP
+.br
+\fC#include <memory>\fP
+.br
+\fC#include 'potentials\&.h'\fP
+.br
+\fC#include 'atom\&.h'\fP
+.br
+\fC#include 'cellList\&.h'\fP
+.br
+\fC#include 'bias\&.h'\fP
+.br
+\fC#include 'global\&.h'\fP
+.br
+\fC#include 'histogram\&.h'\fP
+.br
+\fC#include 'barrier\&.h'\fP
+.br
+
+.SS "Data Structures"
+
+.in +1c
+.ti -1c
+.RI "class \fBsimSystem\fP"
+.br
+.RI "\fISystem information for the simulation\&. \fP"
+.in -1c
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "const double \fBcalculateBias\fP (\fBsimSystem\fP &sys, const int nTotFinal, const int mFinal)"
+.br
+.RI "\fICalculate the bias based on a systems current state and the next state being proposed\&. \fP"
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "const double calculateBias (\fBsimSystem\fP &sys, const intnTotFinal, const intmFinal)"
+
+.PP
+Calculate the bias based on a systems current state and the next state being proposed\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsys\fP System object containing the current state of the system\&. 
+.br
+\fInTotFinal\fP Total atoms in the proposed final state\&. 
+.br
+\fImFinal\fP Final value of the expanded ensemble state of the system\&. 
+.br
+\fIp_u\fP Ratio of the system's partition in the final and initial state (e\&.g\&. unbiased p_acc = min(1, p_u))\&.
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+rel_bias The value of the relative bias to apply in the metropolis criteria during sampling 
+.RE
+.PP
+
+.PP
+Definition at line 1744 of file system\&.cpp\&.
+.PP
+References __BIAS_INT_TYPE__, tmmc::getAddress(), wala::getAddress(), tmmc::getBias(), wala::getBias(), simSystem::getCurrentM(), simSystem::getTotN(), simSystem::tmmcBias, simSystem::useTMMC, simSystem::useWALA, and simSystem::wlBias\&.
+.PP
+Referenced by aggVolBias3::make(), translateParticle::make(), deleteParticle::make(), insertParticle::make(), and swapParticles::make()\&.
+.PP
+.nf
+1744                                                                                    {
+1745     double rel_bias = 1\&.0;
+1746 
+1747     if (sys\&.useTMMC && !sys\&.useWALA) {
+1748         // TMMC biasing
+1749         const __BIAS_INT_TYPE__ address1 = sys\&.tmmcBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.tmmcBias->getAddress(nTotFinal, mFinal);
+1750         const double b1 = sys\&.tmmcBias->getBias (address1), b2 = sys\&.tmmcBias->getBias (address2);
+1751         rel_bias = exp(b2-b1);
+1752     } else if (!sys\&.useTMMC && sys\&.useWALA) {
+1753         // Wang-Landau Biasing
+1754         const __BIAS_INT_TYPE__ address1 = sys\&.wlBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.wlBias->getAddress(nTotFinal, mFinal);
+1755         const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
+1756         rel_bias = exp(b2-b1);
+1757     } else if (sys\&.useTMMC && sys\&.useWALA) {
+1758         // Crossover phase where we use WL but update TMMC collection matrix
+1759         const int address1 = sys\&.wlBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.wlBias->getAddress(nTotFinal, mFinal);
+1760         const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
+1761         rel_bias = exp(b2-b1);
+1762     } else {
+1763         // No biasing
+1764         rel_bias = 1\&.0;
+1765     }
+1766 
+1767     return rel_bias;
+1768 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

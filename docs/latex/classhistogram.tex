@@ -1,0 +1,454 @@
+\hypertarget{classhistogram}{\section{histogram Class Reference}
+\label{classhistogram}\index{histogram@{histogram}}
+}
+
+
+{\ttfamily \#include $<$histogram.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classhistogram_a68bd76ab77437beeb77342469fb77a67}{$\sim$histogram} ()
+\item 
+\hyperlink{classhistogram_acc41cd1e3ace837a977caeeb00f6606e}{histogram} ()
+\item 
+\hyperlink{classhistogram_a5a9a8918737bbb82ad73e31ac2d98a8b}{histogram} (const std\-::vector$<$ double $>$ lbound, const std\-::vector$<$ double $>$ ubound, const std\-::vector$<$ long long unsigned int $>$ nbins)
+\begin{DoxyCompactList}\small\item\em Instantiate a multidimensional histogram. \end{DoxyCompactList}\item 
+void \hyperlink{classhistogram_a801d984fe018521444ee0bd0776ba8dc}{print} (const std\-::string file\-Name)
+\begin{DoxyCompactList}\small\item\em Print R\-A\-W (U\-N-\/\-N\-O\-R\-M\-A\-L\-I\-Z\-E\-D) histogram to file. \end{DoxyCompactList}\item 
+void \hyperlink{classhistogram_a665e7f6c052d4b306c6fe7d0c600f1c8}{increment} (const long long unsigned int address, const double val)
+\begin{DoxyCompactList}\small\item\em Increment the histogram by a given value at a given address. \end{DoxyCompactList}\item 
+void \hyperlink{classhistogram_a1deef1080cd972343d7d5d8e5ef3a9f5}{increment} (const std\-::vector$<$ double $>$ \&coords, const double val)
+\begin{DoxyCompactList}\small\item\em Increment the histogram by a given value at a given coordinate. \end{DoxyCompactList}\item 
+void \hyperlink{classhistogram_aab27615593d020ca4de29c586c92af37}{set} (const std\-::vector$<$ double $>$ \&h, const std\-::vector$<$ double $>$ \&ctr)
+\begin{DoxyCompactList}\small\item\em Assign the histogram and its corresponding counter. \end{DoxyCompactList}\item 
+const long long unsigned int \hyperlink{classhistogram_ae52fa58934b56e05846a66e43c3184bd}{get\-Address} (const std\-::vector$<$ double $>$ \&coords)
+\begin{DoxyCompactList}\small\item\em Get the linear address of the multidimensional coordinate. \end{DoxyCompactList}\item 
+const std\-::vector$<$ double $>$ \hyperlink{classhistogram_a51aaf60b509809204f21934a18005b38}{get\-Coords} (long long unsigned int address)
+\begin{DoxyCompactList}\small\item\em Given an address, return the (center of the) coordinate this refers to. \end{DoxyCompactList}\item 
+std\-::vector$<$ double $>$ \hyperlink{classhistogram_afa81289dc32207eb3c44f8bd746f0d1d}{get\-Raw\-Histogram} ()
+\begin{DoxyCompactList}\small\item\em Return the current histogram. \end{DoxyCompactList}\item 
+std\-::vector$<$ double $>$ \hyperlink{classhistogram_a7d3541bd86551053f9fda7b5ae81e3e8}{get\-Counter} ()
+\begin{DoxyCompactList}\small\item\em Return the current histogram counter. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 13 of file histogram.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classhistogram_a68bd76ab77437beeb77342469fb77a67}{\index{histogram@{histogram}!$\sim$histogram@{$\sim$histogram}}
+\index{$\sim$histogram@{$\sim$histogram}!histogram@{histogram}}
+\subsubsection[{$\sim$histogram}]{\setlength{\rightskip}{0pt plus 5cm}histogram\-::$\sim$histogram (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classhistogram_a68bd76ab77437beeb77342469fb77a67}
+
+
+Definition at line 15 of file histogram.\-h.
+
+
+\begin{DoxyCode}
+15 \{;\}
+\end{DoxyCode}
+\hypertarget{classhistogram_acc41cd1e3ace837a977caeeb00f6606e}{\index{histogram@{histogram}!histogram@{histogram}}
+\index{histogram@{histogram}!histogram@{histogram}}
+\subsubsection[{histogram}]{\setlength{\rightskip}{0pt plus 5cm}histogram\-::histogram (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classhistogram_acc41cd1e3ace837a977caeeb00f6606e}
+
+
+Definition at line 16 of file histogram.\-h.
+
+
+\begin{DoxyCode}
+16 \{;\}
+\end{DoxyCode}
+\hypertarget{classhistogram_a5a9a8918737bbb82ad73e31ac2d98a8b}{\index{histogram@{histogram}!histogram@{histogram}}
+\index{histogram@{histogram}!histogram@{histogram}}
+\subsubsection[{histogram}]{\setlength{\rightskip}{0pt plus 5cm}histogram\-::histogram (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$}]{lbound, }
+\item[{const std\-::vector$<$ double $>$}]{ubound, }
+\item[{const std\-::vector$<$ long long unsigned int $>$}]{nbins}
+\end{DoxyParamCaption}
+)}}\label{classhistogram_a5a9a8918737bbb82ad73e31ac2d98a8b}
+
+
+Instantiate a multidimensional histogram. 
+
+Bounds and widths must be specified for each dimension. A bin is considered \char`\"{}centered\char`\"{} on its value.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em lbound} & Vector of lower bounds for each dimension \\
+\hline
+\mbox{\tt in}  & {\em ubound} & Vector of upper bounds for each dimension \\
+\hline
+\mbox{\tt in}  & {\em nbins} & Number of bins to use along each dimension \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 178 of file histogram.\-cpp.
+
+
+\begin{DoxyCode}
+178                                                                                                            
+                                 \{
+179     \textcolor{keywordflow}{if} (lbound.size() != ubound.size()) \{
+180         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Upper and lower bounds for histogram do have the same size"})
+      ;
+181     \}
+182     \textcolor{keywordflow}{if} (nbins.size() != lbound.size()) \{
+183         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Number of bins for histogram's dimensions does not have the
+       same size as its bounds"});
+184     \}
+185 
+186     dim\_ = nbins.size();
+187     widths\_.resize(dim\_, 0);
+188     delta\_.resize(dim\_, 0);
+189 
+190     size\_ = 1;
+191     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < dim\_; ++i) \{
+192         \textcolor{keywordflow}{if} (lbound[i] > ubound[i]) \{
+193             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Lower bound > upper bound illegal for a histogram"});
+194         \}
+195 
+196         \textcolor{keywordflow}{if} (lbound[i] < ubound[i]) \{
+197             \textcolor{keywordflow}{if} (nbins[i] <= 1) \{
+198                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Must > 1 bins for each dimensions in the histogram"})
+      ;
+199             \}
+200             size\_ *= nbins[i];
+201             delta\_[i] = (ubound[i] - lbound[i])/(nbins[i]-1);
+202         \} \textcolor{keywordflow}{else} \{
+203             \textcolor{comment}{// special case when upper and lower bound are the same (nbins = 1)}
+204             \textcolor{keywordflow}{if} (nbins[i] != 1) \{
+205                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"nbins must be 1 if upper and lower bounds are equal
+       in histogram"});
+206             \}
+207             size\_ *= nbins[i];
+208             delta\_[i] = 1.0; \textcolor{comment}{// arbitrary}
+209         \}
+210 
+211         \textcolor{comment}{// build projected widths}
+212         \textcolor{keywordflow}{if} (i == 0) \{
+213             widths\_[i] = 1;
+214         \} \textcolor{keywordflow}{else} \{
+215             widths\_[i] = widths\_[i-1]*nbins[i-1];
+216         \}
+217     \}
+218 
+219     lbound\_ = lbound;
+220     ubound\_ = ubound;
+221     nbins\_ = nbins;
+222 
+223     \textcolor{comment}{// initialize the histogram to 0}
+224     \textcolor{keywordflow}{try} \{
+225         h\_.resize(size\_, 0);
+226     \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+227         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory for histogram"});
+228     \}
+229     \textcolor{keywordflow}{try} \{
+230         counter\_.resize(size\_, 0);
+231     \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+232         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory for histogram"});
+233     \}
+234 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classhistogram_ae52fa58934b56e05846a66e43c3184bd}{\index{histogram@{histogram}!get\-Address@{get\-Address}}
+\index{get\-Address@{get\-Address}!histogram@{histogram}}
+\subsubsection[{get\-Address}]{\setlength{\rightskip}{0pt plus 5cm}const long long unsigned int histogram\-::get\-Address (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$ \&}]{coords}
+\end{DoxyParamCaption}
+)}}\label{classhistogram_ae52fa58934b56e05846a66e43c3184bd}
+
+
+Get the linear address of the multidimensional coordinate. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em coords} & Coordinates \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 273 of file histogram.\-cpp.
+
+
+
+Referenced by increment(), sim\-System\-::print\-Ext\-Moments(), and sim\-System\-::restart\-Ext\-Moments().
+
+
+\begin{DoxyCode}
+273                                                                                     \{
+274         \textcolor{keywordflow}{if} (coords.size() != dim\_) \{
+275             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Illegal number of coordinate dimensions, cannot locate
+       histogram address"});
+276         \}
+277         \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} address = 0;
+278         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < dim\_; ++i) \{
+279             address += round((coords[i] - lbound\_[i])/delta\_[i])*widths\_[i]; \textcolor{comment}{// will work safely for
+       integers too}
+280         \}
+281         \textcolor{keywordflow}{return} address;
+282 \}
+\end{DoxyCode}
+\hypertarget{classhistogram_a51aaf60b509809204f21934a18005b38}{\index{histogram@{histogram}!get\-Coords@{get\-Coords}}
+\index{get\-Coords@{get\-Coords}!histogram@{histogram}}
+\subsubsection[{get\-Coords}]{\setlength{\rightskip}{0pt plus 5cm}const std\-::vector$<$ double $>$ histogram\-::get\-Coords (
+\begin{DoxyParamCaption}
+\item[{long long unsigned int}]{address}
+\end{DoxyParamCaption}
+)}}\label{classhistogram_a51aaf60b509809204f21934a18005b38}
+
+
+Given an address, return the (center of the) coordinate this refers to. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em address} & Address to check \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 289 of file histogram.\-cpp.
+
+
+\begin{DoxyCode}
+289                                                                              \{
+290         std::vector <double> coords (dim\_, 0);
+291         \textcolor{keywordflow}{if} (address >= size\_) \{
+292             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Histogram address out of bounds"});
+293         \}
+294 
+295         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = dim\_-1; i > 0; --i) \{
+296             \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} diff = floor(address/widths\_[i]);
+297             coords[i] = diff*delta\_[i] + lbound\_[i];
+298             address -= diff*widths\_[i];
+299         \}
+300         coords[0] = address*delta\_[0] + lbound\_[0];
+301 
+302         \textcolor{keywordflow}{return} coords;
+303 \}
+\end{DoxyCode}
+\hypertarget{classhistogram_a7d3541bd86551053f9fda7b5ae81e3e8}{\index{histogram@{histogram}!get\-Counter@{get\-Counter}}
+\index{get\-Counter@{get\-Counter}!histogram@{histogram}}
+\subsubsection[{get\-Counter}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$double$>$ histogram\-::get\-Counter (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classhistogram_a7d3541bd86551053f9fda7b5ae81e3e8}
+
+
+Return the current histogram counter. 
+
+
+
+Definition at line 26 of file histogram.\-h.
+
+
+
+Referenced by sim\-System\-::ext\-Mom\-Counter(), and sim\-System\-::print\-Ext\-Moments().
+
+\hypertarget{classhistogram_afa81289dc32207eb3c44f8bd746f0d1d}{\index{histogram@{histogram}!get\-Raw\-Histogram@{get\-Raw\-Histogram}}
+\index{get\-Raw\-Histogram@{get\-Raw\-Histogram}!histogram@{histogram}}
+\subsubsection[{get\-Raw\-Histogram}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$double$>$ histogram\-::get\-Raw\-Histogram (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classhistogram_afa81289dc32207eb3c44f8bd746f0d1d}
+
+
+Return the current histogram. 
+
+
+
+Definition at line 25 of file histogram.\-h.
+
+
+
+Referenced by sim\-System\-::print\-Ext\-Moments(), and sim\-System\-::restart\-Ext\-Moments().
+
+\hypertarget{classhistogram_a665e7f6c052d4b306c6fe7d0c600f1c8}{\index{histogram@{histogram}!increment@{increment}}
+\index{increment@{increment}!histogram@{histogram}}
+\subsubsection[{increment}]{\setlength{\rightskip}{0pt plus 5cm}void histogram\-::increment (
+\begin{DoxyParamCaption}
+\item[{const long long unsigned int}]{address, }
+\item[{const double}]{val}
+\end{DoxyParamCaption}
+)}}\label{classhistogram_a665e7f6c052d4b306c6fe7d0c600f1c8}
+
+
+Increment the histogram by a given value at a given address. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em address} & Address of the histogram to increment \\
+\hline
+\mbox{\tt in}  & {\em val} & Value to add to the histogram at address \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 242 of file histogram.\-cpp.
+
+
+
+Referenced by sim\-System\-::record\-Ext\-Moments().
+
+
+\begin{DoxyCode}
+242                                                                                  \{
+243         \textcolor{keywordflow}{if} (address < size\_) \{
+244             h\_[address] += val;
+245             counter\_[address] += 1.0;
+246         \} \textcolor{keywordflow}{else} \{
+247             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Histogram address out of bounds"});
+248         \}
+249 \}
+\end{DoxyCode}
+\hypertarget{classhistogram_a1deef1080cd972343d7d5d8e5ef3a9f5}{\index{histogram@{histogram}!increment@{increment}}
+\index{increment@{increment}!histogram@{histogram}}
+\subsubsection[{increment}]{\setlength{\rightskip}{0pt plus 5cm}void histogram\-::increment (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$ \&}]{coords, }
+\item[{const double}]{val}
+\end{DoxyParamCaption}
+)}}\label{classhistogram_a1deef1080cd972343d7d5d8e5ef3a9f5}
+
+
+Increment the histogram by a given value at a given coordinate. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em coords} & Vector of coordinates correponding to a location in the histogram to increment \\
+\hline
+\mbox{\tt in}  & {\em val} & Value to add to the histogram at address \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 257 of file histogram.\-cpp.
+
+
+
+References get\-Address().
+
+
+\begin{DoxyCode}
+257                                                                              \{
+258         \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} address = 0;
+259         \textcolor{keywordflow}{try} \{
+260             address = \hyperlink{classhistogram_ae52fa58934b56e05846a66e43c3184bd}{getAddress} (coords);
+261         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+262             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Histogram address out of bounds"});
+263         \}
+264         h\_[address] += val;
+265         counter\_[address] += 1.0;
+266 \}
+\end{DoxyCode}
+\hypertarget{classhistogram_a801d984fe018521444ee0bd0776ba8dc}{\index{histogram@{histogram}!print@{print}}
+\index{print@{print}!histogram@{histogram}}
+\subsubsection[{print}]{\setlength{\rightskip}{0pt plus 5cm}void histogram\-::print (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{file\-Name}
+\end{DoxyParamCaption}
+)}}\label{classhistogram_a801d984fe018521444ee0bd0776ba8dc}
+
+
+Print R\-A\-W (U\-N-\/\-N\-O\-R\-M\-A\-L\-I\-Z\-E\-D) histogram to file. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em file\-Name} & Name of file to print to \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 310 of file histogram.\-cpp.
+
+
+\begin{DoxyCode}
+310                                                \{
+311     \textcolor{comment}{// Print histogram}
+312     std::ofstream of;
+313     of.open(fileName.c\_str(), std::ofstream::out);
+314     \textcolor{keywordflow}{if} (!of.is\_open()) \{
+315         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write histogram to "}+fileName);
+316     \}
+317     of << \textcolor{stringliteral}{"# Histogram in single row (vectorized) notation."} << std::endl;
+318     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < dim\_; ++i) \{
+319         of << \textcolor{stringliteral}{"# dim\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_upper\_bound:"} << ubound\_[i] << std::endl;
+320         of << \textcolor{stringliteral}{"# dim\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_lower\_bound:"} << lbound\_[i] << std::endl;
+321         of << \textcolor{stringliteral}{"# dim\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_number\_of\_bins:"} << nbins\_[i] << std::endl;
+322     \}
+323     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < h\_.size(); ++i) \{
+324         of << h\_[i] << std::endl;
+325     \}
+326     of.close();
+327 \}
+\end{DoxyCode}
+\hypertarget{classhistogram_aab27615593d020ca4de29c586c92af37}{\index{histogram@{histogram}!set@{set}}
+\index{set@{set}!histogram@{histogram}}
+\subsubsection[{set}]{\setlength{\rightskip}{0pt plus 5cm}void histogram\-::set (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$ \&}]{h, }
+\item[{const std\-::vector$<$ double $>$ \&}]{ctr}
+\end{DoxyParamCaption}
+)}}\label{classhistogram_aab27615593d020ca4de29c586c92af37}
+
+
+Assign the histogram and its corresponding counter. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em h} & histogram \\
+\hline
+\mbox{\tt in}  & {\em ctr} & Counter \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 335 of file histogram.\-cpp.
+
+
+
+Referenced by sim\-System\-::restart\-Ext\-Moments().
+
+
+\begin{DoxyCode}
+335                                                                                \{
+336     \textcolor{keywordflow}{if} (h.size() != ctr.size()) \{
+337         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot set the histogram since counter and histogram have
+       different lengths"});
+338     \}
+339     \textcolor{keywordflow}{if} (h.size() != h\_.size()) \{
+340         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot set the histogram since new histogram has different
+       length compared to current one"});
+341     \}
+342     \textcolor{keywordflow}{if} (ctr.size() != counter\_.size()) \{
+343         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot set the histogram since new counter has different
+       length compared to current one"});
+344     \}
+345     h\_ = h;
+346     counter\_ = ctr;
+347 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{histogram_8h}{histogram.\-h}\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{histogram_8cpp}{histogram.\-cpp}\end{DoxyCompactItemize}

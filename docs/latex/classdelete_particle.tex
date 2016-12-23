@@ -1,0 +1,318 @@
+\hypertarget{classdelete_particle}{\section{delete\-Particle Class Reference}
+\label{classdelete_particle}\index{delete\-Particle@{delete\-Particle}}
+}
+
+
+{\ttfamily \#include $<$delete.\-h$>$}
+
+Inheritance diagram for delete\-Particle\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classdelete_particle}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classdelete_particle_a3b97ed18c7080043db26d2716c67dde0}{delete\-Particle} ()
+\item 
+\hyperlink{classdelete_particle_ae1a05ba703e5df3173384831fccc8698}{delete\-Particle} (const int type\-Index, const std\-::string tag)
+\begin{DoxyCompactList}\small\item\em Instantiate a new move, also give a name which is the combination of auser-\/defined tag + the particle index it operates on. \end{DoxyCompactList}\item 
+int \hyperlink{classdelete_particle_a14f86dd27a82f571caa12af04e22eb1f}{make} (\hyperlink{classsim_system}{sim\-System} \&sys)
+\begin{DoxyCompactList}\small\item\em Delete a particle from the system. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 13 of file delete.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classdelete_particle_a3b97ed18c7080043db26d2716c67dde0}{\index{delete\-Particle@{delete\-Particle}!delete\-Particle@{delete\-Particle}}
+\index{delete\-Particle@{delete\-Particle}!deleteParticle@{delete\-Particle}}
+\subsubsection[{delete\-Particle}]{\setlength{\rightskip}{0pt plus 5cm}delete\-Particle\-::delete\-Particle (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdelete_particle_a3b97ed18c7080043db26d2716c67dde0}
+
+
+Definition at line 15 of file delete.\-h.
+
+
+
+References mc\-Move\-::change\-N\-\_\-.
+
+
+\begin{DoxyCode}
+15 \{ \hyperlink{classmc_move_add8d6d08be181274a61c7463159ad929}{changeN\_} = \textcolor{keyword}{true}; \}
+\end{DoxyCode}
+\hypertarget{classdelete_particle_ae1a05ba703e5df3173384831fccc8698}{\index{delete\-Particle@{delete\-Particle}!delete\-Particle@{delete\-Particle}}
+\index{delete\-Particle@{delete\-Particle}!deleteParticle@{delete\-Particle}}
+\subsubsection[{delete\-Particle}]{\setlength{\rightskip}{0pt plus 5cm}delete\-Particle\-::delete\-Particle (
+\begin{DoxyParamCaption}
+\item[{const int}]{type\-Index, }
+\item[{const std\-::string}]{tag}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdelete_particle_ae1a05ba703e5df3173384831fccc8698}
+
+
+Instantiate a new move, also give a name which is the combination of auser-\/defined tag + the particle index it operates on. 
+
+
+
+Definition at line 16 of file delete.\-h.
+
+
+
+References mc\-Move\-::change\-N\-\_\-, mc\-Move\-::name\-\_\-, and mc\-Move\-::type\-Index\-\_\-.
+
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classdelete_particle_a14f86dd27a82f571caa12af04e22eb1f}{\index{delete\-Particle@{delete\-Particle}!make@{make}}
+\index{make@{make}!deleteParticle@{delete\-Particle}}
+\subsubsection[{make}]{\setlength{\rightskip}{0pt plus 5cm}int delete\-Particle\-::make (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\-System} \&}]{sys}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classdelete_particle_a14f86dd27a82f571caa12af04e22eb1f}
+
+
+Delete a particle from the system. 
+
+All other information is stored in the \hyperlink{classsim_system}{sim\-System} object.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em sys} & System object to attempt to remove a particle from.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+M\-O\-V\-E\-\_\-\-S\-U\-C\-C\-E\-S\-S if deleted a particle, otherwise M\-O\-V\-E\-\_\-\-F\-A\-I\-L\-U\-R\-E if did not. Will throw exceptions if there was an error. 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classmc_move_a2e377a628f9ecee5422fc8967d4924eb}{mc\-Move}.
+
+
+
+Definition at line 10 of file delete.\-cpp.
+
+
+
+References sim\-System\-::add\-K\-E\-Correction(), sim\-System\-::atoms, sim\-System\-::beta(), sim\-System\-::box(), calculate\-Bias(), sim\-System\-::delete\-Atom(), sim\-System\-::get\-Current\-M(), sim\-System\-::get\-Fractional\-Atom(), sim\-System\-::get\-Neighbor\-Atoms(), sim\-System\-::get\-Total\-M(), sim\-System\-::get\-Tot\-N(), sim\-System\-::get\-W\-A\-L\-A\-Bias(), H2\-\_\-2\-P\-I, sim\-System\-::increment\-Energy(), sim\-System\-::mass(), sim\-System\-::min\-Species(), M\-O\-V\-E\-\_\-\-F\-A\-I\-L\-U\-R\-E, M\-O\-V\-E\-\_\-\-S\-U\-C\-C\-E\-S\-S, atom\-::m\-State, sim\-System\-::mu(), sim\-System\-::n\-Species(), sim\-System\-::num\-Species, sim\-System\-::ppot, rng(), R\-N\-G\-\_\-\-S\-E\-E\-D, sim\-System\-::species\-Barriers, sim\-System\-::tmmc\-Bias, sim\-System\-::tot\-N\-Min(), mc\-Move\-::type\-Index\-\_\-, wala\-::update(), tmmc\-::update\-C(), sim\-System\-::use\-T\-M\-M\-C, sim\-System\-::use\-W\-A\-L\-A, and custom\-Exception\-::what().
+
+
+\begin{DoxyCode}
+10                                         \{
+11     \textcolor{keywordtype}{bool} earlyReject = \textcolor{keyword}{false};
+12 
+13     \textcolor{comment}{// check if any can be deleted from this species}
+14     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}] < sys.\hyperlink{classsim_system_afafda4a09ed180ee9c5580d196d8ca9f}{minSpecies}(
+      \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_})) \{
+15         earlyReject = \textcolor{keyword}{true};
+16         \}
+17         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}] == sys.\hyperlink{classsim_system_afafda4a09ed180ee9c5580d196d8ca9f}{minSpecies}(
+      \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}) && sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
+18             earlyReject = \textcolor{keyword}{true};
+19         \}
+20 
+21         \textcolor{comment}{// also check if at global bound on total number of particles}
+22         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}() < sys.\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}()) \{
+23             earlyReject = \textcolor{keyword}{true};
+24         \}
+25         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}() == sys.\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() && sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{ \textcolor{comment}{// move
+       class guarantees only operating on the correct species already}
+26             earlyReject = \textcolor{keyword}{true};
+27         \}
+28 
+29     \textcolor{comment}{// updates to biasing functions must be done even if at bounds}
+30         \textcolor{keywordflow}{if} (earlyReject) \{
+31             \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+32                     sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ab439e3f60bea6c54522a870b9ad67acf}{update}(sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
+      \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}());
+33             \}
+34             \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC}) \{
+35                     \textcolor{keywordtype}{int} nTotFinal = sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), mFinal = sys.
+      \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() - 1;
+36                     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
+37                         nTotFinal--;
+38                         mFinal = sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}() - 1;
+39                     \}
+40                     sys.\hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias}->\hyperlink{classtmmc_ae067afc5b52af203b9d45f18d9737219}{updateC} (sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), nTotFinal, sys.
+      \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}(), mFinal, 0.0);
+41             \}
+42             \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
+43         \}
+44 
+45     \textcolor{keyword}{const} std::vector < double > box = sys.\hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}();
+46     \textcolor{keywordtype}{double} V = 1.0;
+47     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box.size(); ++i) \{
+48         V *= box[i];
+49     \}
+50 
+51     \textcolor{keywordtype}{double} delEnergy = 0.0;
+52 
+53     \textcolor{comment}{// initial guess at the N state we are coming from}
+54         \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} nHigh = sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}];
+55 
+56     \hyperlink{classatom}{atom}* chosenAtom;
+57         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
+58             \textcolor{comment}{// pick a brand new one to delete}
+59             chosenAtom = &sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][(int) floor(\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&
+      \hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) * sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}])];
+60             nHigh = sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}];
+61         \} \textcolor{keywordflow}{else} \{
+62             \textcolor{comment}{// continue to try to delete the partially deleted one}
+63             chosenAtom = sys.\hyperlink{classsim_system_a2ab77377c60e0e3109a6e875690b0ab7}{getFractionalAtom}(); \textcolor{comment}{// mcMove guarantees this move only
+       being made if fractional atom of type typeIndex\_}
+64             nHigh = sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}] + 1; \textcolor{comment}{// again mcMove guarantees this
+       species is the fractional one, reference has to be at the next fully inserted level}
+65     \}
+66 
+67         \textcolor{comment}{// get baseline as the particle currently is}
+68         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
+69             \textcolor{comment}{// get positions of neighboring atoms around chosenAtom}
+70             std::vector < atom* > neighborAtoms = sys.\hyperlink{classsim_system_a9b3aeefa22c3b50b5913df6eea753bc6}{getNeighborAtoms}(spec, 
+      \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}, chosenAtom);
+71             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborAtoms.size(); ++i) \{
+72                     \textcolor{keywordflow}{try} \{
+73                 delEnergy -= sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->energy(neighborAtoms[i], chosenAtom,
+       box);
+74             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+75                 std::string a = \textcolor{stringliteral}{"Cannot delete because of energy error: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+76                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+77             \}
+78             \}
+79             \textcolor{comment}{// add tail correction to potential energy -- only enable for fluid phase simulations}
+80 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+81 \textcolor{preprocessor}{}            \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->useTailCorrection) \{
+82                 \textcolor{keywordflow}{if} (chosenAtom->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} == 0) \{
+83                     \textcolor{comment}{// if current atom is a full atom right now, include tail corrections}
+84                     \textcolor{keywordflow}{if} (spec == typeIndex\_) \{
+85                                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]-1 > 0) \{
+86                                     delEnergy -= sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection((
+      sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]-1)/V);
+87                                 \}
+88                     \} \textcolor{keywordflow}{else} \{
+89                                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec] > 0) \{
+90                                     delEnergy -= sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection(
+      sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]/V);
+91                                 \}
+92                         \}
+93                 \}
+94             \}
+95 \textcolor{preprocessor}{#endif}
+96 \textcolor{preprocessor}{}        \}
+97 
+98         \textcolor{comment}{// also account for any wall or barrier interaction}
+99     delEnergy -= sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}].energy(chosenAtom, box);
+100 
+101         \textcolor{comment}{// if the particle is about to be completely removed, no further calculation is required}
+102         \textcolor{keywordflow}{if} (chosenAtom->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 1 && sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}() > 1) \{ \textcolor{comment}{// if 1, it is just completely
+       removed - otherwise have to do calculation since in expanded ensemble if M > 1}
+103             \textcolor{comment}{// temporarily decrement the expanded ensemble state on the atom}
+104             \textcolor{keywordtype}{int} orig\_state = chosenAtom->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+105             chosenAtom->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} -= 1;
+106             \textcolor{keywordflow}{if} (chosenAtom->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0) \{
+107                 chosenAtom->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} = sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}() - 1;
+108             \}
+109 
+110             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
+111                 \textcolor{comment}{// get positions of neighboring atoms around chosenAtom}
+112                     std::vector < atom* > neighborAtoms = sys.\hyperlink{classsim_system_a9b3aeefa22c3b50b5913df6eea753bc6}{getNeighborAtoms}(spec, 
+      typeIndex\_, chosenAtom);
+113                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborAtoms.size(); ++i) \{
+114                         \textcolor{keywordflow}{try} \{
+115                         delEnergy += sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->energy(neighborAtoms[i], 
+      chosenAtom, box);
+116                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+117                         std::string a = \textcolor{stringliteral}{"Cannot delete because of energy error: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+118                         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+119                     \}
+120                     \}
+121                     \textcolor{comment}{// no tail corrections for partially inserted particles}
+122             \}
+123 
+124             \textcolor{comment}{// also account for any wall or barrier interaction}
+125             delEnergy += sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}].energy(chosenAtom, box);
+126 
+127             \textcolor{comment}{// restore the expanded ensemble state}
+128             chosenAtom->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} = orig\_state;
+129         \}
+130 
+131         \textcolor{comment}{// biasing}
+132         \textcolor{keywordtype}{double} dN = 1.0/sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}();
+133     \textcolor{keywordtype}{double} p\_u = 1.0;
+134     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a09c4ea670168c9f1d549d2a5120eb13c}{addKECorrection}()) \{
+135         \textcolor{keyword}{const} \textcolor{keywordtype}{double} Lambda3 = pow(\hyperlink{global_8h_af42f520b793f7c9dff15cba3bad0eb58}{H2\_2PI}*sys.\hyperlink{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{beta}()/sys.\hyperlink{classsim_system_a7c75052458072e1267bc20594b58d8cd}{mass}(typeIndex\_), 1.5);
+136         p\_u = pow(Lambda3*nHigh/V, dN)*exp(sys.\hyperlink{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{beta}()*(-sys.\hyperlink{classsim_system_af1e3f5320aff976a448647244d5950d1}{mu}(typeIndex\_)*dN - delEnergy));
+137     \} \textcolor{keywordflow}{else} \{
+138         p\_u = pow(nHigh/V, dN)*exp(sys.\hyperlink{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{beta}()*(-sys.\hyperlink{classsim_system_af1e3f5320aff976a448647244d5950d1}{mu}(typeIndex\_)*dN - delEnergy));
+139     \}
+140 
+141         \textcolor{keywordtype}{int} nTotFinal = sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), mFinal = sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() - 1;
+142         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
+143             nTotFinal--;
+144             mFinal = sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}() - 1;
+145             \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a09c4ea670168c9f1d549d2a5120eb13c}{addKECorrection}()) \{
+146                 delEnergy -= 1.5/sys.\hyperlink{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{beta}();
+147             \}
+148         \}
+149         \textcolor{keywordtype}{double} bias = \hyperlink{system_8cpp_acfe185adf03db047fd3753c0d788e0e3}{calculateBias}(sys, nTotFinal, mFinal);
+150 
+151         \textcolor{comment}{// tmmc gets updated the same way, regardless of whether the move gets accepted}
+152         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC}) \{
+153             sys.\hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias}->\hyperlink{classtmmc_ae067afc5b52af203b9d45f18d9737219}{updateC} (sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), nTotFinal, sys.
+      \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}(), mFinal, std::min(1.0, p\_u)); \textcolor{comment}{// also has to be function of N and M now}
+154         \}
+155 
+156     \textcolor{comment}{// metropolis criterion}
+157     \textcolor{keywordflow}{if} (\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) < p\_u*bias) \{
+158         \textcolor{keywordtype}{int} counter = 0;
+159         \textcolor{keywordflow}{for} (std::vector<atom>::iterator it = sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_].begin(); it != sys.
+      \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}].end(); ++it) \{
+160             \textcolor{keywordflow}{if} (&(*it) == chosenAtom) \{
+161                 \textcolor{keywordflow}{break};
+162             \} \textcolor{keywordflow}{else} \{
+163                 counter++;
+164             \}
+165         \}
+166             \textcolor{keywordflow}{try} \{
+167                     sys.\hyperlink{classsim_system_acabf4fc5b5b90bba62e1449ddb3646c6}{deleteAtom}(typeIndex\_, counter);
+168             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+169                     std::string a = \textcolor{stringliteral}{"Failed to delete atom: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+170                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+171             \}
+172         sys.\hyperlink{classsim_system_a6ad31c08955b80873f865b3069618dcb}{incrementEnergy}(delEnergy);
+173 
+174         \textcolor{comment}{// update Wang-Landau bias, if used}
+175         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+176             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ab439e3f60bea6c54522a870b9ad67acf}{update}(sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
+      \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}());
+177         \}
+178 
+179             \textcolor{keywordflow}{return} \hyperlink{moves_8h_ae8285cbddc5d21f73f49dcbad82a775a}{MOVE\_SUCCESS};
+180         \}
+181 
+182     \textcolor{comment}{// update Wang-Landau bias (even if moved failed), if used}
+183     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+184         sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ab439e3f60bea6c54522a870b9ad67acf}{update}(sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
+      \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}());
+185     \}
+186 
+187     \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
+188 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{delete_8h}{delete.\-h}\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{delete_8cpp}{delete.\-cpp}\end{DoxyCompactItemize}

@@ -1,0 +1,125 @@
+.TH "aggVolBiasInsert" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+aggVolBiasInsert \- 
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <aggvolbias\&.h>\fP
+.PP
+Inherits \fBmcMove\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBaggVolBiasInsert\fP ()"
+.br
+.ti -1c
+.RI "\fBaggVolBiasInsert\fP (const int typeIndex, const double pBias, const std::vector< double > rc, const std::string tag)"
+.br
+.RI "\fIInstantiate a grand canonical aggregation-volume bias move to insert particles\&. \fP"
+.ti -1c
+.RI "int \fBmake\fP (\fBsimSystem\fP &sys)"
+.br
+.RI "\fIUse aggregation-volume bias to insert a particle into the system\&. \fP"
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Definition at line 27 of file aggvolbias\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "aggVolBiasInsert::aggVolBiasInsert ()\fC [inline]\fP"
+
+.PP
+Definition at line 29 of file aggvolbias\&.h\&.
+.PP
+References mcMove::changeN_\&.
+.PP
+.nf
+29 { changeN_ = true; pBias_ = 0; }
+.fi
+.SS "aggVolBiasInsert::aggVolBiasInsert (const inttypeIndex, const doublepBias, const std::vector< double >rc, const std::stringtag)"
+
+.PP
+Instantiate a grand canonical aggregation-volume bias move to insert particles\&. From Chen et al\&., J\&. Chem\&. Phys\&. 115 (2001)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fItypeIndex\fP Type to consider deleting from the vicinity of 
+.br
+\fIpBias\fP Biasing probability 
+.br
+\fIrc\fP Radius (min, max) around particle of typeIndex to consider as being the 'in' region 
+.br
+\fItag\fP Name modifier to identify move to user 
+.RE
+.PP
+
+.PP
+Definition at line 11 of file aggvolbias\&.cpp\&.
+.PP
+References mcMove::changeN_, mcMove::name_, and mcMove::typeIndex_\&.
+.PP
+.nf
+11                                                                                                                                {
+12     typeIndex_ = typeIndex;
+13         if (pBias < 1 && pBias > 0) {
+14                 pBias_ = pBias;
+15         } else {
+16                 throw customException ("Bias probability must be > 0 and < 1 for aggVolBias moves");
+17         }
+18 
+19         if (!(rc[0] > 0\&.0)) {
+20                 throw customException ("Min neighborhood radius for aggVolBias must be > 0");
+21         } else {
+22                 rcmin_ = rc[0];
+23         }
+24 
+25         if (!(rc[1] > rc[0])) {
+26                 throw customException ("Max neighborhood radius for aggVolBias must be > min");
+27         } else {
+28                 rcmax_ = rc[1];
+29         }
+30 
+31         name_ = tag + std::to_string(typeIndex);
+32         changeN_ = true;
+33 }
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "int aggVolBiasInsert::make (\fBsimSystem\fP &sys)\fC [virtual]\fP"
+
+.PP
+Use aggregation-volume bias to insert a particle into the system\&. All other information is stored in the \fBsimSystem\fP object\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsys\fP System object to attempt to insert particles into\&.
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+MOVE_SUCCESS if particle is inserted, otherwise MOVE_FAILURE if not\&. Will throw exceptions if there was an error\&. 
+.RE
+.PP
+
+.PP
+Implements \fBmcMove\fP\&.
+.PP
+Definition at line 42 of file aggvolbias\&.cpp\&.
+.PP
+References MOVE_FAILURE\&.
+.PP
+.nf
+42                                           {
+43     return MOVE_FAILURE;
+44 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

@@ -1,0 +1,581 @@
+\hypertarget{classquaternion}{\section{quaternion Class Reference}
+\label{classquaternion}\index{quaternion@{quaternion}}
+}
+
+
+{\ttfamily \#include $<$quaternion.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classquaternion_a66be1b74fcbd7d2bf8b92d0ff3760c03}{quaternion} ()
+\item 
+\hyperlink{classquaternion_afde1d3e0610d4e72a544ef8b329f0588}{$\sim$quaternion} ()
+\item 
+void \hyperlink{classquaternion_ad3b1869658470d5adae436fe6f98e1f0}{set} (const std\-::vector$<$ double $>$ \&q)
+\begin{DoxyCompactList}\small\item\em Set the quaternion's value. \end{DoxyCompactList}\item 
+void \hyperlink{classquaternion_a05a1549d902c5cd6401985caaf1a7e3f}{set\-Axis\-Angle} (const std\-::vector$<$ double $>$ \&u, const double angle)
+\begin{DoxyCompactList}\small\item\em Set the quaternion based on angle, axis desired. \end{DoxyCompactList}\item 
+void \hyperlink{classquaternion_a370e464ed34ec78540481a35b9a6829e}{set\-Random\-Rot} ()
+\begin{DoxyCompactList}\small\item\em Pick a quaternion that corresponds to a random 3\-D rotation. \end{DoxyCompactList}\item 
+void \hyperlink{classquaternion_a5500ac17c80600120b5036fee3796052}{conjugate} ()
+\begin{DoxyCompactList}\small\item\em Transform quaternion into its conjugate. \end{DoxyCompactList}\item 
+void \hyperlink{classquaternion_a056b14ed0f5b2ab02667aeedb58d1725}{normalize} ()
+\begin{DoxyCompactList}\small\item\em Normalize a quaternion. \end{DoxyCompactList}\item 
+void \hyperlink{classquaternion_a1fa2dac4be850e01aa08103dac746b64}{inverse} ()
+\begin{DoxyCompactList}\small\item\em Transform a quanternion into its inverse. \end{DoxyCompactList}\item 
+void \hyperlink{classquaternion_ab8f466daaaa9a122a86da6fe713f62fe}{translate} (const std\-::vector$<$ double $>$ \&t)
+\begin{DoxyCompactList}\small\item\em Translate a quaternion in 3\-D space. \end{DoxyCompactList}\item 
+double \hyperlink{classquaternion_a28ff31359622e09c9c292f78cf08b801}{get\-Norm} ()
+\begin{DoxyCompactList}\small\item\em Return the norm of the quaternion. \end{DoxyCompactList}\item 
+std\-::vector$<$ double $>$ \hyperlink{classquaternion_af701c4a67c60f98af80e3c3caeb5bd4a}{get} ()
+\item 
+std\-::vector$<$ double $>$ \hyperlink{classquaternion_a618cce42beeb9ab3c724c4a9e6f37f55}{rotate\-Vec} (const std\-::vector$<$ double $>$ \&vec)
+\begin{DoxyCompactList}\small\item\em Use this quaternion to operate on a vector, that causes its rotation. \end{DoxyCompactList}\item 
+\hyperlink{classquaternion}{quaternion} \hyperlink{classquaternion_a3cf72d92681c00362e59e7ff96d0ea4f}{operator+} (const \hyperlink{classquaternion}{quaternion} \&p)
+\begin{DoxyCompactList}\small\item\em Add a quaternion to this one. \end{DoxyCompactList}\item 
+\hyperlink{classquaternion}{quaternion} \hyperlink{classquaternion_af299a0ea61d45ff4cb9a8551e7cad01a}{operator-\/} (const \hyperlink{classquaternion}{quaternion} \&p)
+\begin{DoxyCompactList}\small\item\em Subtract a quaternion from this one. \end{DoxyCompactList}\item 
+\hyperlink{classquaternion}{quaternion} \hyperlink{classquaternion_ab8c2b2a742c75b683f75f763a8ecf0aa}{operator$\ast$} (const \hyperlink{classquaternion}{quaternion} \&other)
+\begin{DoxyCompactList}\small\item\em Multiply this quaternion by another. \end{DoxyCompactList}\item 
+bool \hyperlink{classquaternion_ae7b568fc0cc23d9248ae38ec944865ff}{operator==} (const \hyperlink{classquaternion}{quaternion} \&other)
+\begin{DoxyCompactList}\small\item\em Check if two quaternions are equal to each other to within a tolerance of 1.\-0e-\/12. \end{DoxyCompactList}\item 
+bool \hyperlink{classquaternion_a9ed9d3b39020b800e55033efd1fe8e45}{operator!=} (const \hyperlink{classquaternion}{quaternion} \&other)
+\begin{DoxyCompactList}\small\item\em Check if two quaternions are not equal to each other to within a tolerance of 1.\-0e-\/12. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 9 of file quaternion.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classquaternion_a66be1b74fcbd7d2bf8b92d0ff3760c03}{\index{quaternion@{quaternion}!quaternion@{quaternion}}
+\index{quaternion@{quaternion}!quaternion@{quaternion}}
+\subsubsection[{quaternion}]{\setlength{\rightskip}{0pt plus 5cm}quaternion\-::quaternion (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classquaternion_a66be1b74fcbd7d2bf8b92d0ff3760c03}
+
+
+Definition at line 11 of file quaternion.\-h.
+
+
+
+References set\-Random\-Rot().
+
+
+\begin{DoxyCode}
+11 \{ q\_.resize(4, 0.0); std::vector < double > dummy (3, 0); R\_.resize(3, dummy); 
+      \hyperlink{classquaternion_a370e464ed34ec78540481a35b9a6829e}{setRandomRot} (); \}
+\end{DoxyCode}
+\hypertarget{classquaternion_afde1d3e0610d4e72a544ef8b329f0588}{\index{quaternion@{quaternion}!$\sim$quaternion@{$\sim$quaternion}}
+\index{$\sim$quaternion@{$\sim$quaternion}!quaternion@{quaternion}}
+\subsubsection[{$\sim$quaternion}]{\setlength{\rightskip}{0pt plus 5cm}quaternion\-::$\sim$quaternion (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classquaternion_afde1d3e0610d4e72a544ef8b329f0588}
+
+
+Definition at line 12 of file quaternion.\-h.
+
+
+\begin{DoxyCode}
+12 \{\};
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classquaternion_a5500ac17c80600120b5036fee3796052}{\index{quaternion@{quaternion}!conjugate@{conjugate}}
+\index{conjugate@{conjugate}!quaternion@{quaternion}}
+\subsubsection[{conjugate}]{\setlength{\rightskip}{0pt plus 5cm}void quaternion\-::conjugate (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classquaternion_a5500ac17c80600120b5036fee3796052}
+
+
+Transform quaternion into its conjugate. 
+
+
+
+Definition at line 53 of file quaternion.\-cpp.
+
+
+
+Referenced by inverse().
+
+
+\begin{DoxyCode}
+53                             \{
+54     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 1; i < 4; ++i) \{
+55         q\_[i] = -q\_[i];
+56     \}
+57 \}
+\end{DoxyCode}
+\hypertarget{classquaternion_af701c4a67c60f98af80e3c3caeb5bd4a}{\index{quaternion@{quaternion}!get@{get}}
+\index{get@{get}!quaternion@{quaternion}}
+\subsubsection[{get}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$ double $>$ quaternion\-::get (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classquaternion_af701c4a67c60f98af80e3c3caeb5bd4a}
+
+
+Definition at line 24 of file quaternion.\-h.
+
+
+\begin{DoxyCode}
+24 \{ \textcolor{keywordflow}{return} q\_; \} \textcolor{comment}{// Return the quaternion's values}
+\end{DoxyCode}
+\hypertarget{classquaternion_a28ff31359622e09c9c292f78cf08b801}{\index{quaternion@{quaternion}!get\-Norm@{get\-Norm}}
+\index{get\-Norm@{get\-Norm}!quaternion@{quaternion}}
+\subsubsection[{get\-Norm}]{\setlength{\rightskip}{0pt plus 5cm}double quaternion\-::get\-Norm (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classquaternion_a28ff31359622e09c9c292f78cf08b801}
+
+
+Return the norm of the quaternion. 
+
+
+
+Definition at line 102 of file quaternion.\-cpp.
+
+
+
+Referenced by normalize().
+
+
+\begin{DoxyCode}
+102                             \{
+103     \textcolor{keywordtype}{double} n2 = 0.0;
+104     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < 4; ++i) \{
+105         n2 += q\_[i]*q\_[i];
+106     \}
+107     \textcolor{keywordflow}{return} std::sqrt(n2);
+108 \}
+\end{DoxyCode}
+\hypertarget{classquaternion_a1fa2dac4be850e01aa08103dac746b64}{\index{quaternion@{quaternion}!inverse@{inverse}}
+\index{inverse@{inverse}!quaternion@{quaternion}}
+\subsubsection[{inverse}]{\setlength{\rightskip}{0pt plus 5cm}void quaternion\-::inverse (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classquaternion_a1fa2dac4be850e01aa08103dac746b64}
+
+
+Transform a quanternion into its inverse. 
+
+
+
+Definition at line 74 of file quaternion.\-cpp.
+
+
+
+References conjugate().
+
+
+\begin{DoxyCode}
+74                           \{
+75     \hyperlink{classquaternion_a5500ac17c80600120b5036fee3796052}{conjugate}();
+76     \textcolor{keywordtype}{double} n2 = 0.0;
+77     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < 4; ++i) \{
+78         n2 += q\_[i]*q\_[i];
+79     \}
+80     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < 4; ++i) \{
+81         q\_[i] /= n2;
+82     \}
+83 \}
+\end{DoxyCode}
+\hypertarget{classquaternion_a056b14ed0f5b2ab02667aeedb58d1725}{\index{quaternion@{quaternion}!normalize@{normalize}}
+\index{normalize@{normalize}!quaternion@{quaternion}}
+\subsubsection[{normalize}]{\setlength{\rightskip}{0pt plus 5cm}void quaternion\-::normalize (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classquaternion_a056b14ed0f5b2ab02667aeedb58d1725}
+
+
+Normalize a quaternion. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em t} & Translation vector. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 64 of file quaternion.\-cpp.
+
+
+
+References get\-Norm().
+
+
+\begin{DoxyCode}
+64                             \{
+65     \textcolor{keyword}{const} \textcolor{keywordtype}{double} norm = \hyperlink{classquaternion_a28ff31359622e09c9c292f78cf08b801}{getNorm}();
+66     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < 4; ++i) \{
+67         q\_[i] /= norm;
+68     \}
+69 \}
+\end{DoxyCode}
+\hypertarget{classquaternion_a9ed9d3b39020b800e55033efd1fe8e45}{\index{quaternion@{quaternion}!operator!=@{operator!=}}
+\index{operator!=@{operator!=}!quaternion@{quaternion}}
+\subsubsection[{operator!=}]{\setlength{\rightskip}{0pt plus 5cm}bool quaternion\-::operator!= (
+\begin{DoxyParamCaption}
+\item[{const {\bf quaternion} \&}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classquaternion_a9ed9d3b39020b800e55033efd1fe8e45}
+
+
+Check if two quaternions are not equal to each other to within a tolerance of 1.\-0e-\/12. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em other} & Other quaternion to compare with. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 94 of file quaternion.\-h.
+
+
+\begin{DoxyCode}
+94                                               \{
+95         \textcolor{keywordflow}{return} !(*\textcolor{keyword}{this} == other);
+96     \}
+\end{DoxyCode}
+\hypertarget{classquaternion_ab8c2b2a742c75b683f75f763a8ecf0aa}{\index{quaternion@{quaternion}!operator$\ast$@{operator$\ast$}}
+\index{operator$\ast$@{operator$\ast$}!quaternion@{quaternion}}
+\subsubsection[{operator$\ast$}]{\setlength{\rightskip}{0pt plus 5cm}{\bf quaternion} quaternion\-::operator$\ast$ (
+\begin{DoxyParamCaption}
+\item[{const {\bf quaternion} \&}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classquaternion_ab8c2b2a742c75b683f75f763a8ecf0aa}
+
+
+Multiply this quaternion by another. 
+
+Does this in order of self$\ast$other.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em other} & Quaternion to multiply this one by.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+self$\ast$other 
+\end{DoxyReturn}
+
+
+Definition at line 64 of file quaternion.\-h.
+
+
+
+References set().
+
+
+\begin{DoxyCode}
+64                                                    \{
+65         \hyperlink{classquaternion}{quaternion} ans;
+66         std::vector < double > prod (4, 0);
+67         prod[0] = this->q\_[0]*other.q\_[0] - this->q\_[1]*other.q\_[1] - this->q\_[2]*other.q\_[2] - this->q\_[3]
+      *other.q\_[3];
+68         prod[1] = this->q\_[0]*other.q\_[1] + this->q\_[1]*other.q\_[0] + this->q\_[2]*other.q\_[3] - this->q\_[3]
+      *other.q\_[2];
+69         prod[2] = this->q\_[0]*other.q\_[2] - this->q\_[1]*other.q\_[3] + this->q\_[2]*other.q\_[0] + this->q\_[3]
+      *other.q\_[1];
+70         prod[3] = this->q\_[0]*other.q\_[3] + this->q\_[1]*other.q\_[2] - this->q\_[2]*other.q\_[1] + this->q\_[3]
+      *other.q\_[0];
+71         ans.\hyperlink{classquaternion_ad3b1869658470d5adae436fe6f98e1f0}{set}(prod);
+72         \textcolor{keywordflow}{return} ans;
+73     \}
+\end{DoxyCode}
+\hypertarget{classquaternion_a3cf72d92681c00362e59e7ff96d0ea4f}{\index{quaternion@{quaternion}!operator+@{operator+}}
+\index{operator+@{operator+}!quaternion@{quaternion}}
+\subsubsection[{operator+}]{\setlength{\rightskip}{0pt plus 5cm}{\bf quaternion} quaternion\-::operator+ (
+\begin{DoxyParamCaption}
+\item[{const {\bf quaternion} \&}]{p}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classquaternion_a3cf72d92681c00362e59e7ff96d0ea4f}
+
+
+Add a quaternion to this one. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em p} & Quaternion to add to this one. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 32 of file quaternion.\-h.
+
+
+
+References set().
+
+
+\begin{DoxyCode}
+32                                                \{
+33         \hyperlink{classquaternion}{quaternion} ans;
+34         std::vector < double > sum (4, 0);
+35         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < 4; ++i) \{
+36             sum[i] = this->q\_[i] + p.q\_[i];
+37         \}
+38         ans.\hyperlink{classquaternion_ad3b1869658470d5adae436fe6f98e1f0}{set}(sum);
+39         \textcolor{keywordflow}{return} ans;
+40     \}
+\end{DoxyCode}
+\hypertarget{classquaternion_af299a0ea61d45ff4cb9a8551e7cad01a}{\index{quaternion@{quaternion}!operator-\/@{operator-\/}}
+\index{operator-\/@{operator-\/}!quaternion@{quaternion}}
+\subsubsection[{operator-\/}]{\setlength{\rightskip}{0pt plus 5cm}{\bf quaternion} quaternion\-::operator-\/ (
+\begin{DoxyParamCaption}
+\item[{const {\bf quaternion} \&}]{p}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classquaternion_af299a0ea61d45ff4cb9a8551e7cad01a}
+
+
+Subtract a quaternion from this one. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em p} & Quaternion to subtract from this one. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 47 of file quaternion.\-h.
+
+
+
+References set().
+
+
+\begin{DoxyCode}
+47                                                \{
+48         \hyperlink{classquaternion}{quaternion} ans;
+49         std::vector < double > sum (4, 0);
+50         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < 4; ++i) \{
+51             sum[i] = this->q\_[i] - p.q\_[i];
+52         \}
+53         ans.\hyperlink{classquaternion_ad3b1869658470d5adae436fe6f98e1f0}{set}(sum);
+54         \textcolor{keywordflow}{return} ans;
+55     \}
+\end{DoxyCode}
+\hypertarget{classquaternion_ae7b568fc0cc23d9248ae38ec944865ff}{\index{quaternion@{quaternion}!operator==@{operator==}}
+\index{operator==@{operator==}!quaternion@{quaternion}}
+\subsubsection[{operator==}]{\setlength{\rightskip}{0pt plus 5cm}bool quaternion\-::operator== (
+\begin{DoxyParamCaption}
+\item[{const {\bf quaternion} \&}]{other}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classquaternion_ae7b568fc0cc23d9248ae38ec944865ff}
+
+
+Check if two quaternions are equal to each other to within a tolerance of 1.\-0e-\/12. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em other} & Other quaternion to compare with. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 80 of file quaternion.\-h.
+
+
+\begin{DoxyCode}
+80                                               \{
+81         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < 4; ++i) \{
+82             \textcolor{keywordflow}{if} (fabs(this->q\_[i] - other.q\_[i]) > 1.0e-12) \{
+83                 \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+84             \}
+85         \}
+86         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+87     \}
+\end{DoxyCode}
+\hypertarget{classquaternion_a618cce42beeb9ab3c724c4a9e6f37f55}{\index{quaternion@{quaternion}!rotate\-Vec@{rotate\-Vec}}
+\index{rotate\-Vec@{rotate\-Vec}!quaternion@{quaternion}}
+\subsubsection[{rotate\-Vec}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$ double $>$ quaternion\-::rotate\-Vec (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$ \&}]{vec}
+\end{DoxyParamCaption}
+)}}\label{classquaternion_a618cce42beeb9ab3c724c4a9e6f37f55}
+
+
+Use this quaternion to operate on a vector, that causes its rotation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em vec} & Vector to rotate. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 115 of file quaternion.\-cpp.
+
+
+\begin{DoxyCode}
+115                                                                            \{
+116     std::vector < double > ans (3, 0);
+117     assignr\_ (q\_);
+118 
+119     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < 3; ++i) \{
+120         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 3; ++j) \{
+121             ans[i] += R\_[i][j]*vec[j];
+122         \}
+123     \}
+124 
+125     \textcolor{keywordflow}{return} ans;
+126 \}
+\end{DoxyCode}
+\hypertarget{classquaternion_ad3b1869658470d5adae436fe6f98e1f0}{\index{quaternion@{quaternion}!set@{set}}
+\index{set@{set}!quaternion@{quaternion}}
+\subsubsection[{set}]{\setlength{\rightskip}{0pt plus 5cm}void quaternion\-::set (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$ \&}]{qv}
+\end{DoxyParamCaption}
+)}}\label{classquaternion_ad3b1869658470d5adae436fe6f98e1f0}
+
+
+Set the quaternion's value. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em qv} & 4 component vector, \mbox{[}x, x, y, z\mbox{]} \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 8 of file quaternion.\-cpp.
+
+
+
+Referenced by operator$\ast$(), operator+(), and operator-\/().
+
+
+\begin{DoxyCode}
+8                                                     \{
+9     assignq\_ (qv);
+10 \}
+\end{DoxyCode}
+\hypertarget{classquaternion_a05a1549d902c5cd6401985caaf1a7e3f}{\index{quaternion@{quaternion}!set\-Axis\-Angle@{set\-Axis\-Angle}}
+\index{set\-Axis\-Angle@{set\-Axis\-Angle}!quaternion@{quaternion}}
+\subsubsection[{set\-Axis\-Angle}]{\setlength{\rightskip}{0pt plus 5cm}void quaternion\-::set\-Axis\-Angle (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$ \&}]{u, }
+\item[{const double}]{angle}
+\end{DoxyParamCaption}
+)}}\label{classquaternion_a05a1549d902c5cd6401985caaf1a7e3f}
+
+
+Set the quaternion based on angle, axis desired. 
+
+Does not need to be normalized.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em angle} & Angle of rotation desired relative to axis (in radians) \\
+\hline
+\mbox{\tt in}  & {\em aixs} & 3\-D axis to rotate about (in right-\/handed coordinates) \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 150 of file quaternion.\-cpp.
+
+
+\begin{DoxyCode}
+150                                                                                 \{
+151     \textcolor{keywordflow}{if} (u.size() != 3) \{
+152         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Axis for Quaternion must have 3 elements"});
+153     \}
+154     q\_[0] = std::cos(angle/2.0);
+155     \textcolor{keyword}{const} \textcolor{keywordtype}{double} s = std::sin(angle/2.0);
+156     q\_[1] = s*u[0];
+157     q\_[2] = s*u[1];
+158     q\_[3] = s*u[2];
+159 \}
+\end{DoxyCode}
+\hypertarget{classquaternion_a370e464ed34ec78540481a35b9a6829e}{\index{quaternion@{quaternion}!set\-Random\-Rot@{set\-Random\-Rot}}
+\index{set\-Random\-Rot@{set\-Random\-Rot}!quaternion@{quaternion}}
+\subsubsection[{set\-Random\-Rot}]{\setlength{\rightskip}{0pt plus 5cm}void quaternion\-::set\-Random\-Rot (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classquaternion_a370e464ed34ec78540481a35b9a6829e}
+
+
+Pick a quaternion that corresponds to a random 3\-D rotation. 
+
+
+
+Definition at line 131 of file quaternion.\-cpp.
+
+
+
+References P\-I, rng(), and R\-N\-G\-\_\-\-S\-E\-E\-D.
+
+
+
+Referenced by quaternion().
+
+
+\begin{DoxyCode}
+131                                 \{
+132      \textcolor{comment}{// spherical coordinates to get random unit vector}
+133      \textcolor{keyword}{const} \textcolor{keywordtype}{double} theta = std::acos(2.0*\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng}(&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) - 1.0);
+134      \textcolor{keyword}{const} \textcolor{keywordtype}{double} phi = 2.0*\hyperlink{global_8h_a598a3330b3c21701223ee0ca14316eca}{PI}*\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng}(&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}), sin\_phi = std::sin(phi);
+135 
+136      \textcolor{comment}{// randomly pick angle}
+137      \textcolor{keyword}{const} \textcolor{keywordtype}{double} angle = 2.0*\hyperlink{global_8h_a598a3330b3c21701223ee0ca14316eca}{PI}*\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng}(&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}), s = std::sin(angle/2.0);
+138      q\_[0] = std::cos(angle/2.0);
+139      q\_[1] = s*1.0*sin\_phi*std::cos(theta);
+140      q\_[2] = s*1.0*sin\_phi*std::sin(theta);
+141      q\_[3] = s*1.0*std::cos(phi);
+142  \}
+\end{DoxyCode}
+\hypertarget{classquaternion_ab8f466daaaa9a122a86da6fe713f62fe}{\index{quaternion@{quaternion}!translate@{translate}}
+\index{translate@{translate}!quaternion@{quaternion}}
+\subsubsection[{translate}]{\setlength{\rightskip}{0pt plus 5cm}void quaternion\-::translate (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$ \&}]{t}
+\end{DoxyParamCaption}
+)}}\label{classquaternion_ab8f466daaaa9a122a86da6fe713f62fe}
+
+
+Translate a quaternion in 3\-D space. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em t} & Translation vector. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 90 of file quaternion.\-cpp.
+
+
+\begin{DoxyCode}
+90                                                          \{
+91     \textcolor{keywordflow}{if} (t.size() != 3) \{
+92         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Translation vector for Quaternion must have 3 elements"});
+93     \}
+94     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 1; i < 4; ++i) \{
+95         q\_[i] += t[i-1];
+96     \}
+97 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{quaternion_8h}{quaternion.\-h}\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{quaternion_8cpp}{quaternion.\-cpp}\end{DoxyCompactItemize}

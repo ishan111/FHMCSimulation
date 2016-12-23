@@ -1,0 +1,636 @@
+.TH "aggVolBias3" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+aggVolBias3 \- 
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <aggvolbias\&.h>\fP
+.PP
+Inherits \fBmcMove\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fBaggVolBias3\fP ()"
+.br
+.ti -1c
+.RI "\fBaggVolBias3\fP (const int typeIndex, const int typeIndex2, const double pBias, const std::vector< double > rc1, const std::vector< double > rc2, const std::string tag)"
+.br
+.RI "\fIInstantiate a canonical aggregation-volume bias move to swap particles\&. \fP"
+.ti -1c
+.RI "int \fBmake\fP (\fBsimSystem\fP &sys)"
+.br
+.RI "\fIUse aggregation-volume bias to swap two particles in the system\&. \fP"
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Definition at line 11 of file aggvolbias\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "aggVolBias3::aggVolBias3 ()\fC [inline]\fP"
+
+.PP
+Definition at line 13 of file aggvolbias\&.h\&.
+.PP
+References mcMove::changeN_\&.
+.PP
+.nf
+13 { changeN_ = false; pBias_ = 0; }
+.fi
+.SS "aggVolBias3::aggVolBias3 (const inttypeIndex, const inttypeIndex2, const doublepBias, const std::vector< double >rc1, const std::vector< double >rc2, const std::stringtag)"
+
+.PP
+Instantiate a canonical aggregation-volume bias move to swap particles\&. AVBMC3 from Chen and Siepmann, J\&. Phys\&. Chem\&. B 105 (2001)\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fItypeIndex\fP Type to consider in swapping in the vicinity of 
+.br
+\fItypeIndex2\fP Second type to consider in swapping in the vicinity of 
+.br
+\fIpBias\fP Biasing probability 
+.br
+\fIrc1\fP Radius (min, max) around particle of typeIndex to consider as being the 'in' region 
+.br
+\fIrc2\fP Radius (min, max) around particle of typeIndex2 to consider as being the 'in' region 
+.br
+\fItag\fP Name modifier to identify move to user 
+.RE
+.PP
+
+.PP
+Definition at line 99 of file aggvolbias\&.cpp\&.
+.PP
+References mcMove::changeN_, mcMove::name_, and mcMove::typeIndex_\&.
+.PP
+.nf
+99                                                                                                                                                                             {
+100     typeIndex_ = typeIndex;
+101     typeIndex2_ = typeIndex2;
+102 
+103     if (pBias < 1 && pBias > 0) {
+104         pBias_ = pBias;
+105     } else {
+106         throw customException ("Bias probability must be > 0 and < 1 for aggVolBias");
+107     }
+108 
+109     if (!(rc1[0] > 0\&.0)) {
+110             throw customException ("Neighborhood radius for species 1 in aggVolBias must be > 0");
+111         } else {
+112             rc1min_ = rc1[0];
+113         }
+114         if (!(rc2[0] > 0\&.0)) {
+115             throw customException ("Neighborhood radius for species 2 in aggVolBias must be > 0");
+116         } else {
+117             rc2min_ = rc2[0];
+118         }
+119 
+120     if (!(rc1[1] > rc1[0])) {
+121                 throw customException ("Max neighborhood radius for species 1 in aggVolBias must be > min");
+122         } else {
+123                 rc1max_ = rc1[1];
+124         }
+125         if (!(rc2[1] > rc2[0])) {
+126                 throw customException ("Max neighborhood radius for species 2 in aggVolBias must be > min");
+127         } else {
+128                 rc2max_ = rc2[1];
+129         }
+130 
+131         name_ = tag + std::to_string(typeIndex) + "_" + std::to_string(typeIndex2);
+132     changeN_ = false;
+133 }
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "int aggVolBias3::make (\fBsimSystem\fP &sys)\fC [virtual]\fP"
+
+.PP
+Use aggregation-volume bias to swap two particles in the system\&. All other information is stored in the \fBsimSystem\fP object\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsys\fP System object to attempt to swap particles in\&.
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+MOVE_SUCCESS if particles are swapped, otherwise MOVE_FAILURE if not\&. Will throw exceptions if there was an error\&. 
+.RE
+.PP
+
+.PP
+Implements \fBmcMove\fP\&.
+.PP
+Definition at line 142 of file aggvolbias\&.cpp\&.
+.PP
+References simSystem::atoms, simSystem::beta(), simSystem::box(), calculateBias(), simSystem::getCurrentM(), simSystem::getFractionalAtomType(), simSystem::getTotN(), simSystem::getWALABias(), simSystem::incrementEnergy(), MOVE_FAILURE, MOVE_SUCCESS, simSystem::nSpecies(), simSystem::numSpecies, pbcDist2(), PI, atom::pos, random3DSurfaceVector(), rng(), RNG_SEED, simSystem::tmmcBias, simSystem::translateAtom(), mcMove::typeIndex_, wala::update(), tmmc::updateC(), simSystem::useTMMC, simSystem::useWALA, and customException::what()\&.
+.PP
+.nf
+142                                      {
+143         // choose a particle of typeIndex_
+144         int nAvail1 = sys\&.numSpecies[typeIndex_];
+145         if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == typeIndex_) {
+146             nAvail1++;
+147         }
+148 
+149         // choose a particle of typeIndex2_
+150         int nAvail2 = sys\&.numSpecies[typeIndex2_];
+151         if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == typeIndex2_) {
+152             nAvail2++;
+153         }
+154 
+155         // update biases even upon failure to try move (also reject if types are same and only one overall particle)
+156         if (nAvail1 < 1 || nAvail2 < 1 || (typeIndex_ == typeIndex2_ && nAvail1 <= 1)) {
+157             if (sys\&.useWALA) {
+158                     sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+159             }
+160             if (sys\&.useTMMC) {
+161                     sys\&.tmmcBias->updateC (sys\&.getTotN(), sys\&.getTotN(), sys\&.getCurrentM(), sys\&.getCurrentM(), 0\&.0);
+162             }
+163             return MOVE_FAILURE;
+164         }
+165 
+166         // choose particles, j and k - at present we are guaranteed at least 2 unique particles in the system
+167         int pkJ = (int) floor(rng (&RNG_SEED) * nAvail1), pkK = 0, iterMax = 25, iter = 0;
+168         bool jkOverlap = true;
+169         while (jkOverlap && iter < iterMax) {
+170             // if there are only a few particles in the system, they may all overlap so reject after a number of trials
+171             iter++;
+172 
+173             pkK = (int) floor(rng (&RNG_SEED) * nAvail2);
+174 
+175             // establish if j and k overlap their "in" regions
+176             const double rc = (rc1max_ + rc2max_)/2\&.0;
+177 
+178             // if pkK and pkJ are withing rcut of each other, they overlap
+179             if (pbcDist2(sys\&.atoms[typeIndex_][pkJ]\&.pos, sys\&.atoms[typeIndex2_][pkK]\&.pos, sys\&.box()) > rc*rc) {
+180                     jkOverlap = false;
+181             }
+182 
+183             // However, we also technically need to ensure that if typeIndex_ == typeIndex2_, j and k are not the same particle\&.
+184             // Happily, this is already guaranteed by the above distance check (a particle is a distance 0 from itself)
+185         }
+186 
+187         // check for failure to find pkJ and pkK
+188         if (iter >= iterMax) {
+189             if (sys\&.useWALA) {
+190                     sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+191             }
+192             if (sys\&.useTMMC) {
+193                     sys\&.tmmcBias->updateC (sys\&.getTotN(), sys\&.getTotN(), sys\&.getCurrentM(), sys\&.getCurrentM(), 0\&.0);
+194             }
+195             return MOVE_FAILURE;
+196         }
+197 
+198         const std::vector < double > box = sys\&.box();
+199         double minL = box[0];
+200         double V = 1\&.0;
+201         for (unsigned int i = 0; i < box\&.size(); ++i) {
+202             V *= box[i];
+203             minL = std::min(minL, box[i]);
+204         }
+205 
+206         // sanity check for rc's
+207         if (!(rc1max_ < minL/2\&.0)) {
+208             throw customException ("Max neighborhood radius for species 1 in aggVolBias must be < box/2");
+209         }
+210         if (!(rc2max_ < minL/2\&.0)) {
+211             throw customException ("Max neighborhood radius for species 2 in aggVolBias must be < box/2");
+212         }
+213 
+214         // based on the choices made below, the unbiased acceptance probability will be set in each case
+215         double p_u = 1\&.0, bias = 1\&.0, dU = 0\&.0;
+216     double V_in_j = 0\&.0, V_in_k = 0\&.0, V_out_j = 0\&.0, V_out_k = 0\&.0;
+217         int chosenAtomType = 0;
+218     int  N_in_k = 0, N_in_j = 0, N_out_k = 0, N_out_j = 0;
+219         atom* chosenAtom;
+220         atom tmpNewAtom; // stores position the chosenAtom is being proposed to be moved to
+221         bool inA = false; // is this a "in" to X move?
+222 
+223         if (rng(&RNG_SEED) < pBias_) {
+224             // choose a particle either "in" k or "out" j with equal probability
+225             // note that "out" j includes the "in" k region as well
+226             if (rng (&RNG_SEED) < 0\&.5) {
+227                     // choose particle "in" k, this chosen particle can be of any type
+228                     inA = true;
+229             std::vector < atom* > neighborAtoms;
+230                     neighborAtoms\&.reserve(100); // 100 is just an arbitrary number to help accelerate
+231                     std::vector < int > nEachType (sys\&.nSpecies(), 0);
+232                     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+233                         int totKatoms = sys\&.numSpecies[i];
+234 
+235                         // account for if in expanded ensemble and have an additional partially inserted particle floating around
+236                         if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == i) {
+237                                 totKatoms++;
+238                         }
+239 
+240                         for (unsigned int j = 0; j < totKatoms; ++j) {
+241                     const double d2 = pbcDist2(sys\&.atoms[i][j]\&.pos, sys\&.atoms[typeIndex2_][pkK]\&.pos, sys\&.box());
+242                                 if (d2 < rc2max_*rc2max_ && d2 >= rc2min_*rc2min_) {
+243                                     if (&sys\&.atoms[typeIndex2_][pkK] != &sys\&.atoms[i][j]) { // since J and K do not overlap do not have to check if this is pkJ
+244                                             neighborAtoms\&.push_back(&sys\&.atoms[i][j]);
+245                                             nEachType[i] += 1;
+246                                     }
+247                                 }
+248                         }
+249                     }
+250 
+251                     // reject move if no neighbors
+252                     if (neighborAtoms\&.begin() == neighborAtoms\&.end()) {
+253                         if (sys\&.useWALA) {
+254                                 sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+255                         }
+256                         if (sys\&.useTMMC) {
+257                                 sys\&.tmmcBias->updateC (sys\&.getTotN(), sys\&.getTotN(), sys\&.getCurrentM(), sys\&.getCurrentM(), 0\&.0);
+258                         }
+259                         return MOVE_FAILURE;
+260                     }
+261 
+262                     // otherwise choose an atom
+263                     const int atomIndex = (int) floor(rng (&RNG_SEED) * neighborAtoms\&.size());
+264                     chosenAtom = neighborAtoms[atomIndex];
+265                 int tot = 0;
+266                     while (tot < atomIndex) {
+267                         tot += nEachType[chosenAtomType];
+268                         chosenAtomType++;
+269                         if (chosenAtomType > sys\&.nSpecies()) { // > not >= because chosenAtomType will be decremented next
+270                                 throw customException ("Error, could not properly identify the type of the atom chosen to be moved in aggVolBias");
+271                         }
+272                     }
+273                     chosenAtomType--;
+274                     if (chosenAtomType < 0) { // in case atomIndex = 0 and above loop did not execute at all
+275                         chosenAtomType = 0;
+276                     }
+277 
+278             N_in_k = nEachType[chosenAtomType]; // only concerned about the number of the chosen type
+279             V_in_k = 4\&.0/3\&.0*PI*(rc2max_*rc2max_*rc2max_ - rc2min_*rc2min_*rc2min_);
+280         } else {
+281                     // choose particle "out" of j, this chosen particle can be of any type
+282                     inA = false;
+283 
+284                     // just pick atoms (of any type) at random and see if it is "out" of j
+285                     // this should be faster than establishing, a priori, all atoms which are "out"
+286                     // and then picking from that list since *most* atoms should be "out"
+287                     // unlike when we have to pick from "in" ones which are more rare
+288 
+289             int iter = 0, iterMax = 25;
+290                     bool inJ = true;
+291 
+292             while (inJ && iter < iterMax) {
+293                         iter++;
+294                         const int ranSpec = (int) floor(rng (&RNG_SEED) * sys\&.nSpecies());
+295                         int availAtoms = sys\&.numSpecies[ranSpec];
+296                         // account for if in expanded ensemble and have an additional partially inserted particle floating around
+297                         if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == ranSpec) {
+298                             availAtoms++;
+299                         }
+300                         int ranIndex = (int) floor(rng (&RNG_SEED) * availAtoms);
+301 
+302                         // check this atom is neither pkJ nor pkK
+303                         if (&sys\&.atoms[ranSpec][ranIndex] != &sys\&.atoms[typeIndex_][pkJ] && &sys\&.atoms[ranSpec][ranIndex] != &sys\&.atoms[typeIndex2_][pkK]) {
+304                             const double d2 = pbcDist2(sys\&.atoms[ranSpec][ranIndex]\&.pos, sys\&.atoms[typeIndex_][pkJ]\&.pos, sys\&.box());
+305                     if (!(d2 < rc1max_*rc1max_ && d2 >= rc1min_*rc1min_)) {
+306                                     chosenAtom = &sys\&.atoms[ranSpec][ranIndex];
+307                                     chosenAtomType = ranSpec;
+308                                     inJ = false;
+309                                 }
+310                         }
+311                     }
+312 
+313                     // check if we could not locate a particle "out" of j
+314                     if (iter >= iterMax) {
+315                         if (sys\&.useWALA) {
+316                                 sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+317                         }
+318                         if (sys\&.useTMMC) {
+319                                 sys\&.tmmcBias->updateC (sys\&.getTotN(), sys\&.getTotN(), sys\&.getCurrentM(), sys\&.getCurrentM(), 0\&.0);
+320                         }
+321                         return MOVE_FAILURE;
+322                     }
+323 
+324             // need to know how many chosenAtoms are "out" of j
+325             int totJatoms = sys\&.numSpecies[chosenAtomType];
+326 
+327                 // account for if in expanded ensemble and have an additional partially inserted particle floating around
+328                 if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == chosenAtomType) {
+329                         totJatoms++;
+330                 }
+331 
+332             // need for V_out_j later
+333             V_in_k = 4\&.0/3\&.0*PI*(rc2max_*rc2max_*rc2max_ - rc2min_*rc2min_*rc2min_);
+334             }
+335 
+336             // move the chosenAtom "in" j
+337 
+338             // (1) get energy of chosenAtom in current state
+339             double oldEnergy = 0\&.0;
+340             try {
+341                 oldEnergy = getTempEnergy_ (sys, box, V, chosenAtomType, chosenAtom);
+342             } catch (customException &ce) {
+343                     throw customException (ce\&.what());
+344             }
+345 
+346             // (2) "move" chosenAtom - randomly choose a radius from [0, rc1) around pkJ
+347             const double dr = (rc1max_ - rc1min_);
+348         const double magnitude = pow((rng (&RNG_SEED)*dr*dr*dr+rc1min_*rc1min_*rc1min_), 1\&./3\&.);
+349 
+350             // then choose a point randomly on the surface of that sphere to place chosenAtom
+351             std::vector < double > surfaceVec = random3DSurfaceVector (magnitude), origPos = chosenAtom->pos;
+352             for (unsigned int i = 0; i < origPos\&.size(); ++i) {
+353                 chosenAtom->pos[i] = sys\&.atoms[typeIndex_][pkJ]\&.pos[i] + surfaceVec[i];
+354 
+355                 // apply periodic boundary conditions
+356                 if (chosenAtom->pos[i] >= box[i]) {
+357                         chosenAtom->pos[i] -= box[i];
+358                     } else if (chosenAtom->pos[i] < 0) {
+359                         chosenAtom->pos[i] += box[i];
+360                     }
+361             }
+362 
+363             // store the newly proposed position for later
+364             tmpNewAtom\&.pos = chosenAtom->pos;
+365 
+366         // establish how many chosenAtoms are "in" j
+367         int totJatoms = sys\&.numSpecies[chosenAtomType];
+368 
+369             // account for if in expanded ensemble and have an additional partially inserted particle floating around
+370             if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == chosenAtomType) {
+371                 totJatoms++;
+372             }
+373 
+374         N_in_j = 0;
+375             for (unsigned int j = 0; j < totJatoms; ++j) {
+376                 const double d2 = pbcDist2(sys\&.atoms[chosenAtomType][j]\&.pos, sys\&.atoms[typeIndex_][pkJ]\&.pos, sys\&.box());
+377             if (d2 < rc1max_*rc1max_ && d2 >= rc1min_*rc1min_) {
+378                             if (&sys\&.atoms[chosenAtomType][j] != &sys\&.atoms[typeIndex_][pkJ]) {
+379                     N_in_j++;
+380                 }
+381             }
+382         }
+383 
+384 
+385         N_out_j = totJatoms - N_in_j;
+386         V_in_j = 4\&.0/3\&.0*PI*(rc1max_*rc1max_*rc1max_ - rc1min_*rc1min_*rc1min_);
+387 
+388             double newEnergy = 0\&.0;
+389             try {
+390                 newEnergy = getTempEnergy_ (sys, box, V, chosenAtomType, chosenAtom);
+391             } catch (customException &ce) {
+392                 throw customException (ce\&.what());
+393             }
+394 
+395             // restore the atom's original state before continuing
+396             chosenAtom->pos = origPos;
+397 
+398             // assign p_u
+399             dU = newEnergy - oldEnergy;
+400             p_u =  0\&.0;
+401         if (inA) {
+402             // "in K" to "in J" move
+403             p_u = (1\&.0 - pBias_)*V_in_j*N_in_k*exp(-dU*sys\&.beta())/(pBias_*V_in_k*(N_in_j+1\&.0));
+404         } else {
+405             // "out J" to "in J" move
+406             V_out_j = V - V_in_j - V_in_k; // V_in_k subtracted must also be done consistently
+407             p_u = (1\&.0 - pBias_)*V_in_j*N_out_j*exp(-dU*sys\&.beta())/((1\&.0 - pBias_)*V_out_j*(N_in_j + 1\&.0));
+408         }
+409     } else {
+410         // choose a particle "in" j, this chosen particle can be of any type
+411             std::vector < atom* > neighborAtoms;
+412             neighborAtoms\&.reserve(100); // 100 is just an arbitrary number to help accelerate
+413             std::vector < int > nEachType (sys\&.nSpecies(), 0);
+414         for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+415                     int totJatoms = sys\&.numSpecies[i];
+416 
+417                     // account for if in expanded ensemble and have an additional partially inserted particle floating around
+418                     if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == i) {
+419                         totJatoms++;
+420                     }
+421 
+422                     for (unsigned int j = 0; j < totJatoms; ++j) {
+423                         const double d2 = pbcDist2(sys\&.atoms[i][j]\&.pos, sys\&.atoms[typeIndex_][pkJ]\&.pos, sys\&.box());
+424                 if (d2 < rc1max_*rc1max_ && d2 >= rc1min_*rc1min_) {
+425                                 if (&sys\&.atoms[typeIndex_][pkJ] != &sys\&.atoms[i][j]) { // since J and K do not overlap do not have to check this is pkK
+426                                     neighborAtoms\&.push_back(&sys\&.atoms[i][j]);
+427                                     nEachType[i] += 1;
+428                             }
+429                         }
+430                     }
+431             }
+432 
+433             // reject move if no neighbors
+434             if (neighborAtoms\&.begin() == neighborAtoms\&.end()) {
+435                 if (sys\&.useWALA) {
+436                         sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+437                     }
+438                     if (sys\&.useTMMC) {
+439                         sys\&.tmmcBias->updateC (sys\&.getTotN(), sys\&.getTotN(), sys\&.getCurrentM(), sys\&.getCurrentM(), 0\&.0);
+440                     }
+441                 return MOVE_FAILURE;
+442             }
+443 
+444             // otherwise choose an atom
+445             const int atomIndex = (int) floor(rng (&RNG_SEED) * neighborAtoms\&.size());
+446             chosenAtom = neighborAtoms[atomIndex];
+447         int tot = 0;
+448             while (tot < atomIndex) {
+449                 tot += nEachType[chosenAtomType];
+450                 chosenAtomType++;
+451                     if (chosenAtomType > sys\&.nSpecies()) { // > not >= because chosenAtomType will be decremented next
+452                         throw customException ("Error, could not properly identify the type of the atom chosen to be moved in aggVolBias");
+453                     }
+454             }
+455             chosenAtomType--;
+456             if (chosenAtomType < 0) { // in case atomIndex = 0 and above loop did not execute at all
+457                     chosenAtomType = 0;
+458             }
+459 
+460         N_in_j = nEachType[chosenAtomType];
+461         V_in_j = 4\&.0/3\&.0*PI*(rc1max_*rc1max_*rc1max_ - rc1min_*rc1min_*rc1min_);
+462 
+463         // what to do with chosenAtom?
+464         if (rng (&RNG_SEED) < 0\&.5) {
+465                     // move this chosenAtom "out" of pkJ
+466                     bool inJ = true;
+467                     while (inJ) {
+468                         for (unsigned int i = 0; i < box\&.size(); ++i) {
+469                                 tmpNewAtom\&.pos[i] = rng (&RNG_SEED) * box[i];
+470                         }
+471 
+472                         // check that this position is "out" of J
+473                         const double d2 = pbcDist2(tmpNewAtom\&.pos, sys\&.atoms[typeIndex_][pkJ]\&.pos, sys\&.box());
+474                 if (d2 >= rc1max_*rc1max_ || d2 < rc1min_*rc1min_) {
+475                                 inJ = false;
+476                         }
+477                     }
+478 
+479             // calculate energy of chosenAtom in current configuration
+480             double oldEnergy = 0\&.0;
+481                 try {
+482                         oldEnergy = getTempEnergy_ (sys, box, V, chosenAtomType, chosenAtom);
+483                 } catch (customException &ce) {
+484                         throw customException (ce\&.what());
+485                     }
+486 
+487                 // "move" chosenAtomInJ to new location and get energy (amounts to same algorithm as a translation)
+488                     std::vector < double > origPos = chosenAtom->pos;
+489                     chosenAtom->pos = tmpNewAtom\&.pos;
+490 
+491                     double newEnergy = 0\&.0;
+492                     try {
+493                         newEnergy = getTempEnergy_ (sys, box, V, chosenAtomType, chosenAtom);
+494                     } catch (customException &ce) {
+495                         throw customException (ce\&.what());
+496                     }
+497 
+498                // restore atom to original position
+499                     chosenAtom->pos = origPos;
+500 
+501             // must know now many chosenAtoms are "out" of J
+502                     N_out_j = sys\&.numSpecies[chosenAtomType] - 1; // -1 to exclude self
+503             int totJatoms = sys\&.numSpecies[chosenAtomType];
+504 
+505                     if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == chosenAtomType) {
+506                             totJatoms++;
+507                     }
+508 
+509                     for (unsigned int j = 0; j < totJatoms; ++j) {
+510                             const double d2 = pbcDist2(sys\&.atoms[chosenAtomType][j]\&.pos, sys\&.atoms[typeIndex_][pkJ]\&.pos, sys\&.box());
+511                 if (d2 < rc1max_*rc1max_ && d2 >= rc1min_*rc1min_) {
+512                                     if (&sys\&.atoms[chosenAtomType][j] != &sys\&.atoms[typeIndex_][pkJ]) {
+513                         N_out_j--;
+514                     }
+515                             }
+516                     }
+517 
+518                     // assign p_u going from "in J" to "out J"
+519                 dU = newEnergy - oldEnergy;
+520             V_in_k = 4\&.0/3\&.0*PI*(rc2max_*rc2max_*rc2max_ - rc2min_*rc2min_*rc2min_);
+521             V_out_j = V - V_in_j - V_in_k;
+522             p_u = (pBias_*V_out_j*N_in_j*exp(-dU*sys\&.beta()))/((1\&.0 - pBias_)*V_in_j*(N_out_j + 1\&.0));
+523         } else {
+524                     // move this chosenAtom "in" pkK
+525 
+526                     // calculate the energy of its old location
+527                     double oldEnergy = 0\&.0;
+528                     try {
+529                         oldEnergy = getTempEnergy_ (sys, box, V, chosenAtomType, chosenAtom);
+530                     } catch (customException &ce) {
+531                         throw customException (ce\&.what());
+532                     }
+533 
+534                     // randomly choose a radius from [0, rc2)
+535                     const double dr = (rc2max_ - rc2min_);
+536                 const double magnitude = pow((rng (&RNG_SEED)*dr*dr*dr+rc2min_*rc2min_*rc2min_), 1\&./3\&.);
+537 
+538                     // then choose a point randomly on the surface of that sphere to place chosenAtom
+539                     std::vector < double > surfaceVec = random3DSurfaceVector (magnitude), origPos = chosenAtom->pos;
+540                     for (unsigned int i = 0; i < origPos\&.size(); ++i) {
+541                         chosenAtom->pos[i] = sys\&.atoms[typeIndex2_][pkK]\&.pos[i] + surfaceVec[i];
+542 
+543                         // apply periodic boundary conditions
+544                         if (chosenAtom->pos[i] >= box[i]) {
+545                                 chosenAtom->pos[i] -= box[i];
+546                         } else if (chosenAtom->pos[i] < 0) {
+547                                 chosenAtom->pos[i] += box[i];
+548                         }
+549                     }
+550 
+551                     // store for later
+552                     tmpNewAtom\&.pos = chosenAtom->pos;
+553 
+554                     // move, recalculate energy
+555                     double newEnergy = 0\&.0;
+556                     try {
+557                         newEnergy = getTempEnergy_ (sys, box, V, chosenAtomType, chosenAtom);
+558                     } catch (customException &ce) {
+559                         throw customException (ce\&.what());
+560                     }
+561 
+562                     // restore the chosenAtoms position
+563                     chosenAtom->pos = origPos;
+564 
+565             // must know the number of chosenAtoms "in k"
+566             int totKatoms = sys\&.numSpecies[chosenAtomType];
+567             N_in_k = 0;
+568             if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == chosenAtomType) {
+569                             totKatoms++;
+570                     }
+571 
+572                     for (unsigned int j = 0; j < totKatoms; ++j) {
+573                             const double d2 = pbcDist2(sys\&.atoms[chosenAtomType][j]\&.pos, sys\&.atoms[typeIndex2_][pkK]\&.pos, sys\&.box());
+574                 if (d2 < rc2max_*rc2max_ && d2 >= rc2min_*rc2min_) {
+575                                     if (&sys\&.atoms[chosenAtomType][j] != &sys\&.atoms[typeIndex2_][pkK]) { // pkK and pkJ do not overlap so don't have to check for pkJ
+576                         N_in_k++;
+577                                 }
+578                 }
+579                     }
+580 
+581                     // assign p_u going from "in J" to "in K"
+582                     dU = newEnergy - oldEnergy;
+583             V_in_k = 4\&.0/3\&.0*PI*(rc2max_*rc2max_*rc2max_ - rc2min_*rc2min_*rc2min_);
+584                     p_u = (pBias_*V_in_k*N_in_j*exp(-sys\&.beta()*dU))/((1\&.0 - pBias_)*V_in_j*(N_in_k + 1\&.0));
+585             }
+586     }
+587 
+588         // biasing
+589         bias = calculateBias(sys, sys\&.getTotN(), sys\&.getCurrentM()); // N_tot doesn't change throughout this move
+590 
+591         // tmmc gets updated the same way, regardless of whether the move gets accepted
+592         if (sys\&.useTMMC) {
+593             sys\&.tmmcBias->updateC (sys\&.getTotN(), sys\&.getTotN(), sys\&.getCurrentM(), sys\&.getCurrentM(), std::min(1\&.0, p_u)); // since the total number of atoms isn't changing, can use getTotN() as both initial and final states
+594     }
+595 
+596         if (rng (&RNG_SEED) < p_u*bias) {
+597             try {
+598                     // atoms were not modified overall so must do that here
+599                     std::vector < double > origPos = chosenAtom->pos;
+600                 chosenAtom->pos = tmpNewAtom\&.pos; // move the atom
+601                     int totAtoms = sys\&.numSpecies[chosenAtomType];
+602             if (sys\&.getCurrentM() > 0 && sys\&.getFractionalAtomType() == chosenAtomType) {
+603                 totAtoms++;
+604             }
+605 
+606             int chosenAtomIndex = -1;
+607             for (unsigned int i = 0; i < totAtoms; ++i) {
+608                 if (&sys\&.atoms[chosenAtomType][i] == chosenAtom) {
+609                     chosenAtomIndex = i;
+610                     break;
+611                 }
+612             }
+613 
+614             if (chosenAtomIndex < 0) {
+615                 throw customException ("Error, could not locate the atom chosen to move in aggVolBias move");
+616             }
+617 
+618             sys\&.translateAtom(chosenAtomType, chosenAtomIndex, origPos);
+619             } catch (customException &ce) {
+620                     std::string a = "Failed to move atom in aggVolBias: ", b = ce\&.what();
+621                     throw customException (a+b);
+622             }
+623             sys\&.incrementEnergy(dU);
+624 
+625             // update Wang-Landau bias, if used
+626             if (sys\&.useWALA) {
+627                     sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+628             }
+629 
+630             return MOVE_SUCCESS;
+631         }
+632 
+633         // update Wang-Landau bias (even if moved failed), if used
+634         if (sys\&.useWALA) {
+635             sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+636         }
+637 
+638         return MOVE_FAILURE;
+639 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

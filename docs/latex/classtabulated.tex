@@ -1,0 +1,344 @@
+\hypertarget{classtabulated}{\section{tabulated Class Reference}
+\label{classtabulated}\index{tabulated@{tabulated}}
+}
+
+
+Tabulated Potential Parameters should be specified in the following order\-: \{ r\-\_\-cut, r\-\_\-shift, u\-\_\-shift, u\-\_\-infinity, Mtot \}.  
+
+
+
+
+{\ttfamily \#include $<$potentials.\-h$>$}
+
+Inheritance diagram for tabulated\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classtabulated}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classtabulated_a069eb60dc00583fd48b7488c9b9ada38}{$\sim$tabulated} ()
+\item 
+void \hyperlink{classtabulated_a6a52e8a5b99ddd16fcbd3e404c90f559}{set\-Parameters} (const std\-::vector$<$ double $>$ params)
+\begin{DoxyCompactList}\small\item\em Set the parameters in the tabulated potential. \end{DoxyCompactList}\item 
+void \hyperlink{classtabulated_ad3b3fb94b5db44e91d6768cfe21683c3}{load\-Potential} (std\-::string filename)
+\begin{DoxyCompactList}\small\item\em Load a tabulated potential from an external file and store it internally. \end{DoxyCompactList}\item 
+double \hyperlink{classtabulated_a6e51813b15f1a08889545c5d79eb4b92}{energy} (const \hyperlink{classatom}{atom} $\ast$a1, const \hyperlink{classatom}{atom} $\ast$a2, const std\-::vector$<$ double $>$ \&box)
+\begin{DoxyCompactList}\small\item\em Return the energy of two particles. \end{DoxyCompactList}\item 
+double \hyperlink{classtabulated_afb2936dfc0ba4255eb06f9d81e594dd2}{tail\-Correction} (const double rho\-Bath)
+\begin{DoxyCompactList}\small\item\em Tail correction for a tabulated potential always returns 0 since no information about what the potential is after its cutoff radius. \end{DoxyCompactList}\item 
+double \hyperlink{classtabulated_a1826f920afd53d74e17c8fa5253a2d2b}{rcut} ()
+\begin{DoxyCompactList}\small\item\em Return the value of r\-\_\-\{cut\} for this potential. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Tabulated Potential Parameters should be specified in the following order\-: \{ r\-\_\-cut, r\-\_\-shift, u\-\_\-shift, u\-\_\-infinity, Mtot \}. 
+
+Definition at line 77 of file potentials.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classtabulated_a069eb60dc00583fd48b7488c9b9ada38}{\index{tabulated@{tabulated}!$\sim$tabulated@{$\sim$tabulated}}
+\index{$\sim$tabulated@{$\sim$tabulated}!tabulated@{tabulated}}
+\subsubsection[{$\sim$tabulated}]{\setlength{\rightskip}{0pt plus 5cm}tabulated\-::$\sim$tabulated (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classtabulated_a069eb60dc00583fd48b7488c9b9ada38}
+
+
+Definition at line 79 of file potentials.\-h.
+
+
+\begin{DoxyCode}
+79 \{;\}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classtabulated_a6e51813b15f1a08889545c5d79eb4b92}{\index{tabulated@{tabulated}!energy@{energy}}
+\index{energy@{energy}!tabulated@{tabulated}}
+\subsubsection[{energy}]{\setlength{\rightskip}{0pt plus 5cm}double tabulated\-::energy (
+\begin{DoxyParamCaption}
+\item[{const {\bf atom} $\ast$}]{a1, }
+\item[{const {\bf atom} $\ast$}]{a2, }
+\item[{const std\-::vector$<$ double $>$ \&}]{box}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classtabulated_a6e51813b15f1a08889545c5d79eb4b92}
+
+
+Return the energy of two particles. 
+
+Use linear interpolation to calculate energy from tabulated values
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em a1} & Atom 1 \\
+\hline
+\mbox{\tt in}  & {\em a2} & Atom 2 \\
+\hline
+\mbox{\tt in}  & {\em box} & Simulation box dimensions\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+U(r) 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_a2b1e50ef9b6e50b01d89d31d5460ad76}{pair\-Potential}.
+
+
+
+Definition at line 378 of file potentials.\-cpp.
+
+
+
+References atom\-::m\-State, pair\-Potential\-::params\-\_\-, pair\-Potential\-::params\-Are\-Set\-\_\-, pbc\-Dist2(), and atom\-::pos.
+
+
+\begin{DoxyCode}
+378                                                                                          \{
+379     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+380         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For tabulated parameters not set"});
+381     \}
+382 
+383     \textcolor{keyword}{const} \textcolor{keywordtype}{double} r = sqrt(\hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2}(a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, a2->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, box));
+384     \textcolor{keywordtype}{double} en = 0.0;
+385 
+386     \textcolor{comment}{// only one of these atoms (at most) should be "partially" inserted}
+387     \textcolor{keywordtype}{int} mState = 0;
+388     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
+389         mState = a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+390     \}
+391     \textcolor{keywordflow}{if} (a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
+392         mState = a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+393     \}
+394 
+395     \textcolor{keywordflow}{if} (r < \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1]) \{
+396         std::cerr << \textcolor{stringliteral}{"Distance r too small in energy calculation in tabulated potential. Returning value at
+       r = "} << start << std::endl;
+397         en = table[0];
+398     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (r > \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0]) \{
+399         en = \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[3];
+400     \} \textcolor{keywordflow}{else} \{
+401         \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} lowerIndex = floor((r-\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1])/dr);
+402         \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} upperIndex = ceil((r-\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1])/dr);
+403         \textcolor{keyword}{const} \textcolor{keywordtype}{double} upperFraction = (r-\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1])/dr-lowerIndex;
+404         \textcolor{keyword}{const} \textcolor{keywordtype}{double} lowerFraction = 1.0-upperFraction;
+405         en = (lowerFraction*table[lowerIndex] + upperFraction*table[upperIndex] + 
+      \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2])*mScale[mState];
+406     \}
+407 
+408     \textcolor{keywordflow}{return} en;
+409 \}
+\end{DoxyCode}
+\hypertarget{classtabulated_ad3b3fb94b5db44e91d6768cfe21683c3}{\index{tabulated@{tabulated}!load\-Potential@{load\-Potential}}
+\index{load\-Potential@{load\-Potential}!tabulated@{tabulated}}
+\subsubsection[{load\-Potential}]{\setlength{\rightskip}{0pt plus 5cm}void tabulated\-::load\-Potential (
+\begin{DoxyParamCaption}
+\item[{std\-::string}]{filename}
+\end{DoxyParamCaption}
+)}}\label{classtabulated_ad3b3fb94b5db44e91d6768cfe21683c3}
+
+
+Load a tabulated potential from an external file and store it internally. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em filename} & Name of A\-S\-C\-I\-I file to read (r, U(r)) from \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 324 of file potentials.\-cpp.
+
+
+
+References file\-Exists(), pair\-Potential\-::params\-\_\-, and pair\-Potential\-::params\-Are\-Set\-\_\-.
+
+
+\begin{DoxyCode}
+324                                                 \{
+325     std::cout << \textcolor{stringliteral}{"Loading pair potential from file: "} << filename<<std::endl;
+326     \textcolor{comment}{// first check, if file exists}
+327     \textcolor{keywordflow}{if} (\hyperlink{utilities_8cpp_a9d1e3672fd331d4185c1763c80226307}{fileExists}(filename)) \{
+328         std::cout << \textcolor{stringliteral}{"File found, processing."} << std::endl;
+329         table.clear();
+330         \textcolor{keywordtype}{double} r, pot;
+331         \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} lineCounter = 0;
+332 
+333         std::ifstream inputData(filename.c\_str());
+334         \textcolor{keywordflow}{while} (inputData >> r >> pot) \{
+335             \textcolor{keywordflow}{if} (lineCounter == 0) \{
+336                 start = r;
+337             \}
+338             \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineCounter == 1) \{
+339                 dr = r - start;
+340             \}
+341 
+342             table.push\_back(pot);
+343             lineCounter++;
+344         \}
+345         inputData.close();
+346 
+347         \textcolor{keywordflow}{if} (lineCounter < 2) \{
+348             \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{false};
+349             std::cerr << \textcolor{stringliteral}{"Tabulated potential "} << filename << \textcolor{stringliteral}{" needs at least 2 entries, cannot setup
+       potential."} << std::endl;
+350             \textcolor{keywordflow}{return};
+351         \}
+352 
+353         \textcolor{comment}{// if parameters are not set, set default parameters}
+354         \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+355             \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}.assign(4, 0.0);
+356             \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0] = start + (table.size()-1)*dr;
+357             \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1] = start;
+358             params\_[2] = 0.0;
+359             params\_[3] = 0.0;
+360             \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{true};
+361         \}
+362     \} \textcolor{keywordflow}{else} \{
+363         std::cerr<<\textcolor{stringliteral}{"File "}<<filename<<\textcolor{stringliteral}{" not found, cannot setup potential."}<<std::endl;
+364         \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{false};
+365     \}
+366 \}
+\end{DoxyCode}
+\hypertarget{classtabulated_a1826f920afd53d74e17c8fa5253a2d2b}{\index{tabulated@{tabulated}!rcut@{rcut}}
+\index{rcut@{rcut}!tabulated@{tabulated}}
+\subsubsection[{rcut}]{\setlength{\rightskip}{0pt plus 5cm}double tabulated\-::rcut (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classtabulated_a1826f920afd53d74e17c8fa5253a2d2b}
+
+
+Return the value of r\-\_\-\{cut\} for this potential. 
+
+\begin{DoxyReturn}{Returns}
+rcut 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{pair\-Potential}.
+
+
+
+Definition at line 427 of file potentials.\-cpp.
+
+
+
+References pair\-Potential\-::params\-\_\-, and pair\-Potential\-::params\-Are\-Set\-\_\-.
+
+
+\begin{DoxyCode}
+427                         \{
+428     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+429         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For tabulated parameters not set"});
+430     \} \textcolor{keywordflow}{else} \{
+431         \textcolor{keywordflow}{return} \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0];
+432     \}
+433 \}
+\end{DoxyCode}
+\hypertarget{classtabulated_a6a52e8a5b99ddd16fcbd3e404c90f559}{\index{tabulated@{tabulated}!set\-Parameters@{set\-Parameters}}
+\index{set\-Parameters@{set\-Parameters}!tabulated@{tabulated}}
+\subsubsection[{set\-Parameters}]{\setlength{\rightskip}{0pt plus 5cm}void tabulated\-::set\-Parameters (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$}]{params}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classtabulated_a6a52e8a5b99ddd16fcbd3e404c90f559}
+
+
+Set the parameters in the tabulated potential. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em params} & Vector of inputs\-: \{r\-\_\-cut, r\-\_\-shift, u\-\_\-shift, u\-\_\-infinity, Mtot\} \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classpair_potential_ad4b237646f9de2ae9f95cc9350564bc5}{pair\-Potential}.
+
+
+
+Definition at line 291 of file potentials.\-cpp.
+
+
+
+References pair\-Potential\-::params\-\_\-, pair\-Potential\-::params\-Are\-Set\-\_\-, and pair\-Potential\-::use\-Tail\-Correction.
+
+
+\begin{DoxyCode}
+291                                                                 \{
+292     \textcolor{keywordflow}{if} (params.size() != 5) \{
+293         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For tabulated must specify 5 parameters: r\_cut, r\_shift,
+       u\_shift, u\_infinity, Mtot"});
+294     \} \textcolor{keywordflow}{else} \{
+295         \textcolor{keywordflow}{if} (params[0] < 0) \{
+296             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For tabulated, r\_cut > 0"});
+297         \}
+298         \textcolor{keywordflow}{if} (\textcolor{keywordtype}{int}(params[4]) < 1) \{
+299             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For tabulated, total expanded ensemble states, Mtot >= 1
+      "});
+300         \}
+301 
+302         \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{true};
+303         \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_} = params;
+304 
+305         \hyperlink{classpair_potential_ab4b4538a7e13771f50a29aaac2443037}{useTailCorrection} = \textcolor{keyword}{false};
+306 
+307         \textcolor{comment}{// scale energy by a constant factor}
+308         mScale.resize(\textcolor{keywordtype}{int}(params[4]), 0);
+309         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < mScale.size(); ++i) \{
+310             \textcolor{keywordflow}{if} (i == 0) \{
+311                 mScale[i] = 1.0;
+312             \} \textcolor{keywordflow}{else} \{
+313                 mScale[i] = 1.0/int(params[4])*i;
+314             \}
+315         \}
+316     \}
+317 \}
+\end{DoxyCode}
+\hypertarget{classtabulated_afb2936dfc0ba4255eb06f9d81e594dd2}{\index{tabulated@{tabulated}!tail\-Correction@{tail\-Correction}}
+\index{tail\-Correction@{tail\-Correction}!tabulated@{tabulated}}
+\subsubsection[{tail\-Correction}]{\setlength{\rightskip}{0pt plus 5cm}double tabulated\-::tail\-Correction (
+\begin{DoxyParamCaption}
+\item[{const double}]{rho\-Bath}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classtabulated_afb2936dfc0ba4255eb06f9d81e594dd2}
+
+
+Tail correction for a tabulated potential always returns 0 since no information about what the potential is after its cutoff radius. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em Number} & density of the surrounding fluid\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+U\-\_\-tail 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_a5387d21d8d487d1d42e9eaf7cae9175b}{pair\-Potential}.
+
+
+
+Definition at line 418 of file potentials.\-cpp.
+
+
+\begin{DoxyCode}
+418                                                      \{
+419     \textcolor{keywordflow}{return} 0.0;
+420 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{potentials_8h}{potentials.\-h}\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{potentials_8cpp}{potentials.\-cpp}\end{DoxyCompactItemize}

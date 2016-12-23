@@ -1,0 +1,519 @@
+\hypertarget{classmoves}{\section{moves Class Reference}
+\label{classmoves}\index{moves@{moves}}
+}
+
+
+Class that tracks and decides which moves whould be made.  
+
+
+
+
+{\ttfamily \#include $<$mover.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classmoves_a1964259b17a057e8b363736e42fca3e8}{moves} (const int M=1)
+\begin{DoxyCompactList}\small\item\em Instantiate moves class. \end{DoxyCompactList}\item 
+\hyperlink{classmoves_a00dfff19abe056adceb0ccf41778ee0f}{$\sim$moves} ()
+\begin{DoxyCompactList}\small\item\em Destructor for moves class. \end{DoxyCompactList}\item 
+void \hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{make\-Move} (\hyperlink{classsim_system}{sim\-System} \&sys)
+\begin{DoxyCompactList}\small\item\em Choose a move to make. \end{DoxyCompactList}\item 
+void \hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print} (const std\-::string filename)
+\begin{DoxyCompactList}\small\item\em Print move information to file. \end{DoxyCompactList}\item 
+void \hyperlink{classmoves_ab4583b3075f51cce55c3aeb84a58430d}{add\-Insert} (const int index, const double prob)
+\begin{DoxyCompactList}\small\item\em Add insertion move. \end{DoxyCompactList}\item 
+void \hyperlink{classmoves_ac4307636570c4d4bc07c4cba3887005e}{add\-Delete} (const int index, const double prob)
+\begin{DoxyCompactList}\small\item\em Add deletion move. \end{DoxyCompactList}\item 
+void \hyperlink{classmoves_a03cebfa2d8d1cecf253df573fdecc5d0}{add\-Swap} (const int index1, const int index2, const double prob)
+\begin{DoxyCompactList}\small\item\em Add swap move. \end{DoxyCompactList}\item 
+void \hyperlink{classmoves_a91bb7969368fdbb66920a11d79fe7552}{add\-Translate} (const int index, const double prob, const double max\-D, const std\-::vector$<$ double $>$ \&box)
+\begin{DoxyCompactList}\small\item\em Add translate move. \end{DoxyCompactList}\item 
+void \hyperlink{classmoves_ab603c6ce829075e3232ff41a7d5e2aab}{set\-M} (const int M)
+\begin{DoxyCompactList}\small\item\em Set the value of M. \end{DoxyCompactList}\item 
+int \hyperlink{classmoves_a57e814fe08153419f92a983cbf33796d}{get\-M} ()
+\item 
+std\-::vector$<$ std\-::vector\\*
+$<$ double $>$ $>$ \hyperlink{classmoves_ad3e937628d85cdbbe02732648cb533e2}{report\-Move\-Statistics} ()
+\begin{DoxyCompactList}\small\item\em Report the statistics on the success/failure of each move made so far. \end{DoxyCompactList}\item 
+std\-::vector$<$ double $>$ \hyperlink{classmoves_a84f8198bd43c0f6b8b52dce3abdfa6a4}{report\-Probabilities} ()
+\begin{DoxyCompactList}\small\item\em Echo the normalized probabilities of each move in the object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class that tracks and decides which moves whould be made. 
+
+However, it does N\-O\-T store the moves themselves so they should be fixed in memory elsewhere. 
+
+Definition at line 20 of file mover.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classmoves_a1964259b17a057e8b363736e42fca3e8}{\index{moves@{moves}!moves@{moves}}
+\index{moves@{moves}!moves@{moves}}
+\subsubsection[{moves}]{\setlength{\rightskip}{0pt plus 5cm}moves\-::moves (
+\begin{DoxyParamCaption}
+\item[{const int}]{M = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)}}\label{classmoves_a1964259b17a057e8b363736e42fca3e8}
+
+
+Instantiate moves class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in} & M Number of expanded ensemble stages for insert/delete moves \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 8 of file mover.\-cpp.
+
+
+
+References set\-M(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, and custom\-Exception\-::what().
+
+
+\begin{DoxyCode}
+8                          \{
+9     \textcolor{keywordflow}{try} \{
+10         \hyperlink{classmoves_ab603c6ce829075e3232ff41a7d5e2aab}{setM} (M);
+11     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+12         std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+13         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+14     \}
+15 \}
+\end{DoxyCode}
+\hypertarget{classmoves_a00dfff19abe056adceb0ccf41778ee0f}{\index{moves@{moves}!$\sim$moves@{$\sim$moves}}
+\index{$\sim$moves@{$\sim$moves}!moves@{moves}}
+\subsubsection[{$\sim$moves}]{\setlength{\rightskip}{0pt plus 5cm}moves\-::$\sim$moves (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classmoves_a00dfff19abe056adceb0ccf41778ee0f}
+
+
+Destructor for moves class. 
+
+
+
+Definition at line 33 of file mover.\-cpp.
+
+
+\begin{DoxyCode}
+33                \{
+34     ;
+35 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classmoves_ac4307636570c4d4bc07c4cba3887005e}{\index{moves@{moves}!add\-Delete@{add\-Delete}}
+\index{add\-Delete@{add\-Delete}!moves@{moves}}
+\subsubsection[{add\-Delete}]{\setlength{\rightskip}{0pt plus 5cm}void moves\-::add\-Delete (
+\begin{DoxyParamCaption}
+\item[{const int}]{index, }
+\item[{const double}]{prob}
+\end{DoxyParamCaption}
+)}}\label{classmoves_ac4307636570c4d4bc07c4cba3887005e}
+
+
+Add deletion move. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em index} & Particle index to operate on \\
+\hline
+\mbox{\tt in}  & {\em prob} & Probability \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 79 of file mover.\-cpp.
+
+
+
+Referenced by initialize().
+
+
+\begin{DoxyCode}
+79                                                          \{
+80     \textcolor{keyword}{auto} om = std::make\_shared < deleteParticle > (index, \textcolor{stringliteral}{"delete"});
+81     ownedMoves\_.push\_back(om);
+82     addOn\_(ownedMoves\_.back()->changeN(), prob);
+83 \}
+\end{DoxyCode}
+\hypertarget{classmoves_ab4583b3075f51cce55c3aeb84a58430d}{\index{moves@{moves}!add\-Insert@{add\-Insert}}
+\index{add\-Insert@{add\-Insert}!moves@{moves}}
+\subsubsection[{add\-Insert}]{\setlength{\rightskip}{0pt plus 5cm}void moves\-::add\-Insert (
+\begin{DoxyParamCaption}
+\item[{const int}]{index, }
+\item[{const double}]{prob}
+\end{DoxyParamCaption}
+)}}\label{classmoves_ab4583b3075f51cce55c3aeb84a58430d}
+
+
+Add insertion move. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em index} & Particle index to operate on \\
+\hline
+\mbox{\tt in}  & {\em prob} & Probability \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 67 of file mover.\-cpp.
+
+
+
+Referenced by initialize(), and setup().
+
+
+\begin{DoxyCode}
+67                                                          \{
+68     \textcolor{keyword}{auto} om = std::make\_shared < insertParticle > (index, \textcolor{stringliteral}{"insert"});
+69     ownedMoves\_.push\_back(om);
+70     addOn\_(ownedMoves\_.back()->changeN(), prob);
+71 \}
+\end{DoxyCode}
+\hypertarget{classmoves_a03cebfa2d8d1cecf253df573fdecc5d0}{\index{moves@{moves}!add\-Swap@{add\-Swap}}
+\index{add\-Swap@{add\-Swap}!moves@{moves}}
+\subsubsection[{add\-Swap}]{\setlength{\rightskip}{0pt plus 5cm}void moves\-::add\-Swap (
+\begin{DoxyParamCaption}
+\item[{const int}]{index1, }
+\item[{const int}]{index2, }
+\item[{const double}]{prob}
+\end{DoxyParamCaption}
+)}}\label{classmoves_a03cebfa2d8d1cecf253df573fdecc5d0}
+
+
+Add swap move. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em index1} & Particle index 1 to operate on \\
+\hline
+\mbox{\tt in}  & {\em index2} & Particle index 2 to operate on \\
+\hline
+\mbox{\tt in}  & {\em prob} & Probability \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 92 of file mover.\-cpp.
+
+
+
+Referenced by initialize().
+
+
+\begin{DoxyCode}
+92                                                                           \{
+93     \textcolor{keyword}{auto} om = std::make\_shared < swapParticles > (index1, index2, \textcolor{stringliteral}{"swap"});
+94     ownedMoves\_.push\_back(om);
+95     addOn\_(ownedMoves\_.back()->changeN(), prob);
+96 \}
+\end{DoxyCode}
+\hypertarget{classmoves_a91bb7969368fdbb66920a11d79fe7552}{\index{moves@{moves}!add\-Translate@{add\-Translate}}
+\index{add\-Translate@{add\-Translate}!moves@{moves}}
+\subsubsection[{add\-Translate}]{\setlength{\rightskip}{0pt plus 5cm}void moves\-::add\-Translate (
+\begin{DoxyParamCaption}
+\item[{const int}]{index, }
+\item[{const double}]{prob, }
+\item[{const double}]{max\-D, }
+\item[{const std\-::vector$<$ double $>$ \&}]{box}
+\end{DoxyParamCaption}
+)}}\label{classmoves_a91bb7969368fdbb66920a11d79fe7552}
+
+
+Add translate move. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em index} & Particle index to operate on \\
+\hline
+\mbox{\tt in}  & {\em prob} & Probability \\
+\hline
+\mbox{\tt in}  & {\em max\-D} & Maximium displacement \\
+\hline
+\mbox{\tt in}  & {\em box} & Box dimensions \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 106 of file mover.\-cpp.
+
+
+
+Referenced by initialize().
+
+
+\begin{DoxyCode}
+106                                                                                                            
+           \{
+107     \textcolor{keyword}{auto} om = std::make\_shared < translateParticle > (index, \textcolor{stringliteral}{"translate"});
+108     om->setMaxDisplacement (maxD, box);
+109     ownedMoves\_.push\_back(om);
+110     addOn\_(ownedMoves\_.back()->changeN(), prob);
+111 \}
+\end{DoxyCode}
+\hypertarget{classmoves_a57e814fe08153419f92a983cbf33796d}{\index{moves@{moves}!get\-M@{get\-M}}
+\index{get\-M@{get\-M}!moves@{moves}}
+\subsubsection[{get\-M}]{\setlength{\rightskip}{0pt plus 5cm}int moves\-::get\-M (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classmoves_a57e814fe08153419f92a983cbf33796d}
+
+
+Definition at line 32 of file mover.\-h.
+
+
+\begin{DoxyCode}
+32 \{ \textcolor{keywordflow}{return} M\_; \}
+\end{DoxyCode}
+\hypertarget{classmoves_a7f023913b80bb62604b99f4dbf005c37}{\index{moves@{moves}!make\-Move@{make\-Move}}
+\index{make\-Move@{make\-Move}!moves@{moves}}
+\subsubsection[{make\-Move}]{\setlength{\rightskip}{0pt plus 5cm}void moves\-::make\-Move (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\-System} \&}]{sys}
+\end{DoxyParamCaption}
+)}}\label{classmoves_a7f023913b80bb62604b99f4dbf005c37}
+
+
+Choose a move to make. 
+
+If in an expanded ensemble, will restrict moves which change the number of particles to the atom type that is currently on partially in the system.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em sys} & \hyperlink{classsim_system}{sim\-System} object to make a move in. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 156 of file mover.\-cpp.
+
+
+
+References sim\-System\-::get\-Current\-M(), sim\-System\-::get\-Fractional\-Atom\-Type(), sim\-System\-::get\-Total\-M(), rng(), R\-N\-G\-\_\-\-S\-E\-E\-D, and custom\-Exception\-::what().
+
+
+
+Referenced by perform\-Crossover(), perform\-T\-M\-M\-C(), and perform\-W\-A\-L\-A().
+
+
+\begin{DoxyCode}
+156                                     \{
+157     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}() != M\_) \{
+158         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Error, M in system different from M in moves class operating
+       on the system"});
+159     \}
+160     \textcolor{keywordtype}{int} moveChosen = -1, succ = 0, mIndex = 0;
+161     \textcolor{keywordtype}{bool} done = \textcolor{keyword}{false};
+162     \textcolor{keywordflow}{while} (!done) \{
+163         \textcolor{keyword}{const} \textcolor{keywordtype}{double} ran = \hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED});
+164         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < normProbabilities\_.size(); ++i) \{
+165             \textcolor{keywordflow}{if} (ran < normProbabilities\_[i]) \{
+166                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}() > 1) \{
+167                     \textcolor{comment}{// expanded ensemble has to check the moves because have to only work on the partially
+       inserted atom}
+168                     \textcolor{keywordflow}{if} ((ownedMoves\_[i]->changeN() == \textcolor{keyword}{true}) && (ownedMoves\_[i]->whatType() != sys.
+      \hyperlink{classsim_system_a0500a9e84eecfbde7a98cf8a34f719d5}{getFractionalAtomType}()) && (sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() > 0)) \{
+169                         \textcolor{comment}{// reject this choice because we must only insert/delete the type that is already
+       partially inserted IFF we are *already* in a partially inserted state}
+170                         \textcolor{comment}{// choose a new move}
+171                         done = \textcolor{keyword}{false};
+172                         \textcolor{keywordflow}{break};
+173                     \} \textcolor{keywordflow}{else} \{
+174                         \textcolor{comment}{// get M before move happens which can change the state of the system}
+175                         \textcolor{keywordflow}{if} (ownedMoves\_[i]->changeN()) \{
+176                             mIndex = sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}();
+177                         \}
+178                         \textcolor{keywordflow}{try} \{
+179                             succ = ownedMoves\_[i]->make(sys);
+180                         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+181                             std::string a = \textcolor{stringliteral}{"Failed to make a move properly: "};
+182                             std::string b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+183                             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(a+b);
+184                         \}
+185                         done = \textcolor{keyword}{true};
+186                         moveChosen = i;
+187                         \textcolor{keywordflow}{break};
+188                     \}
+189                 \} \textcolor{keywordflow}{else} \{
+190                     \textcolor{comment}{// without expanded ensemble, inserts/deletes can proceed unchecked}
+191                     \textcolor{keywordflow}{try} \{
+192                         succ = ownedMoves\_[i]->make(sys);
+193                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+194                         std::string a = \textcolor{stringliteral}{"Failed to make a move properly: "};
+195                         std::string b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+196                         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(a+b);
+197                     \}
+198                     done = \textcolor{keyword}{true};
+199                     moveChosen = i;
+200                     mIndex = 0;
+201                     \textcolor{keywordflow}{break};
+202                 \}
+203             \}
+204         \}
+205     \}
+206 
+207     \textcolor{keywordflow}{if} (moveChosen < 0) \{
+208         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Failed to choose a move properly"});
+209     \}
+210 
+211     attempted\_[moveChosen][mIndex] += 1.0;
+212     succeeded\_[moveChosen][mIndex] += succ;
+213 \}
+\end{DoxyCode}
+\hypertarget{classmoves_acc6415d4000f01b93235d1a533aa6880}{\index{moves@{moves}!print@{print}}
+\index{print@{print}!moves@{moves}}
+\subsubsection[{print}]{\setlength{\rightskip}{0pt plus 5cm}void moves\-::print (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{filename}
+\end{DoxyParamCaption}
+)}}\label{classmoves_acc6415d4000f01b93235d1a533aa6880}
+
+
+Print move information to file. 
+
+Appends by default.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em filename} & Name of file to print to. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 42 of file mover.\-cpp.
+
+
+
+References get\-Time\-Stamp(), and report\-Move\-Statistics().
+
+
+
+Referenced by perform\-Crossover(), perform\-T\-M\-M\-C(), and perform\-W\-A\-L\-A().
+
+
+\begin{DoxyCode}
+42                                            \{
+43     std::ofstream statFile (filename.c\_str(), std::ofstream::out | std::ofstream::app);
+44     std::vector < std::vector < double > > stats = \hyperlink{classmoves_ad3e937628d85cdbbe02732648cb533e2}{reportMoveStatistics}();
+45     statFile << \textcolor{stringliteral}{"Time: "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+46     statFile << \textcolor{stringliteral}{"---------- Move Statistics --------- "} << std::endl << \textcolor{stringliteral}{"Move\(\backslash\)t\(\backslash\)% Success"} << std::endl;
+47     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < stats.size(); ++i) \{
+48         \textcolor{keywordtype}{double} prod = 1.0;
+49         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < stats[i].size(); ++j) \{
+50             prod *= stats[i][j];
+51             statFile << ownedMoves\_[i]->myName() << \textcolor{stringliteral}{" (from M = "} << j << \textcolor{stringliteral}{")\(\backslash\)t"} << stats[i][j]*100.0 << 
+      std::endl;
+52         \}
+53         \textcolor{keywordflow}{if} (stats[i].size() > 1) \{
+54             statFile << \textcolor{stringliteral}{"-------------------------------------\(\backslash\)nProduct of percentages (%) = "} << prod*100 
+      << \textcolor{stringliteral}{"\(\backslash\)n-------------------------------------"} << std::endl;
+55         \}
+56     \}
+57     statFile << \textcolor{stringliteral}{"------------------------------------ "} << std::endl;
+58     statFile.close();
+59 \}
+\end{DoxyCode}
+\hypertarget{classmoves_ad3e937628d85cdbbe02732648cb533e2}{\index{moves@{moves}!report\-Move\-Statistics@{report\-Move\-Statistics}}
+\index{report\-Move\-Statistics@{report\-Move\-Statistics}!moves@{moves}}
+\subsubsection[{report\-Move\-Statistics}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$ std\-::vector$<$ double $>$ $>$ moves\-::report\-Move\-Statistics (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classmoves_ad3e937628d85cdbbe02732648cb533e2}
+
+
+Report the statistics on the success/failure of each move made so far. 
+
+If the move changes total number of particles in the system, there is a column for each expanded state it traverses.
+
+\begin{DoxyReturn}{Returns}
+ans Number of Success / Total Attempts for each move 
+\end{DoxyReturn}
+
+
+Definition at line 221 of file mover.\-cpp.
+
+
+
+Referenced by print().
+
+
+\begin{DoxyCode}
+221                                                                 \{
+222     std::vector < std::vector < double > > ans = succeeded\_;
+223     \textcolor{keywordflow}{if} (attempted\_.begin() == attempted\_.end()) \{
+224         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"No moves added to system"});
+225     \}
+226     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < attempted\_.size(); ++i) \{
+227         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < attempted\_[i].size(); ++j) \{
+228             ans[i][j] /= attempted\_[i][j];
+229         \}
+230     \}
+231     \textcolor{keywordflow}{return} ans;
+232 \}
+\end{DoxyCode}
+\hypertarget{classmoves_a84f8198bd43c0f6b8b52dce3abdfa6a4}{\index{moves@{moves}!report\-Probabilities@{report\-Probabilities}}
+\index{report\-Probabilities@{report\-Probabilities}!moves@{moves}}
+\subsubsection[{report\-Probabilities}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$ double $>$ moves\-::report\-Probabilities (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classmoves_a84f8198bd43c0f6b8b52dce3abdfa6a4}
+
+
+Echo the normalized probabilities of each move in the object. 
+
+
+
+Definition at line 34 of file mover.\-h.
+
+\hypertarget{classmoves_ab603c6ce829075e3232ff41a7d5e2aab}{\index{moves@{moves}!set\-M@{set\-M}}
+\index{set\-M@{set\-M}!moves@{moves}}
+\subsubsection[{set\-M}]{\setlength{\rightskip}{0pt plus 5cm}void moves\-::set\-M (
+\begin{DoxyParamCaption}
+\item[{const int}]{M}
+\end{DoxyParamCaption}
+)}}\label{classmoves_ab603c6ce829075e3232ff41a7d5e2aab}
+
+
+Set the value of M. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em in} & M Number of expanded ensemble stages for insert/delete moves \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 22 of file mover.\-cpp.
+
+
+
+Referenced by initialize(), and moves().
+
+
+\begin{DoxyCode}
+22                              \{
+23     \textcolor{keywordflow}{if} (M > 0) \{
+24         M\_ = M;
+25     \} \textcolor{keywordflow}{else} \{
+26         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Error, number of expanded ensemble stages must be > 0"});
+27     \}
+28 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{mover_8h}{mover.\-h}\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{mover_8cpp}{mover.\-cpp}\end{DoxyCompactItemize}

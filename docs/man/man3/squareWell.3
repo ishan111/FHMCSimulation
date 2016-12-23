@@ -1,0 +1,244 @@
+.TH "squareWell" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+squareWell \- 
+.PP
+Square-well potential Parameters should be specified in the following order: { sigma, wellwidth, welldepth, Mtot }\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <potentials\&.h>\fP
+.PP
+Inherits \fBpairPotential\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB~squareWell\fP ()"
+.br
+.ti -1c
+.RI "void \fBsetParameters\fP (const std::vector< double > params)"
+.br
+.RI "\fISet the parameters in the square-well equation\&. \fP"
+.ti -1c
+.RI "double \fBenergy\fP (const \fBatom\fP *a1, const \fBatom\fP *a2, const std::vector< double > &box)"
+.br
+.RI "\fIReturn the energy of two particles\&. \fP"
+.ti -1c
+.RI "double \fBtailCorrection\fP (const double rhoBath)"
+.br
+.RI "\fITail correction for a square well potential always returns 0\&. \fP"
+.ti -1c
+.RI "double \fBrcut\fP ()"
+.br
+.RI "\fIReturn the value of r_{cut} for this potential\&. \fP"
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Square-well potential Parameters should be specified in the following order: { sigma, wellwidth, welldepth, Mtot }\&. 
+.PP
+Definition at line 96 of file potentials\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "squareWell::~squareWell ()\fC [inline]\fP"
+
+.PP
+Definition at line 98 of file potentials\&.h\&.
+.PP
+.nf
+98 {;}
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "double squareWell::energy (const \fBatom\fP *a1, const \fBatom\fP *a2, const std::vector< double > &box)\fC [virtual]\fP"
+
+.PP
+Return the energy of two particles\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIa1\fP Atom 1 
+.br
+\fIa2\fP Atom 2 
+.br
+\fIbox\fP Simulation box dimensions
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+U(r) 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 508 of file potentials\&.cpp\&.
+.PP
+References atom::mState, NUM_INFINITY, pairPotential::paramsAreSet_, pbcDist2(), and atom::pos\&.
+.PP
+.nf
+508                                                                                           {
+509     if (!paramsAreSet_) {
+510         throw customException ("For squareWell parameters not set");
+511     }
+512 
+513     const double r = sqrt(pbcDist2(a1->pos, a2->pos, box));
+514 
+515     int mState = 0;
+516     if (a1->mState != 0) {
+517         mState = a1->mState;
+518     }
+519     if (a2->mState != 0) {
+520         mState = a2->mState;
+521     }
+522 
+523     if (r < sigmaM_[mState]) {
+524         return NUM_INFINITY;
+525     } else if (r < rangeM_[mState]) {
+526         return epsM_[mState];
+527     } else {
+528         return 0\&.0;
+529     }
+530 }
+.fi
+.SS "double squareWell::rcut ()\fC [virtual]\fP"
+
+.PP
+Return the value of r_{cut} for this potential\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+r_cut 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 548 of file potentials\&.cpp\&.
+.PP
+References pairPotential::params_, and pairPotential::paramsAreSet_\&.
+.PP
+.nf
+548                          {
+549     if (!paramsAreSet_) {
+550         throw customException ("For squareWell parameters not set");
+551     } else {
+552         return (params_[1]);
+553     }
+554 }
+.fi
+.SS "void squareWell::setParameters (const std::vector< double >params)\fC [virtual]\fP"
+
+.PP
+Set the parameters in the square-well equation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparams\fP Vector of inputs: {sigma, wellwidth, welldepth (magnitude), Mtot} 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 440 of file potentials\&.cpp\&.
+.PP
+References pairPotential::params_, pairPotential::paramsAreSet_, and pairPotential::useTailCorrection\&.
+.PP
+.nf
+440                                                                  {
+441     if (params\&.size() != 4) {
+442         throw customException ("For squareWell must specify 4 parameters: sigma, wellwidth, welldepth, Mtot");
+443     } else {
+444         if (params[0] < 0) {
+445             throw customException ("For squareWell, sigma > 0");
+446         }
+447         if (params[1] < 0) {
+448             throw customException ("For squareWell, wellwidth > 0");
+449         }
+450         if (params[2] < 0) {
+451             throw customException ("For squareWell, welldepth (magnitude) > 0");
+452         }
+453         if (int(params[3]) < 1) {
+454             throw customException ("For squareWell, total expanded ensemble states, Mtot >= 1");
+455         }
+456 
+457         useTailCorrection = false;
+458 
+459         // use a "constant volume" scheme to distribute the stages
+460         sigmaM_\&.resize(int(params[3]), 0);
+461         rangeM_\&.resize(int(params[3]), 0);
+462         for (int i = 0; i < sigmaM_\&.size(); ++i) {
+463             if (i == 0) {
+464                 // fully inserted
+465                 sigmaM_[i] = params[0];
+466                 rangeM_[i] = params[0] + params[1];
+467             } else {
+468                 // use volume scaling so each stage is separated from its neighbors by the same dV
+469                 double lastSigma = 0;
+470                 if (i == 1) {
+471                     lastSigma = 0;
+472                 } else {
+473                     lastSigma = sigmaM_[i-1];
+474                 }
+475                 sigmaM_[i] = pow(params[0]*params[0]*params[0]/(8\&.0*int(params[3])) + lastSigma*lastSigma*lastSigma, 1\&./3\&.);
+476                 rangeM_[i] = sigmaM_[i] + params[1];
+477             }
+478         }
+479 
+480         // scale energy linearly across the stages
+481         epsM_\&.resize(int(params[3]), 0);
+482         for (int i = 0; i < epsM_\&.size(); ++i) {
+483             if (i == 0) {
+484                 // fully inserted
+485                 epsM_[i] = -params[2];
+486             } else {
+487                 epsM_[i] = -i*(params[2]/int(params[3]));
+488             }
+489         }
+490 
+491         // save parameters as sigma, (sigma+wellWidth), -wellDepth to speed up energy calculation
+492         params_ = params;
+493         params_[1] = params[0] + params[1]; // max rcut
+494         params_[2] = -params[2];
+495         paramsAreSet_ = true;
+496     }
+497 }
+.fi
+.SS "double squareWell::tailCorrection (const doublerhoBath)\fC [virtual]\fP"
+
+.PP
+Tail correction for a square well potential always returns 0\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fINumber\fP density of the surrounding fluid
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+U_tail 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 539 of file potentials\&.cpp\&.
+.PP
+.nf
+539                                                       {
+540     return 0\&.0;
+541 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

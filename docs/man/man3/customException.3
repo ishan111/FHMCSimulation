@@ -1,0 +1,64 @@
+.TH "customException" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+customException \- 
+.PP
+Error handling via custom exceptions\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <global\&.h>\fP
+.PP
+Inherits exception\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "const char * \fBwhat\fP () const   throw ()"
+.br
+.RI "\fIReturn the user's message\&. \fP"
+.ti -1c
+.RI "\fBcustomException\fP (std::string m='custom exception occurred')"
+.br
+.RI "\fIInstantiate an exeption with a user-defined error message\&. \fP"
+.ti -1c
+.RI "\fB~customException\fP ()  throw ()"
+.br
+.RI "\fIThrow the message to the user\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Error handling via custom exceptions\&. 
+.PP
+Definition at line 123 of file global\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "customException::customException (std::stringm = \fC'custom exception occurred'\fP)\fC [inline]\fP"
+
+.PP
+Instantiate an exeption with a user-defined error message\&. 
+.PP
+Definition at line 126 of file global\&.h\&.
+.SS "customException::~customException ()\fC [inline]\fP"
+
+.PP
+Throw the message to the user\&. 
+.PP
+Definition at line 127 of file global\&.h\&.
+.SH "Member Function Documentation"
+.PP 
+.SS "const char* customException::what () const\fC [inline]\fP"
+
+.PP
+Return the user's message\&. 
+.PP
+Definition at line 125 of file global\&.h\&.
+.PP
+Referenced by compositeBarrier::addCylinderZ(), compositeBarrier::addHardWallZ(), simSystem::addPotential(), compositeBarrier::addRightTriangleXZ(), compositeBarrier::addSquareWellWallZ(), initializeSystemBarriers(), rightTriangleXZ::inside(), aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), moves::makeMove(), moves::moves(), performCrossover(), performTMMC(), performWALA(), simSystem::readConfig(), dynamic_one_dim_histogram::record(), simSystem::refineEnergyHistogramBounds(), simSystem::restartExtMoments(), simSystem::scratchEnergy(), setup(), simSystem::startTMMC(), simSystem::startWALA(), and tmmc::updateC()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

@@ -1,0 +1,310 @@
+\hypertarget{classlennard_jones}{\section{lennard\-Jones Class Reference}
+\label{classlennard_jones}\index{lennard\-Jones@{lennard\-Jones}}
+}
+
+
+Lennard-\/\-Jones Potential Parameters should be specified in the following order\-: \{ epsilon, sigma, r\-\_\-cut, u\-\_\-shift, Mtot \}.  
+
+
+
+
+{\ttfamily \#include $<$potentials.\-h$>$}
+
+Inheritance diagram for lennard\-Jones\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classlennard_jones}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classlennard_jones_aa05d64fac84629b8bfbbc1387a41119b}{$\sim$lennard\-Jones} ()
+\item 
+void \hyperlink{classlennard_jones_a5b4c41df05048ce99bffb9f27733100a}{set\-Parameters} (const std\-::vector$<$ double $>$ params)
+\begin{DoxyCompactList}\small\item\em Set the parameters in the Lennard-\/\-Jones equation. \end{DoxyCompactList}\item 
+double \hyperlink{classlennard_jones_a1be571dbb8f547f1bddaf76697fcad19}{energy} (const \hyperlink{classatom}{atom} $\ast$a1, const \hyperlink{classatom}{atom} $\ast$a2, const std\-::vector$<$ double $>$ \&box)
+\begin{DoxyCompactList}\small\item\em Return the energy of two particles. \end{DoxyCompactList}\item 
+double \hyperlink{classlennard_jones_a4518a7a9970c1fbed2f2abcf0ceebbfc}{tail\-Correction} (const double rho\-Bath)
+\begin{DoxyCompactList}\small\item\em Calculate the tail correction with the approximation g(r) = 1 for r\-\_\-\{cut\} $>$ 1 as explained in Frenkel \& Smit in eq. \end{DoxyCompactList}\item 
+double \hyperlink{classlennard_jones_a6ab5b04c385544da0de985e9635a6e8c}{rcut} ()
+\begin{DoxyCompactList}\small\item\em Return the value of r\-\_\-\{cut\} for this potential. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Lennard-\/\-Jones Potential Parameters should be specified in the following order\-: \{ epsilon, sigma, r\-\_\-cut, u\-\_\-shift, Mtot \}. 
+
+Definition at line 42 of file potentials.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classlennard_jones_aa05d64fac84629b8bfbbc1387a41119b}{\index{lennard\-Jones@{lennard\-Jones}!$\sim$lennard\-Jones@{$\sim$lennard\-Jones}}
+\index{$\sim$lennard\-Jones@{$\sim$lennard\-Jones}!lennardJones@{lennard\-Jones}}
+\subsubsection[{$\sim$lennard\-Jones}]{\setlength{\rightskip}{0pt plus 5cm}lennard\-Jones\-::$\sim$lennard\-Jones (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classlennard_jones_aa05d64fac84629b8bfbbc1387a41119b}
+
+
+Definition at line 44 of file potentials.\-h.
+
+
+\begin{DoxyCode}
+44 \{;\}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classlennard_jones_a1be571dbb8f547f1bddaf76697fcad19}{\index{lennard\-Jones@{lennard\-Jones}!energy@{energy}}
+\index{energy@{energy}!lennardJones@{lennard\-Jones}}
+\subsubsection[{energy}]{\setlength{\rightskip}{0pt plus 5cm}double lennard\-Jones\-::energy (
+\begin{DoxyParamCaption}
+\item[{const {\bf atom} $\ast$}]{a1, }
+\item[{const {\bf atom} $\ast$}]{a2, }
+\item[{const std\-::vector$<$ double $>$ \&}]{box}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classlennard_jones_a1be571dbb8f547f1bddaf76697fcad19}
+
+
+Return the energy of two particles. 
+
+\[ U(r) = 4 \epsilon \left( \left \frac{ \sigma }{ r } \right)^{12} - \left( \frac{ sigma }{ r } \right)^6 \right) + U_{shift} \quad r < r_{cut} \]
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em a1} & Atom 1 \\
+\hline
+\mbox{\tt in}  & {\em a2} & Atom 2 \\
+\hline
+\mbox{\tt in}  & {\em box} & Simulation box dimensions\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+U(r) 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_a2b1e50ef9b6e50b01d89d31d5460ad76}{pair\-Potential}.
+
+
+
+Definition at line 230 of file potentials.\-cpp.
+
+
+
+References atom\-::m\-State, pair\-Potential\-::params\-\_\-, pair\-Potential\-::params\-Are\-Set\-\_\-, pbc\-Dist2(), and atom\-::pos.
+
+
+\begin{DoxyCode}
+230                                                                                             \{
+231     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+232         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones parameters not set"});
+233     \}
+234 
+235     \textcolor{keyword}{const} \textcolor{keywordtype}{double} r\_sq = \hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2}(a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, a2->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, box);
+236 
+237     \textcolor{comment}{// only one of these atoms (at most) should be "partially" inserted}
+238     \textcolor{keywordtype}{int} mState = 0;
+239     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
+240         mState = a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+241     \}
+242     \textcolor{keywordflow}{if} (a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
+243         mState = a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+244     \}
+245 
+246     \textcolor{keywordtype}{double} r2 = (sigmaM\_[mState]*sigmaM\_[mState]/r\_sq), r6 = r2*r2*r2, r12 = r6*r6;
+247     \textcolor{keywordflow}{if} (r\_sq < \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2]*\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2]) \{
+248         \textcolor{keywordflow}{return} 4.0*epsM\_[mState]*(r12 - r6) + uShiftM\_[mState];
+249     \} \textcolor{keywordflow}{else} \{
+250         \textcolor{keywordflow}{return} 0.0;
+251     \}
+252 \}
+\end{DoxyCode}
+\hypertarget{classlennard_jones_a6ab5b04c385544da0de985e9635a6e8c}{\index{lennard\-Jones@{lennard\-Jones}!rcut@{rcut}}
+\index{rcut@{rcut}!lennardJones@{lennard\-Jones}}
+\subsubsection[{rcut}]{\setlength{\rightskip}{0pt plus 5cm}double lennard\-Jones\-::rcut (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classlennard_jones_a6ab5b04c385544da0de985e9635a6e8c}
+
+
+Return the value of r\-\_\-\{cut\} for this potential. 
+
+\begin{DoxyReturn}{Returns}
+rcut 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{pair\-Potential}.
+
+
+
+Definition at line 278 of file potentials.\-cpp.
+
+
+
+References pair\-Potential\-::params\-\_\-, and pair\-Potential\-::params\-Are\-Set\-\_\-.
+
+
+\begin{DoxyCode}
+278                            \{
+279     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+280         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones parameters not set"});
+281     \} \textcolor{keywordflow}{else} \{
+282         \textcolor{keywordflow}{return} \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2];
+283     \}
+284 \}
+\end{DoxyCode}
+\hypertarget{classlennard_jones_a5b4c41df05048ce99bffb9f27733100a}{\index{lennard\-Jones@{lennard\-Jones}!set\-Parameters@{set\-Parameters}}
+\index{set\-Parameters@{set\-Parameters}!lennardJones@{lennard\-Jones}}
+\subsubsection[{set\-Parameters}]{\setlength{\rightskip}{0pt plus 5cm}void lennard\-Jones\-::set\-Parameters (
+\begin{DoxyParamCaption}
+\item[{const std\-::vector$<$ double $>$}]{params}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classlennard_jones_a5b4c41df05048ce99bffb9f27733100a}
+
+
+Set the parameters in the Lennard-\/\-Jones equation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em params} & Vector of inputs\-: \{epsilon, sigma, r\-\_\-cut, u\-\_\-shift, Mtot\} \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classpair_potential_ad4b237646f9de2ae9f95cc9350564bc5}{pair\-Potential}.
+
+
+
+Definition at line 155 of file potentials.\-cpp.
+
+
+
+References pair\-Potential\-::params\-\_\-, pair\-Potential\-::params\-Are\-Set\-\_\-, and pair\-Potential\-::use\-Tail\-Correction.
+
+
+\begin{DoxyCode}
+155                                                                    \{
+156     \textcolor{keywordflow}{if} (params.size() != 5) \{
+157         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones must specify 5 parameters: epsilon, sigma,
+       r\_cut, u\_shift, Mtot"});
+158     \} \textcolor{keywordflow}{else} \{
+159         \textcolor{keywordflow}{if} (params[0] < 0) \{
+160             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones, epsilon > 0"});
+161         \}
+162         \textcolor{keywordflow}{if} (params[1] < 0) \{
+163             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones, sigma > 0"});
+164         \}
+165         \textcolor{keywordflow}{if} (params[2] < 0) \{
+166             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones, r\_cut > 0"});
+167         \}
+168         \textcolor{keywordflow}{if} (\textcolor{keywordtype}{int}(params[4]) < 1) \{
+169             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For lennardJones, total expanded ensemble states, Mtot
+       >= 1"});
+170         \}
+171 
+172         \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{true};
+173         \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_} = params;
+174 
+175         \hyperlink{classpair_potential_ab4b4538a7e13771f50a29aaac2443037}{useTailCorrection} = \textcolor{keyword}{true};
+176 
+177         \textcolor{comment}{// use a "constant volume" scheme to distribute the stages}
+178         sigmaM\_.resize(\textcolor{keywordtype}{int}(params[4]), 0);
+179         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < sigmaM\_.size(); ++i) \{
+180             \textcolor{keywordflow}{if} (i == 0) \{
+181                 \textcolor{comment}{// fully inserted}
+182                 sigmaM\_[i] = params[1];
+183             \} \textcolor{keywordflow}{else} \{
+184                 \textcolor{comment}{// use volume scaling so each stage is separated from its neighbors by the same dV}
+185                 \textcolor{keywordtype}{double} lastSigma = 0;
+186                 \textcolor{keywordflow}{if} (i == 1) \{
+187                     lastSigma = 0;
+188                 \} \textcolor{keywordflow}{else} \{
+189                     lastSigma = sigmaM\_[i-1];
+190                 \}
+191                 sigmaM\_[i] = pow(params[1]*params[1]*params[1]/(8.0*\textcolor{keywordtype}{int}(params[4])) + lastSigma*lastSigma*
+      lastSigma, 1./3.);
+192             \}
+193         \}
+194 
+195         \textcolor{comment}{// scale energy linearly across the stages}
+196         epsM\_.resize(\textcolor{keywordtype}{int}(params[4]), 0);
+197         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < epsM\_.size(); ++i) \{
+198             \textcolor{keywordflow}{if} (i == 0) \{
+199                 \textcolor{comment}{// fully inserted}
+200                 epsM\_[i] = params[0];
+201             \} \textcolor{keywordflow}{else} \{
+202                 epsM\_[i] = i*(params[0]/int(params[4]));
+203             \}
+204         \}
+205 
+206         \textcolor{comment}{// scale energy linearly across the stages}
+207         uShiftM\_.resize(\textcolor{keywordtype}{int}(params[4]), 0);
+208         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < epsM\_.size(); ++i) \{
+209             \textcolor{keywordflow}{if} (i == 0) \{
+210                 \textcolor{comment}{// fully inserted}
+211                 uShiftM\_[i] = params[3];
+212             \} \textcolor{keywordflow}{else} \{
+213                 uShiftM\_[i] = i*(params[3]/int(params[4]));
+214             \}
+215         \}
+216     \}
+217 \}
+\end{DoxyCode}
+\hypertarget{classlennard_jones_a4518a7a9970c1fbed2f2abcf0ceebbfc}{\index{lennard\-Jones@{lennard\-Jones}!tail\-Correction@{tail\-Correction}}
+\index{tail\-Correction@{tail\-Correction}!lennardJones@{lennard\-Jones}}
+\subsubsection[{tail\-Correction}]{\setlength{\rightskip}{0pt plus 5cm}double lennard\-Jones\-::tail\-Correction (
+\begin{DoxyParamCaption}
+\item[{const double}]{rho\-Bath}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classlennard_jones_a4518a7a9970c1fbed2f2abcf0ceebbfc}
+
+
+Calculate the tail correction with the approximation g(r) = 1 for r\-\_\-\{cut\} $>$ 1 as explained in Frenkel \& Smit in eq. 
+
+(3.\-2.\-5). Tail corrections only account for number of fully inserted particles so I have chosen not to scale this part of the energy with expanded ensemble stage.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em rho\-Bath} & Number density of the surrounding fluid\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+U\-\_\-tail 
+\end{DoxyReturn}
+
+
+Implements \hyperlink{classpair_potential_a5387d21d8d487d1d42e9eaf7cae9175b}{pair\-Potential}.
+
+
+
+Definition at line 263 of file potentials.\-cpp.
+
+
+
+References pair\-Potential\-::params\-\_\-, and P\-I.
+
+
+\begin{DoxyCode}
+263                                                         \{
+264     \textcolor{keywordflow}{if} (rhoBath < 0) \{
+265         \textcolor{keywordflow}{return} 0;
+266     \}
+267     \textcolor{keyword}{const} \textcolor{keywordtype}{double} r3 = (\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1]*\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1]*\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1])/(
+      \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2]*\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2]*\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2]);
+268     \textcolor{keyword}{const} \textcolor{keywordtype}{double} r9 = r3*r3*r3;
+269 
+270     \textcolor{keywordflow}{return} 2.0*(8.0/3.0*\hyperlink{global_8h_a598a3330b3c21701223ee0ca14316eca}{PI}*rhoBath*params\_[0]*params\_[1]*params\_[1]*params\_[1]*(r9/3.0 - r3));
+271 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{potentials_8h}{potentials.\-h}\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{potentials_8cpp}{potentials.\-cpp}\end{DoxyCompactItemize}

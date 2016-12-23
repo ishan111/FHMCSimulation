@@ -1,0 +1,119 @@
+\hypertarget{wala_8h}{\section{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/wala.h File Reference}
+\label{wala_8h}\index{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/wala.\-h@{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/wala.\-h}}
+}
+{\ttfamily \#include $<$memory$>$}\\*
+{\ttfamily \#include \char`\"{}system.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}checkpoint.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}utilities.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}mover.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}sanity.\-h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{wala_8h_ab7dab74cdf175f3cb9b6880f77a2469e}{perform\-W\-A\-L\-A} (\hyperlink{classsim_system}{sim\-System} \&sys, \hyperlink{classcheckpoint}{checkpoint} \&res, \hyperlink{classmoves}{moves} $\ast$used\-Moves\-Eq)
+\begin{DoxyCompactList}\small\item\em Perform Wang-\/\-Landau stage of simulation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{wala_8h_ab7dab74cdf175f3cb9b6880f77a2469e}{\index{wala.\-h@{wala.\-h}!perform\-W\-A\-L\-A@{perform\-W\-A\-L\-A}}
+\index{perform\-W\-A\-L\-A@{perform\-W\-A\-L\-A}!wala.h@{wala.\-h}}
+\subsubsection[{perform\-W\-A\-L\-A}]{\setlength{\rightskip}{0pt plus 5cm}void perform\-W\-A\-L\-A (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\-System} \&}]{sys, }
+\item[{{\bf checkpoint} \&}]{res, }
+\item[{{\bf moves} $\ast$}]{used\-Moves\-Eq}
+\end{DoxyParamCaption}
+)}}\label{wala_8h_ab7dab74cdf175f3cb9b6880f77a2469e}
+
+
+Perform Wang-\/\-Landau stage of simulation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em sys} & System to simulate \\
+\hline
+\mbox{\tt in}  & {\em res} & Restart/checkpoint information \\
+\hline
+\mbox{\tt in}  & {\em used\-Moves\-Eq} & Move class to use \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 10 of file wala.\-cpp.
+
+
+
+References checkpoint\-::check(), sim\-System\-::check\-Energy\-Histogram\-Bounds(), wala\-::evaluate\-Flatness(), sim\-System\-::get\-Current\-M(), get\-Time\-Stamp(), sim\-System\-::get\-Total\-M(), sim\-System\-::get\-W\-A\-L\-A\-Bias(), wala\-::iterate\-Forward(), wala\-::ln\-F(), sim\-System\-::ln\-F\-\_\-end, sim\-System\-::ln\-F\-\_\-start, moves\-::make\-Move(), checkpoint\-::move\-Counter, moves\-::print(), wala\-::readln\-P\-I(), checkpoint\-::res\-From\-W\-A\-L\-A, sim\-System\-::restart\-From\-W\-A\-L\-A, sim\-System\-::restart\-From\-W\-A\-L\-A\-File, sanity\-Checks(), sim\-System\-::start\-W\-A\-L\-A(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, sim\-System\-::use\-T\-M\-M\-C, sim\-System\-::use\-W\-A\-L\-A, sim\-System\-::wala\-\_\-g, sim\-System\-::wala\-\_\-s, checkpoint\-::wala\-Done, custom\-Exception\-::what(), and sim\-System\-::wl\-Sweep\-Size.
+
+
+\begin{DoxyCode}
+10                                                                        \{
+11     \textcolor{keywordflow}{if} (res.\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone}) \{
+12         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Checkpoint indicates WALA already finished"});
+13     \}
+14     std::cout << \textcolor{stringliteral}{"Beginning Wang-Landau portion at "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+15 
+16     \textcolor{keywordtype}{bool} flat = \textcolor{keyword}{false};
+17     \textcolor{keywordtype}{double} lnF = sys.\hyperlink{classsim_system_a794334e163fbeb4b4f61bcea676679ce}{lnF\_start};
+18     \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} moveStart = 0;
+19 
+20     \textcolor{keywordflow}{if} (!res.\hyperlink{classcheckpoint_a46f1c17d03901292f642ccad0a325d9e}{resFromWALA}) \{
+21         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC} or sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+22             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"WALA or TMMC already active, cannot proceeed with WALA"})
+      ;
+23         \}
+24 
+25         sys.\hyperlink{classsim_system_a57af66c88ce4dc1aeb6a1cd3f14ff0bb}{startWALA} (lnF, sys.\hyperlink{classsim_system_aa2e866e69ebe5fa0761894212592175a}{wala\_g}, sys.\hyperlink{classsim_system_a7cc3431bb59acca9165b044dbd07dcdc}{wala\_s}, sys.
+      \hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}());
+26         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a2b168c89742f4d64270583e7e54b2929}{restartFromWALA}) \{
+27             \textcolor{comment}{// specified to start WALA from a lnPI guess, and this is not a restart from a checkpoint}
+28             \textcolor{keywordflow}{try} \{
+29                 sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ae04916f49c11b0636e813787a3906570}{readlnPI}(sys.
+      \hyperlink{classsim_system_afbf0b172dc35572e71ec6d27a018e2fc}{restartFromWALAFile});
+30             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+31                 std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+32                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+33             \}
+34             std::cout << \textcolor{stringliteral}{"Read initial lnPI for Wang-Landau from "} << sys.
+      \hyperlink{classsim_system_afbf0b172dc35572e71ec6d27a018e2fc}{restartFromWALAFile} << std::endl;
+35         \}
+36     \} \textcolor{keywordflow}{else} \{
+37         lnF = sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF}(); \textcolor{comment}{// checkpoint re-initialized to starting value}
+38         moveStart = res.\hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{moveCounter};
+39     \}
+40 
+41     std::cout << \textcolor{stringliteral}{"Initial lnF = "} << sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF}() << \textcolor{stringliteral}{" at "} << 
+      \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+42     std::cout << \textcolor{stringliteral}{"Starting from "} << moveStart << \textcolor{stringliteral}{" moves at "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+43 
+44     \textcolor{keywordflow}{while} (lnF > sys.\hyperlink{classsim_system_a3fb5d01fd3abf49f577c050968fba9d1}{lnF\_end}) \{
+45         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} move = moveStart; move < sys.\hyperlink{classsim_system_ae625e1026daee4f99f83fb73881875a1}{wlSweepSize}; ++move) \{
+46             \textcolor{keywordflow}{try} \{
+47                 usedMovesEq->\hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{makeMove}(sys);
+48             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+49                 std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+50                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+51             \}
+52             \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0)\{
+53                 sys.\hyperlink{classsim_system_a176b9ff482f1d36bc0638538bcfe0670}{checkEnergyHistogramBounds} ();
+54             \}
+55             res.\hyperlink{classcheckpoint_ab9ca7cab3fd3c5dc35fe71977b81a69f}{check}(sys, move);
+56         \}
+57 
+58         \textcolor{comment}{// Check if bias has flattened out}
+59         flat = sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_add6302db96fcc45811b2944de2936525}{evaluateFlatness}();
+60         \textcolor{keywordflow}{if} (flat) \{
+61             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ae06c2f1475702ec9d1b0a243b7f34e4b}{iterateForward}(); \textcolor{comment}{// if flat, need to reset H and
+       reduce lnF}
+62             lnF = sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF}();
+63             flat = \textcolor{keyword}{false};
+64             std::cout << \textcolor{stringliteral}{"Wang-Landau is now flat, new lnF = "} << lnF << \textcolor{stringliteral}{" at "} << 
+      \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+65             usedMovesEq->\hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print}(\textcolor{stringliteral}{"wala.stats"});
+66         \}
+67     \}
+68 
+69     \hyperlink{sanity_8cpp_a73138cec3a48e4523004092dc0c2954b}{sanityChecks}(sys);
+70     res.\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} = \textcolor{keyword}{true};
+71 \}
+\end{DoxyCode}

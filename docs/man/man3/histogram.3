@@ -1,0 +1,361 @@
+.TH "histogram" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+histogram \- 
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <histogram\&.h>\fP
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB~histogram\fP ()"
+.br
+.ti -1c
+.RI "\fBhistogram\fP ()"
+.br
+.ti -1c
+.RI "\fBhistogram\fP (const std::vector< double > lbound, const std::vector< double > ubound, const std::vector< long long unsigned int > nbins)"
+.br
+.RI "\fIInstantiate a multidimensional histogram\&. \fP"
+.ti -1c
+.RI "void \fBprint\fP (const std::string fileName)"
+.br
+.RI "\fIPrint RAW (UN-NORMALIZED) histogram to file\&. \fP"
+.ti -1c
+.RI "void \fBincrement\fP (const long long unsigned int address, const double val)"
+.br
+.RI "\fIIncrement the histogram by a given value at a given address\&. \fP"
+.ti -1c
+.RI "void \fBincrement\fP (const std::vector< double > &coords, const double val)"
+.br
+.RI "\fIIncrement the histogram by a given value at a given coordinate\&. \fP"
+.ti -1c
+.RI "void \fBset\fP (const std::vector< double > &h, const std::vector< double > &ctr)"
+.br
+.RI "\fIAssign the histogram and its corresponding counter\&. \fP"
+.ti -1c
+.RI "const long long unsigned int \fBgetAddress\fP (const std::vector< double > &coords)"
+.br
+.RI "\fIGet the linear address of the multidimensional coordinate\&. \fP"
+.ti -1c
+.RI "const std::vector< double > \fBgetCoords\fP (long long unsigned int address)"
+.br
+.RI "\fIGiven an address, return the (center of the) coordinate this refers to\&. \fP"
+.ti -1c
+.RI "std::vector< double > \fBgetRawHistogram\fP ()"
+.br
+.RI "\fIReturn the current histogram\&. \fP"
+.ti -1c
+.RI "std::vector< double > \fBgetCounter\fP ()"
+.br
+.RI "\fIReturn the current histogram counter\&. \fP"
+.in -1c
+.SH "Detailed Description"
+.PP 
+Definition at line 13 of file histogram\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "histogram::~histogram ()\fC [inline]\fP"
+
+.PP
+Definition at line 15 of file histogram\&.h\&.
+.PP
+.nf
+15 {;}
+.fi
+.SS "histogram::histogram ()\fC [inline]\fP"
+
+.PP
+Definition at line 16 of file histogram\&.h\&.
+.PP
+.nf
+16 {;}
+.fi
+.SS "histogram::histogram (const std::vector< double >lbound, const std::vector< double >ubound, const std::vector< long long unsigned int >nbins)"
+
+.PP
+Instantiate a multidimensional histogram\&. Bounds and widths must be specified for each dimension\&. A bin is considered 'centered' on its value\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlbound\fP Vector of lower bounds for each dimension 
+.br
+\fIubound\fP Vector of upper bounds for each dimension 
+.br
+\fInbins\fP Number of bins to use along each dimension 
+.RE
+.PP
+
+.PP
+Definition at line 178 of file histogram\&.cpp\&.
+.PP
+.nf
+178                                                                                                                                       {
+179     if (lbound\&.size() != ubound\&.size()) {
+180         throw customException ("Upper and lower bounds for histogram do have the same size");
+181     }
+182     if (nbins\&.size() != lbound\&.size()) {
+183         throw customException ("Number of bins for histogram's dimensions does not have the same size as its bounds");
+184     }
+185 
+186     dim_ = nbins\&.size();
+187     widths_\&.resize(dim_, 0);
+188     delta_\&.resize(dim_, 0);
+189 
+190     size_ = 1;
+191     for (unsigned int i = 0; i < dim_; ++i) {
+192         if (lbound[i] > ubound[i]) {
+193             throw customException ("Lower bound > upper bound illegal for a histogram");
+194         }
+195 
+196         if (lbound[i] < ubound[i]) {
+197             if (nbins[i] <= 1) {
+198                 throw customException ("Must > 1 bins for each dimensions in the histogram");
+199             }
+200             size_ *= nbins[i];
+201             delta_[i] = (ubound[i] - lbound[i])/(nbins[i]-1);
+202         } else {
+203             // special case when upper and lower bound are the same (nbins = 1)
+204             if (nbins[i] != 1) {
+205                 throw customException ("nbins must be 1 if upper and lower bounds are equal in histogram");
+206             }
+207             size_ *= nbins[i];
+208             delta_[i] = 1\&.0; // arbitrary
+209         }
+210 
+211         // build projected widths
+212         if (i == 0) {
+213             widths_[i] = 1;
+214         } else {
+215             widths_[i] = widths_[i-1]*nbins[i-1];
+216         }
+217     }
+218 
+219     lbound_ = lbound;
+220     ubound_ = ubound;
+221     nbins_ = nbins;
+222 
+223     // initialize the histogram to 0
+224     try {
+225         h_\&.resize(size_, 0);
+226     } catch (std::bad_alloc &ba) {
+227         throw customException ("Out of memory for histogram");
+228     }
+229     try {
+230         counter_\&.resize(size_, 0);
+231     } catch (std::bad_alloc &ba) {
+232         throw customException ("Out of memory for histogram");
+233     }
+234 }
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "const long long unsigned int histogram::getAddress (const std::vector< double > &coords)"
+
+.PP
+Get the linear address of the multidimensional coordinate\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcoords\fP Coordinates 
+.RE
+.PP
+
+.PP
+Definition at line 273 of file histogram\&.cpp\&.
+.PP
+Referenced by increment(), simSystem::printExtMoments(), and simSystem::restartExtMoments()\&.
+.PP
+.nf
+273                                                                                     {
+274         if (coords\&.size() != dim_) {
+275             throw customException ("Illegal number of coordinate dimensions, cannot locate histogram address");
+276         }
+277         long long unsigned int address = 0;
+278         for (unsigned int i = 0; i < dim_; ++i) {
+279             address += round((coords[i] - lbound_[i])/delta_[i])*widths_[i]; // will work safely for integers too
+280         }
+281         return address;
+282 }
+.fi
+.SS "const std::vector< double > histogram::getCoords (long long unsigned intaddress)"
+
+.PP
+Given an address, return the (center of the) coordinate this refers to\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIaddress\fP Address to check 
+.RE
+.PP
+
+.PP
+Definition at line 289 of file histogram\&.cpp\&.
+.PP
+.nf
+289                                                                              {
+290         std::vector <double> coords (dim_, 0);
+291         if (address >= size_) {
+292             throw customException ("Histogram address out of bounds");
+293         }
+294 
+295         for (unsigned int i = dim_-1; i > 0; --i) {
+296             long long int diff = floor(address/widths_[i]);
+297             coords[i] = diff*delta_[i] + lbound_[i];
+298             address -= diff*widths_[i];
+299         }
+300         coords[0] = address*delta_[0] + lbound_[0];
+301 
+302         return coords;
+303 }
+.fi
+.SS "std::vector<double> histogram::getCounter ()\fC [inline]\fP"
+
+.PP
+Return the current histogram counter\&. 
+.PP
+Definition at line 26 of file histogram\&.h\&.
+.PP
+Referenced by simSystem::extMomCounter(), and simSystem::printExtMoments()\&.
+.SS "std::vector<double> histogram::getRawHistogram ()\fC [inline]\fP"
+
+.PP
+Return the current histogram\&. 
+.PP
+Definition at line 25 of file histogram\&.h\&.
+.PP
+Referenced by simSystem::printExtMoments(), and simSystem::restartExtMoments()\&.
+.SS "void histogram::increment (const long long unsigned intaddress, const doubleval)"
+
+.PP
+Increment the histogram by a given value at a given address\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIaddress\fP Address of the histogram to increment 
+.br
+\fIval\fP Value to add to the histogram at address 
+.RE
+.PP
+
+.PP
+Definition at line 242 of file histogram\&.cpp\&.
+.PP
+Referenced by simSystem::recordExtMoments()\&.
+.PP
+.nf
+242                                                                                  {
+243         if (address < size_) {
+244             h_[address] += val;
+245             counter_[address] += 1\&.0;
+246         } else {
+247             throw customException ("Histogram address out of bounds");
+248         }
+249 }
+.fi
+.SS "void histogram::increment (const std::vector< double > &coords, const doubleval)"
+
+.PP
+Increment the histogram by a given value at a given coordinate\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIcoords\fP Vector of coordinates correponding to a location in the histogram to increment 
+.br
+\fIval\fP Value to add to the histogram at address 
+.RE
+.PP
+
+.PP
+Definition at line 257 of file histogram\&.cpp\&.
+.PP
+References getAddress()\&.
+.PP
+.nf
+257                                                                              {
+258         long long unsigned int address = 0;
+259         try {
+260             address = getAddress (coords);
+261         } catch (customException &ce) {
+262             throw customException ("Histogram address out of bounds");
+263         }
+264         h_[address] += val;
+265         counter_[address] += 1\&.0;
+266 }
+.fi
+.SS "void histogram::print (const std::stringfileName)"
+
+.PP
+Print RAW (UN-NORMALIZED) histogram to file\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIfileName\fP Name of file to print to 
+.RE
+.PP
+
+.PP
+Definition at line 310 of file histogram\&.cpp\&.
+.PP
+.nf
+310                                                {
+311     // Print histogram
+312     std::ofstream of;
+313     of\&.open(fileName\&.c_str(), std::ofstream::out);
+314     if (!of\&.is_open()) {
+315         throw customException ("Unable to write histogram to "+fileName);
+316     }
+317     of << "# Histogram in single row (vectorized) notation\&." << std::endl;
+318     for (unsigned int i = 0; i < dim_; ++i) {
+319         of << "# dim_"+std::to_string(i+1)+"_upper_bound:" << ubound_[i] << std::endl;
+320         of << "# dim_"+std::to_string(i+1)+"_lower_bound:" << lbound_[i] << std::endl;
+321         of << "# dim_"+std::to_string(i+1)+"_number_of_bins:" << nbins_[i] << std::endl;
+322     }
+323     for (unsigned long long int i = 0; i < h_\&.size(); ++i) {
+324         of << h_[i] << std::endl;
+325     }
+326     of\&.close();
+327 }
+.fi
+.SS "void histogram::set (const std::vector< double > &h, const std::vector< double > &ctr)"
+
+.PP
+Assign the histogram and its corresponding counter\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIh\fP histogram 
+.br
+\fIctr\fP Counter 
+.RE
+.PP
+
+.PP
+Definition at line 335 of file histogram\&.cpp\&.
+.PP
+Referenced by simSystem::restartExtMoments()\&.
+.PP
+.nf
+335                                                                                {
+336     if (h\&.size() != ctr\&.size()) {
+337         throw customException ("Cannot set the histogram since counter and histogram have different lengths");
+338     }
+339     if (h\&.size() != h_\&.size()) {
+340         throw customException ("Cannot set the histogram since new histogram has different length compared to current one");
+341     }
+342     if (ctr\&.size() != counter_\&.size()) {
+343         throw customException ("Cannot set the histogram since new counter has different length compared to current one");
+344     }
+345     h_ = h;
+346     counter_ = ctr;
+347 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

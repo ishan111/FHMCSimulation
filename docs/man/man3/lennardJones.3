@@ -1,0 +1,257 @@
+.TH "lennardJones" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+lennardJones \- 
+.PP
+Lennard-Jones Potential Parameters should be specified in the following order: { epsilon, sigma, r_cut, u_shift, Mtot }\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <potentials\&.h>\fP
+.PP
+Inherits \fBpairPotential\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB~lennardJones\fP ()"
+.br
+.ti -1c
+.RI "void \fBsetParameters\fP (const std::vector< double > params)"
+.br
+.RI "\fISet the parameters in the Lennard-Jones equation\&. \fP"
+.ti -1c
+.RI "double \fBenergy\fP (const \fBatom\fP *a1, const \fBatom\fP *a2, const std::vector< double > &box)"
+.br
+.RI "\fIReturn the energy of two particles\&. \fP"
+.ti -1c
+.RI "double \fBtailCorrection\fP (const double rhoBath)"
+.br
+.RI "\fICalculate the tail correction with the approximation g(r) = 1 for r_{cut} > 1 as explained in Frenkel & Smit in eq\&. \fP"
+.ti -1c
+.RI "double \fBrcut\fP ()"
+.br
+.RI "\fIReturn the value of r_{cut} for this potential\&. \fP"
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Lennard-Jones Potential Parameters should be specified in the following order: { epsilon, sigma, r_cut, u_shift, Mtot }\&. 
+.PP
+Definition at line 42 of file potentials\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "lennardJones::~lennardJones ()\fC [inline]\fP"
+
+.PP
+Definition at line 44 of file potentials\&.h\&.
+.PP
+.nf
+44 {;}
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "double lennardJones::energy (const \fBatom\fP *a1, const \fBatom\fP *a2, const std::vector< double > &box)\fC [virtual]\fP"
+
+.PP
+Return the energy of two particles\&. \[ U(r) = 4 \epsilon \left( \left \frac{ \sigma }{ r } \right)^{12} - \left( \frac{ sigma }{ r } \right)^6 \right) + U_{shift} \quad r < r_{cut} \]
+.PP
+\fBParameters:\fP
+.RS 4
+\fIa1\fP Atom 1 
+.br
+\fIa2\fP Atom 2 
+.br
+\fIbox\fP Simulation box dimensions
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+U(r) 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 230 of file potentials\&.cpp\&.
+.PP
+References atom::mState, pairPotential::params_, pairPotential::paramsAreSet_, pbcDist2(), and atom::pos\&.
+.PP
+.nf
+230                                                                                             {
+231     if (!paramsAreSet_) {
+232         throw customException ("For lennardJones parameters not set");
+233     }
+234 
+235     const double r_sq = pbcDist2(a1->pos, a2->pos, box);
+236 
+237     // only one of these atoms (at most) should be "partially" inserted
+238     int mState = 0;
+239     if (a1->mState != 0) {
+240         mState = a1->mState;
+241     }
+242     if (a2->mState != 0) {
+243         mState = a2->mState;
+244     }
+245 
+246     double r2 = (sigmaM_[mState]*sigmaM_[mState]/r_sq), r6 = r2*r2*r2, r12 = r6*r6;
+247     if (r_sq < params_[2]*params_[2]) {
+248         return 4\&.0*epsM_[mState]*(r12 - r6) + uShiftM_[mState];
+249     } else {
+250         return 0\&.0;
+251     }
+252 }
+.fi
+.SS "double lennardJones::rcut ()\fC [virtual]\fP"
+
+.PP
+Return the value of r_{cut} for this potential\&. 
+.PP
+\fBReturns:\fP
+.RS 4
+rcut 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 278 of file potentials\&.cpp\&.
+.PP
+References pairPotential::params_, and pairPotential::paramsAreSet_\&.
+.PP
+.nf
+278                            {
+279     if (!paramsAreSet_) {
+280         throw customException ("For lennardJones parameters not set");
+281     } else {
+282         return params_[2];
+283     }
+284 }
+.fi
+.SS "void lennardJones::setParameters (const std::vector< double >params)\fC [virtual]\fP"
+
+.PP
+Set the parameters in the Lennard-Jones equation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIparams\fP Vector of inputs: {epsilon, sigma, r_cut, u_shift, Mtot} 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 155 of file potentials\&.cpp\&.
+.PP
+References pairPotential::params_, pairPotential::paramsAreSet_, and pairPotential::useTailCorrection\&.
+.PP
+.nf
+155                                                                    {
+156     if (params\&.size() != 5) {
+157         throw customException ("For lennardJones must specify 5 parameters: epsilon, sigma, r_cut, u_shift, Mtot");
+158     } else {
+159         if (params[0] < 0) {
+160             throw customException ("For lennardJones, epsilon > 0");
+161         }
+162         if (params[1] < 0) {
+163             throw customException ("For lennardJones, sigma > 0");
+164         }
+165         if (params[2] < 0) {
+166             throw customException ("For lennardJones, r_cut > 0");
+167         }
+168         if (int(params[4]) < 1) {
+169             throw customException ("For lennardJones, total expanded ensemble states, Mtot >= 1");
+170         }
+171 
+172         paramsAreSet_ = true;
+173         params_ = params;
+174 
+175         useTailCorrection = true;
+176 
+177         // use a "constant volume" scheme to distribute the stages
+178         sigmaM_\&.resize(int(params[4]), 0);
+179         for (int i = 0; i < sigmaM_\&.size(); ++i) {
+180             if (i == 0) {
+181                 // fully inserted
+182                 sigmaM_[i] = params[1];
+183             } else {
+184                 // use volume scaling so each stage is separated from its neighbors by the same dV
+185                 double lastSigma = 0;
+186                 if (i == 1) {
+187                     lastSigma = 0;
+188                 } else {
+189                     lastSigma = sigmaM_[i-1];
+190                 }
+191                 sigmaM_[i] = pow(params[1]*params[1]*params[1]/(8\&.0*int(params[4])) + lastSigma*lastSigma*lastSigma, 1\&./3\&.);
+192             }
+193         }
+194 
+195         // scale energy linearly across the stages
+196         epsM_\&.resize(int(params[4]), 0);
+197         for (int i = 0; i < epsM_\&.size(); ++i) {
+198             if (i == 0) {
+199                 // fully inserted
+200                 epsM_[i] = params[0];
+201             } else {
+202                 epsM_[i] = i*(params[0]/int(params[4]));
+203             }
+204         }
+205 
+206         // scale energy linearly across the stages
+207         uShiftM_\&.resize(int(params[4]), 0);
+208         for (int i = 0; i < epsM_\&.size(); ++i) {
+209             if (i == 0) {
+210                 // fully inserted
+211                 uShiftM_[i] = params[3];
+212             } else {
+213                 uShiftM_[i] = i*(params[3]/int(params[4]));
+214             }
+215         }
+216     }
+217 }
+.fi
+.SS "double lennardJones::tailCorrection (const doublerhoBath)\fC [virtual]\fP"
+
+.PP
+Calculate the tail correction with the approximation g(r) = 1 for r_{cut} > 1 as explained in Frenkel & Smit in eq\&. (3\&.2\&.5)\&. Tail corrections only account for number of fully inserted particles so I have chosen not to scale this part of the energy with expanded ensemble stage\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIrhoBath\fP Number density of the surrounding fluid
+.RE
+.PP
+\fBReturns:\fP
+.RS 4
+U_tail 
+.RE
+.PP
+
+.PP
+Implements \fBpairPotential\fP\&.
+.PP
+Definition at line 263 of file potentials\&.cpp\&.
+.PP
+References pairPotential::params_, and PI\&.
+.PP
+.nf
+263                                                         {
+264     if (rhoBath < 0) {
+265         return 0;
+266     }
+267     const double r3 = (params_[1]*params_[1]*params_[1])/(params_[2]*params_[2]*params_[2]);
+268     const double r9 = r3*r3*r3;
+269 
+270     return 2\&.0*(8\&.0/3\&.0*PI*rhoBath*params_[0]*params_[1]*params_[1]*params_[1]*(r9/3\&.0 - r3));
+271 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.
