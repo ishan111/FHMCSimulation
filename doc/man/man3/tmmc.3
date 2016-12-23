@@ -1,4 +1,4 @@
-.TH "tmmc" 3 "Thu Dec 22 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "tmmc" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -83,16 +83,16 @@ Transition Matrix Monte Carlo biasing class\&.
 .PP 
 Transition Matrix Monte Carlo biasing class\&. 
 .PP
-Definition at line 31 of file bias\&.h\&.
+Definition at line 24 of file bias\&.h\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "tmmc::tmmc ()\fC [inline]\fP"
 
 .PP
-Definition at line 33 of file bias\&.h\&.
+Definition at line 26 of file bias\&.h\&.
 .PP
 .nf
-33 {};
+26 {};
 .fi
 .SS "tmmc::tmmc (const intNmax, const intNmin, const intMtot, const long long inttmmcSweepSize, const std::vector< double >box)"
 
@@ -349,26 +349,26 @@ Referenced by calculateBias()\&.
 .SS "const double tmmc::getBias (const intaddress)\fC [inline]\fP"
 
 .PP
-Definition at line 48 of file bias\&.h\&.
+Definition at line 41 of file bias\&.h\&.
 .PP
 Referenced by calculateBias()\&.
 .PP
 .nf
-48 { return -lnPI_[address]; }
+41 { return -lnPI_[address]; }
 .fi
 .SS "const std::vector< double > tmmc::getC ()\fC [inline]\fP"
 
 .PP
 Return the collection matrix as it is\&. 
 .PP
-Definition at line 49 of file bias\&.h\&.
+Definition at line 42 of file bias\&.h\&.
 .SS "const std::vector< double > tmmc::getHC ()\fC [inline]\fP"
 
 .PP
-Definition at line 50 of file bias\&.h\&.
+Definition at line 43 of file bias\&.h\&.
 .PP
 .nf
-50 { return HC_; }
+43 { return HC_; }
 .fi
 .SS "const \fB__BIAS_INT_TYPE__\fP tmmc::getTransitionAddress (const intNstart, const intNend, const intMstart, const intMend)"
 
@@ -465,17 +465,17 @@ Referenced by performCrossover(), and performTMMC()\&.
 .SS "const long long int tmmc::numSweeps ()\fC [inline]\fP"
 
 .PP
-Definition at line 47 of file bias\&.h\&.
+Definition at line 40 of file bias\&.h\&.
 .PP
 Referenced by performCrossover()\&.
 .PP
 .nf
-47 { return nSweeps_; }
+40 { return nSweeps_; }
 .fi
 .SS "void tmmc::print (const std::stringfileName, boolprintC = \fCfalse\fP, boolprintHC = \fCfalse\fP)"
 
 .PP
-Print the UN-NORMALIZED biasing function (lnPI) and possibly collection matrix to files\&. Will overwrite the files if another with that name exists\&. Prints in netCDF format if enabled\&.
+Print the UN-NORMALIZED biasing function (lnPI) and possibly collection matrix to files\&. Will overwrite the files if another with that name exists\&.
 .PP
 \fBParameters:\fP
 .RS 4
@@ -488,124 +488,57 @@ Print the UN-NORMALIZED biasing function (lnPI) and possibly collection matrix t
 .PP
 
 .PP
-Definition at line 302 of file bias\&.cpp\&.
+Definition at line 301 of file bias\&.cpp\&.
 .PP
 References dumpVisited()\&.
 .PP
 Referenced by checkpoint::dump(), performCrossover(), and performTMMC()\&.
 .PP
 .nf
-302                                                                      {
-303 #ifdef NETCDF_CAPABLE
-304     // Print collection matrix
-305     if (printC) {
-306         const std::string name = fileName + "_C\&.nc";
-307         try {
-308             // print all states, including partial ones, so this can be used to restart from, etc\&.
-309             NcFile outFile(name\&.c_str(), NcFile::replace);
-310             NcDim probDim = outFile\&.addDim("vectorized_position", C_\&.size());
-311             NcVar probVar = outFile\&.addVar("C", ncDouble, probDim);
-312             std::string attName = "species_total_upper_bound";
-313             probVar\&.putAtt(attName\&.c_str(), std::to_string(Nmax_)\&.c_str());
-314             attName = "species_total_lower_bound";
-315             probVar\&.putAtt(attName\&.c_str(), std::to_string(Nmin_)\&.c_str());
-316             attName = "volume";
-317             double V = box_[0]*box_[1]*box_[2];
-318             probVar\&.putAtt(attName\&.c_str(), std::to_string(V)\&.c_str());
-319             probVar\&.putVar(&C_[0]);
-320         } catch (NcException ioe) {
-321             throw customException ("Unable to write TMMC collection matrix to "+name);
-322         }
-323     }
-324 
-325     // Print visited states matrix
-326     if (printHC) {
-327         const std::string name = fileName + "_HC\&.nc";
-328         try {
-329             // print all states, including partial ones, so this can be used to restart from, etc\&.
-330             NcFile outFile(name\&.c_str(), NcFile::replace);
-331             NcDim probDim = outFile\&.addDim("vectorized_position", HC_\&.size());
-332             NcVar probVar = outFile\&.addVar("HC", ncDouble, probDim);
-333             std::string attName = "species_total_upper_bound";
-334             probVar\&.putAtt(attName\&.c_str(), std::to_string(Nmax_)\&.c_str());
-335             attName = "species_total_lower_bound";
-336             probVar\&.putAtt(attName\&.c_str(), std::to_string(Nmin_)\&.c_str());
-337             attName = "volume";
-338             double V = box_[0]*box_[1]*box_[2];
-339             probVar\&.putAtt(attName\&.c_str(), std::to_string(V)\&.c_str());
-340             probVar\&.putVar(&HC_[0]);
-341         } catch (NcException ioe) {
-342             throw customException ("Unable to write TMMC visited states matrix to "+name);
-343         }
-344     }
-345 
-346     // Print lnPI (bias) matrix
-347     const std::string name = fileName + "_lnPI\&.nc";
-348     try {
-349         // only print the integral states
-350         std::vector < double > lnPI_print (Nmax_ - Nmin_ + 1, 0\&.0);
-351         for (unsigned int i = 0; i < lnPI_print\&.size(); ++i) {
-352             lnPI_print[i] = lnPI_[i*Mtot_];
-353         }
-354         NcFile outFile(name\&.c_str(), NcFile::replace);
-355         NcDim probDim = outFile\&.addDim("vectorized_position", lnPI_print\&.size());
-356         NcVar probVar = outFile\&.addVar("lnPI", ncDouble, probDim);
-357         std::string attName = "species_total_upper_bound";
-358         probVar\&.putAtt(attName\&.c_str(), std::to_string(Nmax_)\&.c_str());
-359         attName = "species_total_lower_bound";
-360         probVar\&.putAtt(attName\&.c_str(), std::to_string(Nmin_)\&.c_str());
-361         attName = "volume";
-362         double V = box_[0]*box_[1]*box_[2];
-363         probVar\&.putAtt(attName\&.c_str(), std::to_string(V)\&.c_str());
-364         probVar\&.putVar(&lnPI_print[0]);
-365     } catch (NcException ioe) {
-366         throw customException ("Unable to write TMMC lnPI to "+name);
-367     }
-368 #else
-369     // Print collection matrix
-370     if (printC) {
-371         // print all states, including partial ones, so this can be used to restart from, etc\&.
-372         std::ofstream of;
-373         std::string name = fileName+"_C\&.dat";
-374         of\&.open(name\&.c_str(), std::ofstream::out);
-375         if (!of\&.is_open()) {
-376             throw customException ("Unable to write TMMC collection matrix to "+name);
-377         }
-378         of << "# Collection matrix in single row (vectorized) notation\&." << std::endl;
-379         of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-380         of << "# species_total_lower_bound: " << Nmin_ << std::endl;
-381         double V = box_[0]*box_[1]*box_[2];
-382         of << "# volume: " << std::setprecision(15) << V << std::endl;
-383         for (long long int i = 0; i < C_\&.size(); ++i) {
-384             of << std::setprecision(15) << C_[i] << std::endl;
-385         }
-386         of\&.close();
-387     }
-388 
-389     // Print visited states matrix
-390     if (printHC) {
-391         // print all states, including partial ones, so this can be used to restart from, etc\&.
-392         dumpVisited(fileName+"_HC");
-393     }
-394 
-395     // Print lnPI (bias) matrix
-396     std::ofstream of;
-397     std::string name = fileName+"_lnPI\&.dat";
-398     of\&.open(name\&.c_str(), std::ofstream::out);
-399     if (!of\&.is_open()) {
-400         throw customException ("Unable to write TMMC lnPI to "+name);
-401     }
-402     of << "# lnPI (bias) matrix in single row (vectorized) notation\&." << std::endl;
-403     of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-404     of << "# species_total_lower_bound: " << Nmin_ << std::endl;
-405     double V = box_[0]*box_[1]*box_[2];
-406     of << "# volume: " << std::setprecision(15) << V << std::endl;
-407     for (long long int i = 0; i < lnPI_\&.size(); i += Mtot_) {
-408         of << std::setprecision(15) << lnPI_[i] << std::endl; // only print the integral states
-409     }
-410     of\&.close();
-411 #endif
-412 }
+301                                                                      {
+302     // Print collection matrix
+303     if (printC) {
+304         // print all states, including partial ones, so this can be used to restart from, etc\&.
+305         std::ofstream of;
+306         std::string name = fileName+"_C\&.dat";
+307         of\&.open(name\&.c_str(), std::ofstream::out);
+308         if (!of\&.is_open()) {
+309             throw customException ("Unable to write TMMC collection matrix to "+name);
+310         }
+311         of << "# Collection matrix in single row (vectorized) notation\&." << std::endl;
+312         of << "# species_total_upper_bound: " << Nmax_ << std::endl;
+313         of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+314         double V = box_[0]*box_[1]*box_[2];
+315         of << "# volume: " << std::setprecision(15) << V << std::endl;
+316         for (long long int i = 0; i < C_\&.size(); ++i) {
+317             of << std::setprecision(15) << C_[i] << std::endl;
+318         }
+319         of\&.close();
+320     }
+321 
+322     // Print visited states matrix
+323     if (printHC) {
+324         // print all states, including partial ones, so this can be used to restart from, etc\&.
+325         dumpVisited(fileName+"_HC");
+326     }
+327 
+328     // Print lnPI (bias) matrix
+329     std::ofstream of;
+330     std::string name = fileName+"_lnPI\&.dat";
+331     of\&.open(name\&.c_str(), std::ofstream::out);
+332     if (!of\&.is_open()) {
+333         throw customException ("Unable to write TMMC lnPI to "+name);
+334     }
+335     of << "# lnPI (bias) matrix in single row (vectorized) notation\&." << std::endl;
+336     of << "# species_total_upper_bound: " << Nmax_ << std::endl;
+337     of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+338     double V = box_[0]*box_[1]*box_[2];
+339     of << "# volume: " << std::setprecision(15) << V << std::endl;
+340     for (long long int i = 0; i < lnPI_\&.size(); i += Mtot_) {
+341         of << std::setprecision(15) << lnPI_[i] << std::endl; // only print the integral states
+342     }
+343     of\&.close();
+344 }
 .fi
 .SS "void tmmc::readC (const std::stringfileName)"
 
@@ -619,39 +552,28 @@ Read the collection matrix from a file\&. This assumes the user has already guar
 .PP
 
 .PP
-Definition at line 457 of file bias\&.cpp\&.
+Definition at line 378 of file bias\&.cpp\&.
 .PP
 Referenced by checkpoint::load(), and performTMMC()\&.
 .PP
 .nf
-457                                           {
-458 #ifdef NETCDF_CAPABLE
-459     try {
-460         NcFile dataFile (fileName\&.c_str(), NcFile::read);
-461         NcVar C_data = dataFile\&.getVar("C");
-462         if (C_data\&.isNull()) throw customException("Collection matrix was empty, cannot read from "+fileName);
-463         C_data\&.getVar(&C_[0]);
-464     } catch (NcException ioe) {
-465         throw customException ("Unable to read collection matrix from netCDF file "+fileName);
-466     }
-467 #else
-468     std::ifstream infile (fileName\&.c_str());
-469     if (!infile\&.is_open()) {
-470         throw customException("Unable to read collection matrix from ASCII file "+fileName);
-471     }
-472     std::string line;
-473     int lineIndex = 0;
-474     while(std::getline(infile,line)) {
-475         std::stringstream lineStream(line);
-476         // skip any header information
-477         if (line\&.compare(0,1,"#",0,1) != 0) {
-478             C_[lineIndex] = atof(line\&.c_str());
-479             lineIndex++;
-480         }
-481     }
-482     infile\&.close();
-483 #endif
-484 }
+378                                           {
+379     std::ifstream infile (fileName\&.c_str());
+380     if (!infile\&.is_open()) {
+381         throw customException("Unable to read collection matrix from ASCII file "+fileName);
+382     }
+383     std::string line;
+384     int lineIndex = 0;
+385     while(std::getline(infile,line)) {
+386         std::stringstream lineStream(line);
+387         // skip any header information
+388         if (line\&.compare(0,1,"#",0,1) != 0) {
+389             C_[lineIndex] = atof(line\&.c_str());
+390             lineIndex++;
+391         }
+392     }
+393     infile\&.close();
+394 }
 .fi
 .SS "void tmmc::readHC (const std::stringfileName)"
 
@@ -665,46 +587,35 @@ Read the visited states matrix from a file\&. This assumes the user has already 
 .PP
 
 .PP
-Definition at line 421 of file bias\&.cpp\&.
+Definition at line 353 of file bias\&.cpp\&.
 .PP
 Referenced by checkpoint::load()\&.
 .PP
 .nf
-421                                            {
-422 #ifdef NETCDF_CAPABLE
-423     try {
-424         NcFile dataFile (fileName\&.c_str(), NcFile::read);
-425         NcVar HC_data = dataFile\&.getVar("HC");
-426         if (HC_data\&.isNull()) throw customException("Visited states matrix was empty, cannot read from "+fileName);
-427         HC_data\&.getVar(&HC_[0]);
-428     } catch (NcException ioe) {
-429         throw customException ("Unable to read visited states matrix from netCDF file "+fileName);
-430     }
-431 #else
-432     std::ifstream infile (fileName\&.c_str());
-433     if (!infile\&.is_open()) {
-434         throw customException("Unable to read visited states matrix from ASCII file "+fileName);
-435     }
-436     std::string line;
-437     int lineIndex = 0;
-438     while(std::getline(infile,line)) {
-439         std::stringstream lineStream(line);
-440         // skip any header information
-441         if (line\&.compare(0,1,"#",0,1) != 0) {
-442             HC_[lineIndex] = atof(line\&.c_str());
-443             lineIndex++;
-444         }
-445     }
-446     infile\&.close();
-447 #endif
-448 }
+353                                            {
+354     std::ifstream infile (fileName\&.c_str());
+355     if (!infile\&.is_open()) {
+356         throw customException("Unable to read visited states matrix from ASCII file "+fileName);
+357     }
+358     std::string line;
+359     int lineIndex = 0;
+360     while(std::getline(infile,line)) {
+361         std::stringstream lineStream(line);
+362         // skip any header information
+363         if (line\&.compare(0,1,"#",0,1) != 0) {
+364             HC_[lineIndex] = atof(line\&.c_str());
+365             lineIndex++;
+366         }
+367     }
+368     infile\&.close();
+369 }
 .fi
 .SS "void tmmc::setlnPI (const std::vector< double > &lnPIguess)\fC [inline]\fP"
 
 .PP
 Blindly assign a guess of the macrostate distribution\&. 
 .PP
-Definition at line 41 of file bias\&.h\&.
+Definition at line 34 of file bias\&.h\&.
 .SS "void tmmc::updateC (const intNstart, const intNend, const intMstart, const intMend, const doublepa)"
 
 .PP

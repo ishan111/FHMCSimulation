@@ -96,40 +96,40 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <a href="global_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="preprocessor">#ifndef GLOBAL_H_</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define GLOBAL_H_</span></div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="preprocessor">#include &lt;exception&gt;</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
-<div class="line"><a name="l00117"></a><span class="lineno"><a class="line" href="global_8h.html#a428dfe1ef0a6ff4b1fdebf275f6aff2e">  117</a></span>&#160;<span class="preprocessor">#define SYS_FAILURE -1  </span></div>
-<div class="line"><a name="l00118"></a><span class="lineno"><a class="line" href="global_8h.html#aee0da692ad91bbe61c65dc91c965b19d">  118</a></span>&#160;<span class="preprocessor">#define SAFE_EXIT 0     </span></div>
-<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="global_8h.html#a598a3330b3c21701223ee0ca14316eca">  119</a></span>&#160;<span class="preprocessor">#define PI 3.14159265359 </span></div>
-<div class="line"><a name="l00120"></a><span class="lineno"><a class="line" href="global_8h.html#a85f9382b07ebd88cde9cd3667d50c0a6">  120</a></span>&#160;<span class="preprocessor">#define MAX_BARRIERS_PER_SPECIES 100 </span></div>
-<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="global_8h.html#af42f520b793f7c9dff15cba3bad0eb58">  121</a></span>&#160;<span class="preprocessor">#define H2_2PI 1.0 </span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="preprocessor"></span><span class="keyword">extern</span> <span class="keywordtype">int</span> <a class="code" href="global_8h.html#a3f4e4ea24d5a5c66feae55d1f329c884">RNG_SEED</a>;    <span class="comment">// defined elsewhere, but this allows other routines to access it</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
-<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="classcustom_exception.html">  128</a></span>&#160;<span class="keyword">class </span><a class="code" href="classcustom_exception.html">customException</a> : <span class="keyword">public</span> std::exception {</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00130"></a><span class="lineno"><a class="line" href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">  130</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">what</a>() <span class="keyword">const</span> throw() {<span class="keywordflow">return</span> msg_.c_str();} </div>
-<div class="line"><a name="l00131"></a><span class="lineno"><a class="line" href="classcustom_exception.html#a02ff9f09c4dd8c0b62fb1b6438d7d71a">  131</a></span>&#160;    <a class="code" href="classcustom_exception.html#a02ff9f09c4dd8c0b62fb1b6438d7d71a">customException</a> (std::string m = <span class="stringliteral">&quot;custom exception occurred&quot;</span>):msg_(m) {;} </div>
-<div class="line"><a name="l00132"></a><span class="lineno"><a class="line" href="classcustom_exception.html#a361fad49d4068f3d5fe8d4a1a962791a">  132</a></span>&#160;    <a class="code" href="classcustom_exception.html#a361fad49d4068f3d5fe8d4a1a962791a">~customException</a> () throw() {;} </div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    std::string msg_;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;};</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="classcustom_exception_html_aeb6ab5848b038adfc68fde86a512f691"><div class="ttname"><a href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">customException::what</a></div><div class="ttdeci">const char * what() const </div><div class="ttdoc">Return the user&#39;s message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00130">global.h:130</a></div></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="preprocessor">#ifndef GLOBAL_H_</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define GLOBAL_H_</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="preprocessor">#include &lt;exception&gt;</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="global_8h.html#a428dfe1ef0a6ff4b1fdebf275f6aff2e">  112</a></span>&#160;<span class="preprocessor">#define SYS_FAILURE -1  </span></div>
+<div class="line"><a name="l00113"></a><span class="lineno"><a class="line" href="global_8h.html#aee0da692ad91bbe61c65dc91c965b19d">  113</a></span>&#160;<span class="preprocessor">#define SAFE_EXIT 0     </span></div>
+<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="global_8h.html#a598a3330b3c21701223ee0ca14316eca">  114</a></span>&#160;<span class="preprocessor">#define PI 3.14159265359 </span></div>
+<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="global_8h.html#a85f9382b07ebd88cde9cd3667d50c0a6">  115</a></span>&#160;<span class="preprocessor">#define MAX_BARRIERS_PER_SPECIES 100 </span></div>
+<div class="line"><a name="l00116"></a><span class="lineno"><a class="line" href="global_8h.html#af42f520b793f7c9dff15cba3bad0eb58">  116</a></span>&#160;<span class="preprocessor">#define H2_2PI 1.0 </span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="preprocessor"></span><span class="keyword">extern</span> <span class="keywordtype">int</span> <a class="code" href="global_8h.html#a3f4e4ea24d5a5c66feae55d1f329c884">RNG_SEED</a>;    <span class="comment">// defined elsewhere, but this allows other routines to access it</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
+<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="classcustom_exception.html">  123</a></span>&#160;<span class="keyword">class </span><a class="code" href="classcustom_exception.html">customException</a> : <span class="keyword">public</span> std::exception {</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">  125</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">what</a>() <span class="keyword">const</span> throw() {<span class="keywordflow">return</span> msg_.c_str();} </div>
+<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="classcustom_exception.html#a02ff9f09c4dd8c0b62fb1b6438d7d71a">  126</a></span>&#160;    <a class="code" href="classcustom_exception.html#a02ff9f09c4dd8c0b62fb1b6438d7d71a">customException</a> (std::string m = <span class="stringliteral">&quot;custom exception occurred&quot;</span>):msg_(m) {;} </div>
+<div class="line"><a name="l00127"></a><span class="lineno"><a class="line" href="classcustom_exception.html#a361fad49d4068f3d5fe8d4a1a962791a">  127</a></span>&#160;    <a class="code" href="classcustom_exception.html#a361fad49d4068f3d5fe8d4a1a962791a">~customException</a> () throw() {;} </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    std::string msg_;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;};</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classcustom_exception_html_aeb6ab5848b038adfc68fde86a512f691"><div class="ttname"><a href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">customException::what</a></div><div class="ttdeci">const char * what() const </div><div class="ttdoc">Return the user&#39;s message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00125">global.h:125</a></div></div>
 <div class="ttc" id="global_8h_html_a3f4e4ea24d5a5c66feae55d1f329c884"><div class="ttname"><a href="global_8h.html#a3f4e4ea24d5a5c66feae55d1f329c884">RNG_SEED</a></div><div class="ttdeci">int RNG_SEED</div><div class="ttdoc">Default RNG seed. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00003">utilities.cpp:3</a></div></div>
-<div class="ttc" id="classcustom_exception_html_a02ff9f09c4dd8c0b62fb1b6438d7d71a"><div class="ttname"><a href="classcustom_exception.html#a02ff9f09c4dd8c0b62fb1b6438d7d71a">customException::customException</a></div><div class="ttdeci">customException(std::string m=&quot;custom exception occurred&quot;)</div><div class="ttdoc">Instantiate an exeption with a user-defined error message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00131">global.h:131</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00128">global.h:128</a></div></div>
-<div class="ttc" id="classcustom_exception_html_a361fad49d4068f3d5fe8d4a1a962791a"><div class="ttname"><a href="classcustom_exception.html#a361fad49d4068f3d5fe8d4a1a962791a">customException::~customException</a></div><div class="ttdeci">~customException()</div><div class="ttdoc">Throw the message to the user. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00132">global.h:132</a></div></div>
+<div class="ttc" id="classcustom_exception_html_a02ff9f09c4dd8c0b62fb1b6438d7d71a"><div class="ttname"><a href="classcustom_exception.html#a02ff9f09c4dd8c0b62fb1b6438d7d71a">customException::customException</a></div><div class="ttdeci">customException(std::string m=&quot;custom exception occurred&quot;)</div><div class="ttdoc">Instantiate an exeption with a user-defined error message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00126">global.h:126</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html_a361fad49d4068f3d5fe8d4a1a962791a"><div class="ttname"><a href="classcustom_exception.html#a361fad49d4068f3d5fe8d4a1a962791a">customException::~customException</a></div><div class="ttdeci">~customException()</div><div class="ttdoc">Throw the message to the user. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00127">global.h:127</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 22 2016 16:31:52 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 23 2016 08:42:47 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

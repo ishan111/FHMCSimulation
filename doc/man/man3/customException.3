@@ -1,4 +1,4 @@
-.TH "customException" 3 "Thu Dec 22 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "customException" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -33,7 +33,7 @@ Inherits exception\&.
 .PP 
 Error handling via custom exceptions\&. 
 .PP
-Definition at line 128 of file global\&.h\&.
+Definition at line 123 of file global\&.h\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "customException::customException (std::stringm = \fC'custom exception occurred'\fP)\fC [inline]\fP"
@@ -41,13 +41,13 @@ Definition at line 128 of file global\&.h\&.
 .PP
 Instantiate an exeption with a user-defined error message\&. 
 .PP
-Definition at line 131 of file global\&.h\&.
+Definition at line 126 of file global\&.h\&.
 .SS "customException::~customException ()\fC [inline]\fP"
 
 .PP
 Throw the message to the user\&. 
 .PP
-Definition at line 132 of file global\&.h\&.
+Definition at line 127 of file global\&.h\&.
 .SH "Member Function Documentation"
 .PP 
 .SS "const char* customException::what () const\fC [inline]\fP"
@@ -55,7 +55,7 @@ Definition at line 132 of file global\&.h\&.
 .PP
 Return the user's message\&. 
 .PP
-Definition at line 130 of file global\&.h\&.
+Definition at line 125 of file global\&.h\&.
 .PP
 Referenced by compositeBarrier::addCylinderZ(), compositeBarrier::addHardWallZ(), simSystem::addPotential(), compositeBarrier::addRightTriangleXZ(), compositeBarrier::addSquareWellWallZ(), initializeSystemBarriers(), rightTriangleXZ::inside(), aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), moves::makeMove(), moves::moves(), performCrossover(), performTMMC(), performWALA(), simSystem::readConfig(), dynamic_one_dim_histogram::record(), simSystem::refineEnergyHistogramBounds(), simSystem::restartExtMoments(), simSystem::scratchEnergy(), setup(), simSystem::startTMMC(), simSystem::startWALA(), and tmmc::updateC()\&.
 

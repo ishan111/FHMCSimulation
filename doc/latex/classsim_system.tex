@@ -179,7 +179,7 @@ std\-::vector$<$ \hyperlink{classcomposite_barrier}{composite\-Barrier} $>$ \hyp
 \subsection{Detailed Description}
 System information for the simulation. 
 
-Definition at line 33 of file system.\-h.
+Definition at line 26 of file system.\-h.
 
 
 
@@ -193,11 +193,11 @@ Definition at line 33 of file system.\-h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classsim_system_a2312059f2775a063d02e5739721f7ece}
 
 
-Definition at line 35 of file system.\-h.
+Definition at line 28 of file system.\-h.
 
 
 \begin{DoxyCode}
-35 \{;\}
+28 \{;\}
 \end{DoxyCode}
 \hypertarget{classsim_system_a1a5ca1d7704d8f26b3cb19ebba57e045}{\index{sim\-System@{sim\-System}!sim\-System@{sim\-System}}
 \index{sim\-System@{sim\-System}!simSystem@{sim\-System}}
@@ -486,7 +486,7 @@ References tmmc\-Bias, use\-T\-M\-M\-C, use\-W\-A\-L\-A, and wl\-Bias.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classsim_system_a09c4ea670168c9f1d549d2a5120eb13c}
 
 
-Definition at line 39 of file system.\-h.
+Definition at line 32 of file system.\-h.
 
 
 
@@ -494,7 +494,7 @@ Referenced by initialize(), delete\-Particle\-::make(), insert\-Particle\-::make
 
 
 \begin{DoxyCode}
-39 \{ \textcolor{keywordflow}{return} toggleKE\_; \}
+32 \{ \textcolor{keywordflow}{return} toggleKE\_; \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a43ae18ca5e66c8e916b88b71c5ee5240}{\index{sim\-System@{sim\-System}!add\-Potential@{add\-Potential}}
 \index{add\-Potential@{add\-Potential}!simSystem@{sim\-System}}
@@ -528,7 +528,7 @@ However, it only stores the pointer so the object must be fixed in memory somewh
 \end{DoxyParams}
 
 
-Definition at line 1220 of file system.\-cpp.
+Definition at line 1205 of file system.\-cpp.
 
 
 
@@ -540,119 +540,117 @@ Referenced by set\-Pair\-Potentials().
 
 
 \begin{DoxyCode}
-1220                                                                                                            
+1205                                                                                                            
                                                 \{
-1221     \textcolor{keywordflow}{if} (spec1 >= nSpecies\_) \{
-1222         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Trying to define pair potential for species (1) that does
+1206     \textcolor{keywordflow}{if} (spec1 >= nSpecies\_) \{
+1207         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Trying to define pair potential for species (1) that does
        not exist yet"});
-1223         \textcolor{keywordflow}{return};
-1224     \}
-1225     \textcolor{keywordflow}{if} (spec2 >= nSpecies\_) \{
-1226         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Trying to define pair potential for species (2) that does
+1208     \}
+1209     \textcolor{keywordflow}{if} (spec2 >= nSpecies\_) \{
+1210         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Trying to define pair potential for species (2) that does
        not exist yet"});
-1227         \textcolor{keywordflow}{return};
-1228     \}
-1229 
-1230     \textcolor{keywordflow}{if} (ppot\_name == \textcolor{stringliteral}{"square\_well"}) \{
-1231         \textcolor{keywordflow}{try} \{
-1232             \textcolor{keyword}{auto} pp1 = std::make\_shared < squareWell > ();
-1233             pp1->setParameters(params);
-1234             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2] = pp1;
-1235             \textcolor{keyword}{auto} pp2 = std::make\_shared < squareWell > ();
-1236             pp2->setParameters(params);
-1237             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec2][spec1] = pp2;
-1238         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-1239             std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
-1240             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-1241         \}
-1242     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppot\_name == \textcolor{stringliteral}{"lennard\_jones"}) \{
-1243         \textcolor{keywordflow}{try} \{
-1244             \textcolor{keyword}{auto} pp1 = std::make\_shared < lennardJones > ();
-1245             pp1->setParameters(params);
-1246             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2] = pp1;
-1247             \textcolor{keyword}{auto} pp2 = std::make\_shared < lennardJones > ();
-1248             pp2->setParameters(params);
-1249             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec2][spec1] = pp2;
-1250         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-1251             std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
-1252             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-1253         \}
-1254     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppot\_name == \textcolor{stringliteral}{"fs\_lennard\_jones"}) \{
-1255         \textcolor{keywordflow}{try} \{
-1256             \textcolor{keyword}{auto} pp1 = std::make\_shared < fsLennardJones > ();
-1257             pp1->setParameters(params);
-1258             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2] = pp1;
-1259             \textcolor{keyword}{auto} pp2 = std::make\_shared < fsLennardJones > ();
-1260             pp2->setParameters(params);
-1261             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec2][spec1] = pp2;
-1262         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-1263             std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
-1264             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-1265         \}
-1266     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppot\_name == \textcolor{stringliteral}{"hard\_sphere"}) \{
-1267         \textcolor{keywordflow}{try} \{
-1268             \textcolor{keyword}{auto} pp1 = std::make\_shared < hardCore > ();
-1269             pp1->setParameters(params);
-1270             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2] = pp1;
-1271             \textcolor{keyword}{auto} pp2 = std::make\_shared < hardCore > ();
-1272             pp2->setParameters(params);
-1273             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec2][spec1] = pp2;
-1274         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-1275             std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
-1276             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-1277         \}
-1278     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppot\_name == \textcolor{stringliteral}{"tabulated"}) \{
-1279         \textcolor{keywordflow}{try} \{
-1280             \textcolor{keyword}{auto} pp1 = std::make\_shared < tabulated > ();
-1281             pp1->setParameters(params);
-1282             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2] = pp1;
-1283             \textcolor{keyword}{auto} pp2 = std::make\_shared < tabulated > ();
-1284             pp2->setParameters(params);
-1285             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec2][spec1] = pp2;
-1286         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-1287             std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
-1288             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-1289         \}
-1290     \} \textcolor{keywordflow}{else} \{
-1291         std::cerr << \textcolor{stringliteral}{"Unrecognized pair potential name for species "} << spec1 << \textcolor{stringliteral}{", "} << spec2 << std::endl
+1211     \}
+1212 
+1213     \textcolor{keywordflow}{if} (ppot\_name == \textcolor{stringliteral}{"square\_well"}) \{
+1214         \textcolor{keywordflow}{try} \{
+1215             \textcolor{keyword}{auto} pp1 = std::make\_shared < squareWell > ();
+1216             pp1->setParameters(params);
+1217             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2] = pp1;
+1218             \textcolor{keyword}{auto} pp2 = std::make\_shared < squareWell > ();
+1219             pp2->setParameters(params);
+1220             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec2][spec1] = pp2;
+1221         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+1222             std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+1223             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+1224         \}
+1225     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppot\_name == \textcolor{stringliteral}{"lennard\_jones"}) \{
+1226         \textcolor{keywordflow}{try} \{
+1227             \textcolor{keyword}{auto} pp1 = std::make\_shared < lennardJones > ();
+1228             pp1->setParameters(params);
+1229             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2] = pp1;
+1230             \textcolor{keyword}{auto} pp2 = std::make\_shared < lennardJones > ();
+1231             pp2->setParameters(params);
+1232             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec2][spec1] = pp2;
+1233         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+1234             std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+1235             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+1236         \}
+1237     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppot\_name == \textcolor{stringliteral}{"fs\_lennard\_jones"}) \{
+1238         \textcolor{keywordflow}{try} \{
+1239             \textcolor{keyword}{auto} pp1 = std::make\_shared < fsLennardJones > ();
+1240             pp1->setParameters(params);
+1241             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2] = pp1;
+1242             \textcolor{keyword}{auto} pp2 = std::make\_shared < fsLennardJones > ();
+1243             pp2->setParameters(params);
+1244             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec2][spec1] = pp2;
+1245         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+1246             std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+1247             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+1248         \}
+1249     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppot\_name == \textcolor{stringliteral}{"hard\_sphere"}) \{
+1250         \textcolor{keywordflow}{try} \{
+1251             \textcolor{keyword}{auto} pp1 = std::make\_shared < hardCore > ();
+1252             pp1->setParameters(params);
+1253             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2] = pp1;
+1254             \textcolor{keyword}{auto} pp2 = std::make\_shared < hardCore > ();
+1255             pp2->setParameters(params);
+1256             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec2][spec1] = pp2;
+1257         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+1258             std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+1259             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+1260         \}
+1261     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppot\_name == \textcolor{stringliteral}{"tabulated"}) \{
+1262         \textcolor{keywordflow}{try} \{
+1263             \textcolor{keyword}{auto} pp1 = std::make\_shared < tabulated > ();
+1264             pp1->setParameters(params);
+1265             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2] = pp1;
+1266             \textcolor{keyword}{auto} pp2 = std::make\_shared < tabulated > ();
+1267             pp2->setParameters(params);
+1268             \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec2][spec1] = pp2;
+1269         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+1270             std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+1271             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+1272         \}
+1273     \} \textcolor{keywordflow}{else} \{
+1274         std::cerr << \textcolor{stringliteral}{"Unrecognized pair potential name for species "} << spec1 << \textcolor{stringliteral}{", "} << spec2 << std::endl
       ;
-1292         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-1293     \}
-1294 
-1295     ppotSet\_[spec1][spec2] = \textcolor{keyword}{true};
-1296     ppotSet\_[spec2][spec1] = \textcolor{keyword}{true};
-1297 
-1298     \textcolor{keywordflow}{if} (useCellList) \{
-1299         std::cout << \textcolor{stringliteral}{"Setting up cell list for interactions between type "} << spec1 << \textcolor{stringliteral}{" and "} << spec2 << 
+1275         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+1276     \}
+1277 
+1278     ppotSet\_[spec1][spec2] = \textcolor{keyword}{true};
+1279     ppotSet\_[spec2][spec1] = \textcolor{keyword}{true};
+1280 
+1281     \textcolor{keywordflow}{if} (useCellList) \{
+1282         std::cout << \textcolor{stringliteral}{"Setting up cell list for interactions between type "} << spec1 << \textcolor{stringliteral}{" and "} << spec2 << 
       std::endl;
-1300         \textcolor{comment}{// add creation of cell lists}
-1301         \textcolor{keywordflow}{if} ((\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->rcut() > box\_[0]/3.0) || (\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->rcut() > box\_[1]/3.0
+1283         \textcolor{comment}{// add creation of cell lists}
+1284         \textcolor{keywordflow}{if} ((\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->rcut() > box\_[0]/3.0) || (\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->rcut() > box\_[1]/3.0
       ) || (\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2] ->rcut() > box\_[2]/3.0)) \{
-1302             std::cerr << \textcolor{stringliteral}{"Cutoff ("} << \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->rcut() << \textcolor{stringliteral}{") larger than 1.0/3.0 boxsize,
+1285             std::cerr << \textcolor{stringliteral}{"Cutoff ("} << \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->rcut() << \textcolor{stringliteral}{") larger than 1.0/3.0 boxsize,
        disabling cell lists for this interaction."} << std::endl;
-1303             useCellList\_[spec1][spec2] = \textcolor{keyword}{false};
-1304             useCellList\_[spec2][spec1] = \textcolor{keyword}{false};
-1305         \} \textcolor{keywordflow}{else} \{
-1306             std::cout << \textcolor{stringliteral}{"Creating Cell list with rcut = "} << \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->rcut() << std::endl;
-1307             useCellList\_[spec1][spec2] = \textcolor{keyword}{true};
-1308             useCellList\_[spec2][spec1] = \textcolor{keyword}{true};
-1309 
-1310             std::vector <atom*> dummyList(0);
-1311 
-1312             \textcolor{keywordflow}{if} (cellListsByPairType\_[spec1][spec2] == NULL) \{
-1313                 cellLists\_.push\_back(\hyperlink{classcell_list}{cellList}(box\_, \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->rcut(), dummyList));
-1314                 cellListsByPairType\_[spec1][spec2] = &cellLists\_[cellLists\_.size()-1];
-1315             \}
-1316             \textcolor{keywordflow}{if} (cellListsByPairType\_[spec2][spec1] == NULL) \{
-1317                 cellLists\_.push\_back(\hyperlink{classcell_list}{cellList}(box\_, \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec2][spec1]->rcut(), dummyList));
-1318                 cellListsByPairType\_[spec2][spec1] = &cellLists\_[cellLists\_.size()-1];
-1319             \}
-1320         \}
-1321     \} \textcolor{keywordflow}{else} \{
-1322         useCellList\_[spec1][spec2] = \textcolor{keyword}{false};
-1323         useCellList\_[spec2][spec1] = \textcolor{keyword}{false};
-1324     \}
-1325 \}
+1286             useCellList\_[spec1][spec2] = \textcolor{keyword}{false};
+1287             useCellList\_[spec2][spec1] = \textcolor{keyword}{false};
+1288         \} \textcolor{keywordflow}{else} \{
+1289             std::cout << \textcolor{stringliteral}{"Creating Cell list with rcut = "} << \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->rcut() << std::endl;
+1290             useCellList\_[spec1][spec2] = \textcolor{keyword}{true};
+1291             useCellList\_[spec2][spec1] = \textcolor{keyword}{true};
+1292 
+1293             std::vector <atom*> dummyList(0);
+1294 
+1295             \textcolor{keywordflow}{if} (cellListsByPairType\_[spec1][spec2] == NULL) \{
+1296                 cellLists\_.push\_back(\hyperlink{classcell_list}{cellList}(box\_, \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->rcut(), dummyList));
+1297                 cellListsByPairType\_[spec1][spec2] = &cellLists\_[cellLists\_.size()-1];
+1298             \}
+1299             \textcolor{keywordflow}{if} (cellListsByPairType\_[spec2][spec1] == NULL) \{
+1300                 cellLists\_.push\_back(\hyperlink{classcell_list}{cellList}(box\_, \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec2][spec1]->rcut(), dummyList));
+1301                 cellListsByPairType\_[spec2][spec1] = &cellLists\_[cellLists\_.size()-1];
+1302             \}
+1303         \}
+1304     \} \textcolor{keywordflow}{else} \{
+1305         useCellList\_[spec1][spec2] = \textcolor{keyword}{false};
+1306         useCellList\_[spec2][spec1] = \textcolor{keyword}{false};
+1307     \}
+1308 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{\index{sim\-System@{sim\-System}!beta@{beta}}
 \index{beta@{beta}!simSystem@{sim\-System}}
@@ -667,7 +665,7 @@ Return 1/k\-T.
 
 
 
-Definition at line 94 of file system.\-h.
+Definition at line 87 of file system.\-h.
 
 
 
@@ -686,7 +684,7 @@ Return the system box dimensions.
 
 
 
-Definition at line 111 of file system.\-h.
+Definition at line 104 of file system.\-h.
 
 
 
@@ -705,7 +703,7 @@ Monitor the energy histogram bounds at each Ntot.
 
 
 
-Definition at line 852 of file system.\-cpp.
+Definition at line 847 of file system.\-cpp.
 
 
 
@@ -713,13 +711,13 @@ Referenced by perform\-Crossover(), and perform\-W\-A\-L\-A().
 
 
 \begin{DoxyCode}
-852                                             \{
-853     \textcolor{keywordflow}{if} (totN\_ >= totNBounds\_[0] && totN\_ <= totNBounds\_[1]) \{
-854         \textcolor{keyword}{const} \textcolor{keywordtype}{int} address = totN\_-totNBounds\_[0];
-855         energyHistogram\_lb\_[address] = std::min(energyHistogram\_lb\_[address], energy\_);
-856         energyHistogram\_ub\_[address] = std::max(energyHistogram\_ub\_[address], energy\_);
-857     \}
-858 \}
+847                                             \{
+848     \textcolor{keywordflow}{if} (totN\_ >= totNBounds\_[0] && totN\_ <= totNBounds\_[1]) \{
+849         \textcolor{keyword}{const} \textcolor{keywordtype}{int} address = totN\_-totNBounds\_[0];
+850         energyHistogram\_lb\_[address] = std::min(energyHistogram\_lb\_[address], energy\_);
+851         energyHistogram\_ub\_[address] = std::max(energyHistogram\_ub\_[address], energy\_);
+852     \}
+853 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a18e515d42d1d653bcac67d61701983eb}{\index{sim\-System@{sim\-System}!decrement\-M\-State@{decrement\-M\-State}}
 \index{decrement\-M\-State@{decrement\-M\-State}!simSystem@{sim\-System}}
@@ -945,7 +943,7 @@ Return the system's instantaneous energy.
 
 
 
-Definition at line 91 of file system.\-h.
+Definition at line 84 of file system.\-h.
 
 
 
@@ -964,7 +962,11 @@ Get counter for extensive moments needed for restarting system from a checkpoint
 
 
 
-Definition at line 110 of file system.\-h.
+Definition at line 103 of file system.\-h.
+
+
+
+References histogram\-::get\-Counter().
 
 
 
@@ -983,7 +985,7 @@ Return the system's current expanded ensemble fractional state.
 
 
 
-Definition at line 87 of file system.\-h.
+Definition at line 80 of file system.\-h.
 
 
 
@@ -1002,7 +1004,7 @@ Returns current tally of energy min at each Ntot for checkpointing.
 
 
 
-Definition at line 112 of file system.\-h.
+Definition at line 105 of file system.\-h.
 
 
 
@@ -1021,7 +1023,7 @@ Returns current tally of energy max at each Ntot for checkpointing.
 
 
 
-Definition at line 113 of file system.\-h.
+Definition at line 106 of file system.\-h.
 
 
 
@@ -1040,7 +1042,7 @@ Returns a pointer the atom in the system that is currently only fractionally ins
 
 
 
-Definition at line 117 of file system.\-h.
+Definition at line 110 of file system.\-h.
 
 
 
@@ -1059,7 +1061,7 @@ Return the atom type of the fractional atom.
 
 
 
-Definition at line 89 of file system.\-h.
+Definition at line 82 of file system.\-h.
 
 
 
@@ -1078,7 +1080,7 @@ Return the max order the extensive moments are being stored out to.
 
 
 
-Definition at line 85 of file system.\-h.
+Definition at line 78 of file system.\-h.
 
 
 
@@ -1111,7 +1113,7 @@ neighbor\-\_\-list
 \end{DoxyReturn}
 
 
-Definition at line 1501 of file system.\-cpp.
+Definition at line 1484 of file system.\-cpp.
 
 
 
@@ -1123,49 +1125,49 @@ Referenced by delete\-Particle\-::make(), translate\-Particle\-::make(), swap\-P
 
 
 \begin{DoxyCode}
-1501                                                                                                            
+1484                                                                                                            
                     \{
-1502     std::vector < atom* > neighbors;
-1503 
-1504     \textcolor{keywordtype}{int} end = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndexA];
-1505     \textcolor{keywordflow}{if} (Mcurrent\_ > 0 && typeIndexA == fractionalAtomType\_) \{
-1506         \textcolor{comment}{// account for partial atom too}
-1507         end++;
-1508     \}
-1509     neighbors.reserve(end);
-1510 
-1511     \textcolor{comment}{// if no cell lists are defined for this interaction, return all particles}
-1512     \textcolor{keywordflow}{if} (!useCellList\_[typeIndexA][typeIndexB]) \{
-1513         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < end; ++i) \{
-1514             \textcolor{keywordflow}{if} (\_atom != &\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndexA][i]) \{ \textcolor{comment}{// watch out for self in case typeA = typeB}
-1515                 neighbors.push\_back(&\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndexA][i]);
-1516             \}
-1517         \}
-1518     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (useCellList\_[typeIndexA][typeIndexB]) \{
-1519         \hyperlink{classcell_list}{cellList}* cl = cellListsByPairType\_[typeIndexA][typeIndexB];
-1520         \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} cellIndex = cl->\hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_atom->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_atom->
+1485     std::vector < atom* > neighbors;
+1486 
+1487     \textcolor{keywordtype}{int} end = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[typeIndexA];
+1488     \textcolor{keywordflow}{if} (Mcurrent\_ > 0 && typeIndexA == fractionalAtomType\_) \{
+1489         \textcolor{comment}{// account for partial atom too}
+1490         end++;
+1491     \}
+1492     neighbors.reserve(end);
+1493 
+1494     \textcolor{comment}{// if no cell lists are defined for this interaction, return all particles}
+1495     \textcolor{keywordflow}{if} (!useCellList\_[typeIndexA][typeIndexB]) \{
+1496         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < end; ++i) \{
+1497             \textcolor{keywordflow}{if} (\_atom != &\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndexA][i]) \{ \textcolor{comment}{// watch out for self in case typeA = typeB}
+1498                 neighbors.push\_back(&\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndexA][i]);
+1499             \}
+1500         \}
+1501     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (useCellList\_[typeIndexA][typeIndexB]) \{
+1502         \hyperlink{classcell_list}{cellList}* cl = cellListsByPairType\_[typeIndexA][typeIndexB];
+1503         \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} cellIndex = cl->\hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_atom->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_atom->
       \hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_atom->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]);
-1521 
-1522         \textcolor{comment}{// loop over own cell}
-1523         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[cellIndex].size(); ++i) \{
-1524             \textcolor{keywordflow}{if} (\_atom != cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[cellIndex][i]) \{
-1525                 neighbors.push\_back(cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[cellIndex][i]);
-1526             \}
-1527         \}
-1528 
-1529         \textcolor{comment}{// loop over neighboring cells}
-1530         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < cl->\hyperlink{classcell_list_ada607886d0e5a20d710dde694d6d989f}{neighbours}[cellIndex].size(); ++i) \{
-1531             \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} neighborCellIndex = cl->\hyperlink{classcell_list_ada607886d0e5a20d710dde694d6d989f}{neighbours}[cellIndex][i];
-1532             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[neighborCellIndex].size(); ++j) \{
-1533                 \textcolor{keywordflow}{if} (\_atom != cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[neighborCellIndex][j]) \{
-1534                     neighbors.push\_back(cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[neighborCellIndex][j]);
-1535                 \}
-1536             \}
-1537         \}
-1538     \}
-1539 
-1540     \textcolor{keywordflow}{return} neighbors;
-1541 \}
+1504 
+1505         \textcolor{comment}{// loop over own cell}
+1506         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[cellIndex].size(); ++i) \{
+1507             \textcolor{keywordflow}{if} (\_atom != cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[cellIndex][i]) \{
+1508                 neighbors.push\_back(cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[cellIndex][i]);
+1509             \}
+1510         \}
+1511 
+1512         \textcolor{comment}{// loop over neighboring cells}
+1513         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < cl->\hyperlink{classcell_list_ada607886d0e5a20d710dde694d6d989f}{neighbours}[cellIndex].size(); ++i) \{
+1514             \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} neighborCellIndex = cl->\hyperlink{classcell_list_ada607886d0e5a20d710dde694d6d989f}{neighbours}[cellIndex][i];
+1515             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[neighborCellIndex].size(); ++j) \{
+1516                 \textcolor{keywordflow}{if} (\_atom != cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[neighborCellIndex][j]) \{
+1517                     neighbors.push\_back(cl->\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[neighborCellIndex][j]);
+1518                 \}
+1519             \}
+1520         \}
+1521     \}
+1522 
+1523     \textcolor{keywordflow}{return} neighbors;
+1524 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_aa31d40c91cb50f143a9613d362798887}{\index{sim\-System@{sim\-System}!get\-T\-M\-M\-C\-Bias@{get\-T\-M\-M\-C\-Bias}}
 \index{get\-T\-M\-M\-C\-Bias@{get\-T\-M\-M\-C\-Bias}!simSystem@{sim\-System}}
@@ -1185,7 +1187,7 @@ tmmc Pointer to T\-M\-M\-C biasing object being used.
 \end{DoxyReturn}
 
 
-Definition at line 1691 of file system.\-cpp.
+Definition at line 1674 of file system.\-cpp.
 
 
 
@@ -1197,13 +1199,13 @@ Referenced by checkpoint\-::dump(), checkpoint\-::load(), perform\-Crossover(), 
 
 
 \begin{DoxyCode}
-1691                               \{
-1692     \textcolor{keywordflow}{if} (\hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC} == \textcolor{keyword}{true}) \{
-1693         \textcolor{keywordflow}{return} \hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias};
-1694     \} \textcolor{keywordflow}{else} \{
-1695         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Not using TMMC"});
-1696     \}
-1697 \}
+1674                               \{
+1675     \textcolor{keywordflow}{if} (\hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC} == \textcolor{keyword}{true}) \{
+1676         \textcolor{keywordflow}{return} \hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias};
+1677     \} \textcolor{keywordflow}{else} \{
+1678         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Not using TMMC"});
+1679     \}
+1680 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_aa4ad1afff101bb530e1590df05035276}{\index{sim\-System@{sim\-System}!get\-Total\-M@{get\-Total\-M}}
 \index{get\-Total\-M@{get\-Total\-M}!simSystem@{sim\-System}}
@@ -1218,7 +1220,7 @@ Return the total number of fractional states available to species in the expande
 
 
 
-Definition at line 88 of file system.\-h.
+Definition at line 81 of file system.\-h.
 
 
 
@@ -1237,7 +1239,7 @@ Return a sum of the total number of atoms currently in the system.
 
 
 
-Definition at line 84 of file system.\-h.
+Definition at line 77 of file system.\-h.
 
 
 
@@ -1261,7 +1263,7 @@ wala Pointer to W\-A\-L\-A biasing object being used.
 \end{DoxyReturn}
 
 
-Definition at line 1704 of file system.\-cpp.
+Definition at line 1687 of file system.\-cpp.
 
 
 
@@ -1273,13 +1275,13 @@ Referenced by checkpoint\-::dump(), checkpoint\-::load(), agg\-Vol\-Bias3\-::mak
 
 
 \begin{DoxyCode}
-1704                               \{
-1705     \textcolor{keywordflow}{if} (\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA} == \textcolor{keyword}{true}) \{
-1706         \textcolor{keywordflow}{return} \hyperlink{classsim_system_a6dc8d9f89dfcfa247a59bc50889c49e7}{wlBias};
-1707     \} \textcolor{keywordflow}{else} \{
-1708         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Not using WALA"});
-1709     \}
-1710 \}
+1687                               \{
+1688     \textcolor{keywordflow}{if} (\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA} == \textcolor{keyword}{true}) \{
+1689         \textcolor{keywordflow}{return} \hyperlink{classsim_system_a6dc8d9f89dfcfa247a59bc50889c49e7}{wlBias};
+1690     \} \textcolor{keywordflow}{else} \{
+1691         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Not using WALA"});
+1692     \}
+1693 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a6ad31c08955b80873f865b3069618dcb}{\index{sim\-System@{sim\-System}!increment\-Energy@{increment\-Energy}}
 \index{increment\-Energy@{increment\-Energy}!simSystem@{sim\-System}}
@@ -1294,7 +1296,7 @@ Increment the system's energy.
 
 
 
-Definition at line 41 of file system.\-h.
+Definition at line 34 of file system.\-h.
 
 
 
@@ -1480,7 +1482,7 @@ Return the mass of a given species' index.
 
 
 
-Definition at line 96 of file system.\-h.
+Definition at line 89 of file system.\-h.
 
 
 
@@ -1507,7 +1509,7 @@ max\-Species Maximum number of them allowed
 \end{DoxyReturn}
 
 
-Definition at line 1657 of file system.\-cpp.
+Definition at line 1640 of file system.\-cpp.
 
 
 
@@ -1515,17 +1517,17 @@ Referenced by insert\-Particle\-::make(), and sim\-System().
 
 
 \begin{DoxyCode}
-1657                                                 \{
-1658     \textcolor{keywordflow}{if} (maxSpecies\_.begin() == maxSpecies\_.end()) \{
-1659             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"No species in the system, cannot report a maximum"});
-1660         \}
-1661         \textcolor{keywordflow}{if} (maxSpecies\_.size() <= index) \{
-1662             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"System does not contain that species, cannot report a
+1640                                                 \{
+1641     \textcolor{keywordflow}{if} (maxSpecies\_.begin() == maxSpecies\_.end()) \{
+1642             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"No species in the system, cannot report a maximum"});
+1643         \}
+1644         \textcolor{keywordflow}{if} (maxSpecies\_.size() <= index) \{
+1645             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"System does not contain that species, cannot report a
        maximum"});
-1663         \} \textcolor{keywordflow}{else}  \{
-1664             \textcolor{keywordflow}{return} maxSpecies\_[index];
-1665         \}
-1666 \}
+1646         \} \textcolor{keywordflow}{else}  \{
+1647             \textcolor{keywordflow}{return} maxSpecies\_[index];
+1648         \}
+1649 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_afafda4a09ed180ee9c5580d196d8ca9f}{\index{sim\-System@{sim\-System}!min\-Species@{min\-Species}}
 \index{min\-Species@{min\-Species}!simSystem@{sim\-System}}
@@ -1548,7 +1550,7 @@ min\-Species Minimum number of them allowed
 \end{DoxyReturn}
 
 
-Definition at line 1675 of file system.\-cpp.
+Definition at line 1658 of file system.\-cpp.
 
 
 
@@ -1556,17 +1558,17 @@ Referenced by delete\-Particle\-::make(), and sim\-System().
 
 
 \begin{DoxyCode}
-1675                                                 \{
-1676     \textcolor{keywordflow}{if} (minSpecies\_.begin() == minSpecies\_.end()) \{
-1677             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"No species in the system, cannot report a minimum"});
-1678         \}
-1679         \textcolor{keywordflow}{if} (minSpecies\_.size() <= index) \{
-1680             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"System does not contain that species, cannot report a
+1658                                                 \{
+1659     \textcolor{keywordflow}{if} (minSpecies\_.begin() == minSpecies\_.end()) \{
+1660             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"No species in the system, cannot report a minimum"});
+1661         \}
+1662         \textcolor{keywordflow}{if} (minSpecies\_.size() <= index) \{
+1663             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"System does not contain that species, cannot report a
        minimum"});
-1681         \} \textcolor{keywordflow}{else}  \{
-1682             \textcolor{keywordflow}{return} minSpecies\_[index];
-1683         \}
-1684 \}
+1664         \} \textcolor{keywordflow}{else}  \{
+1665             \textcolor{keywordflow}{return} minSpecies\_[index];
+1666         \}
+1667 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_af1e3f5320aff976a448647244d5950d1}{\index{sim\-System@{sim\-System}!mu@{mu}}
 \index{mu@{mu}!simSystem@{sim\-System}}
@@ -1581,7 +1583,7 @@ Return the chemical potential for a given species' index.
 
 
 
-Definition at line 95 of file system.\-h.
+Definition at line 88 of file system.\-h.
 
 
 
@@ -1600,7 +1602,7 @@ Return the number of different species in the system.
 
 
 
-Definition at line 79 of file system.\-h.
+Definition at line 72 of file system.\-h.
 
 
 
@@ -1620,7 +1622,7 @@ Boolean which returns whether or not a pair has had its potential specified by t
 
 
 
-Definition at line 77 of file system.\-h.
+Definition at line 70 of file system.\-h.
 
 
 
@@ -1638,8 +1640,6 @@ Referenced by check\-Bounds(), and read\-Config().
 
 Print the (normalized by default) energy histogram for each Ntot. 
 
-net\-C\-D\-F4 not enabled
-
 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em file\-Name} & Prefix of the filename to load from \\
@@ -1649,7 +1649,7 @@ net\-C\-D\-F4 not enabled
 \end{DoxyParams}
 
 
-Definition at line 916 of file system.\-cpp.
+Definition at line 911 of file system.\-cpp.
 
 
 
@@ -1657,67 +1657,61 @@ Referenced by checkpoint\-::dump(), and perform\-T\-M\-M\-C().
 
 
 \begin{DoxyCode}
-916                                                                                     \{
-917 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
-918 \textcolor{preprocessor}{}    \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot record the energyHistogram for each Ntot in netCDF4
-       format."});
-919 \textcolor{preprocessor}{#else}
-920 \textcolor{preprocessor}{}    \textcolor{comment}{// Without netCDF capabilities, just print to ASCII file}
-921     std::ofstream of;
-922     std::string name = fileName+\textcolor{stringliteral}{".dat"};
-923     of.open(name.c\_str(), std::ofstream::out);
-924     of << \textcolor{stringliteral}{"# <P(U)> as a function of N\_tot."} << std::endl;
-925     of << \textcolor{stringliteral}{"# number\_of\_species: "} << nSpecies\_ << std::endl;
-926     of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << totNBounds\_[1] << std::endl;
-927     of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << totNBounds\_[0] << std::endl;
-928     \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-929     of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
-930     of << \textcolor{stringliteral}{"# Bin widths for each"} << std::endl;
-931     \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = energyHistogram\_.begin(); it != 
+911                                                                                     \{
+912     std::ofstream of;
+913     std::string name = fileName+\textcolor{stringliteral}{".dat"};
+914     of.open(name.c\_str(), std::ofstream::out);
+915     of << \textcolor{stringliteral}{"# <P(U)> as a function of N\_tot."} << std::endl;
+916     of << \textcolor{stringliteral}{"# number\_of\_species: "} << nSpecies\_ << std::endl;
+917     of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << totNBounds\_[1] << std::endl;
+918     of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << totNBounds\_[0] << std::endl;
+919     \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
+920     of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
+921     of << \textcolor{stringliteral}{"# Bin widths for each"} << std::endl;
+922     \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = energyHistogram\_.begin(); it != 
       energyHistogram\_.end(); ++it) \{
-932         of << it->get\_delta() << \textcolor{stringliteral}{"\(\backslash\)t"};
-933     \}
-934     of << std::endl;
-935     of << \textcolor{stringliteral}{"# Bin lower bound for each"} << std::endl;
-936     \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = energyHistogram\_.begin(); it != 
+923         of << it->get\_delta() << \textcolor{stringliteral}{"\(\backslash\)t"};
+924     \}
+925     of << std::endl;
+926     of << \textcolor{stringliteral}{"# Bin lower bound for each"} << std::endl;
+927     \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = energyHistogram\_.begin(); it != 
       energyHistogram\_.end(); ++it) \{
-937         of << it->get\_lb() << \textcolor{stringliteral}{"\(\backslash\)t"};
-938     \}
-939     of << std::endl;
-940     of << \textcolor{stringliteral}{"# Bin upper bound for each"} << std::endl;
-941     \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = energyHistogram\_.begin(); it != 
+928         of << it->get\_lb() << \textcolor{stringliteral}{"\(\backslash\)t"};
+929     \}
+930     of << std::endl;
+931     of << \textcolor{stringliteral}{"# Bin upper bound for each"} << std::endl;
+932     \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = energyHistogram\_.begin(); it != 
       energyHistogram\_.end(); ++it) \{
-942         of << it->get\_ub() << \textcolor{stringliteral}{"\(\backslash\)t"};
-943     \}
-944     of << std::endl;
-945     \textcolor{keywordflow}{if} (normalize) \{
-946         of << \textcolor{stringliteral}{"# Normalized histogram for each"} << std::endl;
-947         \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = energyHistogram\_.begin(); it != 
+933         of << it->get\_ub() << \textcolor{stringliteral}{"\(\backslash\)t"};
+934     \}
+935     of << std::endl;
+936     \textcolor{keywordflow}{if} (normalize) \{
+937         of << \textcolor{stringliteral}{"# Normalized histogram for each"} << std::endl;
+938         \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = energyHistogram\_.begin(); it != 
       energyHistogram\_.end(); ++it) \{
-948             std::deque <double> h = it->get\_hist();
-949             \textcolor{keywordtype}{double} sum = 0.0;
-950             \textcolor{keywordflow}{for} (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) \{
-951                 sum += *it2;
-952             \}
+939             std::deque <double> h = it->get\_hist();
+940             \textcolor{keywordtype}{double} sum = 0.0;
+941             \textcolor{keywordflow}{for} (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) \{
+942                 sum += *it2;
+943             \}
+944             \textcolor{keywordflow}{for} (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) \{
+945                 of << std::setprecision(15) << *it2/sum << \textcolor{stringliteral}{"\(\backslash\)t"};
+946             \}
+947             of << std::endl;
+948         \}
+949     \} \textcolor{keywordflow}{else} \{
+950         of << \textcolor{stringliteral}{"# Unnormalized histogram for each"} << std::endl;
+951         \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = energyHistogram\_.begin(); it != 
+      energyHistogram\_.end(); ++it) \{
+952             std::deque <double> h = it->get\_hist();
 953             \textcolor{keywordflow}{for} (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) \{
-954                 of << std::setprecision(15) << *it2/sum << \textcolor{stringliteral}{"\(\backslash\)t"};
+954                 of << std::setprecision(15) << *it2 << \textcolor{stringliteral}{"\(\backslash\)t"};
 955             \}
 956             of << std::endl;
 957         \}
-958     \} \textcolor{keywordflow}{else} \{
-959         of << \textcolor{stringliteral}{"# Unnormalized histogram for each"} << std::endl;
-960         \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = energyHistogram\_.begin(); it != 
-      energyHistogram\_.end(); ++it) \{
-961             std::deque <double> h = it->get\_hist();
-962             \textcolor{keywordflow}{for} (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) \{
-963                 of << std::setprecision(15) << *it2 << \textcolor{stringliteral}{"\(\backslash\)t"};
-964             \}
-965             of << std::endl;
-966         \}
-967     \}
-968     of.close();
-969 \textcolor{preprocessor}{#endif}
-970 \textcolor{preprocessor}{}\}
+958     \}
+959     of.close();
+960 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a2818b2f0ff79782d5443ca0f191564f8}{\index{sim\-System@{sim\-System}!print\-Ext\-Moments@{print\-Ext\-Moments}}
 \index{print\-Ext\-Moments@{print\-Ext\-Moments}!simSystem@{sim\-System}}
@@ -1730,8 +1724,6 @@ Referenced by checkpoint\-::dump(), and perform\-T\-M\-M\-C().
 
 
 Print the (normalized by default) extensive energy histogram for each Ntot. 
-
-net\-C\-D\-F4 not enabled
 
 
 \begin{DoxyParams}[1]{Parameters}
@@ -1755,89 +1747,83 @@ Referenced by checkpoint\-::dump(), and perform\-T\-M\-M\-C().
 
 \begin{DoxyCode}
 655                                                                                \{
-656 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
-657 \textcolor{preprocessor}{}    \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot record the extensive moments for each Ntot in netCDF4
-       format."});
-658 \textcolor{preprocessor}{#else}
-659 \textcolor{preprocessor}{}    \textcolor{comment}{// Without netCDF capabilities, just print to ASCII file}
-660     std::ofstream of;
-661     std::string name = fileName+\textcolor{stringliteral}{".dat"};
-662     of.open(name.c\_str(), std::ofstream::out);
-663     of << \textcolor{stringliteral}{"# <N\_i^j*N\_k^m*U^p> as a function of N\_tot."} << std::endl;
-664     of << \textcolor{stringliteral}{"# number\_of\_species: "} << nSpecies\_ << std::endl;
-665     of << \textcolor{stringliteral}{"# max\_order: "} << max\_order\_ << std::endl;
-666     of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << totNBounds\_[1] << std::endl;
-667     of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << totNBounds\_[0] << std::endl;
-668     \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-669     of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
-670     of << \textcolor{stringliteral}{"#\(\backslash\)tN\_tot\(\backslash\)t"};
-671     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
-672         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j <= max\_order\_; ++j) \{
-673             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < nSpecies\_; ++k) \{
-674                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} m = 0; m <= max\_order\_; ++m) \{
-675                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} p = 0; p <= max\_order\_; ++p) \{
-676                         of << \textcolor{stringliteral}{"N\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"^"}+std::to\_string(j)+\textcolor{stringliteral}{"*N\_"}+std::to\_string(k+1)+\textcolor{stringliteral}{"^"}+
+656     std::ofstream of;
+657     std::string name = fileName+\textcolor{stringliteral}{".dat"};
+658     of.open(name.c\_str(), std::ofstream::out);
+659     of << \textcolor{stringliteral}{"# <N\_i^j*N\_k^m*U^p> as a function of N\_tot."} << std::endl;
+660     of << \textcolor{stringliteral}{"# number\_of\_species: "} << nSpecies\_ << std::endl;
+661     of << \textcolor{stringliteral}{"# max\_order: "} << max\_order\_ << std::endl;
+662     of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << totNBounds\_[1] << std::endl;
+663     of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << totNBounds\_[0] << std::endl;
+664     \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
+665     of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
+666     of << \textcolor{stringliteral}{"#\(\backslash\)tN\_tot\(\backslash\)t"};
+667     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+668         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j <= max\_order\_; ++j) \{
+669             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < nSpecies\_; ++k) \{
+670                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} m = 0; m <= max\_order\_; ++m) \{
+671                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} p = 0; p <= max\_order\_; ++p) \{
+672                         of << \textcolor{stringliteral}{"N\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"^"}+std::to\_string(j)+\textcolor{stringliteral}{"*N\_"}+std::to\_string(k+1)+\textcolor{stringliteral}{"^"}+
       std::to\_string(m)+\textcolor{stringliteral}{"*U^"}+std::to\_string(p)+\textcolor{stringliteral}{"\(\backslash\)t"};
-677                     \}
-678                 \}
-679             \}
-680         \}
-681     \}
-682     of << std::endl;
-683     std::vector <double> h = extensive\_moments\_.\hyperlink{classhistogram_afa81289dc32207eb3c44f8bd746f0d1d}{getRawHistogram} ();
-684     std::vector <double> ctr = extensive\_moments\_.\hyperlink{classhistogram_a7d3541bd86551053f9fda7b5ae81e3e8}{getCounter} ();
-685     std::vector <double> coords (6,0);
-686     \textcolor{keywordtype}{long} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} idx = 0;
-687     \textcolor{keywordflow}{if} (normalize) \{
-688         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} n = 0; n < totNBounds\_[1]-totNBounds\_[0]+1; ++n) \{
-689             of << n+totNBounds\_[0] << \textcolor{stringliteral}{"\(\backslash\)t"};
-690             coords[5] = n;
-691             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
-692                 coords[0] = i;
-693                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j <= max\_order\_; ++j) \{
-694                     coords[1] = j;
-695                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < nSpecies\_; ++k) \{
-696                         coords[2] = k;
-697                         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} m = 0; m <= max\_order\_; ++m) \{
-698                             coords[3] = m;
-699                             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} p = 0; p <= max\_order\_; ++p) \{
-700                                 coords[4] = p;
-701                                 idx = extensive\_moments\_.\hyperlink{classhistogram_ae52fa58934b56e05846a66e43c3184bd}{getAddress}(coords);
-702                                 of << std::setprecision(15) << h[idx]/ctr[idx] << \textcolor{stringliteral}{"\(\backslash\)t"};
-703                             \}
-704                         \}
-705                     \}
-706                 \}
-707             \}
-708             of << std::endl;
-709         \}
-710     \} \textcolor{keywordflow}{else} \{
-711         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} n = 0; n < totNBounds\_[1]-totNBounds\_[0]+1; ++n) \{
-712             of << n+totNBounds\_[0] << \textcolor{stringliteral}{"\(\backslash\)t"};
-713             coords[5] = n;
-714             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
-715                 coords[0] = i;
-716                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j <= max\_order\_; ++j) \{
-717                     coords[1] = j;
-718                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < nSpecies\_; ++k) \{
-719                         coords[2] = k;
-720                         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} m = 0; m <= max\_order\_; ++m) \{
-721                             coords[3] = m;
-722                             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} p = 0; p <= max\_order\_; ++p) \{
-723                                 coords[4] = p;
-724                                 idx = extensive\_moments\_.\hyperlink{classhistogram_ae52fa58934b56e05846a66e43c3184bd}{getAddress}(coords);
-725                                 of << std::setprecision(15) << h[idx] << \textcolor{stringliteral}{"\(\backslash\)t"};
-726                             \}
-727                         \}
-728                     \}
-729                 \}
-730             \}
-731             of << std::endl;
-732         \}
-733     \}
-734     of.close();
-735 \textcolor{preprocessor}{#endif}
-736 \textcolor{preprocessor}{}\}
+673                     \}
+674                 \}
+675             \}
+676         \}
+677     \}
+678     of << std::endl;
+679     std::vector <double> h = extensive\_moments\_.\hyperlink{classhistogram_afa81289dc32207eb3c44f8bd746f0d1d}{getRawHistogram} ();
+680     std::vector <double> ctr = extensive\_moments\_.\hyperlink{classhistogram_a7d3541bd86551053f9fda7b5ae81e3e8}{getCounter} ();
+681     std::vector <double> coords (6,0);
+682     \textcolor{keywordtype}{long} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} idx = 0;
+683     \textcolor{keywordflow}{if} (normalize) \{
+684         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} n = 0; n < totNBounds\_[1]-totNBounds\_[0]+1; ++n) \{
+685             of << n+totNBounds\_[0] << \textcolor{stringliteral}{"\(\backslash\)t"};
+686             coords[5] = n;
+687             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+688                 coords[0] = i;
+689                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j <= max\_order\_; ++j) \{
+690                     coords[1] = j;
+691                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < nSpecies\_; ++k) \{
+692                         coords[2] = k;
+693                         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} m = 0; m <= max\_order\_; ++m) \{
+694                             coords[3] = m;
+695                             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} p = 0; p <= max\_order\_; ++p) \{
+696                                 coords[4] = p;
+697                                 idx = extensive\_moments\_.\hyperlink{classhistogram_ae52fa58934b56e05846a66e43c3184bd}{getAddress}(coords);
+698                                 of << std::setprecision(15) << h[idx]/ctr[idx] << \textcolor{stringliteral}{"\(\backslash\)t"};
+699                             \}
+700                         \}
+701                     \}
+702                 \}
+703             \}
+704             of << std::endl;
+705         \}
+706     \} \textcolor{keywordflow}{else} \{
+707         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} n = 0; n < totNBounds\_[1]-totNBounds\_[0]+1; ++n) \{
+708             of << n+totNBounds\_[0] << \textcolor{stringliteral}{"\(\backslash\)t"};
+709             coords[5] = n;
+710             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+711                 coords[0] = i;
+712                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j <= max\_order\_; ++j) \{
+713                     coords[1] = j;
+714                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < nSpecies\_; ++k) \{
+715                         coords[2] = k;
+716                         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} m = 0; m <= max\_order\_; ++m) \{
+717                             coords[3] = m;
+718                             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} p = 0; p <= max\_order\_; ++p) \{
+719                                 coords[4] = p;
+720                                 idx = extensive\_moments\_.\hyperlink{classhistogram_ae52fa58934b56e05846a66e43c3184bd}{getAddress}(coords);
+721                                 of << std::setprecision(15) << h[idx] << \textcolor{stringliteral}{"\(\backslash\)t"};
+722                             \}
+723                         \}
+724                     \}
+725                 \}
+726             \}
+727             of << std::endl;
+728         \}
+729     \}
+730     of.close();
+731 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_ac29bdd6f7fa6f9526b7eafcf658d70d8}{\index{sim\-System@{sim\-System}!print\-Pk\-Histogram@{print\-Pk\-Histogram}}
 \index{print\-Pk\-Histogram@{print\-Pk\-Histogram}!simSystem@{sim\-System}}
@@ -1851,8 +1837,6 @@ Referenced by checkpoint\-::dump(), and perform\-T\-M\-M\-C().
 
 Print the (normalized by default) particle number histogram for each Ntot. 
 
-net\-C\-D\-F4 not enabled
-
 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em file\-Name} & Prefix of filename to print to \\
@@ -1862,7 +1846,7 @@ net\-C\-D\-F4 not enabled
 \end{DoxyParams}
 
 
-Definition at line 1074 of file system.\-cpp.
+Definition at line 1064 of file system.\-cpp.
 
 
 
@@ -1870,69 +1854,63 @@ Referenced by checkpoint\-::dump(), and perform\-T\-M\-M\-C().
 
 
 \begin{DoxyCode}
-1074                                                                                 \{
-1075 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
-1076 \textcolor{preprocessor}{}    \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot record the pkHistogram for each Ntot in netCDF4 format."})
-      ;
-1077 \textcolor{preprocessor}{#else}
-1078 \textcolor{preprocessor}{}    \textcolor{comment}{// Without netCDF capabilities, just print to ASCII file}
-1079     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
-1080         std::ofstream of;
-1081         std::string name = fileName+\textcolor{stringliteral}{"\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{".dat"};
-1082         of.open(name.c\_str(), std::ofstream::out);
-1083         of << \textcolor{stringliteral}{"# <P(N\_"} << i+1 << \textcolor{stringliteral}{")> as a function of N\_tot."} << std::endl;
-1084         of << \textcolor{stringliteral}{"# number\_of\_species: "} << nSpecies\_ << std::endl;
-1085         of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << totNBounds\_[1] << std::endl;
-1086         of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << totNBounds\_[0] << std::endl;
-1087         \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-1088         of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
-1089         of << \textcolor{stringliteral}{"# Bin widths for each species index "} << std::endl;
-1090         \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = pkHistogram\_[i].begin(); it != 
+1064                                                                                 \{
+1065     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+1066         std::ofstream of;
+1067         std::string name = fileName+\textcolor{stringliteral}{"\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{".dat"};
+1068         of.open(name.c\_str(), std::ofstream::out);
+1069         of << \textcolor{stringliteral}{"# <P(N\_"} << i+1 << \textcolor{stringliteral}{")> as a function of N\_tot."} << std::endl;
+1070         of << \textcolor{stringliteral}{"# number\_of\_species: "} << nSpecies\_ << std::endl;
+1071         of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << totNBounds\_[1] << std::endl;
+1072         of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << totNBounds\_[0] << std::endl;
+1073         \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
+1074         of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
+1075         of << \textcolor{stringliteral}{"# Bin widths for each species index "} << std::endl;
+1076         \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = pkHistogram\_[i].begin(); it != 
       pkHistogram\_[i].end(); ++it) \{
-1091             of << it->get\_delta() << \textcolor{stringliteral}{"\(\backslash\)t"};
-1092         \}
-1093         of << std::endl;
-1094         of << \textcolor{stringliteral}{"# Bin lower bound for each species index "} << std::endl;
-1095         \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = pkHistogram\_[i].begin(); it != 
+1077             of << it->get\_delta() << \textcolor{stringliteral}{"\(\backslash\)t"};
+1078         \}
+1079         of << std::endl;
+1080         of << \textcolor{stringliteral}{"# Bin lower bound for each species index "} << std::endl;
+1081         \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = pkHistogram\_[i].begin(); it != 
       pkHistogram\_[i].end(); ++it) \{
-1096             of << it->get\_lb() << \textcolor{stringliteral}{"\(\backslash\)t"};
-1097         \}
-1098         of << std::endl;
-1099         of << \textcolor{stringliteral}{"# Bin upper bound for each species index "} << std::endl;
-1100         \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = pkHistogram\_[i].begin(); it != 
+1082             of << it->get\_lb() << \textcolor{stringliteral}{"\(\backslash\)t"};
+1083         \}
+1084         of << std::endl;
+1085         of << \textcolor{stringliteral}{"# Bin upper bound for each species index "} << std::endl;
+1086         \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = pkHistogram\_[i].begin(); it != 
       pkHistogram\_[i].end(); ++it) \{
-1101             of << it->get\_ub() << \textcolor{stringliteral}{"\(\backslash\)t"};
-1102         \}
-1103         of << std::endl;
-1104         \textcolor{keywordflow}{if} (normalize) \{
-1105             of << \textcolor{stringliteral}{"# Normalized histogram for each species index "} << std::endl;
-1106             \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = pkHistogram\_[i].begin(); it != 
+1087             of << it->get\_ub() << \textcolor{stringliteral}{"\(\backslash\)t"};
+1088         \}
+1089         of << std::endl;
+1090         \textcolor{keywordflow}{if} (normalize) \{
+1091             of << \textcolor{stringliteral}{"# Normalized histogram for each species index "} << std::endl;
+1092             \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = pkHistogram\_[i].begin(); it != 
       pkHistogram\_[i].end(); ++it) \{
-1107                 std::deque <double> h = it->get\_hist();
-1108                 \textcolor{keywordtype}{double} sum = 0.0;
-1109                 \textcolor{keywordflow}{for} (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) \{
-1110                     sum += *it2;
-1111                 \}
-1112                 \textcolor{keywordflow}{for} (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) \{
-1113                     of << std::setprecision(15) << *it2/sum << \textcolor{stringliteral}{"\(\backslash\)t"};
-1114                 \}
-1115                 of << std::endl;
-1116             \}
-1117         \} \textcolor{keywordflow}{else} \{
-1118             of << \textcolor{stringliteral}{"# Unnormalized histogram for each species index "} << std::endl;
-1119             \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = pkHistogram\_[i].begin(); it != 
+1093                 std::deque <double> h = it->get\_hist();
+1094                 \textcolor{keywordtype}{double} sum = 0.0;
+1095                 \textcolor{keywordflow}{for} (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) \{
+1096                     sum += *it2;
+1097                 \}
+1098                 \textcolor{keywordflow}{for} (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) \{
+1099                     of << std::setprecision(15) << *it2/sum << \textcolor{stringliteral}{"\(\backslash\)t"};
+1100                 \}
+1101                 of << std::endl;
+1102             \}
+1103         \} \textcolor{keywordflow}{else} \{
+1104             of << \textcolor{stringliteral}{"# Unnormalized histogram for each species index "} << std::endl;
+1105             \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = pkHistogram\_[i].begin(); it != 
       pkHistogram\_[i].end(); ++it) \{
-1120                 std::deque <double> h = it->get\_hist();
-1121                 \textcolor{keywordflow}{for} (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) \{
-1122                     of << std::setprecision(15) << *it2 << \textcolor{stringliteral}{"\(\backslash\)t"};
-1123                 \}
-1124                 of << std::endl;
-1125             \}
-1126         \}
-1127         of.close();
-1128     \}
-1129 \textcolor{preprocessor}{#endif}
-1130 \textcolor{preprocessor}{}\}
+1106                 std::deque <double> h = it->get\_hist();
+1107                 \textcolor{keywordflow}{for} (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) \{
+1108                     of << std::setprecision(15) << *it2 << \textcolor{stringliteral}{"\(\backslash\)t"};
+1109                 \}
+1110                 of << std::endl;
+1111             \}
+1112         \}
+1113         of.close();
+1114     \}
+1115 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_ae3096dc65acdf38cc824e507cca33370}{\index{sim\-System@{sim\-System}!print\-Snapshot@{print\-Snapshot}}
 \index{print\-Snapshot@{print\-Snapshot}!simSystem@{sim\-System}}
@@ -1960,7 +1938,7 @@ This can be read in at a later time via estart() function.
 \end{DoxyParams}
 
 
-Definition at line 1334 of file system.\-cpp.
+Definition at line 1317 of file system.\-cpp.
 
 
 
@@ -1972,59 +1950,59 @@ Referenced by checkpoint\-::dump(), perform\-T\-M\-M\-C(), and setup().
 
 
 \begin{DoxyCode}
-1334                                                                                     \{
-1335     \textcolor{keywordflow}{if} (overwrite) \{
-1336         std::ofstream outfile (filename.c\_str(), std::ofstream::trunc);
-1337         \textcolor{keywordtype}{int} tot = 0;
-1338         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
-1339             tot += \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[j]; \textcolor{comment}{// only count fully inserted species}
-1340         \}
-1341 
-1342         outfile << tot << std::endl;
-1343         outfile << comment << std::endl;
-1344 
-1345         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
-1346             \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} num = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[j];
-1347             \textcolor{keywordflow}{if} (Mcurrent\_ > 1 && fractionalAtomType\_ == j) \{
-1348                 num += 1; \textcolor{comment}{// account for partially inserted atom}
-1349             \}
-1350             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < num; ++i) \{
-1351                 \textcolor{keywordflow}{if} (\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].mState == 0) \{ \textcolor{comment}{// only print fully inserted atoms}
-1352                     outfile << j << \textcolor{stringliteral}{"\(\backslash\)t"} <<  std::setprecision(15) << \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].pos[0] << \textcolor{stringliteral}{"\(\backslash\)t"} << 
+1317                                                                                     \{
+1318     \textcolor{keywordflow}{if} (overwrite) \{
+1319         std::ofstream outfile (filename.c\_str(), std::ofstream::trunc);
+1320         \textcolor{keywordtype}{int} tot = 0;
+1321         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
+1322             tot += \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[j]; \textcolor{comment}{// only count fully inserted species}
+1323         \}
+1324 
+1325         outfile << tot << std::endl;
+1326         outfile << comment << std::endl;
+1327 
+1328         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
+1329             \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} num = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[j];
+1330             \textcolor{keywordflow}{if} (Mcurrent\_ > 1 && fractionalAtomType\_ == j) \{
+1331                 num += 1; \textcolor{comment}{// account for partially inserted atom}
+1332             \}
+1333             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < num; ++i) \{
+1334                 \textcolor{keywordflow}{if} (\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].mState == 0) \{ \textcolor{comment}{// only print fully inserted atoms}
+1335                     outfile << j << \textcolor{stringliteral}{"\(\backslash\)t"} <<  std::setprecision(15) << \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].pos[0] << \textcolor{stringliteral}{"\(\backslash\)t"} << 
       std::setprecision(15) << \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].pos[1] << \textcolor{stringliteral}{"\(\backslash\)t"} << std::setprecision(15) << 
       \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].pos[2] << std::endl;
-1353                 \}
-1354             \}
-1355         \}
-1356 
-1357         outfile.close();
-1358     \} \textcolor{keywordflow}{else} \{
-1359         std::ofstream outfile (filename.c\_str(), std::ofstream::out | std::ofstream::app);
-1360         \textcolor{keywordtype}{int} tot = 0;
-1361         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
-1362             tot += \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[j]; \textcolor{comment}{// only count fully inserted species}
-1363         \}
-1364 
-1365         outfile << tot << std::endl;
-1366         outfile << comment << std::endl;
-1367 
-1368         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
-1369             \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} num = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[j];
-1370             \textcolor{keywordflow}{if} (Mcurrent\_ > 1 && fractionalAtomType\_ == j) \{
-1371                 num += 1; \textcolor{comment}{// account for partially inserted atom}
-1372             \}
-1373             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < num; ++i) \{
-1374                 \textcolor{keywordflow}{if} (\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].mState == 0) \{ \textcolor{comment}{// only print fully inserted atoms}
-1375                     outfile << j << \textcolor{stringliteral}{"\(\backslash\)t"} <<  std::setprecision(15) << \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].pos[0] << \textcolor{stringliteral}{"\(\backslash\)t"} << 
+1336                 \}
+1337             \}
+1338         \}
+1339 
+1340         outfile.close();
+1341     \} \textcolor{keywordflow}{else} \{
+1342         std::ofstream outfile (filename.c\_str(), std::ofstream::out | std::ofstream::app);
+1343         \textcolor{keywordtype}{int} tot = 0;
+1344         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
+1345             tot += \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[j]; \textcolor{comment}{// only count fully inserted species}
+1346         \}
+1347 
+1348         outfile << tot << std::endl;
+1349         outfile << comment << std::endl;
+1350 
+1351         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
+1352             \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} num = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[j];
+1353             \textcolor{keywordflow}{if} (Mcurrent\_ > 1 && fractionalAtomType\_ == j) \{
+1354                 num += 1; \textcolor{comment}{// account for partially inserted atom}
+1355             \}
+1356             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < num; ++i) \{
+1357                 \textcolor{keywordflow}{if} (\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].mState == 0) \{ \textcolor{comment}{// only print fully inserted atoms}
+1358                     outfile << j << \textcolor{stringliteral}{"\(\backslash\)t"} <<  std::setprecision(15) << \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].pos[0] << \textcolor{stringliteral}{"\(\backslash\)t"} << 
       std::setprecision(15) << \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].pos[1] << \textcolor{stringliteral}{"\(\backslash\)t"} << std::setprecision(15) << 
       \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[j][i].pos[2] << std::endl;
-1376                 \}
-1377             \}
-1378         \}
-1379 
-1380         outfile.close();
-1381     \}
-1382 \}
+1359                 \}
+1360             \}
+1361         \}
+1362 
+1363         outfile.close();
+1364     \}
+1365 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a3161d95bbb800d5d95a732ac5fc32b95}{\index{sim\-System@{sim\-System}!read\-Config@{read\-Config}}
 \index{read\-Config@{read\-Config}!simSystem@{sim\-System}}
@@ -2046,7 +2024,7 @@ Note that the number of species, etc. must already be specified in the construct
 \end{DoxyParams}
 
 
-Definition at line 1390 of file system.\-cpp.
+Definition at line 1373 of file system.\-cpp.
 
 
 
@@ -2058,118 +2036,118 @@ Referenced by checkpoint\-::load(), and setup().
 
 
 \begin{DoxyCode}
-1390                                               \{
-1391     std::cout << \textcolor{stringliteral}{"Reading initial configuration from "} << filename << std::endl;
-1392 
-1393     std::ifstream infile (filename.c\_str());
-1394     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
-1395         std::cerr << \textcolor{stringliteral}{"Cannot open "} << filename << std::endl;
-1396         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-1397     \}
-1398 
-1399     std::string line;
-1400     std::vector < atom > sysatoms;
-1401     std::vector < int > index;
-1402     \textcolor{keywordtype}{int} natoms = 0;
-1403     \textcolor{keywordtype}{int} lineIndex = 0;
-1404     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
-1405         std::stringstream lineStream(line);
-1406         \textcolor{keywordflow}{if} (lineIndex == 0) \{
-1407             lineStream >> natoms;
-1408             index.resize(natoms);
-1409             sysatoms.resize(natoms);
-1410         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex > 1) \{
-1411             lineStream >> index[lineIndex-2] >> sysatoms[lineIndex-2].pos[0] >> sysatoms[lineIndex-2].pos[1
+1373                                               \{
+1374     std::cout << \textcolor{stringliteral}{"Reading initial configuration from "} << filename << std::endl;
+1375 
+1376     std::ifstream infile (filename.c\_str());
+1377     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
+1378         std::cerr << \textcolor{stringliteral}{"Cannot open "} << filename << std::endl;
+1379         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+1380     \}
+1381 
+1382     std::string line;
+1383     std::vector < atom > sysatoms;
+1384     std::vector < int > index;
+1385     \textcolor{keywordtype}{int} natoms = 0;
+1386     \textcolor{keywordtype}{int} lineIndex = 0;
+1387     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
+1388         std::stringstream lineStream(line);
+1389         \textcolor{keywordflow}{if} (lineIndex == 0) \{
+1390             lineStream >> natoms;
+1391             index.resize(natoms);
+1392             sysatoms.resize(natoms);
+1393         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex > 1) \{
+1394             lineStream >> index[lineIndex-2] >> sysatoms[lineIndex-2].pos[0] >> sysatoms[lineIndex-2].pos[1
       ] >> sysatoms[lineIndex-2].pos[2];
-1412         \}
-1413         lineIndex++;
-1414     \}
-1415     infile.close();
-1416 
-1417     \textcolor{comment}{// check if within global bounds}
-1418     \textcolor{keywordflow}{if} (sysatoms.size() > totNBounds\_[1] || sysatoms.size() < totNBounds\_[0]) \{
-1419         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Number of particles ("}+std::to\_string(sysatoms.size())+\textcolor{stringliteral}{") in
+1395         \}
+1396         lineIndex++;
+1397     \}
+1398     infile.close();
+1399 
+1400     \textcolor{comment}{// check if within global bounds}
+1401     \textcolor{keywordflow}{if} (sysatoms.size() > totNBounds\_[1] || sysatoms.size() < totNBounds\_[0]) \{
+1402         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Number of particles ("}+std::to\_string(sysatoms.size())+\textcolor{stringliteral}{") in
        the restart file out of target range ["}+std::to\_string(totNBounds\_[0])+\textcolor{stringliteral}{", "}+std::to\_string(totNBounds\_[1])+\textcolor{stringliteral}{
       "]"});
-1420     \}
-1421 
-1422     \textcolor{comment}{// sort by type}
-1423     std::map < int, int > types;
-1424     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < natoms; ++j) \{
-1425         \textcolor{keywordflow}{if} (types.find(index[j]) != types.end()) \{
-1426             types[index[j]] += 1;
-1427         \} \textcolor{keywordflow}{else} \{
-1428             types[index[j]] = 1;
+1403     \}
+1404 
+1405     \textcolor{comment}{// sort by type}
+1406     std::map < int, int > types;
+1407     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < natoms; ++j) \{
+1408         \textcolor{keywordflow}{if} (types.find(index[j]) != types.end()) \{
+1409             types[index[j]] += 1;
+1410         \} \textcolor{keywordflow}{else} \{
+1411             types[index[j]] = 1;
+1412         \}
+1413     \}
+1414 
+1415     \textcolor{keywordtype}{int} maxType = -1;
+1416     \textcolor{keywordflow}{for} (std::map<int,int>::iterator it = types.begin(); it != types.end(); ++it) \{
+1417         maxType = std::max(maxType, it->first);
+1418         \textcolor{keywordflow}{if} (it->first < 0 || it->first >= nSpecies\_) \{
+1419             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Restart file corrupted, types out of range"});
+1420         \}
+1421     \}
+1422 
+1423     \textcolor{comment}{// check that pair potentials exist so energy can be calculated}
+1424     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+1425         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
+1426             \textcolor{keywordflow}{if} (!\hyperlink{classsim_system_a40af191fae6091e26413ee06ae188ae9}{potentialIsSet}(i, j)) \{
+1427                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Not all pair potentials are set, so cannot initial
+       from file"});
+1428             \}
 1429         \}
 1430     \}
 1431 
-1432     \textcolor{keywordtype}{int} maxType = -1;
-1433     \textcolor{keywordflow}{for} (std::map<int,int>::iterator it = types.begin(); it != types.end(); ++it) \{
-1434         maxType = std::max(maxType, it->first);
-1435         \textcolor{keywordflow}{if} (it->first < 0 || it->first >= nSpecies\_) \{
-1436             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Restart file corrupted, types out of range"});
-1437         \}
-1438     \}
-1439 
-1440     \textcolor{comment}{// check that pair potentials exist so energy can be calculated}
-1441     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
-1442         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < nSpecies\_; ++j) \{
-1443             \textcolor{keywordflow}{if} (!\hyperlink{classsim_system_a40af191fae6091e26413ee06ae188ae9}{potentialIsSet}(i, j)) \{
-1444                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Not all pair potentials are set, so cannot initial
-       from file"});
-1445             \}
-1446         \}
-1447     \}
-1448 
-1449     \textcolor{comment}{// empty out the system before adding new atoms in - all atoms "fully inserted" so no partial ones to
+1432     \textcolor{comment}{// empty out the system before adding new atoms in - all atoms "fully inserted" so no partial ones to
        worry about}
-1450     \textcolor{keywordflow}{if} (Mcurrent\_ != 0) \{
-1451         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"System cannot be restarted from "}+filename+\textcolor{stringliteral}{", for some
+1433     \textcolor{keywordflow}{if} (Mcurrent\_ != 0) \{
+1434         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"System cannot be restarted from "}+filename+\textcolor{stringliteral}{", for some
        reason current expanded state != 0"});
-1452     \}
-1453     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
-1454         \textcolor{keyword}{const} \textcolor{keywordtype}{int} ns = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i];
-1455         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} j = ns-1; j >=0; --j) \{
-1456             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} k = 0; k < Mtot\_; ++k) \{
-1457                 \hyperlink{classsim_system_acabf4fc5b5b90bba62e1449ddb3646c6}{deleteAtom} (i, j, \textcolor{keyword}{true});
-1458             \}
-1459         \}
-1460     \}
-1461     \textcolor{keywordflow}{if} (totN\_ != 0) \{
-1462         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"total N = "}+std::to\_string(totN\_)+\textcolor{stringliteral}{" != 0 after system
+1435     \}
+1436     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+1437         \textcolor{keyword}{const} \textcolor{keywordtype}{int} ns = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i];
+1438         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} j = ns-1; j >=0; --j) \{
+1439             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} k = 0; k < Mtot\_; ++k) \{
+1440                 \hyperlink{classsim_system_acabf4fc5b5b90bba62e1449ddb3646c6}{deleteAtom} (i, j, \textcolor{keyword}{true});
+1441             \}
+1442         \}
+1443     \}
+1444     \textcolor{keywordflow}{if} (totN\_ != 0) \{
+1445         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"total N = "}+std::to\_string(totN\_)+\textcolor{stringliteral}{" != 0 after system
        supposedly emptied"});
-1463     \}
-1464     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
-1465         \textcolor{keywordflow}{if} (\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i] != 0) \{
-1466             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Number of molecules of species #"}+std::to\_string(i+1)+\textcolor{stringliteral}{"
+1446     \}
+1447     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+1448         \textcolor{keywordflow}{if} (\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i] != 0) \{
+1449             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Number of molecules of species #"}+std::to\_string(i+1)+\textcolor{stringliteral}{"
        = "}+std::to\_string(\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i])+\textcolor{stringliteral}{" != 0 after system supposedly emptied"});
+1450         \}
+1451     \}
+1452     \textcolor{keywordflow}{if} (Mcurrent\_ != 0) \{
+1453         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"M state != 0 after system supposedly emptied"});
+1454     \}
+1455 
+1456     energy\_ = 0.0;
+1457     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < sysatoms.size(); ++j) \{
+1458         \textcolor{keywordflow}{try} \{
+1459             \textcolor{comment}{// "partially" insert each atom so it goes through all the stages}
+1460             \hyperlink{classsim_system_a0404e9435cc046d19b6bb990678ee069}{insertAtom} (index[j], &sysatoms[j]);
+1461             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 1; k < Mtot\_; ++k) \{
+1462                 \hyperlink{classsim_system_a0404e9435cc046d19b6bb990678ee069}{insertAtom} (index[j], fractionalAtom\_); \textcolor{comment}{// this will check that within each
+       species own max and min, global bounds handled above}
+1463             \}
+1464         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+1465             std::string a = \textcolor{stringliteral}{"Could not initialize system from restart file, "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+1466             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
 1467         \}
 1468     \}
-1469     \textcolor{keywordflow}{if} (Mcurrent\_ != 0) \{
-1470         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"M state != 0 after system supposedly emptied"});
-1471     \}
-1472 
-1473     energy\_ = 0.0;
-1474     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < sysatoms.size(); ++j) \{
-1475         \textcolor{keywordflow}{try} \{
-1476             \textcolor{comment}{// "partially" insert each atom so it goes through all the stages}
-1477             \hyperlink{classsim_system_a0404e9435cc046d19b6bb990678ee069}{insertAtom} (index[j], &sysatoms[j]);
-1478             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 1; k < Mtot\_; ++k) \{
-1479                 \hyperlink{classsim_system_a0404e9435cc046d19b6bb990678ee069}{insertAtom} (index[j], fractionalAtom\_); \textcolor{comment}{// this will check that within each
-       species own max and min, global bounds handled above}
-1480             \}
-1481         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-1482             std::string a = \textcolor{stringliteral}{"Could not initialize system from restart file, "}, b = ce.
-      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-1483             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
-1484         \}
-1485     \}
-1486 
-1487     \textcolor{comment}{// recalculate system's initial energy}
-1488     energy\_ = \hyperlink{classsim_system_a51539ed4c3bb4905b32ce428c1c537fe}{scratchEnergy}();
-1489     std::cout << \textcolor{stringliteral}{"Successfully loaded initial configuration from "} << filename << \textcolor{stringliteral}{" at "} << 
+1469 
+1470     \textcolor{comment}{// recalculate system's initial energy}
+1471     energy\_ = \hyperlink{classsim_system_a51539ed4c3bb4905b32ce428c1c537fe}{scratchEnergy}();
+1472     std::cout << \textcolor{stringliteral}{"Successfully loaded initial configuration from "} << filename << \textcolor{stringliteral}{" at "} << 
       \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
-1490 \}
+1473 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_aa0eae4d523b5649be273e0419e9f799f}{\index{sim\-System@{sim\-System}!record\-Energy\-Histogram@{record\-Energy\-Histogram}}
 \index{record\-Energy\-Histogram@{record\-Energy\-Histogram}!simSystem@{sim\-System}}
@@ -2184,7 +2162,7 @@ Record the energy histogram for the system at a given Ntot.
 
 Only records values when N\-\_\-tot in range of \mbox{[}min, max\mbox{]}. 
 
-Definition at line 841 of file system.\-cpp.
+Definition at line 836 of file system.\-cpp.
 
 
 
@@ -2192,13 +2170,13 @@ Referenced by perform\-T\-M\-M\-C().
 
 
 \begin{DoxyCode}
-841                                        \{
-842     \textcolor{comment}{// only record if in range (removes equilibration stage to get in this range, if there was any)}
-843     \textcolor{keywordflow}{if} (totN\_ >= totNBounds\_[0] && totN\_ <= totNBounds\_[1]) \{
-844         \textcolor{keyword}{const} \textcolor{keywordtype}{int} address = totN\_-totNBounds\_[0];
-845         energyHistogram\_[address].record(energy\_);
-846     \}
-847 \}
+836                                        \{
+837     \textcolor{comment}{// only record if in range (removes equilibration stage to get in this range, if there was any)}
+838     \textcolor{keywordflow}{if} (totN\_ >= totNBounds\_[0] && totN\_ <= totNBounds\_[1]) \{
+839         \textcolor{keyword}{const} \textcolor{keywordtype}{int} address = totN\_-totNBounds\_[0];
+840         energyHistogram\_[address].record(energy\_);
+841     \}
+842 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a74ce0ab8151fd0501abf853a16cc8e58}{\index{sim\-System@{sim\-System}!record\-Ext\-Moments@{record\-Ext\-Moments}}
 \index{record\-Ext\-Moments@{record\-Ext\-Moments}!simSystem@{sim\-System}}
@@ -2265,7 +2243,7 @@ Record the particle number histogram for the system at a given Ntot.
 
 Only records values when N\-\_\-tot in range of \mbox{[}min, max\mbox{]}. 
 
-Definition at line 1043 of file system.\-cpp.
+Definition at line 1033 of file system.\-cpp.
 
 
 
@@ -2277,15 +2255,15 @@ Referenced by perform\-T\-M\-M\-C().
 
 
 \begin{DoxyCode}
-1043                                    \{
-1044     \textcolor{comment}{// only record if in range (removes equilibration stage to get in this range, if there was any)}
-1045     \textcolor{keywordflow}{if} (totN\_ >= totNBounds\_[0] && totN\_ <= totNBounds\_[1]) \{
-1046         \textcolor{keyword}{const} \textcolor{keywordtype}{int} address = totN\_-totNBounds\_[0];
-1047         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
-1048             pkHistogram\_[i][address].record(\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i]);
-1049         \}
-1050     \}
-1051 \}
+1033                                    \{
+1034     \textcolor{comment}{// only record if in range (removes equilibration stage to get in this range, if there was any)}
+1035     \textcolor{keywordflow}{if} (totN\_ >= totNBounds\_[0] && totN\_ <= totNBounds\_[1]) \{
+1036         \textcolor{keyword}{const} \textcolor{keywordtype}{int} address = totN\_-totNBounds\_[0];
+1037         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+1038             pkHistogram\_[i][address].record(\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i]);
+1039         \}
+1040     \}
+1041 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_afe05cba714a032b445cfb1a529547833}{\index{sim\-System@{sim\-System}!refine\-Energy\-Histogram\-Bounds@{refine\-Energy\-Histogram\-Bounds}}
 \index{refine\-Energy\-Histogram\-Bounds@{refine\-Energy\-Histogram\-Bounds}!simSystem@{sim\-System}}
@@ -2300,7 +2278,7 @@ Check the histogram entries and trim off zero-\/valued entries and bounds.
 
 
 
-Definition at line 863 of file system.\-cpp.
+Definition at line 858 of file system.\-cpp.
 
 
 
@@ -2312,18 +2290,18 @@ Referenced by perform\-T\-M\-M\-C().
 
 
 \begin{DoxyCode}
-863                                              \{
-864     \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = energyHistogram\_.begin(); it != 
+858                                              \{
+859     \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it = energyHistogram\_.begin(); it != 
       energyHistogram\_.end(); ++it) \{
-865         \textcolor{keywordflow}{try} \{
-866             it->trim\_edges();
-867         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-868             std::string a = \textcolor{stringliteral}{"Unable to trim edges in energyHistogram at each Ntot: "}, b = ce.
+860         \textcolor{keywordflow}{try} \{
+861             it->trim\_edges();
+862         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+863             std::string a = \textcolor{stringliteral}{"Unable to trim edges in energyHistogram at each Ntot: "}, b = ce.
       \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-869             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
-870         \}
-871     \}
-872 \}
+864             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+865         \}
+866     \}
+867 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a1e462fcb63389d59419ff6135b2d802e}{\index{sim\-System@{sim\-System}!refine\-Pk\-Histogram\-Bounds@{refine\-Pk\-Histogram\-Bounds}}
 \index{refine\-Pk\-Histogram\-Bounds@{refine\-Pk\-Histogram\-Bounds}!simSystem@{sim\-System}}
@@ -2338,7 +2316,7 @@ Check the histogram entries and trim off zero-\/valued entries and bounds.
 
 
 
-Definition at line 1056 of file system.\-cpp.
+Definition at line 1046 of file system.\-cpp.
 
 
 
@@ -2346,19 +2324,19 @@ Referenced by perform\-T\-M\-M\-C().
 
 
 \begin{DoxyCode}
-1056                                          \{
-1057     \textcolor{keywordflow}{for} (std::vector < std::vector < dynamic\_one\_dim\_histogram > >::iterator it = pkHistogram\_.begin(); it 
+1046                                          \{
+1047     \textcolor{keywordflow}{for} (std::vector < std::vector < dynamic\_one\_dim\_histogram > >::iterator it = pkHistogram\_.begin(); it 
       != pkHistogram\_.end(); ++it) \{
-1058         \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it2 = it->begin(); it2 != it->end(); ++it2
+1048         \textcolor{keywordflow}{for} (std::vector < dynamic\_one\_dim\_histogram >::iterator it2 = it->begin(); it2 != it->end(); ++it2
       ) \{
-1059             \textcolor{keywordflow}{try} \{
-1060                 it2->trim\_edges();
-1061             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-1062                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to trim edges in pkHistogram at each Ntot"});
-1063             \}
-1064         \}
-1065     \}
-1066 \}
+1049             \textcolor{keywordflow}{try} \{
+1050                 it2->trim\_edges();
+1051             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+1052                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to trim edges in pkHistogram at each Ntot"});
+1053             \}
+1054         \}
+1055     \}
+1056 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a861dd81718ef1c069fa7cfb9b7efe83c}{\index{sim\-System@{sim\-System}!re\-Initialize\-Energy\-Histogram@{re\-Initialize\-Energy\-Histogram}}
 \index{re\-Initialize\-Energy\-Histogram@{re\-Initialize\-Energy\-Histogram}!simSystem@{sim\-System}}
@@ -2373,7 +2351,7 @@ Re-\/initialize the energy histogram with internal estimates of bounds.
 
 
 
-Definition at line 877 of file system.\-cpp.
+Definition at line 872 of file system.\-cpp.
 
 
 
@@ -2385,38 +2363,38 @@ Referenced by perform\-Crossover().
 
 
 \begin{DoxyCode}
-877                                              \{
-878     \textcolor{keywordtype}{double} lb = 0.0, ub = 0.0;
-879     \textcolor{keywordflow}{if} (energyHistogram\_lb\_.size() != energyHistogram\_ub\_.size()) \{
-880         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Bad energy histogram bound sizes"});
-881     \}
-882     \textcolor{keywordflow}{if} (energyHistogram\_lb\_.size() != \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}() - \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() + 1) \{
-883         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Bad energy histogram bound sizes"});
-884     \}
-885     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}() - \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() + 1; ++i) \{
-886         \textcolor{keywordflow}{if} (energyHistogram\_lb\_[i] > energyHistogram\_ub\_[i]) \{
-887             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Bad energy histogram bound sizes"});
-888         \}
-889         \textcolor{comment}{// "standardize" the bounds against U = 0 for to "align" the bins, already done for pkHistogram}
-890         \textcolor{comment}{// this way the energy is reported as the limit of the edge of the aligned bins}
-891         \textcolor{keywordflow}{if} (energyHistogram\_lb\_[i] < 0) \{
-892             lb = floor((energyHistogram\_lb\_[i] - 0.0)/energyHistDelta\_);
+872                                              \{
+873     \textcolor{keywordtype}{double} lb = 0.0, ub = 0.0;
+874     \textcolor{keywordflow}{if} (energyHistogram\_lb\_.size() != energyHistogram\_ub\_.size()) \{
+875         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Bad energy histogram bound sizes"});
+876     \}
+877     \textcolor{keywordflow}{if} (energyHistogram\_lb\_.size() != \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}() - \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() + 1) \{
+878         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Bad energy histogram bound sizes"});
+879     \}
+880     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}() - \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() + 1; ++i) \{
+881         \textcolor{keywordflow}{if} (energyHistogram\_lb\_[i] > energyHistogram\_ub\_[i]) \{
+882             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Bad energy histogram bound sizes"});
+883         \}
+884         \textcolor{comment}{// "standardize" the bounds against U = 0 for to "align" the bins, already done for pkHistogram}
+885         \textcolor{comment}{// this way the energy is reported as the limit of the edge of the aligned bins}
+886         \textcolor{keywordflow}{if} (energyHistogram\_lb\_[i] < 0) \{
+887             lb = floor((energyHistogram\_lb\_[i] - 0.0)/energyHistDelta\_);
+888         \} \textcolor{keywordflow}{else} \{
+889             lb = ceil((energyHistogram\_lb\_[i] - 0.0)/energyHistDelta\_);
+890         \}
+891         \textcolor{keywordflow}{if} (energyHistogram\_ub\_[i] < 0) \{
+892             ub = floor((energyHistogram\_ub\_[i] - 0.0)/energyHistDelta\_);
 893         \} \textcolor{keywordflow}{else} \{
-894             lb = ceil((energyHistogram\_lb\_[i] - 0.0)/energyHistDelta\_);
+894             ub = ceil((energyHistogram\_ub\_[i] - 0.0)/energyHistDelta\_);
 895         \}
-896         \textcolor{keywordflow}{if} (energyHistogram\_ub\_[i] < 0) \{
-897             ub = floor((energyHistogram\_ub\_[i] - 0.0)/energyHistDelta\_);
-898         \} \textcolor{keywordflow}{else} \{
-899             ub = ceil((energyHistogram\_ub\_[i] - 0.0)/energyHistDelta\_);
-900         \}
-901 
-902         \textcolor{keywordflow}{try} \{
-903             energyHistogram\_[i].reinitialize(lb,ub,energyHistDelta\_);
-904         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-905             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to reinitialize the energyHistogram"});
-906         \}
-907     \}
-908 \}
+896 
+897         \textcolor{keywordflow}{try} \{
+898             energyHistogram\_[i].reinitialize(lb,ub,energyHistDelta\_);
+899         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+900             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to reinitialize the energyHistogram"});
+901         \}
+902     \}
+903 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_ae073008ed44e551f0d008b2f5a0fc06f}{\index{sim\-System@{sim\-System}!restart\-Energy\-Histogram@{restart\-Energy\-Histogram}}
 \index{restart\-Energy\-Histogram@{restart\-Energy\-Histogram}!simSystem@{sim\-System}}
@@ -2429,8 +2407,6 @@ Referenced by perform\-Crossover().
 
 Restart the energy histogram for each Ntot from unnormalized checkpoint. 
 
-net\-C\-D\-F4 not enabled
-
 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em prefix} & Prefix of the filename to load from \\
@@ -2438,7 +2414,7 @@ net\-C\-D\-F4 not enabled
 \end{DoxyParams}
 
 
-Definition at line 977 of file system.\-cpp.
+Definition at line 967 of file system.\-cpp.
 
 
 
@@ -2450,72 +2426,72 @@ Referenced by checkpoint\-::load().
 
 
 \begin{DoxyCode}
-977                                                               \{
-978     \textcolor{keywordtype}{int} minBound = 0, maxBound = \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}() - \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() + 1;
-979     std::vector < double > lb(maxBound - minBound, 0), ub(maxBound - minBound, 0), delta(maxBound - 
+967                                                               \{
+968     \textcolor{keywordtype}{int} minBound = 0, maxBound = \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}() - \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() + 1;
+969     std::vector < double > lb(maxBound - minBound, 0), ub(maxBound - minBound, 0), delta(maxBound - 
       minBound, 0);
-980     std::string fileName = prefix+\textcolor{stringliteral}{".dat"};
-981 
-982     std::ifstream infile (fileName.c\_str());
-983     std::string line, tmp = \textcolor{stringliteral}{""};
-984     \textcolor{keywordtype}{int} lineIndex = 0;
-985     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
-986         std::stringstream lineStream(line);
-987         \textcolor{keywordflow}{if} (lineIndex == 2) \{
-988             \textcolor{comment}{// get upper bound}
-989             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-990             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-991             \textcolor{keywordtype}{int} high = atoi(tmp.c\_str());
-992             \textcolor{keywordflow}{if} (high != \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}()) \{
-993                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max bound ("}+ std::to\_string(high)+\textcolor{stringliteral}{") is not Nmax("}+
+970     std::string fileName = prefix+\textcolor{stringliteral}{".dat"};
+971 
+972     std::ifstream infile (fileName.c\_str());
+973     std::string line, tmp = \textcolor{stringliteral}{""};
+974     \textcolor{keywordtype}{int} lineIndex = 0;
+975     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
+976         std::stringstream lineStream(line);
+977         \textcolor{keywordflow}{if} (lineIndex == 2) \{
+978             \textcolor{comment}{// get upper bound}
+979             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+980             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+981             \textcolor{keywordtype}{int} high = atoi(tmp.c\_str());
+982             \textcolor{keywordflow}{if} (high != \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}()) \{
+983                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max bound ("}+ std::to\_string(high)+\textcolor{stringliteral}{") is not Nmax("}+
       std::to\_string(\hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}())+\textcolor{stringliteral}{"), cannot restart energy histogram from "}+fileName);
-994             \}
-995         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 3) \{
-996             \textcolor{comment}{// get lower bound}
-997             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-998             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-999             \textcolor{keywordtype}{int} low = atoi(tmp.c\_str());
-1000             \textcolor{keywordflow}{if} (low != \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}()) \{
-1001                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Min bound ("}+ std::to\_string(low)+\textcolor{stringliteral}{") is not Nmin("}+
+984             \}
+985         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 3) \{
+986             \textcolor{comment}{// get lower bound}
+987             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+988             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+989             \textcolor{keywordtype}{int} low = atoi(tmp.c\_str());
+990             \textcolor{keywordflow}{if} (low != \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}()) \{
+991                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Min bound ("}+ std::to\_string(low)+\textcolor{stringliteral}{") is not Nmin("}+
       std::to\_string(\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}())+\textcolor{stringliteral}{"), cannot restart energy histogram from "}+fileName);
+992             \}
+993         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 6) \{
+994             \textcolor{comment}{// delta}
+995             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < maxBound-minBound; ++i) \{
+996                 lineStream >> delta[i];
+997             \}
+998         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 8) \{
+999             \textcolor{comment}{// lower bound}
+1000             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < maxBound-minBound; ++i) \{
+1001                 lineStream >> lb[i];
 1002             \}
-1003         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 6) \{
-1004             \textcolor{comment}{// delta}
+1003         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 10) \{
+1004             \textcolor{comment}{// upper bound}
 1005             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < maxBound-minBound; ++i) \{
-1006                 lineStream >> delta[i];
+1006                 lineStream >> ub[i];
 1007             \}
-1008         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 8) \{
-1009             \textcolor{comment}{// lower bound}
-1010             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < maxBound-minBound; ++i) \{
-1011                 lineStream >> lb[i];
-1012             \}
-1013         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 10) \{
-1014             \textcolor{comment}{// upper bound}
-1015             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < maxBound-minBound; ++i) \{
-1016                 lineStream >> ub[i];
-1017             \}
-1018             \textcolor{comment}{// now can reinitialize the histogram}
-1019             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = minBound; i < maxBound; ++i) \{
-1020                 \textcolor{keywordflow}{try} \{
-1021                     energyHistogram\_[i-minBound].reinitialize(lb[i-minBound], ub[i-minBound], delta[i-
+1008             \textcolor{comment}{// now can reinitialize the histogram}
+1009             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = minBound; i < maxBound; ++i) \{
+1010                 \textcolor{keywordflow}{try} \{
+1011                     energyHistogram\_[i-minBound].reinitialize(lb[i-minBound], ub[i-minBound], delta[i-
       minBound]);
-1022                 \} \textcolor{keywordflow}{catch} (...) \{
-1023                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to restart energy histogram from "}+
+1012                 \} \textcolor{keywordflow}{catch} (...) \{
+1013                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to restart energy histogram from "}+
       fileName);
-1024                 \}
-1025             \}
-1026         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex >= 12) \{
-1027             \textcolor{comment}{// histogram itself}
-1028             std::deque <double> h = energyHistogram\_[lineIndex-12].get\_hist();
-1029             \textcolor{keywordflow}{for} (std::deque <double>::iterator it = h.begin(); it != h.end(); ++it) \{
-1030                 lineStream >> *it;
-1031             \}
-1032             energyHistogram\_[lineIndex-12].set\_hist(h);
-1033         \}
-1034         lineIndex++;
-1035     \}
-1036     infile.close();
-1037 \}
+1014                 \}
+1015             \}
+1016         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex >= 12) \{
+1017             \textcolor{comment}{// histogram itself}
+1018             std::deque <double> h = energyHistogram\_[lineIndex-12].get\_hist();
+1019             \textcolor{keywordflow}{for} (std::deque <double>::iterator it = h.begin(); it != h.end(); ++it) \{
+1020                 lineStream >> *it;
+1021             \}
+1022             energyHistogram\_[lineIndex-12].set\_hist(h);
+1023         \}
+1024         lineIndex++;
+1025     \}
+1026     infile.close();
+1027 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a999556fea891765c5ed4d979706665af}{\index{sim\-System@{sim\-System}!restart\-Ext\-Moments@{restart\-Ext\-Moments}}
 \index{restart\-Ext\-Moments@{restart\-Ext\-Moments}!simSystem@{sim\-System}}
@@ -2529,8 +2505,6 @@ Referenced by checkpoint\-::load().
 
 Restart the extensive energy histogram for each Ntot from unnormalized checkpoint. 
 
-net\-C\-D\-F4 not enabled
-
 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em file\-Name} & Name of the file to load from \\
@@ -2540,7 +2514,7 @@ net\-C\-D\-F4 not enabled
 \end{DoxyParams}
 
 
-Definition at line 744 of file system.\-cpp.
+Definition at line 739 of file system.\-cpp.
 
 
 
@@ -2552,104 +2526,104 @@ Referenced by checkpoint\-::load().
 
 
 \begin{DoxyCode}
-744                                                                                          \{
-745     std::string fileName = prefix+\textcolor{stringliteral}{".dat"};
-746 
-747     std::ifstream infile (fileName.c\_str());
-748     std::string line, tmp = \textcolor{stringliteral}{""};
-749     \textcolor{keywordtype}{int} lineIndex = 0, dummy;
-750     \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} idx;
-751     std::vector < double > h = extensive\_moments\_.\hyperlink{classhistogram_afa81289dc32207eb3c44f8bd746f0d1d}{getRawHistogram} (), coords (6, 0);
-752 
-753     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
-754         std::stringstream lineStream(line);
-755         \textcolor{keywordflow}{if} (lineIndex == 1) \{
-756             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-757             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-758             \textcolor{keywordtype}{int} ns = atoi(tmp.c\_str());
-759             \textcolor{keywordflow}{if} (ns != nSpecies\_) \{
-760                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Number of speces in restart file ("}+ std::to\_string(
+739                                                                                          \{
+740     std::string fileName = prefix+\textcolor{stringliteral}{".dat"};
+741 
+742     std::ifstream infile (fileName.c\_str());
+743     std::string line, tmp = \textcolor{stringliteral}{""};
+744     \textcolor{keywordtype}{int} lineIndex = 0, dummy;
+745     \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} idx;
+746     std::vector < double > h = extensive\_moments\_.\hyperlink{classhistogram_afa81289dc32207eb3c44f8bd746f0d1d}{getRawHistogram} (), coords (6, 0);
+747 
+748     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
+749         std::stringstream lineStream(line);
+750         \textcolor{keywordflow}{if} (lineIndex == 1) \{
+751             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+752             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+753             \textcolor{keywordtype}{int} ns = atoi(tmp.c\_str());
+754             \textcolor{keywordflow}{if} (ns != nSpecies\_) \{
+755                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Number of speces in restart file ("}+ std::to\_string(
       ns)+\textcolor{stringliteral}{") is not the same as provided in input ("}+std::to\_string(nSpecies\_)+\textcolor{stringliteral}{"), cannot restart extMom from "}+
       fileName);
-761             \}
-762         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 2) \{
-763             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-764             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-765             \textcolor{keywordtype}{int} mo = atoi(tmp.c\_str());
-766             \textcolor{keywordflow}{if} (mo != \hyperlink{classsim_system_afe08187d318113c33bda890c69570c36}{getMaxOrder}()) \{
-767                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max order ("}+ std::to\_string(mo)+\textcolor{stringliteral}{") is not the same
+756             \}
+757         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 2) \{
+758             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+759             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+760             \textcolor{keywordtype}{int} mo = atoi(tmp.c\_str());
+761             \textcolor{keywordflow}{if} (mo != \hyperlink{classsim_system_afe08187d318113c33bda890c69570c36}{getMaxOrder}()) \{
+762                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max order ("}+ std::to\_string(mo)+\textcolor{stringliteral}{") is not the same
        as provided in input ("}+std::to\_string(\hyperlink{classsim_system_afe08187d318113c33bda890c69570c36}{getMaxOrder}())+\textcolor{stringliteral}{"), cannot restart extMom from "}+fileName);
-768             \}
-769         \} \textcolor{keywordflow}{if} (lineIndex == 3) \{
-770             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-771             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-772             \textcolor{keywordtype}{int} high = atoi(tmp.c\_str());
-773             \textcolor{keywordflow}{if} (high != \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}()) \{
-774                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max bound ("}+ std::to\_string(high)+\textcolor{stringliteral}{") is not Nmax ("}
+763             \}
+764         \} \textcolor{keywordflow}{if} (lineIndex == 3) \{
+765             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+766             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+767             \textcolor{keywordtype}{int} high = atoi(tmp.c\_str());
+768             \textcolor{keywordflow}{if} (high != \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}()) \{
+769                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max bound ("}+ std::to\_string(high)+\textcolor{stringliteral}{") is not Nmax ("}
       +std::to\_string(\hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}())+\textcolor{stringliteral}{"), cannot restart extMom from "}+fileName);
-775             \}
-776         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 4) \{
-777             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-778             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-779             \textcolor{keywordtype}{int} low = atoi(tmp.c\_str());
-780             \textcolor{keywordflow}{if} (low != \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}()) \{
-781                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Min bound ("}+ std::to\_string(low)+\textcolor{stringliteral}{") is not Nmin ("}+
+770             \}
+771         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 4) \{
+772             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+773             std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+774             \textcolor{keywordtype}{int} low = atoi(tmp.c\_str());
+775             \textcolor{keywordflow}{if} (low != \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}()) \{
+776                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Min bound ("}+ std::to\_string(low)+\textcolor{stringliteral}{") is not Nmin ("}+
       std::to\_string(\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}())+\textcolor{stringliteral}{"), cannot restart extMom from "}+fileName);
-782             \}
-783 
-784             \textcolor{comment}{// now reinstantiate the histogram}
-785             std::vector < double > lbn (6,0), ubn(6,0);
-786             std::vector < long long unsigned int > nbn (6,0);
-787             ubn[0] = nSpecies\_-1;
-788             ubn[1] = max\_order\_;
-789             ubn[2] = nSpecies\_-1;
-790             ubn[3] = max\_order\_;
-791             ubn[4] = max\_order\_;
-792             ubn[5] = \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}()-\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}();
-793 
-794             nbn[0] = nSpecies\_;
-795             nbn[1] = max\_order\_+1;
-796             nbn[2] = nSpecies\_;
-797             nbn[3] = max\_order\_+1;
-798             nbn[4] = max\_order\_+1;
-799             nbn[5] = \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}()-\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}()+1;
-800 
-801             \hyperlink{classhistogram}{histogram} hnn (lbn, ubn, nbn);
-802             extensive\_moments\_ = hnn;
-803         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex >= 7) \{
-804             \textcolor{comment}{// histogram itself}
-805             lineStream >> dummy;
-806             coords[5] = lineIndex-7;
-807             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
-808                 coords[0] = i;
-809                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j <= max\_order\_; ++j) \{
-810                     coords[1] = j;
-811                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < nSpecies\_; ++k) \{
-812                         coords[2] = k;
-813                         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} m = 0; m <= max\_order\_; ++m) \{
-814                             coords[3] = m;
-815                             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} p = 0; p <= max\_order\_; ++p) \{
-816                                 coords[4] = p;
-817                                 idx = extensive\_moments\_.\hyperlink{classhistogram_ae52fa58934b56e05846a66e43c3184bd}{getAddress}(coords);
-818                                 lineStream >> h[idx];
-819                             \}
-820                         \}
-821                     \}
-822                 \}
-823             \}
-824         \}
-825         lineIndex++;
-826     \}
-827     infile.close();
-828 
-829     \textcolor{keywordflow}{try} \{
-830         \textcolor{comment}{// this checks h and ctr same size, and by extension that h from file has same size as h in system}
-831         extensive\_moments\_.\hyperlink{classhistogram_aab27615593d020ca4de29c586c92af37}{set}(h, ctr);
-832     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-833         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to restart extMom from "}+fileName+\textcolor{stringliteral}{" : "}+ce.
+777             \}
+778 
+779             \textcolor{comment}{// now reinstantiate the histogram}
+780             std::vector < double > lbn (6,0), ubn(6,0);
+781             std::vector < long long unsigned int > nbn (6,0);
+782             ubn[0] = nSpecies\_-1;
+783             ubn[1] = max\_order\_;
+784             ubn[2] = nSpecies\_-1;
+785             ubn[3] = max\_order\_;
+786             ubn[4] = max\_order\_;
+787             ubn[5] = \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}()-\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}();
+788 
+789             nbn[0] = nSpecies\_;
+790             nbn[1] = max\_order\_+1;
+791             nbn[2] = nSpecies\_;
+792             nbn[3] = max\_order\_+1;
+793             nbn[4] = max\_order\_+1;
+794             nbn[5] = \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}()-\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}()+1;
+795 
+796             \hyperlink{classhistogram}{histogram} hnn (lbn, ubn, nbn);
+797             extensive\_moments\_ = hnn;
+798         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex >= 7) \{
+799             \textcolor{comment}{// histogram itself}
+800             lineStream >> dummy;
+801             coords[5] = lineIndex-7;
+802             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+803                 coords[0] = i;
+804                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j <= max\_order\_; ++j) \{
+805                     coords[1] = j;
+806                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < nSpecies\_; ++k) \{
+807                         coords[2] = k;
+808                         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} m = 0; m <= max\_order\_; ++m) \{
+809                             coords[3] = m;
+810                             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} p = 0; p <= max\_order\_; ++p) \{
+811                                 coords[4] = p;
+812                                 idx = extensive\_moments\_.\hyperlink{classhistogram_ae52fa58934b56e05846a66e43c3184bd}{getAddress}(coords);
+813                                 lineStream >> h[idx];
+814                             \}
+815                         \}
+816                     \}
+817                 \}
+818             \}
+819         \}
+820         lineIndex++;
+821     \}
+822     infile.close();
+823 
+824     \textcolor{keywordflow}{try} \{
+825         \textcolor{comment}{// this checks h and ctr same size, and by extension that h from file has same size as h in system}
+826         extensive\_moments\_.\hyperlink{classhistogram_aab27615593d020ca4de29c586c92af37}{set}(h, ctr);
+827     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+828         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to restart extMom from "}+fileName+\textcolor{stringliteral}{" : "}+ce.
       \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-834     \}
-835 \}
+829     \}
+830 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a3239a23e35f30e40eeecf8795386c164}{\index{sim\-System@{sim\-System}!restart\-Pk\-Histogram@{restart\-Pk\-Histogram}}
 \index{restart\-Pk\-Histogram@{restart\-Pk\-Histogram}!simSystem@{sim\-System}}
@@ -2662,8 +2636,6 @@ Referenced by checkpoint\-::load().
 
 Restart the particle histogram for each Ntot from unnormalized checkpoint. 
 
-net\-C\-D\-F4 not enabled
-
 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em prefix} & Prefix of the filename to load from \\
@@ -2671,7 +2643,7 @@ net\-C\-D\-F4 not enabled
 \end{DoxyParams}
 
 
-Definition at line 1137 of file system.\-cpp.
+Definition at line 1122 of file system.\-cpp.
 
 
 
@@ -2683,84 +2655,84 @@ Referenced by checkpoint\-::load().
 
 
 \begin{DoxyCode}
-1137                                                           \{
-1138     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < nSpecies\_; ++spec) \{
-1139         \textcolor{keywordtype}{int} minBound = 0, maxBound = \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}() - \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() + 1;
-1140         std::vector < double > lb(maxBound - minBound, 0), ub(maxBound - minBound, 0), delta(maxBound - 
+1122                                                           \{
+1123     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < nSpecies\_; ++spec) \{
+1124         \textcolor{keywordtype}{int} minBound = 0, maxBound = \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}() - \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() + 1;
+1125         std::vector < double > lb(maxBound - minBound, 0), ub(maxBound - minBound, 0), delta(maxBound - 
       minBound, 0);
-1141         std::string fileName = prefix+\textcolor{stringliteral}{"\_"}+std::to\_string(spec+1)+\textcolor{stringliteral}{".dat"};
-1142 
-1143         std::ifstream infile (fileName.c\_str());
-1144         std::string line, tmp = \textcolor{stringliteral}{""};
-1145         \textcolor{keywordtype}{int} lineIndex = 0;
-1146         \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
-1147             std::stringstream lineStream(line);
-1148             \textcolor{keywordflow}{if} (lineIndex == 2) \{
-1149                 \textcolor{comment}{// get upper bound}
-1150                 std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-1151                 std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-1152                 \textcolor{keywordtype}{int} high = atoi(tmp.c\_str());
-1153                 \textcolor{keywordflow}{if} (high != \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}()) \{
-1154                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max bound ("}+ std::to\_string(high)+\textcolor{stringliteral}{") is not
+1126         std::string fileName = prefix+\textcolor{stringliteral}{"\_"}+std::to\_string(spec+1)+\textcolor{stringliteral}{".dat"};
+1127 
+1128         std::ifstream infile (fileName.c\_str());
+1129         std::string line, tmp = \textcolor{stringliteral}{""};
+1130         \textcolor{keywordtype}{int} lineIndex = 0;
+1131         \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
+1132             std::stringstream lineStream(line);
+1133             \textcolor{keywordflow}{if} (lineIndex == 2) \{
+1134                 \textcolor{comment}{// get upper bound}
+1135                 std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+1136                 std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+1137                 \textcolor{keywordtype}{int} high = atoi(tmp.c\_str());
+1138                 \textcolor{keywordflow}{if} (high != \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}()) \{
+1139                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max bound ("}+ std::to\_string(high)+\textcolor{stringliteral}{") is not
        Nmax("}+std::to\_string(\hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}())+\textcolor{stringliteral}{"), cannot restart particle histogram from "}+fileName);
-1155                 \}
-1156             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 3) \{
-1157                 \textcolor{comment}{// get lower bound}
-1158                 std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-1159                 std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-1160                 \textcolor{keywordtype}{int} low = atoi(tmp.c\_str());
-1161                 \textcolor{keywordflow}{if} (low != \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}()) \{
-1162                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Min bound ("}+ std::to\_string(low)+\textcolor{stringliteral}{") is not
+1140                 \}
+1141             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 3) \{
+1142                 \textcolor{comment}{// get lower bound}
+1143                 std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+1144                 std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+1145                 \textcolor{keywordtype}{int} low = atoi(tmp.c\_str());
+1146                 \textcolor{keywordflow}{if} (low != \hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}()) \{
+1147                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Min bound ("}+ std::to\_string(low)+\textcolor{stringliteral}{") is not
        Nmin("}+std::to\_string(\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}())+\textcolor{stringliteral}{"), cannot restart particle histogram from "}+fileName);
-1163                 \}
-1164             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 1) \{
-1165                 \textcolor{comment}{// check the number of species is correct}
-1166                 std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-1167                 std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
-1168                 \textcolor{keywordtype}{int} ns = atoi(tmp.c\_str());
-1169                 \textcolor{keywordflow}{if} (ns != nSpecies\_) \{
-1170                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Number of speces in restart file ("}+ 
+1148                 \}
+1149             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 1) \{
+1150                 \textcolor{comment}{// check the number of species is correct}
+1151                 std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+1152                 std::getline(lineStream, tmp, \textcolor{charliteral}{':'});
+1153                 \textcolor{keywordtype}{int} ns = atoi(tmp.c\_str());
+1154                 \textcolor{keywordflow}{if} (ns != nSpecies\_) \{
+1155                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Number of speces in restart file ("}+ 
       std::to\_string(ns)+\textcolor{stringliteral}{") is not the same as provided in input ("}+std::to\_string(nSpecies\_)+\textcolor{stringliteral}{"), cannot restart particle
        histogram from "}+fileName);
+1156                 \}
+1157             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 6) \{
+1158                 \textcolor{comment}{// delta}
+1159                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < maxBound-minBound; ++i) \{
+1160                     lineStream >> delta[i];
+1161                 \}
+1162             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 8) \{
+1163                 \textcolor{comment}{// lower bound}
+1164                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < maxBound-minBound; ++i) \{
+1165                     lineStream >> lb[i];
+1166                 \}
+1167             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 10) \{
+1168                 \textcolor{comment}{// upper bound}
+1169                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < maxBound-minBound; ++i) \{
+1170                     lineStream >> ub[i];
 1171                 \}
-1172             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 6) \{
-1173                 \textcolor{comment}{// delta}
-1174                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < maxBound-minBound; ++i) \{
-1175                     lineStream >> delta[i];
-1176                 \}
-1177             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 8) \{
-1178                 \textcolor{comment}{// lower bound}
-1179                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < maxBound-minBound; ++i) \{
-1180                     lineStream >> lb[i];
-1181                 \}
-1182             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex == 10) \{
-1183                 \textcolor{comment}{// upper bound}
-1184                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < maxBound-minBound; ++i) \{
-1185                     lineStream >> ub[i];
-1186                 \}
-1187                 \textcolor{comment}{// now can reinitialize the histogram}
-1188                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = minBound; i < maxBound; ++i) \{
-1189                     \textcolor{keywordflow}{try} \{
-1190                         pkHistogram\_[spec][i-minBound].reinitialize(lb[i-minBound], ub[i-minBound], delta[i
+1172                 \textcolor{comment}{// now can reinitialize the histogram}
+1173                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = minBound; i < maxBound; ++i) \{
+1174                     \textcolor{keywordflow}{try} \{
+1175                         pkHistogram\_[spec][i-minBound].reinitialize(lb[i-minBound], ub[i-minBound], delta[i
       -minBound]);
-1191                     \} \textcolor{keywordflow}{catch} (...) \{
-1192                         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to restart particle histogram from "}+
+1176                     \} \textcolor{keywordflow}{catch} (...) \{
+1177                         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to restart particle histogram from "}+
       fileName);
-1193                     \}
-1194                 \}
-1195             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex >= 12) \{
-1196                 \textcolor{comment}{// histogram itself}
-1197                 std::deque <double> h = pkHistogram\_[spec][lineIndex-12].get\_hist();
-1198                 \textcolor{keywordflow}{for} (std::deque <double>::iterator it = h.begin(); it != h.end(); ++it) \{
-1199                     lineStream >> *it;
-1200                 \}
-1201                 pkHistogram\_[spec][lineIndex-12].set\_hist(h);
-1202             \}
-1203             lineIndex++;
-1204         \}
-1205         infile.close();
-1206     \}
-1207 \}
+1178                     \}
+1179                 \}
+1180             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (lineIndex >= 12) \{
+1181                 \textcolor{comment}{// histogram itself}
+1182                 std::deque <double> h = pkHistogram\_[spec][lineIndex-12].get\_hist();
+1183                 \textcolor{keywordflow}{for} (std::deque <double>::iterator it = h.begin(); it != h.end(); ++it) \{
+1184                     lineStream >> *it;
+1185                 \}
+1186                 pkHistogram\_[spec][lineIndex-12].set\_hist(h);
+1187             \}
+1188             lineIndex++;
+1189         \}
+1190         infile.close();
+1191     \}
+1192 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a51539ed4c3bb4905b32ce428c1c537fe}{\index{sim\-System@{sim\-System}!scratch\-Energy@{scratch\-Energy}}
 \index{scratch\-Energy@{scratch\-Energy}!simSystem@{sim\-System}}
@@ -2778,7 +2750,7 @@ tot\-U Total energy of the system
 \end{DoxyReturn}
 
 
-Definition at line 1548 of file system.\-cpp.
+Definition at line 1531 of file system.\-cpp.
 
 
 
@@ -2790,114 +2762,114 @@ Referenced by read\-Config(), and sanity\-Checks().
 
 
 \begin{DoxyCode}
-1548                                        \{
-1549     \textcolor{keywordtype}{double} totU = 0.0;
-1550     \textcolor{keywordtype}{double} V = 1.0;
-1551 
-1552     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box\_.size(); ++i) \{
-1553         V *= box\_[i];
-1554     \}
-1555 
-1556     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec1 = 0; spec1 < nSpecies\_; ++spec1) \{
-1557         \textcolor{keywordtype}{int} num1 = 0, adj1 = 0;
-1558         \textcolor{keywordflow}{try} \{
-1559             num1 = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec1];
-1560         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-1561             std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
+1531                                        \{
+1532     \textcolor{keywordtype}{double} totU = 0.0;
+1533     \textcolor{keywordtype}{double} V = 1.0;
+1534 
+1535     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box\_.size(); ++i) \{
+1536         V *= box\_[i];
+1537     \}
+1538 
+1539     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec1 = 0; spec1 < nSpecies\_; ++spec1) \{
+1540         \textcolor{keywordtype}{int} num1 = 0, adj1 = 0;
+1541         \textcolor{keywordflow}{try} \{
+1542             num1 = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec1];
+1543         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+1544             std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
       \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-1562             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
-1563         \}
-1564 
-1565         \textcolor{comment}{// possibly have fractionally inserted atom}
-1566         \textcolor{keywordflow}{if} (fractionalAtomType\_ == spec1 && Mcurrent\_ > 0) \{
-1567             adj1 = 1;
-1568         \}
-1569 
-1570         \textcolor{comment}{// wall/barrier interactions}
-1571         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < num1+adj1; ++j) \{
-1572             \textcolor{keywordtype}{double} dU = 0.0;
-1573             \textcolor{keywordflow}{try} \{
-1574                 dU = \hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[spec1].energy(&\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[spec1][j], box\_);
-1575             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-1576                 std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
+1545             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+1546         \}
+1547 
+1548         \textcolor{comment}{// possibly have fractionally inserted atom}
+1549         \textcolor{keywordflow}{if} (fractionalAtomType\_ == spec1 && Mcurrent\_ > 0) \{
+1550             adj1 = 1;
+1551         \}
+1552 
+1553         \textcolor{comment}{// wall/barrier interactions}
+1554         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < num1+adj1; ++j) \{
+1555             \textcolor{keywordtype}{double} dU = 0.0;
+1556             \textcolor{keywordflow}{try} \{
+1557                 dU = \hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[spec1].energy(&\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[spec1][j], box\_);
+1558             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+1559                 std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
       \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-1577                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
-1578             \}
-1579             \textcolor{keywordflow}{if} (dU == \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \{
-1580                 \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
-1581             \} \textcolor{keywordflow}{else} \{
-1582                 totU += dU;
-1583             \}
-1584         \}
-1585 
-1586         \textcolor{comment}{// interactions with same type}
-1587         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < num1+adj1; ++j) \{
-1588             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = j+1; k < num1+adj1; ++k) \{
-1589                 \textcolor{keywordflow}{try} \{
-1590                     totU += \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec1]->energy(&\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[spec1][j], &
+1560                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+1561             \}
+1562             \textcolor{keywordflow}{if} (dU == \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \{
+1563                 \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
+1564             \} \textcolor{keywordflow}{else} \{
+1565                 totU += dU;
+1566             \}
+1567         \}
+1568 
+1569         \textcolor{comment}{// interactions with same type}
+1570         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < num1+adj1; ++j) \{
+1571             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = j+1; k < num1+adj1; ++k) \{
+1572                 \textcolor{keywordflow}{try} \{
+1573                     totU += \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec1]->energy(&\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[spec1][j], &
       \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[spec1][k], box\_);
-1591                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-1592                     std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
+1574                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+1575                     std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
       \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-1593                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
-1594                 \}
-1595             \}
-1596         \}
+1576                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+1577                 \}
+1578             \}
+1579         \}
+1580 
+1581         \textcolor{comment}{// add tail correction to potential energy but only for atoms fully inserted}
+1582 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+1583 \textcolor{preprocessor}{}        \textcolor{keywordflow}{if} ((\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec1]->useTailCorrection) && (num1 > 1)) \{
+1584             totU += (num1)*0.5*\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec1]->tailCorrection((num1-1)/V);
+1585         \}
+1586 \textcolor{preprocessor}{#endif}
+1587 \textcolor{preprocessor}{}
+1588         \textcolor{comment}{// interactions with other unique types}
+1589         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec2 = spec1+1; spec2 < nSpecies\_; ++spec2) \{
+1590             \textcolor{keywordtype}{int} num2 = 0, adj2 = 0;
+1591             \textcolor{keywordflow}{try} \{
+1592                 num2 = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec2];
+1593             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+1594                 std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+1595                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+1596             \}
 1597 
-1598         \textcolor{comment}{// add tail correction to potential energy but only for atoms fully inserted}
-1599 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
-1600 \textcolor{preprocessor}{}        \textcolor{keywordflow}{if} ((\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec1]->useTailCorrection) && (num1 > 1)) \{
-1601             totU += (num1)*0.5*\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec1]->tailCorrection((num1-1)/V);
-1602         \}
-1603 \textcolor{preprocessor}{#endif}
-1604 \textcolor{preprocessor}{}
-1605         \textcolor{comment}{// interactions with other unique types}
-1606         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec2 = spec1+1; spec2 < nSpecies\_; ++spec2) \{
-1607             \textcolor{keywordtype}{int} num2 = 0, adj2 = 0;
-1608             \textcolor{keywordflow}{try} \{
-1609                 num2 = \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec2];
-1610             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-1611                 std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
-      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-1612                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
-1613             \}
-1614 
-1615             \textcolor{keywordflow}{if} (fractionalAtomType\_ == spec2 && Mcurrent\_ > 0) \{
-1616                 adj2 = 1;
-1617             \}
-1618 
-1619             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < num1+adj1; ++j) \{
-1620                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < num2+adj2; ++k) \{
-1621                     \textcolor{keywordflow}{try} \{
-1622                         totU += \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->energy(&\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[spec1][j], &
+1598             \textcolor{keywordflow}{if} (fractionalAtomType\_ == spec2 && Mcurrent\_ > 0) \{
+1599                 adj2 = 1;
+1600             \}
+1601 
+1602             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < num1+adj1; ++j) \{
+1603                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < num2+adj2; ++k) \{
+1604                     \textcolor{keywordflow}{try} \{
+1605                         totU += \hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->energy(&\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[spec1][j], &
       \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[spec2][k], box\_);
-1623                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-1624                         std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
+1606                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+1607                         std::string a = \textcolor{stringliteral}{"Cannot recalculate energy from scratch: "}, b = ce.
       \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-1625                         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
-1626                     \}
-1627                 \}
-1628             \}
+1608                         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+1609                     \}
+1610                 \}
+1611             \}
+1612 
+1613             \textcolor{comment}{// add tail correction to potential energy but only bewteen fully inserted species}
+1614 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+1615 \textcolor{preprocessor}{}            \textcolor{keywordflow}{if} ((\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) \{
+1616                 totU += (num1)*\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->tailCorrection(num2/V);
+1617             \}
+1618 \textcolor{preprocessor}{#endif}
+1619 \textcolor{preprocessor}{}        \}
+1620     \}
+1621 
+1622     \textcolor{keywordflow}{if} (toggleKE\_ == \textcolor{keyword}{true}) \{
+1623         \textcolor{keywordtype}{double} ns = 0.0;
+1624         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
+1625             ns += \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i];
+1626         \}
+1627         totU += 1.5/beta\_*ns; \textcolor{comment}{// only adjust for FULLY-INSERTED ATOMS}
+1628     \}
 1629 
-1630             \textcolor{comment}{// add tail correction to potential energy but only bewteen fully inserted species}
-1631 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
-1632 \textcolor{preprocessor}{}            \textcolor{keywordflow}{if} ((\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) \{
-1633                 totU += (num1)*\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec1][spec2]->tailCorrection(num2/V);
-1634             \}
-1635 \textcolor{preprocessor}{#endif}
-1636 \textcolor{preprocessor}{}        \}
-1637     \}
-1638 
-1639     \textcolor{keywordflow}{if} (toggleKE\_ == \textcolor{keyword}{true}) \{
-1640         \textcolor{keywordtype}{double} ns = 0.0;
-1641         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nSpecies\_; ++i) \{
-1642             ns += \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i];
-1643         \}
-1644         totU += 1.5/beta\_*ns; \textcolor{comment}{// only adjust for FULLY-INSERTED ATOMS}
-1645     \}
-1646 
-1647     \textcolor{keywordflow}{return} totU;
-1648 \}
+1630     \textcolor{keywordflow}{return} totU;
+1631 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a284cf6c00f572db12db0cb263974a78a}{\index{sim\-System@{sim\-System}!set\-E\-L\-B@{set\-E\-L\-B}}
 \index{set\-E\-L\-B@{set\-E\-L\-B}!simSystem@{sim\-System}}
@@ -2912,7 +2884,7 @@ Assign energy lower bound from restart.
 
 
 
-Definition at line 50 of file system.\-h.
+Definition at line 43 of file system.\-h.
 
 
 
@@ -2931,7 +2903,7 @@ Assign energy upper bound from restart.
 
 
 
-Definition at line 49 of file system.\-h.
+Definition at line 42 of file system.\-h.
 
 
 
@@ -3092,7 +3064,7 @@ Throws an exception if input values are illegal or there is another problem (e.\
 \end{DoxyParams}
 
 
-Definition at line 1737 of file system.\-cpp.
+Definition at line 1720 of file system.\-cpp.
 
 
 
@@ -3104,18 +3076,18 @@ Referenced by checkpoint\-::load(), perform\-Crossover(), and perform\-T\-M\-M\-
 
 
 \begin{DoxyCode}
-1737                                                                             \{
-1738     \textcolor{comment}{// initialize the tmmc object}
-1739     \textcolor{keywordflow}{try} \{
-1740         \hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias} = \textcolor{keyword}{new} \hyperlink{classtmmc}{tmmc} (totNBounds\_[1], totNBounds\_[0], Mtot, 
+1720                                                                             \{
+1721     \textcolor{comment}{// initialize the tmmc object}
+1722     \textcolor{keywordflow}{try} \{
+1723         \hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias} = \textcolor{keyword}{new} \hyperlink{classtmmc}{tmmc} (totNBounds\_[1], totNBounds\_[0], Mtot, 
       \hyperlink{classsim_system_a56e284a361964d0a9ce5c45f41d56ab1}{tmmcSweepSize}, box\_);
-1741     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
-1742         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot start TMMC biasing in system: "}+std::to\_string(*ce.
+1724     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+1725         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot start TMMC biasing in system: "}+std::to\_string(*ce.
       \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}()));
-1743     \}
-1744 
-1745     \hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC} = \textcolor{keyword}{true};
-1746 \}
+1726     \}
+1727 
+1728     \hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC} = \textcolor{keyword}{true};
+1729 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a57af66c88ce4dc1aeb6a1cd3f14ff0bb}{\index{sim\-System@{sim\-System}!start\-W\-A\-L\-A@{start\-W\-A\-L\-A}}
 \index{start\-W\-A\-L\-A@{start\-W\-A\-L\-A}!simSystem@{sim\-System}}
@@ -3133,7 +3105,7 @@ Start using Wang-\/\-Landau and instantiate the bias object.
 
 
 
-Definition at line 1720 of file system.\-cpp.
+Definition at line 1703 of file system.\-cpp.
 
 
 
@@ -3145,17 +3117,17 @@ Referenced by checkpoint\-::load(), and perform\-W\-A\-L\-A().
 
 
 \begin{DoxyCode}
-1720                                                                                            \{
-1721     \textcolor{comment}{// initialize the wala object}
-1722     \textcolor{keywordflow}{try} \{
-1723         \hyperlink{classsim_system_a6dc8d9f89dfcfa247a59bc50889c49e7}{wlBias} = \textcolor{keyword}{new} \hyperlink{classwala}{wala} (lnF, g, s, totNBounds\_[1], totNBounds\_[0], Mtot, box\_);
-1724     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
-1725         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot start Wang-Landau biasing in system: "}+std::to\_string
+1703                                                                                            \{
+1704     \textcolor{comment}{// initialize the wala object}
+1705     \textcolor{keywordflow}{try} \{
+1706         \hyperlink{classsim_system_a6dc8d9f89dfcfa247a59bc50889c49e7}{wlBias} = \textcolor{keyword}{new} \hyperlink{classwala}{wala} (lnF, g, s, totNBounds\_[1], totNBounds\_[0], Mtot, box\_);
+1707     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+1708         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot start Wang-Landau biasing in system: "}+std::to\_string
       (*ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}()));
-1726     \}
-1727 
-1728     \hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA} = \textcolor{keyword}{true};
-1729 \}
+1709     \}
+1710 
+1711     \hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA} = \textcolor{keyword}{true};
+1712 \}
 \end{DoxyCode}
 \hypertarget{classsim_system_a69edcc2c27db3d4e94002ac5635e9030}{\index{sim\-System@{sim\-System}!stop\-T\-M\-M\-C@{stop\-T\-M\-M\-C}}
 \index{stop\-T\-M\-M\-C@{stop\-T\-M\-M\-C}!simSystem@{sim\-System}}
@@ -3170,7 +3142,11 @@ Stop using T\-M\-M\-C and free the bias object.
 
 
 
-Definition at line 70 of file system.\-h.
+Definition at line 63 of file system.\-h.
+
+
+
+References tmmc\-Bias, and use\-T\-M\-M\-C.
 
 
 
@@ -3189,7 +3165,11 @@ Stop using Wang-\/\-Landau and free the bias object.
 
 
 
-Definition at line 68 of file system.\-h.
+Definition at line 61 of file system.\-h.
+
+
+
+References use\-W\-A\-L\-A, and wl\-Bias.
 
 
 
@@ -3237,7 +3217,7 @@ Return upper bound on the total number of atoms in the system.
 
 
 
-Definition at line 82 of file system.\-h.
+Definition at line 75 of file system.\-h.
 
 
 
@@ -3256,7 +3236,7 @@ Return lower bound on the total number of atoms in the system.
 
 
 
-Definition at line 83 of file system.\-h.
+Definition at line 76 of file system.\-h.
 
 
 
@@ -3332,7 +3312,7 @@ Atoms in a matrix by type, and particle index, respectively that a system C\-A\-
 
 
 
-Definition at line 125 of file system.\-h.
+Definition at line 118 of file system.\-h.
 
 
 
@@ -3347,7 +3327,7 @@ Starting and ending ln\-F for Wang-\/\-Landau.
 
 
 
-Definition at line 107 of file system.\-h.
+Definition at line 100 of file system.\-h.
 
 
 
@@ -3358,7 +3338,7 @@ Referenced by initialize(), perform\-W\-A\-L\-A(), and sim\-System().
 \subsubsection[{ln\-F\-\_\-start}]{\setlength{\rightskip}{0pt plus 5cm}double sim\-System\-::ln\-F\-\_\-start}}\label{classsim_system_a794334e163fbeb4b4f61bcea676679ce}
 
 
-Definition at line 107 of file system.\-h.
+Definition at line 100 of file system.\-h.
 
 
 
@@ -3373,7 +3353,7 @@ Number of crossovers that must occur before switching from W\-A\-L\-A to T\-M\-M
 
 
 
-Definition at line 105 of file system.\-h.
+Definition at line 98 of file system.\-h.
 
 
 
@@ -3388,7 +3368,7 @@ Total number of each type of atom the system contains.
 
 
 
-Definition at line 124 of file system.\-h.
+Definition at line 117 of file system.\-h.
 
 
 
@@ -3403,7 +3383,7 @@ Matrix of pair potentials for atom types i, j.
 
 
 
-Definition at line 126 of file system.\-h.
+Definition at line 119 of file system.\-h.
 
 
 
@@ -3418,7 +3398,7 @@ Flags to restart from W\-A\-L\-A or T\-M\-M\-C initially.
 
 
 
-Definition at line 100 of file system.\-h.
+Definition at line 93 of file system.\-h.
 
 
 
@@ -3433,7 +3413,7 @@ Files to restart from W\-A\-L\-A or T\-M\-M\-C initially.
 
 
 
-Definition at line 122 of file system.\-h.
+Definition at line 115 of file system.\-h.
 
 
 
@@ -3444,7 +3424,7 @@ Referenced by initialize(), perform\-T\-M\-M\-C(), and sim\-System().
 \subsubsection[{restart\-From\-W\-A\-L\-A}]{\setlength{\rightskip}{0pt plus 5cm}bool sim\-System\-::restart\-From\-W\-A\-L\-A}}\label{classsim_system_a2b168c89742f4d64270583e7e54b2929}
 
 
-Definition at line 100 of file system.\-h.
+Definition at line 93 of file system.\-h.
 
 
 
@@ -3455,7 +3435,7 @@ Referenced by initialize(), perform\-W\-A\-L\-A(), and sim\-System().
 \subsubsection[{restart\-From\-W\-A\-L\-A\-File}]{\setlength{\rightskip}{0pt plus 5cm}std\-::string sim\-System\-::restart\-From\-W\-A\-L\-A\-File}}\label{classsim_system_afbf0b172dc35572e71ec6d27a018e2fc}
 
 
-Definition at line 122 of file system.\-h.
+Definition at line 115 of file system.\-h.
 
 
 
@@ -3470,7 +3450,7 @@ Barriers, if any, for each species.
 
 
 
-Definition at line 127 of file system.\-h.
+Definition at line 120 of file system.\-h.
 
 
 
@@ -3485,11 +3465,11 @@ T\-M\-M\-C biasing function.
 
 
 
-Definition at line 119 of file system.\-h.
+Definition at line 112 of file system.\-h.
 
 
 
-Referenced by calculate\-Bias(), get\-T\-M\-M\-C\-Bias(), agg\-Vol\-Bias3\-::make(), translate\-Particle\-::make(), delete\-Particle\-::make(), insert\-Particle\-::make(), swap\-Particles\-::make(), start\-T\-M\-M\-C(), and $\sim$sim\-System().
+Referenced by calculate\-Bias(), get\-T\-M\-M\-C\-Bias(), agg\-Vol\-Bias3\-::make(), delete\-Particle\-::make(), translate\-Particle\-::make(), swap\-Particles\-::make(), insert\-Particle\-::make(), start\-T\-M\-M\-C(), stop\-T\-M\-M\-C(), and $\sim$sim\-System().
 
 \hypertarget{classsim_system_a56e284a361964d0a9ce5c45f41d56ab1}{\index{sim\-System@{sim\-System}!tmmc\-Sweep\-Size@{tmmc\-Sweep\-Size}}
 \index{tmmc\-Sweep\-Size@{tmmc\-Sweep\-Size}!simSystem@{sim\-System}}
@@ -3500,7 +3480,7 @@ Size of a sweep in T\-M\-M\-C.
 
 
 
-Definition at line 102 of file system.\-h.
+Definition at line 95 of file system.\-h.
 
 
 
@@ -3515,7 +3495,7 @@ Total number of sweeps to perform during T\-M\-M\-C.
 
 
 
-Definition at line 103 of file system.\-h.
+Definition at line 96 of file system.\-h.
 
 
 
@@ -3530,11 +3510,11 @@ Logical stating whether or not to use T\-M\-M\-C biasing.
 
 
 
-Definition at line 98 of file system.\-h.
+Definition at line 91 of file system.\-h.
 
 
 
-Referenced by calculate\-Bias(), get\-T\-M\-M\-C\-Bias(), agg\-Vol\-Bias3\-::make(), delete\-Particle\-::make(), translate\-Particle\-::make(), swap\-Particles\-::make(), insert\-Particle\-::make(), perform\-T\-M\-M\-C(), perform\-W\-A\-L\-A(), sim\-System(), start\-T\-M\-M\-C(), and $\sim$sim\-System().
+Referenced by calculate\-Bias(), get\-T\-M\-M\-C\-Bias(), agg\-Vol\-Bias3\-::make(), delete\-Particle\-::make(), translate\-Particle\-::make(), swap\-Particles\-::make(), insert\-Particle\-::make(), perform\-T\-M\-M\-C(), perform\-W\-A\-L\-A(), sim\-System(), start\-T\-M\-M\-C(), stop\-T\-M\-M\-C(), and $\sim$sim\-System().
 
 \hypertarget{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{\index{sim\-System@{sim\-System}!use\-W\-A\-L\-A@{use\-W\-A\-L\-A}}
 \index{use\-W\-A\-L\-A@{use\-W\-A\-L\-A}!simSystem@{sim\-System}}
@@ -3545,18 +3525,18 @@ Logical stating whether or not to use Wang-\/\-Landau biasing.
 
 
 
-Definition at line 99 of file system.\-h.
+Definition at line 92 of file system.\-h.
 
 
 
-Referenced by calculate\-Bias(), get\-W\-A\-L\-A\-Bias(), agg\-Vol\-Bias3\-::make(), delete\-Particle\-::make(), translate\-Particle\-::make(), insert\-Particle\-::make(), swap\-Particles\-::make(), perform\-Crossover(), perform\-T\-M\-M\-C(), perform\-W\-A\-L\-A(), sim\-System(), start\-W\-A\-L\-A(), and $\sim$sim\-System().
+Referenced by calculate\-Bias(), get\-W\-A\-L\-A\-Bias(), agg\-Vol\-Bias3\-::make(), delete\-Particle\-::make(), translate\-Particle\-::make(), insert\-Particle\-::make(), swap\-Particles\-::make(), perform\-Crossover(), perform\-T\-M\-M\-C(), perform\-W\-A\-L\-A(), sim\-System(), start\-W\-A\-L\-A(), stop\-W\-A\-L\-A(), and $\sim$sim\-System().
 
 \hypertarget{classsim_system_aa2e866e69ebe5fa0761894212592175a}{\index{sim\-System@{sim\-System}!wala\-\_\-g@{wala\-\_\-g}}
 \index{wala\-\_\-g@{wala\-\_\-g}!simSystem@{sim\-System}}
 \subsubsection[{wala\-\_\-g}]{\setlength{\rightskip}{0pt plus 5cm}double sim\-System\-::wala\-\_\-g}}\label{classsim_system_aa2e866e69ebe5fa0761894212592175a}
 
 
-Definition at line 108 of file system.\-h.
+Definition at line 101 of file system.\-h.
 
 
 
@@ -3571,7 +3551,7 @@ Wang-\/\-Landau g and s factors.
 
 
 
-Definition at line 108 of file system.\-h.
+Definition at line 101 of file system.\-h.
 
 
 
@@ -3586,11 +3566,11 @@ W\-L biasing function.
 
 
 
-Definition at line 120 of file system.\-h.
+Definition at line 113 of file system.\-h.
 
 
 
-Referenced by calculate\-Bias(), get\-W\-A\-L\-A\-Bias(), start\-W\-A\-L\-A(), and $\sim$sim\-System().
+Referenced by calculate\-Bias(), get\-W\-A\-L\-A\-Bias(), start\-W\-A\-L\-A(), stop\-W\-A\-L\-A(), and $\sim$sim\-System().
 
 \hypertarget{classsim_system_ae625e1026daee4f99f83fb73881875a1}{\index{sim\-System@{sim\-System}!wl\-Sweep\-Size@{wl\-Sweep\-Size}}
 \index{wl\-Sweep\-Size@{wl\-Sweep\-Size}!simSystem@{sim\-System}}
@@ -3601,7 +3581,7 @@ Size of Wang-\/\-Landau sweep.
 
 
 
-Definition at line 104 of file system.\-h.
+Definition at line 97 of file system.\-h.
 
 
 

@@ -46,7 +46,7 @@ const std\-::vector$<$ double $>$ \hyperlink{classwala_a52cec7bdf93eec7d4eefc627
 \subsection{Detailed Description}
 Wang-\/\-Landau biasing class. 
 
-Definition at line 66 of file bias.\-h.
+Definition at line 59 of file bias.\-h.
 
 
 
@@ -60,11 +60,11 @@ Definition at line 66 of file bias.\-h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classwala_a1a4483327eb3527ecc114c075b0b0598}
 
 
-Definition at line 68 of file bias.\-h.
+Definition at line 61 of file bias.\-h.
 
 
 \begin{DoxyCode}
-68 \{\};
+61 \{\};
 \end{DoxyCode}
 \hypertarget{classwala_ac0d2f33ee8226fb4306628a750ed0d14}{\index{wala@{wala}!wala@{wala}}
 \index{wala@{wala}!wala@{wala}}
@@ -102,7 +102,7 @@ Wang-\/\-Landau biasing constructor.
 \end{DoxyParams}
 
 
-Definition at line 497 of file bias.\-cpp.
+Definition at line 407 of file bias.\-cpp.
 
 
 
@@ -110,68 +110,68 @@ References \-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-
 
 
 \begin{DoxyCode}
-497                                                                                                            
+407                                                                                                            
                                      \{
-498     \textcolor{keywordflow}{if} (\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF} < 0) \{
-499         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"lnF in Wang-Landau cannot be < 0"});
-500     \}
-501     lnF\_ = \hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF};
-502 
-503     \textcolor{keywordflow}{if} (g <= 0 || g >= 1) \{
-504         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"In Wang-Landau 0 < g < 1"});
-505     \}
-506     g\_ = g;
-507 
-508     \textcolor{keywordflow}{if} (s <= 0 || s >= 1) \{
-509         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"In Wang-Landau 0 < s < 1"});
-510     \}
-511     s\_ = s;
-512 
-513     \textcolor{keywordflow}{if} (Nmin > Nmax) \{
-514         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Nmin > Nmax in Wang-Landau object"});
-515     \}
-516 
-517     \textcolor{keywordflow}{if} (Nmin < 0) \{
-518         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Nmin < 0 in Wang-Landau object"});
-519     \}
-520 
-521     \textcolor{keywordflow}{if} (Mtot < 1) \{
-522         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Mtot < 1 in Wang-Landau object"});
-523     \}
-524     Mtot\_ = Mtot;
-525 
-526     \textcolor{keywordflow}{if} (box.size() != 3) \{
-527         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Illegal number of box dimensions in Wang-Landau"});
-528     \}
-529     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box.size(); ++i) \{
-530         \textcolor{keywordflow}{if} (box[i] < 0) \{
-531             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Illegal box dimensions in Wang-Landau"});
-532         \}
-533     \}
-534     box\_.resize(3, 0);
-535     box\_ = box;
-536 
-537     \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} size = (Nmax - Nmin + 1);
-538 
-539     Nmin\_ = Nmin;
-540     Nmax\_ = Nmax;
-541 
-542     \textcolor{comment}{// attempt to allocate memory for macrostate distribution matrix and initializes it all to 0}
-543     \textcolor{keywordflow}{try} \{
-544         lnPI\_.resize(size*Mtot\_, 0.0);
-545     \} \textcolor{keywordflow}{catch} (\textcolor{keyword}{const} std::bad\_alloc &ce) \{
-546         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory, cannot allocate space for macrostate
+408     \textcolor{keywordflow}{if} (\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF} < 0) \{
+409         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"lnF in Wang-Landau cannot be < 0"});
+410     \}
+411     lnF\_ = \hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF};
+412 
+413     \textcolor{keywordflow}{if} (g <= 0 || g >= 1) \{
+414         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"In Wang-Landau 0 < g < 1"});
+415     \}
+416     g\_ = g;
+417 
+418     \textcolor{keywordflow}{if} (s <= 0 || s >= 1) \{
+419         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"In Wang-Landau 0 < s < 1"});
+420     \}
+421     s\_ = s;
+422 
+423     \textcolor{keywordflow}{if} (Nmin > Nmax) \{
+424         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Nmin > Nmax in Wang-Landau object"});
+425     \}
+426 
+427     \textcolor{keywordflow}{if} (Nmin < 0) \{
+428         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Nmin < 0 in Wang-Landau object"});
+429     \}
+430 
+431     \textcolor{keywordflow}{if} (Mtot < 1) \{
+432         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Mtot < 1 in Wang-Landau object"});
+433     \}
+434     Mtot\_ = Mtot;
+435 
+436     \textcolor{keywordflow}{if} (box.size() != 3) \{
+437         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Illegal number of box dimensions in Wang-Landau"});
+438     \}
+439     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box.size(); ++i) \{
+440         \textcolor{keywordflow}{if} (box[i] < 0) \{
+441             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Illegal box dimensions in Wang-Landau"});
+442         \}
+443     \}
+444     box\_.resize(3, 0);
+445     box\_ = box;
+446 
+447     \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} size = (Nmax - Nmin + 1);
+448 
+449     Nmin\_ = Nmin;
+450     Nmax\_ = Nmax;
+451 
+452     \textcolor{comment}{// attempt to allocate memory for macrostate distribution matrix and initializes it all to 0}
+453     \textcolor{keywordflow}{try} \{
+454         lnPI\_.resize(size*Mtot\_, 0.0);
+455     \} \textcolor{keywordflow}{catch} (\textcolor{keyword}{const} std::bad\_alloc &ce) \{
+456         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory, cannot allocate space for macrostate
        distribution matrix in wala"});
-547     \}
-548 
-549     \textcolor{comment}{// initialize the visited-states histogram}
-550     \textcolor{keywordflow}{try} \{
-551         H\_.resize(size*Mtot\_, 0.0);
-552     \} \textcolor{keywordflow}{catch} (\textcolor{keyword}{const} std::bad\_alloc &ce) \{
-553         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory, cannot allocate space for visited-states
+457     \}
+458 
+459     \textcolor{comment}{// initialize the visited-states histogram}
+460     \textcolor{keywordflow}{try} \{
+461         H\_.resize(size*Mtot\_, 0.0);
+462     \} \textcolor{keywordflow}{catch} (\textcolor{keyword}{const} std::bad\_alloc &ce) \{
+463         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory, cannot allocate space for visited-states
        histogram in wala"});
-554     \}
-555 \}
+464     \}
+465 \}
 \end{DoxyCode}
 
 
@@ -192,7 +192,7 @@ Returns whether the histogram is flat or not.
 \end{DoxyReturn}
 
 
-Definition at line 587 of file bias.\-cpp.
+Definition at line 497 of file bias.\-cpp.
 
 
 
@@ -204,24 +204,24 @@ Referenced by perform\-Crossover(), and perform\-W\-A\-L\-A().
 
 
 \begin{DoxyCode}
-587                              \{
-588     \textcolor{keywordtype}{double} min = H\_[0], lnMean = -DBL\_MAX;
-589     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < H\_.size() - (Mtot\_-1); ++i) \{ \textcolor{comment}{// insert routine prevents the sampling past
+497                              \{
+498     \textcolor{keywordtype}{double} min = H\_[0], lnMean = -DBL\_MAX;
+499     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < H\_.size() - (Mtot\_-1); ++i) \{ \textcolor{comment}{// insert routine prevents the sampling past
        N = Nmax, M = 0, so N = Nmax and M > 0 are validly empty}
-590         \textcolor{keywordflow}{if} (H\_[i] < min) \{
-591             min = H\_[i];
-592         \}
-593 
-594         \textcolor{comment}{// summing so many doubles may overrun DBL\_MAX, so instead track the lnMean}
-595         lnMean = \hyperlink{bias_8h_a9f1e113b6454173bd61677519ec34c3a}{specExp}(lnMean, log(H\_[i]));
-596     \}
-597     lnMean -= log(H\_.size() - (Mtot\_-1));
-598 
-599     \textcolor{keywordflow}{if} (log(min) - lnMean > log(s\_)) \{
-600         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
-601     \}
-602     \textcolor{keywordflow}{return} \textcolor{keyword}{false};
-603 \}
+500         \textcolor{keywordflow}{if} (H\_[i] < min) \{
+501             min = H\_[i];
+502         \}
+503 
+504         \textcolor{comment}{// summing so many doubles may overrun DBL\_MAX, so instead track the lnMean}
+505         lnMean = \hyperlink{bias_8h_a9f1e113b6454173bd61677519ec34c3a}{specExp}(lnMean, log(H\_[i]));
+506     \}
+507     lnMean -= log(H\_.size() - (Mtot\_-1));
+508 
+509     \textcolor{keywordflow}{if} (log(min) - lnMean > log(s\_)) \{
+510         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+511     \}
+512     \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+513 \}
 \end{DoxyCode}
 \hypertarget{classwala_a6120a0549bee60f2acabf6db132ff9d9}{\index{wala@{wala}!get\-Address@{get\-Address}}
 \index{get\-Address@{get\-Address}!wala@{wala}}
@@ -244,7 +244,7 @@ For multidimensional Wang-\/\-Landau biasing, get the 1\-D coordinate of the mac
 \end{DoxyParams}
 
 
-Definition at line 563 of file bias.\-cpp.
+Definition at line 473 of file bias.\-cpp.
 
 
 
@@ -252,13 +252,13 @@ Referenced by calculate\-Bias(), and update().
 
 
 \begin{DoxyCode}
-563                                                                         \{
-564     \textcolor{keywordflow}{if} (Nval > Nmax\_ || Nval < Nmin\_ || Mval < 0 || Mval > Mtot\_-1) \{
-565         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"N, M out of bounds in Wang-Landau object, cannot retrieve
+473                                                                         \{
+474     \textcolor{keywordflow}{if} (Nval > Nmax\_ || Nval < Nmin\_ || Mval < 0 || Mval > Mtot\_-1) \{
+475         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"N, M out of bounds in Wang-Landau object, cannot retrieve
        address"});
-566     \}
-567     \textcolor{keywordflow}{return} (Nval - Nmin\_)*Mtot\_ + Mval;
-568 \}
+476     \}
+477     \textcolor{keywordflow}{return} (Nval - Nmin\_)*Mtot\_ + Mval;
+478 \}
 \end{DoxyCode}
 \hypertarget{classwala_a03f7b333aa0a280e78060bd9af7ec318}{\index{wala@{wala}!get\-Bias@{get\-Bias}}
 \index{get\-Bias@{get\-Bias}!wala@{wala}}
@@ -269,7 +269,7 @@ Referenced by calculate\-Bias(), and update().
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classwala_a03f7b333aa0a280e78060bd9af7ec318}
 
 
-Definition at line 80 of file bias.\-h.
+Definition at line 73 of file bias.\-h.
 
 
 
@@ -277,7 +277,7 @@ Referenced by calculate\-Bias().
 
 
 \begin{DoxyCode}
-80 \{ \textcolor{keywordflow}{return} -lnPI\_[address]; \}
+73 \{ \textcolor{keywordflow}{return} -lnPI\_[address]; \}
 \end{DoxyCode}
 \hypertarget{classwala_a52cec7bdf93eec7d4eefc627b71f1f65}{\index{wala@{wala}!get\-H@{get\-H}}
 \index{get\-H@{get\-H}!wala@{wala}}
@@ -292,7 +292,7 @@ Return the visited-\/states histogram.
 
 
 
-Definition at line 82 of file bias.\-h.
+Definition at line 75 of file bias.\-h.
 
 \hypertarget{classwala_a80b00e34135eb6da4e81cd0935622fc5}{\index{wala@{wala}!getln\-P\-I@{getln\-P\-I}}
 \index{getln\-P\-I@{getln\-P\-I}!wala@{wala}}
@@ -307,7 +307,7 @@ Return the current estimate of the macrostate distribution.
 
 
 
-Definition at line 81 of file bias.\-h.
+Definition at line 74 of file bias.\-h.
 
 \hypertarget{classwala_ae06c2f1475702ec9d1b0a243b7f34e4b}{\index{wala@{wala}!iterate\-Forward@{iterate\-Forward}}
 \index{iterate\-Forward@{iterate\-Forward}!wala@{wala}}
@@ -322,7 +322,7 @@ This should only be called when the \char`\"{}flatness\char`\"{} criterion is me
 
 This then resets the visited-\/states histogram H, and decrements ln\-F. 
 
-Definition at line 608 of file bias.\-cpp.
+Definition at line 518 of file bias.\-cpp.
 
 
 
@@ -330,10 +330,10 @@ Referenced by perform\-Crossover(), and perform\-W\-A\-L\-A().
 
 
 \begin{DoxyCode}
-608                            \{
-609     lnF\_ = lnF\_*g\_;
-610     std::fill(H\_.begin(), H\_.end(), 0);
-611 \}
+518                            \{
+519     lnF\_ = lnF\_*g\_;
+520     std::fill(H\_.begin(), H\_.end(), 0);
+521 \}
 \end{DoxyCode}
 \hypertarget{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{\index{wala@{wala}!ln\-F@{ln\-F}}
 \index{ln\-F@{ln\-F}!wala@{wala}}
@@ -344,7 +344,7 @@ Referenced by perform\-Crossover(), and perform\-W\-A\-L\-A().
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}
 
 
-Definition at line 79 of file bias.\-h.
+Definition at line 72 of file bias.\-h.
 
 
 
@@ -352,7 +352,7 @@ Referenced by checkpoint\-::dump(), perform\-Crossover(), perform\-W\-A\-L\-A(),
 
 
 \begin{DoxyCode}
-79 \{ \textcolor{keywordflow}{return} lnF\_; \}
+72 \{ \textcolor{keywordflow}{return} lnF\_; \}
 \end{DoxyCode}
 \hypertarget{classwala_a65569289fac85d0da9c336e17c9d809a}{\index{wala@{wala}!print@{print}}
 \index{print@{print}!wala@{wala}}
@@ -366,7 +366,7 @@ Referenced by checkpoint\-::dump(), perform\-Crossover(), perform\-W\-A\-L\-A(),
 
 Print the U\-N-\/\-N\-O\-R\-M\-A\-L\-I\-Z\-E\-D biasing function (ln\-P\-I) and possible the visted states histogram to files. 
 
-Will overwrite the files if another with that name exists. Prints in net\-C\-D\-F format if enabled.
+Will overwrite the files if another with that name exists.
 
 
 \begin{DoxyParams}[1]{Parameters}
@@ -377,7 +377,7 @@ Will overwrite the files if another with that name exists. Prints in net\-C\-D\-
 \end{DoxyParams}
 
 
-Definition at line 621 of file bias.\-cpp.
+Definition at line 530 of file bias.\-cpp.
 
 
 
@@ -385,88 +385,45 @@ Referenced by checkpoint\-::dump().
 
 
 \begin{DoxyCode}
-621                                                        \{
-622 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
-623 \textcolor{preprocessor}{}    \textcolor{comment}{// Print visited-states histogram}
-624     \textcolor{keywordflow}{if} (printH) \{
-625         \textcolor{keyword}{const} std::string name = fileName + \textcolor{stringliteral}{"\_H.nc"};
-626         \textcolor{keywordflow}{try} \{
-627             \textcolor{comment}{// print complete visited states histogram to restart / visualize progress}
-628             NcFile outFile(name.c\_str(), NcFile::replace);
-629             NcDim probDim = outFile.addDim(\textcolor{stringliteral}{"vectorized\_position"}, H\_.size());
-630             NcVar probVar = outFile.addVar(\textcolor{stringliteral}{"H"}, ncDouble, probDim);
-631             std::string attName = \textcolor{stringliteral}{"species\_total\_upper\_bound"};
-632             probVar.putAtt(attName.c\_str(), std::to\_string(Nmax\_).c\_str());
-633             attName = \textcolor{stringliteral}{"species\_upper\_lower\_bound"};
-634             probVar.putAtt(attName.c\_str(), std::to\_string(Nmin\_).c\_str());
-635             attName = \textcolor{stringliteral}{"volume"};
-636             \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-637             probVar.putAtt(attName.c\_str(), std::to\_string(V).c\_str());
-638             probVar.putVar(&H\_[0]);
-639         \} \textcolor{keywordflow}{catch} (NcException ioe) \{
-640             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write Wang-Landau visited states histogram to 
+530                                                        \{
+531     \textcolor{comment}{// Print visited-states histogram}
+532     \textcolor{keywordflow}{if} (printH) \{
+533         \textcolor{comment}{// print complete visited states histogram to restart / visualize progress}
+534         std::ofstream of;
+535         std::string name = fileName+\textcolor{stringliteral}{"\_H.dat"};
+536         of.open(name.c\_str(), std::ofstream::out);
+537         \textcolor{keywordflow}{if} (!of.is\_open()) \{
+538             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write Wang-Landau visited states histogram to 
       "}+name);
-641         \}
-642     \}
-643 
-644     \textcolor{comment}{// Print lnPI (bias) matrix}
-645     \textcolor{keyword}{const} std::string name = fileName + \textcolor{stringliteral}{"\_lnPI.nc"};
-646     \textcolor{keywordflow}{try} \{
-647         \textcolor{comment}{// only ALL states for restarting purposes}
-648         NcFile outFile(name.c\_str(), NcFile::replace);
-649         NcDim probDim = outFile.addDim(\textcolor{stringliteral}{"vectorized\_position"}, lnPI\_.size());
-650         NcVar probVar = outFile.addVar(\textcolor{stringliteral}{"lnPI"}, ncDouble, probDim);
-651         std::string attName = \textcolor{stringliteral}{"species\_total\_upper\_bound"};
-652         probVar.putAtt(attName.c\_str(), std::to\_string(Nmax\_).c\_str());
-653         attName = \textcolor{stringliteral}{"species\_total\_lower\_bound"};
-654         probVar.putAtt(attName.c\_str(), std::to\_string(Nmin\_).c\_str());
-655         attName = \textcolor{stringliteral}{"volume"};
-656         \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-657         probVar.putAtt(attName.c\_str(), std::to\_string(V).c\_str());
-658         probVar.putVar(&lnPI\_[0]);
-659     \} \textcolor{keywordflow}{catch} (NcException ioe) \{
-660         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write Wang-Landau lnPI histogram to "}+name);
-661     \}
-662 \textcolor{preprocessor}{#else}
-663 \textcolor{preprocessor}{}    \textcolor{comment}{// Print visited-states histogram}
-664     \textcolor{keywordflow}{if} (printH) \{
-665         \textcolor{comment}{// print complete visited states histogram to restart / visualize progress}
-666         std::ofstream of;
-667         std::string name = fileName+\textcolor{stringliteral}{"\_H.dat"};
-668         of.open(name.c\_str(), std::ofstream::out);
-669         \textcolor{keywordflow}{if} (!of.is\_open()) \{
-670             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write Wang-Landau visited states histogram to 
-      "}+name);
-671         \}
-672         of << \textcolor{stringliteral}{"# Visited states histogram in single row (vectorized) notation."} << std::endl;
-673         of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
-674         of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
-675         \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-676         of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
-677         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < H\_.size(); ++i) \{
-678             of << std::setprecision(15) << H\_[i] << std::endl;
-679         \}
-680         of.close();
-681     \}
-682 
-683     \textcolor{comment}{// Print lnPI (bias) matrix}
-684     std::ofstream of;
-685     std::string name = fileName+\textcolor{stringliteral}{"\_lnPI.dat"};
-686     of.open(name.c\_str(), std::ofstream::out);
-687     \textcolor{keywordflow}{if} (!of.is\_open()) \{
-688         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write Wang-Landau lnPI histogram to "}+name);
-689     \}
-690     of << \textcolor{stringliteral}{"# lnPI (bias) matrix in single row (vectorized) notation."} << std::endl;
-691     of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
-692     of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
-693     \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-694     of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
-695     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < lnPI\_.size(); ++i) \{
-696         of << std::setprecision(15) << lnPI\_[i] << std::endl; \textcolor{comment}{// only ALL states for restarting purposes}
-697     \}
-698     of.close();
-699 \textcolor{preprocessor}{#endif}
-700 \textcolor{preprocessor}{}\}
+539         \}
+540         of << \textcolor{stringliteral}{"# Visited states histogram in single row (vectorized) notation."} << std::endl;
+541         of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
+542         of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
+543         \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
+544         of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
+545         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < H\_.size(); ++i) \{
+546             of << std::setprecision(15) << H\_[i] << std::endl;
+547         \}
+548         of.close();
+549     \}
+550 
+551     \textcolor{comment}{// Print lnPI (bias) matrix}
+552     std::ofstream of;
+553     std::string name = fileName+\textcolor{stringliteral}{"\_lnPI.dat"};
+554     of.open(name.c\_str(), std::ofstream::out);
+555     \textcolor{keywordflow}{if} (!of.is\_open()) \{
+556         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write Wang-Landau lnPI histogram to "}+name);
+557     \}
+558     of << \textcolor{stringliteral}{"# lnPI (bias) matrix in single row (vectorized) notation."} << std::endl;
+559     of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
+560     of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
+561     \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
+562     of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
+563     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < lnPI\_.size(); ++i) \{
+564         of << std::setprecision(15) << lnPI\_[i] << std::endl; \textcolor{comment}{// only ALL states for restarting purposes}
+565     \}
+566     of.close();
+567 \}
 \end{DoxyCode}
 \hypertarget{classwala_a0b8df0fb2b7722fc4a458e527a478b6f}{\index{wala@{wala}!read\-H@{read\-H}}
 \index{read\-H@{read\-H}!wala@{wala}}
@@ -488,7 +445,7 @@ This assumes the user has already guaranteed that the bounds are consistent, e.\
 \end{DoxyParams}
 
 
-Definition at line 744 of file bias.\-cpp.
+Definition at line 600 of file bias.\-cpp.
 
 
 
@@ -496,36 +453,23 @@ Referenced by checkpoint\-::load().
 
 
 \begin{DoxyCode}
-744                                           \{
-745 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
-746 \textcolor{preprocessor}{}    \textcolor{keywordflow}{try} \{
-747         NcFile dataFile (fileName.c\_str(), NcFile::read);
-748         NcVar H\_data = dataFile.getVar(\textcolor{stringliteral}{"H"});
-749         \textcolor{keywordflow}{if} (H\_data.isNull()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Wang-Landau visited states matrix was
-       empty, cannot read from "}+fileName);
-750         H\_data.getVar(&H\_[0]);
-751     \} \textcolor{keywordflow}{catch} (NcException ioe) \{
-752         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to read Wang-Landau visited states matrix from "}+
+600                                           \{
+601     std::ifstream infile (fileName.c\_str());
+602     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
+603         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to read Wang-Landau visited states matrix  from "}+
       fileName);
-753     \}
-754 \textcolor{preprocessor}{#else}
-755 \textcolor{preprocessor}{}    std::ifstream infile (fileName.c\_str());
-756     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
-757         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to read Wang-Landau visited states matrix  from "}+
-      fileName);
-758     \}
-759     std::string line;
-760     \textcolor{keywordtype}{int} lineIndex = 0;
-761     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
-762         std::stringstream lineStream(line);
-763         \textcolor{comment}{// skip any header information}
-764         \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
-765             H\_[lineIndex] = atof(line.c\_str());
-766             lineIndex++;
-767         \}
-768     \}
-769 \textcolor{preprocessor}{#endif}
-770 \textcolor{preprocessor}{}\}
+604     \}
+605     std::string line;
+606     \textcolor{keywordtype}{int} lineIndex = 0;
+607     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
+608         std::stringstream lineStream(line);
+609         \textcolor{comment}{// skip any header information}
+610         \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
+611             H\_[lineIndex] = atof(line.c\_str());
+612             lineIndex++;
+613         \}
+614     \}
+615 \}
 \end{DoxyCode}
 \hypertarget{classwala_ae04916f49c11b0636e813787a3906570}{\index{wala@{wala}!readln\-P\-I@{readln\-P\-I}}
 \index{readln\-P\-I@{readln\-P\-I}!wala@{wala}}
@@ -547,7 +491,7 @@ This assumes the user has already guaranteed that the bounds are consistent, e.\
 \end{DoxyParams}
 
 
-Definition at line 709 of file bias.\-cpp.
+Definition at line 576 of file bias.\-cpp.
 
 
 
@@ -555,34 +499,22 @@ Referenced by checkpoint\-::load(), and perform\-W\-A\-L\-A().
 
 
 \begin{DoxyCode}
-709                                              \{
-710 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
-711 \textcolor{preprocessor}{}    \textcolor{keywordflow}{try} \{
-712         NcFile dataFile (fileName.c\_str(), NcFile::read);
-713         NcVar lnPI\_data = dataFile.getVar(\textcolor{stringliteral}{"lnPI"});
-714         \textcolor{keywordflow}{if} (lnPI\_data.isNull()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Wang-Landau macrostate distribution
-       matrix (biasing function) was empty, cannot read from "}+fileName);
-715         lnPI\_data.getVar(&lnPI\_[0]);
-716     \} \textcolor{keywordflow}{catch} (NcException ioe) \{
-717         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to read Wang-Landau lnPI from "}+fileName);
-718     \}
-719 \textcolor{preprocessor}{#else}
-720 \textcolor{preprocessor}{}    std::ifstream infile (fileName.c\_str());
-721     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
-722         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to read Wang-Landau lnPI from "}+fileName);
-723     \}
-724     std::string line;
-725     \textcolor{keywordtype}{int} lineIndex = 0;
-726     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
-727         std::stringstream lineStream(line);
-728         \textcolor{comment}{// skip any header information}
-729         \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
-730             lnPI\_[lineIndex] = atof(line.c\_str());
-731             lineIndex++;
-732         \}
-733     \}
-734 \textcolor{preprocessor}{#endif}
-735 \textcolor{preprocessor}{}\}
+576                                              \{
+577     std::ifstream infile (fileName.c\_str());
+578     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
+579         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to read Wang-Landau lnPI from "}+fileName);
+580     \}
+581     std::string line;
+582     \textcolor{keywordtype}{int} lineIndex = 0;
+583     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
+584         std::stringstream lineStream(line);
+585         \textcolor{comment}{// skip any header information}
+586         \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
+587             lnPI\_[lineIndex] = atof(line.c\_str());
+588             lineIndex++;
+589         \}
+590     \}
+591 \}
 \end{DoxyCode}
 \hypertarget{classwala_a1d778061b12611b1a35eb3ca15038d02}{\index{wala@{wala}!setln\-P\-I@{setln\-P\-I}}
 \index{setln\-P\-I@{setln\-P\-I}!wala@{wala}}
@@ -597,7 +529,7 @@ Blindly assign a guess of the macrostate distribution.
 
 
 
-Definition at line 76 of file bias.\-h.
+Definition at line 69 of file bias.\-h.
 
 \hypertarget{classwala_ab439e3f60bea6c54522a870b9ad67acf}{\index{wala@{wala}!update@{update}}
 \index{update@{update}!wala@{wala}}
@@ -620,7 +552,7 @@ Update the estimate of the macrostate distribution.
 \end{DoxyParams}
 
 
-Definition at line 576 of file bias.\-cpp.
+Definition at line 486 of file bias.\-cpp.
 
 
 
@@ -632,11 +564,11 @@ Referenced by agg\-Vol\-Bias3\-::make(), translate\-Particle\-::make(), delete\-
 
 
 \begin{DoxyCode}
-576                                                  \{
-577     \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} address = \hyperlink{classwala_a6120a0549bee60f2acabf6db132ff9d9}{getAddress} (Nval, Mval);
-578     lnPI\_[address] += lnF\_;
-579     H\_[address] += 1.0;
-580 \}
+486                                                  \{
+487     \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} address = \hyperlink{classwala_a6120a0549bee60f2acabf6db132ff9d9}{getAddress} (Nval, Mval);
+488     lnPI\_[address] += lnF\_;
+489     H\_[address] += 1.0;
+490 \}
 \end{DoxyCode}
 
 

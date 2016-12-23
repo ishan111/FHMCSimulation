@@ -1,4 +1,4 @@
-.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/bias.h" 3 "Thu Dec 22 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/bias.h" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -58,7 +58,7 @@
 .PP
 For biasing, need to address things with large indices\&. 
 .PP
-Definition at line 23 of file bias\&.h\&.
+Definition at line 16 of file bias\&.h\&.
 .PP
 Referenced by calculateBias(), tmmc::calculatePI(), tmmc::checkFullyVisited(), tmmc::getTransitionAddress(), tmmc::tmmc(), wala::update(), and wala::wala()\&.
 .SS "#define specExp(a, b)   std::max(a, b) + log(1\&.0 + exp(-std::fabs(a-b)))"
@@ -66,7 +66,7 @@ Referenced by calculateBias(), tmmc::calculatePI(), tmmc::checkFullyVisited(), t
 .PP
 Jacobi method for evaluating natural logarithm of a sum of exponentials E\&.g\&. ln( exp(a) + exp(b) ) = \fBspecExp(a, b)\fP 
 .PP
-Definition at line 28 of file bias\&.h\&.
+Definition at line 21 of file bias\&.h\&.
 .PP
 Referenced by wala::evaluateFlatness()\&.
 .SH "Author"

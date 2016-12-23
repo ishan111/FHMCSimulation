@@ -1,4 +1,4 @@
-.TH "simSystem" 3 "Thu Dec 22 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "simSystem" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -332,16 +332,16 @@ System information for the simulation\&.
 .PP 
 System information for the simulation\&. 
 .PP
-Definition at line 33 of file system\&.h\&.
+Definition at line 26 of file system\&.h\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "simSystem::simSystem ()\fC [inline]\fP"
 
 .PP
-Definition at line 35 of file system\&.h\&.
+Definition at line 28 of file system\&.h\&.
 .PP
 .nf
-35 {;}
+28 {;}
 .fi
 .SS "simSystem::simSystem (const unsigned intnSpecies, const doublebeta, const std::vector< double >box, const std::vector< double >mu, const std::vector< int >maxSpecies, const std::vector< int >minSpecies, const intMtot, const doubleenergyHistDelta = \fC10\&.0\fP, const intmax_order = \fC2\fP)"
 
@@ -588,12 +588,12 @@ References tmmcBias, useTMMC, useWALA, and wlBias\&.
 .SS "bool simSystem::addKECorrection ()\fC [inline]\fP"
 
 .PP
-Definition at line 39 of file system\&.h\&.
+Definition at line 32 of file system\&.h\&.
 .PP
 Referenced by initialize(), deleteParticle::make(), insertParticle::make(), and setup()\&.
 .PP
 .nf
-39 { return toggleKE_; }
+32 { return toggleKE_; }
 .fi
 .SS "void simSystem::addPotential (const intspec1, const intspec2, const std::stringppot_name, const std::vector< double > &params, const booluseCellList = \fCfalse\fP)"
 
@@ -615,126 +615,124 @@ Add a pair potential to the system which governs the pair (spec1, spec2)\&. Howe
 .PP
 
 .PP
-Definition at line 1220 of file system\&.cpp\&.
+Definition at line 1205 of file system\&.cpp\&.
 .PP
 References ppot, SYS_FAILURE, and customException::what()\&.
 .PP
 Referenced by setPairPotentials()\&.
 .PP
 .nf
-1220                                                                                                                                                      {
-1221     if (spec1 >= nSpecies_) {
-1222         throw customException ("Trying to define pair potential for species (1) that does not exist yet");
-1223         return;
-1224     }
-1225     if (spec2 >= nSpecies_) {
-1226         throw customException ("Trying to define pair potential for species (2) that does not exist yet");
-1227         return;
-1228     }
-1229 
-1230     if (ppot_name == "square_well") {
-1231         try {
-1232             auto pp1 = std::make_shared < squareWell > ();
-1233             pp1->setParameters(params);
-1234             ppot[spec1][spec2] = pp1;
-1235             auto pp2 = std::make_shared < squareWell > ();
-1236             pp2->setParameters(params);
-1237             ppot[spec2][spec1] = pp2;
-1238         } catch (customException &ce) {
-1239             std::cerr << ce\&.what() << std::endl;
-1240             exit(SYS_FAILURE);
-1241         }
-1242     } else if (ppot_name == "lennard_jones") {
-1243         try {
-1244             auto pp1 = std::make_shared < lennardJones > ();
-1245             pp1->setParameters(params);
-1246             ppot[spec1][spec2] = pp1;
-1247             auto pp2 = std::make_shared < lennardJones > ();
-1248             pp2->setParameters(params);
-1249             ppot[spec2][spec1] = pp2;
-1250         } catch (customException &ce) {
-1251             std::cerr << ce\&.what() << std::endl;
-1252             exit(SYS_FAILURE);
-1253         }
-1254     } else if (ppot_name == "fs_lennard_jones") {
-1255         try {
-1256             auto pp1 = std::make_shared < fsLennardJones > ();
-1257             pp1->setParameters(params);
-1258             ppot[spec1][spec2] = pp1;
-1259             auto pp2 = std::make_shared < fsLennardJones > ();
-1260             pp2->setParameters(params);
-1261             ppot[spec2][spec1] = pp2;
-1262         } catch (customException &ce) {
-1263             std::cerr << ce\&.what() << std::endl;
-1264             exit(SYS_FAILURE);
-1265         }
-1266     } else if (ppot_name == "hard_sphere") {
-1267         try {
-1268             auto pp1 = std::make_shared < hardCore > ();
-1269             pp1->setParameters(params);
-1270             ppot[spec1][spec2] = pp1;
-1271             auto pp2 = std::make_shared < hardCore > ();
-1272             pp2->setParameters(params);
-1273             ppot[spec2][spec1] = pp2;
-1274         } catch (customException &ce) {
-1275             std::cerr << ce\&.what() << std::endl;
-1276             exit(SYS_FAILURE);
-1277         }
-1278     } else if (ppot_name == "tabulated") {
-1279         try {
-1280             auto pp1 = std::make_shared < tabulated > ();
-1281             pp1->setParameters(params);
-1282             ppot[spec1][spec2] = pp1;
-1283             auto pp2 = std::make_shared < tabulated > ();
-1284             pp2->setParameters(params);
-1285             ppot[spec2][spec1] = pp2;
-1286         } catch (customException &ce) {
-1287             std::cerr << ce\&.what() << std::endl;
-1288             exit(SYS_FAILURE);
-1289         }
-1290     } else {
-1291         std::cerr << "Unrecognized pair potential name for species " << spec1 << ", " << spec2 << std::endl;
-1292         exit(SYS_FAILURE);
-1293     }
+1205                                                                                                                                                      {
+1206     if (spec1 >= nSpecies_) {
+1207         throw customException ("Trying to define pair potential for species (1) that does not exist yet");
+1208     }
+1209     if (spec2 >= nSpecies_) {
+1210         throw customException ("Trying to define pair potential for species (2) that does not exist yet");
+1211     }
+1212 
+1213     if (ppot_name == "square_well") {
+1214         try {
+1215             auto pp1 = std::make_shared < squareWell > ();
+1216             pp1->setParameters(params);
+1217             ppot[spec1][spec2] = pp1;
+1218             auto pp2 = std::make_shared < squareWell > ();
+1219             pp2->setParameters(params);
+1220             ppot[spec2][spec1] = pp2;
+1221         } catch (customException &ce) {
+1222             std::cerr << ce\&.what() << std::endl;
+1223             exit(SYS_FAILURE);
+1224         }
+1225     } else if (ppot_name == "lennard_jones") {
+1226         try {
+1227             auto pp1 = std::make_shared < lennardJones > ();
+1228             pp1->setParameters(params);
+1229             ppot[spec1][spec2] = pp1;
+1230             auto pp2 = std::make_shared < lennardJones > ();
+1231             pp2->setParameters(params);
+1232             ppot[spec2][spec1] = pp2;
+1233         } catch (customException &ce) {
+1234             std::cerr << ce\&.what() << std::endl;
+1235             exit(SYS_FAILURE);
+1236         }
+1237     } else if (ppot_name == "fs_lennard_jones") {
+1238         try {
+1239             auto pp1 = std::make_shared < fsLennardJones > ();
+1240             pp1->setParameters(params);
+1241             ppot[spec1][spec2] = pp1;
+1242             auto pp2 = std::make_shared < fsLennardJones > ();
+1243             pp2->setParameters(params);
+1244             ppot[spec2][spec1] = pp2;
+1245         } catch (customException &ce) {
+1246             std::cerr << ce\&.what() << std::endl;
+1247             exit(SYS_FAILURE);
+1248         }
+1249     } else if (ppot_name == "hard_sphere") {
+1250         try {
+1251             auto pp1 = std::make_shared < hardCore > ();
+1252             pp1->setParameters(params);
+1253             ppot[spec1][spec2] = pp1;
+1254             auto pp2 = std::make_shared < hardCore > ();
+1255             pp2->setParameters(params);
+1256             ppot[spec2][spec1] = pp2;
+1257         } catch (customException &ce) {
+1258             std::cerr << ce\&.what() << std::endl;
+1259             exit(SYS_FAILURE);
+1260         }
+1261     } else if (ppot_name == "tabulated") {
+1262         try {
+1263             auto pp1 = std::make_shared < tabulated > ();
+1264             pp1->setParameters(params);
+1265             ppot[spec1][spec2] = pp1;
+1266             auto pp2 = std::make_shared < tabulated > ();
+1267             pp2->setParameters(params);
+1268             ppot[spec2][spec1] = pp2;
+1269         } catch (customException &ce) {
+1270             std::cerr << ce\&.what() << std::endl;
+1271             exit(SYS_FAILURE);
+1272         }
+1273     } else {
+1274         std::cerr << "Unrecognized pair potential name for species " << spec1 << ", " << spec2 << std::endl;
+1275         exit(SYS_FAILURE);
+1276     }
+1277 
+1278     ppotSet_[spec1][spec2] = true;
+1279     ppotSet_[spec2][spec1] = true;
+1280 
+1281     if (useCellList) {
+1282         std::cout << "Setting up cell list for interactions between type " << spec1 << " and " << spec2 << std::endl;
+1283         // add creation of cell lists
+1284         if ((ppot[spec1][spec2]->rcut() > box_[0]/3\&.0) || (ppot[spec1][spec2]->rcut() > box_[1]/3\&.0) || (ppot[spec1][spec2] ->rcut() > box_[2]/3\&.0)) {
+1285             std::cerr << "Cutoff (" << ppot[spec1][spec2]->rcut() << ") larger than 1\&.0/3\&.0 boxsize, disabling cell lists for this interaction\&." << std::endl;
+1286             useCellList_[spec1][spec2] = false;
+1287             useCellList_[spec2][spec1] = false;
+1288         } else {
+1289             std::cout << "Creating Cell list with rcut = " << ppot[spec1][spec2]->rcut() << std::endl;
+1290             useCellList_[spec1][spec2] = true;
+1291             useCellList_[spec2][spec1] = true;
+1292 
+1293             std::vector <atom*> dummyList(0);
 1294 
-1295     ppotSet_[spec1][spec2] = true;
-1296     ppotSet_[spec2][spec1] = true;
-1297 
-1298     if (useCellList) {
-1299         std::cout << "Setting up cell list for interactions between type " << spec1 << " and " << spec2 << std::endl;
-1300         // add creation of cell lists
-1301         if ((ppot[spec1][spec2]->rcut() > box_[0]/3\&.0) || (ppot[spec1][spec2]->rcut() > box_[1]/3\&.0) || (ppot[spec1][spec2] ->rcut() > box_[2]/3\&.0)) {
-1302             std::cerr << "Cutoff (" << ppot[spec1][spec2]->rcut() << ") larger than 1\&.0/3\&.0 boxsize, disabling cell lists for this interaction\&." << std::endl;
-1303             useCellList_[spec1][spec2] = false;
-1304             useCellList_[spec2][spec1] = false;
-1305         } else {
-1306             std::cout << "Creating Cell list with rcut = " << ppot[spec1][spec2]->rcut() << std::endl;
-1307             useCellList_[spec1][spec2] = true;
-1308             useCellList_[spec2][spec1] = true;
-1309 
-1310             std::vector <atom*> dummyList(0);
-1311 
-1312             if (cellListsByPairType_[spec1][spec2] == NULL) {
-1313                 cellLists_\&.push_back(cellList(box_, ppot[spec1][spec2]->rcut(), dummyList));
-1314                 cellListsByPairType_[spec1][spec2] = &cellLists_[cellLists_\&.size()-1];
-1315             }
-1316             if (cellListsByPairType_[spec2][spec1] == NULL) {
-1317                 cellLists_\&.push_back(cellList(box_, ppot[spec2][spec1]->rcut(), dummyList));
-1318                 cellListsByPairType_[spec2][spec1] = &cellLists_[cellLists_\&.size()-1];
-1319             }
-1320         }
-1321     } else {
-1322         useCellList_[spec1][spec2] = false;
-1323         useCellList_[spec2][spec1] = false;
-1324     }
-1325 }
+1295             if (cellListsByPairType_[spec1][spec2] == NULL) {
+1296                 cellLists_\&.push_back(cellList(box_, ppot[spec1][spec2]->rcut(), dummyList));
+1297                 cellListsByPairType_[spec1][spec2] = &cellLists_[cellLists_\&.size()-1];
+1298             }
+1299             if (cellListsByPairType_[spec2][spec1] == NULL) {
+1300                 cellLists_\&.push_back(cellList(box_, ppot[spec2][spec1]->rcut(), dummyList));
+1301                 cellListsByPairType_[spec2][spec1] = &cellLists_[cellLists_\&.size()-1];
+1302             }
+1303         }
+1304     } else {
+1305         useCellList_[spec1][spec2] = false;
+1306         useCellList_[spec2][spec1] = false;
+1307     }
+1308 }
 .fi
 .SS "const double simSystem::beta ()\fC [inline]\fP"
 
 .PP
 Return 1/kT\&. 
 .PP
-Definition at line 94 of file system\&.h\&.
+Definition at line 87 of file system\&.h\&.
 .PP
 Referenced by aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), and simSystem()\&.
 .SS "const std::vector< double > simSystem::box ()\fC [inline]\fP"
@@ -742,7 +740,7 @@ Referenced by aggVolBias3::make(), deleteParticle::make(), translateParticle::ma
 .PP
 Return the system box dimensions\&. 
 .PP
-Definition at line 111 of file system\&.h\&.
+Definition at line 104 of file system\&.h\&.
 .PP
 Referenced by checkBounds(), initialize(), aggVolBias3::make(), translateParticle::make(), deleteParticle::make(), swapParticles::make(), insertParticle::make(), setup(), and simSystem()\&.
 .SS "void simSystem::checkEnergyHistogramBounds ()"
@@ -750,18 +748,18 @@ Referenced by checkBounds(), initialize(), aggVolBias3::make(), translateParticl
 .PP
 Monitor the energy histogram bounds at each Ntot\&. 
 .PP
-Definition at line 852 of file system\&.cpp\&.
+Definition at line 847 of file system\&.cpp\&.
 .PP
 Referenced by performCrossover(), and performWALA()\&.
 .PP
 .nf
-852                                             {
-853     if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
-854         const int address = totN_-totNBounds_[0];
-855         energyHistogram_lb_[address] = std::min(energyHistogram_lb_[address], energy_);
-856         energyHistogram_ub_[address] = std::max(energyHistogram_ub_[address], energy_);
-857     }
-858 }
+847                                             {
+848     if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+849         const int address = totN_-totNBounds_[0];
+850         energyHistogram_lb_[address] = std::min(energyHistogram_lb_[address], energy_);
+851         energyHistogram_ub_[address] = std::max(energyHistogram_ub_[address], energy_);
+852     }
+853 }
 .fi
 .SS "void simSystem::decrementMState ()"
 
@@ -935,7 +933,7 @@ Referenced by deleteParticle::make(), swapParticles::make(), and readConfig()\&.
 .PP
 Return the system's instantaneous energy\&. 
 .PP
-Definition at line 91 of file system\&.h\&.
+Definition at line 84 of file system\&.h\&.
 .PP
 Referenced by sanityChecks()\&.
 .SS "const std::vector< double > simSystem::extMomCounter ()\fC [inline]\fP"
@@ -943,7 +941,9 @@ Referenced by sanityChecks()\&.
 .PP
 Get counter for extensive moments needed for restarting system from a checkpoint\&. 
 .PP
-Definition at line 110 of file system\&.h\&.
+Definition at line 103 of file system\&.h\&.
+.PP
+References histogram::getCounter()\&.
 .PP
 Referenced by checkpoint::dump()\&.
 .SS "const int simSystem::getCurrentM ()\fC [inline]\fP"
@@ -951,7 +951,7 @@ Referenced by checkpoint::dump()\&.
 .PP
 Return the system's current expanded ensemble fractional state\&. 
 .PP
-Definition at line 87 of file system\&.h\&.
+Definition at line 80 of file system\&.h\&.
 .PP
 Referenced by calculateBias(), aggVolBias3::make(), translateParticle::make(), deleteParticle::make(), insertParticle::make(), swapParticles::make(), moves::makeMove(), performCrossover(), performTMMC(), performWALA(), and sanityChecks()\&.
 .SS "std::vector< double > simSystem::getELB ()\fC [inline]\fP"
@@ -959,7 +959,7 @@ Referenced by calculateBias(), aggVolBias3::make(), translateParticle::make(), d
 .PP
 Returns current tally of energy min at each Ntot for checkpointing\&. 
 .PP
-Definition at line 112 of file system\&.h\&.
+Definition at line 105 of file system\&.h\&.
 .PP
 Referenced by checkpoint::dump()\&.
 .SS "std::vector< double > simSystem::getEUB ()\fC [inline]\fP"
@@ -967,7 +967,7 @@ Referenced by checkpoint::dump()\&.
 .PP
 Returns current tally of energy max at each Ntot for checkpointing\&. 
 .PP
-Definition at line 113 of file system\&.h\&.
+Definition at line 106 of file system\&.h\&.
 .PP
 Referenced by checkpoint::dump()\&.
 .SS "\fBatom\fP* simSystem::getFractionalAtom ()\fC [inline]\fP"
@@ -975,7 +975,7 @@ Referenced by checkpoint::dump()\&.
 .PP
 Returns a pointer the atom in the system that is currently only fractionally inserted/deleted\&. 
 .PP
-Definition at line 117 of file system\&.h\&.
+Definition at line 110 of file system\&.h\&.
 .PP
 Referenced by deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), and sanityChecks()\&.
 .SS "const int simSystem::getFractionalAtomType ()\fC [inline]\fP"
@@ -983,7 +983,7 @@ Referenced by deleteParticle::make(), translateParticle::make(), swapParticles::
 .PP
 Return the atom type of the fractional atom\&. 
 .PP
-Definition at line 89 of file system\&.h\&.
+Definition at line 82 of file system\&.h\&.
 .PP
 Referenced by aggVolBias3::make(), translateParticle::make(), swapParticles::make(), moves::makeMove(), and sanityChecks()\&.
 .SS "const int simSystem::getMaxOrder ()\fC [inline]\fP"
@@ -991,7 +991,7 @@ Referenced by aggVolBias3::make(), translateParticle::make(), swapParticles::mak
 .PP
 Return the max order the extensive moments are being stored out to\&. 
 .PP
-Definition at line 85 of file system\&.h\&.
+Definition at line 78 of file system\&.h\&.
 .PP
 Referenced by restartExtMoments()\&.
 .SS "std::vector< \fBatom\fP * > simSystem::getNeighborAtoms (const unsigned inttypeIndexA, const unsigned inttypeIndexB, \fBatom\fP *_atom)"
@@ -1015,54 +1015,54 @@ neighbor_list
 .PP
 
 .PP
-Definition at line 1501 of file system\&.cpp\&.
+Definition at line 1484 of file system\&.cpp\&.
 .PP
 References atoms, cellList::calcIndex(), cellList::cells, cellList::neighbours, numSpecies, and atom::pos\&.
 .PP
 Referenced by deleteParticle::make(), translateParticle::make(), swapParticles::make(), and insertParticle::make()\&.
 .PP
 .nf
-1501                                                                                                                          {
-1502     std::vector < atom* > neighbors;
-1503 
-1504     int end = numSpecies[typeIndexA];
-1505     if (Mcurrent_ > 0 && typeIndexA == fractionalAtomType_) {
-1506         // account for partial atom too
-1507         end++;
-1508     }
-1509     neighbors\&.reserve(end);
-1510 
-1511     // if no cell lists are defined for this interaction, return all particles
-1512     if (!useCellList_[typeIndexA][typeIndexB]) {
-1513         for (unsigned int i = 0; i < end; ++i) {
-1514             if (_atom != &atoms[typeIndexA][i]) { // watch out for self in case typeA = typeB
-1515                 neighbors\&.push_back(&atoms[typeIndexA][i]);
-1516             }
-1517         }
-1518     } else if (useCellList_[typeIndexA][typeIndexB]) {
-1519         cellList* cl = cellListsByPairType_[typeIndexA][typeIndexB];
-1520         const unsigned int cellIndex = cl->calcIndex(_atom->pos[0], _atom->pos[1], _atom->pos[2]);
-1521 
-1522         // loop over own cell
-1523         for (unsigned int i = 0; i < cl->cells[cellIndex]\&.size(); ++i) {
-1524             if (_atom != cl->cells[cellIndex][i]) {
-1525                 neighbors\&.push_back(cl->cells[cellIndex][i]);
-1526             }
-1527         }
-1528 
-1529         // loop over neighboring cells
-1530         for (unsigned int i = 0; i < cl->neighbours[cellIndex]\&.size(); ++i) {
-1531             const unsigned int neighborCellIndex = cl->neighbours[cellIndex][i];
-1532             for (unsigned int j = 0; j < cl->cells[neighborCellIndex]\&.size(); ++j) {
-1533                 if (_atom != cl->cells[neighborCellIndex][j]) {
-1534                     neighbors\&.push_back(cl->cells[neighborCellIndex][j]);
-1535                 }
-1536             }
-1537         }
-1538     }
-1539 
-1540     return neighbors;
-1541 }
+1484                                                                                                                          {
+1485     std::vector < atom* > neighbors;
+1486 
+1487     int end = numSpecies[typeIndexA];
+1488     if (Mcurrent_ > 0 && typeIndexA == fractionalAtomType_) {
+1489         // account for partial atom too
+1490         end++;
+1491     }
+1492     neighbors\&.reserve(end);
+1493 
+1494     // if no cell lists are defined for this interaction, return all particles
+1495     if (!useCellList_[typeIndexA][typeIndexB]) {
+1496         for (unsigned int i = 0; i < end; ++i) {
+1497             if (_atom != &atoms[typeIndexA][i]) { // watch out for self in case typeA = typeB
+1498                 neighbors\&.push_back(&atoms[typeIndexA][i]);
+1499             }
+1500         }
+1501     } else if (useCellList_[typeIndexA][typeIndexB]) {
+1502         cellList* cl = cellListsByPairType_[typeIndexA][typeIndexB];
+1503         const unsigned int cellIndex = cl->calcIndex(_atom->pos[0], _atom->pos[1], _atom->pos[2]);
+1504 
+1505         // loop over own cell
+1506         for (unsigned int i = 0; i < cl->cells[cellIndex]\&.size(); ++i) {
+1507             if (_atom != cl->cells[cellIndex][i]) {
+1508                 neighbors\&.push_back(cl->cells[cellIndex][i]);
+1509             }
+1510         }
+1511 
+1512         // loop over neighboring cells
+1513         for (unsigned int i = 0; i < cl->neighbours[cellIndex]\&.size(); ++i) {
+1514             const unsigned int neighborCellIndex = cl->neighbours[cellIndex][i];
+1515             for (unsigned int j = 0; j < cl->cells[neighborCellIndex]\&.size(); ++j) {
+1516                 if (_atom != cl->cells[neighborCellIndex][j]) {
+1517                     neighbors\&.push_back(cl->cells[neighborCellIndex][j]);
+1518                 }
+1519             }
+1520         }
+1521     }
+1522 
+1523     return neighbors;
+1524 }
 .fi
 .SS "\fBtmmc\fP * simSystem::getTMMCBias ()"
 
@@ -1076,27 +1076,27 @@ tmmc Pointer to TMMC biasing object being used\&.
 .PP
 
 .PP
-Definition at line 1691 of file system\&.cpp\&.
+Definition at line 1674 of file system\&.cpp\&.
 .PP
 References tmmcBias, and useTMMC\&.
 .PP
 Referenced by checkpoint::dump(), checkpoint::load(), performCrossover(), and performTMMC()\&.
 .PP
 .nf
-1691                               {
-1692     if (useTMMC == true) {
-1693         return tmmcBias;
-1694     } else {
-1695         throw customException ("Not using TMMC");
-1696     }
-1697 }
+1674                               {
+1675     if (useTMMC == true) {
+1676         return tmmcBias;
+1677     } else {
+1678         throw customException ("Not using TMMC");
+1679     }
+1680 }
 .fi
 .SS "const int simSystem::getTotalM ()\fC [inline]\fP"
 
 .PP
 Return the total number of fractional states available to species in the expanded ensemble\&. 
 .PP
-Definition at line 88 of file system\&.h\&.
+Definition at line 81 of file system\&.h\&.
 .PP
 Referenced by initialize(), initializeSystemBarriers(), checkpoint::load(), deleteParticle::make(), insertParticle::make(), moves::makeMove(), performCrossover(), performTMMC(), performWALA(), sanityChecks(), and setup()\&.
 .SS "const int simSystem::getTotN ()\fC [inline]\fP"
@@ -1104,7 +1104,7 @@ Referenced by initialize(), initializeSystemBarriers(), checkpoint::load(), dele
 .PP
 Return a sum of the total number of atoms currently in the system\&. 
 .PP
-Definition at line 84 of file system\&.h\&.
+Definition at line 77 of file system\&.h\&.
 .PP
 Referenced by calculateBias(), aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), insertParticle::make(), swapParticles::make(), and sanityChecks()\&.
 .SS "\fBwala\fP * simSystem::getWALABias ()"
@@ -1119,27 +1119,27 @@ wala Pointer to WALA biasing object being used\&.
 .PP
 
 .PP
-Definition at line 1704 of file system\&.cpp\&.
+Definition at line 1687 of file system\&.cpp\&.
 .PP
 References useWALA, and wlBias\&.
 .PP
 Referenced by checkpoint::dump(), checkpoint::load(), aggVolBias3::make(), translateParticle::make(), deleteParticle::make(), swapParticles::make(), insertParticle::make(), performCrossover(), and performWALA()\&.
 .PP
 .nf
-1704                               {
-1705     if (useWALA == true) {
-1706         return wlBias;
-1707     } else {
-1708         throw customException ("Not using WALA");
-1709     }
-1710 }
+1687                               {
+1688     if (useWALA == true) {
+1689         return wlBias;
+1690     } else {
+1691         throw customException ("Not using WALA");
+1692     }
+1693 }
 .fi
 .SS "void simSystem::incrementEnergy (const doubledU)\fC [inline]\fP"
 
 .PP
 Increment the system's energy\&. 
 .PP
-Definition at line 41 of file system\&.h\&.
+Definition at line 34 of file system\&.h\&.
 .PP
 Referenced by aggVolBias3::make(), translateParticle::make(), deleteParticle::make(), insertParticle::make(), and swapParticles::make()\&.
 .SS "void simSystem::incrementMState ()"
@@ -1279,7 +1279,7 @@ Referenced by insertParticle::make(), swapParticles::make(), and readConfig()\&.
 .PP
 Return the mass of a given species' index\&. 
 .PP
-Definition at line 96 of file system\&.h\&.
+Definition at line 89 of file system\&.h\&.
 .PP
 Referenced by deleteParticle::make(), and insertParticle::make()\&.
 .SS "const int simSystem::maxSpecies (const intindex)"
@@ -1299,21 +1299,21 @@ maxSpecies Maximum number of them allowed
 .PP
 
 .PP
-Definition at line 1657 of file system\&.cpp\&.
+Definition at line 1640 of file system\&.cpp\&.
 .PP
 Referenced by insertParticle::make(), and simSystem()\&.
 .PP
 .nf
-1657                                                 {
-1658     if (maxSpecies_\&.begin() == maxSpecies_\&.end()) {
-1659             throw customException ("No species in the system, cannot report a maximum");
-1660         }
-1661         if (maxSpecies_\&.size() <= index) {
-1662             throw customException ("System does not contain that species, cannot report a maximum");
-1663         } else  {
-1664             return maxSpecies_[index];
-1665         }
-1666 }
+1640                                                 {
+1641     if (maxSpecies_\&.begin() == maxSpecies_\&.end()) {
+1642             throw customException ("No species in the system, cannot report a maximum");
+1643         }
+1644         if (maxSpecies_\&.size() <= index) {
+1645             throw customException ("System does not contain that species, cannot report a maximum");
+1646         } else  {
+1647             return maxSpecies_[index];
+1648         }
+1649 }
 .fi
 .SS "const int simSystem::minSpecies (const intindex)"
 
@@ -1332,28 +1332,28 @@ minSpecies Minimum number of them allowed
 .PP
 
 .PP
-Definition at line 1675 of file system\&.cpp\&.
+Definition at line 1658 of file system\&.cpp\&.
 .PP
 Referenced by deleteParticle::make(), and simSystem()\&.
 .PP
 .nf
-1675                                                 {
-1676     if (minSpecies_\&.begin() == minSpecies_\&.end()) {
-1677             throw customException ("No species in the system, cannot report a minimum");
-1678         }
-1679         if (minSpecies_\&.size() <= index) {
-1680             throw customException ("System does not contain that species, cannot report a minimum");
-1681         } else  {
-1682             return minSpecies_[index];
-1683         }
-1684 }
+1658                                                 {
+1659     if (minSpecies_\&.begin() == minSpecies_\&.end()) {
+1660             throw customException ("No species in the system, cannot report a minimum");
+1661         }
+1662         if (minSpecies_\&.size() <= index) {
+1663             throw customException ("System does not contain that species, cannot report a minimum");
+1664         } else  {
+1665             return minSpecies_[index];
+1666         }
+1667 }
 .fi
 .SS "const double simSystem::mu (const intindex)\fC [inline]\fP"
 
 .PP
 Return the chemical potential for a given species' index\&. 
 .PP
-Definition at line 95 of file system\&.h\&.
+Definition at line 88 of file system\&.h\&.
 .PP
 Referenced by deleteParticle::make(), insertParticle::make(), and simSystem()\&.
 .SS "const int simSystem::nSpecies ()\fC [inline]\fP"
@@ -1361,7 +1361,7 @@ Referenced by deleteParticle::make(), insertParticle::make(), and simSystem()\&.
 .PP
 Return the number of different species in the system\&. 
 .PP
-Definition at line 79 of file system\&.h\&.
+Definition at line 72 of file system\&.h\&.
 .PP
 Referenced by checkBounds(), initialize(), initializeSystemBarriers(), aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), insertParticle::make(), swapParticles::make(), sanityChecks(), setPairPotentials(), setup(), and simSystem()\&.
 .SS "bool simSystem::potentialIsSet (const intspec1, const intspec2)\fC [inline]\fP"
@@ -1369,13 +1369,13 @@ Referenced by checkBounds(), initialize(), initializeSystemBarriers(), aggVolBia
 .PP
 Boolean which returns whether or not a pair has had its potential specified by the user yet\&. 
 .PP
-Definition at line 77 of file system\&.h\&.
+Definition at line 70 of file system\&.h\&.
 .PP
 Referenced by checkBounds(), and readConfig()\&.
 .SS "void simSystem::printEnergyHistogram (const std::stringfileName, const boolnormalize = \fCtrue\fP)"
 
 .PP
-Print the (normalized by default) energy histogram for each Ntot\&. netCDF4 not enabled
+Print the (normalized by default) energy histogram for each Ntot\&. 
 .PP
 \fBParameters:\fP
 .RS 4
@@ -1386,71 +1386,66 @@ Print the (normalized by default) energy histogram for each Ntot\&. netCDF4 not 
 .PP
 
 .PP
-Definition at line 916 of file system\&.cpp\&.
+Definition at line 911 of file system\&.cpp\&.
 .PP
 Referenced by checkpoint::dump(), and performTMMC()\&.
 .PP
 .nf
-916                                                                                     {
-917 #ifdef NETCDF_CAPABLE
-918     throw customException ("Cannot record the energyHistogram for each Ntot in netCDF4 format\&.");
-919 #else
-920     // Without netCDF capabilities, just print to ASCII file
-921     std::ofstream of;
-922     std::string name = fileName+"\&.dat";
-923     of\&.open(name\&.c_str(), std::ofstream::out);
-924     of << "# <P(U)> as a function of N_tot\&." << std::endl;
-925     of << "# number_of_species: " << nSpecies_ << std::endl;
-926     of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
-927     of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
-928     double V = box_[0]*box_[1]*box_[2];
-929     of << "# volume: " << std::setprecision(15) << V << std::endl;
-930     of << "# Bin widths for each" << std::endl;
-931     for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_\&.begin(); it != energyHistogram_\&.end(); ++it) {
-932         of << it->get_delta() << "\t";
-933     }
-934     of << std::endl;
-935     of << "# Bin lower bound for each" << std::endl;
-936     for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_\&.begin(); it != energyHistogram_\&.end(); ++it) {
-937         of << it->get_lb() << "\t";
-938     }
-939     of << std::endl;
-940     of << "# Bin upper bound for each" << std::endl;
-941     for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_\&.begin(); it != energyHistogram_\&.end(); ++it) {
-942         of << it->get_ub() << "\t";
-943     }
-944     of << std::endl;
-945     if (normalize) {
-946         of << "# Normalized histogram for each" << std::endl;
-947         for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_\&.begin(); it != energyHistogram_\&.end(); ++it) {
-948             std::deque <double> h = it->get_hist();
-949             double sum = 0\&.0;
-950             for (std::deque <double>::iterator it2 = h\&.begin(); it2 != h\&.end(); ++it2) {
-951                 sum += *it2;
-952             }
+911                                                                                     {
+912     std::ofstream of;
+913     std::string name = fileName+"\&.dat";
+914     of\&.open(name\&.c_str(), std::ofstream::out);
+915     of << "# <P(U)> as a function of N_tot\&." << std::endl;
+916     of << "# number_of_species: " << nSpecies_ << std::endl;
+917     of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
+918     of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+919     double V = box_[0]*box_[1]*box_[2];
+920     of << "# volume: " << std::setprecision(15) << V << std::endl;
+921     of << "# Bin widths for each" << std::endl;
+922     for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_\&.begin(); it != energyHistogram_\&.end(); ++it) {
+923         of << it->get_delta() << "\t";
+924     }
+925     of << std::endl;
+926     of << "# Bin lower bound for each" << std::endl;
+927     for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_\&.begin(); it != energyHistogram_\&.end(); ++it) {
+928         of << it->get_lb() << "\t";
+929     }
+930     of << std::endl;
+931     of << "# Bin upper bound for each" << std::endl;
+932     for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_\&.begin(); it != energyHistogram_\&.end(); ++it) {
+933         of << it->get_ub() << "\t";
+934     }
+935     of << std::endl;
+936     if (normalize) {
+937         of << "# Normalized histogram for each" << std::endl;
+938         for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_\&.begin(); it != energyHistogram_\&.end(); ++it) {
+939             std::deque <double> h = it->get_hist();
+940             double sum = 0\&.0;
+941             for (std::deque <double>::iterator it2 = h\&.begin(); it2 != h\&.end(); ++it2) {
+942                 sum += *it2;
+943             }
+944             for (std::deque <double>::iterator it2 = h\&.begin(); it2 != h\&.end(); ++it2) {
+945                 of << std::setprecision(15) << *it2/sum << "\t";
+946             }
+947             of << std::endl;
+948         }
+949     } else {
+950         of << "# Unnormalized histogram for each" << std::endl;
+951         for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_\&.begin(); it != energyHistogram_\&.end(); ++it) {
+952             std::deque <double> h = it->get_hist();
 953             for (std::deque <double>::iterator it2 = h\&.begin(); it2 != h\&.end(); ++it2) {
-954                 of << std::setprecision(15) << *it2/sum << "\t";
+954                 of << std::setprecision(15) << *it2 << "\t";
 955             }
 956             of << std::endl;
 957         }
-958     } else {
-959         of << "# Unnormalized histogram for each" << std::endl;
-960         for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_\&.begin(); it != energyHistogram_\&.end(); ++it) {
-961             std::deque <double> h = it->get_hist();
-962             for (std::deque <double>::iterator it2 = h\&.begin(); it2 != h\&.end(); ++it2) {
-963                 of << std::setprecision(15) << *it2 << "\t";
-964             }
-965             of << std::endl;
-966         }
-967     }
-968     of\&.close();
-969 #endif
-970 }
+958     }
+959     of\&.close();
+960 }
 .fi
 .SS "void simSystem::printExtMoments (const std::stringfileName, const boolnormalize = \fCtrue\fP)"
 
 .PP
-Print the (normalized by default) extensive energy histogram for each Ntot\&. netCDF4 not enabled
+Print the (normalized by default) extensive energy histogram for each Ntot\&. 
 .PP
 \fBParameters:\fP
 .RS 4
@@ -1469,92 +1464,87 @@ Referenced by checkpoint::dump(), and performTMMC()\&.
 .PP
 .nf
 655                                                                                {
-656 #ifdef NETCDF_CAPABLE
-657     throw customException ("Cannot record the extensive moments for each Ntot in netCDF4 format\&.");
-658 #else
-659     // Without netCDF capabilities, just print to ASCII file
-660     std::ofstream of;
-661     std::string name = fileName+"\&.dat";
-662     of\&.open(name\&.c_str(), std::ofstream::out);
-663     of << "# <N_i^j*N_k^m*U^p> as a function of N_tot\&." << std::endl;
-664     of << "# number_of_species: " << nSpecies_ << std::endl;
-665     of << "# max_order: " << max_order_ << std::endl;
-666     of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
-667     of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
-668     double V = box_[0]*box_[1]*box_[2];
-669     of << "# volume: " << std::setprecision(15) << V << std::endl;
-670     of << "#\tN_tot\t";
-671     for (unsigned int i = 0; i < nSpecies_; ++i) {
-672         for (unsigned int j = 0; j <= max_order_; ++j) {
-673             for (unsigned int k = 0; k < nSpecies_; ++k) {
-674                 for (unsigned int m = 0; m <= max_order_; ++m) {
-675                     for (unsigned int p = 0; p <= max_order_; ++p) {
-676                         of << "N_"+std::to_string(i+1)+"^"+std::to_string(j)+"*N_"+std::to_string(k+1)+"^"+std::to_string(m)+"*U^"+std::to_string(p)+"\t";
-677                     }
-678                 }
-679             }
-680         }
-681     }
-682     of << std::endl;
-683     std::vector <double> h = extensive_moments_\&.getRawHistogram ();
-684     std::vector <double> ctr = extensive_moments_\&.getCounter ();
-685     std::vector <double> coords (6,0);
-686     long unsigned int idx = 0;
-687     if (normalize) {
-688         for (unsigned int n = 0; n < totNBounds_[1]-totNBounds_[0]+1; ++n) {
-689             of << n+totNBounds_[0] << "\t";
-690             coords[5] = n;
-691             for (unsigned int i = 0; i < nSpecies_; ++i) {
-692                 coords[0] = i;
-693                 for (unsigned int j = 0; j <= max_order_; ++j) {
-694                     coords[1] = j;
-695                     for (unsigned int k = 0; k < nSpecies_; ++k) {
-696                         coords[2] = k;
-697                         for (unsigned int m = 0; m <= max_order_; ++m) {
-698                             coords[3] = m;
-699                             for (unsigned int p = 0; p <= max_order_; ++p) {
-700                                 coords[4] = p;
-701                                 idx = extensive_moments_\&.getAddress(coords);
-702                                 of << std::setprecision(15) << h[idx]/ctr[idx] << "\t";
-703                             }
-704                         }
-705                     }
-706                 }
-707             }
-708             of << std::endl;
-709         }
-710     } else {
-711         for (unsigned int n = 0; n < totNBounds_[1]-totNBounds_[0]+1; ++n) {
-712             of << n+totNBounds_[0] << "\t";
-713             coords[5] = n;
-714             for (unsigned int i = 0; i < nSpecies_; ++i) {
-715                 coords[0] = i;
-716                 for (unsigned int j = 0; j <= max_order_; ++j) {
-717                     coords[1] = j;
-718                     for (unsigned int k = 0; k < nSpecies_; ++k) {
-719                         coords[2] = k;
-720                         for (unsigned int m = 0; m <= max_order_; ++m) {
-721                             coords[3] = m;
-722                             for (unsigned int p = 0; p <= max_order_; ++p) {
-723                                 coords[4] = p;
-724                                 idx = extensive_moments_\&.getAddress(coords);
-725                                 of << std::setprecision(15) << h[idx] << "\t";
-726                             }
-727                         }
-728                     }
-729                 }
-730             }
-731             of << std::endl;
-732         }
-733     }
-734     of\&.close();
-735 #endif
-736 }
+656     std::ofstream of;
+657     std::string name = fileName+"\&.dat";
+658     of\&.open(name\&.c_str(), std::ofstream::out);
+659     of << "# <N_i^j*N_k^m*U^p> as a function of N_tot\&." << std::endl;
+660     of << "# number_of_species: " << nSpecies_ << std::endl;
+661     of << "# max_order: " << max_order_ << std::endl;
+662     of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
+663     of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+664     double V = box_[0]*box_[1]*box_[2];
+665     of << "# volume: " << std::setprecision(15) << V << std::endl;
+666     of << "#\tN_tot\t";
+667     for (unsigned int i = 0; i < nSpecies_; ++i) {
+668         for (unsigned int j = 0; j <= max_order_; ++j) {
+669             for (unsigned int k = 0; k < nSpecies_; ++k) {
+670                 for (unsigned int m = 0; m <= max_order_; ++m) {
+671                     for (unsigned int p = 0; p <= max_order_; ++p) {
+672                         of << "N_"+std::to_string(i+1)+"^"+std::to_string(j)+"*N_"+std::to_string(k+1)+"^"+std::to_string(m)+"*U^"+std::to_string(p)+"\t";
+673                     }
+674                 }
+675             }
+676         }
+677     }
+678     of << std::endl;
+679     std::vector <double> h = extensive_moments_\&.getRawHistogram ();
+680     std::vector <double> ctr = extensive_moments_\&.getCounter ();
+681     std::vector <double> coords (6,0);
+682     long unsigned int idx = 0;
+683     if (normalize) {
+684         for (unsigned int n = 0; n < totNBounds_[1]-totNBounds_[0]+1; ++n) {
+685             of << n+totNBounds_[0] << "\t";
+686             coords[5] = n;
+687             for (unsigned int i = 0; i < nSpecies_; ++i) {
+688                 coords[0] = i;
+689                 for (unsigned int j = 0; j <= max_order_; ++j) {
+690                     coords[1] = j;
+691                     for (unsigned int k = 0; k < nSpecies_; ++k) {
+692                         coords[2] = k;
+693                         for (unsigned int m = 0; m <= max_order_; ++m) {
+694                             coords[3] = m;
+695                             for (unsigned int p = 0; p <= max_order_; ++p) {
+696                                 coords[4] = p;
+697                                 idx = extensive_moments_\&.getAddress(coords);
+698                                 of << std::setprecision(15) << h[idx]/ctr[idx] << "\t";
+699                             }
+700                         }
+701                     }
+702                 }
+703             }
+704             of << std::endl;
+705         }
+706     } else {
+707         for (unsigned int n = 0; n < totNBounds_[1]-totNBounds_[0]+1; ++n) {
+708             of << n+totNBounds_[0] << "\t";
+709             coords[5] = n;
+710             for (unsigned int i = 0; i < nSpecies_; ++i) {
+711                 coords[0] = i;
+712                 for (unsigned int j = 0; j <= max_order_; ++j) {
+713                     coords[1] = j;
+714                     for (unsigned int k = 0; k < nSpecies_; ++k) {
+715                         coords[2] = k;
+716                         for (unsigned int m = 0; m <= max_order_; ++m) {
+717                             coords[3] = m;
+718                             for (unsigned int p = 0; p <= max_order_; ++p) {
+719                                 coords[4] = p;
+720                                 idx = extensive_moments_\&.getAddress(coords);
+721                                 of << std::setprecision(15) << h[idx] << "\t";
+722                             }
+723                         }
+724                     }
+725                 }
+726             }
+727             of << std::endl;
+728         }
+729     }
+730     of\&.close();
+731 }
 .fi
 .SS "void simSystem::printPkHistogram (const std::stringfileName, const boolnormalize = \fCtrue\fP)"
 
 .PP
-Print the (normalized by default) particle number histogram for each Ntot\&. netCDF4 not enabled
+Print the (normalized by default) particle number histogram for each Ntot\&. 
 .PP
 \fBParameters:\fP
 .RS 4
@@ -1565,68 +1555,63 @@ Print the (normalized by default) particle number histogram for each Ntot\&. net
 .PP
 
 .PP
-Definition at line 1074 of file system\&.cpp\&.
+Definition at line 1064 of file system\&.cpp\&.
 .PP
 Referenced by checkpoint::dump(), and performTMMC()\&.
 .PP
 .nf
-1074                                                                                 {
-1075 #ifdef NETCDF_CAPABLE
-1076     throw customException ("Cannot record the pkHistogram for each Ntot in netCDF4 format\&.");
-1077 #else
-1078     // Without netCDF capabilities, just print to ASCII file
-1079     for (unsigned int i = 0; i < nSpecies_; ++i) {
-1080         std::ofstream of;
-1081         std::string name = fileName+"_"+std::to_string(i+1)+"\&.dat";
-1082         of\&.open(name\&.c_str(), std::ofstream::out);
-1083         of << "# <P(N_" << i+1 << ")> as a function of N_tot\&." << std::endl;
-1084         of << "# number_of_species: " << nSpecies_ << std::endl;
-1085         of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
-1086         of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
-1087         double V = box_[0]*box_[1]*box_[2];
-1088         of << "# volume: " << std::setprecision(15) << V << std::endl;
-1089         of << "# Bin widths for each species index " << std::endl;
-1090         for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i]\&.begin(); it != pkHistogram_[i]\&.end(); ++it) {
-1091             of << it->get_delta() << "\t";
-1092         }
-1093         of << std::endl;
-1094         of << "# Bin lower bound for each species index " << std::endl;
-1095         for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i]\&.begin(); it != pkHistogram_[i]\&.end(); ++it) {
-1096             of << it->get_lb() << "\t";
-1097         }
-1098         of << std::endl;
-1099         of << "# Bin upper bound for each species index " << std::endl;
-1100         for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i]\&.begin(); it != pkHistogram_[i]\&.end(); ++it) {
-1101             of << it->get_ub() << "\t";
-1102         }
-1103         of << std::endl;
-1104         if (normalize) {
-1105             of << "# Normalized histogram for each species index " << std::endl;
-1106             for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i]\&.begin(); it != pkHistogram_[i]\&.end(); ++it) {
-1107                 std::deque <double> h = it->get_hist();
-1108                 double sum = 0\&.0;
-1109                 for (std::deque <double>::iterator it2 = h\&.begin(); it2 != h\&.end(); ++it2) {
-1110                     sum += *it2;
-1111                 }
-1112                 for (std::deque <double>::iterator it2 = h\&.begin(); it2 != h\&.end(); ++it2) {
-1113                     of << std::setprecision(15) << *it2/sum << "\t";
-1114                 }
-1115                 of << std::endl;
-1116             }
-1117         } else {
-1118             of << "# Unnormalized histogram for each species index " << std::endl;
-1119             for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i]\&.begin(); it != pkHistogram_[i]\&.end(); ++it) {
-1120                 std::deque <double> h = it->get_hist();
-1121                 for (std::deque <double>::iterator it2 = h\&.begin(); it2 != h\&.end(); ++it2) {
-1122                     of << std::setprecision(15) << *it2 << "\t";
-1123                 }
-1124                 of << std::endl;
-1125             }
-1126         }
-1127         of\&.close();
-1128     }
-1129 #endif
-1130 }
+1064                                                                                 {
+1065     for (unsigned int i = 0; i < nSpecies_; ++i) {
+1066         std::ofstream of;
+1067         std::string name = fileName+"_"+std::to_string(i+1)+"\&.dat";
+1068         of\&.open(name\&.c_str(), std::ofstream::out);
+1069         of << "# <P(N_" << i+1 << ")> as a function of N_tot\&." << std::endl;
+1070         of << "# number_of_species: " << nSpecies_ << std::endl;
+1071         of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
+1072         of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+1073         double V = box_[0]*box_[1]*box_[2];
+1074         of << "# volume: " << std::setprecision(15) << V << std::endl;
+1075         of << "# Bin widths for each species index " << std::endl;
+1076         for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i]\&.begin(); it != pkHistogram_[i]\&.end(); ++it) {
+1077             of << it->get_delta() << "\t";
+1078         }
+1079         of << std::endl;
+1080         of << "# Bin lower bound for each species index " << std::endl;
+1081         for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i]\&.begin(); it != pkHistogram_[i]\&.end(); ++it) {
+1082             of << it->get_lb() << "\t";
+1083         }
+1084         of << std::endl;
+1085         of << "# Bin upper bound for each species index " << std::endl;
+1086         for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i]\&.begin(); it != pkHistogram_[i]\&.end(); ++it) {
+1087             of << it->get_ub() << "\t";
+1088         }
+1089         of << std::endl;
+1090         if (normalize) {
+1091             of << "# Normalized histogram for each species index " << std::endl;
+1092             for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i]\&.begin(); it != pkHistogram_[i]\&.end(); ++it) {
+1093                 std::deque <double> h = it->get_hist();
+1094                 double sum = 0\&.0;
+1095                 for (std::deque <double>::iterator it2 = h\&.begin(); it2 != h\&.end(); ++it2) {
+1096                     sum += *it2;
+1097                 }
+1098                 for (std::deque <double>::iterator it2 = h\&.begin(); it2 != h\&.end(); ++it2) {
+1099                     of << std::setprecision(15) << *it2/sum << "\t";
+1100                 }
+1101                 of << std::endl;
+1102             }
+1103         } else {
+1104             of << "# Unnormalized histogram for each species index " << std::endl;
+1105             for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i]\&.begin(); it != pkHistogram_[i]\&.end(); ++it) {
+1106                 std::deque <double> h = it->get_hist();
+1107                 for (std::deque <double>::iterator it2 = h\&.begin(); it2 != h\&.end(); ++it2) {
+1108                     of << std::setprecision(15) << *it2 << "\t";
+1109                 }
+1110                 of << std::endl;
+1111             }
+1112         }
+1113         of\&.close();
+1114     }
+1115 }
 .fi
 .SS "void simSystem::printSnapshot (std::stringfilename, std::stringcomment, booloverwrite = \fCtrue\fP)"
 
@@ -1644,62 +1629,62 @@ Print an XYZ file of the instantaneous system configuration\&. This can be read 
 .PP
 
 .PP
-Definition at line 1334 of file system\&.cpp\&.
+Definition at line 1317 of file system\&.cpp\&.
 .PP
 References atoms, and numSpecies\&.
 .PP
 Referenced by checkpoint::dump(), performTMMC(), and setup()\&.
 .PP
 .nf
-1334                                                                                     {
-1335     if (overwrite) {
-1336         std::ofstream outfile (filename\&.c_str(), std::ofstream::trunc);
-1337         int tot = 0;
-1338         for (unsigned int j = 0; j < nSpecies_; ++j) {
-1339             tot += numSpecies[j]; // only count fully inserted species
-1340         }
-1341 
-1342         outfile << tot << std::endl;
-1343         outfile << comment << std::endl;
-1344 
-1345         for (unsigned int j = 0; j < nSpecies_; ++j) {
-1346             long long int num = numSpecies[j];
-1347             if (Mcurrent_ > 1 && fractionalAtomType_ == j) {
-1348                 num += 1; // account for partially inserted atom
-1349             }
-1350             for (unsigned int i = 0; i < num; ++i) {
-1351                 if (atoms[j][i]\&.mState == 0) { // only print fully inserted atoms
-1352                     outfile << j << "\t" <<  std::setprecision(15) << atoms[j][i]\&.pos[0] << "\t" << std::setprecision(15) << atoms[j][i]\&.pos[1] << "\t" << std::setprecision(15) << atoms[j][i]\&.pos[2] << std::endl;
-1353                 }
-1354             }
-1355         }
-1356 
-1357         outfile\&.close();
-1358     } else {
-1359         std::ofstream outfile (filename\&.c_str(), std::ofstream::out | std::ofstream::app);
-1360         int tot = 0;
-1361         for (unsigned int j = 0; j < nSpecies_; ++j) {
-1362             tot += numSpecies[j]; // only count fully inserted species
-1363         }
-1364 
-1365         outfile << tot << std::endl;
-1366         outfile << comment << std::endl;
-1367 
-1368         for (unsigned int j = 0; j < nSpecies_; ++j) {
-1369             long long int num = numSpecies[j];
-1370             if (Mcurrent_ > 1 && fractionalAtomType_ == j) {
-1371                 num += 1; // account for partially inserted atom
-1372             }
-1373             for (unsigned int i = 0; i < num; ++i) {
-1374                 if (atoms[j][i]\&.mState == 0) { // only print fully inserted atoms
-1375                     outfile << j << "\t" <<  std::setprecision(15) << atoms[j][i]\&.pos[0] << "\t" << std::setprecision(15) << atoms[j][i]\&.pos[1] << "\t" << std::setprecision(15) << atoms[j][i]\&.pos[2] << std::endl;
-1376                 }
-1377             }
-1378         }
-1379 
-1380         outfile\&.close();
-1381     }
-1382 }
+1317                                                                                     {
+1318     if (overwrite) {
+1319         std::ofstream outfile (filename\&.c_str(), std::ofstream::trunc);
+1320         int tot = 0;
+1321         for (unsigned int j = 0; j < nSpecies_; ++j) {
+1322             tot += numSpecies[j]; // only count fully inserted species
+1323         }
+1324 
+1325         outfile << tot << std::endl;
+1326         outfile << comment << std::endl;
+1327 
+1328         for (unsigned int j = 0; j < nSpecies_; ++j) {
+1329             long long int num = numSpecies[j];
+1330             if (Mcurrent_ > 1 && fractionalAtomType_ == j) {
+1331                 num += 1; // account for partially inserted atom
+1332             }
+1333             for (unsigned int i = 0; i < num; ++i) {
+1334                 if (atoms[j][i]\&.mState == 0) { // only print fully inserted atoms
+1335                     outfile << j << "\t" <<  std::setprecision(15) << atoms[j][i]\&.pos[0] << "\t" << std::setprecision(15) << atoms[j][i]\&.pos[1] << "\t" << std::setprecision(15) << atoms[j][i]\&.pos[2] << std::endl;
+1336                 }
+1337             }
+1338         }
+1339 
+1340         outfile\&.close();
+1341     } else {
+1342         std::ofstream outfile (filename\&.c_str(), std::ofstream::out | std::ofstream::app);
+1343         int tot = 0;
+1344         for (unsigned int j = 0; j < nSpecies_; ++j) {
+1345             tot += numSpecies[j]; // only count fully inserted species
+1346         }
+1347 
+1348         outfile << tot << std::endl;
+1349         outfile << comment << std::endl;
+1350 
+1351         for (unsigned int j = 0; j < nSpecies_; ++j) {
+1352             long long int num = numSpecies[j];
+1353             if (Mcurrent_ > 1 && fractionalAtomType_ == j) {
+1354                 num += 1; // account for partially inserted atom
+1355             }
+1356             for (unsigned int i = 0; i < num; ++i) {
+1357                 if (atoms[j][i]\&.mState == 0) { // only print fully inserted atoms
+1358                     outfile << j << "\t" <<  std::setprecision(15) << atoms[j][i]\&.pos[0] << "\t" << std::setprecision(15) << atoms[j][i]\&.pos[1] << "\t" << std::setprecision(15) << atoms[j][i]\&.pos[2] << std::endl;
+1359                 }
+1360             }
+1361         }
+1362 
+1363         outfile\&.close();
+1364     }
+1365 }
 .fi
 .SS "void simSystem::readConfig (std::stringfilename)"
 
@@ -1713,132 +1698,132 @@ Read an XYZ file as the system's initial configuration\&. Note that the number o
 .PP
 
 .PP
-Definition at line 1390 of file system\&.cpp\&.
+Definition at line 1373 of file system\&.cpp\&.
 .PP
 References deleteAtom(), getTimeStamp(), insertAtom(), numSpecies, potentialIsSet(), scratchEnergy(), SYS_FAILURE, and customException::what()\&.
 .PP
 Referenced by checkpoint::load(), and setup()\&.
 .PP
 .nf
-1390                                               {
-1391     std::cout << "Reading initial configuration from " << filename << std::endl;
-1392 
-1393     std::ifstream infile (filename\&.c_str());
-1394     if (!infile\&.is_open()) {
-1395         std::cerr << "Cannot open " << filename << std::endl;
-1396         exit(SYS_FAILURE);
+1373                                               {
+1374     std::cout << "Reading initial configuration from " << filename << std::endl;
+1375 
+1376     std::ifstream infile (filename\&.c_str());
+1377     if (!infile\&.is_open()) {
+1378         std::cerr << "Cannot open " << filename << std::endl;
+1379         exit(SYS_FAILURE);
+1380     }
+1381 
+1382     std::string line;
+1383     std::vector < atom > sysatoms;
+1384     std::vector < int > index;
+1385     int natoms = 0;
+1386     int lineIndex = 0;
+1387     while(std::getline(infile,line)) {
+1388         std::stringstream lineStream(line);
+1389         if (lineIndex == 0) {
+1390             lineStream >> natoms;
+1391             index\&.resize(natoms);
+1392             sysatoms\&.resize(natoms);
+1393         } else if (lineIndex > 1) {
+1394             lineStream >> index[lineIndex-2] >> sysatoms[lineIndex-2]\&.pos[0] >> sysatoms[lineIndex-2]\&.pos[1] >> sysatoms[lineIndex-2]\&.pos[2];
+1395         }
+1396         lineIndex++;
 1397     }
-1398 
-1399     std::string line;
-1400     std::vector < atom > sysatoms;
-1401     std::vector < int > index;
-1402     int natoms = 0;
-1403     int lineIndex = 0;
-1404     while(std::getline(infile,line)) {
-1405         std::stringstream lineStream(line);
-1406         if (lineIndex == 0) {
-1407             lineStream >> natoms;
-1408             index\&.resize(natoms);
-1409             sysatoms\&.resize(natoms);
-1410         } else if (lineIndex > 1) {
-1411             lineStream >> index[lineIndex-2] >> sysatoms[lineIndex-2]\&.pos[0] >> sysatoms[lineIndex-2]\&.pos[1] >> sysatoms[lineIndex-2]\&.pos[2];
+1398     infile\&.close();
+1399 
+1400     // check if within global bounds
+1401     if (sysatoms\&.size() > totNBounds_[1] || sysatoms\&.size() < totNBounds_[0]) {
+1402         throw customException ("Number of particles ("+std::to_string(sysatoms\&.size())+") in the restart file out of target range ["+std::to_string(totNBounds_[0])+", "+std::to_string(totNBounds_[1])+"]");
+1403     }
+1404 
+1405     // sort by type
+1406     std::map < int, int > types;
+1407     for (unsigned int j = 0; j < natoms; ++j) {
+1408         if (types\&.find(index[j]) != types\&.end()) {
+1409             types[index[j]] += 1;
+1410         } else {
+1411             types[index[j]] = 1;
 1412         }
-1413         lineIndex++;
-1414     }
-1415     infile\&.close();
-1416 
-1417     // check if within global bounds
-1418     if (sysatoms\&.size() > totNBounds_[1] || sysatoms\&.size() < totNBounds_[0]) {
-1419         throw customException ("Number of particles ("+std::to_string(sysatoms\&.size())+") in the restart file out of target range ["+std::to_string(totNBounds_[0])+", "+std::to_string(totNBounds_[1])+"]");
-1420     }
-1421 
-1422     // sort by type
-1423     std::map < int, int > types;
-1424     for (unsigned int j = 0; j < natoms; ++j) {
-1425         if (types\&.find(index[j]) != types\&.end()) {
-1426             types[index[j]] += 1;
-1427         } else {
-1428             types[index[j]] = 1;
+1413     }
+1414 
+1415     int maxType = -1;
+1416     for (std::map<int,int>::iterator it = types\&.begin(); it != types\&.end(); ++it) {
+1417         maxType = std::max(maxType, it->first);
+1418         if (it->first < 0 || it->first >= nSpecies_) {
+1419             throw customException ("Restart file corrupted, types out of range");
+1420         }
+1421     }
+1422 
+1423     // check that pair potentials exist so energy can be calculated
+1424     for (unsigned int i = 0; i < nSpecies_; ++i) {
+1425         for (unsigned int j = 0; j < nSpecies_; ++j) {
+1426             if (!potentialIsSet(i, j)) {
+1427                 throw customException("Not all pair potentials are set, so cannot initial from file");
+1428             }
 1429         }
 1430     }
 1431 
-1432     int maxType = -1;
-1433     for (std::map<int,int>::iterator it = types\&.begin(); it != types\&.end(); ++it) {
-1434         maxType = std::max(maxType, it->first);
-1435         if (it->first < 0 || it->first >= nSpecies_) {
-1436             throw customException ("Restart file corrupted, types out of range");
-1437         }
-1438     }
-1439 
-1440     // check that pair potentials exist so energy can be calculated
-1441     for (unsigned int i = 0; i < nSpecies_; ++i) {
-1442         for (unsigned int j = 0; j < nSpecies_; ++j) {
-1443             if (!potentialIsSet(i, j)) {
-1444                 throw customException("Not all pair potentials are set, so cannot initial from file");
-1445             }
-1446         }
-1447     }
-1448 
-1449     // empty out the system before adding new atoms in - all atoms "fully inserted" so no partial ones to worry about
-1450     if (Mcurrent_ != 0) {
-1451         throw customException ("System cannot be restarted from "+filename+", for some reason current expanded state != 0");
-1452     }
-1453     for (unsigned int i = 0; i < nSpecies_; ++i) {
-1454         const int ns = numSpecies[i];
-1455         for (int j = ns-1; j >=0; --j) {
-1456             for (int k = 0; k < Mtot_; ++k) {
-1457                 deleteAtom (i, j, true);
-1458             }
-1459         }
-1460     }
-1461     if (totN_ != 0) {
-1462         throw customException ("total N = "+std::to_string(totN_)+" != 0 after system supposedly emptied");
-1463     }
-1464     for (unsigned int i = 0; i < nSpecies_; ++i) {
-1465         if (numSpecies[i] != 0) {
-1466             throw customException ("Number of molecules of species #"+std::to_string(i+1)+" = "+std::to_string(numSpecies[i])+" != 0 after system supposedly emptied");
+1432     // empty out the system before adding new atoms in - all atoms "fully inserted" so no partial ones to worry about
+1433     if (Mcurrent_ != 0) {
+1434         throw customException ("System cannot be restarted from "+filename+", for some reason current expanded state != 0");
+1435     }
+1436     for (unsigned int i = 0; i < nSpecies_; ++i) {
+1437         const int ns = numSpecies[i];
+1438         for (int j = ns-1; j >=0; --j) {
+1439             for (int k = 0; k < Mtot_; ++k) {
+1440                 deleteAtom (i, j, true);
+1441             }
+1442         }
+1443     }
+1444     if (totN_ != 0) {
+1445         throw customException ("total N = "+std::to_string(totN_)+" != 0 after system supposedly emptied");
+1446     }
+1447     for (unsigned int i = 0; i < nSpecies_; ++i) {
+1448         if (numSpecies[i] != 0) {
+1449             throw customException ("Number of molecules of species #"+std::to_string(i+1)+" = "+std::to_string(numSpecies[i])+" != 0 after system supposedly emptied");
+1450         }
+1451     }
+1452     if (Mcurrent_ != 0) {
+1453         throw customException ("M state != 0 after system supposedly emptied");
+1454     }
+1455 
+1456     energy_ = 0\&.0;
+1457     for (unsigned int j = 0; j < sysatoms\&.size(); ++j) {
+1458         try {
+1459             // "partially" insert each atom so it goes through all the stages
+1460             insertAtom (index[j], &sysatoms[j]);
+1461             for (unsigned int k = 1; k < Mtot_; ++k) {
+1462                 insertAtom (index[j], fractionalAtom_); // this will check that within each species own max and min, global bounds handled above
+1463             }
+1464         } catch (customException &ce) {
+1465             std::string a = "Could not initialize system from restart file, ", b = ce\&.what();
+1466             throw customException (a+b);
 1467         }
 1468     }
-1469     if (Mcurrent_ != 0) {
-1470         throw customException ("M state != 0 after system supposedly emptied");
-1471     }
-1472 
-1473     energy_ = 0\&.0;
-1474     for (unsigned int j = 0; j < sysatoms\&.size(); ++j) {
-1475         try {
-1476             // "partially" insert each atom so it goes through all the stages
-1477             insertAtom (index[j], &sysatoms[j]);
-1478             for (unsigned int k = 1; k < Mtot_; ++k) {
-1479                 insertAtom (index[j], fractionalAtom_); // this will check that within each species own max and min, global bounds handled above
-1480             }
-1481         } catch (customException &ce) {
-1482             std::string a = "Could not initialize system from restart file, ", b = ce\&.what();
-1483             throw customException (a+b);
-1484         }
-1485     }
-1486 
-1487     // recalculate system's initial energy
-1488     energy_ = scratchEnergy();
-1489     std::cout << "Successfully loaded initial configuration from " << filename << " at " << getTimeStamp() << std::endl;
-1490 }
+1469 
+1470     // recalculate system's initial energy
+1471     energy_ = scratchEnergy();
+1472     std::cout << "Successfully loaded initial configuration from " << filename << " at " << getTimeStamp() << std::endl;
+1473 }
 .fi
 .SS "void simSystem::recordEnergyHistogram ()"
 
 .PP
 Record the energy histogram for the system at a given Ntot\&. Only records values when N_tot in range of [min, max]\&. 
 .PP
-Definition at line 841 of file system\&.cpp\&.
+Definition at line 836 of file system\&.cpp\&.
 .PP
 Referenced by performTMMC()\&.
 .PP
 .nf
-841                                        {
-842     // only record if in range (removes equilibration stage to get in this range, if there was any)
-843     if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
-844         const int address = totN_-totNBounds_[0];
-845         energyHistogram_[address]\&.record(energy_);
-846     }
-847 }
+836                                        {
+837     // only record if in range (removes equilibration stage to get in this range, if there was any)
+838     if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+839         const int address = totN_-totNBounds_[0];
+840         energyHistogram_[address]\&.record(energy_);
+841     }
+842 }
 .fi
 .SS "void simSystem::recordExtMoments ()"
 
@@ -1883,117 +1868,117 @@ Referenced by performTMMC()\&.
 .PP
 Record the particle number histogram for the system at a given Ntot\&. Only records values when N_tot in range of [min, max]\&. 
 .PP
-Definition at line 1043 of file system\&.cpp\&.
+Definition at line 1033 of file system\&.cpp\&.
 .PP
 References numSpecies\&.
 .PP
 Referenced by performTMMC()\&.
 .PP
 .nf
-1043                                    {
-1044     // only record if in range (removes equilibration stage to get in this range, if there was any)
-1045     if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
-1046         const int address = totN_-totNBounds_[0];
-1047         for (unsigned int i = 0; i < nSpecies_; ++i) {
-1048             pkHistogram_[i][address]\&.record(numSpecies[i]);
-1049         }
-1050     }
-1051 }
+1033                                    {
+1034     // only record if in range (removes equilibration stage to get in this range, if there was any)
+1035     if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+1036         const int address = totN_-totNBounds_[0];
+1037         for (unsigned int i = 0; i < nSpecies_; ++i) {
+1038             pkHistogram_[i][address]\&.record(numSpecies[i]);
+1039         }
+1040     }
+1041 }
 .fi
 .SS "void simSystem::refineEnergyHistogramBounds ()"
 
 .PP
 Check the histogram entries and trim off zero-valued entries and bounds\&. 
 .PP
-Definition at line 863 of file system\&.cpp\&.
+Definition at line 858 of file system\&.cpp\&.
 .PP
 References customException::what()\&.
 .PP
 Referenced by performTMMC()\&.
 .PP
 .nf
-863                                              {
-864     for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_\&.begin(); it != energyHistogram_\&.end(); ++it) {
-865         try {
-866             it->trim_edges();
-867         } catch (customException &ce) {
-868             std::string a = "Unable to trim edges in energyHistogram at each Ntot: ", b = ce\&.what();
-869             throw customException (a+b);
-870         }
-871     }
-872 }
+858                                              {
+859     for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_\&.begin(); it != energyHistogram_\&.end(); ++it) {
+860         try {
+861             it->trim_edges();
+862         } catch (customException &ce) {
+863             std::string a = "Unable to trim edges in energyHistogram at each Ntot: ", b = ce\&.what();
+864             throw customException (a+b);
+865         }
+866     }
+867 }
 .fi
 .SS "void simSystem::refinePkHistogramBounds ()"
 
 .PP
 Check the histogram entries and trim off zero-valued entries and bounds\&. 
 .PP
-Definition at line 1056 of file system\&.cpp\&.
+Definition at line 1046 of file system\&.cpp\&.
 .PP
 Referenced by performTMMC()\&.
 .PP
 .nf
-1056                                          {
-1057     for (std::vector < std::vector < dynamic_one_dim_histogram > >::iterator it = pkHistogram_\&.begin(); it != pkHistogram_\&.end(); ++it) {
-1058         for (std::vector < dynamic_one_dim_histogram >::iterator it2 = it->begin(); it2 != it->end(); ++it2) {
-1059             try {
-1060                 it2->trim_edges();
-1061             } catch (customException &ce) {
-1062                 throw customException ("Unable to trim edges in pkHistogram at each Ntot");
-1063             }
-1064         }
-1065     }
-1066 }
+1046                                          {
+1047     for (std::vector < std::vector < dynamic_one_dim_histogram > >::iterator it = pkHistogram_\&.begin(); it != pkHistogram_\&.end(); ++it) {
+1048         for (std::vector < dynamic_one_dim_histogram >::iterator it2 = it->begin(); it2 != it->end(); ++it2) {
+1049             try {
+1050                 it2->trim_edges();
+1051             } catch (customException &ce) {
+1052                 throw customException ("Unable to trim edges in pkHistogram at each Ntot");
+1053             }
+1054         }
+1055     }
+1056 }
 .fi
 .SS "void simSystem::reInitializeEnergyHistogram ()"
 
 .PP
 Re-initialize the energy histogram with internal estimates of bounds\&. 
 .PP
-Definition at line 877 of file system\&.cpp\&.
+Definition at line 872 of file system\&.cpp\&.
 .PP
 References totNMax(), and totNMin()\&.
 .PP
 Referenced by performCrossover()\&.
 .PP
 .nf
-877                                              {
-878     double lb = 0\&.0, ub = 0\&.0;
-879     if (energyHistogram_lb_\&.size() != energyHistogram_ub_\&.size()) {
-880         throw customException ("Bad energy histogram bound sizes");
-881     }
-882     if (energyHistogram_lb_\&.size() != totNMax() - totNMin() + 1) {
-883         throw customException ("Bad energy histogram bound sizes");
-884     }
-885     for (unsigned int i = 0; i < totNMax() - totNMin() + 1; ++i) {
-886         if (energyHistogram_lb_[i] > energyHistogram_ub_[i]) {
-887             throw customException ("Bad energy histogram bound sizes");
-888         }
-889         // "standardize" the bounds against U = 0 for to "align" the bins, already done for pkHistogram
-890         // this way the energy is reported as the limit of the edge of the aligned bins
-891         if (energyHistogram_lb_[i] < 0) {
-892             lb = floor((energyHistogram_lb_[i] - 0\&.0)/energyHistDelta_);
+872                                              {
+873     double lb = 0\&.0, ub = 0\&.0;
+874     if (energyHistogram_lb_\&.size() != energyHistogram_ub_\&.size()) {
+875         throw customException ("Bad energy histogram bound sizes");
+876     }
+877     if (energyHistogram_lb_\&.size() != totNMax() - totNMin() + 1) {
+878         throw customException ("Bad energy histogram bound sizes");
+879     }
+880     for (unsigned int i = 0; i < totNMax() - totNMin() + 1; ++i) {
+881         if (energyHistogram_lb_[i] > energyHistogram_ub_[i]) {
+882             throw customException ("Bad energy histogram bound sizes");
+883         }
+884         // "standardize" the bounds against U = 0 for to "align" the bins, already done for pkHistogram
+885         // this way the energy is reported as the limit of the edge of the aligned bins
+886         if (energyHistogram_lb_[i] < 0) {
+887             lb = floor((energyHistogram_lb_[i] - 0\&.0)/energyHistDelta_);
+888         } else {
+889             lb = ceil((energyHistogram_lb_[i] - 0\&.0)/energyHistDelta_);
+890         }
+891         if (energyHistogram_ub_[i] < 0) {
+892             ub = floor((energyHistogram_ub_[i] - 0\&.0)/energyHistDelta_);
 893         } else {
-894             lb = ceil((energyHistogram_lb_[i] - 0\&.0)/energyHistDelta_);
+894             ub = ceil((energyHistogram_ub_[i] - 0\&.0)/energyHistDelta_);
 895         }
-896         if (energyHistogram_ub_[i] < 0) {
-897             ub = floor((energyHistogram_ub_[i] - 0\&.0)/energyHistDelta_);
-898         } else {
-899             ub = ceil((energyHistogram_ub_[i] - 0\&.0)/energyHistDelta_);
-900         }
-901 
-902         try {
-903             energyHistogram_[i]\&.reinitialize(lb,ub,energyHistDelta_);
-904         } catch (customException &ce) {
-905             throw customException ("Unable to reinitialize the energyHistogram");
-906         }
-907     }
-908 }
+896 
+897         try {
+898             energyHistogram_[i]\&.reinitialize(lb,ub,energyHistDelta_);
+899         } catch (customException &ce) {
+900             throw customException ("Unable to reinitialize the energyHistogram");
+901         }
+902     }
+903 }
 .fi
 .SS "void simSystem::restartEnergyHistogram (const std::stringprefix)"
 
 .PP
-Restart the energy histogram for each Ntot from unnormalized checkpoint\&. netCDF4 not enabled
+Restart the energy histogram for each Ntot from unnormalized checkpoint\&. 
 .PP
 \fBParameters:\fP
 .RS 4
@@ -2002,79 +1987,79 @@ Restart the energy histogram for each Ntot from unnormalized checkpoint\&. netCD
 .PP
 
 .PP
-Definition at line 977 of file system\&.cpp\&.
+Definition at line 967 of file system\&.cpp\&.
 .PP
 References totNMax(), and totNMin()\&.
 .PP
 Referenced by checkpoint::load()\&.
 .PP
 .nf
-977                                                               {
-978     int minBound = 0, maxBound = totNMax() - totNMin() + 1;
-979     std::vector < double > lb(maxBound - minBound, 0), ub(maxBound - minBound, 0), delta(maxBound - minBound, 0);
-980     std::string fileName = prefix+"\&.dat";
-981 
-982     std::ifstream infile (fileName\&.c_str());
-983     std::string line, tmp = "";
-984     int lineIndex = 0;
-985     while(std::getline(infile,line)) {
-986         std::stringstream lineStream(line);
-987         if (lineIndex == 2) {
-988             // get upper bound
-989             std::getline(lineStream, tmp, ':');
-990             std::getline(lineStream, tmp, ':');
-991             int high = atoi(tmp\&.c_str());
-992             if (high != totNMax()) {
-993                 throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax("+std::to_string(totNMax())+"), cannot restart energy histogram from "+fileName);
-994             }
-995         } else if (lineIndex == 3) {
-996             // get lower bound
-997             std::getline(lineStream, tmp, ':');
-998             std::getline(lineStream, tmp, ':');
-999             int low = atoi(tmp\&.c_str());
-1000             if (low != totNMin()) {
-1001                 throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin("+std::to_string(totNMin())+"), cannot restart energy histogram from "+fileName);
+967                                                               {
+968     int minBound = 0, maxBound = totNMax() - totNMin() + 1;
+969     std::vector < double > lb(maxBound - minBound, 0), ub(maxBound - minBound, 0), delta(maxBound - minBound, 0);
+970     std::string fileName = prefix+"\&.dat";
+971 
+972     std::ifstream infile (fileName\&.c_str());
+973     std::string line, tmp = "";
+974     int lineIndex = 0;
+975     while(std::getline(infile,line)) {
+976         std::stringstream lineStream(line);
+977         if (lineIndex == 2) {
+978             // get upper bound
+979             std::getline(lineStream, tmp, ':');
+980             std::getline(lineStream, tmp, ':');
+981             int high = atoi(tmp\&.c_str());
+982             if (high != totNMax()) {
+983                 throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax("+std::to_string(totNMax())+"), cannot restart energy histogram from "+fileName);
+984             }
+985         } else if (lineIndex == 3) {
+986             // get lower bound
+987             std::getline(lineStream, tmp, ':');
+988             std::getline(lineStream, tmp, ':');
+989             int low = atoi(tmp\&.c_str());
+990             if (low != totNMin()) {
+991                 throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin("+std::to_string(totNMin())+"), cannot restart energy histogram from "+fileName);
+992             }
+993         } else if (lineIndex == 6) {
+994             // delta
+995             for (unsigned int i = 0; i < maxBound-minBound; ++i) {
+996                 lineStream >> delta[i];
+997             }
+998         } else if (lineIndex == 8) {
+999             // lower bound
+1000             for (unsigned int i = 0; i < maxBound-minBound; ++i) {
+1001                 lineStream >> lb[i];
 1002             }
-1003         } else if (lineIndex == 6) {
-1004             // delta
+1003         } else if (lineIndex == 10) {
+1004             // upper bound
 1005             for (unsigned int i = 0; i < maxBound-minBound; ++i) {
-1006                 lineStream >> delta[i];
+1006                 lineStream >> ub[i];
 1007             }
-1008         } else if (lineIndex == 8) {
-1009             // lower bound
-1010             for (unsigned int i = 0; i < maxBound-minBound; ++i) {
-1011                 lineStream >> lb[i];
-1012             }
-1013         } else if (lineIndex == 10) {
-1014             // upper bound
-1015             for (unsigned int i = 0; i < maxBound-minBound; ++i) {
-1016                 lineStream >> ub[i];
-1017             }
-1018             // now can reinitialize the histogram
-1019             for (unsigned int i = minBound; i < maxBound; ++i) {
-1020                 try {
-1021                     energyHistogram_[i-minBound]\&.reinitialize(lb[i-minBound], ub[i-minBound], delta[i-minBound]);
-1022                 } catch (\&.\&.\&.) {
-1023                     throw customException ("Unable to restart energy histogram from "+fileName);
-1024                 }
-1025             }
-1026         } else if (lineIndex >= 12) {
-1027             // histogram itself
-1028             std::deque <double> h = energyHistogram_[lineIndex-12]\&.get_hist();
-1029             for (std::deque <double>::iterator it = h\&.begin(); it != h\&.end(); ++it) {
-1030                 lineStream >> *it;
-1031             }
-1032             energyHistogram_[lineIndex-12]\&.set_hist(h);
-1033         }
-1034         lineIndex++;
-1035     }
-1036     infile\&.close();
-1037 }
+1008             // now can reinitialize the histogram
+1009             for (unsigned int i = minBound; i < maxBound; ++i) {
+1010                 try {
+1011                     energyHistogram_[i-minBound]\&.reinitialize(lb[i-minBound], ub[i-minBound], delta[i-minBound]);
+1012                 } catch (\&.\&.\&.) {
+1013                     throw customException ("Unable to restart energy histogram from "+fileName);
+1014                 }
+1015             }
+1016         } else if (lineIndex >= 12) {
+1017             // histogram itself
+1018             std::deque <double> h = energyHistogram_[lineIndex-12]\&.get_hist();
+1019             for (std::deque <double>::iterator it = h\&.begin(); it != h\&.end(); ++it) {
+1020                 lineStream >> *it;
+1021             }
+1022             energyHistogram_[lineIndex-12]\&.set_hist(h);
+1023         }
+1024         lineIndex++;
+1025     }
+1026     infile\&.close();
+1027 }
 .fi
 .SS "void simSystem::restartExtMoments (const std::stringprefix, const std::vector< double > &ctr)"
 
 .PP
-Restart the extensive energy histogram for each Ntot from unnormalized checkpoint\&. netCDF4 not enabled
+Restart the extensive energy histogram for each Ntot from unnormalized checkpoint\&. 
 .PP
 \fBParameters:\fP
 .RS 4
@@ -2085,110 +2070,110 @@ Restart the extensive energy histogram for each Ntot from unnormalized checkpoin
 .PP
 
 .PP
-Definition at line 744 of file system\&.cpp\&.
+Definition at line 739 of file system\&.cpp\&.
 .PP
 References histogram::getAddress(), getMaxOrder(), histogram::getRawHistogram(), histogram::set(), totNMax(), totNMin(), and customException::what()\&.
 .PP
 Referenced by checkpoint::load()\&.
 .PP
 .nf
-744                                                                                          {
-745     std::string fileName = prefix+"\&.dat";
-746 
-747     std::ifstream infile (fileName\&.c_str());
-748     std::string line, tmp = "";
-749     int lineIndex = 0, dummy;
-750     long long unsigned int idx;
-751     std::vector < double > h = extensive_moments_\&.getRawHistogram (), coords (6, 0);
-752 
-753     while(std::getline(infile,line)) {
-754         std::stringstream lineStream(line);
-755         if (lineIndex == 1) {
-756             std::getline(lineStream, tmp, ':');
-757             std::getline(lineStream, tmp, ':');
-758             int ns = atoi(tmp\&.c_str());
-759             if (ns != nSpecies_) {
-760                 throw customException ("Number of speces in restart file ("+ std::to_string(ns)+") is not the same as provided in input ("+std::to_string(nSpecies_)+"), cannot restart extMom from "+fileName);
-761             }
-762         } else if (lineIndex == 2) {
-763             std::getline(lineStream, tmp, ':');
-764             std::getline(lineStream, tmp, ':');
-765             int mo = atoi(tmp\&.c_str());
-766             if (mo != getMaxOrder()) {
-767                 throw customException ("Max order ("+ std::to_string(mo)+") is not the same as provided in input ("+std::to_string(getMaxOrder())+"), cannot restart extMom from "+fileName);
-768             }
-769         } if (lineIndex == 3) {
-770             std::getline(lineStream, tmp, ':');
-771             std::getline(lineStream, tmp, ':');
-772             int high = atoi(tmp\&.c_str());
-773             if (high != totNMax()) {
-774                 throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax ("+std::to_string(totNMax())+"), cannot restart extMom from "+fileName);
-775             }
-776         } else if (lineIndex == 4) {
-777             std::getline(lineStream, tmp, ':');
-778             std::getline(lineStream, tmp, ':');
-779             int low = atoi(tmp\&.c_str());
-780             if (low != totNMin()) {
-781                 throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin ("+std::to_string(totNMin())+"), cannot restart extMom from "+fileName);
-782             }
-783 
-784             // now reinstantiate the histogram
-785             std::vector < double > lbn (6,0), ubn(6,0);
-786             std::vector < long long unsigned int > nbn (6,0);
-787             ubn[0] = nSpecies_-1;
-788             ubn[1] = max_order_;
-789             ubn[2] = nSpecies_-1;
-790             ubn[3] = max_order_;
-791             ubn[4] = max_order_;
-792             ubn[5] = totNMax()-totNMin();
-793 
-794             nbn[0] = nSpecies_;
-795             nbn[1] = max_order_+1;
-796             nbn[2] = nSpecies_;
-797             nbn[3] = max_order_+1;
-798             nbn[4] = max_order_+1;
-799             nbn[5] = totNMax()-totNMin()+1;
-800 
-801             histogram hnn (lbn, ubn, nbn);
-802             extensive_moments_ = hnn;
-803         } else if (lineIndex >= 7) {
-804             // histogram itself
-805             lineStream >> dummy;
-806             coords[5] = lineIndex-7;
-807             for (unsigned int i = 0; i < nSpecies_; ++i) {
-808                 coords[0] = i;
-809                 for (unsigned int j = 0; j <= max_order_; ++j) {
-810                     coords[1] = j;
-811                     for (unsigned int k = 0; k < nSpecies_; ++k) {
-812                         coords[2] = k;
-813                         for (unsigned int m = 0; m <= max_order_; ++m) {
-814                             coords[3] = m;
-815                             for (unsigned int p = 0; p <= max_order_; ++p) {
-816                                 coords[4] = p;
-817                                 idx = extensive_moments_\&.getAddress(coords);
-818                                 lineStream >> h[idx];
-819                             }
-820                         }
-821                     }
-822                 }
-823             }
-824         }
-825         lineIndex++;
-826     }
-827     infile\&.close();
-828 
-829     try {
-830         // this checks h and ctr same size, and by extension that h from file has same size as h in system
-831         extensive_moments_\&.set(h, ctr);
-832     } catch (customException &ce) {
-833         throw customException ("Unable to restart extMom from "+fileName+" : "+ce\&.what());
-834     }
-835 }
+739                                                                                          {
+740     std::string fileName = prefix+"\&.dat";
+741 
+742     std::ifstream infile (fileName\&.c_str());
+743     std::string line, tmp = "";
+744     int lineIndex = 0, dummy;
+745     long long unsigned int idx;
+746     std::vector < double > h = extensive_moments_\&.getRawHistogram (), coords (6, 0);
+747 
+748     while(std::getline(infile,line)) {
+749         std::stringstream lineStream(line);
+750         if (lineIndex == 1) {
+751             std::getline(lineStream, tmp, ':');
+752             std::getline(lineStream, tmp, ':');
+753             int ns = atoi(tmp\&.c_str());
+754             if (ns != nSpecies_) {
+755                 throw customException ("Number of speces in restart file ("+ std::to_string(ns)+") is not the same as provided in input ("+std::to_string(nSpecies_)+"), cannot restart extMom from "+fileName);
+756             }
+757         } else if (lineIndex == 2) {
+758             std::getline(lineStream, tmp, ':');
+759             std::getline(lineStream, tmp, ':');
+760             int mo = atoi(tmp\&.c_str());
+761             if (mo != getMaxOrder()) {
+762                 throw customException ("Max order ("+ std::to_string(mo)+") is not the same as provided in input ("+std::to_string(getMaxOrder())+"), cannot restart extMom from "+fileName);
+763             }
+764         } if (lineIndex == 3) {
+765             std::getline(lineStream, tmp, ':');
+766             std::getline(lineStream, tmp, ':');
+767             int high = atoi(tmp\&.c_str());
+768             if (high != totNMax()) {
+769                 throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax ("+std::to_string(totNMax())+"), cannot restart extMom from "+fileName);
+770             }
+771         } else if (lineIndex == 4) {
+772             std::getline(lineStream, tmp, ':');
+773             std::getline(lineStream, tmp, ':');
+774             int low = atoi(tmp\&.c_str());
+775             if (low != totNMin()) {
+776                 throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin ("+std::to_string(totNMin())+"), cannot restart extMom from "+fileName);
+777             }
+778 
+779             // now reinstantiate the histogram
+780             std::vector < double > lbn (6,0), ubn(6,0);
+781             std::vector < long long unsigned int > nbn (6,0);
+782             ubn[0] = nSpecies_-1;
+783             ubn[1] = max_order_;
+784             ubn[2] = nSpecies_-1;
+785             ubn[3] = max_order_;
+786             ubn[4] = max_order_;
+787             ubn[5] = totNMax()-totNMin();
+788 
+789             nbn[0] = nSpecies_;
+790             nbn[1] = max_order_+1;
+791             nbn[2] = nSpecies_;
+792             nbn[3] = max_order_+1;
+793             nbn[4] = max_order_+1;
+794             nbn[5] = totNMax()-totNMin()+1;
+795 
+796             histogram hnn (lbn, ubn, nbn);
+797             extensive_moments_ = hnn;
+798         } else if (lineIndex >= 7) {
+799             // histogram itself
+800             lineStream >> dummy;
+801             coords[5] = lineIndex-7;
+802             for (unsigned int i = 0; i < nSpecies_; ++i) {
+803                 coords[0] = i;
+804                 for (unsigned int j = 0; j <= max_order_; ++j) {
+805                     coords[1] = j;
+806                     for (unsigned int k = 0; k < nSpecies_; ++k) {
+807                         coords[2] = k;
+808                         for (unsigned int m = 0; m <= max_order_; ++m) {
+809                             coords[3] = m;
+810                             for (unsigned int p = 0; p <= max_order_; ++p) {
+811                                 coords[4] = p;
+812                                 idx = extensive_moments_\&.getAddress(coords);
+813                                 lineStream >> h[idx];
+814                             }
+815                         }
+816                     }
+817                 }
+818             }
+819         }
+820         lineIndex++;
+821     }
+822     infile\&.close();
+823 
+824     try {
+825         // this checks h and ctr same size, and by extension that h from file has same size as h in system
+826         extensive_moments_\&.set(h, ctr);
+827     } catch (customException &ce) {
+828         throw customException ("Unable to restart extMom from "+fileName+" : "+ce\&.what());
+829     }
+830 }
 .fi
 .SS "void simSystem::restartPkHistogram (const std::stringprefix)"
 
 .PP
-Restart the particle histogram for each Ntot from unnormalized checkpoint\&. netCDF4 not enabled
+Restart the particle histogram for each Ntot from unnormalized checkpoint\&. 
 .PP
 \fBParameters:\fP
 .RS 4
@@ -2197,84 +2182,84 @@ Restart the particle histogram for each Ntot from unnormalized checkpoint\&. net
 .PP
 
 .PP
-Definition at line 1137 of file system\&.cpp\&.
+Definition at line 1122 of file system\&.cpp\&.
 .PP
 References totNMax(), and totNMin()\&.
 .PP
 Referenced by checkpoint::load()\&.
 .PP
 .nf
-1137                                                           {
-1138     for (unsigned int spec = 0; spec < nSpecies_; ++spec) {
-1139         int minBound = 0, maxBound = totNMax() - totNMin() + 1;
-1140         std::vector < double > lb(maxBound - minBound, 0), ub(maxBound - minBound, 0), delta(maxBound - minBound, 0);
-1141         std::string fileName = prefix+"_"+std::to_string(spec+1)+"\&.dat";
-1142 
-1143         std::ifstream infile (fileName\&.c_str());
-1144         std::string line, tmp = "";
-1145         int lineIndex = 0;
-1146         while(std::getline(infile,line)) {
-1147             std::stringstream lineStream(line);
-1148             if (lineIndex == 2) {
-1149                 // get upper bound
-1150                 std::getline(lineStream, tmp, ':');
+1122                                                           {
+1123     for (unsigned int spec = 0; spec < nSpecies_; ++spec) {
+1124         int minBound = 0, maxBound = totNMax() - totNMin() + 1;
+1125         std::vector < double > lb(maxBound - minBound, 0), ub(maxBound - minBound, 0), delta(maxBound - minBound, 0);
+1126         std::string fileName = prefix+"_"+std::to_string(spec+1)+"\&.dat";
+1127 
+1128         std::ifstream infile (fileName\&.c_str());
+1129         std::string line, tmp = "";
+1130         int lineIndex = 0;
+1131         while(std::getline(infile,line)) {
+1132             std::stringstream lineStream(line);
+1133             if (lineIndex == 2) {
+1134                 // get upper bound
+1135                 std::getline(lineStream, tmp, ':');
+1136                 std::getline(lineStream, tmp, ':');
+1137                 int high = atoi(tmp\&.c_str());
+1138                 if (high != totNMax()) {
+1139                     throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax("+std::to_string(totNMax())+"), cannot restart particle histogram from "+fileName);
+1140                 }
+1141             } else if (lineIndex == 3) {
+1142                 // get lower bound
+1143                 std::getline(lineStream, tmp, ':');
+1144                 std::getline(lineStream, tmp, ':');
+1145                 int low = atoi(tmp\&.c_str());
+1146                 if (low != totNMin()) {
+1147                     throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin("+std::to_string(totNMin())+"), cannot restart particle histogram from "+fileName);
+1148                 }
+1149             } else if (lineIndex == 1) {
+1150                 // check the number of species is correct
 1151                 std::getline(lineStream, tmp, ':');
-1152                 int high = atoi(tmp\&.c_str());
-1153                 if (high != totNMax()) {
-1154                     throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax("+std::to_string(totNMax())+"), cannot restart particle histogram from "+fileName);
-1155                 }
-1156             } else if (lineIndex == 3) {
-1157                 // get lower bound
-1158                 std::getline(lineStream, tmp, ':');
-1159                 std::getline(lineStream, tmp, ':');
-1160                 int low = atoi(tmp\&.c_str());
-1161                 if (low != totNMin()) {
-1162                     throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin("+std::to_string(totNMin())+"), cannot restart particle histogram from "+fileName);
-1163                 }
-1164             } else if (lineIndex == 1) {
-1165                 // check the number of species is correct
-1166                 std::getline(lineStream, tmp, ':');
-1167                 std::getline(lineStream, tmp, ':');
-1168                 int ns = atoi(tmp\&.c_str());
-1169                 if (ns != nSpecies_) {
-1170                     throw customException ("Number of speces in restart file ("+ std::to_string(ns)+") is not the same as provided in input ("+std::to_string(nSpecies_)+"), cannot restart particle histogram from "+fileName);
+1152                 std::getline(lineStream, tmp, ':');
+1153                 int ns = atoi(tmp\&.c_str());
+1154                 if (ns != nSpecies_) {
+1155                     throw customException ("Number of speces in restart file ("+ std::to_string(ns)+") is not the same as provided in input ("+std::to_string(nSpecies_)+"), cannot restart particle histogram from "+fileName);
+1156                 }
+1157             } else if (lineIndex == 6) {
+1158                 // delta
+1159                 for (unsigned int i = 0; i < maxBound-minBound; ++i) {
+1160                     lineStream >> delta[i];
+1161                 }
+1162             } else if (lineIndex == 8) {
+1163                 // lower bound
+1164                 for (unsigned int i = 0; i < maxBound-minBound; ++i) {
+1165                     lineStream >> lb[i];
+1166                 }
+1167             } else if (lineIndex == 10) {
+1168                 // upper bound
+1169                 for (unsigned int i = 0; i < maxBound-minBound; ++i) {
+1170                     lineStream >> ub[i];
 1171                 }
-1172             } else if (lineIndex == 6) {
-1173                 // delta
-1174                 for (unsigned int i = 0; i < maxBound-minBound; ++i) {
-1175                     lineStream >> delta[i];
-1176                 }
-1177             } else if (lineIndex == 8) {
-1178                 // lower bound
-1179                 for (unsigned int i = 0; i < maxBound-minBound; ++i) {
-1180                     lineStream >> lb[i];
-1181                 }
-1182             } else if (lineIndex == 10) {
-1183                 // upper bound
-1184                 for (unsigned int i = 0; i < maxBound-minBound; ++i) {
-1185                     lineStream >> ub[i];
-1186                 }
-1187                 // now can reinitialize the histogram
-1188                 for (unsigned int i = minBound; i < maxBound; ++i) {
-1189                     try {
-1190                         pkHistogram_[spec][i-minBound]\&.reinitialize(lb[i-minBound], ub[i-minBound], delta[i-minBound]);
-1191                     } catch (\&.\&.\&.) {
-1192                         throw customException ("Unable to restart particle histogram from "+fileName);
-1193                     }
-1194                 }
-1195             } else if (lineIndex >= 12) {
-1196                 // histogram itself
-1197                 std::deque <double> h = pkHistogram_[spec][lineIndex-12]\&.get_hist();
-1198                 for (std::deque <double>::iterator it = h\&.begin(); it != h\&.end(); ++it) {
-1199                     lineStream >> *it;
-1200                 }
-1201                 pkHistogram_[spec][lineIndex-12]\&.set_hist(h);
-1202             }
-1203             lineIndex++;
-1204         }
-1205         infile\&.close();
-1206     }
-1207 }
+1172                 // now can reinitialize the histogram
+1173                 for (unsigned int i = minBound; i < maxBound; ++i) {
+1174                     try {
+1175                         pkHistogram_[spec][i-minBound]\&.reinitialize(lb[i-minBound], ub[i-minBound], delta[i-minBound]);
+1176                     } catch (\&.\&.\&.) {
+1177                         throw customException ("Unable to restart particle histogram from "+fileName);
+1178                     }
+1179                 }
+1180             } else if (lineIndex >= 12) {
+1181                 // histogram itself
+1182                 std::deque <double> h = pkHistogram_[spec][lineIndex-12]\&.get_hist();
+1183                 for (std::deque <double>::iterator it = h\&.begin(); it != h\&.end(); ++it) {
+1184                     lineStream >> *it;
+1185                 }
+1186                 pkHistogram_[spec][lineIndex-12]\&.set_hist(h);
+1187             }
+1188             lineIndex++;
+1189         }
+1190         infile\&.close();
+1191     }
+1192 }
 .fi
 .SS "const double simSystem::scratchEnergy ()"
 
@@ -2288,121 +2273,121 @@ totU Total energy of the system
 .PP
 
 .PP
-Definition at line 1548 of file system\&.cpp\&.
+Definition at line 1531 of file system\&.cpp\&.
 .PP
 References atoms, NUM_INFINITY, numSpecies, ppot, speciesBarriers, and customException::what()\&.
 .PP
 Referenced by readConfig(), and sanityChecks()\&.
 .PP
 .nf
-1548                                        {
-1549     double totU = 0\&.0;
-1550     double V = 1\&.0;
-1551 
-1552     for (unsigned int i = 0; i < box_\&.size(); ++i) {
-1553         V *= box_[i];
-1554     }
-1555 
-1556     for (unsigned int spec1 = 0; spec1 < nSpecies_; ++spec1) {
-1557         int num1 = 0, adj1 = 0;
-1558         try {
-1559             num1 = numSpecies[spec1];
-1560         } catch (customException &ce) {
-1561             std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
-1562             throw customException (a+b);
-1563         }
-1564 
-1565         // possibly have fractionally inserted atom
-1566         if (fractionalAtomType_ == spec1 && Mcurrent_ > 0) {
-1567             adj1 = 1;
-1568         }
-1569 
-1570         // wall/barrier interactions
-1571         for (unsigned int j = 0; j < num1+adj1; ++j) {
-1572             double dU = 0\&.0;
-1573             try {
-1574                 dU = speciesBarriers[spec1]\&.energy(&atoms[spec1][j], box_);
-1575             } catch (customException &ce) {
-1576                 std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
-1577                 throw customException (a+b);
+1531                                        {
+1532     double totU = 0\&.0;
+1533     double V = 1\&.0;
+1534 
+1535     for (unsigned int i = 0; i < box_\&.size(); ++i) {
+1536         V *= box_[i];
+1537     }
+1538 
+1539     for (unsigned int spec1 = 0; spec1 < nSpecies_; ++spec1) {
+1540         int num1 = 0, adj1 = 0;
+1541         try {
+1542             num1 = numSpecies[spec1];
+1543         } catch (customException &ce) {
+1544             std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
+1545             throw customException (a+b);
+1546         }
+1547 
+1548         // possibly have fractionally inserted atom
+1549         if (fractionalAtomType_ == spec1 && Mcurrent_ > 0) {
+1550             adj1 = 1;
+1551         }
+1552 
+1553         // wall/barrier interactions
+1554         for (unsigned int j = 0; j < num1+adj1; ++j) {
+1555             double dU = 0\&.0;
+1556             try {
+1557                 dU = speciesBarriers[spec1]\&.energy(&atoms[spec1][j], box_);
+1558             } catch (customException &ce) {
+1559                 std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
+1560                 throw customException (a+b);
+1561             }
+1562             if (dU == NUM_INFINITY) {
+1563                 return NUM_INFINITY;
+1564             } else {
+1565                 totU += dU;
+1566             }
+1567         }
+1568 
+1569         // interactions with same type
+1570         for (unsigned int j = 0; j < num1+adj1; ++j) {
+1571             for (unsigned int k = j+1; k < num1+adj1; ++k) {
+1572                 try {
+1573                     totU += ppot[spec1][spec1]->energy(&atoms[spec1][j], &atoms[spec1][k], box_);
+1574                 } catch (customException &ce) {
+1575                     std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
+1576                     throw customException (a+b);
+1577                 }
 1578             }
-1579             if (dU == NUM_INFINITY) {
-1580                 return NUM_INFINITY;
-1581             } else {
-1582                 totU += dU;
-1583             }
-1584         }
-1585 
-1586         // interactions with same type
-1587         for (unsigned int j = 0; j < num1+adj1; ++j) {
-1588             for (unsigned int k = j+1; k < num1+adj1; ++k) {
-1589                 try {
-1590                     totU += ppot[spec1][spec1]->energy(&atoms[spec1][j], &atoms[spec1][k], box_);
-1591                 } catch (customException &ce) {
-1592                     std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
-1593                     throw customException (a+b);
-1594                 }
-1595             }
-1596         }
+1579         }
+1580 
+1581         // add tail correction to potential energy but only for atoms fully inserted
+1582 #ifdef FLUID_PHASE_SIMULATIONS
+1583         if ((ppot[spec1][spec1]->useTailCorrection) && (num1 > 1)) {
+1584             totU += (num1)*0\&.5*ppot[spec1][spec1]->tailCorrection((num1-1)/V);
+1585         }
+1586 #endif
+1587 
+1588         // interactions with other unique types
+1589         for (unsigned int spec2 = spec1+1; spec2 < nSpecies_; ++spec2) {
+1590             int num2 = 0, adj2 = 0;
+1591             try {
+1592                 num2 = numSpecies[spec2];
+1593             } catch (customException &ce) {
+1594                 std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
+1595                 throw customException (a+b);
+1596             }
 1597 
-1598         // add tail correction to potential energy but only for atoms fully inserted
-1599 #ifdef FLUID_PHASE_SIMULATIONS
-1600         if ((ppot[spec1][spec1]->useTailCorrection) && (num1 > 1)) {
-1601             totU += (num1)*0\&.5*ppot[spec1][spec1]->tailCorrection((num1-1)/V);
-1602         }
-1603 #endif
-1604 
-1605         // interactions with other unique types
-1606         for (unsigned int spec2 = spec1+1; spec2 < nSpecies_; ++spec2) {
-1607             int num2 = 0, adj2 = 0;
-1608             try {
-1609                 num2 = numSpecies[spec2];
-1610             } catch (customException &ce) {
-1611                 std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
-1612                 throw customException (a+b);
-1613             }
-1614 
-1615             if (fractionalAtomType_ == spec2 && Mcurrent_ > 0) {
-1616                 adj2 = 1;
+1598             if (fractionalAtomType_ == spec2 && Mcurrent_ > 0) {
+1599                 adj2 = 1;
+1600             }
+1601 
+1602             for (unsigned int j = 0; j < num1+adj1; ++j) {
+1603                 for (unsigned int k = 0; k < num2+adj2; ++k) {
+1604                     try {
+1605                         totU += ppot[spec1][spec2]->energy(&atoms[spec1][j], &atoms[spec2][k], box_);
+1606                     } catch (customException &ce) {
+1607                         std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
+1608                         throw customException (a+b);
+1609                     }
+1610                 }
+1611             }
+1612 
+1613             // add tail correction to potential energy but only bewteen fully inserted species
+1614 #ifdef FLUID_PHASE_SIMULATIONS
+1615             if ((ppot[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) {
+1616                 totU += (num1)*ppot[spec1][spec2]->tailCorrection(num2/V);
 1617             }
-1618 
-1619             for (unsigned int j = 0; j < num1+adj1; ++j) {
-1620                 for (unsigned int k = 0; k < num2+adj2; ++k) {
-1621                     try {
-1622                         totU += ppot[spec1][spec2]->energy(&atoms[spec1][j], &atoms[spec2][k], box_);
-1623                     } catch (customException &ce) {
-1624                         std::string a = "Cannot recalculate energy from scratch: ", b = ce\&.what();
-1625                         throw customException (a+b);
-1626                     }
-1627                 }
-1628             }
+1618 #endif
+1619         }
+1620     }
+1621 
+1622     if (toggleKE_ == true) {
+1623         double ns = 0\&.0;
+1624         for (unsigned int i = 0; i < nSpecies_; ++i) {
+1625             ns += numSpecies[i];
+1626         }
+1627         totU += 1\&.5/beta_*ns; // only adjust for FULLY-INSERTED ATOMS
+1628     }
 1629 
-1630             // add tail correction to potential energy but only bewteen fully inserted species
-1631 #ifdef FLUID_PHASE_SIMULATIONS
-1632             if ((ppot[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) {
-1633                 totU += (num1)*ppot[spec1][spec2]->tailCorrection(num2/V);
-1634             }
-1635 #endif
-1636         }
-1637     }
-1638 
-1639     if (toggleKE_ == true) {
-1640         double ns = 0\&.0;
-1641         for (unsigned int i = 0; i < nSpecies_; ++i) {
-1642             ns += numSpecies[i];
-1643         }
-1644         totU += 1\&.5/beta_*ns; // only adjust for FULLY-INSERTED ATOMS
-1645     }
-1646 
-1647     return totU;
-1648 }
+1630     return totU;
+1631 }
 .fi
 .SS "void simSystem::setELB (const std::vector< double >elb)\fC [inline]\fP"
 
 .PP
 Assign energy lower bound from restart\&. 
 .PP
-Definition at line 50 of file system\&.h\&.
+Definition at line 43 of file system\&.h\&.
 .PP
 Referenced by checkpoint::load()\&.
 .SS "void simSystem::setEUB (const std::vector< double >eub)\fC [inline]\fP"
@@ -2410,7 +2395,7 @@ Referenced by checkpoint::load()\&.
 .PP
 Assign energy upper bound from restart\&. 
 .PP
-Definition at line 49 of file system\&.h\&.
+Definition at line 42 of file system\&.h\&.
 .PP
 Referenced by checkpoint::load()\&.
 .SS "void simSystem::setTotNBounds (const std::vector< int > &bounds)"
@@ -2541,53 +2526,55 @@ Throws an exception if input values are illegal or there is another problem (e\&
 .PP
 
 .PP
-Definition at line 1737 of file system\&.cpp\&.
+Definition at line 1720 of file system\&.cpp\&.
 .PP
 References tmmcBias, useTMMC, and customException::what()\&.
 .PP
 Referenced by checkpoint::load(), performCrossover(), and performTMMC()\&.
 .PP
 .nf
-1737                                                                             {
-1738     // initialize the tmmc object
-1739     try {
-1740         tmmcBias = new tmmc (totNBounds_[1], totNBounds_[0], Mtot, tmmcSweepSize, box_);
-1741     } catch (customException& ce) {
-1742         throw customException ("Cannot start TMMC biasing in system: "+std::to_string(*ce\&.what()));
-1743     }
-1744 
-1745     useTMMC = true;
-1746 }
+1720                                                                             {
+1721     // initialize the tmmc object
+1722     try {
+1723         tmmcBias = new tmmc (totNBounds_[1], totNBounds_[0], Mtot, tmmcSweepSize, box_);
+1724     } catch (customException& ce) {
+1725         throw customException ("Cannot start TMMC biasing in system: "+std::to_string(*ce\&.what()));
+1726     }
+1727 
+1728     useTMMC = true;
+1729 }
 .fi
 .SS "void simSystem::startWALA (const doublelnF, const doubleg, const doubles, const intMtot)"
 
 .PP
 Start using Wang-Landau and instantiate the bias object\&. 
 .PP
-Definition at line 1720 of file system\&.cpp\&.
+Definition at line 1703 of file system\&.cpp\&.
 .PP
 References useWALA, customException::what(), and wlBias\&.
 .PP
 Referenced by checkpoint::load(), and performWALA()\&.
 .PP
 .nf
-1720                                                                                            {
-1721     // initialize the wala object
-1722     try {
-1723         wlBias = new wala (lnF, g, s, totNBounds_[1], totNBounds_[0], Mtot, box_);
-1724     } catch (customException& ce) {
-1725         throw customException ("Cannot start Wang-Landau biasing in system: "+std::to_string(*ce\&.what()));
-1726     }
-1727 
-1728     useWALA = true;
-1729 }
+1703                                                                                            {
+1704     // initialize the wala object
+1705     try {
+1706         wlBias = new wala (lnF, g, s, totNBounds_[1], totNBounds_[0], Mtot, box_);
+1707     } catch (customException& ce) {
+1708         throw customException ("Cannot start Wang-Landau biasing in system: "+std::to_string(*ce\&.what()));
+1709     }
+1710 
+1711     useWALA = true;
+1712 }
 .fi
 .SS "void simSystem::stopTMMC ()\fC [inline]\fP"
 
 .PP
 Stop using TMMC and free the bias object\&. 
 .PP
-Definition at line 70 of file system\&.h\&.
+Definition at line 63 of file system\&.h\&.
+.PP
+References tmmcBias, and useTMMC\&.
 .PP
 Referenced by performTMMC()\&.
 .SS "void simSystem::stopWALA ()\fC [inline]\fP"
@@ -2595,7 +2582,9 @@ Referenced by performTMMC()\&.
 .PP
 Stop using Wang-Landau and free the bias object\&. 
 .PP
-Definition at line 68 of file system\&.h\&.
+Definition at line 61 of file system\&.h\&.
+.PP
+References useWALA, and wlBias\&.
 .PP
 Referenced by performCrossover()\&.
 .SS "void simSystem::toggleKE ()"
@@ -2621,7 +2610,7 @@ Referenced by initialize(), and setup()\&.
 .PP
 Return upper bound on the total number of atoms in the system\&. 
 .PP
-Definition at line 82 of file system\&.h\&.
+Definition at line 75 of file system\&.h\&.
 .PP
 Referenced by insertParticle::make(), performTMMC(), reInitializeEnergyHistogram(), restartEnergyHistogram(), restartExtMoments(), and restartPkHistogram()\&.
 .SS "const int simSystem::totNMin ()\fC [inline]\fP"
@@ -2629,7 +2618,7 @@ Referenced by insertParticle::make(), performTMMC(), reInitializeEnergyHistogram
 .PP
 Return lower bound on the total number of atoms in the system\&. 
 .PP
-Definition at line 83 of file system\&.h\&.
+Definition at line 76 of file system\&.h\&.
 .PP
 Referenced by deleteParticle::make(), performTMMC(), reInitializeEnergyHistogram(), restartEnergyHistogram(), restartExtMoments(), restartPkHistogram(), and setup()\&.
 .SS "void simSystem::translateAtom (const inttypeIndex, const intatomIndex, std::vector< double >oldPos)"
@@ -2680,7 +2669,7 @@ Referenced by aggVolBias3::make(), and translateParticle::make()\&.
 .PP
 Atoms in a matrix by type, and particle index, respectively that a system CAN hold but not all are actually 'in' the system\&. 
 .PP
-Definition at line 125 of file system\&.h\&.
+Definition at line 118 of file system\&.h\&.
 .PP
 Referenced by deleteAtom(), getNeighborAtoms(), insertAtom(), aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), swapParticles::make(), printSnapshot(), sanityChecks(), scratchEnergy(), setTotNBounds(), simSystem(), and translateAtom()\&.
 .SS "double simSystem::lnF_end"
@@ -2688,13 +2677,13 @@ Referenced by deleteAtom(), getNeighborAtoms(), insertAtom(), aggVolBias3::make(
 .PP
 Starting and ending lnF for Wang-Landau\&. 
 .PP
-Definition at line 107 of file system\&.h\&.
+Definition at line 100 of file system\&.h\&.
 .PP
 Referenced by initialize(), performWALA(), and simSystem()\&.
 .SS "double simSystem::lnF_start"
 
 .PP
-Definition at line 107 of file system\&.h\&.
+Definition at line 100 of file system\&.h\&.
 .PP
 Referenced by initialize(), performWALA(), and simSystem()\&.
 .SS "long long int simSystem::nCrossoverVisits"
@@ -2702,7 +2691,7 @@ Referenced by initialize(), performWALA(), and simSystem()\&.
 .PP
 Number of crossovers that must occur before switching from WALA to TMMC\&. 
 .PP
-Definition at line 105 of file system\&.h\&.
+Definition at line 98 of file system\&.h\&.
 .PP
 Referenced by initialize(), performCrossover(), and simSystem()\&.
 .SS "std::vector< int > simSystem::numSpecies"
@@ -2710,7 +2699,7 @@ Referenced by initialize(), performCrossover(), and simSystem()\&.
 .PP
 Total number of each type of atom the system contains\&. 
 .PP
-Definition at line 124 of file system\&.h\&.
+Definition at line 117 of file system\&.h\&.
 .PP
 Referenced by deleteAtom(), getNeighborAtoms(), insertAtom(), aggVolBias3::make(), translateParticle::make(), deleteParticle::make(), insertParticle::make(), swapParticles::make(), printSnapshot(), readConfig(), recordExtMoments(), recordPkHistogram(), sanityChecks(), scratchEnergy(), setTotNBounds(), setup(), and simSystem()\&.
 .SS "std::vector< std::vector < std::shared_ptr < \fBpairPotential\fP > > > simSystem::ppot"
@@ -2718,7 +2707,7 @@ Referenced by deleteAtom(), getNeighborAtoms(), insertAtom(), aggVolBias3::make(
 .PP
 Matrix of pair potentials for atom types i, j\&. 
 .PP
-Definition at line 126 of file system\&.h\&.
+Definition at line 119 of file system\&.h\&.
 .PP
 Referenced by addPotential(), checkBounds(), deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), scratchEnergy(), setPairPotentials(), and simSystem()\&.
 .SS "bool simSystem::restartFromTMMC"
@@ -2726,7 +2715,7 @@ Referenced by addPotential(), checkBounds(), deleteParticle::make(), translatePa
 .PP
 Flags to restart from WALA or TMMC initially\&. 
 .PP
-Definition at line 100 of file system\&.h\&.
+Definition at line 93 of file system\&.h\&.
 .PP
 Referenced by checkpoint::checkpoint(), initialize(), performTMMC(), and simSystem()\&.
 .SS "std::string simSystem::restartFromTMMCFile"
@@ -2734,19 +2723,19 @@ Referenced by checkpoint::checkpoint(), initialize(), performTMMC(), and simSyst
 .PP
 Files to restart from WALA or TMMC initially\&. 
 .PP
-Definition at line 122 of file system\&.h\&.
+Definition at line 115 of file system\&.h\&.
 .PP
 Referenced by initialize(), performTMMC(), and simSystem()\&.
 .SS "bool simSystem::restartFromWALA"
 
 .PP
-Definition at line 100 of file system\&.h\&.
+Definition at line 93 of file system\&.h\&.
 .PP
 Referenced by initialize(), performWALA(), and simSystem()\&.
 .SS "std::string simSystem::restartFromWALAFile"
 
 .PP
-Definition at line 122 of file system\&.h\&.
+Definition at line 115 of file system\&.h\&.
 .PP
 Referenced by initialize(), performWALA(), and simSystem()\&.
 .SS "std::vector< \fBcompositeBarrier\fP > simSystem::speciesBarriers"
@@ -2754,7 +2743,7 @@ Referenced by initialize(), performWALA(), and simSystem()\&.
 .PP
 Barriers, if any, for each species\&. 
 .PP
-Definition at line 127 of file system\&.h\&.
+Definition at line 120 of file system\&.h\&.
 .PP
 Referenced by initializeSystemBarriers(), deleteParticle::make(), translateParticle::make(), insertParticle::make(), swapParticles::make(), scratchEnergy(), and simSystem()\&.
 .SS "\fBtmmc\fP* simSystem::tmmcBias"
@@ -2762,15 +2751,15 @@ Referenced by initializeSystemBarriers(), deleteParticle::make(), translateParti
 .PP
 TMMC biasing function\&. 
 .PP
-Definition at line 119 of file system\&.h\&.
+Definition at line 112 of file system\&.h\&.
 .PP
-Referenced by calculateBias(), getTMMCBias(), aggVolBias3::make(), translateParticle::make(), deleteParticle::make(), insertParticle::make(), swapParticles::make(), startTMMC(), and ~simSystem()\&.
+Referenced by calculateBias(), getTMMCBias(), aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), startTMMC(), stopTMMC(), and ~simSystem()\&.
 .SS "long long int simSystem::tmmcSweepSize"
 
 .PP
 Size of a sweep in TMMC\&. 
 .PP
-Definition at line 102 of file system\&.h\&.
+Definition at line 95 of file system\&.h\&.
 .PP
 Referenced by initialize(), checkpoint::load(), performCrossover(), and performTMMC()\&.
 .SS "long long int simSystem::totalTMMCSweeps"
@@ -2778,7 +2767,7 @@ Referenced by initialize(), checkpoint::load(), performCrossover(), and performT
 .PP
 Total number of sweeps to perform during TMMC\&. 
 .PP
-Definition at line 103 of file system\&.h\&.
+Definition at line 96 of file system\&.h\&.
 .PP
 Referenced by initialize(), performTMMC(), and simSystem()\&.
 .SS "bool simSystem::useTMMC"
@@ -2786,21 +2775,21 @@ Referenced by initialize(), performTMMC(), and simSystem()\&.
 .PP
 Logical stating whether or not to use TMMC biasing\&. 
 .PP
-Definition at line 98 of file system\&.h\&.
+Definition at line 91 of file system\&.h\&.
 .PP
-Referenced by calculateBias(), getTMMCBias(), aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), performTMMC(), performWALA(), simSystem(), startTMMC(), and ~simSystem()\&.
+Referenced by calculateBias(), getTMMCBias(), aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), performTMMC(), performWALA(), simSystem(), startTMMC(), stopTMMC(), and ~simSystem()\&.
 .SS "bool simSystem::useWALA"
 
 .PP
 Logical stating whether or not to use Wang-Landau biasing\&. 
 .PP
-Definition at line 99 of file system\&.h\&.
+Definition at line 92 of file system\&.h\&.
 .PP
-Referenced by calculateBias(), getWALABias(), aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), insertParticle::make(), swapParticles::make(), performCrossover(), performTMMC(), performWALA(), simSystem(), startWALA(), and ~simSystem()\&.
+Referenced by calculateBias(), getWALABias(), aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), insertParticle::make(), swapParticles::make(), performCrossover(), performTMMC(), performWALA(), simSystem(), startWALA(), stopWALA(), and ~simSystem()\&.
 .SS "double simSystem::wala_g"
 
 .PP
-Definition at line 108 of file system\&.h\&.
+Definition at line 101 of file system\&.h\&.
 .PP
 Referenced by initialize(), checkpoint::load(), performWALA(), and simSystem()\&.
 .SS "double simSystem::wala_s"
@@ -2808,7 +2797,7 @@ Referenced by initialize(), checkpoint::load(), performWALA(), and simSystem()\&
 .PP
 Wang-Landau g and s factors\&. 
 .PP
-Definition at line 108 of file system\&.h\&.
+Definition at line 101 of file system\&.h\&.
 .PP
 Referenced by initialize(), checkpoint::load(), performWALA(), and simSystem()\&.
 .SS "\fBwala\fP* simSystem::wlBias"
@@ -2816,15 +2805,15 @@ Referenced by initialize(), checkpoint::load(), performWALA(), and simSystem()\&
 .PP
 WL biasing function\&. 
 .PP
-Definition at line 120 of file system\&.h\&.
+Definition at line 113 of file system\&.h\&.
 .PP
-Referenced by calculateBias(), getWALABias(), startWALA(), and ~simSystem()\&.
+Referenced by calculateBias(), getWALABias(), startWALA(), stopWALA(), and ~simSystem()\&.
 .SS "long long int simSystem::wlSweepSize"
 
 .PP
 Size of Wang-Landau sweep\&. 
 .PP
-Definition at line 104 of file system\&.h\&.
+Definition at line 97 of file system\&.h\&.
 .PP
 Referenced by initialize(), performCrossover(), performWALA(), and simSystem()\&.
 

@@ -52,7 +52,7 @@ const std\-::vector$<$ double $>$ \hyperlink{classtmmc_a9e61aead97aef135db0895e7
 \subsection{Detailed Description}
 Transition Matrix Monte Carlo biasing class. 
 
-Definition at line 31 of file bias.\-h.
+Definition at line 24 of file bias.\-h.
 
 
 
@@ -66,11 +66,11 @@ Definition at line 31 of file bias.\-h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classtmmc_a2dd6a666daae3a9b7c3978d8ecff887e}
 
 
-Definition at line 33 of file bias.\-h.
+Definition at line 26 of file bias.\-h.
 
 
 \begin{DoxyCode}
-33 \{\};
+26 \{\};
 \end{DoxyCode}
 \hypertarget{classtmmc_ae09ec510cf4ba97b612fa0b42b811d20}{\index{tmmc@{tmmc}!tmmc@{tmmc}}
 \index{tmmc@{tmmc}!tmmc@{tmmc}}
@@ -410,7 +410,7 @@ Referenced by calculate\-Bias().
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classtmmc_afbcaaf974280aad6d78ca7e112438641}
 
 
-Definition at line 48 of file bias.\-h.
+Definition at line 41 of file bias.\-h.
 
 
 
@@ -418,7 +418,7 @@ Referenced by calculate\-Bias().
 
 
 \begin{DoxyCode}
-48 \{ \textcolor{keywordflow}{return} -lnPI\_[address]; \}
+41 \{ \textcolor{keywordflow}{return} -lnPI\_[address]; \}
 \end{DoxyCode}
 \hypertarget{classtmmc_a281634902422824ca2905fad6478f0c0}{\index{tmmc@{tmmc}!get\-C@{get\-C}}
 \index{get\-C@{get\-C}!tmmc@{tmmc}}
@@ -433,7 +433,7 @@ Return the collection matrix as it is.
 
 
 
-Definition at line 49 of file bias.\-h.
+Definition at line 42 of file bias.\-h.
 
 \hypertarget{classtmmc_a9e61aead97aef135db0895e749186f47}{\index{tmmc@{tmmc}!get\-H\-C@{get\-H\-C}}
 \index{get\-H\-C@{get\-H\-C}!tmmc@{tmmc}}
@@ -444,11 +444,11 @@ Definition at line 49 of file bias.\-h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classtmmc_a9e61aead97aef135db0895e749186f47}
 
 
-Definition at line 50 of file bias.\-h.
+Definition at line 43 of file bias.\-h.
 
 
 \begin{DoxyCode}
-50 \{ \textcolor{keywordflow}{return} HC\_; \}
+43 \{ \textcolor{keywordflow}{return} HC\_; \}
 \end{DoxyCode}
 \hypertarget{classtmmc_ae296df3336ebf0fa1db7c34972c544eb}{\index{tmmc@{tmmc}!get\-Transition\-Address@{get\-Transition\-Address}}
 \index{get\-Transition\-Address@{get\-Transition\-Address}!tmmc@{tmmc}}
@@ -582,7 +582,7 @@ Referenced by perform\-Crossover(), and perform\-T\-M\-M\-C().
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classtmmc_afbdc037dc9b941d71d7049855e18f4be}
 
 
-Definition at line 47 of file bias.\-h.
+Definition at line 40 of file bias.\-h.
 
 
 
@@ -590,7 +590,7 @@ Referenced by perform\-Crossover().
 
 
 \begin{DoxyCode}
-47 \{ \textcolor{keywordflow}{return} nSweeps\_; \}
+40 \{ \textcolor{keywordflow}{return} nSweeps\_; \}
 \end{DoxyCode}
 \hypertarget{classtmmc_ad49e147dc88b3e1c2975269598f94327}{\index{tmmc@{tmmc}!print@{print}}
 \index{print@{print}!tmmc@{tmmc}}
@@ -605,7 +605,7 @@ Referenced by perform\-Crossover().
 
 Print the U\-N-\/\-N\-O\-R\-M\-A\-L\-I\-Z\-E\-D biasing function (ln\-P\-I) and possibly collection matrix to files. 
 
-Will overwrite the files if another with that name exists. Prints in net\-C\-D\-F format if enabled.
+Will overwrite the files if another with that name exists.
 
 
 \begin{DoxyParams}[1]{Parameters}
@@ -618,7 +618,7 @@ Will overwrite the files if another with that name exists. Prints in net\-C\-D\-
 \end{DoxyParams}
 
 
-Definition at line 302 of file bias.\-cpp.
+Definition at line 301 of file bias.\-cpp.
 
 
 
@@ -630,117 +630,50 @@ Referenced by checkpoint\-::dump(), perform\-Crossover(), and perform\-T\-M\-M\-
 
 
 \begin{DoxyCode}
-302                                                                      \{
-303 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
-304 \textcolor{preprocessor}{}    \textcolor{comment}{// Print collection matrix}
-305     \textcolor{keywordflow}{if} (printC) \{
-306         \textcolor{keyword}{const} std::string name = fileName + \textcolor{stringliteral}{"\_C.nc"};
-307         \textcolor{keywordflow}{try} \{
-308             \textcolor{comment}{// print all states, including partial ones, so this can be used to restart from, etc.}
-309             NcFile outFile(name.c\_str(), NcFile::replace);
-310             NcDim probDim = outFile.addDim(\textcolor{stringliteral}{"vectorized\_position"}, C\_.size());
-311             NcVar probVar = outFile.addVar(\textcolor{stringliteral}{"C"}, ncDouble, probDim);
-312             std::string attName = \textcolor{stringliteral}{"species\_total\_upper\_bound"};
-313             probVar.putAtt(attName.c\_str(), std::to\_string(Nmax\_).c\_str());
-314             attName = \textcolor{stringliteral}{"species\_total\_lower\_bound"};
-315             probVar.putAtt(attName.c\_str(), std::to\_string(Nmin\_).c\_str());
-316             attName = \textcolor{stringliteral}{"volume"};
-317             \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-318             probVar.putAtt(attName.c\_str(), std::to\_string(V).c\_str());
-319             probVar.putVar(&C\_[0]);
-320         \} \textcolor{keywordflow}{catch} (NcException ioe) \{
-321             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write TMMC collection matrix to "}+name);
-322         \}
-323     \}
-324 
-325     \textcolor{comment}{// Print visited states matrix}
-326     \textcolor{keywordflow}{if} (printHC) \{
-327         \textcolor{keyword}{const} std::string name = fileName + \textcolor{stringliteral}{"\_HC.nc"};
-328         \textcolor{keywordflow}{try} \{
-329             \textcolor{comment}{// print all states, including partial ones, so this can be used to restart from, etc.}
-330             NcFile outFile(name.c\_str(), NcFile::replace);
-331             NcDim probDim = outFile.addDim(\textcolor{stringliteral}{"vectorized\_position"}, HC\_.size());
-332             NcVar probVar = outFile.addVar(\textcolor{stringliteral}{"HC"}, ncDouble, probDim);
-333             std::string attName = \textcolor{stringliteral}{"species\_total\_upper\_bound"};
-334             probVar.putAtt(attName.c\_str(), std::to\_string(Nmax\_).c\_str());
-335             attName = \textcolor{stringliteral}{"species\_total\_lower\_bound"};
-336             probVar.putAtt(attName.c\_str(), std::to\_string(Nmin\_).c\_str());
-337             attName = \textcolor{stringliteral}{"volume"};
-338             \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-339             probVar.putAtt(attName.c\_str(), std::to\_string(V).c\_str());
-340             probVar.putVar(&HC\_[0]);
-341         \} \textcolor{keywordflow}{catch} (NcException ioe) \{
-342             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write TMMC visited states matrix to "}+name);
-343         \}
-344     \}
-345 
-346     \textcolor{comment}{// Print lnPI (bias) matrix}
-347     \textcolor{keyword}{const} std::string name = fileName + \textcolor{stringliteral}{"\_lnPI.nc"};
-348     \textcolor{keywordflow}{try} \{
-349         \textcolor{comment}{// only print the integral states}
-350         std::vector < double > lnPI\_print (Nmax\_ - Nmin\_ + 1, 0.0);
-351         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < lnPI\_print.size(); ++i) \{
-352             lnPI\_print[i] = lnPI\_[i*Mtot\_];
-353         \}
-354         NcFile outFile(name.c\_str(), NcFile::replace);
-355         NcDim probDim = outFile.addDim(\textcolor{stringliteral}{"vectorized\_position"}, lnPI\_print.size());
-356         NcVar probVar = outFile.addVar(\textcolor{stringliteral}{"lnPI"}, ncDouble, probDim);
-357         std::string attName = \textcolor{stringliteral}{"species\_total\_upper\_bound"};
-358         probVar.putAtt(attName.c\_str(), std::to\_string(Nmax\_).c\_str());
-359         attName = \textcolor{stringliteral}{"species\_total\_lower\_bound"};
-360         probVar.putAtt(attName.c\_str(), std::to\_string(Nmin\_).c\_str());
-361         attName = \textcolor{stringliteral}{"volume"};
-362         \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-363         probVar.putAtt(attName.c\_str(), std::to\_string(V).c\_str());
-364         probVar.putVar(&lnPI\_print[0]);
-365     \} \textcolor{keywordflow}{catch} (NcException ioe) \{
-366         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write TMMC lnPI to "}+name);
-367     \}
-368 \textcolor{preprocessor}{#else}
-369 \textcolor{preprocessor}{}    \textcolor{comment}{// Print collection matrix}
-370     \textcolor{keywordflow}{if} (printC) \{
-371         \textcolor{comment}{// print all states, including partial ones, so this can be used to restart from, etc.}
-372         std::ofstream of;
-373         std::string name = fileName+\textcolor{stringliteral}{"\_C.dat"};
-374         of.open(name.c\_str(), std::ofstream::out);
-375         \textcolor{keywordflow}{if} (!of.is\_open()) \{
-376             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write TMMC collection matrix to "}+name);
-377         \}
-378         of << \textcolor{stringliteral}{"# Collection matrix in single row (vectorized) notation."} << std::endl;
-379         of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
-380         of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
-381         \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-382         of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
-383         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < C\_.size(); ++i) \{
-384             of << std::setprecision(15) << C\_[i] << std::endl;
-385         \}
-386         of.close();
-387     \}
-388 
-389     \textcolor{comment}{// Print visited states matrix}
-390     \textcolor{keywordflow}{if} (printHC) \{
-391         \textcolor{comment}{// print all states, including partial ones, so this can be used to restart from, etc.}
-392         \hyperlink{classtmmc_a295886d2f7a947a9de890bcb3adb51c7}{dumpVisited}(fileName+\textcolor{stringliteral}{"\_HC"});
-393     \}
-394 
-395     \textcolor{comment}{// Print lnPI (bias) matrix}
-396     std::ofstream of;
-397     std::string name = fileName+\textcolor{stringliteral}{"\_lnPI.dat"};
-398     of.open(name.c\_str(), std::ofstream::out);
-399     \textcolor{keywordflow}{if} (!of.is\_open()) \{
-400         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write TMMC lnPI to "}+name);
-401     \}
-402     of << \textcolor{stringliteral}{"# lnPI (bias) matrix in single row (vectorized) notation."} << std::endl;
-403     of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
-404     of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
-405     \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-406     of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
-407     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < lnPI\_.size(); i += Mtot\_) \{
-408         of << std::setprecision(15) << lnPI\_[i] << std::endl; \textcolor{comment}{// only print the integral states}
-409     \}
-410     of.close();
-411 \textcolor{preprocessor}{#endif}
-412 \textcolor{preprocessor}{}\}
+301                                                                      \{
+302     \textcolor{comment}{// Print collection matrix}
+303     \textcolor{keywordflow}{if} (printC) \{
+304         \textcolor{comment}{// print all states, including partial ones, so this can be used to restart from, etc.}
+305         std::ofstream of;
+306         std::string name = fileName+\textcolor{stringliteral}{"\_C.dat"};
+307         of.open(name.c\_str(), std::ofstream::out);
+308         \textcolor{keywordflow}{if} (!of.is\_open()) \{
+309             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write TMMC collection matrix to "}+name);
+310         \}
+311         of << \textcolor{stringliteral}{"# Collection matrix in single row (vectorized) notation."} << std::endl;
+312         of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
+313         of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
+314         \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
+315         of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
+316         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < C\_.size(); ++i) \{
+317             of << std::setprecision(15) << C\_[i] << std::endl;
+318         \}
+319         of.close();
+320     \}
+321 
+322     \textcolor{comment}{// Print visited states matrix}
+323     \textcolor{keywordflow}{if} (printHC) \{
+324         \textcolor{comment}{// print all states, including partial ones, so this can be used to restart from, etc.}
+325         \hyperlink{classtmmc_a295886d2f7a947a9de890bcb3adb51c7}{dumpVisited}(fileName+\textcolor{stringliteral}{"\_HC"});
+326     \}
+327 
+328     \textcolor{comment}{// Print lnPI (bias) matrix}
+329     std::ofstream of;
+330     std::string name = fileName+\textcolor{stringliteral}{"\_lnPI.dat"};
+331     of.open(name.c\_str(), std::ofstream::out);
+332     \textcolor{keywordflow}{if} (!of.is\_open()) \{
+333         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write TMMC lnPI to "}+name);
+334     \}
+335     of << \textcolor{stringliteral}{"# lnPI (bias) matrix in single row (vectorized) notation."} << std::endl;
+336     of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
+337     of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
+338     \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
+339     of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
+340     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < lnPI\_.size(); i += Mtot\_) \{
+341         of << std::setprecision(15) << lnPI\_[i] << std::endl; \textcolor{comment}{// only print the integral states}
+342     \}
+343     of.close();
+344 \}
 \end{DoxyCode}
 \hypertarget{classtmmc_a7d9ee0505dc801cbff55bc35c3654a61}{\index{tmmc@{tmmc}!read\-C@{read\-C}}
 \index{read\-C@{read\-C}!tmmc@{tmmc}}
@@ -762,7 +695,7 @@ This assumes the user has already guaranteed that the bounds are consistent, e.\
 \end{DoxyParams}
 
 
-Definition at line 457 of file bias.\-cpp.
+Definition at line 378 of file bias.\-cpp.
 
 
 
@@ -770,36 +703,23 @@ Referenced by checkpoint\-::load(), and perform\-T\-M\-M\-C().
 
 
 \begin{DoxyCode}
-457                                           \{
-458 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
-459 \textcolor{preprocessor}{}    \textcolor{keywordflow}{try} \{
-460         NcFile dataFile (fileName.c\_str(), NcFile::read);
-461         NcVar C\_data = dataFile.getVar(\textcolor{stringliteral}{"C"});
-462         \textcolor{keywordflow}{if} (C\_data.isNull()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Collection matrix was empty, cannot read
-       from "}+fileName);
-463         C\_data.getVar(&C\_[0]);
-464     \} \textcolor{keywordflow}{catch} (NcException ioe) \{
-465         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to read collection matrix from netCDF file "}+fileName
-      );
-466     \}
-467 \textcolor{preprocessor}{#else}
-468 \textcolor{preprocessor}{}    std::ifstream infile (fileName.c\_str());
-469     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
-470         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Unable to read collection matrix from ASCII file "}+fileName);
-471     \}
-472     std::string line;
-473     \textcolor{keywordtype}{int} lineIndex = 0;
-474     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
-475         std::stringstream lineStream(line);
-476         \textcolor{comment}{// skip any header information}
-477         \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
-478             C\_[lineIndex] = atof(line.c\_str());
-479             lineIndex++;
-480         \}
-481     \}
-482     infile.close();
-483 \textcolor{preprocessor}{#endif}
-484 \textcolor{preprocessor}{}\}
+378                                           \{
+379     std::ifstream infile (fileName.c\_str());
+380     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
+381         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Unable to read collection matrix from ASCII file "}+fileName);
+382     \}
+383     std::string line;
+384     \textcolor{keywordtype}{int} lineIndex = 0;
+385     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
+386         std::stringstream lineStream(line);
+387         \textcolor{comment}{// skip any header information}
+388         \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
+389             C\_[lineIndex] = atof(line.c\_str());
+390             lineIndex++;
+391         \}
+392     \}
+393     infile.close();
+394 \}
 \end{DoxyCode}
 \hypertarget{classtmmc_ab51a593d041a65c4ca47e6c4e0c26992}{\index{tmmc@{tmmc}!read\-H\-C@{read\-H\-C}}
 \index{read\-H\-C@{read\-H\-C}!tmmc@{tmmc}}
@@ -821,7 +741,7 @@ This assumes the user has already guaranteed that the bounds are consistent, e.\
 \end{DoxyParams}
 
 
-Definition at line 421 of file bias.\-cpp.
+Definition at line 353 of file bias.\-cpp.
 
 
 
@@ -829,37 +749,24 @@ Referenced by checkpoint\-::load().
 
 
 \begin{DoxyCode}
-421                                            \{
-422 \textcolor{preprocessor}{#ifdef NETCDF\_CAPABLE}
-423 \textcolor{preprocessor}{}    \textcolor{keywordflow}{try} \{
-424         NcFile dataFile (fileName.c\_str(), NcFile::read);
-425         NcVar HC\_data = dataFile.getVar(\textcolor{stringliteral}{"HC"});
-426         \textcolor{keywordflow}{if} (HC\_data.isNull()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Visited states matrix was empty, cannot
-       read from "}+fileName);
-427         HC\_data.getVar(&HC\_[0]);
-428     \} \textcolor{keywordflow}{catch} (NcException ioe) \{
-429         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to read visited states matrix from netCDF file "}+
+353                                            \{
+354     std::ifstream infile (fileName.c\_str());
+355     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
+356         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Unable to read visited states matrix from ASCII file "}+
       fileName);
-430     \}
-431 \textcolor{preprocessor}{#else}
-432 \textcolor{preprocessor}{}    std::ifstream infile (fileName.c\_str());
-433     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
-434         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Unable to read visited states matrix from ASCII file "}+
-      fileName);
-435     \}
-436     std::string line;
-437     \textcolor{keywordtype}{int} lineIndex = 0;
-438     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
-439         std::stringstream lineStream(line);
-440         \textcolor{comment}{// skip any header information}
-441         \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
-442             HC\_[lineIndex] = atof(line.c\_str());
-443             lineIndex++;
-444         \}
-445     \}
-446     infile.close();
-447 \textcolor{preprocessor}{#endif}
-448 \textcolor{preprocessor}{}\}
+357     \}
+358     std::string line;
+359     \textcolor{keywordtype}{int} lineIndex = 0;
+360     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
+361         std::stringstream lineStream(line);
+362         \textcolor{comment}{// skip any header information}
+363         \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
+364             HC\_[lineIndex] = atof(line.c\_str());
+365             lineIndex++;
+366         \}
+367     \}
+368     infile.close();
+369 \}
 \end{DoxyCode}
 \hypertarget{classtmmc_a416db4e54e3d2ab23daed2e33468df4d}{\index{tmmc@{tmmc}!setln\-P\-I@{setln\-P\-I}}
 \index{setln\-P\-I@{setln\-P\-I}!tmmc@{tmmc}}
@@ -874,7 +781,7 @@ Blindly assign a guess of the macrostate distribution.
 
 
 
-Definition at line 41 of file bias.\-h.
+Definition at line 34 of file bias.\-h.
 
 \hypertarget{classtmmc_ae067afc5b52af203b9d45f18d9737219}{\index{tmmc@{tmmc}!update\-C@{update\-C}}
 \index{update\-C@{update\-C}!tmmc@{tmmc}}
