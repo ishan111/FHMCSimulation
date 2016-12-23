@@ -5,8 +5,8 @@
 @filename window_helper.py
 """
 
-import os, re, json, shutil
-import math as np
+import re, json
+import math as m
 
 def pure_settings (settings):
 	"""
@@ -31,7 +31,7 @@ def pure_settings (settings):
 	info["num_species"] = 1
 	info["beta"] = beta
 	info["box"] = [8.0, 8.0, 8.0]
-	info["mu"] = [0.0 for i in xrange(info["num_species"])]
+	info["mu"] = [0.0*i for i in xrange(info["num_species"])]
 	info["seed"] = -10
 	info["max_N"] = int(1200)
 	info["min_N"] = int(0)
@@ -86,13 +86,13 @@ def make_sleeper (filename):
 		Name of file to produce
 
 	"""
-	
+
 	sync_every = 15 # minutes
 
 	f = open(filename, 'w')
 	f.write('for ((i = 0; i < 100000; ++i)); do\n\tfor ((j = 0; j < 100000; ++j)); do\n\t\tsleep $((1*'+str(int(sync_every))+'*60));\n\t\trsync -a $1 $2;\n\tdone;\ndone;')
 	f.close()
-	
+
 def gibbs_qsub (prefix, num_windows, binary, git_head, input_name="input.json", jobs_per_node=12, scratch_dir="/tmp/nam4/", q="medium", tag=""):
 	"""
 	Example of submission script for PBS system, in this case, for gibbs.nist.gov.
@@ -130,7 +130,7 @@ def gibbs_qsub (prefix, num_windows, binary, git_head, input_name="input.json", 
 	new_string = re.sub('__INPUTNAME__', str(input_name), new_string)
 
 	jobs_remaining = num_windows
-	for idx in xrange(0, int(np.ceil(num_windows/float(jobs_per)))):
+	for idx in xrange(0, int(m.ceil(num_windows/float(jobs_per)))):
 		start = idx*jobs_per+1
 		end = idx*jobs_per+min([jobs_remaining,jobs_per])
 		i_string = re.sub('__MINWIN__', str(start), new_string)
@@ -153,8 +153,7 @@ if __name__ == "__main__":
 	
 	* Below is an example of a script to use these functions to produce windows
 
-	```
-	import sys
+	import os, sys, shutil
 	FHMCLIB = "/home/nam4/Desktop/sandbox/"
 	sys.path.append(FHMCLIB)
 	import FHMCAnalysis
@@ -197,5 +196,5 @@ if __name__ == "__main__":
 		make_sleeper (dname+"/sleeper.sh")
 
 	gibbs_qsub ('./', num_windows, binary, git_head, input_name, jobs_per, scratch_dir, q, tag)
-	```
 	"""
+
