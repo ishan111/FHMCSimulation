@@ -1,0 +1,118 @@
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/wala.h" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/nam4/Desktop/sandbox/FHMCSimulation/src/wala.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <memory>\fP
+.br
+\fC#include 'system\&.h'\fP
+.br
+\fC#include 'checkpoint\&.h'\fP
+.br
+\fC#include 'utilities\&.h'\fP
+.br
+\fC#include 'mover\&.h'\fP
+.br
+\fC#include 'sanity\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBperformWALA\fP (\fBsimSystem\fP &sys, \fBcheckpoint\fP &res, \fBmoves\fP *usedMovesEq)"
+.br
+.RI "\fIPerform Wang-Landau stage of simulation\&. \fP"
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void performWALA (\fBsimSystem\fP &sys, \fBcheckpoint\fP &res, \fBmoves\fP *usedMovesEq)"
+
+.PP
+Perform Wang-Landau stage of simulation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsys\fP System to simulate 
+.br
+\fIres\fP Restart/checkpoint information 
+.br
+\fIusedMovesEq\fP Move class to use 
+.RE
+.PP
+
+.PP
+Definition at line 10 of file wala\&.cpp\&.
+.PP
+References checkpoint::check(), simSystem::checkEnergyHistogramBounds(), wala::evaluateFlatness(), simSystem::getCurrentM(), getTimeStamp(), simSystem::getTotalM(), simSystem::getWALABias(), wala::iterateForward(), wala::lnF(), simSystem::lnF_end, simSystem::lnF_start, moves::makeMove(), checkpoint::moveCounter, moves::print(), wala::readlnPI(), checkpoint::resFromWALA, simSystem::restartFromWALA, simSystem::restartFromWALAFile, sanityChecks(), simSystem::startWALA(), SYS_FAILURE, simSystem::useTMMC, simSystem::useWALA, simSystem::wala_g, simSystem::wala_s, checkpoint::walaDone, customException::what(), and simSystem::wlSweepSize\&.
+.PP
+.nf
+10                                                                        {
+11     if (res\&.walaDone) {
+12         throw customException ("Checkpoint indicates WALA already finished");
+13     }
+14     std::cout << "Beginning Wang-Landau portion at " << getTimeStamp() << std::endl;
+15 
+16     bool flat = false;
+17     double lnF = sys\&.lnF_start;
+18     long long int moveStart = 0;
+19 
+20     if (!res\&.resFromWALA) {
+21         if (sys\&.useTMMC or sys\&.useWALA) {
+22             throw customException ("WALA or TMMC already active, cannot proceeed with WALA");
+23         }
+24 
+25         sys\&.startWALA (lnF, sys\&.wala_g, sys\&.wala_s, sys\&.getTotalM());
+26         if (sys\&.restartFromWALA) {
+27             // specified to start WALA from a lnPI guess, and this is not a restart from a checkpoint
+28             try {
+29                 sys\&.getWALABias()->readlnPI(sys\&.restartFromWALAFile);
+30             } catch (customException &ce) {
+31                 std::cerr << ce\&.what() << std::endl;
+32                 exit(SYS_FAILURE);
+33             }
+34             std::cout << "Read initial lnPI for Wang-Landau from " << sys\&.restartFromWALAFile << std::endl;
+35         }
+36     } else {
+37         lnF = sys\&.getWALABias()->lnF(); // checkpoint re-initialized to starting value
+38         moveStart = res\&.moveCounter;
+39     }
+40 
+41     std::cout << "Initial lnF = " << sys\&.getWALABias()->lnF() << " at " << getTimeStamp() << std::endl;
+42     std::cout << "Starting from " << moveStart << " moves at " << getTimeStamp() << std::endl;
+43 
+44     while (lnF > sys\&.lnF_end) {
+45         for (unsigned long long int move = moveStart; move < sys\&.wlSweepSize; ++move) {
+46             try {
+47                 usedMovesEq->makeMove(sys);
+48             } catch (customException &ce) {
+49                 std::cerr << ce\&.what() << std::endl;
+50                 exit(SYS_FAILURE);
+51             }
+52             if (sys\&.getCurrentM() == 0){
+53                 sys\&.checkEnergyHistogramBounds ();
+54             }
+55             res\&.check(sys, move);
+56         }
+57 
+58         // Check if bias has flattened out
+59         flat = sys\&.getWALABias()->evaluateFlatness();
+60         if (flat) {
+61             sys\&.getWALABias()->iterateForward(); // if flat, need to reset H and reduce lnF
+62             lnF = sys\&.getWALABias()->lnF();
+63             flat = false;
+64             std::cout << "Wang-Landau is now flat, new lnF = " << lnF << " at " << getTimeStamp() << std::endl;
+65             usedMovesEq->print("wala\&.stats");
+66         }
+67     }
+68 
+69     sanityChecks(sys);
+70     res\&.walaDone = true;
+71 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

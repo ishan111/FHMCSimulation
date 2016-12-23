@@ -273,7 +273,7 @@ Data Fields</h2></td></tr>
 
 <p>References <a class="el" href="cell_list_8h_source.html#l00036">cellCountX</a>, and <a class="el" href="cell_list_8h_source.html#l00036">cellCountXY</a>.</p>
 
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l01484">simSystem::getNeighborAtoms()</a>, <a class="el" href="cell_list_8cpp_source.html#l00094">insertParticle()</a>, <a class="el" href="cell_list_8cpp_source.html#l00072">sortIntoCells()</a>, <a class="el" href="cell_list_8cpp_source.html#l00101">swapAndDeleteParticle()</a>, and <a class="el" href="cell_list_8cpp_source.html#l00138">translateParticle()</a>.</p>
+<p>Referenced by <a class="el" href="system_8cpp_source.html#l01487">simSystem::getNeighborAtoms()</a>, <a class="el" href="cell_list_8cpp_source.html#l00094">insertParticle()</a>, <a class="el" href="cell_list_8cpp_source.html#l00072">sortIntoCells()</a>, <a class="el" href="cell_list_8cpp_source.html#l00101">swapAndDeleteParticle()</a>, and <a class="el" href="cell_list_8cpp_source.html#l00138">translateParticle()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                                                   {</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordflow">return</span> (k + l*<a class="code" href="classcell_list.html#a342f802c342f51f3c1aa4dab7d7a4d84">cellCountX</a> + m*<a class="code" href="classcell_list.html#a619d607f8569876cead1bdfad239d4b2">cellCountXY</a>);</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;}</div>
@@ -490,7 +490,7 @@ Data Fields</h2></td></tr>
 
 <p>References <a class="el" href="cell_list_8h_source.html#l00041">calcIndex()</a>, <a class="el" href="cell_list_8h_source.html#l00037">cells</a>, and <a class="el" href="atom_8h_source.html#l00022">atom::pos</a>.</p>
 
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l00137">simSystem::insertAtom()</a>.</p>
+<p>Referenced by <a class="el" href="system_8cpp_source.html#l00140">simSystem::insertAtom()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                                       {</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> index = <a class="code" href="classcell_list.html#aa6b843131cd487164a137571c7343cab">calcIndex</a>(_a-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[0], _a-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[1], _a-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[2]);</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <a class="code" href="classcell_list.html#a10bc0c3ae819293b1e88bc7d1bfdb2aa">cells</a>[index].push_back(_a);</div>
@@ -595,7 +595,7 @@ Data Fields</h2></td></tr>
 
 <p>References <a class="el" href="cell_list_8h_source.html#l00041">calcIndex()</a>, <a class="el" href="cell_list_8h_source.html#l00037">cells</a>, and <a class="el" href="atom_8h_source.html#l00022">atom::pos</a>.</p>
 
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l00238">simSystem::deleteAtom()</a>.</p>
+<p>Referenced by <a class="el" href="system_8cpp_source.html#l00241">simSystem::deleteAtom()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;                                                        {</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> indexA = <a class="code" href="classcell_list.html#aa6b843131cd487164a137571c7343cab">calcIndex</a>(_a-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[0], _a-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[1], _a-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[2]);</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> indexB = <a class="code" href="classcell_list.html#aa6b843131cd487164a137571c7343cab">calcIndex</a>(_b-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[0], _b-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[1], _b-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[2]);</div>
@@ -666,7 +666,7 @@ Data Fields</h2></td></tr>
 
 <p>References <a class="el" href="cell_list_8h_source.html#l00041">calcIndex()</a>, <a class="el" href="cell_list_8h_source.html#l00037">cells</a>, and <a class="el" href="atom_8h_source.html#l00022">atom::pos</a>.</p>
 
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l00375">simSystem::translateAtom()</a>.</p>
+<p>Referenced by <a class="el" href="system_8cpp_source.html#l00378">simSystem::translateAtom()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;                                                                        {</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> indexOld = <a class="code" href="classcell_list.html#aa6b843131cd487164a137571c7343cab">calcIndex</a>(_oldPos[0], _oldPos[1], _oldPos[2]);</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">unsigned</span> indexNew = <a class="code" href="classcell_list.html#aa6b843131cd487164a137571c7343cab">calcIndex</a>(_a-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[0], _a-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[1], _a-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[2]);</div>
@@ -811,7 +811,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="cell_list_8h_source.html#l00037">37</a> of file <a class="el" href="cell_list_8h_source.html">cellList.h</a>.</p>
 
-<p>Referenced by <a class="el" href="cell_list_8cpp_source.html#l00003">cellList()</a>, <a class="el" href="system_8cpp_source.html#l01484">simSystem::getNeighborAtoms()</a>, <a class="el" href="cell_list_8cpp_source.html#l00094">insertParticle()</a>, <a class="el" href="cell_list_8cpp_source.html#l00072">sortIntoCells()</a>, <a class="el" href="cell_list_8cpp_source.html#l00101">swapAndDeleteParticle()</a>, and <a class="el" href="cell_list_8cpp_source.html#l00138">translateParticle()</a>.</p>
+<p>Referenced by <a class="el" href="cell_list_8cpp_source.html#l00003">cellList()</a>, <a class="el" href="system_8cpp_source.html#l01487">simSystem::getNeighborAtoms()</a>, <a class="el" href="cell_list_8cpp_source.html#l00094">insertParticle()</a>, <a class="el" href="cell_list_8cpp_source.html#l00072">sortIntoCells()</a>, <a class="el" href="cell_list_8cpp_source.html#l00101">swapAndDeleteParticle()</a>, and <a class="el" href="cell_list_8cpp_source.html#l00138">translateParticle()</a>.</p>
 
 </div>
 </div>
@@ -843,7 +843,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="cell_list_8h_source.html#l00038">38</a> of file <a class="el" href="cell_list_8h_source.html">cellList.h</a>.</p>
 
-<p>Referenced by <a class="el" href="cell_list_8cpp_source.html#l00003">cellList()</a>, and <a class="el" href="system_8cpp_source.html#l01484">simSystem::getNeighborAtoms()</a>.</p>
+<p>Referenced by <a class="el" href="cell_list_8cpp_source.html#l00003">cellList()</a>, and <a class="el" href="system_8cpp_source.html#l01487">simSystem::getNeighborAtoms()</a>.</p>
 
 </div>
 </div>
@@ -854,7 +854,7 @@ Data Fields</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 23 2016 08:42:47 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 23 2016 10:17:54 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

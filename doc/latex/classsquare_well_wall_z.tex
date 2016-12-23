@@ -1,0 +1,258 @@
+\hypertarget{classsquare_well_wall_z}{\section{square\-Well\-Wall\-Z Class Reference}
+\label{classsquare_well_wall_z}\index{square\-Well\-Wall\-Z@{square\-Well\-Wall\-Z}}
+}
+
+
+Parallel square-\/well walls in the z-\/direction.  
+
+
+
+
+{\ttfamily \#include $<$barrier.\-h$>$}
+
+Inheritance diagram for square\-Well\-Wall\-Z\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classsquare_well_wall_z}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classsquare_well_wall_z_a98e2785289630c78afcb0bc8a7fd24e1}{$\sim$square\-Well\-Wall\-Z} ()
+\item 
+\hyperlink{classsquare_well_wall_z_a9f4c4e2e118fd68c2591a4d6f06aa594}{square\-Well\-Wall\-Z} (const double lb, const double ub, const double sigma, const double range, const double eps, const int M=1)
+\begin{DoxyCompactList}\small\item\em Instantiate a square well wall with boundaries in the +/-\/ z direction. \end{DoxyCompactList}\item 
+bool \hyperlink{classsquare_well_wall_z_a10fc7a357ac1ec6bb0cd1d1e95570195}{inside} (const \hyperlink{classatom}{atom} $\ast$a1, const std\-::vector$<$ double $>$ \&box)
+\begin{DoxyCompactList}\small\item\em Return whether or not a point falls between the walls (subject to a hard-\/sphere exclusion radius). \end{DoxyCompactList}\item 
+double \hyperlink{classsquare_well_wall_z_a77c366eb9c10f6a68e3f633e9b64dc47}{energy} (const \hyperlink{classatom}{atom} $\ast$a1, const std\-::vector$<$ double $>$ \&box)
+\begin{DoxyCompactList}\small\item\em Interaction energy with the wall. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Parallel square-\/well walls in the z-\/direction. 
+
+Definition at line 45 of file barrier.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classsquare_well_wall_z_a98e2785289630c78afcb0bc8a7fd24e1}{\index{square\-Well\-Wall\-Z@{square\-Well\-Wall\-Z}!$\sim$square\-Well\-Wall\-Z@{$\sim$square\-Well\-Wall\-Z}}
+\index{$\sim$square\-Well\-Wall\-Z@{$\sim$square\-Well\-Wall\-Z}!squareWellWallZ@{square\-Well\-Wall\-Z}}
+\subsubsection[{$\sim$square\-Well\-Wall\-Z}]{\setlength{\rightskip}{0pt plus 5cm}square\-Well\-Wall\-Z\-::$\sim$square\-Well\-Wall\-Z (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classsquare_well_wall_z_a98e2785289630c78afcb0bc8a7fd24e1}
+
+
+Definition at line 47 of file barrier.\-h.
+
+
+\begin{DoxyCode}
+47 \{\};
+\end{DoxyCode}
+\hypertarget{classsquare_well_wall_z_a9f4c4e2e118fd68c2591a4d6f06aa594}{\index{square\-Well\-Wall\-Z@{square\-Well\-Wall\-Z}!square\-Well\-Wall\-Z@{square\-Well\-Wall\-Z}}
+\index{square\-Well\-Wall\-Z@{square\-Well\-Wall\-Z}!squareWellWallZ@{square\-Well\-Wall\-Z}}
+\subsubsection[{square\-Well\-Wall\-Z}]{\setlength{\rightskip}{0pt plus 5cm}square\-Well\-Wall\-Z\-::square\-Well\-Wall\-Z (
+\begin{DoxyParamCaption}
+\item[{const double}]{lb, }
+\item[{const double}]{ub, }
+\item[{const double}]{sigma, }
+\item[{const double}]{range, }
+\item[{const double}]{eps, }
+\item[{const int}]{M = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)}}\label{classsquare_well_wall_z_a9f4c4e2e118fd68c2591a4d6f06aa594}
+
+
+Instantiate a square well wall with boundaries in the +/-\/ z direction. 
+
+Expanded ensembles primarily scale the magnitude of interaction. The repulsive boundary scales with sigma at the boundary, but the attractive cutoff remains fixed relative to the boundary.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em lb} & z-\/\-Position of the lower wall \\
+\hline
+\mbox{\tt in}  & {\em ub} & z-\/\-Position of the upper wall \\
+\hline
+\mbox{\tt in}  & {\em sigma} & Hard-\/sphere diameter the species this wall interacts with can approach within \\
+\hline
+\mbox{\tt in}  & {\em range} & Distance normal to the wall's surface where there is an interaction \\
+\hline
+\mbox{\tt in}  & {\em eps} & Magnitude of the wall interaction (U = -\/eps) \\
+\hline
+\mbox{\tt in}  & {\em M} & Total number of expanded ensemble states possible for this atom type (defaults to 1) \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 562 of file barrier.\-cpp.
+
+
+
+References barrier\-::\-M\-\_\-.
+
+
+\begin{DoxyCode}
+562                                                                                                            
+                                    \{
+563     \textcolor{keywordflow}{if} (lb >= ub) \{
+564         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have lower bound < upper bound"});
+565     \}
+566     \textcolor{keywordflow}{if} (sigma < 0) \{
+567         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have sigma >= 0"});
+568     \}
+569     \textcolor{keywordflow}{if} (range < 0) \{
+570         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have range >= 0"});
+571     \}
+572     \textcolor{keywordflow}{if} (eps < 0) \{
+573         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have eps >= 0"});
+574     \}
+575     \textcolor{keywordflow}{if} (sigma/2.0 >= range) \{
+576         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have sigma/2 < range to have a finite
+       range of interaction"});
+577     \}
+578     \textcolor{keywordflow}{if} (M < 1) \{
+579         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have M >= 1"});
+580     \}
+581 
+582     eps\_ = eps;
+583     sigma\_ = sigma;
+584     range\_ = range;
+585     ub\_ = ub;
+586     lb\_ = lb;
+587     \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_} = M;
+588 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classsquare_well_wall_z_a77c366eb9c10f6a68e3f633e9b64dc47}{\index{square\-Well\-Wall\-Z@{square\-Well\-Wall\-Z}!energy@{energy}}
+\index{energy@{energy}!squareWellWallZ@{square\-Well\-Wall\-Z}}
+\subsubsection[{energy}]{\setlength{\rightskip}{0pt plus 5cm}double square\-Well\-Wall\-Z\-::energy (
+\begin{DoxyParamCaption}
+\item[{const {\bf atom} $\ast$}]{a1, }
+\item[{const std\-::vector$<$ double $>$ \&}]{box}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classsquare_well_wall_z_a77c366eb9c10f6a68e3f633e9b64dc47}
+
+
+Interaction energy with the wall. 
+
+Sigma and epsilon are scaled linearly with expanded ensemble state.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em a1} & Pointer to atom with position to test -\/ this does N\-O\-T need to be in the simulation box a priori \\
+\hline
+\mbox{\tt in}  & {\em box} & Simulation box \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classbarrier_a2d308cfd5709aa479d0b37733f1a0db7}{barrier}.
+
+
+
+Definition at line 621 of file barrier.\-cpp.
+
+
+
+References barrier\-::\-M\-\_\-, atom\-::m\-State, N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y, pbc(), and atom\-::pos.
+
+
+\begin{DoxyCode}
+621                                                                                \{
+622     std::vector < double > p = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos};
+623     \hyperlink{utilities_8cpp_ad858a38f435e9a0ee890aa0f526714d2}{pbc} (p, box);
+624     \textcolor{keywordtype}{double} U = 0.0;
+625 
+626     \textcolor{keywordtype}{double} sig = sigma\_, eps = eps\_;
+627     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
+628         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+629         eps = (eps\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+630     \}
+631     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
+632         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for squareWellWallZ"});
+633     \}
+634 
+635     \textcolor{comment}{// return infinity if out of bounds}
+636     \textcolor{keywordflow}{if} (p[2] >= ub\_ - sig/2.0 || p[2] <= lb\_ + sig/2.0) \{
+637         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
+638     \}
+639 
+640     \textcolor{comment}{// interaction with top wall}
+641     \textcolor{keywordflow}{if} (p[2] > ub\_ - range\_) \{
+642         U += -eps;
+643     \}
+644 
+645     \textcolor{comment}{// interaction with lower wall}
+646     \textcolor{keywordflow}{if} (p[2] < lb\_ + range\_) \{
+647         U += -eps;
+648     \}
+649 
+650     \textcolor{keywordflow}{return} U;
+651 \}
+\end{DoxyCode}
+\hypertarget{classsquare_well_wall_z_a10fc7a357ac1ec6bb0cd1d1e95570195}{\index{square\-Well\-Wall\-Z@{square\-Well\-Wall\-Z}!inside@{inside}}
+\index{inside@{inside}!squareWellWallZ@{square\-Well\-Wall\-Z}}
+\subsubsection[{inside}]{\setlength{\rightskip}{0pt plus 5cm}bool square\-Well\-Wall\-Z\-::inside (
+\begin{DoxyParamCaption}
+\item[{const {\bf atom} $\ast$}]{a1, }
+\item[{const std\-::vector$<$ double $>$ \&}]{box}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classsquare_well_wall_z_a10fc7a357ac1ec6bb0cd1d1e95570195}
+
+
+Return whether or not a point falls between the walls (subject to a hard-\/sphere exclusion radius). 
+
+Sigma is scaled linearly with expanded ensemble state.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em a1} & Pointer to atom with position to test -\/ this does N\-O\-T need to be in the simulation box a priori \\
+\hline
+\mbox{\tt in}  & {\em box} & Simulation box \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classbarrier_a948ebdcfac501cb75d1a1f045a7d9125}{barrier}.
+
+
+
+Definition at line 596 of file barrier.\-cpp.
+
+
+
+References barrier\-::\-M\-\_\-, atom\-::m\-State, pbc(), and atom\-::pos.
+
+
+\begin{DoxyCode}
+596                                                                              \{
+597     std::vector < double > p = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos};
+598     \hyperlink{utilities_8cpp_ad858a38f435e9a0ee890aa0f526714d2}{pbc} (p, box);
+599 
+600     \textcolor{keywordtype}{double} sig = sigma\_;
+601     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
+602         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+603     \}
+604     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
+605         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for squareWellWallZ"});
+606     \}
+607 
+608     \textcolor{keywordflow}{if} (p[2] >= ub\_ - sig/2.0 || p[2] <= lb\_ + sig/2.0) \{
+609         \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+610     \} \textcolor{keywordflow}{else} \{
+611         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+612     \}
+613 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{barrier_8h}{barrier.\-h}\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{barrier_8cpp}{barrier.\-cpp}\end{DoxyCompactItemize}

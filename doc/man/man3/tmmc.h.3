@@ -1,0 +1,163 @@
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/tmmc.h" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/nam4/Desktop/sandbox/FHMCSimulation/src/tmmc.h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <memory>\fP
+.br
+\fC#include 'system\&.h'\fP
+.br
+\fC#include 'checkpoint\&.h'\fP
+.br
+\fC#include 'utilities\&.h'\fP
+.br
+\fC#include 'mover\&.h'\fP
+.br
+\fC#include 'sanity\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBperformTMMC\fP (\fBsimSystem\fP &sys, \fBcheckpoint\fP &res, \fBmoves\fP *usedMovesPr)"
+.br
+.RI "\fIPerform TMMC stage of simulation\&. \fP"
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void performTMMC (\fBsimSystem\fP &sys, \fBcheckpoint\fP &res, \fBmoves\fP *usedMovesPr)"
+
+.PP
+Perform TMMC stage of simulation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsys\fP System to simulate 
+.br
+\fIres\fP Restart/checkpoint information 
+.br
+\fIusedMovesPr\fP Move class to use 
+.RE
+.PP
+
+.PP
+Definition at line 10 of file tmmc\&.cpp\&.
+.PP
+References tmmc::calculatePI(), checkpoint::check(), tmmc::checkFullyVisited(), simSystem::getCurrentM(), getTimeStamp(), simSystem::getTMMCBias(), simSystem::getTotalM(), tmmc::iterateForward(), moves::makeMove(), checkpoint::moveCounter, moves::print(), tmmc::print(), simSystem::printEnergyHistogram(), simSystem::printExtMoments(), simSystem::printPkHistogram(), simSystem::printSnapshot(), tmmc::readC(), simSystem::recordEnergyHistogram(), simSystem::recordExtMoments(), simSystem::recordPkHistogram(), simSystem::refineEnergyHistogramBounds(), simSystem::refinePkHistogramBounds(), checkpoint::resFromTMMC, simSystem::restartFromTMMC, simSystem::restartFromTMMCFile, sanityChecks(), simSystem::startTMMC(), simSystem::stopTMMC(), checkpoint::sweepCounter, SYS_FAILURE, checkpoint::tmmcDone, simSystem::tmmcSweepSize, simSystem::totalTMMCSweeps, simSystem::totNMax(), simSystem::totNMin(), simSystem::useTMMC, simSystem::useWALA, and customException::what()\&.
+.PP
+.nf
+10                                                                        {
+11     if (res\&.tmmcDone) {
+12         throw customException ("Checkpoint indicates TMMC already finished");
+13     }
+14     std::cout << "Beginning TMMC at " << getTimeStamp() << std::endl;
+15 
+16     // Specifically for printing progress every 1% of the simulation
+17     const long long int numSweepSnaps = 100;
+18     unsigned long long int sweepPrint = sys\&.totalTMMCSweeps, printCounter = 0;
+19     if (sys\&.totalTMMCSweeps > numSweepSnaps) {
+20         sweepPrint /= numSweepSnaps;
+21     }
+22 
+23     res\&.tmmcDone = false;
+24     unsigned long long int sweep = 0;
+25     unsigned long long int counter = 0;
+26     if (!res\&.resFromTMMC) {
+27         if (sys\&.useWALA) {
+28             throw customException ("WALA not deactivated, cannot proceeed with TMMC");
+29         }
+30         if (sys\&.restartFromTMMC) {
+31             if (!sys\&.useTMMC) {
+32                 // In case where not restarting from checkpoint, but starting fresh from TMMC, crossover stage was skipped so TMMC has not been activated yet
+33                 sys\&.startTMMC (sys\&.tmmcSweepSize, sys\&.getTotalM());
+34             }
+35             try {
+36                 sys\&.getTMMCBias()->readC(sys\&.restartFromTMMCFile); // read collection matrix
+37                 sys\&.getTMMCBias()->calculatePI();
+38                 std::cout << "Restarted TMMC from collection matrix from " << sys\&.restartFromTMMCFile << std::endl;
+39             } catch (customException &ce) {
+40                 sys\&.stopTMMC(); // deallocate
+41                 std::cerr << "Failed to initialize from TMMC collection matrix: " << ce\&.what() << std::endl;
+42                 exit(SYS_FAILURE);
+43             }
+44         }
+45     } else {
+46         printCounter = res\&.moveCounter;
+47         sweep = res\&.sweepCounter;
+48     }
+49 
+50     std::cout << "Starting progress stage from " << printCounter << "/" << std::min(numSweepSnaps, sys\&.totalTMMCSweeps) << " at " << getTimeStamp() << std::endl;
+51     std::cout << "Starting from " << sweep << "/" << sys\&.totalTMMCSweeps << " total TMMC sweeps at " << getTimeStamp() << std::endl;
+52 
+53     unsigned long long int checkPoint = sys\&.tmmcSweepSize*(sys\&.totNMax() - sys\&.totNMin() + 1)*3; // how often to check full traversal of collection matrix
+54     while (sweep < sys\&.totalTMMCSweeps) {
+55         bool done = false;
+56 
+57         // Perform a sweep
+58         while (!done) {
+59             try {
+60                 usedMovesPr->makeMove(sys);
+61             } catch (customException &ce) {
+62                 std::cerr << ce\&.what() << std::endl;
+63                 exit(SYS_FAILURE);
+64             }
+65 
+66             // Only record properties of the system when it is NOT in an intermediate state
+67             if (sys\&.getCurrentM() == 0) {
+68                 sys\&.recordEnergyHistogram();
+69                 sys\&.recordPkHistogram();
+70                 sys\&.recordExtMoments();
+71             }
+72 
+73             // Check if sweep is done
+74             if (counter%checkPoint == 0) {
+75                 done = sys\&.getTMMCBias()->checkFullyVisited();
+76                 counter = 0;
+77             }
+78 
+79             counter++;
+80             res\&.check(sys, printCounter, sweep);
+81         }
+82 
+83         sys\&.getTMMCBias()->iterateForward(); // reset the counting matrix and increment total sweep number
+84         sweep++;
+85 
+86         std::cout << "Finished " << sweep << "/" << sys\&.totalTMMCSweeps << " total TMMC sweeps at " << getTimeStamp() << std::endl;
+87 
+88         // Update biasing function from collection matrix
+89         sys\&.getTMMCBias()->calculatePI();
+90 
+91         // Periodically write out checkpoints to monitor convergence properties later - all are used in FHMCAnalysis at this point (12/22/16)
+92         if (sweep%sweepPrint == 0) {
+93             printCounter++;
+94             sys\&.getTMMCBias()->print("tmmc-Checkpoint-"+std::to_string(printCounter), false, false); // true, false);
+95             sys\&.refineEnergyHistogramBounds();
+96             sys\&.printEnergyHistogram("eHist-Checkpoint-"+std::to_string(printCounter));
+97             sys\&.refinePkHistogramBounds();
+98             sys\&.printPkHistogram("pkHist-Checkpoint-"+std::to_string(printCounter));
+99             sys\&.printExtMoments("extMom-Checkpoint-"+std::to_string(printCounter));
+100             usedMovesPr->print("tmmc\&.stats");
+101         }
+102     }
+103 
+104     // Print final results
+105     sys\&.getTMMCBias()->print("final", false, false);
+106     sys\&.refineEnergyHistogramBounds();
+107     sys\&.printEnergyHistogram("final_eHist");
+108     sys\&.refinePkHistogramBounds();
+109     sys\&.printPkHistogram("final_pkHist");
+110     sys\&.printExtMoments("final_extMom");
+111     sys\&.printSnapshot("final\&.xyz", "last configuration");
+112     usedMovesPr->print("tmmc\&.stats");
+113 
+114     sanityChecks(sys);
+115     res\&.tmmcDone = true;
+116 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

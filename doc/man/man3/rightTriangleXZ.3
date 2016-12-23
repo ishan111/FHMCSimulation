@@ -1,0 +1,429 @@
+.TH "rightTriangleXZ" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+rightTriangleXZ \- 
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <barrier\&.h>\fP
+.PP
+Inherits \fBbarrier\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB~rightTriangleXZ\fP ()"
+.br
+.ti -1c
+.RI "\fBrightTriangleXZ\fP (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector< double > &box, const double zbase, bool top=false, const int M=1)"
+.br
+.RI "\fIInstantiate a right triangle feature with its base in the xy-plane\&. \fP"
+.ti -1c
+.RI "bool \fBinside\fP (const \fBatom\fP *a1, const std::vector< double > &box)"
+.br
+.RI "\fICheck if an atom is overlapping the feature\&. \fP"
+.ti -1c
+.RI "double \fBenergy\fP (const \fBatom\fP *a1, const std::vector< double > &box)"
+.br
+.RI "\fIGet the energy of a position assuming it is located within window 8\&. \fP"
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Definition at line 81 of file barrier\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "rightTriangleXZ::~rightTriangleXZ ()\fC [inline]\fP"
+
+.PP
+Definition at line 83 of file barrier\&.h\&.
+.PP
+.nf
+83 {};
+.fi
+.SS "rightTriangleXZ::rightTriangleXZ (const doublewidth, const doubletheta, const doublelamW, const doubleeps, const doublesigma, const doublesep, const doubleoffset, const std::vector< double > &box, const doublezbase, booltop = \fCfalse\fP, const intM = \fC1\fP)"
+
+.PP
+Instantiate a right triangle feature with its base in the xy-plane\&. It is raised in the z-direction and extends in the x-direction\&. Expanded ensembles scale the range of interaction as well as the magnitude\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIwidth\fP Width of triangle's feature 
+.br
+\fItheta\fP Elevation angle of the feature in radians (0, PI) 
+.br
+\fIlamW\fP Attractive range ratio relative to hard sphere in contact with the feature (akin to a square well potential's lambda), must be >= 1 
+.br
+\fIeps\fP Attraction strength to feature 
+.br
+\fIsigma\fP Hard sphere diameter of interaction with the feature 
+.br
+\fIsep\fP Distance between features 
+.br
+\fIoffset\fP Offset from x = 0 position of the first feature\&. A positive offset shifts the feature in the +x direction\&. 
+.br
+\fIbox\fP System box size to check the feature (as specified) is periodic in the box 
+.br
+\fIzbase\fP Z-coordinate of XY plane that defines the base of the feature\&. To avoid periodicity effects be sure it is > 0 and less than Lz, but this depends on other interactions so it cannot be checked automatically here\&. 
+.br
+\fItop\fP If true, feature is on the 'top', else is on the bottom (default) 
+.br
+\fIM\fP Number of expanded ensemble states to recognize (default = 1) 
+.RE
+.PP
+
+.PP
+Definition at line 18 of file barrier\&.cpp\&.
+.PP
+References barrier::M_, NUM_INFINITY, and PI\&.
+.PP
+.nf
+18                                                                                                                                                                                                                                                     {
+19     if (sep < 0\&.0) {
+20         throw customException ("rightTriangle sep is out of bounds");
+21     }
+22     // Check the feature fits periodically in the box
+23     if ( fmod(box[0]/(sep+width), 1) != 0\&.0 ) {
+24         throw customException ("rightTriangle width+separation is not commensurate with the box size");
+25     }
+26     if (theta <= 0\&.0 || theta >= PI/2\&.0) {
+27         throw customException ("rightTriangle elevation angle is out of bounds");
+28     }
+29     if (sigma <= 0\&.0) {
+30         throw customException ("rightTriangle sigma is out of bounds");
+31     }
+32     if (lamW < 1\&.0) {
+33         throw customException ("rightTriangle lamW is out of bounds");
+34     }
+35     if (eps < 0\&.0) {
+36         throw customException ("rightTriangle eps is out of bounds");
+37     }
+38     if (M < 1) {
+39         throw customException ("rightTriangle M value is out of bounds");
+40     }
+41     if (zbase < 0\&.0 || zbase > box[2]) {
+42         throw customException ("rightTriangle zbase value is out of bounds");
+43     }
+44     if (offset >= box[0] || offset < 0) {
+45         throw customException ("rightTriangle offset value is out of bounds");
+46     }
+47 
+48     // store variables internally and do conversion to conventions in which derivation was done
+49     zbase_ = zbase;
+50     width_ = width;
+51     sep_ = sep;
+52     theta_ = theta;
+53     xOffset_ = offset;
+54     top_ = top;
+55     M_ = M;
+56     lamW_ = lamW;
+57     x_max_image_ = (int) round(box[0]/(sep+width)) - 1;
+58 
+59     // precompute points and trigonometry
+60     a_ = width_*cos(theta_)*sin(theta_);
+61     b_ = width_*sin(theta_)*cos(PI/2\&.0-theta_);
+62     c_ = width_*cos(theta_)*cos(theta_);
+63 
+64     try {
+65         sigma_\&.resize(M_);
+66     } catch (std::bad_alloc &ba) {
+67         throw customException ("Out of memory");
+68     }
+69     try {
+70         eps_\&.resize(M_);
+71     } catch (std::bad_alloc &ba) {
+72         throw customException ("Out of memory");
+73     }
+74     try {
+75         box_\&.resize(3);
+76     } catch (std::bad_alloc &ba) {
+77         throw customException ("Out of memory");
+78     }
+79     box_ = box;
+80     try {
+81         ub_check_\&.resize(M_, -NUM_INFINITY);
+82     } catch (std::bad_alloc &ba) {
+83         throw customException ("Out of memory");
+84     }
+85 
+86     try {
+87         ub_seg_x_\&.resize(M_);
+88     } catch (std::bad_alloc &ba) {
+89         throw customException ("Out of memory");
+90     }
+91     for (int i = 0; i < M_; ++i) {
+92         try {
+93             ub_seg_x_[i]\&.resize(4);
+94         } catch (std::bad_alloc &ba) {
+95             throw customException ("Out of memory");
+96         }
+97     }
+98     try {
+99         lb_seg_x_\&.resize(M_);
+100     } catch (std::bad_alloc &ba) {
+101         throw customException ("Out of memory");
+102     }
+103     for (int i = 0; i < M_; ++i) {
+104         try {
+105             lb_seg_x_[i]\&.resize(4);
+106         } catch (std::bad_alloc &ba) {
+107             throw customException ("Out of memory");
+108         }
+109     }
+110     try {
+111         ub_seg_z_\&.resize(M_);
+112     } catch (std::bad_alloc &ba) {
+113         throw customException ("Out of memory");
+114     }
+115     for (int i = 0; i < M_; ++i) {
+116         try {
+117             ub_seg_z_[i]\&.resize(4);
+118         } catch (std::bad_alloc &ba) {
+119             throw customException ("Out of memory");
+120         }
+121     }
+122     try {
+123         lb_seg_z_\&.resize(M_);
+124     } catch (std::bad_alloc &ba) {
+125         throw customException ("Out of memory");
+126     }
+127     for (int i = 0; i < M_; ++i) {
+128         try {
+129             lb_seg_z_[i]\&.resize(4);
+130         } catch (std::bad_alloc &ba) {
+131             throw customException ("Out of memory");
+132         }
+133     }
+134     try {
+135         ub_slope_\&.resize(M_);
+136     } catch (std::bad_alloc &ba) {
+137         throw customException ("Out of memory");
+138     }
+139     for (int i = 0; i < M_; ++i) {
+140         try {
+141             ub_slope_[i]\&.resize(5);
+142         } catch (std::bad_alloc &ba) {
+143             throw customException ("Out of memory");
+144         }
+145     }
+146     try {
+147         lb_slope_\&.resize(M_);
+148     } catch (std::bad_alloc &ba) {
+149         throw customException ("Out of memory");
+150     }
+151     for (int i = 0; i < M_; ++i) {
+152         try {
+153             lb_slope_[i]\&.resize(5);
+154         } catch (std::bad_alloc &ba) {
+155             throw customException ("Out of memory");
+156         }
+157     }
+158     try {
+159         ub_int_\&.resize(M_);
+160     } catch (std::bad_alloc &ba) {
+161         throw customException ("Out of memory");
+162     }
+163     for (int i = 0; i < M_; ++i) {
+164         try {
+165             ub_int_[i]\&.resize(5);
+166         } catch (std::bad_alloc &ba) {
+167             throw customException ("Out of memory");
+168         }
+169     }
+170     try {
+171         lb_int_\&.resize(M_);
+172     } catch (std::bad_alloc &ba) {
+173         throw customException ("Out of memory");
+174     }
+175     for (int i = 0; i < M_; ++i) {
+176         try {
+177             lb_int_[i]\&.resize(5);
+178         } catch (std::bad_alloc &ba) {
+179             throw customException ("Out of memory");
+180         }
+181     }
+182 
+183     for (int i = 0; i < M_; ++i) {
+184         if (i == 0) {
+185             sigma_[i] = sigma;
+186             eps_[i] = eps;
+187         } else {
+188             sigma_[i] = sigma_[0]/M_*i;
+189             eps_[i] = eps_[0]/M_*i;
+190         }
+191 
+192         ub_seg_x_[i][0] = -lamW_*sigma_[i]*sin(theta_);
+193         ub_seg_x_[i][1] = c_ - lamW_*sigma_[i]*sin(theta_);
+194         ub_seg_x_[i][2] = c_ + lamW_*sigma_[i]*cos(theta_);
+195         ub_seg_x_[i][3] = width_ + lamW_*sigma_[i]*cos(theta_);
+196 
+197         lb_seg_x_[i][0] = -sigma_[i]/2\&.0*sin(theta_);
+198         lb_seg_x_[i][1] = c_ - sigma_[i]/2\&.0*sin(theta_);
+199         lb_seg_x_[i][2] = c_ + sigma_[i]/2\&.0*cos(theta_);
+200         lb_seg_x_[i][3] = width_ + sigma_[i]/2\&.0*cos(theta_);
+201 
+202         ub_seg_z_[i][0] = lamW_*sigma_[i]*cos(theta_);
+203         ub_seg_z_[i][1] = a_ + lamW_*sigma_[i]*cos(theta_);
+204         ub_seg_z_[i][2] = a_ + lamW_*sigma_[i]*sin(theta_);
+205         ub_seg_z_[i][3] = lamW_*sigma_[i]*sin(theta_);
+206 
+207         lb_seg_z_[i][0] = sigma_[i]/2\&.0*cos(theta_);
+208         lb_seg_z_[i][1] = a_ + sigma_[i]/2\&.0*cos(theta_);
+209         lb_seg_z_[i][2] = a_ + sigma_[i]/2\&.0*sin(theta_);
+210         lb_seg_z_[i][3] = sigma_[i]/2\&.0*sin(theta_);
+211 
+212         ub_check_[i] = *std::max_element(ub_seg_z_[i]\&.begin(), ub_seg_z_[i]\&.end());
+213 
+214         ub_slope_[i][0] = 0\&.0;
+215         ub_slope_[i][1] = (ub_seg_z_[i][1] - ub_seg_z_[i][0])/(ub_seg_x_[i][1] - ub_seg_x_[i][0]);
+216         ub_slope_[i][2] = (ub_seg_z_[i][2] - ub_seg_z_[i][1])/(ub_seg_x_[i][2] - ub_seg_x_[i][1]);
+217         ub_slope_[i][3] = (ub_seg_z_[i][3] - ub_seg_z_[i][2])/(ub_seg_x_[i][3] - ub_seg_x_[i][2]);
+218         ub_slope_[i][4] = 0\&.0;
+219 
+220         ub_int_[i][0] = 0\&.0;
+221         ub_int_[i][1] = ub_seg_z_[i][0];
+222         ub_int_[i][2] = ub_seg_z_[i][1];
+223         ub_int_[i][3] = ub_seg_z_[i][2];
+224         ub_int_[i][4] = 0\&.0;
+225 
+226         lb_slope_[i][0] = 0\&.0;
+227         lb_slope_[i][1] = (lb_seg_z_[i][1] - lb_seg_z_[i][0])/(lb_seg_x_[i][1] - lb_seg_x_[i][0]);
+228         lb_slope_[i][2] = (lb_seg_z_[i][2] - lb_seg_z_[i][1])/(lb_seg_x_[i][2] - lb_seg_x_[i][1]);
+229         lb_slope_[i][3] = (lb_seg_z_[i][3] - lb_seg_z_[i][2])/(lb_seg_x_[i][3] - lb_seg_x_[i][2]);
+230         lb_slope_[i][4] = 0\&.0;
+231 
+232         lb_int_[i][0] = 0\&.0;
+233         lb_int_[i][1] = lb_seg_z_[i][0];
+234         lb_int_[i][2] = lb_seg_z_[i][1];
+235         lb_int_[i][3] = lb_seg_z_[i][2];
+236         lb_int_[i][4] = 0\&.0;
+237     }
+238 }
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "double rightTriangleXZ::energy (const \fBatom\fP *a1, const std::vector< double > &box)\fC [virtual]\fP"
+
+.PP
+Get the energy of a position assuming it is located within window 8\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIatom\fP Pointer to atom to examine 
+.br
+\fIbox\fP System box size\&. Will be checked that it is identical to value at class instantiation\&. 
+.RE
+.PP
+
+.PP
+Implements \fBbarrier\fP\&.
+.PP
+Definition at line 292 of file barrier\&.cpp\&.
+.PP
+References barrier::M_, atom::mState, NUM_INFINITY, pbc(), and atom::pos\&.
+.PP
+Referenced by inside()\&.
+.PP
+.nf
+292                                                                                {
+293     for (unsigned int i = 0; i < box_\&.size(); ++i) {
+294         if (box[i] != box_[i]) {
+295             throw customException ("System box size has changed from when rightTriangleXZ was instantiated");
+296         }
+297     }
+298 
+299     const int mv = a1->mState;
+300     std::vector < double > p = a1->pos;
+301 
+302 
+303     if (mv < 0 || mv > M_-1) {
+304         throw customException ("mState out of bounds for rightTriangleZ");
+305     }
+306 
+307     // First find nearest feature (the one right below)
+308     pbc (p, box);
+309     double dx = p[0] - xOffset_, dz = 0\&.0;
+310     int x_image = int(floor(dx/(width_+sep_)));
+311     double x_shift = x_image*(width_+sep_);
+312 
+313     if (top_) {
+314         dz = zbase_ - p[2];
+315     } else {
+316         dz = p[2] - zbase_;
+317     }
+318 
+319     if (dz > ub_check_[mv]) {
+320         return 0\&.0;
+321     }
+322 
+323     double U = featureInteraction_ (dx, dz, x_shift, mv);
+324     if (U == NUM_INFINITY) {
+325         return U;
+326     }
+327 
+328     // Must check all neighboring images, including images beyond edge of each box for periodicity effects
+329     int x_i = x_image+1;
+330     if (x_i > x_max_image_+1) {
+331         x_i = -1;
+332     }
+333     while (x_i != x_image) { // Stop once one complete cycle is finished
+334         x_shift = x_i*(width_+sep_);
+335         double dU = featureInteraction_ (dx, dz, x_shift, mv);
+336         if (dU == NUM_INFINITY) {
+337             return NUM_INFINITY;
+338         } else {
+339             U += dU;
+340         }
+341         x_i += 1;
+342         if (x_i > x_max_image_+1) {
+343             x_i = -1;
+344         }
+345     }
+346 
+347     return U;
+348 }
+.fi
+.SS "bool rightTriangleXZ::inside (const \fBatom\fP *a1, const std::vector< double > &box)\fC [virtual]\fP"
+
+.PP
+Check if an atom is overlapping the feature\&. The term 'inside' can be a bit confusing here\&. This function returns true if an atom does NOT overlap the feature (have infinite interaction energy), which might be considered as being 'outside' the feature depending on how you look at it\&. However, to be consistent with the expected behavior of this virtual function, this is how this function must behave\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIa1\fP Atom whose position to test\&. 
+.br
+\fIbox\fP System box size\&. Not actually used, but will be checked that it is identical to value at class instantiation\&. 
+.RE
+.PP
+
+.PP
+Implements \fBbarrier\fP\&.
+.PP
+Definition at line 360 of file barrier\&.cpp\&.
+.PP
+References energy(), NUM_INFINITY, and customException::what()\&.
+.PP
+.nf
+360                                                                              {
+361     double U = NUM_INFINITY;
+362     try {
+363         U = energy (a1, box); // takes care of pbc internally
+364     } catch (customException &ce) {
+365         throw customException ("Unable to test if inside rightTriangleXZ : "+std::to_string(*ce\&.what()));
+366         //exit (SYS_FAILURE);
+367     }
+368 
+369     if (U < NUM_INFINITY) {
+370         return true;
+371     } else {
+372         return false;
+373     }
+374 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

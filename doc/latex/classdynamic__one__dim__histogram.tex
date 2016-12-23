@@ -1,0 +1,421 @@
+\hypertarget{classdynamic__one__dim__histogram}{\section{dynamic\-\_\-one\-\_\-dim\-\_\-histogram Class Reference}
+\label{classdynamic__one__dim__histogram}\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+}
+
+
+{\ttfamily \#include $<$histogram.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classdynamic__one__dim__histogram_a23aed9a23459cdee64422347878d81af}{$\sim$dynamic\-\_\-one\-\_\-dim\-\_\-histogram} ()
+\item 
+\hyperlink{classdynamic__one__dim__histogram_a361db85e9c1b246c24c4fdcba934de08}{dynamic\-\_\-one\-\_\-dim\-\_\-histogram} ()
+\item 
+\hyperlink{classdynamic__one__dim__histogram_a5c11c62055bece5d5bce48c27e8d8f99}{dynamic\-\_\-one\-\_\-dim\-\_\-histogram} (const double lb, const double ub, const double delta)
+\begin{DoxyCompactList}\small\item\em Instantiate a 1\-D histogram that grow as needed to record values. \end{DoxyCompactList}\item 
+void \hyperlink{classdynamic__one__dim__histogram_a899b4d0ab90f83506d12bc00c88a060a}{reinitialize} (const double lb, const double ub, const double delta)
+\begin{DoxyCompactList}\small\item\em Re-\/initialize histogram and its bounds. \end{DoxyCompactList}\item 
+void \hyperlink{classdynamic__one__dim__histogram_af03dc61101ae9d08b6f3474af04fbeeb}{trim\-\_\-edges} ()
+\begin{DoxyCompactList}\small\item\em Trim the size of the histogram to remove leading and trailing zeros. \end{DoxyCompactList}\item 
+void \hyperlink{classdynamic__one__dim__histogram_a03402a7219e10240803609fb6cbb24a6}{prepend\-\_\-bins} (const unsigned int nbins)
+\begin{DoxyCompactList}\small\item\em Add a number of bins to the beginning of the histogram. \end{DoxyCompactList}\item 
+void \hyperlink{classdynamic__one__dim__histogram_a6fa516279d227e363aa90baf29f8a181}{append\-\_\-bins} (const unsigned int nbins)
+\begin{DoxyCompactList}\small\item\em Add a number of bins to the end of the histogram. \end{DoxyCompactList}\item 
+void \hyperlink{classdynamic__one__dim__histogram_a2ae28c147c2dfc624ece9102603dd667}{record} (const double value)
+\begin{DoxyCompactList}\small\item\em Record an entry in the histogram at the bin corresponding to where value falls. \end{DoxyCompactList}\item 
+void \hyperlink{classdynamic__one__dim__histogram_a6fe82d8d8f463c6ca684bf1fead1d5c3}{set\-\_\-hist} (const std\-::deque$<$ double $>$ h)
+\begin{DoxyCompactList}\small\item\em Set the histogram. \end{DoxyCompactList}\item 
+const double \hyperlink{classdynamic__one__dim__histogram_a36567635816c1d33b8fb6f14ac50d575}{get\-\_\-delta} ()
+\item 
+const double \hyperlink{classdynamic__one__dim__histogram_a3849f19cd0c77e153cf32b0acefacc4d}{get\-\_\-lb} ()
+\item 
+const double \hyperlink{classdynamic__one__dim__histogram_a50871ffa445bce5f4443770a18db84aa}{get\-\_\-ub} ()
+\item 
+std\-::deque$<$ double $>$ \hyperlink{classdynamic__one__dim__histogram_ac3903fa9339e78a5b9abe908af279b0a}{get\-\_\-hist} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+Definition at line 40 of file histogram.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classdynamic__one__dim__histogram_a23aed9a23459cdee64422347878d81af}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!$\sim$dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{$\sim$dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\index{$\sim$dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{$\sim$dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{$\sim$dynamic\-\_\-one\-\_\-dim\-\_\-histogram}]{\setlength{\rightskip}{0pt plus 5cm}dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::$\sim$dynamic\-\_\-one\-\_\-dim\-\_\-histogram (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdynamic__one__dim__histogram_a23aed9a23459cdee64422347878d81af}
+
+
+Definition at line 42 of file histogram.\-h.
+
+
+\begin{DoxyCode}
+42 \{;\}
+\end{DoxyCode}
+\hypertarget{classdynamic__one__dim__histogram_a361db85e9c1b246c24c4fdcba934de08}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}]{\setlength{\rightskip}{0pt plus 5cm}dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::dynamic\-\_\-one\-\_\-dim\-\_\-histogram (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdynamic__one__dim__histogram_a361db85e9c1b246c24c4fdcba934de08}
+
+
+Definition at line 43 of file histogram.\-h.
+
+
+\begin{DoxyCode}
+43 \{;\}
+\end{DoxyCode}
+\hypertarget{classdynamic__one__dim__histogram_a5c11c62055bece5d5bce48c27e8d8f99}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}]{\setlength{\rightskip}{0pt plus 5cm}dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::dynamic\-\_\-one\-\_\-dim\-\_\-histogram (
+\begin{DoxyParamCaption}
+\item[{const double}]{lb, }
+\item[{const double}]{ub, }
+\item[{const double}]{delta}
+\end{DoxyParamCaption}
+)}}\label{classdynamic__one__dim__histogram_a5c11c62055bece5d5bce48c27e8d8f99}
+
+
+Instantiate a 1\-D histogram that grow as needed to record values. 
+
+A bin is considered \char`\"{}centered\char`\"{} on its value.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em lb} & Lower bound \\
+\hline
+\mbox{\tt in}  & {\em ub} & Upper bound \\
+\hline
+\mbox{\tt in}  & {\em delta} & Bin width \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 99 of file histogram.\-cpp.
+
+
+\begin{DoxyCode}
+99                                                                                                           \{
+100     \textcolor{keywordflow}{try} \{
+101         initialize\_ (lb, ub, delta);
+102     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+103         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to initialize dynamic\_one\_dim\_histogram"});
+104     \}
+105 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classdynamic__one__dim__histogram_a6fa516279d227e363aa90baf29f8a181}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!append\-\_\-bins@{append\-\_\-bins}}
+\index{append\-\_\-bins@{append\-\_\-bins}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{append\-\_\-bins}]{\setlength{\rightskip}{0pt plus 5cm}void dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::append\-\_\-bins (
+\begin{DoxyParamCaption}
+\item[{const unsigned int}]{nbins}
+\end{DoxyParamCaption}
+)}}\label{classdynamic__one__dim__histogram_a6fa516279d227e363aa90baf29f8a181}
+
+
+Add a number of bins to the end of the histogram. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em nbins} & Number of bins to add to the end \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 129 of file histogram.\-cpp.
+
+
+
+Referenced by record().
+
+
+\begin{DoxyCode}
+129                                                                      \{
+130     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nbins; i++) \{
+131         \textcolor{keywordflow}{try} \{
+132             h\_.push\_back (0.0);
+133             nbins\_++;
+134             ub\_ += delta\_;
+135         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+136             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory for dynamic\_one\_dim\_histogram"});
+137         \}
+138     \}
+139 \}
+\end{DoxyCode}
+\hypertarget{classdynamic__one__dim__histogram_a36567635816c1d33b8fb6f14ac50d575}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!get\-\_\-delta@{get\-\_\-delta}}
+\index{get\-\_\-delta@{get\-\_\-delta}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{get\-\_\-delta}]{\setlength{\rightskip}{0pt plus 5cm}const double dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::get\-\_\-delta (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdynamic__one__dim__histogram_a36567635816c1d33b8fb6f14ac50d575}
+
+
+Definition at line 52 of file histogram.\-h.
+
+
+\begin{DoxyCode}
+52 \{ \textcolor{keywordflow}{return} delta\_; \}
+\end{DoxyCode}
+\hypertarget{classdynamic__one__dim__histogram_ac3903fa9339e78a5b9abe908af279b0a}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!get\-\_\-hist@{get\-\_\-hist}}
+\index{get\-\_\-hist@{get\-\_\-hist}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{get\-\_\-hist}]{\setlength{\rightskip}{0pt plus 5cm}std\-::deque$<$ double $>$ dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::get\-\_\-hist (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdynamic__one__dim__histogram_ac3903fa9339e78a5b9abe908af279b0a}
+
+
+Definition at line 55 of file histogram.\-h.
+
+
+\begin{DoxyCode}
+55 \{ \textcolor{keywordflow}{return} h\_; \}
+\end{DoxyCode}
+\hypertarget{classdynamic__one__dim__histogram_a3849f19cd0c77e153cf32b0acefacc4d}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!get\-\_\-lb@{get\-\_\-lb}}
+\index{get\-\_\-lb@{get\-\_\-lb}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{get\-\_\-lb}]{\setlength{\rightskip}{0pt plus 5cm}const double dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::get\-\_\-lb (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdynamic__one__dim__histogram_a3849f19cd0c77e153cf32b0acefacc4d}
+
+
+Definition at line 53 of file histogram.\-h.
+
+
+\begin{DoxyCode}
+53 \{ \textcolor{keywordflow}{return} lb\_; \}
+\end{DoxyCode}
+\hypertarget{classdynamic__one__dim__histogram_a50871ffa445bce5f4443770a18db84aa}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!get\-\_\-ub@{get\-\_\-ub}}
+\index{get\-\_\-ub@{get\-\_\-ub}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{get\-\_\-ub}]{\setlength{\rightskip}{0pt plus 5cm}const double dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::get\-\_\-ub (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classdynamic__one__dim__histogram_a50871ffa445bce5f4443770a18db84aa}
+
+
+Definition at line 54 of file histogram.\-h.
+
+
+\begin{DoxyCode}
+54 \{ \textcolor{keywordflow}{return} ub\_; \}
+\end{DoxyCode}
+\hypertarget{classdynamic__one__dim__histogram_a03402a7219e10240803609fb6cbb24a6}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!prepend\-\_\-bins@{prepend\-\_\-bins}}
+\index{prepend\-\_\-bins@{prepend\-\_\-bins}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{prepend\-\_\-bins}]{\setlength{\rightskip}{0pt plus 5cm}void dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::prepend\-\_\-bins (
+\begin{DoxyParamCaption}
+\item[{const unsigned int}]{nbins}
+\end{DoxyParamCaption}
+)}}\label{classdynamic__one__dim__histogram_a03402a7219e10240803609fb6cbb24a6}
+
+
+Add a number of bins to the beginning of the histogram. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em nbins} & Number of bins to add to the beginning \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 112 of file histogram.\-cpp.
+
+
+
+Referenced by record().
+
+
+\begin{DoxyCode}
+112                                                                       \{
+113     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < nbins; i++) \{
+114         \textcolor{keywordflow}{try} \{
+115             h\_.push\_front (0.0);
+116             nbins\_++;
+117             lb\_ -= delta\_;
+118         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+119             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory for dynamic\_one\_dim\_histogram"});
+120         \}
+121     \}
+122 \}
+\end{DoxyCode}
+\hypertarget{classdynamic__one__dim__histogram_a2ae28c147c2dfc624ece9102603dd667}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!record@{record}}
+\index{record@{record}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{record}]{\setlength{\rightskip}{0pt plus 5cm}void dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::record (
+\begin{DoxyParamCaption}
+\item[{const double}]{value}
+\end{DoxyParamCaption}
+)}}\label{classdynamic__one__dim__histogram_a2ae28c147c2dfc624ece9102603dd667}
+
+
+Record an entry in the histogram at the bin corresponding to where value falls. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em value} & Raw value, bin this corresponds to is internally calculated \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 146 of file histogram.\-cpp.
+
+
+
+References append\-\_\-bins(), prepend\-\_\-bins(), and custom\-Exception\-::what().
+
+
+\begin{DoxyCode}
+146                                                           \{
+147     \textcolor{keywordtype}{int} bin = round((value - lb\_)/delta\_); \textcolor{comment}{// this "centers" the bin}
+148     \textcolor{keywordflow}{if} (bin < 0) \{
+149         \textcolor{comment}{// prepend and fill}
+150         \textcolor{keywordflow}{try} \{
+151             \hyperlink{classdynamic__one__dim__histogram_a03402a7219e10240803609fb6cbb24a6}{prepend\_bins}(-bin);
+152         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+153             std::string a = \textcolor{stringliteral}{"Unable to prepend dynamic\_one\_dim\_histogram: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+154             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+155         \}
+156         bin = round((value - lb\_)/delta\_);
+157     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (bin >= nbins\_) \{
+158         \textcolor{comment}{// append and fill}
+159         \textcolor{keywordflow}{try} \{
+160             \hyperlink{classdynamic__one__dim__histogram_a6fa516279d227e363aa90baf29f8a181}{append\_bins} (bin - nbins\_ + 1);
+161         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+162             std::string a = \textcolor{stringliteral}{"Unable to append dynamic\_one\_dim\_histogram: "}, b = ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+163             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+164         \}
+165         bin = round((value - lb\_)/delta\_);
+166     \}
+167     h\_[bin] += 1.0;
+168 \}
+\end{DoxyCode}
+\hypertarget{classdynamic__one__dim__histogram_a899b4d0ab90f83506d12bc00c88a060a}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!reinitialize@{reinitialize}}
+\index{reinitialize@{reinitialize}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{reinitialize}]{\setlength{\rightskip}{0pt plus 5cm}void dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::reinitialize (
+\begin{DoxyParamCaption}
+\item[{const double}]{lb, }
+\item[{const double}]{ub, }
+\item[{const double}]{delta}
+\end{DoxyParamCaption}
+)}}\label{classdynamic__one__dim__histogram_a899b4d0ab90f83506d12bc00c88a060a}
+
+
+Re-\/initialize histogram and its bounds. 
+
+All entries are zeroed. 
+
+Definition at line 83 of file histogram.\-cpp.
+
+
+\begin{DoxyCode}
+83                                                                                                   \{
+84     \textcolor{keywordflow}{try} \{
+85         initialize\_ (lb, ub, delta);
+86     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+87         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to re-initialize dynamic\_one\_dim\_histogram"});
+88     \}
+89 \}
+\end{DoxyCode}
+\hypertarget{classdynamic__one__dim__histogram_a6fe82d8d8f463c6ca684bf1fead1d5c3}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!set\-\_\-hist@{set\-\_\-hist}}
+\index{set\-\_\-hist@{set\-\_\-hist}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{set\-\_\-hist}]{\setlength{\rightskip}{0pt plus 5cm}void dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::set\-\_\-hist (
+\begin{DoxyParamCaption}
+\item[{const std\-::deque$<$ double $>$}]{h}
+\end{DoxyParamCaption}
+)}}\label{classdynamic__one__dim__histogram_a6fe82d8d8f463c6ca684bf1fead1d5c3}
+
+
+Set the histogram. 
+
+Intended to be used to restart from a checkpoint.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em h} & Histogram to set to. \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 72 of file histogram.\-cpp.
+
+
+\begin{DoxyCode}
+72                                                                      \{
+73     \textcolor{keywordflow}{if} (h.size() != h\_.size()) \{
+74         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Histogram using to set is not the same as inherent, aborting
+      "});
+75     \} \textcolor{keywordflow}{else} \{
+76         h\_ = (std::deque < double >)h;
+77     \}
+78 \}
+\end{DoxyCode}
+\hypertarget{classdynamic__one__dim__histogram_af03dc61101ae9d08b6f3474af04fbeeb}{\index{dynamic\-\_\-one\-\_\-dim\-\_\-histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}!trim\-\_\-edges@{trim\-\_\-edges}}
+\index{trim\-\_\-edges@{trim\-\_\-edges}!dynamic_one_dim_histogram@{dynamic\-\_\-one\-\_\-dim\-\_\-histogram}}
+\subsubsection[{trim\-\_\-edges}]{\setlength{\rightskip}{0pt plus 5cm}void dynamic\-\_\-one\-\_\-dim\-\_\-histogram\-::trim\-\_\-edges (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classdynamic__one__dim__histogram_af03dc61101ae9d08b6f3474af04fbeeb}
+
+
+Trim the size of the histogram to remove leading and trailing zeros. 
+
+
+
+Definition at line 7 of file histogram.\-cpp.
+
+
+\begin{DoxyCode}
+7                                             \{
+8     \textcolor{keywordtype}{long} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} leading = 0, trailing = 0;
+9     \textcolor{keywordflow}{for} (std::deque < double >::iterator it = h\_.begin(); it != h\_.end(); ++it) \{
+10         \textcolor{keywordflow}{if} (*it <= 0) \{
+11             leading++;
+12         \} \textcolor{keywordflow}{else} \{
+13             \textcolor{keywordflow}{break};
+14         \}
+15     \}
+16     \textcolor{keywordflow}{for} (std::deque < double >::reverse\_iterator rit = h\_.rbegin(); rit != h\_.rend(); ++rit) \{
+17         \textcolor{keywordflow}{if} (*rit <= 0) \{
+18             trailing++;
+19         \} \textcolor{keywordflow}{else} \{
+20             \textcolor{keywordflow}{break};
+21         \}
+22     \}
+23 
+24     \textcolor{keywordflow}{if} (leading + trailing >= h\_.size()) \{
+25         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot trim dynamic\_one\_dim\_histogram because it is empty"});
+26     \}
+27 
+28     nbins\_ -= (leading + trailing);
+29     lb\_ += leading*delta\_;
+30     ub\_ -= trailing*delta\_;
+31 
+32     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < leading; ++i) \{
+33         h\_.pop\_front();
+34     \}
+35     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < trailing; ++i) \{
+36         h\_.pop\_back();
+37     \}
+38 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{histogram_8h}{histogram.\-h}\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{histogram_8cpp}{histogram.\-cpp}\end{DoxyCompactItemize}

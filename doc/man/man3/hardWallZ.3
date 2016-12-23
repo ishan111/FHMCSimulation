@@ -1,0 +1,177 @@
+.TH "hardWallZ" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+hardWallZ \- 
+.PP
+Parallel hard walls in the z-direction\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <barrier\&.h>\fP
+.PP
+Inherits \fBbarrier\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "\fB~hardWallZ\fP ()"
+.br
+.ti -1c
+.RI "\fBhardWallZ\fP (const double lb, const double ub, const double sigma, const int M=1)"
+.br
+.RI "\fIInstantiate a hard wall with boundaries in the +/- z direction\&. \fP"
+.ti -1c
+.RI "bool \fBinside\fP (const \fBatom\fP *a1, const std::vector< double > &box)"
+.br
+.RI "\fIReturn whether or not a point falls between the walls (subject to a hard-sphere exclusion radius)\&. \fP"
+.ti -1c
+.RI "double \fBenergy\fP (const \fBatom\fP *a1, const std::vector< double > &box)"
+.br
+.RI "\fIInteraction energy with the wall\&. \fP"
+.in -1c
+.SS "Additional Inherited Members"
+.SH "Detailed Description"
+.PP 
+Parallel hard walls in the z-direction\&. 
+.PP
+Definition at line 29 of file barrier\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "hardWallZ::~hardWallZ ()\fC [inline]\fP"
+
+.PP
+Definition at line 31 of file barrier\&.h\&.
+.PP
+.nf
+31 {};
+.fi
+.SS "hardWallZ::hardWallZ (const doublelb, const doubleub, const doublesigma, const intM = \fC1\fP)"
+
+.PP
+Instantiate a hard wall with boundaries in the +/- z direction\&. Expanded ensembles scale the range of interaction via the sigma parameter\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIlb\fP z-Position of the lower wall 
+.br
+\fIub\fP z-Position of the upper wall 
+.br
+\fIsigma\fP Hard-sphere diameter the species this wall interacts with can approach within 
+.br
+\fIM\fP Total number of expanded ensemble states possible for this atom type (defaults to 1) 
+.RE
+.PP
+
+.PP
+Definition at line 384 of file barrier\&.cpp\&.
+.PP
+References barrier::M_\&.
+.PP
+.nf
+384                                                                                        {
+385     if (lb >= ub) {
+386         throw customException ("hardWallZ must have lower bound < upper bound");
+387     }
+388     if (sigma < 0) {
+389         throw customException ("hardWallZ must have sigma >= 0");
+390     }
+391     if (M < 1) {
+392         throw customException ("hardWallZ must have M >= 1");
+393     }
+394 
+395     sigma_ = sigma;
+396     ub_ = ub;
+397     lb_ = lb;
+398     M_ = M;
+399 }
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "double hardWallZ::energy (const \fBatom\fP *a1, const std::vector< double > &box)\fC [virtual]\fP"
+
+.PP
+Interaction energy with the wall\&. Sigma is scaled linearly with expanded ensemble state\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIa1\fP Pointer to atom with position to test - this does NOT need to be in the simulation box a priori 
+.br
+\fIbox\fP Simulation box 
+.RE
+.PP
+
+.PP
+Implements \fBbarrier\fP\&.
+.PP
+Definition at line 432 of file barrier\&.cpp\&.
+.PP
+References barrier::M_, atom::mState, NUM_INFINITY, pbc(), and atom::pos\&.
+.PP
+.nf
+432                                                                          {
+433     std::vector < double > p = a1->pos;
+434     pbc (p, box);
+435 
+436     double sig = sigma_;
+437     if (a1->mState > 0) {
+438         sig = (sigma_/M_)*a1->mState;
+439     }
+440     if (a1->mState < 0 || a1->mState > M_-1) {
+441         throw customException ("mState out of bounds for hardWallZ");
+442     }
+443 
+444     if (p[2] >= ub_ - sig/2\&.0 || p[2] <= lb_ + sig/2\&.0) {
+445         return NUM_INFINITY;
+446     } else {
+447         return 0\&.0;
+448     }
+449 }
+.fi
+.SS "bool hardWallZ::inside (const \fBatom\fP *a1, const std::vector< double > &box)\fC [virtual]\fP"
+
+.PP
+Return whether or not a point falls between the walls (subject to a hard-sphere exclusion radius)\&. Sigma is scaled linearly with expanded ensemble state\&.
+.PP
+\fBParameters:\fP
+.RS 4
+\fIa1\fP Pointer to atom with position to test - this does NOT need to be in the simulation box a priori 
+.br
+\fIbox\fP Simulation box 
+.RE
+.PP
+
+.PP
+Implements \fBbarrier\fP\&.
+.PP
+Definition at line 407 of file barrier\&.cpp\&.
+.PP
+References barrier::M_, atom::mState, pbc(), and atom::pos\&.
+.PP
+.nf
+407                                                                        {
+408     std::vector < double > p = a1->pos;
+409     pbc (p, box);
+410 
+411     double sig = sigma_;
+412     if (a1->mState > 0) {
+413         sig = (sigma_/M_)*a1->mState;
+414     }
+415     if (a1->mState < 0 || a1->mState > M_-1) {
+416         throw customException ("mState out of bounds for hardWallZ");
+417     }
+418 
+419     if (p[2] >= ub_ - sig/2\&.0 || p[2] <= lb_ + sig/2\&.0) {
+420         return false;
+421     } else {
+422         return true;
+423     }
+424 }
+.fi
+
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

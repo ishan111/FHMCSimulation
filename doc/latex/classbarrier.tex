@@ -1,0 +1,105 @@
+\hypertarget{classbarrier}{\section{barrier Class Reference}
+\label{classbarrier}\index{barrier@{barrier}}
+}
+
+
+Virtual base class for barriers.  
+
+
+
+
+{\ttfamily \#include $<$barrier.\-h$>$}
+
+Inheritance diagram for barrier\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classbarrier}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \hyperlink{classbarrier_a54d34bd0e56a4af26ab34975e9569ac7}{$\sim$barrier} ()
+\item 
+virtual bool \hyperlink{classbarrier_a948ebdcfac501cb75d1a1f045a7d9125}{inside} (const \hyperlink{classatom}{atom} $\ast$a1, const std\-::vector$<$ double $>$ \&box)=0
+\item 
+virtual double \hyperlink{classbarrier_a2d308cfd5709aa479d0b37733f1a0db7}{energy} (const \hyperlink{classatom}{atom} $\ast$a1, const std\-::vector$<$ double $>$ \&box)=0
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\-\_\-}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Virtual base class for barriers. 
+
+It is intended that there should be a separate barrier class defined for each species type. 
+
+Definition at line 16 of file barrier.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classbarrier_a54d34bd0e56a4af26ab34975e9569ac7}{\index{barrier@{barrier}!$\sim$barrier@{$\sim$barrier}}
+\index{$\sim$barrier@{$\sim$barrier}!barrier@{barrier}}
+\subsubsection[{$\sim$barrier}]{\setlength{\rightskip}{0pt plus 5cm}virtual barrier\-::$\sim$barrier (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}}\label{classbarrier_a54d34bd0e56a4af26ab34975e9569ac7}
+
+
+Definition at line 18 of file barrier.\-h.
+
+
+\begin{DoxyCode}
+18 \{;\}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classbarrier_a2d308cfd5709aa479d0b37733f1a0db7}{\index{barrier@{barrier}!energy@{energy}}
+\index{energy@{energy}!barrier@{barrier}}
+\subsubsection[{energy}]{\setlength{\rightskip}{0pt plus 5cm}virtual double barrier\-::energy (
+\begin{DoxyParamCaption}
+\item[{const {\bf atom} $\ast$}]{a1, }
+\item[{const std\-::vector$<$ double $>$ \&}]{box}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classbarrier_a2d308cfd5709aa479d0b37733f1a0db7}
+
+
+Implemented in \hyperlink{classright_triangle_x_z_a0a15ebff4238aeb15cad052cf9904f43}{right\-Triangle\-X\-Z}, \hyperlink{classcylinder_z_a0d1ec094ac9bf23b74e6f03f09477217}{cylinder\-Z}, \hyperlink{classsquare_well_wall_z_a77c366eb9c10f6a68e3f633e9b64dc47}{square\-Well\-Wall\-Z}, and \hyperlink{classhard_wall_z_ae1c05d46be694e7b071969f9511e4142}{hard\-Wall\-Z}.
+
+\hypertarget{classbarrier_a948ebdcfac501cb75d1a1f045a7d9125}{\index{barrier@{barrier}!inside@{inside}}
+\index{inside@{inside}!barrier@{barrier}}
+\subsubsection[{inside}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool barrier\-::inside (
+\begin{DoxyParamCaption}
+\item[{const {\bf atom} $\ast$}]{a1, }
+\item[{const std\-::vector$<$ double $>$ \&}]{box}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classbarrier_a948ebdcfac501cb75d1a1f045a7d9125}
+
+
+Implemented in \hyperlink{classright_triangle_x_z_a574bcc38639a6d599aaa38fd9085ff63}{right\-Triangle\-X\-Z}, \hyperlink{classcylinder_z_aff84684096c1d04d73ee894b499a0a2f}{cylinder\-Z}, \hyperlink{classsquare_well_wall_z_a10fc7a357ac1ec6bb0cd1d1e95570195}{square\-Well\-Wall\-Z}, and \hyperlink{classhard_wall_z_ac4c72aa32e0cdfe40c6765642ffb78d7}{hard\-Wall\-Z}.
+
+
+
+\subsection{Field Documentation}
+\hypertarget{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{\index{barrier@{barrier}!M\-\_\-@{M\-\_\-}}
+\index{M\-\_\-@{M\-\_\-}!barrier@{barrier}}
+\subsubsection[{M\-\_\-}]{\setlength{\rightskip}{0pt plus 5cm}int barrier\-::\-M\-\_\-\hspace{0.3cm}{\ttfamily [protected]}}}\label{classbarrier_a274cf283ffc97c22ffa9a4258369c400}
+
+
+Definition at line 23 of file barrier.\-h.
+
+
+
+Referenced by cylinder\-Z\-::cylinder\-Z(), hard\-Wall\-Z\-::energy(), square\-Well\-Wall\-Z\-::energy(), cylinder\-Z\-::energy(), right\-Triangle\-X\-Z\-::energy(), hard\-Wall\-Z\-::hard\-Wall\-Z(), hard\-Wall\-Z\-::inside(), square\-Well\-Wall\-Z\-::inside(), cylinder\-Z\-::inside(), right\-Triangle\-X\-Z\-::right\-Triangle\-X\-Z(), and square\-Well\-Wall\-Z\-::square\-Well\-Wall\-Z().
+
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{barrier_8h}{barrier.\-h}\end{DoxyCompactItemize}

@@ -1,0 +1,261 @@
+\hypertarget{classcylinder_z}{\section{cylinder\-Z Class Reference}
+\label{classcylinder_z}\index{cylinder\-Z@{cylinder\-Z}}
+}
+
+
+Cylinder along z = 0 axis at a given (x,y) coordinate.  
+
+
+
+
+{\ttfamily \#include $<$barrier.\-h$>$}
+
+Inheritance diagram for cylinder\-Z\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classcylinder_z}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcylinder_z_a06f3ecc97023c1806d587f93a1c6c565}{$\sim$cylinder\-Z} ()
+\item 
+\hyperlink{classcylinder_z_a6891adbe87a6814239c8a143e996b1b0}{cylinder\-Z} (const double x, const double y, const double radius, const double width, const double sigma, const double eps, const int M=1)
+\begin{DoxyCompactList}\small\item\em Instantiate a cylinderical pore in the z-\/direction. \end{DoxyCompactList}\item 
+bool \hyperlink{classcylinder_z_aff84684096c1d04d73ee894b499a0a2f}{inside} (const \hyperlink{classatom}{atom} $\ast$a1, const std\-::vector$<$ double $>$ \&box)
+\begin{DoxyCompactList}\small\item\em Return whether or not a point falls inside the cylinder (subject to a hard-\/sphere exclusion radius). \end{DoxyCompactList}\item 
+double \hyperlink{classcylinder_z_a0d1ec094ac9bf23b74e6f03f09477217}{energy} (const \hyperlink{classatom}{atom} $\ast$a1, const std\-::vector$<$ double $>$ \&box)
+\begin{DoxyCompactList}\small\item\em Interaction energy with the cylinder. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Cylinder along z = 0 axis at a given (x,y) coordinate. 
+
+Definition at line 63 of file barrier.\-h.
+
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classcylinder_z_a06f3ecc97023c1806d587f93a1c6c565}{\index{cylinder\-Z@{cylinder\-Z}!$\sim$cylinder\-Z@{$\sim$cylinder\-Z}}
+\index{$\sim$cylinder\-Z@{$\sim$cylinder\-Z}!cylinderZ@{cylinder\-Z}}
+\subsubsection[{$\sim$cylinder\-Z}]{\setlength{\rightskip}{0pt plus 5cm}cylinder\-Z\-::$\sim$cylinder\-Z (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classcylinder_z_a06f3ecc97023c1806d587f93a1c6c565}
+
+
+Definition at line 65 of file barrier.\-h.
+
+
+\begin{DoxyCode}
+65 \{\};
+\end{DoxyCode}
+\hypertarget{classcylinder_z_a6891adbe87a6814239c8a143e996b1b0}{\index{cylinder\-Z@{cylinder\-Z}!cylinder\-Z@{cylinder\-Z}}
+\index{cylinder\-Z@{cylinder\-Z}!cylinderZ@{cylinder\-Z}}
+\subsubsection[{cylinder\-Z}]{\setlength{\rightskip}{0pt plus 5cm}cylinder\-Z\-::cylinder\-Z (
+\begin{DoxyParamCaption}
+\item[{const double}]{x, }
+\item[{const double}]{y, }
+\item[{const double}]{radius, }
+\item[{const double}]{width, }
+\item[{const double}]{sigma, }
+\item[{const double}]{eps, }
+\item[{const int}]{M = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)}}\label{classcylinder_z_a6891adbe87a6814239c8a143e996b1b0}
+
+
+Instantiate a cylinderical pore in the z-\/direction. 
+
+Expanded ensembles primarily scale the magnitude of interaction. The repulsive boundary scales with sigma at the boundary, but the attractive cutoff remains fixed relative to the boundary.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em x} & x-\/coordinate of cylinder's center \\
+\hline
+\mbox{\tt in}  & {\em y} & y-\/coordinate of cylinder's center \\
+\hline
+\mbox{\tt in}  & {\em radius} & Radius of cylinder \\
+\hline
+\mbox{\tt in}  & {\em width} & Width of square-\/well-\/like interaction (distance from wall) \\
+\hline
+\mbox{\tt in}  & {\em sigma} & Hard-\/sphere diameter the species this wall interacts with can approach within \\
+\hline
+\mbox{\tt in}  & {\em eps} & Magnitude of the wall interaction (U = -\/eps) \\
+\hline
+\mbox{\tt in}  & {\em M} & Total number of expanded ensemble states possible for this atom type (defaults to 1) \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 462 of file barrier.\-cpp.
+
+
+
+References barrier\-::\-M\-\_\-.
+
+
+\begin{DoxyCode}
+462                                                                                                            
+                                           \{
+463     \textcolor{keywordflow}{if} (radius <= sigma) \{
+464         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ radius <= sigma so practically no particles will
+       fit"});
+465     \}
+466     \textcolor{keywordflow}{if} (sigma < 0) \{
+467         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have sigma >= 0"});
+468     \}
+469     \textcolor{keywordflow}{if} (width < 0) \{
+470         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have range width >= 0"});
+471     \}
+472     \textcolor{keywordflow}{if} (eps < 0) \{
+473         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have eps >= 0"});
+474     \}
+475     \textcolor{keywordflow}{if} (sigma/2.0 >= width) \{
+476         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have sigma/2 < width to have a finite range
+       of interaction"});
+477     \}
+478     \textcolor{keywordflow}{if} (M < 1) \{
+479         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have M >= 1"});
+480     \}
+481 
+482     eps\_ = eps;
+483     sigma\_ = sigma;
+484     width\_ = width;
+485     radius\_ = radius;
+486     \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_} = M;
+487 
+488     center\_.resize(3, 0);
+489     center\_[0] = x;
+490     center\_[1] = y;
+491 \}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classcylinder_z_a0d1ec094ac9bf23b74e6f03f09477217}{\index{cylinder\-Z@{cylinder\-Z}!energy@{energy}}
+\index{energy@{energy}!cylinderZ@{cylinder\-Z}}
+\subsubsection[{energy}]{\setlength{\rightskip}{0pt plus 5cm}double cylinder\-Z\-::energy (
+\begin{DoxyParamCaption}
+\item[{const {\bf atom} $\ast$}]{a1, }
+\item[{const std\-::vector$<$ double $>$ \&}]{box}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classcylinder_z_a0d1ec094ac9bf23b74e6f03f09477217}
+
+
+Interaction energy with the cylinder. 
+
+Sigma and epsilon are scaled linearly with expanded ensemble state.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em a1} & Pointer to atom with position to test -\/ this does N\-O\-T need to be in the simulation box a priori \\
+\hline
+\mbox{\tt in}  & {\em box} & Simulation box \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classbarrier_a2d308cfd5709aa479d0b37733f1a0db7}{barrier}.
+
+
+
+Definition at line 525 of file barrier.\-cpp.
+
+
+
+References barrier\-::\-M\-\_\-, atom\-::m\-State, N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y, pbc\-Dist2(), and atom\-::pos.
+
+
+\begin{DoxyCode}
+525                                                                          \{
+526     center\_[2] = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]; \textcolor{comment}{// same z-plane}
+527     \textcolor{keywordtype}{double} rv2 = \hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2} (a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, center\_, box);
+528     \textcolor{keywordtype}{double} U = 0.0, sig = sigma\_, eps = eps\_;
+529 
+530     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
+531         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+532         eps = (eps\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+533     \}
+534     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
+535         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for cylinderZ"});
+536     \}
+537 
+538     \textcolor{comment}{// return infinity if out of bounds}
+539     \textcolor{keywordtype}{double} rc = radius\_ - sig/2.0, ri = radius\_ - width\_;
+540     \textcolor{keywordflow}{if} (rv2 >= rc*rc) \{
+541         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
+542     \}
+543 
+544     \textcolor{comment}{// interaction with the wall - return infinity if it was out of bounds already}
+545     \textcolor{keywordflow}{if} (rv2 > ri*ri) \{
+546         U += -eps;
+547     \}
+548 
+549     \textcolor{keywordflow}{return} U;
+550 \}
+\end{DoxyCode}
+\hypertarget{classcylinder_z_aff84684096c1d04d73ee894b499a0a2f}{\index{cylinder\-Z@{cylinder\-Z}!inside@{inside}}
+\index{inside@{inside}!cylinderZ@{cylinder\-Z}}
+\subsubsection[{inside}]{\setlength{\rightskip}{0pt plus 5cm}bool cylinder\-Z\-::inside (
+\begin{DoxyParamCaption}
+\item[{const {\bf atom} $\ast$}]{a1, }
+\item[{const std\-::vector$<$ double $>$ \&}]{box}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classcylinder_z_aff84684096c1d04d73ee894b499a0a2f}
+
+
+Return whether or not a point falls inside the cylinder (subject to a hard-\/sphere exclusion radius). 
+
+Sigma is scaled linearly with expanded ensemble state.
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em a1} & Pointer to atom with position to test -\/ this does N\-O\-T need to be in the simulation box a priori \\
+\hline
+\mbox{\tt in}  & {\em box} & Simulation box \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classbarrier_a948ebdcfac501cb75d1a1f045a7d9125}{barrier}.
+
+
+
+Definition at line 499 of file barrier.\-cpp.
+
+
+
+References barrier\-::\-M\-\_\-, atom\-::m\-State, pbc\-Dist2(), and atom\-::pos.
+
+
+\begin{DoxyCode}
+499                                                                        \{
+500     center\_[2] = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]; \textcolor{comment}{// same z-plane}
+501     \textcolor{keywordtype}{double} rv2 = \hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2} (a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, center\_, box);
+502 
+503     \textcolor{keywordtype}{double} sig = sigma\_;
+504     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
+505         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+506     \}
+507     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
+508         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for cylinderZ"});
+509     \}
+510 
+511     \textcolor{keywordtype}{double} rc = radius\_ - sig/2.0;
+512     \textcolor{keywordflow}{if} (rv2 >= rc*rc) \{
+513         \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+514     \} \textcolor{keywordflow}{else} \{
+515         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+516     \}
+517 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{barrier_8h}{barrier.\-h}\item 
+/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/\hyperlink{barrier_8cpp}{barrier.\-cpp}\end{DoxyCompactItemize}

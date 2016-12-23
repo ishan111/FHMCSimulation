@@ -1,0 +1,928 @@
+\hypertarget{input_8cpp}{\section{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/input.cpp File Reference}
+\label{input_8cpp}\index{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/input.\-cpp@{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/input.\-cpp}}
+}
+{\ttfamily \#include \char`\"{}input.\-h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{input_8cpp_aa89df4b08049cfd9bdd875d78591ba5b}{check\-Bounds} (\hyperlink{classsim_system}{sim\-System} \&sys)
+\begin{DoxyCompactList}\small\item\em Check bounds on system variables such as rcut $<$ L/2, etc. \end{DoxyCompactList}\item 
+\hyperlink{classsim_system}{sim\-System} \hyperlink{input_8cpp_a904001bba4e2facc93d1df9d214ed86e}{initialize} (const std\-::string filename, \hyperlink{classmoves}{moves} $\ast$used\-Moves\-Eq, \hyperlink{classmoves}{moves} $\ast$used\-Moves\-Pr)
+\begin{DoxyCompactList}\small\item\em Parse a json input file and initialize system object accordingly. \end{DoxyCompactList}\item 
+void \hyperlink{input_8cpp_afcd470506b012754a93b2012b65e3fc4}{set\-Pair\-Potentials} (\hyperlink{classsim_system}{sim\-System} \&sys, const rapidjson\-::\-Document \&doc)
+\item 
+void \hyperlink{input_8cpp_ab8c0953ceb099a5c8a275750d9b2cfe5}{setup} (\hyperlink{classsim_system}{sim\-System} \&sys, const std\-::string filename)
+\begin{DoxyCompactList}\small\item\em Setup a system's initial configuration as necessary. \end{DoxyCompactList}\item 
+void \hyperlink{input_8cpp_a0b96c0c9384a55ad9227194045ae5f24}{initialize\-System\-Barriers} (\hyperlink{classsim_system}{sim\-System} \&sys, const rapidjson\-::\-Document \&doc)
+\begin{DoxyCompactList}\small\item\em Initialize the barriers in a system by parsing the input document. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{input_8cpp_aa89df4b08049cfd9bdd875d78591ba5b}{\index{input.\-cpp@{input.\-cpp}!check\-Bounds@{check\-Bounds}}
+\index{check\-Bounds@{check\-Bounds}!input.cpp@{input.\-cpp}}
+\subsubsection[{check\-Bounds}]{\setlength{\rightskip}{0pt plus 5cm}void check\-Bounds (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\-System} \&}]{sys}
+\end{DoxyParamCaption}
+)}}\label{input_8cpp_aa89df4b08049cfd9bdd875d78591ba5b}
+
+
+Check bounds on system variables such as rcut $<$ L/2, etc. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em sys} & System to check bounds on \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 8 of file input.\-cpp.
+
+
+
+References sim\-System\-::box(), sim\-System\-::n\-Species(), sim\-System\-::potential\-Is\-Set(), sim\-System\-::ppot, and S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E.
+
+
+
+Referenced by initialize().
+
+
+\begin{DoxyCode}
+8                                   \{
+9     \textcolor{comment}{// check all pair potentials have been set and all r\_cut < L/2}
+10     \textcolor{keywordtype}{double} minL = sys.\hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}()[0];
+11     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 1; i < 3; ++i) \{
+12         minL = std::min(minL, sys.\hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}()[i]);
+13     \}
+14     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+15         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++j) \{
+16             \textcolor{keywordflow}{if} (!sys.\hyperlink{classsim_system_a40af191fae6091e26413ee06ae188ae9}{potentialIsSet}(i, j)) \{
+17                 std::cerr << \textcolor{stringliteral}{"Not all pair potentials are set"} << std::endl;
+18                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+19             \}
+20             \textcolor{keywordflow}{if} (!(sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[i][j]->rcut() < minL/2.0)) \{
+21                 std::cerr << \textcolor{stringliteral}{"Pair potential r\_cut for species "} << i << \textcolor{stringliteral}{", "} << j << \textcolor{stringliteral}{" is > L/2"} << 
+      std::endl;
+22                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+23             \}
+24         \}
+25     \}
+26 \}
+\end{DoxyCode}
+\hypertarget{input_8cpp_a904001bba4e2facc93d1df9d214ed86e}{\index{input.\-cpp@{input.\-cpp}!initialize@{initialize}}
+\index{initialize@{initialize}!input.cpp@{input.\-cpp}}
+\subsubsection[{initialize}]{\setlength{\rightskip}{0pt plus 5cm}{\bf sim\-System} initialize (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{filename, }
+\item[{{\bf moves} $\ast$}]{used\-Moves\-Eq, }
+\item[{{\bf moves} $\ast$}]{used\-Moves\-Pr}
+\end{DoxyParamCaption}
+)}}\label{input_8cpp_a904001bba4e2facc93d1df9d214ed86e}
+
+
+Parse a json input file and initialize system object accordingly. 
+
+\mbox{[}in\mbox{]} filename Input J\-S\-O\-N document's filename  \mbox{[}in\mbox{]} used\-Moves\-Eq Pointer to move object that will be used during \char`\"{}equilibration\char`\"{} (W\-L)  \mbox{[}in\mbox{]} used\-Moves\-Pr Pointer to move object that will be used during \char`\"{}production\char`\"{} (T\-M\-M\-C) 
+
+Definition at line 35 of file input.\-cpp.
+
+
+
+References moves\-::add\-Delete(), moves\-::add\-Insert(), sim\-System\-::add\-K\-E\-Correction(), moves\-::add\-Swap(), moves\-::add\-Translate(), sim\-System\-::box(), check\-Bounds(), get\-Time\-Stamp(), sim\-System\-::get\-Total\-M(), initialize\-System\-Barriers(), sim\-System\-::ln\-F\-\_\-end, sim\-System\-::ln\-F\-\_\-start, sim\-System\-::n\-Crossover\-Visits, sim\-System\-::n\-Species(), sim\-System\-::restart\-From\-T\-M\-M\-C, sim\-System\-::restart\-From\-T\-M\-M\-C\-File, sim\-System\-::restart\-From\-W\-A\-L\-A, sim\-System\-::restart\-From\-W\-A\-L\-A\-File, R\-N\-G\-\_\-\-S\-E\-E\-D, moves\-::set\-M(), set\-Pair\-Potentials(), sim\-System\-::set\-Tot\-N\-Bounds(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, sim\-System\-::tmmc\-Sweep\-Size, sim\-System\-::toggle\-K\-E(), sim\-System\-::total\-T\-M\-M\-C\-Sweeps, sim\-System\-::wala\-\_\-g, sim\-System\-::wala\-\_\-s, and sim\-System\-::wl\-Sweep\-Size.
+
+
+\begin{DoxyCode}
+35                                                                                         \{
+36 
+37     \textcolor{comment}{// Parse input JSON file}
+38     FILE* fp = fopen(filename.c\_str(), \textcolor{stringliteral}{"r"});
+39     \textcolor{keywordtype}{char} readBuffer[65536];
+40     rapidjson::FileReadStream is(fp, readBuffer, \textcolor{keyword}{sizeof}(readBuffer));
+41     rapidjson::Document doc;
+42     doc.ParseStream(is);
+43     fclose(fp);
+44     std::cout << \textcolor{stringliteral}{"Parsed "} << filename << \textcolor{stringliteral}{" at "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+45 
+46     \textcolor{comment}{// Assert that this is a JSON document}
+47     assert(doc.IsObject());
+48 
+49     \textcolor{comment}{// Check each member exists and is in the correct format}
+50     assert(doc.HasMember(\textcolor{stringliteral}{"num\_species"}));
+51     assert(doc[\textcolor{stringliteral}{"num\_species"}].IsInt());
+52     assert(doc.HasMember(\textcolor{stringliteral}{"beta"}));
+53     assert(doc[\textcolor{stringliteral}{"beta"}].IsNumber());
+54 
+55     assert(doc.HasMember(\textcolor{stringliteral}{"box"}));
+56     assert(doc[\textcolor{stringliteral}{"box"}].IsArray());
+57     assert(doc[\textcolor{stringliteral}{"box"}].Size() == 3);
+58     std::vector < double > sysBox (3, 0);
+59     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"box"}].Size(); ++i) \{
+60         assert(doc[\textcolor{stringliteral}{"box"}][i].IsNumber());
+61         sysBox[i] = doc[\textcolor{stringliteral}{"box"}][i].GetDouble();
+62     \}
+63 
+64     \textcolor{keywordtype}{double} duh = 10.0;
+65     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"delta\_u\_hist"})) \{
+66         assert(doc[\textcolor{stringliteral}{"delta\_u\_hist"}].IsNumber());
+67         duh = doc[\textcolor{stringliteral}{"delta\_u\_hist"}].GetDouble();
+68     \}
+69 
+70     \textcolor{keywordtype}{int} max\_order = 2;
+71     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"max\_order"})) \{
+72         assert(doc[\textcolor{stringliteral}{"max\_order"}].IsNumber());
+73         max\_order = doc[\textcolor{stringliteral}{"max\_order"}].GetInt();
+74     \}
+75 
+76     \textcolor{keywordtype}{bool} use\_ke = \textcolor{keyword}{false};
+77     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"use\_ke"})) \{
+78         assert(doc[\textcolor{stringliteral}{"use\_ke"}].IsBool());
+79         use\_ke = doc[\textcolor{stringliteral}{"use\_ke"}].GetBool();
+80     \}
+81 
+82     assert(doc.HasMember(\textcolor{stringliteral}{"mu"}));
+83     assert(doc[\textcolor{stringliteral}{"mu"}].IsArray());
+84     assert(doc[\textcolor{stringliteral}{"mu"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
+85     std::vector < double > sysMu (doc[\textcolor{stringliteral}{"mu"}].Size(), 0);
+86     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"mu"}].Size(); ++i) \{
+87         assert(doc[\textcolor{stringliteral}{"mu"}][i].IsNumber());
+88         sysMu[i] = doc[\textcolor{stringliteral}{"mu"}][i].GetDouble();
+89     \}
+90 
+91     assert(doc.HasMember(\textcolor{stringliteral}{"seed"}));
+92     assert(doc[\textcolor{stringliteral}{"seed"}].IsInt());
+93     \hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED} = doc[\textcolor{stringliteral}{"seed"}].GetInt();
+94 
+95     assert(doc.HasMember(\textcolor{stringliteral}{"max\_N"}));
+96     assert(doc[\textcolor{stringliteral}{"max\_N"}].IsArray());
+97     assert(doc[\textcolor{stringliteral}{"max\_N"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
+98     std::vector < int > sysMax (doc[\textcolor{stringliteral}{"max\_N"}].Size(), 0);
+99     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"max\_N"}].Size(); ++i) \{
+100         assert(doc[\textcolor{stringliteral}{"max\_N"}][i].IsInt());
+101         sysMax[i] = doc[\textcolor{stringliteral}{"max\_N"}][i].GetInt();
+102     \}
+103 
+104     assert(doc.HasMember(\textcolor{stringliteral}{"min\_N"}));
+105     assert(doc[\textcolor{stringliteral}{"min\_N"}].IsArray());
+106     assert(doc[\textcolor{stringliteral}{"min\_N"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
+107     std::vector < int > sysMin (doc[\textcolor{stringliteral}{"min\_N"}].Size(), 0);
+108     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"min\_N"}].Size(); ++i) \{
+109         assert(doc[\textcolor{stringliteral}{"min\_N"}][i].IsInt());
+110         sysMin[i] = doc[\textcolor{stringliteral}{"min\_N"}][i].GetInt();
+111     \}
+112 
+113     \textcolor{keywordtype}{int} Mtot = 1;
+114     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"num\_expanded\_states"})) \{
+115         assert(doc[\textcolor{stringliteral}{"num\_expanded\_states"}].IsInt());
+116         Mtot = doc[\textcolor{stringliteral}{"num\_expanded\_states"}].GetInt();
+117     \}
+118 
+119     \hyperlink{classsim_system}{simSystem} sys (doc[\textcolor{stringliteral}{"num\_species"}].GetInt(), doc[\textcolor{stringliteral}{"beta"}].GetDouble(), sysBox, sysMu, sysMax, 
+      sysMin, Mtot, duh, max\_order);
+120     \textcolor{keywordflow}{if} (use\_ke) \{
+121         sys.toggleKE();
+122         \textcolor{keywordflow}{if} (sys.addKECorrection() == \textcolor{keyword}{false}) \{
+123             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to set KE flag"});
+124         \}
+125     \}
+126 
+127     std::vector < int > sysWindow;
+128     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"window"})) \{
+129         assert(doc[\textcolor{stringliteral}{"window"}].IsArray());
+130         assert(doc[\textcolor{stringliteral}{"window"}].Size() == 2);
+131         sysWindow.resize(2, 0);
+132         sysWindow[0] = doc[\textcolor{stringliteral}{"window"}][0].GetInt();
+133         sysWindow[1] = doc[\textcolor{stringliteral}{"window"}][1].GetInt();
+134     \}
+135 
+136     \textcolor{keywordflow}{if} (sysWindow.begin() != sysWindow.end()) \{
+137         sys.setTotNBounds(sysWindow);
+138     \}
+139 
+140     assert(doc.HasMember(\textcolor{stringliteral}{"tmmc\_sweep\_size"}));
+141     assert(doc[\textcolor{stringliteral}{"tmmc\_sweep\_size"}].IsNumber());
+142     \textcolor{keywordtype}{double} tmpT = doc[\textcolor{stringliteral}{"tmmc\_sweep\_size"}].GetDouble(); \textcolor{comment}{// possibly in scientific notation}
+143     sys.tmmcSweepSize = tmpT; \textcolor{comment}{// convert}
+144 
+145     assert(doc.HasMember(\textcolor{stringliteral}{"total\_tmmc\_sweeps"}));
+146     assert(doc[\textcolor{stringliteral}{"total\_tmmc\_sweeps"}].IsNumber());
+147     \textcolor{keywordtype}{double} tmpS = doc[\textcolor{stringliteral}{"total\_tmmc\_sweeps"}].GetDouble(); \textcolor{comment}{// possibly in scientific notation}
+148     sys.totalTMMCSweeps = tmpS; \textcolor{comment}{// convert}
+149 
+150     assert(doc.HasMember(\textcolor{stringliteral}{"wala\_sweep\_size"}));
+151     assert(doc[\textcolor{stringliteral}{"wala\_sweep\_size"}].IsNumber());
+152     \textcolor{keywordtype}{double} tmpW = doc[\textcolor{stringliteral}{"wala\_sweep\_size"}].GetDouble(); \textcolor{comment}{// possibly in scientific notation}
+153     sys.wlSweepSize = tmpW; \textcolor{comment}{// convert}
+154 
+155     assert(doc.HasMember(\textcolor{stringliteral}{"wala\_g"}));
+156     assert(doc[\textcolor{stringliteral}{"wala\_g"}].IsNumber());
+157     sys.wala\_g = doc[\textcolor{stringliteral}{"wala\_g"}].GetDouble();
+158 
+159     assert(doc.HasMember(\textcolor{stringliteral}{"wala\_s"}));
+160     assert(doc[\textcolor{stringliteral}{"wala\_s"}].IsNumber());
+161     sys.wala\_s = doc[\textcolor{stringliteral}{"wala\_s"}].GetDouble();
+162 
+163     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"lnF\_start"})) \{
+164         assert(doc[\textcolor{stringliteral}{"lnF\_start"}].IsNumber());
+165         sys.lnF\_start = doc[\textcolor{stringliteral}{"lnF\_start"}].GetDouble(); \textcolor{comment}{// bounds are checked later}
+166     \}
+167 
+168     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"lnF\_end"})) \{
+169         assert(doc[\textcolor{stringliteral}{"lnF\_end"}].IsNumber());
+170         sys.lnF\_end = doc[\textcolor{stringliteral}{"lnF\_end"}].GetDouble();
+171         \textcolor{keywordflow}{if} (sys.lnF\_end >= 1.0) \{
+172             std::cerr << \textcolor{stringliteral}{"Terminal lnF factor for Wang-Landau must be < 1"} << std::endl;
+173             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+174         \}
+175     \}
+176     \textcolor{keywordflow}{if} (sys.lnF\_end >= sys.lnF\_start) \{
+177         std::cerr << \textcolor{stringliteral}{"lnF\_end must be < lnF\_start for Wang-Landau to proceed forward"} << std::endl;
+178         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+179     \}
+180 
+181     sys.restartFromWALA = \textcolor{keyword}{false};
+182     sys.restartFromWALAFile = \textcolor{stringliteral}{""};
+183     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"restart\_from\_wala\_lnPI"})) \{
+184         assert(doc[\textcolor{stringliteral}{"restart\_from\_wala\_lnPI"}].IsString());
+185         sys.restartFromWALAFile = doc[\textcolor{stringliteral}{"restart\_from\_wala\_lnPI"}].GetString();
+186         \textcolor{keywordflow}{if} (sys.restartFromWALAFile != \textcolor{stringliteral}{""}) \{
+187             sys.restartFromWALA = \textcolor{keyword}{true};
+188         \}
+189     \}
+190 
+191     \textcolor{comment}{// restarting from TMMC overrides WL by skipping that portion altogether}
+192     sys.restartFromTMMC = \textcolor{keyword}{false};
+193     sys.restartFromTMMCFile = \textcolor{stringliteral}{""};
+194     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"restart\_from\_tmmc\_C"})) \{
+195         assert(doc[\textcolor{stringliteral}{"restart\_from\_tmmc\_C"}].IsString());
+196         sys.restartFromTMMCFile = doc[\textcolor{stringliteral}{"restart\_from\_tmmc\_C"}].GetString();
+197         \textcolor{keywordflow}{if} (sys.restartFromTMMCFile != \textcolor{stringliteral}{""}) \{
+198             sys.restartFromTMMC = \textcolor{keyword}{true};
+199         \}
+200     \}
+201 
+202     \textcolor{comment}{// number of times the TMMC C matrix has to be traversed during the WALA --> TMMC crossover}
+203     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"num\_crossover\_visits"})) \{
+204         assert(doc[\textcolor{stringliteral}{"num\_crossover\_visits"}].IsNumber());
+205         sys.nCrossoverVisits = doc[\textcolor{stringliteral}{"num\_crossover\_visits"}].GetDouble(); \textcolor{comment}{// convert}
+206         \textcolor{keywordflow}{if} (sys.nCrossoverVisits < 1) \{
+207             std::cerr << \textcolor{stringliteral}{"Must allow the collection matrix to be traversed at least once in the crossover
+       from Wang-Landau to TMMC"} << std::endl;
+208             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+209         \}
+210     \}
+211 
+212     std::vector < double > ref (sys.nSpecies(), 0);
+213     std::vector < std::vector < double > > probEqSwap (sys.nSpecies(), ref), probPrSwap (sys.nSpecies(), 
+      ref);
+214     std::vector < double > probPrInsDel (sys.nSpecies(), 0), probPrDisp (sys.nSpecies(), 0);
+215     std::vector < double > probEqInsDel (sys.nSpecies(), 0), probEqDisp (sys.nSpecies(), 0);
+216     std::vector < double > maxPrD (sys.nSpecies(), 0), maxEqD (sys.nSpecies(), 0);
+217     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+218         std::string dummy = \textcolor{stringliteral}{"prob\_pr\_ins\_del\_"} + std::to\_string(i+1);
+219         assert(doc.HasMember(dummy.c\_str()));
+220         assert(doc[dummy.c\_str()].IsNumber());
+221         probPrInsDel[i] = doc[dummy.c\_str()].GetDouble();
+222     \}
+223     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+224         std::string dummy = \textcolor{stringliteral}{"prob\_pr\_displace\_"} + std::to\_string(i+1);
+225         assert(doc.HasMember(dummy.c\_str()));
+226         assert(doc[dummy.c\_str()].IsNumber());
+227         probPrDisp[i] = doc[dummy.c\_str()].GetDouble();
+228         dummy = \textcolor{stringliteral}{"max\_pr\_displacement\_"} + std::to\_string(i+1);
+229         assert(doc.HasMember(dummy.c\_str()));
+230         assert(doc[dummy.c\_str()].IsNumber());
+231         maxPrD[i] = doc[dummy.c\_str()].GetDouble();
+232     \}
+233     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+234         std::string dummy = \textcolor{stringliteral}{"prob\_eq\_ins\_del\_"} + std::to\_string(i+1);
+235         assert(doc.HasMember(dummy.c\_str()));
+236         assert(doc[dummy.c\_str()].IsNumber());
+237         probEqInsDel[i] = doc[dummy.c\_str()].GetDouble();
+238     \}
+239     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+240         std::string dummy = \textcolor{stringliteral}{"prob\_eq\_displace\_"} + std::to\_string(i+1);
+241         assert(doc.HasMember(dummy.c\_str()));
+242         assert(doc[dummy.c\_str()].IsNumber());
+243         probEqDisp[i] = doc[dummy.c\_str()].GetDouble();
+244         dummy = \textcolor{stringliteral}{"max\_eq\_displacement\_"} + std::to\_string(i+1);
+245         assert(doc.HasMember(dummy.c\_str()));
+246         assert(doc[dummy.c\_str()].IsNumber());
+247         maxEqD[i] = doc[dummy.c\_str()].GetDouble();
+248     \}
+249     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+250         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i+1; j < sys.nSpecies(); ++j) \{
+251             std::string name1 = \textcolor{stringliteral}{"prob\_pr\_swap\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(j+1);
+252             std::string name2 = \textcolor{stringliteral}{"prob\_pr\_swap\_"}+std::to\_string(j+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(i+1);
+253             std::string moveName = \textcolor{stringliteral}{""};
+254             \textcolor{keywordtype}{bool} foundIJ = \textcolor{keyword}{false};
+255             \textcolor{keywordflow}{if} (doc.HasMember(name1.c\_str())) \{
+256                 moveName = name1;
+257                 foundIJ = \textcolor{keyword}{true};
+258             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && !foundIJ) \{
+259                 moveName = name2;
+260                 foundIJ = \textcolor{keyword}{true};
+261             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && foundIJ) \{
+262                 std::cerr << \textcolor{stringliteral}{"Input file doubly specifies production swap move probability for species pair
+       ("}+std::to\_string(i+1)+\textcolor{stringliteral}{", "}+std::to\_string(j+1)+\textcolor{stringliteral}{")"} << std::endl;
+263                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+264             \} \textcolor{keywordflow}{else} \{
+265                 std::cerr << \textcolor{stringliteral}{"Input file does not specify production swap move probability for species pair
+       ("}+std::to\_string(i+1)+\textcolor{stringliteral}{", "}+std::to\_string(j+1)+\textcolor{stringliteral}{")"} << std::endl;
+266                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+267             \}
+268             assert(doc[moveName.c\_str()].IsNumber());
+269             probPrSwap[i][j] = doc[moveName.c\_str()].GetDouble();
+270             probPrSwap[j][i] = doc[moveName.c\_str()].GetDouble();
+271         \}
+272     \}
+273 
+274     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+275         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i+1; j < sys.nSpecies(); ++j) \{
+276             std::string name1 = \textcolor{stringliteral}{"prob\_eq\_swap\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(j+1);
+277             std::string name2 = \textcolor{stringliteral}{"prob\_eq\_swap\_"}+std::to\_string(j+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(i+1);
+278             std::string moveName = \textcolor{stringliteral}{""};
+279             \textcolor{keywordtype}{bool} foundIJ = \textcolor{keyword}{false};
+280             \textcolor{keywordflow}{if} (doc.HasMember(name1.c\_str())) \{
+281                 moveName = name1;
+282                 foundIJ = \textcolor{keyword}{true};
+283             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && !foundIJ) \{
+284                 moveName = name2;
+285                 foundIJ = \textcolor{keyword}{true};
+286             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && foundIJ) \{
+287                 std::cerr << \textcolor{stringliteral}{"Input file doubly specifies equilibration swap move probability for species
+       pair ("}+std::to\_string(i+1)+\textcolor{stringliteral}{", "}+std::to\_string(j+1)+\textcolor{stringliteral}{")"} << std::endl;
+288                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+289             \} \textcolor{keywordflow}{else} \{
+290                 std::cerr << \textcolor{stringliteral}{"Input file does not specify equilibration swap move probability for species
+       pair ("}+std::to\_string(i+1)+\textcolor{stringliteral}{", "}+std::to\_string(j+1)+\textcolor{stringliteral}{")"} << std::endl;
+291                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+292             \}
+293             assert(doc[moveName.c\_str()].IsNumber());
+294             probEqSwap[i][j] = doc[moveName.c\_str()].GetDouble();
+295             probEqSwap[j][i] = doc[moveName.c\_str()].GetDouble();
+296         \}
+297     \}
+298 
+299     \hyperlink{input_8cpp_afcd470506b012754a93b2012b65e3fc4}{setPairPotentials} (sys, doc);
+300 
+301     usedMovesEq->\hyperlink{classmoves_ab603c6ce829075e3232ff41a7d5e2aab}{setM}(sys.getTotalM());
+302     usedMovesPr->\hyperlink{classmoves_ab603c6ce829075e3232ff41a7d5e2aab}{setM}(sys.getTotalM());
+303     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.nSpecies(); ++i) \{
+304         usedMovesEq->\hyperlink{classmoves_ab4583b3075f51cce55c3aeb84a58430d}{addInsert}(i, probEqInsDel[i]);
+305         usedMovesPr->\hyperlink{classmoves_ab4583b3075f51cce55c3aeb84a58430d}{addInsert}(i, probPrInsDel[i]);
+306 
+307         usedMovesEq->\hyperlink{classmoves_ac4307636570c4d4bc07c4cba3887005e}{addDelete}(i, probEqInsDel[i]);
+308         usedMovesPr->\hyperlink{classmoves_ac4307636570c4d4bc07c4cba3887005e}{addDelete}(i, probPrInsDel[i]);
+309 
+310         usedMovesEq->\hyperlink{classmoves_a91bb7969368fdbb66920a11d79fe7552}{addTranslate}(i, probEqDisp[i], maxEqD[i], sys.box());
+311         usedMovesPr->\hyperlink{classmoves_a91bb7969368fdbb66920a11d79fe7552}{addTranslate}(i, probPrDisp[i], maxPrD[i], sys.box());
+312 
+313         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i+1; j < sys.nSpecies(); ++j) \{
+314             usedMovesEq->\hyperlink{classmoves_a03cebfa2d8d1cecf253df573fdecc5d0}{addSwap}(i, j, probEqSwap[i][j]);
+315             usedMovesPr->\hyperlink{classmoves_a03cebfa2d8d1cecf253df573fdecc5d0}{addSwap}(i, j, probPrSwap[i][j]);
+316         \}
+317     \}
+318 
+319     \hyperlink{input_8cpp_aa89df4b08049cfd9bdd875d78591ba5b}{checkBounds} (sys);
+320     std::cout << filename << \textcolor{stringliteral}{" passed bounds checks at "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+321     \hyperlink{input_8cpp_a0b96c0c9384a55ad9227194045ae5f24}{initializeSystemBarriers} (sys, doc);
+322     std::cout << \textcolor{stringliteral}{"Initialized barriers from "} << filename << \textcolor{stringliteral}{" at "} << 
+      \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+323 
+324     std::cout << \textcolor{stringliteral}{"Successfully read valid parameters from "} << filename << \textcolor{stringliteral}{" at "} << 
+      \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+325     \textcolor{keywordflow}{return} sys;
+326 \}
+\end{DoxyCode}
+\hypertarget{input_8cpp_a0b96c0c9384a55ad9227194045ae5f24}{\index{input.\-cpp@{input.\-cpp}!initialize\-System\-Barriers@{initialize\-System\-Barriers}}
+\index{initialize\-System\-Barriers@{initialize\-System\-Barriers}!input.cpp@{input.\-cpp}}
+\subsubsection[{initialize\-System\-Barriers}]{\setlength{\rightskip}{0pt plus 5cm}void initialize\-System\-Barriers (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\-System} \&}]{sys, }
+\item[{const rapidjson\-::\-Document \&}]{doc}
+\end{DoxyParamCaption}
+)}}\label{input_8cpp_a0b96c0c9384a55ad9227194045ae5f24}
+
+
+Initialize the barriers in a system by parsing the input document. 
+
+This function is defined separately since it must be done several times.
+
+\mbox{[}in, out\mbox{]} sys System to initialize with barriers  \mbox{[}in\mbox{]} doc Input J\-S\-O\-N document 
+
+Definition at line 563 of file input.\-cpp.
+
+
+
+References sim\-System\-::get\-Total\-M(), M\-A\-X\-\_\-\-B\-A\-R\-R\-I\-E\-R\-S\-\_\-\-P\-E\-R\-\_\-\-S\-P\-E\-C\-I\-E\-S, sim\-System\-::n\-Species(), sim\-System\-::species\-Barriers, S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, and custom\-Exception\-::what().
+
+
+
+Referenced by initialize(), and setup().
+
+
+\begin{DoxyCode}
+563                                                                              \{
+564     \textcolor{comment}{// get Mtot, first from doc, otherwise try sys, but they should be the same}
+565     \textcolor{keywordtype}{int} Mtot = 1;
+566     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"num\_expanded\_states"})) \{
+567         assert(doc[\textcolor{stringliteral}{"num\_expanded\_states"}].IsInt());
+568         Mtot = doc[\textcolor{stringliteral}{"num\_expanded\_states"}].GetInt();
+569     \} \textcolor{keywordflow}{else} \{
+570         Mtot = sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}();
+571     \}
+572 
+573     \textcolor{comment}{// Hard wall (expect parameters: \{lb, ub, sigma\})}
+574     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+575         \textcolor{keywordtype}{bool} convention0 = \textcolor{keyword}{false};
+576         std::string dummy = \textcolor{stringliteral}{"hardWallZ\_"} + std::to\_string(i+1);
+577         std::vector < double > wallParams (3, 0);
+578         \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+579             assert(doc[dummy.c\_str()].IsArray());
+580             assert(doc[dummy.c\_str()].Size() == 3);
+581             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 3; ++j) \{
+582                 wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
+583             \}
+584             \textcolor{keywordflow}{try} \{
+585                 sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addHardWallZ (wallParams[0], wallParams[1], 
+      wallParams[2], Mtot);
+586             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+587                 std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+588                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+589             \}
+590             convention0 = \textcolor{keyword}{true};
+591         \}
+592         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 1; j <= \hyperlink{global_8h_a85f9382b07ebd88cde9cd3667d50c0a6}{MAX\_BARRIERS\_PER\_SPECIES}; ++j) \{
+593             \textcolor{comment}{// alternatively allow multiple walls to specified with a suffix up to a max}
+594             std::string dummy = \textcolor{stringliteral}{"hardWallZ\_"} + std::to\_string(i+1) + \textcolor{stringliteral}{"\_"} + std::to\_string(j);
+595             \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+596                 \textcolor{keywordflow}{if} (convention0) \{
+597                     std::cerr << \textcolor{stringliteral}{"Error: multiple barrier naming conventions used for the same species"} << 
+      std::endl;
+598                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+599                 \}
+600                 \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+601                     assert(doc[dummy.c\_str()].IsArray());
+602                     assert(doc[dummy.c\_str()].Size() == 3);
+603                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 3; ++j) \{
+604                         wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
+605                     \}
+606                     \textcolor{keywordflow}{try} \{
+607                         sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addHardWallZ (wallParams[0], wallParams[1], 
+      wallParams[2], Mtot);
+608                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+609                         std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+610                         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+611                     \}
+612                 \}
+613             \}
+614         \}
+615     \}
+616 
+617     \textcolor{comment}{// Square well wall (expect parameters: \{lb, ub, sigma, range, eps\})}
+618     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+619         \textcolor{keywordtype}{bool} convention0 = \textcolor{keyword}{false};
+620         std::string dummy = \textcolor{stringliteral}{"squareWellWallZ\_"} + std::to\_string(i+1);
+621         std::vector < double > wallParams (5, 0);
+622         \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+623             assert(doc[dummy.c\_str()].IsArray());
+624             assert(doc[dummy.c\_str()].Size() == 5);
+625             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 5; ++j) \{
+626                 wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
+627             \}
+628             \textcolor{keywordflow}{try} \{
+629                 sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addSquareWellWallZ (wallParams[0], wallParams[1], 
+      wallParams[2], wallParams[3], wallParams[4], Mtot);
+630             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+631                 std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+632                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+633             \}
+634             convention0 = \textcolor{keyword}{true};
+635         \}
+636         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 1; j <= \hyperlink{global_8h_a85f9382b07ebd88cde9cd3667d50c0a6}{MAX\_BARRIERS\_PER\_SPECIES}; ++j) \{
+637             \textcolor{comment}{// alternatively allow multiple walls to specified with a suffix up to a max}
+638             std::string dummy = \textcolor{stringliteral}{"squareWellWallZ\_"} + std::to\_string(i+1) + \textcolor{stringliteral}{"\_"} + std::to\_string(j);
+639             \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+640                 \textcolor{keywordflow}{if} (convention0) \{
+641                     std::cerr << \textcolor{stringliteral}{"Error: multiple barrier naming conventions used for the same species"} << 
+      std::endl;
+642                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+643                 \}
+644                 \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+645                     assert(doc[dummy.c\_str()].IsArray());
+646                     assert(doc[dummy.c\_str()].Size() == 5);
+647                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 5; ++j) \{
+648                         wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
+649                     \}
+650                     \textcolor{keywordflow}{try} \{
+651                         sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addSquareWellWallZ (wallParams[0], wallParams
+      [1], wallParams[2], wallParams[3], wallParams[4], Mtot);
+652                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+653                         std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+654                         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+655                     \}
+656                 \}
+657             \}
+658         \}
+659     \}
+660 
+661     \textcolor{comment}{// cylinderZ (expect parameters: \{x, y, radius, width, sigma, eps\})}
+662     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+663         \textcolor{keywordtype}{bool} convention0 = \textcolor{keyword}{false};
+664         std::string dummy = \textcolor{stringliteral}{"cylinderZ\_"} + std::to\_string(i+1);
+665         std::vector < double > wallParams (6, 0);
+666         \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+667             assert(doc[dummy.c\_str()].IsArray());
+668             assert(doc[dummy.c\_str()].Size() == 6);
+669             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 6; ++j) \{
+670                 wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
+671             \}
+672             \textcolor{keywordflow}{try} \{
+673                 sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addCylinderZ (wallParams[0], wallParams[1], 
+      wallParams[2], wallParams[3], wallParams[4], wallParams[5], Mtot);
+674             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+675                 std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+676                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+677             \}
+678             convention0 = \textcolor{keyword}{true};
+679         \}
+680         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 1; j <= \hyperlink{global_8h_a85f9382b07ebd88cde9cd3667d50c0a6}{MAX\_BARRIERS\_PER\_SPECIES}; ++j) \{
+681             \textcolor{comment}{// alternatively allow multiple walls to specified with a suffix up to a max}
+682             std::string dummy = \textcolor{stringliteral}{"cylinderZ\_"} + std::to\_string(i+1) + \textcolor{stringliteral}{"\_"} + std::to\_string(j);
+683             \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+684                 \textcolor{keywordflow}{if} (convention0) \{
+685                     std::cerr << \textcolor{stringliteral}{"Error: multiple barrier naming conventions used for the same species"} << 
+      std::endl;
+686                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+687                 \}
+688                 \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+689                     assert(doc[dummy.c\_str()].IsArray());
+690                     assert(doc[dummy.c\_str()].Size() == 6);
+691                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 6; ++j) \{
+692                         wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
+693                     \}
+694                     \textcolor{keywordflow}{try} \{
+695                         sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addCylinderZ (wallParams[0], wallParams[1], 
+      wallParams[2], wallParams[3], wallParams[4], wallParams[5], Mtot);
+696                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+697                         std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+698                         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+699                     \}
+700                 \}
+701             \}
+702         \}
+703     \}
+704 
+705     \textcolor{comment}{// rightTriangleXZ (expect parameters: \{width, theta, lamW, eps, sigma, sep, offset, zbase, top\})}
+706     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+707         \textcolor{keywordtype}{bool} convention0 = \textcolor{keyword}{false};
+708         std::string dummy = \textcolor{stringliteral}{"rightTriangleXZ\_"} + std::to\_string(i+1);
+709         std::vector < double > wallParams (8, 0);
+710         \textcolor{keywordtype}{bool} top = \textcolor{keyword}{false};
+711         assert(doc.HasMember(\textcolor{stringliteral}{"box"}));
+712         assert(doc[\textcolor{stringliteral}{"box"}].IsArray());
+713         assert(doc[\textcolor{stringliteral}{"box"}].Size() == 3);
+714         std::vector < double > sysBox (3, 0);
+715         \textcolor{keywordflow}{for} (rapidjson::SizeType j = 0; j < doc[\textcolor{stringliteral}{"box"}].Size(); ++j) \{
+716             assert(doc[\textcolor{stringliteral}{"box"}][j].IsNumber());
+717             sysBox[j] = doc[\textcolor{stringliteral}{"box"}][j].GetDouble();
+718         \}
+719         \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+720             assert(doc[dummy.c\_str()].IsArray());
+721             assert(doc[dummy.c\_str()].Size() == 9);
+722             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 8; ++j) \{
+723                 assert (doc[dummy.c\_str()][j].IsDouble());
+724                 wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
+725             \}
+726             assert (doc[dummy.c\_str()][8].IsBool());
+727             top = doc[dummy.c\_str()][8].GetBool();
+728             \textcolor{keywordflow}{try} \{
+729                 sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addRightTriangleXZ (wallParams[0], wallParams[1], 
+      wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
+730             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+731                 std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+732                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+733             \}
+734             convention0 = \textcolor{keyword}{true};
+735         \}
+736         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 1; j <= \hyperlink{global_8h_a85f9382b07ebd88cde9cd3667d50c0a6}{MAX\_BARRIERS\_PER\_SPECIES}; ++j) \{
+737             \textcolor{comment}{// alternatively allow multiple walls to specified with a suffix up to a max}
+738             std::string dummy = \textcolor{stringliteral}{"rightTriangleXZ\_"} + std::to\_string(i+1) + \textcolor{stringliteral}{"\_"} + std::to\_string(j);
+739             \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+740                 \textcolor{keywordflow}{if} (convention0) \{
+741                     std::cerr << \textcolor{stringliteral}{"Error: multiple barrier naming conventions used for the same species"} << 
+      std::endl;
+742                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+743                 \}
+744                 \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+745                     assert(doc[dummy.c\_str()].IsArray());
+746                     assert(doc[dummy.c\_str()].Size() == 9);
+747                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < 8; ++k) \{
+748                         assert (doc[dummy.c\_str()][k].IsNumber());
+749                         wallParams[k] = doc[dummy.c\_str()][k].GetDouble();
+750                     \}
+751                     assert (doc[dummy.c\_str()][8].IsBool());
+752                     top = doc[dummy.c\_str()][8].GetBool();
+753                     \textcolor{keywordflow}{try} \{
+754                         sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addRightTriangleXZ (wallParams[0], wallParams
+      [1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, 
+      Mtot);
+755                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+756                         std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+757                         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+758                     \}
+759                 \}
+760             \}
+761         \}
+762     \}
+763 \}
+\end{DoxyCode}
+\hypertarget{input_8cpp_afcd470506b012754a93b2012b65e3fc4}{\index{input.\-cpp@{input.\-cpp}!set\-Pair\-Potentials@{set\-Pair\-Potentials}}
+\index{set\-Pair\-Potentials@{set\-Pair\-Potentials}!input.cpp@{input.\-cpp}}
+\subsubsection[{set\-Pair\-Potentials}]{\setlength{\rightskip}{0pt plus 5cm}void set\-Pair\-Potentials (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\-System} \&}]{sys, }
+\item[{const rapidjson\-::\-Document \&}]{doc}
+\end{DoxyParamCaption}
+)}}\label{input_8cpp_afcd470506b012754a93b2012b65e3fc4}
+
+
+Definition at line 328 of file input.\-cpp.
+
+
+
+References sim\-System\-::add\-Potential(), sim\-System\-::n\-Species(), sim\-System\-::ppot, and S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E.
+
+
+
+Referenced by initialize(), and setup().
+
+
+\begin{DoxyCode}
+328                                                                       \{
+329     \textcolor{keywordtype}{int} Mtot = 1;
+330     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"num\_expanded\_states"})) \{
+331         Mtot = doc[\textcolor{stringliteral}{"num\_expanded\_states"}].GetInt();
+332     \}
+333 
+334     \textcolor{comment}{//std::vector < pairPotential* > ppotArray (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());}
+335     std::vector < std::string > ppotType (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}()*(sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}()-1)/2 + sys.
+      \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}());
+336     \textcolor{keywordtype}{int} ppotTypeIndex = 0;
+337     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+338         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i; j < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++j) \{
+339             std::string name1 = \textcolor{stringliteral}{"ppot\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(j+1), name2 = \textcolor{stringliteral}{"ppot\_"}+
+      std::to\_string(j+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(i+1);
+340             std::string ppotName = \textcolor{stringliteral}{""}, dummy = \textcolor{stringliteral}{""};
+341             \textcolor{keywordtype}{bool} foundIJ = \textcolor{keyword}{false};
+342             \textcolor{keywordflow}{if} (doc.HasMember(name1.c\_str())) \{
+343                 ppotName = name1;
+344                 foundIJ = \textcolor{keyword}{true};
+345             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && !foundIJ) \{
+346                 ppotName = name2;
+347                 foundIJ = \textcolor{keyword}{true};
+348             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && foundIJ) \{
+349                 std::cerr << \textcolor{stringliteral}{"Input file doubly specifies pair potential for species pair ("}+std::to\_string
+      (i+1)+\textcolor{stringliteral}{", "}+std::to\_string(j+1)+\textcolor{stringliteral}{")"} << std::endl;
+350                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+351             \} \textcolor{keywordflow}{else} \{
+352                 std::cerr << \textcolor{stringliteral}{"Input file does not specify pair potential for species pair ("}+std::to\_string
+      (i+1)+\textcolor{stringliteral}{", "}+std::to\_string(j+1)+\textcolor{stringliteral}{")"} << std::endl;
+353                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+354             \}
+355             assert(doc[ppotName.c\_str()].IsString());
+356             ppotType[ppotTypeIndex] = doc[ppotName.c\_str()].GetString();
+357             dummy = ppotName+\textcolor{stringliteral}{"\_params"};
+358             assert(doc.HasMember(dummy.c\_str()));
+359             assert(doc[dummy.c\_str()].IsArray());
+360             std::vector < double > params (doc[dummy.c\_str()].Size()+1, 0);
+361             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < params.size()-1; ++k) \{
+362                 assert(doc[dummy.c\_str()][k].IsNumber());
+363                 params[k] = doc[dummy.c\_str()][k].GetDouble();
+364             \}
+365             params[params.size()-1] = Mtot;
+366 
+367             \textcolor{keywordtype}{bool} useCellList = \textcolor{keyword}{false}; \textcolor{comment}{// default}
+368             dummy = ppotName+\textcolor{stringliteral}{"\_use\_cell\_list"};
+369             \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
+370                 assert(doc[dummy.c\_str()].IsBool());
+371                 useCellList = doc[dummy.c\_str()].GetBool();
+372             \}
+373 
+374             sys.\hyperlink{classsim_system_a43ae18ca5e66c8e916b88b71c5ee5240}{addPotential}(i, j, ppotType[ppotTypeIndex], params, useCellList);
+375             sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[i][j]->savePotential(ppotName+\textcolor{stringliteral}{".dat"}, 0.01, 0.01);
+376 
+377             ppotTypeIndex++;
+378         \}
+379     \}
+380 \}
+\end{DoxyCode}
+\hypertarget{input_8cpp_ab8c0953ceb099a5c8a275750d9b2cfe5}{\index{input.\-cpp@{input.\-cpp}!setup@{setup}}
+\index{setup@{setup}!input.cpp@{input.\-cpp}}
+\subsubsection[{setup}]{\setlength{\rightskip}{0pt plus 5cm}void setup (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\-System} \&}]{sys, }
+\item[{const std\-::string}]{filename}
+\end{DoxyParamCaption}
+)}}\label{input_8cpp_ab8c0953ceb099a5c8a275750d9b2cfe5}
+
+
+Setup a system's initial configuration as necessary. 
+
+
+\begin{DoxyEnumerate}
+\item If \char`\"{}restart\-\_\-file\char`\"{} in input json file, read initial config from there.
+\item In not, randomly generate initial configuration.
+\end{DoxyEnumerate}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em sys} & System to initialize \\
+\hline
+\mbox{\tt in}  & {\em filename} & Input J\-S\-O\-N filename \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 390 of file input.\-cpp.
+
+
+
+References moves\-::add\-Insert(), sim\-System\-::add\-K\-E\-Correction(), sim\-System\-::box(), sim\-System\-::get\-Total\-M(), initialize\-System\-Barriers(), sim\-System\-::n\-Species(), sim\-System\-::num\-Species, sim\-System\-::print\-Snapshot(), sim\-System\-::read\-Config(), set\-Pair\-Potentials(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, sim\-System\-::toggle\-K\-E(), sim\-System\-::tot\-N\-Min(), and custom\-Exception\-::what().
+
+
+\begin{DoxyCode}
+390                                                       \{
+391 
+392     FILE* fp = fopen(filename.c\_str(), \textcolor{stringliteral}{"r"});
+393     \textcolor{keywordtype}{char} readBuffer[65536];
+394     rapidjson::FileReadStream is(fp, readBuffer, \textcolor{keyword}{sizeof}(readBuffer));
+395     rapidjson::Document doc;
+396     doc.ParseStream(is);
+397     fclose(fp);
+398 
+399     std::string restart\_file = \textcolor{stringliteral}{""};
+400     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"restart\_file"})) \{
+401         assert(doc[\textcolor{stringliteral}{"restart\_file"}].IsString());
+402         restart\_file = doc[\textcolor{stringliteral}{"restart\_file"}].GetString();
+403     \}
+404 
+405     std::vector < double > sysBox = sys.\hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}();
+406 
+407     \textcolor{keywordtype}{double} duh = 10.0;
+408     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"delta\_u\_hist"})) \{
+409         assert(doc[\textcolor{stringliteral}{"delta\_u\_hist"}].IsNumber());
+410         duh = doc[\textcolor{stringliteral}{"delta\_u\_hist"}].GetDouble();
+411     \}
+412 
+413     \textcolor{keywordtype}{int} max\_order = 2;
+414     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"max\_order"})) \{
+415         assert(doc[\textcolor{stringliteral}{"max\_order"}].IsNumber());
+416         max\_order = doc[\textcolor{stringliteral}{"max\_order"}].GetInt();
+417     \}
+418 
+419     \textcolor{keywordtype}{bool} use\_ke = sys.\hyperlink{classsim_system_a09c4ea670168c9f1d549d2a5120eb13c}{addKECorrection}();
+420     \textcolor{keywordtype}{int} Mtot = sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}();
+421 
+422     std::vector < double > sysMu (doc[\textcolor{stringliteral}{"mu"}].Size(), 0);
+423     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"mu"}].Size(); ++i) \{
+424         sysMu[i] = doc[\textcolor{stringliteral}{"mu"}][i].GetDouble();
+425     \}
+426     std::vector < int > sysMax (doc[\textcolor{stringliteral}{"max\_N"}].Size(), 0);
+427     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"max\_N"}].Size(); ++i) \{
+428         sysMax[i] = doc[\textcolor{stringliteral}{"max\_N"}][i].GetInt();
+429     \}
+430     std::vector < int > sysMin (doc[\textcolor{stringliteral}{"min\_N"}].Size(), 0);
+431     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"min\_N"}].Size(); ++i) \{
+432         sysMin[i] = doc[\textcolor{stringliteral}{"min\_N"}][i].GetInt();
+433     \}
+434 
+435     \textcolor{comment}{// Read from restart file if specified}
+436     \textcolor{keywordflow}{if} (restart\_file != \textcolor{stringliteral}{""}) \{
+437         \textcolor{keywordflow}{try} \{
+438             sys.\hyperlink{classsim_system_a3161d95bbb800d5d95a732ac5fc32b95}{readConfig}(restart\_file);
+439         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+440             std::cerr << ce. what() << std::endl;
+441         \}
+442     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (restart\_file == \textcolor{stringliteral}{""} && sys.\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() > 0) \{
+443         std::cout << \textcolor{stringliteral}{"Automatically generating the initial configuration"} << std::endl;
+444 
+445         \textcolor{comment}{// have to generate initial configuration manually - start with mu = INF}
+446         std::vector < double > initMu (doc[\textcolor{stringliteral}{"num\_species"}].GetInt(), 1.0e2);
+447         \hyperlink{classsim_system}{simSystem} initSys (doc[\textcolor{stringliteral}{"num\_species"}].GetInt(), 1/10., sysBox, initMu, sysMax, sysMin, 
+      Mtot, duh, max\_order); \textcolor{comment}{// beta =  1/T, so low beta to have high T}
+448         \textcolor{keywordflow}{if} (use\_ke) \{
+449             initSys.toggleKE();
+450             \textcolor{keywordflow}{if} (initSys.addKECorrection() == \textcolor{keyword}{false}) \{
+451                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to set KE flag"});
+452             \}
+453         \}
+454 
+455         \textcolor{comment}{// add the same potentials}
+456         \hyperlink{input_8cpp_afcd470506b012754a93b2012b65e3fc4}{setPairPotentials} (initSys, doc);
+457         \hyperlink{input_8cpp_a0b96c0c9384a55ad9227194045ae5f24}{initializeSystemBarriers} (initSys, doc);
+458 
+459         std::vector < int > initialization\_order (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0), check\_init (sys.
+      \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0);
+460         std::vector < double > init\_frac (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 1.0);
+461         \textcolor{keywordtype}{double} sum = 0.0;
+462         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+463             initialization\_order[i] = i;
+464             \textcolor{keywordflow}{if} (i > 0) init\_frac[i] = 0.0;
+465             sum += init\_frac[i];
+466         \}
+467         \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"init\_order"})) \{
+468             assert(doc[\textcolor{stringliteral}{"init\_order"}].IsArray());
+469             assert(doc[\textcolor{stringliteral}{"init\_order"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
+470 
+471             \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"init\_order"}].Size(); ++i) \{
+472                 assert(doc[\textcolor{stringliteral}{"init\_order"}][i].IsInt());
+473                 initialization\_order[i] = doc[\textcolor{stringliteral}{"init\_order"}][i].GetInt();
+474                 \textcolor{keywordflow}{if} (initialization\_order[i] < 0 || initialization\_order[i] >= sys.
+      \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}()) \{
+475                     std::cerr << \textcolor{stringliteral}{"Order of initialization goes out of bounds, should include 0 <= i < nSpec
+      "} << std::endl;
+476                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+477                 \}
+478                 \textcolor{keywordflow}{if} (check\_init[initialization\_order[i]] != 0) \{
+479                     std::cerr << \textcolor{stringliteral}{"Order of initialization repeats itself"} << std::endl;
+480                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+481                 \} \textcolor{keywordflow}{else} \{
+482                     check\_init[initialization\_order[i]] = 1;
+483                 \}
+484             \}
+485         \}
+486         \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"init\_frac"})) \{
+487             assert(doc[\textcolor{stringliteral}{"init\_frac"}].IsArray());
+488             assert(doc[\textcolor{stringliteral}{"init\_frac"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
+489             sum = 0.0;
+490             \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"init\_frac"}].Size(); ++i) \{
+491                 assert(doc[\textcolor{stringliteral}{"init\_frac"}][i].IsNumber());
+492                 init\_frac[i] = doc[\textcolor{stringliteral}{"init\_frac"}][i].GetDouble();
+493                 \textcolor{keywordflow}{if} (init\_frac[i] < 0 || init\_frac[i] >= 1.0) \{
+494                     std::cerr << \textcolor{stringliteral}{"Initialization fraction out of bounds"} << std::endl;
+495                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+496                 \}
+497                 sum += init\_frac[i];
+498             \}
+499         \}
+500         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+501             init\_frac[i] /= sum;
+502         \}
+503 
+504         \textcolor{comment}{// iteratively add each individual species, assume we want an equimolar mixture to start from}
+505         \textcolor{keywordtype}{int} added = 0;
+506         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} idx = 0; idx < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++idx) \{
+507             \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = initialization\_order[idx];
+508             std::cout << \textcolor{stringliteral}{"Initializing species "} << i << \textcolor{stringliteral}{" configurations"} << std::endl;
+509 
+510             \textcolor{comment}{// insert this species i}
+511             \hyperlink{classmoves}{moves} initMove (initSys.getTotalM());
+512             initMove.\hyperlink{classmoves_ab4583b3075f51cce55c3aeb84a58430d}{addInsert}(i, 1.0);
+513 
+514             \textcolor{comment}{// also add displacment moves for all species present}
+515             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j <= idx; ++j) \{
+516                 std::cout << \textcolor{stringliteral}{"Added translation moves for initialization of species "} << 
+      initialization\_order[j] << std::endl;
+517                 initMove.addTranslate(initialization\_order[j], 2.0, 1.0, initSys.box());
+518             \}
+519 
+520             \textcolor{comment}{// now do simuation until within proper range}
+521             \textcolor{keywordtype}{int} targetNum = sys.\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}()*init\_frac[idx];
+522             \textcolor{keywordflow}{if} (idx == sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}() - 1) \{
+523                 \textcolor{comment}{// to account for integer rounding}
+524                 targetNum = sys.\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() - added;
+525             \}
+526             added += targetNum;
+527 
+528             std::cout << \textcolor{stringliteral}{"Target number = "} << targetNum << \textcolor{stringliteral}{" for species "} << i+1 << std::endl;
+529             \textcolor{keywordtype}{int} tmpCounter = 0, statusPrint = 10e6;
+530             \textcolor{keywordflow}{while} (initSys.numSpecies[i] < targetNum) \{
+531                 \textcolor{keywordflow}{try} \{
+532                     initMove.makeMove(initSys);
+533                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+534                     std::cerr << \textcolor{stringliteral}{"Failed to create an initial configuration: "} << ce.
+      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+535                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+536                 \}
+537                 tmpCounter++;
+538                 \textcolor{keywordflow}{if} (tmpCounter%statusPrint == 0) \{
+539                     tmpCounter = 0;
+540                     std::cout << \textcolor{stringliteral}{"Grew "} << initSys.numSpecies[i] << \textcolor{stringliteral}{" atoms of type "} << i << \textcolor{stringliteral}{" so far"} <<
+       std::endl;
+541                 \}
+542             \}
+543         \}
+544 
+545         \textcolor{comment}{// print snapshot from Reading initial configuration}
+546         initSys.printSnapshot(\textcolor{stringliteral}{"auto-init.xyz"}, \textcolor{stringliteral}{"auto-generated initial configuration"});
+547 
+548         \textcolor{comment}{// read into sys}
+549         \textcolor{keywordflow}{try} \{
+550             sys.\hyperlink{classsim_system_a3161d95bbb800d5d95a732ac5fc32b95}{readConfig}(\textcolor{stringliteral}{"auto-init.xyz"});
+551         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+552             std::cerr << \textcolor{stringliteral}{"Failed to read auto-generated initialization file: "} << ce. what() << std::endl;
+553         \}
+554     \}
+555 \}
+\end{DoxyCode}

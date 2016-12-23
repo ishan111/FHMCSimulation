@@ -1,0 +1,74 @@
+.TH "barrier" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+barrier \- 
+.PP
+Virtual base class for barriers\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.PP
+\fC#include <barrier\&.h>\fP
+.PP
+Inherited by \fBcylinderZ\fP, \fBhardWallZ\fP, \fBrightTriangleXZ\fP, and \fBsquareWellWallZ\fP\&.
+.SS "Public Member Functions"
+
+.in +1c
+.ti -1c
+.RI "virtual \fB~barrier\fP ()"
+.br
+.ti -1c
+.RI "virtual bool \fBinside\fP (const \fBatom\fP *a1, const std::vector< double > &box)=0"
+.br
+.ti -1c
+.RI "virtual double \fBenergy\fP (const \fBatom\fP *a1, const std::vector< double > &box)=0"
+.br
+.in -1c
+.SS "Protected Attributes"
+
+.in +1c
+.ti -1c
+.RI "int \fBM_\fP"
+.br
+.in -1c
+.SH "Detailed Description"
+.PP 
+Virtual base class for barriers\&. 
+
+It is intended that there should be a separate barrier class defined for each species type\&. 
+.PP
+Definition at line 16 of file barrier\&.h\&.
+.SH "Constructor & Destructor Documentation"
+.PP 
+.SS "virtual barrier::~barrier ()\fC [inline]\fP, \fC [virtual]\fP"
+
+.PP
+Definition at line 18 of file barrier\&.h\&.
+.PP
+.nf
+18 {;}
+.fi
+.SH "Member Function Documentation"
+.PP 
+.SS "virtual double barrier::energy (const \fBatom\fP *a1, const std::vector< double > &box)\fC [pure virtual]\fP"
+
+.PP
+Implemented in \fBrightTriangleXZ\fP, \fBcylinderZ\fP, \fBsquareWellWallZ\fP, and \fBhardWallZ\fP\&.
+.SS "virtual bool barrier::inside (const \fBatom\fP *a1, const std::vector< double > &box)\fC [pure virtual]\fP"
+
+.PP
+Implemented in \fBrightTriangleXZ\fP, \fBcylinderZ\fP, \fBsquareWellWallZ\fP, and \fBhardWallZ\fP\&.
+.SH "Field Documentation"
+.PP 
+.SS "int barrier::M_\fC [protected]\fP"
+
+.PP
+Definition at line 23 of file barrier\&.h\&.
+.PP
+Referenced by cylinderZ::cylinderZ(), hardWallZ::energy(), squareWellWallZ::energy(), cylinderZ::energy(), rightTriangleXZ::energy(), hardWallZ::hardWallZ(), hardWallZ::inside(), squareWellWallZ::inside(), cylinderZ::inside(), rightTriangleXZ::rightTriangleXZ(), and squareWellWallZ::squareWellWallZ()\&.
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.
