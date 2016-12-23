@@ -5,7 +5,7 @@
 @filename window_helper.py
 """
 
-import os, sys, re, json, shutil
+import os, re, json, shutil
 import math as np
 
 def pure_settings (settings):
@@ -55,8 +55,8 @@ def pure_settings (settings):
 	info["ppot_1_1"] = "square_well"
 	info["ppot_1_1_params"] = [1.0, 0.5, 1.0] # [sig, width, eps]
 	info["ppot_1_1_use_cell_list"] = True
-	
-	return info	
+
+	return info
 
 def make_input (filename, settings):
 	"""
@@ -149,12 +149,12 @@ if __name__ == "__main__":
 	print "window_helper.py"
 
 	"""
-	
 	Tutorial:
 	
 	* Below is an example of a script to use these functions to produce windows
 
 	```
+	import sys
 	FHMCLIB = "/home/nam4/Desktop/sandbox/"
 	sys.path.append(FHMCLIB)
 	import FHMCAnalysis
@@ -176,7 +176,7 @@ if __name__ == "__main__":
 	install_dir = "/home/nam4/FHMCSimulation/"
 	binary = install_dir+"/bin/tmmc"
 	git_head = install_dir+"/.git/logs/HEAD"
-	jobs_per = 12 
+	jobs_per = 12
 	scratch_dir = "/tmp/nam4/"
 	q = "medium"
 	tag = "example"
@@ -198,5 +198,4 @@ if __name__ == "__main__":
 
 	gibbs_qsub ('./', num_windows, binary, git_head, input_name, jobs_per, scratch_dir, q, tag)
 	```
-
 	"""
