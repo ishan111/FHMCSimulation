@@ -1205,11 +1205,9 @@ void simSystem::restartPkHistogram (const std::string prefix) {
 void simSystem::addPotential (const int spec1, const int spec2, const std::string ppot_name, const std::vector < double > &params, const bool useCellList) {
 	if (spec1 >= nSpecies_) {
 		throw customException ("Trying to define pair potential for species (1) that does not exist yet");
-		return;
 	}
 	if (spec2 >= nSpecies_) {
 		throw customException ("Trying to define pair potential for species (2) that does not exist yet");
-		return;
 	}
 
 	if (ppot_name == "square_well") {
