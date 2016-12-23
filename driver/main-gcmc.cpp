@@ -1,28 +1,3 @@
-/*!
- * Perform (un/)biased multicomponent GCMC.
- * 
- * \author Nathan A. Mahynski
- * \date 02/24/16
- * 
- * \mainpage
- * 
- * \section Dependencies
- * 
- * \section Compiling
- * Run tests and run main
- * 
- * Complile with -DFLUID_PHASE_SIMULATIONS if simulations are purely in the fluid phase.  
- * This will allow tail corrections to be enabled which are only valid assuming a converging g(r) at large r.
- * 
- * Compile with -DNETCDF_CAPABLE if netCDF libraries are installed and can be compiled against.  Certain data will be output to these arrays
- * instead of ASCII files if so.
- * 
- * Tests compile with cmake and by default, do not link to netcdf libraries since they do not use them.  Everything tested in ASCII.
- * 
- * \section Input
- * 
- */
-
 #include <iostream>
 #include <time.h>
 #include <fstream>
@@ -148,7 +123,7 @@ void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
                 }
             }
     	}
-    
+
     // rightTriangleXZ (expect parameters: {width, theta, lamW, eps, sigma, sep, offset, zbase, top})
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
         bool convention0 = false;
@@ -221,27 +196,27 @@ int main (int argc, char * const argv[]) {
 	char timestamp [80];
 	strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
 	std::cout << "Beginning simulation at " << timestamp << std::endl;
-	
+
 	/* -------------------- BEGIN INPUT -------------------- */
-	
+
 	// Parse input JSON file
 	FILE* fp = fopen(argv[1], "r");
 	char readBuffer[65536];
 	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
 	rapidjson::Document doc;
-	doc.ParseStream(is);	
+	doc.ParseStream(is);
 	fclose(fp);
 	std::cout << "Parsed " << argv[1] << std::endl;
-	
+
 	// Assert that this is a JSON document
 	assert(doc.IsObject());
-	
+
 	// Check each member exists and is in the correct format
 	assert(doc.HasMember("num_species"));
 	assert(doc["num_species"].IsInt());
 	assert(doc.HasMember("beta"));
 	assert(doc["beta"].IsNumber());
-	
+
 	assert(doc.HasMember("box"));
 	assert(doc["box"].IsArray());
 	assert(doc["box"].Size() == 3);
@@ -263,7 +238,7 @@ int main (int argc, char * const argv[]) {
 	assert(doc.HasMember("seed"));
 	assert(doc["seed"].IsInt());
 	RNG_SEED = doc["seed"].GetInt();
-	
+
 	assert(doc.HasMember("max_N"));
 	assert(doc["max_N"].IsArray());
 	assert(doc["max_N"].Size() == doc["num_species"].GetInt());
@@ -280,14 +255,14 @@ int main (int argc, char * const argv[]) {
 	for (rapidjson::SizeType i = 0; i < doc["min_N"].Size(); ++i) {
 		assert(doc["min_N"][i].IsInt());
 		sysMin[i] = doc["min_N"][i].GetInt();
-	}	
-	
+	}
+
 	int Mtot = 1;
 	if (doc.HasMember("num_expanded_states")) {
 		assert(doc["num_expanded_states"].IsInt());
 		Mtot = doc["num_expanded_states"].GetInt();
-	}	
-	
+	}
+
 	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot);
 
 	std::vector < int > sysWindow;
@@ -302,7 +277,7 @@ int main (int argc, char * const argv[]) {
 	if (sysWindow.begin() != sysWindow.end()) {
 		sys.setTotNBounds(sysWindow);
 	}
-	
+
 	std::string restart_file = "";
 	if (doc.HasMember("restart_file")) {
 		assert(doc["restart_file"].IsString());
@@ -335,20 +310,20 @@ int main (int argc, char * const argv[]) {
 	if (doc.HasMember("init_order")) {
 		assert(doc["init_order"].IsArray());
 		assert(doc["init_order"].Size() == doc["num_species"].GetInt());
-	
+
 		for (rapidjson::SizeType i = 0; i < doc["init_order"].Size(); ++i) {
 			assert(doc["init_order"][i].IsInt());
 			initialization_order[i] = doc["init_order"][i].GetInt();
 			if (initialization_order[i] < 0 || initialization_order[i] >= sys.nSpecies()) {
 				std::cerr << "Order of initialization goes out of bounds, should include 0 <= i < nSpec" << std::endl;
-				exit(SYS_FAILURE);		
+				exit(SYS_FAILURE);
 			}
 			if (check_init[initialization_order[i]] != 0) {
 				std::cerr << "Order of initialization repeats itself" << std::endl;
 				exit(SYS_FAILURE);
 			} else {
 				check_init[initialization_order[i]] = 1;
-			}	
+			}
 		}
 	}
 	if (doc.HasMember("init_frac")) {
@@ -360,12 +335,12 @@ int main (int argc, char * const argv[]) {
 			init_frac[i] = doc["init_frac"][i].GetDouble();
 			if (init_frac[i] < 0 || init_frac[i] >= 1.0) {
 				std::cerr << "Initialization fraction out of bounds" << std::endl;
-				exit(SYS_FAILURE);		
-			}	
+				exit(SYS_FAILURE);
+			}
 			sum += init_frac[i];
 		}
 	}
-	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {	
+	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		init_frac[i] /= sum;
 	}
 
@@ -430,7 +405,7 @@ int main (int argc, char * const argv[]) {
 			probPrSwap[j][i] = doc[moveName.c_str()].GetDouble();
 		}
 	}
-	
+
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
 			std::string name1 = "prob_eq_swap_"+sstr(i+1)+"_"+sstr(j+1);
@@ -454,7 +429,7 @@ int main (int argc, char * const argv[]) {
 			probEqSwap[i][j] = doc[moveName.c_str()].GetDouble();
 			probEqSwap[j][i] = doc[moveName.c_str()].GetDouble();
 		}
-	}	
+	}
 
 	std::vector < pairPotential* > ppotArray (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
 	std::vector < std::string > ppotType (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
@@ -487,7 +462,7 @@ int main (int argc, char * const argv[]) {
 			for (unsigned int k = 0; k < params.size()-1; ++k) {
 				assert(doc[dummy.c_str()][k].IsNumber());
 				params[k] = doc[dummy.c_str()][k].GetDouble();
-			}	
+			}
 			params[params.size()-1] = Mtot;
 
 			bool useCellList = false; // default
@@ -515,7 +490,7 @@ int main (int argc, char * const argv[]) {
 					exit(SYS_FAILURE);
 				}
 				ppotArray[ppotIndex]->savePotential(ppotName+".dat", 0.01, 0.01);
-				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);				
+				sys.addPotential (i, j, ppotArray[ppotIndex], useCellList);
 			} else if (ppotType[ppotTypeIndex] == "hard_sphere") {
 				try {
 					ppotArray[ppotIndex] = new hardCore;
@@ -544,7 +519,7 @@ int main (int argc, char * const argv[]) {
 			ppotIndex++;
 		}
 	}
-	
+
 	// check all pair potentials have been set and all r_cut < L/2
 	double minL = sys.box()[0];
 	for (unsigned int i = 1; i < 3; ++i) {
@@ -561,8 +536,8 @@ int main (int argc, char * const argv[]) {
 				exit(SYS_FAILURE);
 			}
 		}
-	} 
-    
+	}
+
     // Add barriers for each species
 	initializeSystemBarriers (sys, doc);
 
@@ -578,44 +553,44 @@ int main (int argc, char * const argv[]) {
 		insertParticle newIns (i, "insert");
 		eqInsertions[i] = newIns;
 		usedMovesEq.addMove (&eqInsertions[i], probEqInsDel[i]);
-		
+
 		deleteParticle newDel (i, "delete");
 		eqDeletions[i] = newDel;
 		usedMovesEq.addMove (&eqDeletions[i], probEqInsDel[i]);
-		
+
 		translateParticle newTranslate (i, "translate");
 		newTranslate.setMaxDisplacement (maxEqD[i], sys.box());
 		eqTranslations[i] = newTranslate;
 		usedMovesEq.addMove (&eqTranslations[i], probEqDisp[i]);
-		
+
 		insertParticle newIns2 (i, "insert");
 		prInsertions[i] = newIns2;
 		usedMovesPr.addMove (&prInsertions[i], probPrInsDel[i]);
-		
+
 		deleteParticle newDel2 (i, "delete");
 		prDeletions[i] = newDel2;
-		usedMovesPr.addMove (&prDeletions[i], probPrInsDel[i]);		
-		
+		usedMovesPr.addMove (&prDeletions[i], probPrInsDel[i]);
+
 		translateParticle newTranslate2 (i, "translate");
 		newTranslate2.setMaxDisplacement (maxPrD[i], sys.box());
 		prTranslations[i] = newTranslate2;
 		usedMovesPr.addMove (&prTranslations[i], probPrDisp[i]);
-		
+
 		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
 			swapParticles newSwap (i, j, "swap");
 			eqSwaps[swapCounter] = newSwap;
 			usedMovesEq.addMove (&eqSwaps[swapCounter], probEqSwap[i][j]);
-			
+
 			swapParticles newSwap2 (i, j, "swap");
 			prSwaps[swapCounter] = newSwap2;
 			usedMovesPr.addMove (&prSwaps[swapCounter], probPrSwap[i][j]);
-			
+
 			swapCounter++;
 		}
 	}
-	
+
 	/* -------------------- END INPUT -------------------- */
-	
+
 	// Read from restart file if specified
 	if (restart_file != "") {
 		std::cout << "Reading initial configuration from " << restart_file << std::endl;
@@ -631,7 +606,7 @@ int main (int argc, char * const argv[]) {
 		}
 	} else if (restart_file == "" && sys.totNMin() > 0) {
 		std::cout << "Automatically generating the initial configuration" << std::endl;
-		
+
 		// have to generate initial configuration manually - start with mu = INF
         std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
         simSystem initSys (doc["num_species"].GetInt(), 1/10., sysBox, initMu, sysMax, sysMin, Mtot); // beta =  1/T, so low beta to have high T
@@ -652,7 +627,7 @@ int main (int argc, char * const argv[]) {
 		for (unsigned int idx = 0; idx < sys.nSpecies(); ++idx) {
 			unsigned int i = initialization_order[i];
 			std::cout << "Initializing species " << i << " configurations" << std::endl;
-			
+
 			// insert this species i
 			moves initMove (initSys.getTotalM());
 			insertParticle initIns (i, "insert");
@@ -712,7 +687,7 @@ int main (int argc, char * const argv[]) {
             exit(SYS_FAILURE);
         }
    	}
-        
+
 	for (unsigned long long int move = 0; move < eqSteps; ++move) {
 		try {
 			usedMovesEq.makeMove(sys);
@@ -744,7 +719,7 @@ int main (int argc, char * const argv[]) {
 	}
 	eq_statFile << std::endl;
 	eq_statFile.close();
-	
+
 	long double sys_U = 0.0, measure_count = 0.0, sys_ntot = 0.0;
 	std::vector < double > sys_comp (sys.nSpecies(), 0.0);
 	long long int printCounter = 0;
@@ -759,12 +734,12 @@ int main (int argc, char * const argv[]) {
 			ppotArray.clear();
 			exit(SYS_FAILURE);
 		}
-			
+
 		// only record properties of the system when it is NOT in an intermediate state
 		if (sys.getCurrentM() == 0) {
 			// record U
 			sys_U += sys.energy();
-	
+
 			// record composition
 			for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 				sys_comp[i] += sys.numSpecies[i];
@@ -780,7 +755,7 @@ int main (int argc, char * const argv[]) {
 			printCounter++;
 		}
 	}
-	
+
 	// Sanity checks
 	if (sys.nSpecies() != sys.atoms.size()) {
 		std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
@@ -797,20 +772,20 @@ int main (int argc, char * const argv[]) {
 			for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 				int end = sys.numSpecies[i];
 				if (i == sys.getFractionalAtomType()) {
-					end++;			
+					end++;
 				}
 				for (unsigned int j = 0; j < end; ++j) {
 					if (&sys.atoms[i][j] != sys.getFractionalAtom()) {
 						if (sys.atoms[i][j].mState != 0) {
-							std::cerr << "Atom ("+sstr(i)+", "+sstr(j)+") has non-zero expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+")" << std::endl;	
-							exit(SYS_FAILURE);				
-						}				
+							std::cerr << "Atom ("+sstr(i)+", "+sstr(j)+") has non-zero expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+")" << std::endl;
+							exit(SYS_FAILURE);
+						}
 					} else {
 						if (sys.atoms[i][j].mState != sys.getCurrentM()) {
-							std::cerr << "Fractional atom ("+sstr(i)+", "+sstr(j)+")'s expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+") does not match system's ("+sstr(sys.getCurrentM())+")" << std::endl;	
-							exit(SYS_FAILURE);				
+							std::cerr << "Fractional atom ("+sstr(i)+", "+sstr(j)+")'s expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+") does not match system's ("+sstr(sys.getCurrentM())+")" << std::endl;
+							exit(SYS_FAILURE);
 						}
-					}								
+					}
 				}
 			}
 		}
@@ -818,13 +793,13 @@ int main (int argc, char * const argv[]) {
 		for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 			for (unsigned int j = 0; j < sys.numSpecies[i]; ++j) {
 				if (sys.atoms[i][j].mState != 0) {
-					std::cerr << "Atom ("+sstr(i)+", "+sstr(j)+") has non-zero expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+")" << std::endl;	
-					exit(SYS_FAILURE);				
-				}												
+					std::cerr << "Atom ("+sstr(i)+", "+sstr(j)+") has non-zero expanded ensemble state ("+sstr(sys.atoms[i][j].mState)+")" << std::endl;
+					exit(SYS_FAILURE);
+				}
 			}
-		}	
+		}
 	}
-	
+
 	// Report move statistics for final "production" stage
 	char statName [80];
 	strftime (statName,80,"%Y_%m_%d_%H_%M_%S-stats.log",timeinfo);
@@ -843,16 +818,16 @@ int main (int argc, char * const argv[]) {
 	}
 	statFile << std::endl;
 	statFile.close();
-	
+
  	// print out restart file (xyz)
 	sys.printSnapshot("final.xyz", "last configuration");
-    
+
 	std::cout << "<U> : " << sys_U/measure_count << std::endl;
 	std::cout << "<N_tot> : " << sys_ntot/measure_count << std::endl;
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		std::cout << "x_"+sstr(i+1)+" = <N_"+sstr(i+1)+">/<N_tot> : " << sys_comp[i]/sys_ntot << std::endl;
 	}
-	
+
 	// Still allow for printing of all data, even if there is an error, in order to interrogate the results anyway
 	const double tol = 1.0e-6;
 	const double scratchEnergy = sys.scratchEnergy(), incrEnergy = sys.energy();
@@ -866,7 +841,7 @@ int main (int argc, char * const argv[]) {
 	} else {
 		std::cout << "Passed: Final scratch energy - incremental = " << std::setprecision(20) << scratchEnergy - incrEnergy << std::endl;
 	}
-	
+
 	// Free pair potential pointers
   	for (unsigned int i = 0; i < ppotArray.size(); ++i) {
 		delete ppotArray[i];

@@ -293,79 +293,12 @@ void tmmc::calculatePI () {
 /*!
  * Print the UN-NORMALIZED biasing function (lnPI) and possibly collection matrix to files.
  * Will overwrite the files if another with that name exists.
- * Prints in netCDF format if enabled.
  *
  * \param [in] fileName Name of the file to print to.  Will append with "_lnPI" and "_C" for biasing function and collection matrix, respectively.
  * \param [in] printC Defaults to false, but if true will also print the collection matrix.
  * \param [in] printHC Defaults to false, but if true will also print the visited states matrix.
  */
 void tmmc::print (const std::string fileName, bool printC, bool printHC) {
-#ifdef NETCDF_CAPABLE
-	// Print collection matrix
-	if (printC) {
-		const std::string name = fileName + "_C.nc";
-		try {
-			// print all states, including partial ones, so this can be used to restart from, etc.
-			NcFile outFile(name.c_str(), NcFile::replace);
-			NcDim probDim = outFile.addDim("vectorized_position", C_.size());
-			NcVar probVar = outFile.addVar("C", ncDouble, probDim);
-			std::string attName = "species_total_upper_bound";
-			probVar.putAtt(attName.c_str(), std::to_string(Nmax_).c_str());
-			attName = "species_total_lower_bound";
-			probVar.putAtt(attName.c_str(), std::to_string(Nmin_).c_str());
-			attName = "volume";
-			double V = box_[0]*box_[1]*box_[2];
-			probVar.putAtt(attName.c_str(), std::to_string(V).c_str());
-			probVar.putVar(&C_[0]);
-		} catch (NcException ioe) {
-			throw customException ("Unable to write TMMC collection matrix to "+name);
-		}
-	}
-
-	// Print visited states matrix
-	if (printHC) {
-		const std::string name = fileName + "_HC.nc";
-		try {
-			// print all states, including partial ones, so this can be used to restart from, etc.
-			NcFile outFile(name.c_str(), NcFile::replace);
-			NcDim probDim = outFile.addDim("vectorized_position", HC_.size());
-			NcVar probVar = outFile.addVar("HC", ncDouble, probDim);
-			std::string attName = "species_total_upper_bound";
-			probVar.putAtt(attName.c_str(), std::to_string(Nmax_).c_str());
-			attName = "species_total_lower_bound";
-			probVar.putAtt(attName.c_str(), std::to_string(Nmin_).c_str());
-			attName = "volume";
-			double V = box_[0]*box_[1]*box_[2];
-			probVar.putAtt(attName.c_str(), std::to_string(V).c_str());
-			probVar.putVar(&HC_[0]);
-		} catch (NcException ioe) {
-			throw customException ("Unable to write TMMC visited states matrix to "+name);
-		}
-	}
-
-	// Print lnPI (bias) matrix
-	const std::string name = fileName + "_lnPI.nc";
-	try {
-		// only print the integral states
-		std::vector < double > lnPI_print (Nmax_ - Nmin_ + 1, 0.0);
-		for (unsigned int i = 0; i < lnPI_print.size(); ++i) {
-			lnPI_print[i] = lnPI_[i*Mtot_];
-		}
-		NcFile outFile(name.c_str(), NcFile::replace);
-		NcDim probDim = outFile.addDim("vectorized_position", lnPI_print.size());
-		NcVar probVar = outFile.addVar("lnPI", ncDouble, probDim);
-		std::string attName = "species_total_upper_bound";
-		probVar.putAtt(attName.c_str(), std::to_string(Nmax_).c_str());
-		attName = "species_total_lower_bound";
-		probVar.putAtt(attName.c_str(), std::to_string(Nmin_).c_str());
-		attName = "volume";
-		double V = box_[0]*box_[1]*box_[2];
-		probVar.putAtt(attName.c_str(), std::to_string(V).c_str());
-		probVar.putVar(&lnPI_print[0]);
-	} catch (NcException ioe) {
-		throw customException ("Unable to write TMMC lnPI to "+name);
-	}
-#else
 	// Print collection matrix
 	if (printC) {
 		// print all states, including partial ones, so this can be used to restart from, etc.
@@ -408,7 +341,6 @@ void tmmc::print (const std::string fileName, bool printC, bool printHC) {
 		of << std::setprecision(15) << lnPI_[i] << std::endl; // only print the integral states
 	}
 	of.close();
-#endif
 }
 
 /*!
@@ -419,16 +351,6 @@ void tmmc::print (const std::string fileName, bool printC, bool printHC) {
  * \param [in] fileName Name of file containing the visited states matrix.  Must include file extension.
  */
 void tmmc::readHC (const std::string fileName) {
-#ifdef NETCDF_CAPABLE
-	try {
-		NcFile dataFile (fileName.c_str(), NcFile::read);
-		NcVar HC_data = dataFile.getVar("HC");
-		if (HC_data.isNull()) throw customException("Visited states matrix was empty, cannot read from "+fileName);
-		HC_data.getVar(&HC_[0]);
-	} catch (NcException ioe) {
-		throw customException ("Unable to read visited states matrix from netCDF file "+fileName);
-	}
-#else
 	std::ifstream infile (fileName.c_str());
 	if (!infile.is_open()) {
 		throw customException("Unable to read visited states matrix from ASCII file "+fileName);
@@ -444,7 +366,6 @@ void tmmc::readHC (const std::string fileName) {
 		}
 	}
 	infile.close();
-#endif
 }
 
 /*!
@@ -455,16 +376,6 @@ void tmmc::readHC (const std::string fileName) {
  * \param [in] fileName Name of file containing the collection matrix.  Must include file extension.
  */
 void tmmc::readC (const std::string fileName) {
-#ifdef NETCDF_CAPABLE
-	try {
-		NcFile dataFile (fileName.c_str(), NcFile::read);
-		NcVar C_data = dataFile.getVar("C");
-		if (C_data.isNull()) throw customException("Collection matrix was empty, cannot read from "+fileName);
-		C_data.getVar(&C_[0]);
-	} catch (NcException ioe) {
-		throw customException ("Unable to read collection matrix from netCDF file "+fileName);
-	}
-#else
 	std::ifstream infile (fileName.c_str());
 	if (!infile.is_open()) {
 		throw customException("Unable to read collection matrix from ASCII file "+fileName);
@@ -480,7 +391,6 @@ void tmmc::readC (const std::string fileName) {
 		}
 	}
 	infile.close();
-#endif
 }
 
 /*!
@@ -613,53 +523,11 @@ void wala::iterateForward () {
 /*!
  * Print the UN-NORMALIZED biasing function (lnPI) and possible the visted states histogram to files.
  * Will overwrite the files if another with that name exists.
- * Prints in netCDF format if enabled.
  *
  * \param [in] fileName Name of the file to print to.  Will append with "_lnPI" and "_H" for the macrostate distribution and visited-states histogram, respectively.
  * \param [in] printH Defaults to false, but if true will also print the visited states histogram.
  */
 void wala::print (const std::string fileName, bool printH) {
-#ifdef NETCDF_CAPABLE
-	// Print visited-states histogram
-	if (printH) {
-		const std::string name = fileName + "_H.nc";
-		try {
-			// print complete visited states histogram to restart / visualize progress
-			NcFile outFile(name.c_str(), NcFile::replace);
-			NcDim probDim = outFile.addDim("vectorized_position", H_.size());
-			NcVar probVar = outFile.addVar("H", ncDouble, probDim);
-			std::string attName = "species_total_upper_bound";
-			probVar.putAtt(attName.c_str(), std::to_string(Nmax_).c_str());
-			attName = "species_upper_lower_bound";
-			probVar.putAtt(attName.c_str(), std::to_string(Nmin_).c_str());
-			attName = "volume";
-			double V = box_[0]*box_[1]*box_[2];
-			probVar.putAtt(attName.c_str(), std::to_string(V).c_str());
-			probVar.putVar(&H_[0]);
-		} catch (NcException ioe) {
-			throw customException ("Unable to write Wang-Landau visited states histogram to "+name);
-		}
-	}
-
-	// Print lnPI (bias) matrix
-	const std::string name = fileName + "_lnPI.nc";
-	try {
-		// only ALL states for restarting purposes
-		NcFile outFile(name.c_str(), NcFile::replace);
-		NcDim probDim = outFile.addDim("vectorized_position", lnPI_.size());
-		NcVar probVar = outFile.addVar("lnPI", ncDouble, probDim);
-		std::string attName = "species_total_upper_bound";
-		probVar.putAtt(attName.c_str(), std::to_string(Nmax_).c_str());
-		attName = "species_total_lower_bound";
-		probVar.putAtt(attName.c_str(), std::to_string(Nmin_).c_str());
-		attName = "volume";
-		double V = box_[0]*box_[1]*box_[2];
-		probVar.putAtt(attName.c_str(), std::to_string(V).c_str());
-		probVar.putVar(&lnPI_[0]);
-	} catch (NcException ioe) {
-		throw customException ("Unable to write Wang-Landau lnPI histogram to "+name);
-	}
-#else
 	// Print visited-states histogram
 	if (printH) {
 		// print complete visited states histogram to restart / visualize progress
@@ -696,7 +564,6 @@ void wala::print (const std::string fileName, bool printH) {
 		of << std::setprecision(15) << lnPI_[i] << std::endl; // only ALL states for restarting purposes
 	}
 	of.close();
-#endif
 }
 
 /*!
@@ -707,16 +574,6 @@ void wala::print (const std::string fileName, bool printH) {
  * \param [in] fileName Name of file containing lnPI.  Must include file extension.
  */
 void wala::readlnPI (const std::string fileName) {
-#ifdef NETCDF_CAPABLE
-	try {
-		NcFile dataFile (fileName.c_str(), NcFile::read);
-		NcVar lnPI_data = dataFile.getVar("lnPI");
-		if (lnPI_data.isNull()) throw customException("Wang-Landau macrostate distribution matrix (biasing function) was empty, cannot read from "+fileName);
-		lnPI_data.getVar(&lnPI_[0]);
-	} catch (NcException ioe) {
-		throw customException ("Unable to read Wang-Landau lnPI from "+fileName);
-	}
-#else
 	std::ifstream infile (fileName.c_str());
 	if (!infile.is_open()) {
 		throw customException ("Unable to read Wang-Landau lnPI from "+fileName);
@@ -731,7 +588,6 @@ void wala::readlnPI (const std::string fileName) {
 			lineIndex++;
 		}
 	}
-#endif
 }
 
 /*!
@@ -742,16 +598,6 @@ void wala::readlnPI (const std::string fileName) {
  * \param [in] fileName Name of file containing visited states.  Must include file extension.
  */
 void wala::readH (const std::string fileName) {
-#ifdef NETCDF_CAPABLE
-	try {
-		NcFile dataFile (fileName.c_str(), NcFile::read);
-		NcVar H_data = dataFile.getVar("H");
-		if (H_data.isNull()) throw customException("Wang-Landau visited states matrix was empty, cannot read from "+fileName);
-		H_data.getVar(&H_[0]);
-	} catch (NcException ioe) {
-		throw customException ("Unable to read Wang-Landau visited states matrix from "+fileName);
-	}
-#else
 	std::ifstream infile (fileName.c_str());
 	if (!infile.is_open()) {
 		throw customException ("Unable to read Wang-Landau visited states matrix  from "+fileName);
@@ -766,5 +612,4 @@ void wala::readH (const std::string fileName) {
 			lineIndex++;
 		}
 	}
-#endif
 }

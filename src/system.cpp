@@ -647,16 +647,12 @@ void simSystem::recordExtMoments () {
 }
 
 /*!
- * Print the (normalized by default) extensive energy histogram for each Ntot. netCDF4 not enabled
+ * Print the (normalized by default) extensive energy histogram for each Ntot.
  *
  * \param [in] fileName Name of the file to print to
  * \param [in] normalize Whether or not to normalize the histogram (default=true)
  */
 void simSystem::printExtMoments (const std::string fileName, const bool normalize) {
-#ifdef NETCDF_CAPABLE
-    throw customException ("Cannot record the extensive moments for each Ntot in netCDF4 format.");
-#else
-	// Without netCDF capabilities, just print to ASCII file
 	std::ofstream of;
 	std::string name = fileName+".dat";
 	of.open(name.c_str(), std::ofstream::out);
@@ -732,11 +728,10 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 		}
 	}
 	of.close();
-#endif
 }
 
 /*!
- * Restart the extensive energy histogram for each Ntot from unnormalized checkpoint. netCDF4 not enabled
+ * Restart the extensive energy histogram for each Ntot from unnormalized checkpoint.
  *
  * \param [in] fileName Name of the file to load from
  * \param [in] ctr Counter for each point in the histogram
@@ -908,16 +903,12 @@ void simSystem::reInitializeEnergyHistogram () {
 }
 
 /*!
- * Print the (normalized by default) energy histogram for each Ntot. netCDF4 not enabled
+ * Print the (normalized by default) energy histogram for each Ntot.
  *
  * \param [in] fileName Prefix of the filename to load from
  * \param [in] normalize Whether or not to normalize the histogram (default=true)
  */
 void simSystem::printEnergyHistogram (const std::string fileName, const bool normalize) {
-#ifdef NETCDF_CAPABLE
-    throw customException ("Cannot record the energyHistogram for each Ntot in netCDF4 format.");
-#else
-	// Without netCDF capabilities, just print to ASCII file
 	std::ofstream of;
 	std::string name = fileName+".dat";
 	of.open(name.c_str(), std::ofstream::out);
@@ -966,11 +957,10 @@ void simSystem::printEnergyHistogram (const std::string fileName, const bool nor
 		}
 	}
 	of.close();
-#endif
 }
 
 /*!
- * Restart the energy histogram for each Ntot from unnormalized checkpoint. netCDF4 not enabled
+ * Restart the energy histogram for each Ntot from unnormalized checkpoint.
  *
  * \param [in] prefix Prefix of the filename to load from
  */
@@ -1066,16 +1056,12 @@ void simSystem::refinePkHistogramBounds () {
 }
 
 /*!
- * Print the (normalized by default) particle number histogram for each Ntot. netCDF4 not enabled
+ * Print the (normalized by default) particle number histogram for each Ntot.
  *
  * \param [in] fileName Prefix of filename to print to
  * \param [in] normalize Whether or not to normalize the histogram (default=true)
  */
 void simSystem::printPkHistogram (const std::string fileName, const bool normalize) {
-#ifdef NETCDF_CAPABLE
-    throw customException ("Cannot record the pkHistogram for each Ntot in netCDF4 format.");
-#else
-	// Without netCDF capabilities, just print to ASCII file
 	for (unsigned int i = 0; i < nSpecies_; ++i) {
 		std::ofstream of;
 		std::string name = fileName+"_"+std::to_string(i+1)+".dat";
@@ -1126,11 +1112,10 @@ void simSystem::printPkHistogram (const std::string fileName, const bool normali
 		}
 		of.close();
 	}
-#endif
 }
 
 /*!
- * Restart the particle histogram for each Ntot from unnormalized checkpoint. netCDF4 not enabled
+ * Restart the particle histogram for each Ntot from unnormalized checkpoint.
  *
  * \param [in] prefix Prefix of the filename to load from
  */

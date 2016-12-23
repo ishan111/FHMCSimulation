@@ -1,10 +1,9 @@
-# This does not compile with the netCDF libraries so all output will be switched to ASCII from the executable
 cmake_minimum_required(VERSION 2.6)
 project(fhmc)
 
 set(CMAKE_CXX_STANDARD 11)
 
-# check that C++11 is supported
+# Check that C++11 is supported
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 if(COMPILER_SUPPORTS_CXX11)

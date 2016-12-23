@@ -924,11 +924,7 @@ TEST_F (tmmBiaslnPI, checkPrintAndRead) {
 	tmmcBias->calculatePI();
 	tmmcBias->print("tmmBiaslnPI_checkPrint", true);
 	std::vector < double > C1 = tmmcBias->getC();
-#ifdef NETCDF_CAPABLE
-	tmmcBias->readC("tmmBiaslnPI_checkPrint_C.nc");
-#else
 	tmmcBias->readC("tmmBiaslnPI_checkPrint_C.dat");
-#endif
 	std::vector < double > C2 = tmmcBias->getC();
 	EXPECT_EQ (C2.size(), C1.size());
 	for (unsigned int i = 0; i < C1.size(); ++i) {
@@ -1195,12 +1191,7 @@ TEST_F (testWalaBias, checkPrintReadlnPI) {
 		EXPECT_TRUE (fabs(lnPI_check[i] - 0.123456) < 1.0e-9);
 	}
 
-	// read in and check again
-#ifdef NETCDF_CAPABLE
-	walaBias->readlnPI("walaBiaslnPI_checkPrint_lnPI.nc");
-#else
 	walaBias->readlnPI("walaBiaslnPI_checkPrint_lnPI.dat");
-#endif
 
 	std::vector < double > lnPI_new = walaBias->getlnPI();
 	for (unsigned int i = 0; i < lnPI_new.size(); ++i) {
@@ -2017,11 +2008,9 @@ TEST_F (tmmBiasExpandedlnPI, checkPrintAndRead) {
 	tmmcBias->calculatePI();
 	tmmcBias->print("tmmBiasExpandedlnPI_checkPrint", true);
 	std::vector < double > C1 = tmmcBias->getC();
-#ifdef NETCDF_CAPABLE
-	tmmcBias->readC("tmmBiasExpandedlnPI_checkPrint_C.nc");
-#else
+
 	tmmcBias->readC("tmmBiasExpandedlnPI_checkPrint_C.dat");
-#endif
+
 	std::vector < double > C2 = tmmcBias->getC();
 	EXPECT_EQ (C2.size(), C1.size());
 	for (unsigned int i = 0; i < C1.size(); ++i) {
@@ -2227,12 +2216,7 @@ TEST_F (testExpandedWalaBias, checkPrintReadlnPI) {
 		EXPECT_TRUE (fabs(lnPI_check[i] - 0.123456) < 1.0e-9);
 	}
 
-	// read in and check again
-#ifdef NETCDF_CAPABLE
-	walaBias->readlnPI("walaBiasExpandedlnPI_checkPrint_lnPI.nc");
-#else
 	walaBias->readlnPI("walaBiasExpandedlnPI_checkPrint_lnPI.dat");
-#endif
 
 	std::vector < double > lnPI_new = walaBias->getlnPI();
 	for (unsigned int i = 0; i < lnPI_new.size(); ++i) {

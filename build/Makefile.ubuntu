@@ -1,19 +1,12 @@
 # define the C compiler to use
 CXX = g++
 
-# -DNETCDF_CAPABLE to enable printing in netCDF formats, esle defaults to ASCII
 # -DFLUID_PHASE_SIMULATIONS to enable the possibility of tail corrections
-CXXFLAGS = -Wall -O3 -DFLUID_PHASE_SIMULATIONS -std=c++11
-#-DNETCDF_CAPABLE
+CXXFLAGS = -Wall -O3 -std=c++11 -DFLUID_PHASE_SIMULATIONS
 
-INCLUDES =
-#-I/home/nam4_local/netCDF_c++4/4.2.1/install/include -I/home/nam4_local/netCDF/4.3.3.1/install/include
-
-LFLAGS =
-#-L/home/nam4_local/netCDF_c++4/4.2.1/install/lib/ -L/home/nam4_local/netCDF/4.3.3.1/install/lib/
-
+#INCLUDES = -I/
+#LFLAGS = -L/
 LIBS = -lstdc++
-#-lnetcdf_c++4 -lnetcdf
 
 SRC_DIR = ../src/
 DRIVER_DIR = ../driver/
@@ -24,7 +17,7 @@ _OBJS = $(SRCS:.cpp=.o)
 ODIR = ./
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
-MAIN = ../bin/fhmc_$(DRIVER_SUFFIX)
+MAIN = ../bin/fhmc_$DRIVER_SUFFIX
 
 .PHONY: depend clean
 

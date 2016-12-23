@@ -16,11 +16,6 @@
  * Complile with -DFLUID_PHASE_SIMULATIONS if simulations are purely in the fluid phase.
  * This will allow tail corrections to be enabled which are only valid assuming a converging g(r) at large r.
  *
- * Compile with -DNETCDF_CAPABLE if netCDF libraries are installed and can be compiled against.  Certain data will be output to these arrays
- * instead of ASCII files if so.
- *
- * Tests compile with cmake and by default, do not link to netcdf libraries since they do not use them.  Everything tested in ASCII.
- *
  * \section Input
  * This is a sample input json file for a binary system.
  *

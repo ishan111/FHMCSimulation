@@ -12,13 +12,6 @@
 #include "global.h"
 #include "utilities.h"
 
-// netCDF if enabled
-#ifdef NETCDF_CAPABLE
-#include <netcdf>
-using namespace netCDF;
-using namespace netCDF::exceptions;
-#endif
-
 //! For biasing, need to address things with large indices
 #define __BIAS_INT_TYPE__ long long int
 
