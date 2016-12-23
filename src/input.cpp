@@ -525,7 +525,7 @@ void setup (simSystem &sys, const std::string filename) {
 			}
 			added += targetNum;
 
-			std::cout << "Target number = " << targetNum << std::endl;
+			std::cout << "Target number = " << targetNum << " for species " << i+1 << std::endl;
 			int tmpCounter = 0, statusPrint = 10e6;
 			while (initSys.numSpecies[i] < targetNum) {
 				try {

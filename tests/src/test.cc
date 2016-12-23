@@ -485,13 +485,14 @@ protected:
 			maxSpecies[i] = 10*i+10; // 10, 20, 30
 			minSpecies[i] = 0;
 		}
+		maxSpecies[0] = 20; // 20 20 30
 	}
 };
 
 TEST_F (InitializeSystem, nSpecies) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	EXPECT_EQ (mysys.nSpecies(), nSpecies);
-	EXPECT_EQ (mysys.totNMax(), 60);
+	EXPECT_EQ (mysys.totNMax(), 70);
 	EXPECT_EQ (mysys.totNMin(), 0);
 }
 
@@ -555,8 +556,8 @@ TEST_F (InitializeSystem, setUpperWindowLower) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	mysys.setTotNBounds (totNbounds);
 
-	// should have resized species 2,3 from 30,20 to 19,19
-	EXPECT_EQ (mysys.maxSpecies(0), 10);
+	// should have resized species bounds
+	EXPECT_EQ (mysys.maxSpecies(0), totNbounds[1]);
 	EXPECT_EQ (mysys.maxSpecies(1), totNbounds[1]);
 	EXPECT_EQ (mysys.maxSpecies(2), totNbounds[1]);
 	EXPECT_EQ (mysys.atoms[1].size(), totNbounds[1]);
@@ -573,8 +574,8 @@ TEST_F (InitializeSystem, setInterfereWindowLower) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	mysys.setTotNBounds (totNbounds);
 
-	// should have resized species 2,3 from 30,20 to 19,19
-	EXPECT_EQ (mysys.maxSpecies(0), 10);
+	// should have resized species 
+	EXPECT_EQ (mysys.maxSpecies(0), totNbounds[1]);
 	EXPECT_EQ (mysys.maxSpecies(1), totNbounds[1]);
 	EXPECT_EQ (mysys.maxSpecies(2), totNbounds[1]);
 	EXPECT_EQ (mysys.atoms[1].size(), totNbounds[1]);

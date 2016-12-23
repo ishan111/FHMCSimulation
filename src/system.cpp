@@ -55,10 +55,12 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
 		if (maxSpecies_[i] > totNBounds_[1]) {
 			maxSpecies_[i] = totNBounds_[1];
 		}
+		if (maxSpecies_[i] < totNBounds_[1]) {
+			throw customException ("Upper bound for species "+std::to_string(i+1)+" is lower than overall max, so cannot realize possibility of system being full of this species");
+		}
 		totMin += minSpecies_[i];
 	}
 	if (totMin > totNBounds_[0]) {
-		// this isn't the end of the world, but for now, alert the user in case something is wrong
 		throw customException ("Lower total N bound is lower than the sum of all individual lower bounds, region cannot be completely sampled");
 	}
 
@@ -69,12 +71,13 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
         	throw customException ("Max species < Min species");
     	}
 		try {
-			atoms[i].resize(maxSpecies_[i]);
+			atoms[i].resize(maxSpecies_[i], atom());
 		} catch (std::exception &e) {
 			throw customException (e.what());
 		}
+		// if numSpecies[i] above maxSpecies_[i] for some reason, destroy the atoms beyond bound
 		if (numSpecies[i] > (int)atoms[i].size()) {
-			numSpecies[i] = atoms.size();
+			numSpecies[i] = atoms[i].size();
 		}
 		tmpTot += numSpecies[i];
 	}
@@ -550,7 +553,7 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
     		throw customException ("Max species < Min species");
     	}
 		try {
-			atoms[i].resize(maxSpecies_[i]);
+			atoms[i].resize(maxSpecies_[i], atom());
 		} catch (std::exception &e) {
 			throw customException (e.what());
 		}
