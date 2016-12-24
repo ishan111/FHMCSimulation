@@ -42,6 +42,10 @@ $ cd ../bin; ./runUnitTests
 * See helper/window_helper.py for python functions to construct windows
 * $ ./binary_name input.json 2>> err >> log
 
+### Output
+
+The simulation produces checkpoints which allow the simulation to be restarted automatically.  During the "production" TMMC phase, extensive properties, $ln\Pi$, as well as energy and particle number histograms collected at each value of the scalar order parameter used.  These are later automatically identified and analyzed by [FHMCAnalysis](https://github.com/mahynski/FHMCAnalysis).
+
 ### Input File
 
 Example input file(s) may be generated with helper/window_helper.py, and can be modified by the user as needed.  A sample input.json file is given below:
