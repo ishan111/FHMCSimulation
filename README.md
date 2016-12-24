@@ -46,11 +46,11 @@ $ cd ../bin; ./runUnitTests
 
 Example input file(s) may be generated with helper/window_helper.py, and can be modified by the user as needed.  A sample input.json file is given below:
 
- {
- "num_species" : 2, # 2 species
- "beta" : 0.89, # 1/T* = 0.89
- "box" : [9.0, 9.0, 9.0], # Box = [9, 9, 9] with a corner at (0,0,0)
- "mu" : [1.234, 2.345], # (Excess) Chemical potential of each species
+>{
+>"num_species" : 2, # 2 species
+>"beta" : 0.89, # 1/T* = 0.89
+>"box" : [9.0, 9.0, 9.0], # Box = [9, 9, 9] with a corner at (0,0,0)
+>"mu" : [1.234, 2.345], # (Excess) Chemical potential of each species
 "seed" : -10, # RNG seed
 "max_N" : [200, 200], # Maximum number of each species type to allow
 "min_N" : [0, 0], # Minimum number of each species type to allow
