@@ -44,7 +44,7 @@ $ cd ../bin; ./runUnitTests
 
 ### Output
 
-The simulation produces checkpoints which allow the simulation to be restarted automatically.  During the "production" TMMC phase, extensive properties, $ln\Pi$, as well as energy and particle number histograms collected at each value of the scalar order parameter used.  These are later automatically identified and analyzed by [FHMCAnalysis](https://github.com/mahynski/FHMCAnalysis).
+The simulation produces checkpoints which allow the simulation to be restarted automatically.  During the "production" TMMC phase, extensive properties, lnPI, as well as energy and particle number histograms collected at each value of the scalar order parameter used.  These are later automatically identified and analyzed by [FHMCAnalysis](https://github.com/mahynski/FHMCAnalysis).
 
 ### Input File
 
