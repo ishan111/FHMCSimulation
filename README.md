@@ -48,9 +48,8 @@ Example input file(s) may be generated with helper/window_helper.py, and can be 
 
 >{
 >
->"num_species" : 2, # 2 species
->
->"beta" : 0.89, # 1/T* = 0.89
+> "num_species" : 2, # 2 species
+> "beta" : 0.89, # 1/T* = 0.89
 >
 >"box" : [9.0, 9.0, 9.0], # Box = [9, 9, 9] with a corner at (0,0,0)
 >
