@@ -17,7 +17,7 @@ int main (int argc, char * const argv[]) {
 
 	// Check not falsely restarting the simulation
 	if (cpt.tmmcDone) {
-		std::cerr << "TMMC stage already finished, terminating" << std::endl;
+		std::cout << "TMMC stage already finished, terminating at " << getTimeStamp() << std::endl;
 		return SAFE_EXIT;
 	}
 
