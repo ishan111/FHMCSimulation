@@ -176,7 +176,6 @@ def raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name="inpu
 
 	"""
 
-	totmem = 100*num_windows # MB/node, assuming 100MB per job
 	sdays = int(m.floor(float(hours)/24.))
 	shours = int(m.floor(float(hours-24*sdays)))
 	sminutes = int(m.floor(float(hours-24*sdays-shours)*60))
@@ -191,7 +190,6 @@ def raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name="inpu
 	new_string = re.sub('__GITHEAD__', str(git_head), new_string)
 	new_string = re.sub('__BINARY__', str(binary), new_string)
 	new_string = re.sub('__INPUTNAME__', str(input_name), new_string)
-	new_string = re.sub('__TOTMEM__', str(totmem), new_string)
 	new_string = re.sub('__SDAYS__', str(sdays), new_string)
 	new_string = re.sub('__SHOURS__', str(shours), new_string)
 	new_string = re.sub('__SMINUTES__', str(sminutes), new_string)
@@ -200,13 +198,15 @@ def raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name="inpu
 	for idx in xrange(0, int(m.ceil(num_windows/float(jobs_per)))):
 		start = idx*jobs_per+1
 		end = idx*jobs_per+min([jobs_remaining,jobs_per])
+		totmem = 100*(end-start+1) # MB/job, assuming 100MB per job
 		i_string = re.sub('__MINWIN__', str(start), new_string)
 		i_string = re.sub('__MAXWIN__', str(end), i_string)
 		i_string = re.sub('__TAGNAME__', str(tag+"_"+str(idx+1)), i_string)
 		i_string = re.sub('__PPNVIS__', str(2*(end-start+1)), i_string) # double to deal with hyperthreading
+		i_string = re.sub('__TOTMEM__', str(totmem), i_string)
 		jobs_remaining -= jobs_per
 
-		f = open(prefix+"/qsub_"+str(idx+1)+".pbs", 'w')
+		f = open(prefix+"/sbatch_"+str(idx+1)+".sb", 'w')
 		f.write(i_string)
 		f.close()
 
