@@ -33,7 +33,7 @@ def pure_settings (settings):
 	info["box"] = [8.0, 8.0, 8.0]
 	info["mu"] = [0.0*i for i in xrange(info["num_species"])]
 	info["seed"] = -10
-	info["max_N"] = [int(1200)]s
+	info["max_N"] = [int(1200)]
 	info["min_N"] = [int(0)]
 	info["window"] = [bounds[0], bounds[1]]
 	info["restart_file"] = ""
@@ -58,9 +58,9 @@ def pure_settings (settings):
 
 	return info
 
-def make_input (filename, settings):
+def make_input (filename, settings, generator):
 	"""
-	Example production of input file for FHMCSimulation, in this case using pure_settings()
+	Example production of input file for FHMCSimulation.
 
 	Parameters
 	----------
@@ -68,10 +68,12 @@ def make_input (filename, settings):
 		Name of file to produce
 	settings : tuple
 		Tuple of settings, user defined
+	generator : function
+		Takes settings tuple as only argument and returns json input as dictionary
 
 	"""
 
-	info = pure_settings(settings)
+	info = generator(settings)
 	f = open(filename, 'w')
 	json.dump(info, f, sort_keys=True, indent=4)
 	f.close()
@@ -256,10 +258,10 @@ if __name__ == "__main__":
 	for w in range(num_windows):
 		dname = prefix+"/"+str(w+1)
 		if ((str(w+1) in os.listdir(prefix)) and overwrite):
-			shutil.rmtree(dname)
+			shutil.rmtree(dname, pure_settings)
 		os.makedirs(dname)
 
-		make_input (dname+"/"+input_name, (bounds[w], beta))
+		make_input (dname+"/"+input_name, (bounds[w], beta), pure_settings)
 		make_sleeper (dname+"/sleeper.sh")
 
 	gibbs_qsub (num_windows, binary, git_head, tag, './', input_name, jobs_per, q, scratch_dir)
