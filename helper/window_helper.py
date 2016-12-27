@@ -177,9 +177,9 @@ def raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name="inpu
 	"""
 
 	totmem = 100*num_windows # MB/node, assuming 100MB per job
-	sdays = int(floor(float(hours)/24.))
-	shours = int(floor(float(hours-24*sdays)))
-	sminutes = int(floor(float(hours-24*sdays-shours)*60))
+	sdays = int(m.floor(float(hours)/24.))
+	shours = int(m.floor(float(hours-24*sdays)))
+	sminutes = int(m.floor(float(hours-24*sdays-shours)*60))
 
 	if (sdays > 14 or (sdays == 14 and (shours > 0 or sminutes > 0))):
 		raise Exception ("Cannot exceed 14 days on raritan queues")
