@@ -201,6 +201,7 @@ def raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name="inpu
 		start = idx*jobs_per+1
 		end = idx*jobs_per+min([jobs_remaining,jobs_per])
 		totmem = 100*(end-start+1) # MB/job, assuming 100MB per job
+		totmem = max(totmem, 4000) # Impose a 4GB min reservation on raritan
 		i_string = re.sub('__MINWIN__', str(start), new_string)
 		i_string = re.sub('__MAXWIN__', str(end), i_string)
 		i_string = re.sub('__TAGNAME__', str(tag+"_"+str(idx+1)), i_string)
