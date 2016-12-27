@@ -11,7 +11,7 @@ def altsep (settings):
 
 	Parameters
 	----------
-	settings : tuple
+	settings : dict
 		Settings
 
 	"""
@@ -35,10 +35,28 @@ if __name__ == "__main__":
 	# Overwrite existing inputs
 	overwrite = True
 
-	# Establish bounds for windows
+	# System settings
+	eps_11 = 1.0
+	sig_11 = 1.0
+	
+        sett = {}
+	sett["beta"] = 1.0*eps_11
+        sett["sig"] = [sig_11, 1.2*sig_11] 
+        sett["eps"] = [eps_11, 1.0*eps_11]
+	sett["D_cyl"] = 9.0*sig_11
+	sett["lam_w"] = []
+        sett["eps_w"] = []
+
+	ff_range = max(np.array(sett["lam"])*np.array(sett["sig"]))
+	fw_range = max(np.array(sett["lam_w"])*np.array(sett["sig"]))
+	Lxy = D_cyl + 2*max(ff_range, fw_range) 
 	ntot_max = 600
+	Lz = 
+	sett["box"] = [Lxy, Lxy, Lz]
+
+	# Establish bounds for windows
 	final_window_width = 20
-	num_windows = 20
+	num_windows = 24
 	num_overlap = 6
 
 	# Need installation information
@@ -47,25 +65,29 @@ if __name__ == "__main__":
 	git_head = install_dir+"/.git/logs/HEAD"
 	jobs_per = 12
 	scratch_dir = "/scratch/nam4/"
-	q = "medium"
-	tag = "fs_binary_example"
+	q = "mml"
 	hours = 72
+	tag = "fs_binary_example"
 
 	# Window settings
 	input_name = "input.json"
-	prefix = "./"
-	bounds = win.ntot_window_scaling (ntot_max, final_window_width, num_windows, num_overlap)
+	
+	for dMu2 in [-2.9, -1.4, 0.0, 1.4, 2.9]:	
+		prefix = "./dMu2_"+str(dMu2)
+		bounds = win.ntot_window_scaling (ntot_max, final_window_width, num_windows, num_overlap)
 
-	# System settings
-	beta = 1.0
+		if (!os.path.isdir(prefix)):
+			os.makedirs(prefix)
 
-	for w in range(num_windows):
-		dname = prefix+"/"+str(w+1)
-		if ((str(w+1) in os.listdir(prefix)) and overwrite):
-			shutil.rmtree(dname)
-		os.makedirs(dname)
+		sett["dMu2"] = dMu2
+		for w in range(num_windows):
+			dname = prefix+"/"+str(w+1)
+			if ((str(w+1) in os.listdir(prefix)) and overwrite):
+				shutil.rmtree(dname)
+			os.makedirs(dname)
+	
+			sett["bounds"] = bounds[w]
+			hP.make_input (dname+"/"+input_name, sett, altsep)
+			hP.make_sleeper (dname+"/sleeper.sh")
 
-		hP.make_input (dname+"/"+input_name, (bounds[w], beta), altsep)
-		hP.make_sleeper (dname+"/sleeper.sh")
-
-	hP.raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name, jobs_per, q, hours, scratch_dir)
+		hP.raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name, jobs_per, q, hours, scratch_dir)

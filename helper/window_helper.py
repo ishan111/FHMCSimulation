@@ -14,8 +14,8 @@ def pure_settings (settings):
 
 	Parameters
 	----------
-	settings : tuple
-		Tuple of (beta, bounds) where, beta = 1/T* for the simulation, bounds = (low, high) for Ntot
+	settings : dict
+		Dictionary containing (beta, bounds) where, beta = 1/T* for the simulation, bounds = (low, high) for Ntot
 
 	Returns
 	-------
@@ -24,7 +24,8 @@ def pure_settings (settings):
 
 	"""
 
-	bounds, beta = settings
+	bounds = settings["bounds"]
+	beta = settings["beta"]
 
 	info = {}
 
@@ -66,10 +67,10 @@ def make_input (filename, settings, generator):
 	----------
 	filename : str
 		Name of file to produce
-	settings : tuple
-		Tuple of settings, user defined
+	settings : dict
+		Dictionary of settings, user defined
 	generator : function
-		Takes settings tuple as only argument and returns json input as dictionary
+		Takes settings tuple as only argument and returns json input as dictionaryi, e.g., pure_settings()
 
 	"""
 
@@ -228,12 +229,16 @@ if __name__ == "__main__":
 	sys.path.append(FHMCLIB)
 	import FHMCAnalysis
 	import FHMCAnalysis.moments.win_patch.windows as win
+	
 	HELPLIB = "./"
 	sys.path.append(HELPLIB)
 	import window_helper as hP
 
 	# Overwrite existing inputs
 	overwrite = True
+
+	# Simulation settings
+	beta = 1.0
 
 	# Establish bounds for windows
 	ntot_max = 500
@@ -253,18 +258,22 @@ if __name__ == "__main__":
 	# Window settings
 	input_name = "input.json"
 	prefix = "./"
-	beta = 1.0
 	bounds = win.ntot_window_scaling (ntot_max, final_window_width, num_windows, num_overlap)
+	if (!os.path.isdir(prefix)):
+		os.makedirs(prefix)
 
+	sett = {}
+	sett["beta"] = beta
 	for w in range(num_windows):
 		dname = prefix+"/"+str(w+1)
 		if ((str(w+1) in os.listdir(prefix)) and overwrite):
 			shutil.rmtree(dname, pure_settings)
 		os.makedirs(dname)
 
-		hP.make_input (dname+"/"+input_name, (bounds[w], beta), hP.pure_settings)
+		sett["bounds"] = bounds[w]
+		hP.make_input (dname+"/"+input_name, sett, hP.pure_settings)
 		hP.make_sleeper (dname+"/sleeper.sh")
 
-	gibbs_qsub (num_windows, binary, git_head, tag, './', input_name, jobs_per, q, scratch_dir)
+	hP.gibbs_qsub (num_windows, binary, git_head, tag, './', input_name, jobs_per, q, scratch_dir)
 	"""
 
