@@ -229,7 +229,7 @@ if __name__ == "__main__":
 	import FHMCAnalysis.moments.win_patch.windows as win
 	HELPLIB = "./"
 	sys.path.append(HELPLIB)
-	from window_helper import *
+	import window_helper as hP
 
 	# Overwrite existing inputs
 	overwrite = True
@@ -261,8 +261,8 @@ if __name__ == "__main__":
 			shutil.rmtree(dname, pure_settings)
 		os.makedirs(dname)
 
-		make_input (dname+"/"+input_name, (bounds[w], beta), pure_settings)
-		make_sleeper (dname+"/sleeper.sh")
+		hP.make_input (dname+"/"+input_name, (bounds[w], beta), hP.pure_settings)
+		hP.make_sleeper (dname+"/sleeper.sh")
 
 	gibbs_qsub (num_windows, binary, git_head, tag, './', input_name, jobs_per, q, scratch_dir)
 	"""
