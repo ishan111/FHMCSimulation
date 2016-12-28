@@ -894,16 +894,6 @@ void simSystem::reInitializeEnergyHistogram () {
 		// This is just to give the system a good "guess" to conserve memory.
 		lb = round((energyHistogram_lb_[i] - 0.0)/energyHistDelta_)*energyHistDelta_;
 		ub = round((energyHistogram_ub_[i] - 0.0)/energyHistDelta_)*energyHistDelta_;
-		/*if (energyHistogram_lb_[i] < 0) {
-			lb = floor((energyHistogram_lb_[i] - 0.0)/energyHistDelta_);
-		} else {
-			lb = ceil((energyHistogram_lb_[i] - 0.0)/energyHistDelta_);
-		}
-		if (energyHistogram_ub_[i] < 0) {
-			ub = floor((energyHistogram_ub_[i] - 0.0)/energyHistDelta_);
-		} else {
-			ub = ceil((energyHistogram_ub_[i] - 0.0)/energyHistDelta_);
-		}*/
 
 		try {
 			energyHistogram_[i].reinitialize(lb,ub,energyHistDelta_);
