@@ -11404,8 +11404,8 @@ TEST_F (checkpointTest, loadDump) {
 	}
 
 	FILE* fp2 = fopen("../data/checkpt2/state.json", "r");
-	char readBuffer2[65536];
-	rapidjson::FileReadStream is2(fp, readBuffer2, sizeof(readBuffer2) );
+	char readBuffer2[100000];
+	rapidjson::FileReadStream is2(fp2, readBuffer2, sizeof(readBuffer2) );
 	rapidjson::Document doc2;
 	doc2.ParseStream(is2);
 	fclose(fp2);
@@ -11426,7 +11426,7 @@ TEST_F (checkpointTest, check) {
 	// test the system can check timing correctly
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
 	setup (sys, fname);
-	checkpoint cpt ("../data/checkpt", 2, sys);
+	checkpoint cpt ("../data/checkpt", 2, sys, false, true); // override all errors
 
 	std::cout << "Patience: testing checkpoint timing ..." << std::endl;
 

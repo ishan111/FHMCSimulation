@@ -142,8 +142,8 @@ private:
 	std::vector < double > box_; //!< System box size
 	std::vector < double > mass_; //!< Mass of each species.  Only used for deBroglie calculation if KE correction used
 	std::vector < double > mu_; //!< Chemical potential of each species
-	std::vector < double > energyHistogram_lb_; //!< Lowest energy observed for each Ntot
-	std::vector < double > energyHistogram_ub_; //!< Highest energy observed for each Ntot
+	std::vector < double > energyHistogram_lb_; //!< Lowest energy observed for each Ntot, is adjusted to become lb for energyHistogram_
+	std::vector < double > energyHistogram_ub_; //!< Highest energy observed for each Ntot, is adjusted in energyHistogram_
 
 	std::vector < std::vector < bool > > ppotSet_; //!< Matrix of pair potentials between type i and j
 	std::vector < std::vector < bool > > useCellList_;  //!< Matrix of whether or not to use cell lists to calculate potentials for pair type (i,j)

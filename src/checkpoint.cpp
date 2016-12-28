@@ -155,6 +155,8 @@ void checkpoint::load (simSystem &sys, const bool override) {
             hasCheckpoint = false;
             std::cerr << "Unable to load checkpoint: " << ex.what() << std::endl;
             exit(SYS_FAILURE);
+        } else {
+            std::cerr << "Overriding the following errors to load checkpoint: " << ex.what() << std::endl;
         }
     }
 

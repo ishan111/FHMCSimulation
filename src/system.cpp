@@ -874,7 +874,7 @@ void simSystem::refineEnergyHistogramBounds () {
 }
 
 /*!
- * Re-initialize the energy histogram with internal estimates of bounds.
+ * Re-initialize the energy histogram with internal estimates of bounds. Intended to be used at crossover stage before TMMC.
  */
 void simSystem::reInitializeEnergyHistogram () {
 	double lb = 0.0, ub = 0.0;
@@ -888,11 +888,13 @@ void simSystem::reInitializeEnergyHistogram () {
 		if (energyHistogram_lb_[i] > energyHistogram_ub_[i]) {
 			throw customException ("Bad energy histogram bound sizes");
 		}
-		// "standardize" the bounds against U = 0 for to "align" the bins, already done for pkHistogram
-		// this allows overlapping windows to be merged, otherwise they are not "aligned"
-		// this way the energy is reported as the limit of the edge of the aligned bins
-
-		if (energyHistogram_lb_[i] < 0) {
+		// "Standardize" the bounds against U = 0 for to "align" the bins, already done for pkHistogram.
+		// This allows overlapping windows to be merged, otherwise they are not "aligned".
+		// Rounding does not account for rare edge cases where energy falls exactly on the border between bins, but does not matter since this will be automatically handled.
+		// This is just to give the system a good "guess" to conserve memory.
+		lb = round((energyHistogram_lb_[i] - 0.0)/energyHistDelta_)*energyHistDelta_;
+		ub = round((energyHistogram_ub_[i] - 0.0)/energyHistDelta_)*energyHistDelta_;
+		/*if (energyHistogram_lb_[i] < 0) {
 			lb = floor((energyHistogram_lb_[i] - 0.0)/energyHistDelta_);
 		} else {
 			lb = ceil((energyHistogram_lb_[i] - 0.0)/energyHistDelta_);
@@ -901,7 +903,7 @@ void simSystem::reInitializeEnergyHistogram () {
 			ub = floor((energyHistogram_ub_[i] - 0.0)/energyHistDelta_);
 		} else {
 			ub = ceil((energyHistogram_ub_[i] - 0.0)/energyHistDelta_);
-		}
+		}*/
 
 		try {
 			energyHistogram_[i].reinitialize(lb,ub,energyHistDelta_);

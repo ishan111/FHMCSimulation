@@ -45,7 +45,6 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
     } else {
         printCounter = res.moveCounter;
         sweep = res.sweepCounter;
-        sys.reInitializeEnergyHistogram();
     }
 
     std::cout << "Starting progress stage from " << printCounter << "/" << std::min(numSweepSnaps, sys.totalTMMCSweeps) << " at " << getTimeStamp() << std::endl;
