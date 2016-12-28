@@ -969,7 +969,8 @@ void simSystem::printEnergyHistogram (const std::string fileName, const bool nor
 }
 
 /*!
- * Restart the energy histogram for each Ntot from unnormalized checkpoint.
+ * Restart the energy histogram for each Ntot from unnormalized checkpoint. This will check for "alignment" of energy bins to 0.
+ * So "manually" prepared files are likely to fail, but this is intended to restart from system-generated files anyway.
  *
  * \param [in] prefix Prefix of the filename to load from
  */
@@ -1012,6 +1013,14 @@ void simSystem::restartEnergyHistogram (const std::string prefix) {
 			// lower bound
 			for (unsigned int i = 0; i < maxBound-minBound; ++i) {
 				lineStream >> lb[i];
+			}
+			// check that system "aligned" the lower bounds so that a bin falls centered at U = 0
+			for (unsigned int i = 0; i < maxBound-minBound; ++i) {
+				const double x = (lb[i] - 0.0)/delta[i];
+				const double err = fabs(round(x) - x);
+				if (err >= 1.0e-6) {
+					throw customException ("Energy bins not aligned to U = 0, cannot restart energy histogram from "+fileName+" (err, "+std::to_string(i)+") = "+std::to_string(err));
+				}
 			}
 		} else if (lineIndex == 10) {
 			// upper bound
