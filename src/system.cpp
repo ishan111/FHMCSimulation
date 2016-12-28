@@ -743,6 +743,10 @@ void simSystem::restartExtMoments (const std::string prefix, const std::vector <
 	std::string fileName = prefix+".dat";
 
 	std::ifstream infile (fileName.c_str());
+	if (!infile.is_open()) {
+		throw customException ("Cannot load extMoments from "+fileName);
+	}
+
 	std::string line, tmp = "";
 	int lineIndex = 0, dummy;
 	long long unsigned int idx;
