@@ -1,4 +1,4 @@
-.TH "dynamic_one_dim_histogram" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "dynamic_one_dim_histogram" 3 "Wed Dec 28 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -60,18 +60,10 @@ dynamic_one_dim_histogram \-
 .in -1c
 .SH "Detailed Description"
 .PP 
-Definition at line 40 of file histogram\&.h\&.
+Definition at line 41 of file histogram\&.h\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "dynamic_one_dim_histogram::~dynamic_one_dim_histogram ()\fC [inline]\fP"
-
-.PP
-Definition at line 42 of file histogram\&.h\&.
-.PP
-.nf
-42 {;}
-.fi
-.SS "dynamic_one_dim_histogram::dynamic_one_dim_histogram ()\fC [inline]\fP"
 
 .PP
 Definition at line 43 of file histogram\&.h\&.
@@ -79,32 +71,40 @@ Definition at line 43 of file histogram\&.h\&.
 .nf
 43 {;}
 .fi
+.SS "dynamic_one_dim_histogram::dynamic_one_dim_histogram ()\fC [inline]\fP"
+
+.PP
+Definition at line 44 of file histogram\&.h\&.
+.PP
+.nf
+44 {;}
+.fi
 .SS "dynamic_one_dim_histogram::dynamic_one_dim_histogram (const doublelb, const doubleub, const doubledelta)"
 
 .PP
-Instantiate a 1D histogram that grow as needed to record values\&. A bin is considered 'centered' on its value\&.
+Instantiate a 1D histogram that grow as needed to record values\&. Aligns against the lower bound, and uses this as the bin's 'center\&.' The upper bound is internally re-calculated from the lower bound and the value of delta\&. Bins include values between [lo, hi) where a bin's value = (low+hi)/2\&.
 .PP
 \fBParameters:\fP
 .RS 4
-\fIlb\fP Lower bound 
+\fIlb\fP Lowest value that must be covered by histogram\&. This is used to align the histogram when ub and lb not integer delta's apart\&. 
 .br
-\fIub\fP Upper bound 
+\fIub\fP Largest value that must be covered by histogram\&. Less relevant than lb, which is used for alignment\&. This value is only used to determined the number of bins necessary\&. 
 .br
-\fIdelta\fP Bin width 
+\fIdelta\fP Bin width\&. 
 .RE
 .PP
 
 .PP
-Definition at line 99 of file histogram\&.cpp\&.
+Definition at line 114 of file histogram\&.cpp\&.
 .PP
 .nf
-99                                                                                                           {
-100     try {
-101         initialize_ (lb, ub, delta);
-102     } catch (customException &ce) {
-103         throw customException ("Unable to initialize dynamic_one_dim_histogram");
-104     }
-105 }
+114                                                                                                           {
+115     try {
+116         initialize_ (lb, ub, delta);
+117     } catch (customException &ce) {
+118         throw customException ("Unable to initialize dynamic_one_dim_histogram");
+119     }
+120 }
 .fi
 .SH "Member Function Documentation"
 .PP 
@@ -120,54 +120,54 @@ Add a number of bins to the end of the histogram\&.
 .PP
 
 .PP
-Definition at line 129 of file histogram\&.cpp\&.
+Definition at line 144 of file histogram\&.cpp\&.
 .PP
 Referenced by record()\&.
 .PP
 .nf
-129                                                                      {
-130     for (unsigned int i = 0; i < nbins; i++) {
-131         try {
-132             h_\&.push_back (0\&.0);
-133             nbins_++;
-134             ub_ += delta_;
-135         } catch (std::bad_alloc &ba) {
-136             throw customException ("Out of memory for dynamic_one_dim_histogram");
-137         }
-138     }
-139 }
+144                                                                      {
+145     for (unsigned int i = 0; i < nbins; i++) {
+146         try {
+147             h_\&.push_back (0\&.0);
+148             nbins_++;
+149             ub_ += delta_;
+150         } catch (std::bad_alloc &ba) {
+151             throw customException ("Out of memory for dynamic_one_dim_histogram");
+152         }
+153     }
+154 }
 .fi
 .SS "const double dynamic_one_dim_histogram::get_delta ()\fC [inline]\fP"
-
-.PP
-Definition at line 52 of file histogram\&.h\&.
-.PP
-.nf
-52 { return delta_; }
-.fi
-.SS "std::deque< double > dynamic_one_dim_histogram::get_hist ()\fC [inline]\fP"
-
-.PP
-Definition at line 55 of file histogram\&.h\&.
-.PP
-.nf
-55 { return h_; }
-.fi
-.SS "const double dynamic_one_dim_histogram::get_lb ()\fC [inline]\fP"
 
 .PP
 Definition at line 53 of file histogram\&.h\&.
 .PP
 .nf
-53 { return lb_; }
+53 { return delta_; }
 .fi
-.SS "const double dynamic_one_dim_histogram::get_ub ()\fC [inline]\fP"
+.SS "std::deque< double > dynamic_one_dim_histogram::get_hist ()\fC [inline]\fP"
+
+.PP
+Definition at line 56 of file histogram\&.h\&.
+.PP
+.nf
+56 { return h_; }
+.fi
+.SS "const double dynamic_one_dim_histogram::get_lb ()\fC [inline]\fP"
 
 .PP
 Definition at line 54 of file histogram\&.h\&.
 .PP
 .nf
-54 { return ub_; }
+54 { return lb_; }
+.fi
+.SS "const double dynamic_one_dim_histogram::get_ub ()\fC [inline]\fP"
+
+.PP
+Definition at line 55 of file histogram\&.h\&.
+.PP
+.nf
+55 { return ub_; }
 .fi
 .SS "void dynamic_one_dim_histogram::prepend_bins (const unsigned intnbins)"
 
@@ -181,22 +181,22 @@ Add a number of bins to the beginning of the histogram\&.
 .PP
 
 .PP
-Definition at line 112 of file histogram\&.cpp\&.
+Definition at line 127 of file histogram\&.cpp\&.
 .PP
 Referenced by record()\&.
 .PP
 .nf
-112                                                                       {
-113     for (unsigned int i = 0; i < nbins; i++) {
-114         try {
-115             h_\&.push_front (0\&.0);
-116             nbins_++;
-117             lb_ -= delta_;
-118         } catch (std::bad_alloc &ba) {
-119             throw customException ("Out of memory for dynamic_one_dim_histogram");
-120         }
-121     }
-122 }
+127                                                                       {
+128     for (unsigned int i = 0; i < nbins; i++) {
+129         try {
+130             h_\&.push_front (0\&.0);
+131             nbins_++;
+132             lb_ -= delta_;
+133         } catch (std::bad_alloc &ba) {
+134             throw customException ("Out of memory for dynamic_one_dim_histogram");
+135         }
+136     }
+137 }
 .fi
 .SS "void dynamic_one_dim_histogram::record (const doublevalue)"
 
@@ -210,50 +210,71 @@ Record an entry in the histogram at the bin corresponding to where value falls\&
 .PP
 
 .PP
-Definition at line 146 of file histogram\&.cpp\&.
+Definition at line 161 of file histogram\&.cpp\&.
 .PP
 References append_bins(), prepend_bins(), and customException::what()\&.
 .PP
 .nf
-146                                                           {
-147     int bin = round((value - lb_)/delta_); // this "centers" the bin
-148     if (bin < 0) {
-149         // prepend and fill
-150         try {
-151             prepend_bins(-bin);
-152         } catch (customException &ce) {
-153             std::string a = "Unable to prepend dynamic_one_dim_histogram: ", b = ce\&.what();
-154             throw customException (a+b);
-155         }
-156         bin = round((value - lb_)/delta_);
-157     } else if (bin >= nbins_) {
-158         // append and fill
-159         try {
-160             append_bins (bin - nbins_ + 1);
-161         } catch (customException &ce) {
-162             std::string a = "Unable to append dynamic_one_dim_histogram: ", b = ce\&.what();
-163             throw customException (a+b);
-164         }
-165         bin = round((value - lb_)/delta_);
+161                                                           {
+162     int bin = round((value - lb_)/delta_); // this "centers" the bin
+163     if (fabs(bin) < tol_) {
+164             // prevent -0 case and set to 0
+165             bin = 0;
 166     }
-167     h_[bin] += 1\&.0;
-168 }
+167 
+168     if (bin < 0) {
+169         // prepend and fill
+170         try {
+171             prepend_bins(-bin);
+172         } catch (customException &ce) {
+173             std::string a = "Unable to prepend dynamic_one_dim_histogram: ", b = ce\&.what();
+174             throw customException (a+b);
+175         }
+176     } else if (bin >= nbins_) {
+177         // append and fill
+178         try {
+179             append_bins (bin - nbins_ + 1);
+180         } catch (customException &ce) {
+181             std::string a = "Unable to append dynamic_one_dim_histogram: ", b = ce\&.what();
+182             throw customException (a+b);
+183         }
+184     }
+185 
+186     // re-calculate after lb potentially adjusted
+187     bin = round((value - lb_)/delta_);
+188     if (fabs(bin) < tol_) {
+189             // prevent -0 case and set to 0
+190             bin = 0;
+191     }
+192     h_[bin] += 1\&.0;
+193 }
 .fi
 .SS "void dynamic_one_dim_histogram::reinitialize (const doublelb, const doubleub, const doubledelta)"
 
 .PP
-Re-initialize histogram and its bounds\&. All entries are zeroed\&. 
+Re-initialize histogram and its bounds\&. All entries are zeroed\&. Aligns against the lower bound, and uses this as the bin's 'center\&.' The upper bound is internally re-calculated from the lower bound and the value of delta\&. Bins include values between [lo, hi) where a bin's value = (low+hi)/2\&.
 .PP
-Definition at line 83 of file histogram\&.cpp\&.
+\fBParameters:\fP
+.RS 4
+\fIlb\fP Lowest value that must be covered by histogram\&. This is used to align the histogram when ub and lb not integer delta's apart\&. 
+.br
+\fIub\fP Largest value that must be covered by histogram\&. Less relevant than lb, which is used for alignment\&. This value is only used to determined the number of bins necessary\&. 
+.br
+\fIdelta\fP Bin width\&. 
+.RE
+.PP
+
+.PP
+Definition at line 98 of file histogram\&.cpp\&.
 .PP
 .nf
-83                                                                                                   {
-84     try {
-85         initialize_ (lb, ub, delta);
-86     } catch (customException &ce) {
-87         throw customException ("Unable to re-initialize dynamic_one_dim_histogram");
-88     }
-89 }
+98                                                                                                   {
+99     try {
+100         initialize_ (lb, ub, delta);
+101     } catch (customException &ce) {
+102         throw customException ("Unable to re-initialize dynamic_one_dim_histogram");
+103     }
+104 }
 .fi
 .SS "void dynamic_one_dim_histogram::set_hist (const std::deque< double >h)"
 
@@ -267,16 +288,16 @@ Set the histogram\&. Intended to be used to restart from a checkpoint\&.
 .PP
 
 .PP
-Definition at line 72 of file histogram\&.cpp\&.
+Definition at line 82 of file histogram\&.cpp\&.
 .PP
 .nf
-72                                                                      {
-73     if (h\&.size() != h_\&.size()) {
-74         throw customException ("Histogram using to set is not the same as inherent, aborting");
-75     } else {
-76         h_ = (std::deque < double >)h;
-77     }
-78 }
+82                                                                      {
+83     if (h\&.size() != h_\&.size()) {
+84         throw customException ("Histogram using to set is not the same as inherent, aborting");
+85     } else {
+86         h_ = (std::deque < double >)h;
+87     }
+88 }
 .fi
 .SS "void dynamic_one_dim_histogram::trim_edges ()"
 

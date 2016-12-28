@@ -51,7 +51,7 @@ References tmmc\-::calculate\-P\-I(), checkpoint\-::check(), tmmc\-::check\-Full
 16     \textcolor{comment}{// Specifically for printing progress every 1% of the simulation}
 17     \textcolor{keyword}{const} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} numSweepSnaps = 100;
 18     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} sweepPrint = sys.\hyperlink{classsim_system_a78b107e20bcbf2f818264fa076de5db3}{totalTMMCSweeps}, printCounter = 0;
-19     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a78b107e20bcbf2f818264fa076de5db3}{totalTMMCSweeps} > numSweepSnaps) \{
+19     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a78b107e20bcbf2f818264fa076de5db3}{totalTMMCSweeps} >= numSweepSnaps) \{
 20         sweepPrint /= numSweepSnaps;
 21     \}
 22 

@@ -1,4 +1,4 @@
-.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/tmmc.h" 3 "Fri Dec 23 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/tmmc.h" 3 "Wed Dec 28 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -59,7 +59,7 @@ References tmmc::calculatePI(), checkpoint::check(), tmmc::checkFullyVisited(), 
 16     // Specifically for printing progress every 1% of the simulation
 17     const long long int numSweepSnaps = 100;
 18     unsigned long long int sweepPrint = sys\&.totalTMMCSweeps, printCounter = 0;
-19     if (sys\&.totalTMMCSweeps > numSweepSnaps) {
+19     if (sys\&.totalTMMCSweeps >= numSweepSnaps) {
 20         sweepPrint /= numSweepSnaps;
 21     }
 22 

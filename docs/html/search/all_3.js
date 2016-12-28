@@ -20,7 +20,7 @@ var searchData=
   ['checkbounds',['checkBounds',['../input_8cpp.html#aa89df4b08049cfd9bdd875d78591ba5b',1,'checkBounds(simSystem &amp;sys):&#160;input.cpp'],['../input_8h.html#aa89df4b08049cfd9bdd875d78591ba5b',1,'checkBounds(simSystem &amp;sys):&#160;input.cpp']]],
   ['checkenergyhistogrambounds',['checkEnergyHistogramBounds',['../classsim_system.html#a176b9ff482f1d36bc0638538bcfe0670',1,'simSystem']]],
   ['checkfullyvisited',['checkFullyVisited',['../classtmmc.html#aa51f03f958dabefcff97be4a7c3b336c',1,'tmmc']]],
-  ['checkpoint',['checkpoint',['../classcheckpoint.html',1,'checkpoint'],['../classcheckpoint.html#a0c9fbc3decbdd8a0eedd43e4bef55583',1,'checkpoint::checkpoint()'],['../classcheckpoint.html#a581d523291838c5ec953752ad812cd9b',1,'checkpoint::checkpoint(const std::string directory, const long int frequency, simSystem &amp;sys, bool snaps=false)']]],
+  ['checkpoint',['checkpoint',['../classcheckpoint.html',1,'checkpoint'],['../classcheckpoint.html#a0c9fbc3decbdd8a0eedd43e4bef55583',1,'checkpoint::checkpoint()'],['../classcheckpoint.html#ac04bc1b2caf79f6071842919d5743024',1,'checkpoint::checkpoint(const std::string directory, const long int frequency, simSystem &amp;sys, const bool snaps=false, const bool override=false)']]],
   ['checkpoint_2ecpp',['checkpoint.cpp',['../checkpoint_8cpp.html',1,'']]],
   ['checkpoint_2eh',['checkpoint.h',['../checkpoint_8h.html',1,'']]],
   ['chkptname',['chkptName',['../classcheckpoint.html#a477eea21621f066889660ed426dc800f',1,'checkpoint']]],

@@ -26,16 +26,16 @@ const long long unsigned int \hyperlink{classhistogram_ae52fa58934b56e05846a66e4
 \begin{DoxyCompactList}\small\item\em Get the linear address of the multidimensional coordinate. \end{DoxyCompactList}\item 
 const std\-::vector$<$ double $>$ \hyperlink{classhistogram_a51aaf60b509809204f21934a18005b38}{get\-Coords} (long long unsigned int address)
 \begin{DoxyCompactList}\small\item\em Given an address, return the (center of the) coordinate this refers to. \end{DoxyCompactList}\item 
-std\-::vector$<$ double $>$ \hyperlink{classhistogram_afa81289dc32207eb3c44f8bd746f0d1d}{get\-Raw\-Histogram} ()
+std\-::vector$<$ double $>$ \hyperlink{classhistogram_a3a75adbce72057f3a4db805d9efc3c9c}{get\-Raw\-Histogram} ()
 \begin{DoxyCompactList}\small\item\em Return the current histogram. \end{DoxyCompactList}\item 
-std\-::vector$<$ double $>$ \hyperlink{classhistogram_a7d3541bd86551053f9fda7b5ae81e3e8}{get\-Counter} ()
+std\-::vector$<$ double $>$ \hyperlink{classhistogram_a8417c827c4653055b370786916c901cf}{get\-Counter} ()
 \begin{DoxyCompactList}\small\item\em Return the current histogram counter. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
 
 
-Definition at line 13 of file histogram.\-h.
+Definition at line 14 of file histogram.\-h.
 
 
 
@@ -49,11 +49,11 @@ Definition at line 13 of file histogram.\-h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classhistogram_a68bd76ab77437beeb77342469fb77a67}
 
 
-Definition at line 15 of file histogram.\-h.
+Definition at line 16 of file histogram.\-h.
 
 
 \begin{DoxyCode}
-15 \{;\}
+16 \{;\}
 \end{DoxyCode}
 \hypertarget{classhistogram_acc41cd1e3ace837a977caeeb00f6606e}{\index{histogram@{histogram}!histogram@{histogram}}
 \index{histogram@{histogram}!histogram@{histogram}}
@@ -64,11 +64,11 @@ Definition at line 15 of file histogram.\-h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classhistogram_acc41cd1e3ace837a977caeeb00f6606e}
 
 
-Definition at line 16 of file histogram.\-h.
+Definition at line 17 of file histogram.\-h.
 
 
 \begin{DoxyCode}
-16 \{;\}
+17 \{;\}
 \end{DoxyCode}
 \hypertarget{classhistogram_a5a9a8918737bbb82ad73e31ac2d98a8b}{\index{histogram@{histogram}!histogram@{histogram}}
 \index{histogram@{histogram}!histogram@{histogram}}
@@ -96,72 +96,72 @@ Bounds and widths must be specified for each dimension. A bin is considered \cha
 \end{DoxyParams}
 
 
-Definition at line 178 of file histogram.\-cpp.
+Definition at line 203 of file histogram.\-cpp.
 
 
 \begin{DoxyCode}
-178                                                                                                            
-                                 \{
-179     \textcolor{keywordflow}{if} (lbound.size() != ubound.size()) \{
-180         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Upper and lower bounds for histogram do have the same size"})
+203                                                                                                            
+                                       \{
+204     \textcolor{keywordflow}{if} (lbound.size() != ubound.size()) \{
+205         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Upper and lower bounds for histogram do have the same size"})
       ;
-181     \}
-182     \textcolor{keywordflow}{if} (nbins.size() != lbound.size()) \{
-183         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Number of bins for histogram's dimensions does not have the
+206     \}
+207     \textcolor{keywordflow}{if} (nbins.size() != lbound.size()) \{
+208         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Number of bins for histogram's dimensions does not have the
        same size as its bounds"});
-184     \}
-185 
-186     dim\_ = nbins.size();
-187     widths\_.resize(dim\_, 0);
-188     delta\_.resize(dim\_, 0);
-189 
-190     size\_ = 1;
-191     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < dim\_; ++i) \{
-192         \textcolor{keywordflow}{if} (lbound[i] > ubound[i]) \{
-193             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Lower bound > upper bound illegal for a histogram"});
-194         \}
-195 
-196         \textcolor{keywordflow}{if} (lbound[i] < ubound[i]) \{
-197             \textcolor{keywordflow}{if} (nbins[i] <= 1) \{
-198                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Must > 1 bins for each dimensions in the histogram"})
-      ;
-199             \}
-200             size\_ *= nbins[i];
-201             delta\_[i] = (ubound[i] - lbound[i])/(nbins[i]-1);
-202         \} \textcolor{keywordflow}{else} \{
-203             \textcolor{comment}{// special case when upper and lower bound are the same (nbins = 1)}
-204             \textcolor{keywordflow}{if} (nbins[i] != 1) \{
-205                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"nbins must be 1 if upper and lower bounds are equal
-       in histogram"});
-206             \}
-207             size\_ *= nbins[i];
-208             delta\_[i] = 1.0; \textcolor{comment}{// arbitrary}
-209         \}
+209     \}
 210 
-211         \textcolor{comment}{// build projected widths}
-212         \textcolor{keywordflow}{if} (i == 0) \{
-213             widths\_[i] = 1;
-214         \} \textcolor{keywordflow}{else} \{
-215             widths\_[i] = widths\_[i-1]*nbins[i-1];
-216         \}
-217     \}
-218 
-219     lbound\_ = lbound;
-220     ubound\_ = ubound;
-221     nbins\_ = nbins;
-222 
-223     \textcolor{comment}{// initialize the histogram to 0}
-224     \textcolor{keywordflow}{try} \{
-225         h\_.resize(size\_, 0);
-226     \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
-227         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory for histogram"});
-228     \}
-229     \textcolor{keywordflow}{try} \{
-230         counter\_.resize(size\_, 0);
-231     \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
-232         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory for histogram"});
-233     \}
-234 \}
+211     dim\_ = nbins.size();
+212     widths\_.resize(dim\_, 0);
+213     delta\_.resize(dim\_, 0);
+214 
+215     size\_ = 1;
+216     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < dim\_; ++i) \{
+217         \textcolor{keywordflow}{if} (lbound[i] > ubound[i]) \{
+218             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Lower bound > upper bound illegal for a histogram"});
+219         \}
+220 
+221         \textcolor{keywordflow}{if} (lbound[i] < ubound[i]) \{
+222             \textcolor{keywordflow}{if} (nbins[i] <= 1) \{
+223                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Must > 1 bins for each dimensions in the histogram"})
+      ;
+224             \}
+225             size\_ *= nbins[i];
+226             delta\_[i] = (ubound[i] - lbound[i])/(nbins[i]-1);
+227         \} \textcolor{keywordflow}{else} \{
+228             \textcolor{comment}{// special case when upper and lower bound are the same (nbins = 1)}
+229             \textcolor{keywordflow}{if} (nbins[i] != 1) \{
+230                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"nbins must be 1 if upper and lower bounds are equal
+       in histogram"});
+231             \}
+232             size\_ *= nbins[i];
+233             delta\_[i] = 1.0; \textcolor{comment}{// arbitrary}
+234         \}
+235 
+236         \textcolor{comment}{// build projected widths}
+237         \textcolor{keywordflow}{if} (i == 0) \{
+238             widths\_[i] = 1;
+239         \} \textcolor{keywordflow}{else} \{
+240             widths\_[i] = widths\_[i-1]*nbins[i-1];
+241         \}
+242     \}
+243 
+244     lbound\_ = lbound;
+245     ubound\_ = ubound;
+246     nbins\_ = nbins;
+247 
+248     \textcolor{comment}{// initialize the histogram to 0}
+249     \textcolor{keywordflow}{try} \{
+250         h\_.resize(size\_, 0);
+251     \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+252         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory for histogram"});
+253     \}
+254     \textcolor{keywordflow}{try} \{
+255         counter\_.resize(size\_, 0);
+256     \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+257         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Out of memory for histogram"});
+258     \}
+259 \}
 \end{DoxyCode}
 
 
@@ -184,7 +184,7 @@ Get the linear address of the multidimensional coordinate.
 \end{DoxyParams}
 
 
-Definition at line 273 of file histogram.\-cpp.
+Definition at line 298 of file histogram.\-cpp.
 
 
 
@@ -192,18 +192,18 @@ Referenced by increment(), sim\-System\-::print\-Ext\-Moments(), and sim\-System
 
 
 \begin{DoxyCode}
-273                                                                                     \{
-274         \textcolor{keywordflow}{if} (coords.size() != dim\_) \{
-275             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Illegal number of coordinate dimensions, cannot locate
+298                                                                                     \{
+299         \textcolor{keywordflow}{if} (coords.size() != dim\_) \{
+300             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Illegal number of coordinate dimensions, cannot locate
        histogram address"});
-276         \}
-277         \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} address = 0;
-278         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < dim\_; ++i) \{
-279             address += round((coords[i] - lbound\_[i])/delta\_[i])*widths\_[i]; \textcolor{comment}{// will work safely for
+301         \}
+302         \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} address = 0;
+303         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < dim\_; ++i) \{
+304             address += round((coords[i] - lbound\_[i])/delta\_[i])*widths\_[i]; \textcolor{comment}{// will work safely for
        integers too}
-280         \}
-281         \textcolor{keywordflow}{return} address;
-282 \}
+305         \}
+306         \textcolor{keywordflow}{return} address;
+307 \}
 \end{DoxyCode}
 \hypertarget{classhistogram_a51aaf60b509809204f21934a18005b38}{\index{histogram@{histogram}!get\-Coords@{get\-Coords}}
 \index{get\-Coords@{get\-Coords}!histogram@{histogram}}
@@ -223,59 +223,59 @@ Given an address, return the (center of the) coordinate this refers to.
 \end{DoxyParams}
 
 
-Definition at line 289 of file histogram.\-cpp.
+Definition at line 314 of file histogram.\-cpp.
 
 
 \begin{DoxyCode}
-289                                                                              \{
-290         std::vector <double> coords (dim\_, 0);
-291         \textcolor{keywordflow}{if} (address >= size\_) \{
-292             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Histogram address out of bounds"});
-293         \}
-294 
-295         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = dim\_-1; i > 0; --i) \{
-296             \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} diff = floor(address/widths\_[i]);
-297             coords[i] = diff*delta\_[i] + lbound\_[i];
-298             address -= diff*widths\_[i];
-299         \}
-300         coords[0] = address*delta\_[0] + lbound\_[0];
-301 
-302         \textcolor{keywordflow}{return} coords;
-303 \}
+314                                                                              \{
+315         std::vector <double> coords (dim\_, 0);
+316         \textcolor{keywordflow}{if} (address >= size\_) \{
+317             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Histogram address out of bounds"});
+318         \}
+319 
+320         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = dim\_-1; i > 0; --i) \{
+321             \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} diff = floor(address/widths\_[i]);
+322             coords[i] = diff*delta\_[i] + lbound\_[i];
+323             address -= diff*widths\_[i];
+324         \}
+325         coords[0] = address*delta\_[0] + lbound\_[0];
+326 
+327         \textcolor{keywordflow}{return} coords;
+328 \}
 \end{DoxyCode}
-\hypertarget{classhistogram_a7d3541bd86551053f9fda7b5ae81e3e8}{\index{histogram@{histogram}!get\-Counter@{get\-Counter}}
+\hypertarget{classhistogram_a8417c827c4653055b370786916c901cf}{\index{histogram@{histogram}!get\-Counter@{get\-Counter}}
 \index{get\-Counter@{get\-Counter}!histogram@{histogram}}
-\subsubsection[{get\-Counter}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$double$>$ histogram\-::get\-Counter (
+\subsubsection[{get\-Counter}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$ double $>$ histogram\-::get\-Counter (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classhistogram_a7d3541bd86551053f9fda7b5ae81e3e8}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classhistogram_a8417c827c4653055b370786916c901cf}
 
 
 Return the current histogram counter. 
 
 
 
-Definition at line 26 of file histogram.\-h.
+Definition at line 27 of file histogram.\-h.
 
 
 
 Referenced by sim\-System\-::ext\-Mom\-Counter(), and sim\-System\-::print\-Ext\-Moments().
 
-\hypertarget{classhistogram_afa81289dc32207eb3c44f8bd746f0d1d}{\index{histogram@{histogram}!get\-Raw\-Histogram@{get\-Raw\-Histogram}}
+\hypertarget{classhistogram_a3a75adbce72057f3a4db805d9efc3c9c}{\index{histogram@{histogram}!get\-Raw\-Histogram@{get\-Raw\-Histogram}}
 \index{get\-Raw\-Histogram@{get\-Raw\-Histogram}!histogram@{histogram}}
-\subsubsection[{get\-Raw\-Histogram}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$double$>$ histogram\-::get\-Raw\-Histogram (
+\subsubsection[{get\-Raw\-Histogram}]{\setlength{\rightskip}{0pt plus 5cm}std\-::vector$<$ double $>$ histogram\-::get\-Raw\-Histogram (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classhistogram_afa81289dc32207eb3c44f8bd746f0d1d}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classhistogram_a3a75adbce72057f3a4db805d9efc3c9c}
 
 
 Return the current histogram. 
 
 
 
-Definition at line 25 of file histogram.\-h.
+Definition at line 26 of file histogram.\-h.
 
 
 
@@ -302,7 +302,7 @@ Increment the histogram by a given value at a given address.
 \end{DoxyParams}
 
 
-Definition at line 242 of file histogram.\-cpp.
+Definition at line 267 of file histogram.\-cpp.
 
 
 
@@ -310,14 +310,14 @@ Referenced by sim\-System\-::record\-Ext\-Moments().
 
 
 \begin{DoxyCode}
-242                                                                                  \{
-243         \textcolor{keywordflow}{if} (address < size\_) \{
-244             h\_[address] += val;
-245             counter\_[address] += 1.0;
-246         \} \textcolor{keywordflow}{else} \{
-247             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Histogram address out of bounds"});
-248         \}
-249 \}
+267                                                                                  \{
+268         \textcolor{keywordflow}{if} (address < size\_) \{
+269             h\_[address] += val;
+270             counter\_[address] += 1.0;
+271         \} \textcolor{keywordflow}{else} \{
+272             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Histogram address out of bounds"});
+273         \}
+274 \}
 \end{DoxyCode}
 \hypertarget{classhistogram_a1deef1080cd972343d7d5d8e5ef3a9f5}{\index{histogram@{histogram}!increment@{increment}}
 \index{increment@{increment}!histogram@{histogram}}
@@ -340,7 +340,7 @@ Increment the histogram by a given value at a given coordinate.
 \end{DoxyParams}
 
 
-Definition at line 257 of file histogram.\-cpp.
+Definition at line 282 of file histogram.\-cpp.
 
 
 
@@ -348,16 +348,16 @@ References get\-Address().
 
 
 \begin{DoxyCode}
-257                                                                              \{
-258         \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} address = 0;
-259         \textcolor{keywordflow}{try} \{
-260             address = \hyperlink{classhistogram_ae52fa58934b56e05846a66e43c3184bd}{getAddress} (coords);
-261         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-262             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Histogram address out of bounds"});
-263         \}
-264         h\_[address] += val;
-265         counter\_[address] += 1.0;
-266 \}
+282                                                                              \{
+283         \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} address = 0;
+284         \textcolor{keywordflow}{try} \{
+285             address = \hyperlink{classhistogram_ae52fa58934b56e05846a66e43c3184bd}{getAddress} (coords);
+286         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+287             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Histogram address out of bounds"});
+288         \}
+289         h\_[address] += val;
+290         counter\_[address] += 1.0;
+291 \}
 \end{DoxyCode}
 \hypertarget{classhistogram_a801d984fe018521444ee0bd0776ba8dc}{\index{histogram@{histogram}!print@{print}}
 \index{print@{print}!histogram@{histogram}}
@@ -377,28 +377,28 @@ Print R\-A\-W (U\-N-\/\-N\-O\-R\-M\-A\-L\-I\-Z\-E\-D) histogram to file.
 \end{DoxyParams}
 
 
-Definition at line 310 of file histogram.\-cpp.
+Definition at line 335 of file histogram.\-cpp.
 
 
 \begin{DoxyCode}
-310                                                \{
-311     \textcolor{comment}{// Print histogram}
-312     std::ofstream of;
-313     of.open(fileName.c\_str(), std::ofstream::out);
-314     \textcolor{keywordflow}{if} (!of.is\_open()) \{
-315         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write histogram to "}+fileName);
-316     \}
-317     of << \textcolor{stringliteral}{"# Histogram in single row (vectorized) notation."} << std::endl;
-318     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < dim\_; ++i) \{
-319         of << \textcolor{stringliteral}{"# dim\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_upper\_bound:"} << ubound\_[i] << std::endl;
-320         of << \textcolor{stringliteral}{"# dim\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_lower\_bound:"} << lbound\_[i] << std::endl;
-321         of << \textcolor{stringliteral}{"# dim\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_number\_of\_bins:"} << nbins\_[i] << std::endl;
-322     \}
-323     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < h\_.size(); ++i) \{
-324         of << h\_[i] << std::endl;
-325     \}
-326     of.close();
-327 \}
+335                                                \{
+336     \textcolor{comment}{// Print histogram}
+337     std::ofstream of;
+338     of.open(fileName.c\_str(), std::ofstream::out);
+339     \textcolor{keywordflow}{if} (!of.is\_open()) \{
+340         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write histogram to "}+fileName);
+341     \}
+342     of << \textcolor{stringliteral}{"# Histogram in single row (vectorized) notation."} << std::endl;
+343     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < dim\_; ++i) \{
+344         of << \textcolor{stringliteral}{"# dim\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_upper\_bound:"} << ubound\_[i] << std::endl;
+345         of << \textcolor{stringliteral}{"# dim\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_lower\_bound:"} << lbound\_[i] << std::endl;
+346         of << \textcolor{stringliteral}{"# dim\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_number\_of\_bins:"} << nbins\_[i] << std::endl;
+347     \}
+348     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < h\_.size(); ++i) \{
+349         of << h\_[i] << std::endl;
+350     \}
+351     of.close();
+352 \}
 \end{DoxyCode}
 \hypertarget{classhistogram_aab27615593d020ca4de29c586c92af37}{\index{histogram@{histogram}!set@{set}}
 \index{set@{set}!histogram@{histogram}}
@@ -421,7 +421,7 @@ Assign the histogram and its corresponding counter.
 \end{DoxyParams}
 
 
-Definition at line 335 of file histogram.\-cpp.
+Definition at line 360 of file histogram.\-cpp.
 
 
 
@@ -429,22 +429,22 @@ Referenced by sim\-System\-::restart\-Ext\-Moments().
 
 
 \begin{DoxyCode}
-335                                                                                \{
-336     \textcolor{keywordflow}{if} (h.size() != ctr.size()) \{
-337         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot set the histogram since counter and histogram have
+360                                                                                \{
+361     \textcolor{keywordflow}{if} (h.size() != ctr.size()) \{
+362         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot set the histogram since counter and histogram have
        different lengths"});
-338     \}
-339     \textcolor{keywordflow}{if} (h.size() != h\_.size()) \{
-340         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot set the histogram since new histogram has different
+363     \}
+364     \textcolor{keywordflow}{if} (h.size() != h\_.size()) \{
+365         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot set the histogram since new histogram has different
        length compared to current one"});
-341     \}
-342     \textcolor{keywordflow}{if} (ctr.size() != counter\_.size()) \{
-343         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot set the histogram since new counter has different
+366     \}
+367     \textcolor{keywordflow}{if} (ctr.size() != counter\_.size()) \{
+368         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot set the histogram since new counter has different
        length compared to current one"});
-344     \}
-345     h\_ = h;
-346     counter\_ = ctr;
-347 \}
+369     \}
+370     h\_ = h;
+371     counter\_ = ctr;
+372 \}
 \end{DoxyCode}
 
 

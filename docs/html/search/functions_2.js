@@ -10,7 +10,7 @@ var searchData=
   ['checkbounds',['checkBounds',['../input_8cpp.html#aa89df4b08049cfd9bdd875d78591ba5b',1,'checkBounds(simSystem &amp;sys):&#160;input.cpp'],['../input_8h.html#aa89df4b08049cfd9bdd875d78591ba5b',1,'checkBounds(simSystem &amp;sys):&#160;input.cpp']]],
   ['checkenergyhistogrambounds',['checkEnergyHistogramBounds',['../classsim_system.html#a176b9ff482f1d36bc0638538bcfe0670',1,'simSystem']]],
   ['checkfullyvisited',['checkFullyVisited',['../classtmmc.html#aa51f03f958dabefcff97be4a7c3b336c',1,'tmmc']]],
-  ['checkpoint',['checkpoint',['../classcheckpoint.html#a0c9fbc3decbdd8a0eedd43e4bef55583',1,'checkpoint::checkpoint()'],['../classcheckpoint.html#a581d523291838c5ec953752ad812cd9b',1,'checkpoint::checkpoint(const std::string directory, const long int frequency, simSystem &amp;sys, bool snaps=false)']]],
+  ['checkpoint',['checkpoint',['../classcheckpoint.html#a0c9fbc3decbdd8a0eedd43e4bef55583',1,'checkpoint::checkpoint()'],['../classcheckpoint.html#ac04bc1b2caf79f6071842919d5743024',1,'checkpoint::checkpoint(const std::string directory, const long int frequency, simSystem &amp;sys, const bool snaps=false, const bool override=false)']]],
   ['compositebarrier',['compositeBarrier',['../classcomposite_barrier.html#a84b553543dddd5177980f5e5a5616af3',1,'compositeBarrier']]],
   ['conjugate',['conjugate',['../classquaternion.html#a5500ac17c80600120b5036fee3796052',1,'quaternion']]],
   ['customexception',['customException',['../classcustom_exception.html#a02ff9f09c4dd8c0b62fb1b6438d7d71a',1,'customException']]],
