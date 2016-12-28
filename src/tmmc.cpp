@@ -16,7 +16,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
     // Specifically for printing progress every 1% of the simulation
     const long long int numSweepSnaps = 100;
 	unsigned long long int sweepPrint = sys.totalTMMCSweeps, printCounter = 0;
-	if (sys.totalTMMCSweeps > numSweepSnaps) {
+	if (sys.totalTMMCSweeps >= numSweepSnaps) {
 		sweepPrint /= numSweepSnaps;
 	}
 

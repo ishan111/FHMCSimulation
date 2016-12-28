@@ -207,7 +207,9 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
     if (walaDone && crossoverDone) {
         // in final TMMC stage or just finished the TMMC (end of simulation)
         sys.getTMMCBias()->print(dir+"/tmmc", true, true);
+        sys.refineEnergyHistogramBounds();
         sys.printEnergyHistogram(dir+"/eHist", false); // Un-normalized Energy histogram
+        sys.refinePkHistogramBounds();
         sys.printPkHistogram(dir+"/pkHist", false); // Un-normalized Particle histogram
         sys.printExtMoments(dir+"/extMom", false); // Un-normalized Extensive moments, plus counter (number of times each recorded)
         writer.String("extMomCounter");
