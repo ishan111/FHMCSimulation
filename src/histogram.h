@@ -59,6 +59,7 @@ class dynamic_one_dim_histogram {
 		double lb_; //!< Lower bound
 		double ub_; //!< Upper bound
 		double delta_; //!< Width of a bin
+		double tol_; //!< Internal floating point tolerance
 		std::deque < double > h_; //!< Histogram
 		void initialize_ (const double lb, const double ub, const double delta);
 };

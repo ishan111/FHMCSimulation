@@ -38,7 +38,12 @@ void dynamic_one_dim_histogram::trim_edges () {
 }
 
 /*!
- * Initialize histogram and its bounds.
+ * Initialize histogram and its bounds. Aligns against the lower bound, and uses this as the bin's "center."  The upper bound is re-calculated from the lower bound and the value of delta.
+ * Bins include values between [lo, hi) where a bin's value = (low+hi)/2.
+ *
+ * \param [in] lb Lowest value that must be covered by histogram. This is used to align the histogram when ub and lb not integer delta's apart.
+ * \param [in] ub Largest value that must be covered by histogram. Less relevant than lb, which is used for alignment.  This value is only used to determined the number of bins necessary and will be changed internally.
+ * \param [in] delta Bin width.
  */
 void dynamic_one_dim_histogram::initialize_ (const double lb, const double ub, const double delta) {
 	if (lb > ub) {
@@ -47,18 +52,23 @@ void dynamic_one_dim_histogram::initialize_ (const double lb, const double ub, c
     if (delta <= 0) {
         throw customException ("Bin width must be > 0 for a dynamic_one_dim_histogram");
     }
+	tol_ = std::numeric_limits < double >::epsilon();
+
 	delta_ = delta;
  	lb_ = lb;
- 	ub_ = ub;
- 	nbins_ = ceil((ub - lb)/delta);
- 	if (fabs(round((ub - lb)/delta) - ((ub - lb)/delta)) < 1.0e-6) {
- 		nbins_++; // include endpoint
- 	}
-	
+
+	const double x = (ub - (lb_- delta_/2.0))/delta_;
+	if (fabs(round(x) - x) < tol_) {
+		// ub is on the "edge" of the high end of a bin, round for numerical stability and then include next bin, because bins are [lo, hi)
+		nbins_ = round(x)+1;
+	} else {
+		nbins_ = ceil(x);
+	}
+	ub_ = (nbins_-1)*delta_+lb_;
+
     // initialize the histogram to 0
-    h_.resize(0);
-    try {
-        h_.resize(nbins_, 0);
+	try {
+        h_.assign(nbins_, 0);
     } catch (std::bad_alloc &ba) {
         throw customException ("Out of memory for dynamic_one_dim_histogram");
     }
@@ -78,7 +88,12 @@ void dynamic_one_dim_histogram::set_hist (const std::deque < double > h) {
 }
 
 /*!
- * Re-initialize histogram and its bounds.  All entries are zeroed.
+ * Re-initialize histogram and its bounds.  All entries are zeroed. Aligns against the lower bound, and uses this as the bin's "center."
+ * The upper bound is re-calculated from the lower bound and the value of delta. Bins include values between [lo, hi) where a bin's value = (low+hi)/2.
+ *
+ * \param [in] lb Lowest value that must be covered by histogram. This is used to align the histogram when ub and lb not integer delta's apart.
+ * \param [in] ub Largest value that must be covered by histogram. Less relevant than lb, which is used for alignment.  This value is only used to determined the number of bins necessary.
+ * \param [in] delta Bin width.
  */
 void dynamic_one_dim_histogram::reinitialize (const double lb, const double ub, const double delta) {
 	try {
@@ -90,11 +105,11 @@ void dynamic_one_dim_histogram::reinitialize (const double lb, const double ub, 
 
 /*!
  * Instantiate a 1D histogram that grow as needed to record values.
- * A bin is considered "centered" on its value.
+ * A bin is considered "centered" on its value, and is aligned to the lower bound's value.
  *
- * \param [in] lb Lower bound
- * \param [in] ub Upper bound
- * \param [in] delta Bin width
+ * \param [in] lb Lowest value that must be covered by histogram. This is used to align the histogram when ub and lb not integer delta's apart.
+ * \param [in] ub Largest value that must be covered by histogram. Less relevant than lb, which is used for alignment.  This value is only used to determined the number of bins necessary.
+ * \param [in] delta Bin width.
  */
 dynamic_one_dim_histogram::dynamic_one_dim_histogram (const double lb, const double ub, const double delta) {
 	try {
@@ -145,6 +160,11 @@ void dynamic_one_dim_histogram::append_bins (const unsigned int nbins) {
  */
 void dynamic_one_dim_histogram::record (const double value) {
 	int bin = round((value - lb_)/delta_); // this "centers" the bin
+	if (fabs(bin) < tol_) {
+			// prevent -0 case and set to 0
+			bin = 0;
+	}
+
 	if (bin < 0) {
 		// prepend and fill
 		try {
@@ -153,7 +173,6 @@ void dynamic_one_dim_histogram::record (const double value) {
 			std::string a = "Unable to prepend dynamic_one_dim_histogram: ", b = ce.what();
 			throw customException (a+b);
 		}
-		bin = round((value - lb_)/delta_);
 	} else if (bin >= nbins_) {
 		// append and fill
 		try {
@@ -162,7 +181,13 @@ void dynamic_one_dim_histogram::record (const double value) {
 			std::string a = "Unable to append dynamic_one_dim_histogram: ", b = ce.what();
 			throw customException (a+b);
 		}
-		bin = round((value - lb_)/delta_);
+	}
+
+	// re-calculate after lb potentially adjusted
+	bin = round((value - lb_)/delta_);
+	if (fabs(bin) < tol_) {
+			// prevent -0 case and set to 0
+			bin = 0;
 	}
 	h_[bin] += 1.0;
 }
