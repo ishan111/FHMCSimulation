@@ -11453,26 +11453,25 @@ TEST_F (checkpointTest, check) {
 	EXPECT_TRUE(now);
 }
 
-// energy bounds now recalculated so this test (correctly) fails to load exactly from file
-/*TEST_F (checkpointTest, restartEnergyHistogram) {
+TEST_F (checkpointTest, restartEnergyHistogram) {
 	// test that system can load,dump restartEnergyHistogram info
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
 	setup (sys, fname);
 
-	sys.restartEnergyHistogram("../data/eHist");
+	sys.restartEnergyHistogram("../data/eHist_aligned");
 	sys.printEnergyHistogram("eHist_test", false);
 
 	// compare the two files
-	int result = system("diff ../data/eHist.dat eHist_test.dat > dmp");
+	int result = system("diff ../data/eHist_aligned.dat eHist_test.dat > dmp");
 	EXPECT_EQ (result, 0);
 
-	sys.restartEnergyHistogram("../data/eHist");
+	sys.restartEnergyHistogram("../data/eHist_aligned");
 	sys.printEnergyHistogram("eHist_test", true);
 
 	// normalization changes the result
-	result = system("diff ../data/eHist.dat eHist_test.dat > dmp");
+	result = system("diff ../data/eHist_aligned.dat eHist_test.dat > dmp");
 	EXPECT_TRUE (result != 0);
-}*/
+}
 
 TEST_F (checkpointTest, restartPkHistogram) {
 	// test that system can load,dump restartEnergyHistogram info
@@ -11539,6 +11538,10 @@ TEST (testNone, cleanUp) {
 	// cleanup files produced after running other tests
 	int res;
 	res = system("rm ppot_*");
+	EXPECT_EQ (res, 0);
+	res = system("rm dmp");
+	EXPECT_EQ (res, 0);
+	res = system("rm eHist_test.dat");
 	EXPECT_EQ (res, 0);
 	res = system("rm tmmBias*");
 	EXPECT_EQ (res, 0);

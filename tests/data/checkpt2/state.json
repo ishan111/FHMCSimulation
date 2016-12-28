@@ -4,7 +4,7 @@
     "walaDone": true,
     "hasCheckpoint": true,
     "takeSnaps": false,
-    "freq": 900,
+    "freq": 2,
     "dir": "../data/checkpt2/",
     "moveCounter": 0.0,
     "sweepCounter": 0.0,
