@@ -11353,7 +11353,7 @@ TEST_F (checkpointTest, dump) {
 
 	bool failed = false;
 	try {
-		cpt.dump(sys);
+		cpt.dump(sys, 0, 0, false);
 	} catch (customException &ce) {
 		failed = true;
 		std::cout << ce.what() << std::endl;
@@ -11372,7 +11372,7 @@ TEST_F (checkpointTest, loadDump) {
 	// use one system to write a copy of its checkpoint
 	cpt.dir = "../data/checkpt2/";
 	cpt.chkptName = "../data/checkpt2/state.json"; // dumps a diff checkpoint
-	cpt.dump(sys);
+	cpt.dump(sys, 0, 0, false);
 
 	// use a second checkpoint to load
 	checkpoint cpt2 ("../data/checkpt2", 900, sys, false, over);
@@ -11434,22 +11434,22 @@ TEST_F (checkpointTest, check) {
 	std::cout << " ... 1/4 ... " << std::endl;
 	cpt.dir = "../data/checkpt2/";
 	cpt.chkptName = "../data/checkpt2/state.json";
-	bool now = cpt.check(sys);
+	bool now = cpt.check(sys, 0, 0, false);
 	EXPECT_TRUE (!now);
 
 	pauseCode(1);
 	std::cout << " ... 2/4 ... " << std::endl;
-	now = cpt.check(sys);
+	now = cpt.check(sys, 0, 0, false);
 	EXPECT_TRUE(now);
 
 	pauseCode(1);
 	std::cout << " ... 3/4 ... " << std::endl;
-	now = cpt.check(sys);
+	now = cpt.check(sys, 0, 0, false);
 	EXPECT_TRUE(!now);
 
 	pauseCode(1);
 	std::cout << " ... 4/4 ... " << std::endl;
-	now = cpt.check(sys);
+	now = cpt.check(sys, 0, 0, false);
 	EXPECT_TRUE(now);
 }
 

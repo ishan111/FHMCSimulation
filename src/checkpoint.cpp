@@ -169,8 +169,9 @@ void checkpoint::load (simSystem &sys, const bool override) {
  * \param [in] sys System to checkpoint
  * \param [in] moveCounter Number of moves out of a given sweep that have executed
  * \param [in] sweepCounter Number of loops/sweeps that have executed
+ * \param [in] refine Refine the histogram boundaries before printing any? (default=true)
  */
-void checkpoint::dump (simSystem &sys, const long long int moveCounter, const long long int sweepCounter) {
+void checkpoint::dump (simSystem &sys, const long long int moveCounter, const long long int sweepCounter, const bool refine) {
     rapidjson::StringBuffer s;
     rapidjson::PrettyWriter < rapidjson::StringBuffer > writer(s);
     hasCheckpoint = true;
@@ -207,9 +208,13 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
     if (walaDone && crossoverDone) {
         // in final TMMC stage or just finished the TMMC (end of simulation)
         sys.getTMMCBias()->print(dir+"/tmmc", true, true);
-        sys.refineEnergyHistogramBounds();
+        if (refine) {
+            sys.refineEnergyHistogramBounds();
+        }
         sys.printEnergyHistogram(dir+"/eHist", false); // Un-normalized Energy histogram
-        sys.refinePkHistogramBounds();
+        if (refine) {
+            sys.refinePkHistogramBounds();
+        }
         sys.printPkHistogram(dir+"/pkHist", false); // Un-normalized Particle histogram
         sys.printExtMoments(dir+"/extMom", false); // Un-normalized Extensive moments, plus counter (number of times each recorded)
         writer.String("extMomCounter");
@@ -284,13 +289,14 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
  * \param [in] sys System to checkpoint
  * \param [in] moveCounter Number of moves out of a given sweep that have executed
  * \param [in] sweepCounter Number of loops/sweeps that have executed
+ * \param [in] refine Refine the histogram boundaries before printing any? (default=true)
  *
  * \returns bool Is a checkpoint being generated or not
  */
-bool checkpoint::check (simSystem &sys, const long long int moveCounter, const long long int sweepCounter) {
+bool checkpoint::check (simSystem &sys, const long long int moveCounter, const long long int sweepCounter, const bool refine) {
     if (freq > 0) {
         if (std::abs(difftime(time(&now_), lastCheckPt_)) >= freq) {
-            dump(sys, moveCounter, sweepCounter);
+            dump(sys, moveCounter, sweepCounter, refine);
             return true;
         }
     }

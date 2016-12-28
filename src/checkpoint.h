@@ -26,8 +26,8 @@ public:
     ~checkpoint () {};
 
 	void load (simSystem &sys, const bool override);
-	void dump (simSystem &sys, const long long int moveCounter=0, const long long int sweepCounter=0);
-	bool check (simSystem &sys, const long long int moveCounter=0, const long long int sweepCounter=0);
+	void dump (simSystem &sys, const long long int moveCounter=0, const long long int sweepCounter=0, const bool refine=true);
+	bool check (simSystem &sys, const long long int moveCounter=0, const long long int sweepCounter=0, const bool refine=true);
 
 	bool hasCheckpoint; //!< At least one checkpoint has been made that the system can restart from
 	bool takeSnaps; //!< Save snapshot of the system each time a record is made
