@@ -906,12 +906,14 @@ void simSystem::reInitializeEnergyHistogram () {
 }
 
 /*!
- * Print the (normalized by default) energy histogram for each Ntot.
+ * Print the (normalized by default) energy histogram for each Ntot. Refines bounds before each print.
  *
  * \param [in] fileName Prefix of the filename to load from
  * \param [in] normalize Whether or not to normalize the histogram (default=true)
  */
 void simSystem::printEnergyHistogram (const std::string fileName, const bool normalize) {
+	refineEnergyHistogramBounds();
+
 	std::ofstream of;
 	std::string name = fileName+".dat";
 	of.open(name.c_str(), std::ofstream::out);
@@ -1059,12 +1061,14 @@ void simSystem::refinePkHistogramBounds () {
 }
 
 /*!
- * Print the (normalized by default) particle number histogram for each Ntot.
+ * Print the (normalized by default) particle number histogram for each Ntot. Refines histograms before each print.
  *
  * \param [in] fileName Prefix of filename to print to
  * \param [in] normalize Whether or not to normalize the histogram (default=true)
  */
 void simSystem::printPkHistogram (const std::string fileName, const bool normalize) {
+	refinePkHistogramBounds();
+
 	for (unsigned int i = 0; i < nSpecies_; ++i) {
 		std::ofstream of;
 		std::string name = fileName+"_"+std::to_string(i+1)+".dat";

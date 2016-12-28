@@ -93,9 +93,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 		if (sweep%sweepPrint == 0) {
 			printCounter++;
 			sys.getTMMCBias()->print("tmmc-Checkpoint-"+std::to_string(printCounter), false, false); // true, false);
-			sys.refineEnergyHistogramBounds();
 			sys.printEnergyHistogram("eHist-Checkpoint-"+std::to_string(printCounter));
-            sys.refinePkHistogramBounds();
             sys.printPkHistogram("pkHist-Checkpoint-"+std::to_string(printCounter));
             sys.printExtMoments("extMom-Checkpoint-"+std::to_string(printCounter));
             usedMovesPr->print("tmmc.stats");
@@ -104,9 +102,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 
     // Print final results
     sys.getTMMCBias()->print("final", false, false);
-    sys.refineEnergyHistogramBounds();
     sys.printEnergyHistogram("final_eHist");
-    sys.refinePkHistogramBounds();
     sys.printPkHistogram("final_pkHist");
     sys.printExtMoments("final_extMom");
     sys.printSnapshot("final.xyz", "last configuration");

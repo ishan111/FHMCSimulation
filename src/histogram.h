@@ -18,23 +18,23 @@ public:
 
     	void print (const std::string fileName);
     	void increment (const long long unsigned int address, const double val);
-    	void increment (const std::vector <double> &coords, const double val);
-		void set (const std::vector <double> &h, const std::vector <double> &ctr);
-    	const long long unsigned int getAddress (const std::vector <double> &coords);
-    	const std::vector <double> getCoords (long long unsigned int address);
-    	std::vector <double> getRawHistogram () { return h_; } //!< Return the current histogram
-    	std::vector <double> getCounter () { return counter_; } //!< Return the current histogram counter
+    	void increment (const std::vector < double > &coords, const double val);
+		void set (const std::vector < double > &h, const std::vector < double > &ctr);
+    	const long long unsigned int getAddress (const std::vector < double > &coords);
+    	const std::vector < double > getCoords (long long unsigned int address);
+    	std::vector < double > getRawHistogram () { return h_; } //!< Return the current histogram
+    	std::vector < double > getCounter () { return counter_; } //!< Return the current histogram counter
 
 private:
     	unsigned int dim_; //!< Dimensionality of the histogram
     	long long unsigned int size_; //!< Total size of histogram
-    	std::vector <long long unsigned int> nbins_; //!< Number of bins along each dimension
-    	std::vector <long long unsigned int> widths_; //!< Total widths (number of bins) of each iteratively projected dimension
-    	std::vector <double> h_; //!< Histogram
-    	std::vector <double> counter_; //!< Histogram counter
-    	std::vector <double> ubound_; //!< Upper bound for each dimension
-    	std::vector <double> lbound_; //!< Lower bound for each dimension
-    	std::vector <double> delta_; //!< Magnitude of the width of a bin in each dimension
+    	std::vector < long long unsigned int > nbins_; //!< Number of bins along each dimension
+    	std::vector < long long unsigned int > widths_; //!< Total widths (number of bins) of each iteratively projected dimension
+    	std::vector < double > h_; //!< Histogram
+    	std::vector < double > counter_; //!< Histogram counter
+    	std::vector < double > ubound_; //!< Upper bound for each dimension
+    	std::vector < double > lbound_; //!< Lower bound for each dimension
+    	std::vector < double > delta_; //!< Magnitude of the width of a bin in each dimension
 };
 
 class dynamic_one_dim_histogram {

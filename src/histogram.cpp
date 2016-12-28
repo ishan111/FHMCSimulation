@@ -38,7 +38,7 @@ void dynamic_one_dim_histogram::trim_edges () {
 }
 
 /*!
- * Initialize histogram and its bounds. Aligns against the lower bound, and uses this as the bin's "center."  The upper bound is re-calculated from the lower bound and the value of delta.
+ * Initialize histogram and its bounds. Aligns against the lower bound, and uses this as the bin's "center."  The upper bound is internally re-calculated from the lower bound and the value of delta.
  * Bins include values between [lo, hi) where a bin's value = (low+hi)/2.
  *
  * \param [in] lb Lowest value that must be covered by histogram. This is used to align the histogram when ub and lb not integer delta's apart.
@@ -89,7 +89,7 @@ void dynamic_one_dim_histogram::set_hist (const std::deque < double > h) {
 
 /*!
  * Re-initialize histogram and its bounds.  All entries are zeroed. Aligns against the lower bound, and uses this as the bin's "center."
- * The upper bound is re-calculated from the lower bound and the value of delta. Bins include values between [lo, hi) where a bin's value = (low+hi)/2.
+ * The upper bound is internally re-calculated from the lower bound and the value of delta. Bins include values between [lo, hi) where a bin's value = (low+hi)/2.
  *
  * \param [in] lb Lowest value that must be covered by histogram. This is used to align the histogram when ub and lb not integer delta's apart.
  * \param [in] ub Largest value that must be covered by histogram. Less relevant than lb, which is used for alignment.  This value is only used to determined the number of bins necessary.
@@ -104,8 +104,8 @@ void dynamic_one_dim_histogram::reinitialize (const double lb, const double ub, 
 }
 
 /*!
- * Instantiate a 1D histogram that grow as needed to record values.
- * A bin is considered "centered" on its value, and is aligned to the lower bound's value.
+ * Instantiate a 1D histogram that grow as needed to record values. Aligns against the lower bound, and uses this as the bin's "center."
+ * The upper bound is internally re-calculated from the lower bound and the value of delta. Bins include values between [lo, hi) where a bin's value = (low+hi)/2.
  *
  * \param [in] lb Lowest value that must be covered by histogram. This is used to align the histogram when ub and lb not integer delta's apart.
  * \param [in] ub Largest value that must be covered by histogram. Less relevant than lb, which is used for alignment.  This value is only used to determined the number of bins necessary.
@@ -200,7 +200,7 @@ void dynamic_one_dim_histogram::record (const double value) {
  * \param [in] ubound Vector of upper bounds for each dimension
  * \param [in] nbins Number of bins to use along each dimension
  */
-histogram::histogram (const std::vector <double> lbound, const std::vector <double> ubound, const std::vector <long long unsigned int> nbins) {
+histogram::histogram (const std::vector < double > lbound, const std::vector < double > ubound, const std::vector < long long unsigned int > nbins) {
 	if (lbound.size() != ubound.size()) {
 		throw customException ("Upper and lower bounds for histogram do have the same size");
     }
