@@ -9,8 +9,9 @@
  * \param [in] frequency Frquency to take snapshots/checkpoints of the system (< 0 disables)
  * \param [in] sys System to checkpoint
  * \param [in] snaps Take snapshots each time a record is made to make a movie? (default = false)
+ * \param [in] override Manually override exceptions, use with extreme caution (default=false)
  */
-checkpoint::checkpoint (const std::string directory, const long int frequency, simSystem &sys, bool snaps) {
+checkpoint::checkpoint (const std::string directory, const long int frequency, simSystem &sys, const bool snaps, const bool override) {
     tmmcDone = false;
     crossoverDone = false;
     walaDone = false;
@@ -34,7 +35,7 @@ checkpoint::checkpoint (const std::string directory, const long int frequency, s
     	doc.ParseStream(is);
     	fclose(fp);
         if (doc.IsObject()) {
-            load(sys);
+            load(sys, override);
         }
     } else {
         std::string command = "mkdir -p "+dir+" && touch "+chkptName;
@@ -57,9 +58,10 @@ checkpoint::checkpoint (const std::string directory, const long int frequency, s
  * Read state of a system from a json file.
  *
  * \param [in] sys System to checkpoint
+ * \param [in] override Manually override exceptions, use with extreme caution (default=false)
  */
-void checkpoint::load (simSystem &sys) {
-    if (!fileExists(chkptName)) {
+void checkpoint::load (simSystem &sys, const bool override) {
+    if (!fileExists(chkptName) && !override) {
         throw customException ("No checkpoint by the name: "+chkptName);
     }
 
@@ -140,16 +142,20 @@ void checkpoint::load (simSystem &sys) {
             }
             sys.setEUB(eub);
         } else {
-            std::cerr << "Uncertain which stage simulation is in, so cannot checkpoint" << std::endl;
-            exit(SYS_FAILURE);
+            if (!override) {
+                std::cerr << "Uncertain which stage simulation is in, so cannot checkpoint" << std::endl;
+                exit(SYS_FAILURE);
+            }
         }
 
         sys.readConfig(dir+"/snap.xyz");
         hasCheckpoint = true;
     } catch (std::exception &ex) {
-        hasCheckpoint = false;
-        std::cerr << "Unable to load checkpoint: " << ex.what() << std::endl;
-        exit(SYS_FAILURE);
+        if (!override) {
+            hasCheckpoint = false;
+            std::cerr << "Unable to load checkpoint: " << ex.what() << std::endl;
+            exit(SYS_FAILURE);
+        }
     }
 
     std::cout << "Checkpoint loaded from " << chkptName << " on " << getTimeStamp() << std::endl;

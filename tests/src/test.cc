@@ -574,7 +574,7 @@ TEST_F (InitializeSystem, setInterfereWindowLower) {
 	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1);
 	mysys.setTotNBounds (totNbounds);
 
-	// should have resized species 
+	// should have resized species
 	EXPECT_EQ (mysys.maxSpecies(0), totNbounds[1]);
 	EXPECT_EQ (mysys.maxSpecies(1), totNbounds[1]);
 	EXPECT_EQ (mysys.maxSpecies(2), totNbounds[1]);
@@ -11327,7 +11327,9 @@ TEST_F (checkpointTest, load) {
 	// test the system can load info from checkpoint
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
 	setup (sys, fname);
-	checkpoint cpt ("../data/checkpt", 900, sys);
+
+	bool over = true;
+	checkpoint cpt ("../data/checkpt", 900, sys, false, over);
 
 	EXPECT_EQ(cpt.hasCheckpoint, true);
 	EXPECT_EQ(cpt.takeSnaps, false);
@@ -11345,13 +11347,16 @@ TEST_F (checkpointTest, dump) {
 	// test the system can dump
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
 	setup (sys, fname);
-	checkpoint cpt ("../data/checkpt", 900, sys);
+
+	bool over = true;
+	checkpoint cpt ("../data/checkpt", 900, sys, false, over);
 
 	bool failed = false;
 	try {
 		cpt.dump(sys);
-	} catch (...) {
+	} catch (customException &ce) {
 		failed = true;
+		std::cout << ce.what() << std::endl;
 	}
 	EXPECT_TRUE(!failed);
 }
@@ -11360,7 +11365,9 @@ TEST_F (checkpointTest, loadDump) {
 	// test that system can load,dump same info
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
 	setup (sys, fname);
-	checkpoint cpt ("../data/checkpt", 900, sys);
+
+	bool over = true;
+	checkpoint cpt ("../data/checkpt", 900, sys, false, over);
 
 	// use one system to write a copy of its checkpoint
 	cpt.dir = "../data/checkpt2/";
@@ -11368,7 +11375,7 @@ TEST_F (checkpointTest, loadDump) {
 	cpt.dump(sys);
 
 	// use a second checkpoint to load
-	checkpoint cpt2 ("../data/checkpt2", 900, sys);
+	checkpoint cpt2 ("../data/checkpt2", 900, sys, false, over);
 
 	EXPECT_EQ(cpt.hasCheckpoint, cpt2.hasCheckpoint);
 	EXPECT_EQ(cpt.takeSnaps, cpt2.takeSnaps);

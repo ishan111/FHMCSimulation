@@ -885,7 +885,9 @@ void simSystem::reInitializeEnergyHistogram () {
 			throw customException ("Bad energy histogram bound sizes");
 		}
 		// "standardize" the bounds against U = 0 for to "align" the bins, already done for pkHistogram
+		// this allows overlapping windows to be merged, otherwise they are not "aligned"
 		// this way the energy is reported as the limit of the edge of the aligned bins
+
 		if (energyHistogram_lb_[i] < 0) {
 			lb = floor((energyHistogram_lb_[i] - 0.0)/energyHistDelta_);
 		} else {
@@ -912,8 +914,6 @@ void simSystem::reInitializeEnergyHistogram () {
  * \param [in] normalize Whether or not to normalize the histogram (default=true)
  */
 void simSystem::printEnergyHistogram (const std::string fileName, const bool normalize) {
-	refineEnergyHistogramBounds();
-
 	std::ofstream of;
 	std::string name = fileName+".dat";
 	of.open(name.c_str(), std::ofstream::out);
@@ -975,6 +975,10 @@ void simSystem::restartEnergyHistogram (const std::string prefix) {
 	std::string fileName = prefix+".dat";
 
 	std::ifstream infile (fileName.c_str());
+	if (!infile.is_open()) {
+		throw customException ("Cannot load energyHistogram from "+fileName);
+	}
+
 	std::string line, tmp = "";
 	int lineIndex = 0;
 	while(std::getline(infile,line)) {
@@ -1067,8 +1071,6 @@ void simSystem::refinePkHistogramBounds () {
  * \param [in] normalize Whether or not to normalize the histogram (default=true)
  */
 void simSystem::printPkHistogram (const std::string fileName, const bool normalize) {
-	refinePkHistogramBounds();
-
 	for (unsigned int i = 0; i < nSpecies_; ++i) {
 		std::ofstream of;
 		std::string name = fileName+"_"+std::to_string(i+1)+".dat";
@@ -1133,6 +1135,10 @@ void simSystem::restartPkHistogram (const std::string prefix) {
 		std::string fileName = prefix+"_"+std::to_string(spec+1)+".dat";
 
 		std::ifstream infile (fileName.c_str());
+		if (!infile.is_open()) {
+			throw customException ("Cannot load pkHistogram from "+fileName);
+		}
+
 		std::string line, tmp = "";
 		int lineIndex = 0;
 		while(std::getline(infile,line)) {

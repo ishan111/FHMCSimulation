@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <limits>
 #include "global.h"
 #include "utilities.h"
 

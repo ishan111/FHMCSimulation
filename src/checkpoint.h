@@ -22,10 +22,10 @@
 class checkpoint {
 public:
 	checkpoint () { tmmcDone = false; crossoverDone = false; walaDone = false; hasCheckpoint = false; resFromTMMC = false; resFromWALA = false; resFromCross = false; takeSnaps = false; freq = -1; dir = "checkpt"; }
-	checkpoint (const std::string directory, const long int frequency, simSystem &sys, bool snaps=false);
+	checkpoint (const std::string directory, const long int frequency, simSystem &sys, const bool snaps=false, const bool override=false);
     ~checkpoint () {};
 
-	void load (simSystem &sys);
+	void load (simSystem &sys, const bool override);
 	void dump (simSystem &sys, const long long int moveCounter=0, const long long int sweepCounter=0);
 	bool check (simSystem &sys, const long long int moveCounter=0, const long long int sweepCounter=0);
 
