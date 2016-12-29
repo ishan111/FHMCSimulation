@@ -39,39 +39,44 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
     parseJson (filename, doc);
 
 	// Check each member exists and is in the correct format
-	assert(doc.HasMember("num_species"));
-	assert(doc["num_species"].IsInt());
-	assert(doc.HasMember("beta"));
-	assert(doc["beta"].IsNumber());
+    if (!doc.HasMember("num_species")) throw customException("\"num_species\" is not specified in "+filename);
+    if (!doc["num_species"].IsInt()) throw customException("\"num_species\" is not an integer in "+filename);
 
-	assert(doc.HasMember("box"));
-	assert(doc["box"].IsArray());
-	assert(doc["box"].Size() == 3);
+    if (!doc.HasMember("beta")) throw customException("\"beta\" is not specified in "+filename);
+    if (!doc["beta"].IsNumber()) throw customException("\"beta\" is not a number in "+filename);
+
+    if (!doc.HasMember("box")) throw customException("\"box\" is not specified in "+filename);
+    if (!doc["box"].IsArray()) throw customException("\"box\" is not an array in "+filename);
+    if (doc["box"].Size() != 3) throw customException("\"box\" is not a length 3 array in "+filename);
 	std::vector < double > sysBox (3, 0);
 	for (rapidjson::SizeType i = 0; i < doc["box"].Size(); ++i) {
-		assert(doc["box"][i].IsNumber());
+        if (!doc["box"][i].IsNumber()) throw customException("box index "+numToStr(i)+" is not a number in "+filename);
 		sysBox[i] = doc["box"][i].GetDouble();
 	}
 
 	double duh = 10.0;
 	if (doc.HasMember("delta_u_hist")) {
-		assert(doc["delta_u_hist"].IsNumber());
+        if (!doc["delta_u_hist"].IsNumber()) throw customException("\"delta_u_hist\" is not a number in "+filename);
 		duh = doc["delta_u_hist"].GetDouble();
 	}
 
 	int max_order = 2;
 	if (doc.HasMember("max_order")) {
-		assert(doc["max_order"].IsNumber());
+        if (!doc["max_order"].IsInt()) throw customException("\"max_order\" is not an integer in "+filename);
 		max_order = doc["max_order"].GetInt();
 	}
 
 	bool use_ke = false;
 	if (doc.HasMember("use_ke")) {
-		assert(doc["use_ke"].IsBool());
+        if (!doc["use_ke"].IsBool()) throw customException("\"use_ke\" is not a boolean in "+filename);
 		use_ke = doc["use_ke"].GetBool();
 	}
 
-	assert(doc.HasMember("mu"));
+    if (!doc.HasMember("mu")) throw customException("\"mu\" is specified in "+filename);
+
+
+
+    
 	assert(doc["mu"].IsArray());
 	assert(doc["mu"].Size() == doc["num_species"].GetInt());
 	std::vector < double > sysMu (doc["mu"].Size(), 0);
