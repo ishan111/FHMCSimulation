@@ -11,6 +11,7 @@
 #include <ctime>
 #include <time.h>
 #include <iostream>
+#include <stdio.h>
 #include "global.h"
 
 // JSON interface from local distro of rapidjson
@@ -32,6 +33,19 @@ double rng (int *idum);
 double pbcDist2 (const std::vector < double > &p1, const std::vector < double > &p2, const std::vector < double > &box);
 
 std::string getTimeStamp ();
+
+/*!
+ * Convert a number to a string.
+ *
+ * \param [in] val Double precision value
+ *
+ * \return string Representation of this value
+ */
+template < typename T > std::string numToStr(const T& val) {
+   std::ostringstream os;
+   os << val;
+   return os.str();
+}
 
 std::vector < double > random3DSurfaceVector (const double magnitude);
 
