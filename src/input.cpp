@@ -16,11 +16,11 @@ void checkBounds (simSystem &sys) {
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
         for (unsigned int j = 0; j < sys.nSpecies(); ++j) {
             if (!sys.potentialIsSet(i, j)) {
-                std::cerr << "Not all pair potentials are set" << std::endl;
+                sendErr("Not all pair potentials are set");
                 exit(SYS_FAILURE);
             }
             if (!(sys.ppot[i][j]->rcut() < minL/2.0)) {
-                std::cerr << "Pair potential r_cut for species " << i << ", " << j << " is > L/2" << std::endl;
+                sendErr("Pair potential r_cut for species "+numToStr(i)+", "+numToStr(j)+" is > L/2");
                 exit(SYS_FAILURE);
             }
         }
@@ -161,12 +161,12 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		assert(doc["lnF_end"].IsNumber());
 		sys.lnF_end = doc["lnF_end"].GetDouble();
 		if (sys.lnF_end >= 1.0) {
-			std::cerr << "Terminal lnF factor for Wang-Landau must be < 1" << std::endl;
+            sendErr("Terminal lnF factor for Wang-Landau must be < 1");
 			exit(SYS_FAILURE);
 		}
 	}
 	if (sys.lnF_end >= sys.lnF_start) {
-		std::cerr << "lnF_end must be < lnF_start for Wang-Landau to proceed forward" << std::endl;
+        sendErr("lnF_end must be < lnF_start for Wang-Landau to proceed forward");
 		exit(SYS_FAILURE);
 	}
 
@@ -196,7 +196,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		assert(doc["num_crossover_visits"].IsNumber());
 		sys.nCrossoverVisits = doc["num_crossover_visits"].GetDouble(); // convert
 		if (sys.nCrossoverVisits < 1) {
-			std::cerr << "Must allow the collection matrix to be traversed at least once in the crossover from Wang-Landau to TMMC" << std::endl;
+            sendErr("Must allow the collection matrix to be traversed at least once in the crossover from Wang-Landau to TMMC");
 			exit(SYS_FAILURE);
 		}
 	}
@@ -205,12 +205,12 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
     setPairPotentials (sys, doc);
 
     checkBounds (sys);
-    std::cout << "System from " << filename << " passed bounds checks at " << getTimeStamp() << std::endl;
+    sendMsg("System from "+filename+" passed bounds checks");
 
     setSystemBarriers (sys, doc);
-    std::cout << "Initialized barriers from " << filename << " at " << getTimeStamp() << std::endl;
+    sendMsg("Initialized barriers from "+filename);
 
-    std::cout << "Successfully read valid parameters from " << filename << " at " << getTimeStamp() << std::endl;
+    sendMsg("Successfully read valid parameters from "+filename);
     return sys;
 }
 
@@ -277,10 +277,10 @@ void setMoves (simSystem &sys, const rapidjson::Document &doc, moves* usedMovesE
 				moveName = name2;
 				foundIJ = true;
 			} else if (doc.HasMember(name2.c_str()) && foundIJ) {
-				std::cerr << "Input file doubly specifies production swap move probability for species pair ("+std::to_string(i+1)+", "+std::to_string(j+1)+")" << std::endl;
+                sendErr("Input file doubly specifies production swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
 				exit(SYS_FAILURE);
 			} else {
-				std::cerr << "Input file does not specify production swap move probability for species pair ("+std::to_string(i+1)+", "+std::to_string(j+1)+")" << std::endl;
+                sendErr("Input file does not specify production swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
 				exit(SYS_FAILURE);
 			}
 			assert(doc[moveName.c_str()].IsNumber());
@@ -302,10 +302,10 @@ void setMoves (simSystem &sys, const rapidjson::Document &doc, moves* usedMovesE
 				moveName = name2;
 				foundIJ = true;
 			} else if (doc.HasMember(name2.c_str()) && foundIJ) {
-				std::cerr << "Input file doubly specifies equilibration swap move probability for species pair ("+std::to_string(i+1)+", "+std::to_string(j+1)+")" << std::endl;
+                sendErr("Input file doubly specifies equilibration swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
 				exit(SYS_FAILURE);
 			} else {
-				std::cerr << "Input file does not specify equilibration swap move probability for species pair ("+std::to_string(i+1)+", "+std::to_string(j+1)+")" << std::endl;
+                sendErr("Input file does not specify equilibration swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
 				exit(SYS_FAILURE);
 			}
 			assert(doc[moveName.c_str()].IsNumber());
@@ -360,10 +360,10 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
 				ppotName = name2;
 				foundIJ = true;
 			} else if (doc.HasMember(name2.c_str()) && foundIJ) {
-				std::cerr << "Input file doubly specifies pair potential for species pair ("+std::to_string(i+1)+", "+std::to_string(j+1)+")" << std::endl;
+                sendErr("Input file doubly specifies pair potential for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
 				exit(SYS_FAILURE);
 			} else {
-				std::cerr << "Input file does not specify pair potential for species pair ("+std::to_string(i+1)+", "+std::to_string(j+1)+")" << std::endl;
+                sendErr("Input file does not specify pair potential for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
 				exit(SYS_FAILURE);
 			}
 			assert(doc[ppotName.c_str()].IsString());
@@ -446,10 +446,10 @@ void setConfig (simSystem &sys, const std::string filename) {
 		try {
 			sys.readConfig(restart_file);
 		} catch (customException &ce) {
-			std::cerr << ce. what() << std::endl;
+            sendErr(ce.what());
 		}
 	} else if (restart_file == "" && sys.totNMin() > 0) {
-		std::cout << "Automatically generating the initial configuration" << std::endl;
+        sendMsg("Automatically generating the initial configuration");
 
 		// have to generate initial configuration manually - start with mu = INF
         std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
@@ -482,11 +482,11 @@ void setConfig (simSystem &sys, const std::string filename) {
     			assert(doc["init_order"][i].IsInt());
     			initialization_order[i] = doc["init_order"][i].GetInt();
     			if (initialization_order[i] < 0 || initialization_order[i] >= sys.nSpecies()) {
-    				std::cerr << "Order of initialization goes out of bounds, should include 0 <= i < nSpec" << std::endl;
+                    sendErr("Order of initialization goes out of bounds, should include 0 <= i < nSpec");
     				exit(SYS_FAILURE);
     			}
     			if (check_init[initialization_order[i]] != 0) {
-    				std::cerr << "Order of initialization repeats itself" << std::endl;
+                    sendErr("Order of initialization repeats itself");
     				exit(SYS_FAILURE);
     			} else {
     				check_init[initialization_order[i]] = 1;
@@ -501,7 +501,7 @@ void setConfig (simSystem &sys, const std::string filename) {
     			assert(doc["init_frac"][i].IsNumber());
     			init_frac[i] = doc["init_frac"][i].GetDouble();
     			if (init_frac[i] < 0 || init_frac[i] >= 1.0) {
-    				std::cerr << "Initialization fraction out of bounds" << std::endl;
+                    sendErr("Initialization fraction out of bounds");
     				exit(SYS_FAILURE);
     			}
     			sum += init_frac[i];
@@ -515,7 +515,7 @@ void setConfig (simSystem &sys, const std::string filename) {
 		int added = 0;
 		for (unsigned int idx = 0; idx < sys.nSpecies(); ++idx) {
 			unsigned int i = initialization_order[idx];
-			std::cout << "Initializing species " << i << " configurations" << std::endl;
+            sendMsg("Initializing species "+numToStr(i)+" configurations");
 
 			// insert this species i
 			moves initMove (initSys.getTotalM());
@@ -523,7 +523,7 @@ void setConfig (simSystem &sys, const std::string filename) {
 
 			// also add displacment moves for all species present
 			for (unsigned int j = 0; j <= idx; ++j) {
-				std::cout << "Added translation moves for initialization of species " << initialization_order[j] << std::endl;
+                sendMsg("Added translation moves for initialization of species "+numToStr(initialization_order[j]));
                 initMove.addTranslate(initialization_order[j], 2.0, 1.0, initSys.box());
 			}
 
@@ -535,19 +535,20 @@ void setConfig (simSystem &sys, const std::string filename) {
 			}
 			added += targetNum;
 
-			std::cout << "Target number = " << targetNum << " for species " << i+1 << std::endl;
+            sendMsg("Target number = "+numToStr(targetNum)+" for species "+numToStr(i+1));
 			int tmpCounter = 0, statusPrint = 10e6;
 			while (initSys.numSpecies[i] < targetNum) {
 				try {
                     initMove.makeMove(initSys);
                 } catch (customException &ce) {
-                    std::cerr << "Failed to create an initial configuration: " << ce.what() << std::endl;
+                    std::string msg = ce.what();
+                    sendErr("Failed to create an initial configuration because "+msg);
                     exit(SYS_FAILURE);
                 }
 				tmpCounter++;
 				if (tmpCounter%statusPrint == 0) {
 					tmpCounter = 0;
-					std::cout << "Grew " << initSys.numSpecies[i] << " atoms of type " << i << " so far" << std::endl;
+                    sendMsg("Grew "+numToStr(initSys.numSpecies[i])+" atoms of type "+numToStr(i)+" so far");
 				}
 			}
 		}
@@ -559,7 +560,8 @@ void setConfig (simSystem &sys, const std::string filename) {
 		try {
 			sys.readConfig("auto-init.xyz");
 		} catch (customException &ce) {
-			std::cerr << "Failed to read auto-generated initialization file: " << ce. what() << std::endl;
+            std::string msg = ce.what();
+            sendErr("Failed to read auto-generated initialization file because "+msg);
         }
    	}
 }
@@ -594,7 +596,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 			try {
 				sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
 			} catch (customException &ce) {
-				std::cerr << ce.what() << std::endl;
+                sendErr(ce.what());
 				exit(SYS_FAILURE);
 			}
 			convention0 = true;
@@ -604,7 +606,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 			std::string dummy = "hardWallZ_" + std::to_string(i+1) + "_" + std::to_string(j);
             if (doc.HasMember(dummy.c_str())) {
 				if (convention0) {
-					std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
+                    sendErr("Error, multiple barrier naming conventions used for the same species");
 					exit(SYS_FAILURE);
                 }
 				if (doc.HasMember(dummy.c_str())) {
@@ -616,7 +618,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
                     try {
 						sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
 					} catch (customException &ce) {
-						std::cerr << ce.what() << std::endl;
+						sendErr(ce.what());
 						exit(SYS_FAILURE);
                     }
                 }
@@ -638,7 +640,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 			try {
 				sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
             } catch (customException &ce) {
-                std::cerr << ce.what() << std::endl;
+                sendErr(ce.what());
                 exit(SYS_FAILURE);
             }
             convention0 = true;
@@ -648,7 +650,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 			std::string dummy = "squareWellWallZ_" + std::to_string(i+1) + "_" + std::to_string(j);
 			if (doc.HasMember(dummy.c_str())) {
 				if (convention0) {
-					std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
+                    sendErr("Error, multiple barrier naming conventions used for the same species");
 					exit(SYS_FAILURE);
 				}
 				if (doc.HasMember(dummy.c_str())) {
@@ -660,7 +662,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 					try {
 						sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
 					} catch (customException &ce) {
-						std::cerr << ce.what() << std::endl;
+						sendErr(ce.what());
 						exit(SYS_FAILURE);
 					}
                 }
@@ -682,7 +684,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 			try {
 				sys.speciesBarriers[i].addCylinderZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], Mtot);
             } catch (customException &ce) {
-                std::cerr << ce.what() << std::endl;
+                sendErr(ce.what());
                 exit(SYS_FAILURE);
             }
             convention0 = true;
@@ -692,7 +694,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 			std::string dummy = "cylinderZ_" + std::to_string(i+1) + "_" + std::to_string(j);
 			if (doc.HasMember(dummy.c_str())) {
 				if (convention0) {
-					std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
+                    sendErr("Error, multiple barrier naming conventions used for the same species");
 					exit(SYS_FAILURE);
 				}
 				if (doc.HasMember(dummy.c_str())) {
@@ -704,7 +706,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 					try {
 						sys.speciesBarriers[i].addCylinderZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], Mtot);
 					} catch (customException &ce) {
-						std::cerr << ce.what() << std::endl;
+						sendErr(ce.what());
 						exit(SYS_FAILURE);
 					}
                 }
@@ -738,7 +740,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
             try {
                 sys.speciesBarriers[i].addRightTriangleXZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
             } catch (customException &ce) {
-                std::cerr << ce.what() << std::endl;
+                sendErr(ce.what());
                 exit(SYS_FAILURE);
             }
             convention0 = true;
@@ -748,7 +750,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
             std::string dummy = "rightTriangleXZ_" + std::to_string(i+1) + "_" + std::to_string(j);
             if (doc.HasMember(dummy.c_str())) {
                 if (convention0) {
-                    std::cerr << "Error: multiple barrier naming conventions used for the same species" << std::endl;
+                    sendErr("Error, multiple barrier naming conventions used for the same species");
                     exit(SYS_FAILURE);
                 }
                 if (doc.HasMember(dummy.c_str())) {
@@ -763,7 +765,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
                     try {
                         sys.speciesBarriers[i].addRightTriangleXZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
                     } catch (customException &ce) {
-                        std::cerr << ce.what() << std::endl;
+                        sendErr(ce.what());
                         exit(SYS_FAILURE);
                     }
                 }

@@ -322,10 +322,11 @@ void tabulated::setParameters (const std::vector < double > params) {
  * \param [in] filename Name of ASCII file to read (r, U(r)) from
  */
 void tabulated::loadPotential(std::string filename) {
-	std::cout << "Loading pair potential from file: " << filename<<std::endl;
+	sendMsg("Loading pair potential from "+filename);
+
 	// first check, if file exists
 	if (fileExists(filename)) {
-		std::cout << "File found, processing." << std::endl;
+		sendMsg("File found, processing");
 		table.clear();
 		double r, pot;
 		unsigned int lineCounter = 0;
@@ -346,7 +347,7 @@ void tabulated::loadPotential(std::string filename) {
 
 		if (lineCounter < 2) {
 			paramsAreSet_ = false;
-			std::cerr << "Tabulated potential " << filename << " needs at least 2 entries, cannot setup potential." << std::endl;
+			sendErr("Tabulated potential "+numToStr(filename)+" needs at least 2 entries, cannot setup potential");
 			return;
 		}
 
@@ -360,7 +361,7 @@ void tabulated::loadPotential(std::string filename) {
 			paramsAreSet_ = true;
 		}
 	} else {
-		std::cerr<<"File "<<filename<<" not found, cannot setup potential."<<std::endl;
+		sendErr("File "+numToStr(filename)+" not found, cannot setup potential");
 		paramsAreSet_ = false;
 	}
 }
@@ -393,7 +394,7 @@ double tabulated::energy (const atom* a1, const atom* a2, const std::vector < do
 	}
 
 	if (r < params_[1]) {
-		std::cerr << "Distance r too small in energy calculation in tabulated potential. Returning value at r = " << start << std::endl;
+		sendErr("Distance r too small in energy calculation in tabulated potential. Returning value at r = "+numToStr(start));
 		en = table[0];
 	} else if (r > params_[0]) {
 		en = params_[3];

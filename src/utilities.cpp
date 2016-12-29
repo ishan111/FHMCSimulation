@@ -33,7 +33,7 @@ void sendMsg (const std::string msg) {
  * \param [in] msg Message as string
  */
 void sendErr (const std::string msg) {
-    std::cerr << getTimeStamp() << " : " << msg << std::endl;
+    std::cerr << " *** ERROR: " << getTimeStamp() << " : " << msg << " *** " << std::endl;
 }
 
 /*!
@@ -53,7 +53,7 @@ void parseJson (const std::string filename, rapidjson::Document &doc) {
     }
 
     if (doc.IsObject()) {
-        std::cout << "Parsed JSON file " << filename << " at " << getTimeStamp() << std::endl;
+        sendMsg("Parsed JSON file "+filename);
     } else {
         throw customException ("Error in "+filename+", not begin detected as proper JSON document");
     }

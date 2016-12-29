@@ -1237,7 +1237,7 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 			pp2->setParameters(params);
 			ppot[spec2][spec1] = pp2;
 		} catch (customException &ce) {
-			std::cerr << ce.what() << std::endl;
+			sendErr(ce.what());
 			exit(SYS_FAILURE);
 		}
 	} else if (ppot_name == "lennard_jones") {
@@ -1249,7 +1249,7 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 			pp2->setParameters(params);
 			ppot[spec2][spec1] = pp2;
 		} catch (customException &ce) {
-			std::cerr << ce.what() << std::endl;
+			sendErr(ce.what());
 			exit(SYS_FAILURE);
 		}
 	} else if (ppot_name == "fs_lennard_jones") {
@@ -1261,7 +1261,7 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 			pp2->setParameters(params);
 			ppot[spec2][spec1] = pp2;
 		} catch (customException &ce) {
-			std::cerr << ce.what() << std::endl;
+			sendErr(ce.what());
 			exit(SYS_FAILURE);
 		}
 	} else if (ppot_name == "hard_sphere") {
@@ -1273,7 +1273,7 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 			pp2->setParameters(params);
 			ppot[spec2][spec1] = pp2;
 		} catch (customException &ce) {
-			std::cerr << ce.what() << std::endl;
+			sendErr(ce.what());
 			exit(SYS_FAILURE);
 		}
 	} else if (ppot_name == "tabulated") {
@@ -1285,11 +1285,11 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 			pp2->setParameters(params);
 			ppot[spec2][spec1] = pp2;
 		} catch (customException &ce) {
-			std::cerr << ce.what() << std::endl;
+			sendErr(ce.what());
 			exit(SYS_FAILURE);
 		}
 	} else {
-		std::cerr << "Unrecognized pair potential name for species " << spec1 << ", " << spec2 << std::endl;
+		sendErr("Unrecognized pair potential name for species "+numToStr(spec1)+", "+numToStr(spec2));
 		exit(SYS_FAILURE);
 	}
 
@@ -1297,14 +1297,14 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 	ppotSet_[spec2][spec1] = true;
 
 	if (useCellList) {
-		std::cout << "Setting up cell list for interactions between type " << spec1 << " and " << spec2 << std::endl;
+		sendMsg("Setting up cell list for interactions between type "+numToStr(spec1)+" and "+numToStr(spec2));
 		// add creation of cell lists
 		if ((ppot[spec1][spec2]->rcut() > box_[0]/3.0) || (ppot[spec1][spec2]->rcut() > box_[1]/3.0) || (ppot[spec1][spec2] ->rcut() > box_[2]/3.0)) {
-			std::cerr << "Cutoff (" << ppot[spec1][spec2]->rcut() << ") larger than 1.0/3.0 boxsize, disabling cell lists for this interaction." << std::endl;
+			sendErr("Cutoff ("+numToStr(ppot[spec1][spec2]->rcut())+") larger than 1.0/3.0 boxsize, disabling cell lists for this interaction");
 			useCellList_[spec1][spec2] = false;
 			useCellList_[spec2][spec1] = false;
 		} else {
-			std::cout << "Creating Cell list with rcut = " << ppot[spec1][spec2]->rcut() << std::endl;
+			sendMsg("Creating Cell list with r_cut = "+numToStr(ppot[spec1][spec2]->rcut()));
 			useCellList_[spec1][spec2] = true;
 			useCellList_[spec2][spec1] = true;
 
@@ -1389,11 +1389,11 @@ void simSystem::printSnapshot (std::string filename, std::string comment, bool o
  * \param [in] filename File to read XYZ coordinates from
  */
 void simSystem::readConfig (std::string filename) {
-	std::cout << "Reading initial configuration from " << filename << std::endl;
+	sendMsg("Reading initial configuration from "+filename);
 
 	std::ifstream infile (filename.c_str());
 	if (!infile.is_open()) {
-		std::cerr << "Cannot open " << filename << std::endl;
+		sendErr("Cannot open "+filename);
 		exit(SYS_FAILURE);
 	}
 
@@ -1487,7 +1487,7 @@ void simSystem::readConfig (std::string filename) {
 
 	// recalculate system's initial energy
 	energy_ = scratchEnergy();
-	std::cout << "Successfully loaded initial configuration from " << filename << " at " << getTimeStamp() << std::endl;
+	sendMsg("Successfully loaded initial configuration from "+filename);
 }
 
 /*!

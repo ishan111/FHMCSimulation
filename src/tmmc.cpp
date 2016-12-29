@@ -11,7 +11,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
     if (res.tmmcDone) {
         throw customException ("Checkpoint indicates TMMC already finished");
     }
-    std::cout << "Beginning TMMC at " << getTimeStamp() << std::endl;
+    sendMsg("Beginning TMMC");
 
     // Specifically for printing progress every 1% of the simulation
     const long long int numSweepSnaps = 100;
@@ -35,10 +35,11 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
     		try {
     			sys.getTMMCBias()->readC(sys.restartFromTMMCFile); // read collection matrix
     			sys.getTMMCBias()->calculatePI();
-    	        std::cout << "Restarted TMMC from collection matrix from " << sys.restartFromTMMCFile << std::endl;
+                sendMsg("Restarted TMMC from collection matrix from "+sys.restartFromTMMCFile);
     		} catch (customException &ce) {
     			sys.stopTMMC(); // deallocate
-    			std::cerr << "Failed to initialize from TMMC collection matrix: " << ce.what() << std::endl;
+                std::string msg = ce.what();
+                sendErr("Failed to initialize from TMMC collection matrix because "+msg);
     			exit(SYS_FAILURE);
     		}
     	}
@@ -47,8 +48,8 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
         sweep = res.sweepCounter;
     }
 
-    std::cout << "Starting progress stage from " << printCounter << "/" << std::min(numSweepSnaps, sys.totalTMMCSweeps) << " at " << getTimeStamp() << std::endl;
-    std::cout << "Starting from " << sweep << "/" << sys.totalTMMCSweeps << " total TMMC sweeps at " << getTimeStamp() << std::endl;
+    sendMsg("Starting progress stage from "+numToStr(printCounter)+"/"+numToStr(std::min(numSweepSnaps, sys.totalTMMCSweeps)));
+    sendMsg("Starting from "+numToStr(sweep)+"/"+numToStr(sys.totalTMMCSweeps)+" total TMMC sweeps");
 
     unsigned long long int checkPoint = sys.tmmcSweepSize*(sys.totNMax() - sys.totNMin() + 1)*3; // how often to check full traversal of collection matrix
 	while (sweep < sys.totalTMMCSweeps) {
@@ -59,7 +60,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 			try {
 				usedMovesPr->makeMove(sys);
 			} catch (customException &ce) {
-				std::cerr << ce.what() << std::endl;
+                sendErr(ce.what());
 				exit(SYS_FAILURE);
 			}
 
@@ -83,7 +84,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 		sys.getTMMCBias()->iterateForward(); // reset the counting matrix and increment total sweep number
 		sweep++;
 
-		std::cout << "Finished " << sweep << "/" << sys.totalTMMCSweeps << " total TMMC sweeps at " << getTimeStamp() << std::endl;
+        sendMsg("Finished "+numToStr(sweep)+"/"+numToStr(sys.totalTMMCSweeps)+" total TMMC sweeps");
 
 		// Update biasing function from collection matrix
 		sys.getTMMCBias()->calculatePI();

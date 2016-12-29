@@ -7,10 +7,10 @@
  */
 void sanityChecks (simSystem &sys) {
 	if (sys.nSpecies() != sys.atoms.size()) {
-        std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
+		sendErr("Error, number of components changed throughout simulation");
         exit(SYS_FAILURE);
 	} else {
-		std::cout << "Passed: Number of species present check" << std::endl;
+		sendMsg("Passed number of species present check");
 	}
 
 	long long int ns = 0;
@@ -18,32 +18,32 @@ void sanityChecks (simSystem &sys) {
 		ns += sys.numSpecies[i];
 	}
 	if (ns != sys.getTotN()) {
-		std::cerr << "Sum of fully inserted atoms deviates from total counter" << std::endl;
+		sendErr("Sum of fully inserted atoms deviates from total counter");
 		exit(SYS_FAILURE);
 	} else {
-		std::cout << "Passed: Sum of atoms consistent with total counter" << std::endl;
+		sendMsg("Passed sum of atoms consistency check with total counter");
 	}
 
 	if (sys.getTotalM() > 1) {
 		if (sys.getFractionalAtom()->mState != sys.getCurrentM()) {
-			std::cerr << "Expanded ensemble state deviates between atom ("+std::to_string(sys.getFractionalAtom()->mState)+") and system ("+std::to_string(sys.getCurrentM())+")" << std::endl;
+			sendErr("Expanded ensemble state deviates between atom ("+numToStr(sys.getFractionalAtom()->mState)+") and system ("+numToStr(sys.getCurrentM())+")");
 			exit(SYS_FAILURE);
-			for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-				int end = sys.numSpecies[i];
-				if (i == sys.getFractionalAtomType()) {
-					end++;
-				}
-				for (unsigned int j = 0; j < end; ++j) {
-					if (&sys.atoms[i][j] != sys.getFractionalAtom()) {
-						if (sys.atoms[i][j].mState != 0) {
-							std::cerr << "Atom ("+std::to_string(i)+", "+std::to_string(j)+") has non-zero expanded ensemble state ("+std::to_string(sys.atoms[i][j].mState)+")" << std::endl;
-							exit(SYS_FAILURE);
-						}
-					} else {
-						if (sys.atoms[i][j].mState != sys.getCurrentM()) {
-							std::cerr << "Fractional atom ("+std::to_string(i)+", "+std::to_string(j)+")'s expanded ensemble state ("+std::to_string(sys.atoms[i][j].mState)+") does not match system's ("+std::to_string(sys.getCurrentM())+")" << std::endl;
-							exit(SYS_FAILURE);
-						}
+		}
+		for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+			int end = sys.numSpecies[i];
+			if (i == sys.getFractionalAtomType()) {
+				end++;
+			}
+			for (unsigned int j = 0; j < end; ++j) {
+				if (&sys.atoms[i][j] != sys.getFractionalAtom()) {
+					if (sys.atoms[i][j].mState != 0) {
+						sendErr("Atom ("+numToStr(i)+", "+numToStr(j)+") has non-zero expanded ensemble state ("+numToStr(sys.atoms[i][j].mState)+")");
+						exit(SYS_FAILURE);
+					}
+				} else {
+					if (sys.atoms[i][j].mState != sys.getCurrentM()) {
+						sendErr("Fractional atom ("+numToStr(i)+", "+numToStr(j)+")'s expanded ensemble state ("+numToStr(sys.atoms[i][j].mState)+") does not match system's ("+numToStr(sys.getCurrentM())+")");
+						exit(SYS_FAILURE);
 					}
 				}
 			}
@@ -52,20 +52,20 @@ void sanityChecks (simSystem &sys) {
 		for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 			for (unsigned int j = 0; j < sys.numSpecies[i]; ++j) {
 				if (sys.atoms[i][j].mState != 0) {
-					std::cerr << "Atom ("+std::to_string(i)+", "+std::to_string(j)+") has non-zero expanded ensemble state ("+std::to_string(sys.atoms[i][j].mState)+")" << std::endl;
+					sendErr("Atom ("+numToStr(i)+", "+numToStr(j)+") has non-zero expanded ensemble state ("+numToStr(sys.atoms[i][j].mState)+")");
 					exit(SYS_FAILURE);
 				}
 			}
 		}
 	}
-	std::cout << "Passed: Expanded ensemble state check for all atoms" << std::endl;
+	sendMsg("Passed expanded ensemble state check for all atoms");
 
 	const double tol = 1.0e-6;
 	const double scratchEnergy = sys.scratchEnergy(), incrEnergy = sys.energy();
     if (fabs(scratchEnergy - incrEnergy) > tol) {
-        std::cerr << "Error: scratch energy calculation = " << std::setprecision(20) << scratchEnergy << ", but incremental = " << std::setprecision(20) << incrEnergy << ", |diff| = " << std::setprecision(20) << fabs(scratchEnergy - incrEnergy) << std::endl;
+		sendErr("Error, scratch energy calculation = "+numToStr(scratchEnergy)+", but incremental = "+numToStr(incrEnergy)+", |diff| = "+numToStr(fabs(scratchEnergy - incrEnergy)));
         exit(SYS_FAILURE);
     } else {
-        std::cout << "Passed: Final scratch energy - incremental = " << std::setprecision(20) << scratchEnergy - incrEnergy << std::endl;
+		sendMsg("Passed, final scratch energy - incremental = "+numToStr(scratchEnergy - incrEnergy));
     }
 }

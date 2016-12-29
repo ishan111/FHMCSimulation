@@ -48,7 +48,7 @@ checkpoint::checkpoint (const std::string directory, const long int frequency, s
         }
     }
 
-    time(&lastCheckPt_); // take time when object was instantiated as initial time
+    time(&lastCheckPt_); // Take time when object was instantiated as initial time
 }
 
 /*!
@@ -76,7 +76,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
         sweepCounter = (long long int)doc["sweepCounter"].GetDouble();
 
         if (walaDone && crossoverDone) {
-            // in final TMMC stage or just finished the TMMC (end of simulation)
+            // In final TMMC stage or just finished the TMMC (end of simulation)
             resFromTMMC = true;
             sys.startTMMC(sys.tmmcSweepSize, sys.getTotalM());
             sys.getTMMCBias()->readC(dir+"/tmmc_C.dat");
@@ -90,7 +90,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
             sys.restartPkHistogram(dir+"/pkHist");
             sys.restartExtMoments(dir+"/extMom", ctr);
         } else if (walaDone && !crossoverDone && !tmmcDone) {
-            // in crossover stage
+            // In crossover stage
             resFromCross = true;
             sys.startTMMC(sys.tmmcSweepSize, sys.getTotalM());
             wala_lnF = doc["wala_lnF"].GetDouble();
@@ -101,7 +101,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
             sys.getWALABias()->readlnPI(dir+"/wala_lnPI.dat");
             sys.getWALABias()->readH(dir+"/wala_H.dat");
 
-            // energy upper and lower bounds for histogram
+            // Energy upper and lower bounds for histogram
             elb.resize(doc["energyHistogramLB"].Size(), 0);
             for (unsigned int i = 0; i < doc["energyHistogramLB"].Size(); ++i) {
                 elb[i] = doc["energyHistogramLB"][i].GetDouble();
@@ -114,7 +114,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
             }
             sys.setEUB(eub);
         } else if (!walaDone && !crossoverDone && !tmmcDone) {
-            // in WALA stage
+            // In WALA stage
             resFromWALA = true;
             wala_lnF = doc["wala_lnF"].GetDouble();
             sys.startWALA (wala_lnF, sys.wala_g, sys.wala_s, sys.getTotalM());
@@ -122,7 +122,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
             sys.getWALABias()->readlnPI(dir+"/wala_lnPI.dat");
             sys.getWALABias()->readH(dir+"/wala_H.dat");
 
-            // energy upper and lower bounds for histogram
+            // Energy upper and lower bounds for histogram
             elb.resize(doc["energyHistogramLB"].Size(), 0);
             for (unsigned int i = 0; i < doc["energyHistogramLB"].Size(); ++i) {
                 elb[i] = doc["energyHistogramLB"][i].GetDouble();
@@ -136,7 +136,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
             sys.setEUB(eub);
         } else {
             if (!override) {
-                std::cerr << "Uncertain which stage simulation is in, so cannot checkpoint" << std::endl;
+                sendErr("Uncertain which stage simulation is in, so cannot checkpoint");
                 exit(SYS_FAILURE);
             }
         }
@@ -144,16 +144,17 @@ void checkpoint::load (simSystem &sys, const bool override) {
         sys.readConfig(dir+"/snap.xyz");
         hasCheckpoint = true;
     } catch (std::exception &ex) {
+        std::string msg = ex.what();
         if (!override) {
             hasCheckpoint = false;
-            std::cerr << "Unable to load checkpoint: " << ex.what() << std::endl;
+            sendErr("Unable to load checkpoint "+msg);
             exit(SYS_FAILURE);
         } else {
-            std::cerr << "Overriding the following errors to load checkpoint: " << ex.what() << std::endl;
+            sendErr("Overriding the following errors to load checkpoint "+msg);
         }
     }
 
-    std::cout << "Checkpoint loaded from " << chkptName << " on " << getTimeStamp() << std::endl;
+    sendMsg("Checkpoint loaded from "+chkptName);
 }
 
 /*!

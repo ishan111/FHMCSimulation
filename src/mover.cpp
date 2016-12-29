@@ -9,7 +9,7 @@ moves::moves (const int M) {
 	try {
 		setM (M);
 	} catch (customException &ce) {
-		std::cerr << ce.what() << std::endl;
+		sendErr(ce.what());
 		exit(SYS_FAILURE);
 	}
 }

@@ -11,7 +11,7 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
     if (res.walaDone) {
         throw customException ("Checkpoint indicates WALA already finished");
     }
-    std::cout << "Beginning Wang-Landau portion at " << getTimeStamp() << std::endl;
+    sendMsg("Beginning Wang-Landau");
 
     bool flat = false;
     double lnF = sys.lnF_start;
@@ -28,25 +28,25 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             try {
                 sys.getWALABias()->readlnPI(sys.restartFromWALAFile);
             } catch (customException &ce) {
-                std::cerr << ce.what() << std::endl;
+                sendErr(ce.what());
                 exit(SYS_FAILURE);
             }
-            std::cout << "Read initial lnPI for Wang-Landau from " << sys.restartFromWALAFile << std::endl;
+            sendMsg("Read initial lnPI for Wang-Landau from "+sys.restartFromWALAFile);
         }
     } else {
         lnF = sys.getWALABias()->lnF(); // checkpoint re-initialized to starting value
         moveStart = res.moveCounter;
     }
 
-    std::cout << "Initial lnF = " << sys.getWALABias()->lnF() << " at " << getTimeStamp() << std::endl;
-    std::cout << "Starting from " << moveStart << " moves at " << getTimeStamp() << std::endl;
+    sendMsg("Initial lnF = "+numToStr(sys.getWALABias()->lnF()));
+    sendMsg("Starting from "+numToStr(moveStart)+" moves");
 
     while (lnF > sys.lnF_end) {
         for (unsigned long long int move = moveStart; move < sys.wlSweepSize; ++move) {
             try {
                 usedMovesEq->makeMove(sys);
             } catch (customException &ce) {
-                std::cerr << ce.what() << std::endl;
+                sendErr(ce.what());
                 exit(SYS_FAILURE);
             }
             if (sys.getCurrentM() == 0){
@@ -61,7 +61,7 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             sys.getWALABias()->iterateForward(); // if flat, need to reset H and reduce lnF
             lnF = sys.getWALABias()->lnF();
             flat = false;
-            std::cout << "Wang-Landau is now flat, new lnF = " << lnF << " at " << getTimeStamp() << std::endl;
+            sendMsg("Wang-Landau is now flat, new lnF = "+numToStr(lnF));
             usedMovesEq->print("wala.stats");
         }
     }
