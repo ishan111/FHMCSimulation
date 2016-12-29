@@ -11310,7 +11310,7 @@ protected:
 TEST_F (checkpointTest, restarts) {
 	// test that system can restart from multiple configurations without error
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
-	setup (sys, fname);
+	setConfig (sys, fname);
 
 	bool failed = false;
 	try {
@@ -11326,7 +11326,7 @@ TEST_F (checkpointTest, restarts) {
 TEST_F (checkpointTest, load) {
 	// test the system can load info from checkpoint
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
-	setup (sys, fname);
+	setConfig (sys, fname);
 
 	bool over = true;
 	checkpoint cpt ("../data/checkpt", 900, sys, false, over);
@@ -11346,7 +11346,7 @@ TEST_F (checkpointTest, load) {
 TEST_F (checkpointTest, dump) {
 	// test the system can dump
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
-	setup (sys, fname);
+	setConfig (sys, fname);
 
 	bool over = true;
 	checkpoint cpt ("../data/checkpt", 900, sys, false, over);
@@ -11364,7 +11364,7 @@ TEST_F (checkpointTest, dump) {
 TEST_F (checkpointTest, loadDump) {
 	// test that system can load,dump same info
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
-	setup (sys, fname);
+	setConfig (sys, fname);
 
 	bool over = true;
 	checkpoint cpt ("../data/checkpt", 900, sys, false, over);
@@ -11425,7 +11425,7 @@ TEST_F (checkpointTest, loadDump) {
 TEST_F (checkpointTest, check) {
 	// test the system can check timing correctly
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
-	setup (sys, fname);
+	setConfig (sys, fname);
 	checkpoint cpt ("../data/checkpt", 2, sys, false, true); // override all errors
 
 	std::cout << "Patience: testing checkpoint timing ..." << std::endl;
@@ -11456,7 +11456,7 @@ TEST_F (checkpointTest, check) {
 TEST_F (checkpointTest, restartEnergyHistogram) {
 	// test that system can load,dump restartEnergyHistogram info
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
-	setup (sys, fname);
+	setConfig (sys, fname);
 
 	sys.restartEnergyHistogram("../data/eHist_aligned");
 	sys.printEnergyHistogram("eHist_test", false);
@@ -11476,7 +11476,7 @@ TEST_F (checkpointTest, restartEnergyHistogram) {
 TEST_F (checkpointTest, restartPkHistogram) {
 	// test that system can load,dump restartEnergyHistogram info
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
-	setup (sys, fname);
+	setConfig (sys, fname);
 
 	sys.restartPkHistogram("../data/pkHist");
 	sys.printPkHistogram("pkHist_test", false);
@@ -11500,7 +11500,7 @@ TEST_F (checkpointTest, restartPkHistogram) {
 TEST_F (checkpointTest, restartExtMoments) {
 	// test that system can load,dump restartEnergyHistogram info
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
-	setup (sys, fname);
+	setConfig (sys, fname);
 
 	FILE* fp = fopen("../data/checkpt/state.json", "r");
 	char readBuffer[65536];

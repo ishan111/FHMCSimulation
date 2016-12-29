@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/Users/nam4/Desktop/FHMCSimulation/tests/src/gtest-1.7.0/src/gtest_main.cc
+/home/nam4/Desktop/sandbox/FHMCSimulation/tests/src/gtest-1.7.0/src/gtest_main.cc
 stdio.h
 -
 gtest/gtest.h
-/Users/nam4/Desktop/FHMCSimulation/tests/src/gtest-1.7.0/src/gtest/gtest.h
+/home/nam4/Desktop/sandbox/FHMCSimulation/tests/src/gtest-1.7.0/src/gtest/gtest.h
 
 gtest-1.7.0/include/gtest/gtest-death-test.h
 gtest/internal/gtest-death-test-internal.h
