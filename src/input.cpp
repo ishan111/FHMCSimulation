@@ -401,7 +401,7 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
  * \param [in] sys System to initialize
  * \param [in] filename Input JSON filename
  */
-void setup (simSystem &sys, const std::string filename) {
+void setConfig (simSystem &sys, const std::string filename) {
     rapidjson::Document doc;
     parseJson (filename, doc);
 
@@ -453,7 +453,8 @@ void setup (simSystem &sys, const std::string filename) {
 
 		// have to generate initial configuration manually - start with mu = INF
         std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
-		simSystem initSys (doc["num_species"].GetInt(), 1/10., sysBox, initMu, sysMax, sysMin, Mtot, duh, max_order); // beta =  1/T, so low beta to have high T
+
+		simSystem initSys (doc["num_species"].GetInt(), doc["beta"].GetDouble()/100.0, sysBox, initMu, sysMax, sysMin, Mtot, duh, max_order); // beta =  1/T, so low beta to have high T
 		if (use_ke) {
 			initSys.toggleKE();
 			if (initSys.addKECorrection() == false) {

@@ -10,9 +10,9 @@ int main (int argc, char * const argv[]) {
 	simSystem sys = initialize (argv[1], &usedMovesEq, &usedMovesPr);
 
 	// If checkpoint exists, default to use this information to restart the simulation
-	checkpoint cpt ("checkpt", 900, sys);
+	checkpoint cpt ("checkpt", 1, sys);
     if (!cpt.hasCheckpoint) {
-        setup (sys, argv[1]);
+        setConfig (sys, argv[1]);
     }
 
 	// Check not falsely restarting the simulation
