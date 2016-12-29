@@ -19,6 +19,24 @@ int RNG_SEED = -1024;	//!< Default RNG seed
 #define RNMX (1.0-EPS)
 
 /*!
+ * Send a message to std::cout
+ *
+ * \param [in] msg Message as string
+ */
+void sendMsg (const std::string msg) {
+    std::cout << getTimeStamp() << " : " << msg << std::endl;
+}
+
+/*!
+ * Send a message to std::cerr
+ *
+ * \param [in] msg Message as string
+ */
+void sendErr (const std::string msg) {
+    std::cerr << getTimeStamp() << " : " << msg << std::endl;
+}
+
+/*!
  * Parse a JSON file and return the corresponding document.
  *
  * \param [in] filename Input JSON document's filename

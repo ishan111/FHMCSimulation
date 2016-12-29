@@ -4,7 +4,7 @@
  * Usage: ./binary_name input.json
  */
 int main (int argc, char * const argv[]) {
-	std::cout << "Beginning simulation at " << getTimeStamp() << std::endl;
+	sendMsg ("Beginning simulation");
 
 	moves usedMovesEq, usedMovesPr;
 	simSystem sys = initialize (argv[1], &usedMovesEq, &usedMovesPr);
@@ -17,7 +17,7 @@ int main (int argc, char * const argv[]) {
 
 	// Check not falsely restarting the simulation
 	if (cpt.tmmcDone) {
-		std::cout << "TMMC stage already finished, terminating at " << getTimeStamp() << std::endl;
+		sendMsg ("TMMC stage already finished");
 		return SAFE_EXIT;
 	}
 
@@ -35,13 +35,13 @@ int main (int argc, char * const argv[]) {
 		// Perform TMMC portion of the simulation
 		performTMMC (sys, cpt, &usedMovesPr);
 	} else {
-		std::cerr << "Error in establishing which stage to begin from" << std::endl;
+		sendErr ("Error in establishing which stage to begin from");
 		return SYS_FAILURE;
 	}
 
 	// Dump a final checkpoint to indicate the simulation has finished, so do not restart it
 	cpt.dump(sys);
 
-    std::cout << "Finished simulation at " << getTimeStamp() << std::endl;
+	sendMsg ("Finished simulation");
 	return SAFE_EXIT;
 }

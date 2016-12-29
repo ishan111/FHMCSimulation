@@ -20,16 +20,24 @@
 #include "rapidjson/include/rapidjson/filereadstream.h"
 #include "rapidjson/include/rapidjson/prettywriter.h"
 
+void sendMsg (const std::string msg);
+void sendErr (const std::string msg);
 void parseJson (const std::string filename, rapidjson::Document &doc);
 void pauseCode (long int dur);
 void pbc (std::vector < double > &pos, const std::vector < double > &box);
+
 bool fileExists(std::string fileName);
-std::string getTimeStamp ();
+
 double rng (int *idum);
 double pbcDist2 (const std::vector < double > &p1, const std::vector < double > &p2, const std::vector < double > &box);
+
+std::string getTimeStamp ();
+
 std::vector < double > random3DSurfaceVector (const double magnitude);
+
+std::vector < std::string > splitstr (const std::string &s, char delim);
+
 std::vector < std::vector < double > > rotationMatrix (const double alpha, const double beta, const double gamma);
 std::vector < std::vector < double > > matrixProduct (std::vector < std::vector < double > > &mat1, std::vector < std::vector < double > > &mat2);
-std::vector < std::string > splitstr (const std::string &s, char delim);
 
 #endif
