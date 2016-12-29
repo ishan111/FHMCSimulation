@@ -368,6 +368,13 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
 			}
 			assert(doc[ppotName.c_str()].IsString());
 			ppotType[ppotTypeIndex] = doc[ppotName.c_str()].GetString();
+
+            /*
+            In the future, make this to read nested document so that each
+            parameter is desribed in json file and correctly ordered here
+            before being passed to sys.addPotential()
+            */
+            
 			dummy = ppotName+"_params";
 			assert(doc.HasMember(dummy.c_str()));
 			assert(doc[dummy.c_str()].IsArray());
