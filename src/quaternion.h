@@ -22,7 +22,7 @@ public:
 
     double getNorm (); // Return the norm of the quaternion
     std::vector < double > get () { return q_; } // Return the quaternion's values
-    std::vector < double > rotateVec (const std::vector < double > &vec); // Return the quaternion's values
+    std::vector < double > rotateVec (const std::vector < double > &vec);
 
     /*!
      * Add a quaternion to this one.
