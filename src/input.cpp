@@ -200,7 +200,6 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 			exit(SYS_FAILURE);
 		}
 	}
-
     setMoves (sys, doc, usedMovesEq, usedMovesPr);
     setPairPotentials (sys, doc);
 
@@ -345,7 +344,6 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
         Mtot = doc["num_expanded_states"].GetInt();
     }
 
-    //std::vector < pairPotential* > ppotArray (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
 	std::vector < std::string > ppotType (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
 	int ppotTypeIndex = 0;
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
@@ -366,31 +364,90 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
                 sendErr("Input file does not specify pair potential for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
 				exit(SYS_FAILURE);
 			}
-			assert(doc[ppotName.c_str()].IsString());
+
+            if (!doc[ppotName.c_str()].IsString()) throw customException ("Pair potential is not a name for ("+numToStr(i+1)+","+numToStr(j+1)+")");
 			ppotType[ppotTypeIndex] = doc[ppotName.c_str()].GetString();
+            dummy = ppotName+"_params";
+            if (!doc.HasMember(dummy.c_str())) throw customException ("Input file missing pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+")");
+            if (!doc[dummy.c_str()].IsObject()) throw customException ("Pair potential's parameters are not valid json document");
 
-            /*
-            In the future, make this to read nested document so that each
-            parameter is desribed in json file and correctly ordered here
-            before being passed to sys.addPotential()
-            */
-            
-			dummy = ppotName+"_params";
-			assert(doc.HasMember(dummy.c_str()));
-			assert(doc[dummy.c_str()].IsArray());
-			std::vector < double > params (doc[dummy.c_str()].Size()+1, 0);
-			for (unsigned int k = 0; k < params.size()-1; ++k) {
-				assert(doc[dummy.c_str()][k].IsNumber());
-				params[k] = doc[dummy.c_str()][k].GetDouble();
-			}
-			params[params.size()-1] = Mtot;
+            std::vector < double > params;
 
-			bool useCellList = false; // default
-			dummy = ppotName+"_use_cell_list";
-			if (doc.HasMember(dummy.c_str())) {
-				assert(doc[dummy.c_str()].IsBool());
-				useCellList = doc[dummy.c_str()].GetBool();
-			}
+            bool useCellList = false; // default
+            if (doc[dummy.c_str()].HasMember("cell_list")) {
+                useCellList = doc[dummy.c_str()]["cell_list"].GetBool();
+            }
+
+            if (ppotType[ppotTypeIndex] == "square_well") {
+                // Expects sigma, width, depth, cell_list
+                if (!doc[dummy.c_str()].HasMember("sigma")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"sigma\"");
+                if (!doc[dummy.c_str()].HasMember("width")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"width\"");
+                if (!doc[dummy.c_str()].HasMember("depth")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"depth\"");
+
+                if (!doc[dummy.c_str()]["sigma"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"sigma\" is not a number");
+                if (!doc[dummy.c_str()]["width"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"width\" is not a number");
+                if (!doc[dummy.c_str()]["depth"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"depth\" is not a number");
+
+                params.push_back(doc[dummy.c_str()]["sigma"].GetDouble());
+                params.push_back(doc[dummy.c_str()]["width"].GetDouble());
+                params.push_back(doc[dummy.c_str()]["depth"].GetDouble());
+            } else if (ppotType[ppotTypeIndex] == "lennard_jones") {
+                // Expects epsilon, sigma, r_cut, u_shift
+                if (!doc[dummy.c_str()].HasMember("epsilon")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"epsilon\"");
+                if (!doc[dummy.c_str()].HasMember("sigma")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"sigma\"");
+                if (!doc[dummy.c_str()].HasMember("r_cut")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"r_cut\"");
+                if (!doc[dummy.c_str()].HasMember("u_shift")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"u_shift\"");
+
+                if (!doc[dummy.c_str()]["epsilon"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"epsilon\" is not a number");
+                if (!doc[dummy.c_str()]["sigma"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"sigma\" is not a number");
+                if (!doc[dummy.c_str()]["r_cut"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"r_cut\" is not a number");
+                if (!doc[dummy.c_str()]["u_shift"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"u_shift\" is not a number");
+
+                params.push_back(doc[dummy.c_str()]["epsilon"].GetDouble());
+                params.push_back(doc[dummy.c_str()]["sigma"].GetDouble());
+                params.push_back(doc[dummy.c_str()]["r_cut"].GetDouble());
+                params.push_back(doc[dummy.c_str()]["u_shift"].GetDouble());
+            } else if (ppotType[ppotTypeIndex] == "fs_lennard_jones") {
+                // Expects epsilon, sigma, r_cut
+                if (!doc[dummy.c_str()].HasMember("epsilon")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"epsilon\"");
+                if (!doc[dummy.c_str()].HasMember("sigma")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"sigma\"");
+                if (!doc[dummy.c_str()].HasMember("r_cut")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"r_cut\"");
+
+                if (!doc[dummy.c_str()]["epsilon"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"epsilon\" is not a number");
+                if (!doc[dummy.c_str()]["sigma"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"sigma\" is not a number");
+                if (!doc[dummy.c_str()]["r_cut"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"r_cut\" is not a number");
+
+                params.push_back(doc[dummy.c_str()]["epsilon"].GetDouble());
+                params.push_back(doc[dummy.c_str()]["sigma"].GetDouble());
+                params.push_back(doc[dummy.c_str()]["r_cut"].GetDouble());
+            } else if (ppotType[ppotTypeIndex] == "hard_sphere") {
+                // Expects sigma
+                if (!doc[dummy.c_str()].HasMember("sigma")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"sigma\"");
+
+                if (!doc[dummy.c_str()]["sigma"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"sigma\" is not a number");
+
+                params.push_back(doc[dummy.c_str()]["sigma"].GetDouble());
+            } else if (ppotType[ppotTypeIndex] == "tabulated") {
+                // Expects r_cut, r_shift, u_shift, u_infinity
+                if (!doc[dummy.c_str()].HasMember("r_cut")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"r_cut\"");
+                if (!doc[dummy.c_str()].HasMember("r_shift")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"r_shift\"");
+                if (!doc[dummy.c_str()].HasMember("u_shift")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"u_shift\"");
+                if (!doc[dummy.c_str()].HasMember("u_infinity")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"u_infinity\"");
+
+                if (!doc[dummy.c_str()]["r_cut"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"r_cut\" is not a number");
+                if (!doc[dummy.c_str()]["r_shift"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"r_shift\" is not a number");
+                if (!doc[dummy.c_str()]["u_shift"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"u_shift\" is not a number");
+                if (!doc[dummy.c_str()]["u_infinity"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"u_infinity\" is not a number");
+
+                params.push_back(doc[dummy.c_str()]["r_cut"].GetDouble());
+                params.push_back(doc[dummy.c_str()]["r_shift"].GetDouble());
+                params.push_back(doc[dummy.c_str()]["u_shift"].GetDouble());
+                params.push_back(doc[dummy.c_str()]["u_infinity"].GetDouble());
+            } else {
+                throw customException ("Unrecognized pair potential "+ppotType[ppotTypeIndex]);
+            }
+
+            params.push_back(Mtot);
 
             sys.addPotential(i, j, ppotType[ppotTypeIndex], params, useCellList);
             sys.ppot[i][j]->savePotential(ppotName+".dat", 0.01, 0.01);
