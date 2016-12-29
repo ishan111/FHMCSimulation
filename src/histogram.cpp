@@ -160,9 +160,9 @@ void dynamic_one_dim_histogram::append_bins (const unsigned int nbins) {
  */
 void dynamic_one_dim_histogram::record (const double value) {
 	int bin = round((value - lb_)/delta_); // this "centers" the bin
-	if (fabs(bin) < tol_) {
-			// prevent -0 case and set to 0
-			bin = 0;
+	if (std::abs(bin) < tol_) {
+		// prevent -0 case and set to 0
+		bin = 0;
 	}
 
 	if (bin < 0) {
@@ -185,7 +185,7 @@ void dynamic_one_dim_histogram::record (const double value) {
 
 	// re-calculate after lb potentially adjusted
 	bin = round((value - lb_)/delta_);
-	if (fabs(bin) < tol_) {
+	if (std::abs(bin) < tol_) {
 			// prevent -0 case and set to 0
 			bin = 0;
 	}

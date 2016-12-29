@@ -1,7 +1,9 @@
 #include "input.h"
 
 /*!
- * Check bounds on system variables such as rcut < L/2, etc.
+ * Check the following bounds on system.  If any fail, an emergency exit is performed.
+ * 1. Check all pair potentials are set.
+ * 2. Check that rcut < L/2 for all potentials
  *
  * \param [in] sys System to check bounds on
  */
@@ -33,18 +35,8 @@ void checkBounds (simSystem &sys) {
  * \params [in] usedMovesPr Pointer to move object that will be used during "production" (TMMC)
  */
 simSystem initialize (const std::string filename, moves* usedMovesEq, moves* usedMovesPr) {
-
-	// Parse input JSON file
-	FILE* fp = fopen(filename.c_str(), "r");
-	char readBuffer[65536];
-	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
 	rapidjson::Document doc;
-	doc.ParseStream(is);
-	fclose(fp);
-	std::cout << "Parsed " << filename << " at " << getTimeStamp() << std::endl;
-
-	// Assert that this is a JSON document
-	assert(doc.IsObject());
+    parseJson (filename, doc);
 
 	// Check each member exists and is in the correct format
 	assert(doc.HasMember("num_species"));
@@ -388,13 +380,8 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
  * \param [in] filename Input JSON filename
  */
 void setup (simSystem &sys, const std::string filename) {
-
-    FILE* fp = fopen(filename.c_str(), "r");
-	char readBuffer[65536];
-	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-	rapidjson::Document doc;
-	doc.ParseStream(is);
-	fclose(fp);
+    rapidjson::Document doc;
+    parseJson (filename, doc);
 
     std::string restart_file = "";
 	if (doc.HasMember("restart_file")) {

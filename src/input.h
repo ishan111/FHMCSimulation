@@ -8,13 +8,7 @@
 #include "delete.h"
 #include "translate.h"
 #include "swap.h"
-
-// JSON interface from local distro of rapidjson
-#include "rapidjson/include/rapidjson/document.h"
-#include "rapidjson/include/rapidjson/writer.h"
-#include "rapidjson/include/rapidjson/stringbuffer.h"
-#include "rapidjson/include/rapidjson/filereadstream.h"
-#include "rapidjson/include/rapidjson/prettywriter.h"
+#include "utilities.h"
 
 void checkBounds (simSystem &sys);
 void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc);

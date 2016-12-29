@@ -19,6 +19,29 @@ int RNG_SEED = -1024;	//!< Default RNG seed
 #define RNMX (1.0-EPS)
 
 /*!
+ * Parse a JSON file and return the corresponding document.
+ *
+ * \param [in] filename Input JSON document's filename
+ */
+void parseJson (const std::string filename, rapidjson::Document &doc) {
+    try {
+        FILE* fp = fopen(filename.c_str(), "r");
+    	char readBuffer[65536];
+    	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+    	doc.ParseStream(is);
+    	fclose(fp);
+    } catch (...) {
+        throw customException ("Unable to parse "+filename);
+    }
+
+    if (doc.IsObject()) {
+        std::cout << "Parsed JSON file " << filename << " at " << getTimeStamp() << std::endl;
+    } else {
+        throw customException ("Error in "+filename+", not begin detected as proper JSON document");
+    }
+}
+
+/*!
  * Pause the code for a certain time.
  *
  * \param [in] dur Number of seconds to pause for

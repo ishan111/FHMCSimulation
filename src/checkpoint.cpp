@@ -27,15 +27,12 @@ checkpoint::checkpoint (const std::string directory, const long int frequency, s
 
     chkptName = dir+"/state.json";
     if (fileExists(chkptName)) {
-        // if checkpoint exists, and is a valid json file, use this information
-        FILE* fp = fopen(chkptName.c_str(), "r");
-    	char readBuffer[65536];
-    	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer) );
-        rapidjson::Document doc;
-    	doc.ParseStream(is);
-    	fclose(fp);
-        if (doc.IsObject()) {
+        try {
             load(sys, override);
+        } catch (std::exception &ex) {
+            std::string a = "Unable to load checkpoint "+chkptName+" because ";
+            std::string b = ex.what();
+            throw customException (a+b);
         }
     } else {
         std::string command = "mkdir -p "+dir+" && touch "+chkptName;
@@ -67,11 +64,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
 
     rapidjson::Document doc;
     try {
-        FILE* fp = fopen(chkptName.c_str(), "r");
-    	char readBuffer[65536];
-    	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer) );
-    	doc.ParseStream(is);
-    	fclose(fp);
+        parseJson (chkptName, doc);
 
         tmmcDone = doc["tmmcDone"].GetBool();
         crossoverDone = doc["crossoverDone"].GetBool();
