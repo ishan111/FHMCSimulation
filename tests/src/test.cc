@@ -11356,7 +11356,7 @@ TEST_F (checkpointTest, dump) {
 		cpt.dump(sys, 0, 0, false);
 	} catch (customException &ce) {
 		failed = true;
-		std::cout << ce.what() << std::endl;
+		sendErr(ce.what());
 	}
 	EXPECT_TRUE(!failed);
 }
@@ -11428,27 +11428,27 @@ TEST_F (checkpointTest, check) {
 	setConfig (sys, fname);
 	checkpoint cpt ("../data/checkpt", 2, sys, false, true); // override all errors
 
-	std::cout << "Patience: testing checkpoint timing ..." << std::endl;
+	sendMsg("Patience: testing checkpoint timing ...");
 
 	pauseCode(1);
-	std::cout << " ... 1/4 ... " << std::endl;
+	sendMsg(" ... 1/4 ... ");
 	cpt.dir = "../data/checkpt2/";
 	cpt.chkptName = "../data/checkpt2/state.json";
 	bool now = cpt.check(sys, 0, 0, false);
 	EXPECT_TRUE (!now);
 
 	pauseCode(1);
-	std::cout << " ... 2/4 ... " << std::endl;
+	sendMsg(" ... 2/4 ... ");
 	now = cpt.check(sys, 0, 0, false);
 	EXPECT_TRUE(now);
 
 	pauseCode(1);
-	std::cout << " ... 3/4 ... " << std::endl;
+	sendMsg(" ... 3/4 ... ");
 	now = cpt.check(sys, 0, 0, false);
 	EXPECT_TRUE(!now);
 
 	pauseCode(1);
-	std::cout << " ... 4/4 ... " << std::endl;
+	sendMsg(" ... 4/4 ... ");
 	now = cpt.check(sys, 0, 0, false);
 	EXPECT_TRUE(now);
 }
