@@ -201,7 +201,29 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		}
 	}
 
-	std::vector < double > ref (sys.nSpecies(), 0);
+    setMoves (sys, doc, usedMovesEq, usedMovesPr);
+    setPairPotentials (sys, doc);
+
+    checkBounds (sys);
+    std::cout << "System from " << filename << " passed bounds checks at " << getTimeStamp() << std::endl;
+
+    setSystemBarriers (sys, doc);
+    std::cout << "Initialized barriers from " << filename << " at " << getTimeStamp() << std::endl;
+
+    std::cout << "Successfully read valid parameters from " << filename << " at " << getTimeStamp() << std::endl;
+    return sys;
+}
+
+/*!
+ * Assign the Monte Carlo moves based on the JSON input file.
+ *
+ * \param [in] sys Simulation system that has been initialized
+ * \param [in] doc JSON document corresponding to input file
+ * \params [in] usedMovesEq Pointer to move object that will be used during "equilibration" (WL)
+ * \params [in] usedMovesPr Pointer to move object that will be used during "production" (TMMC)
+ */
+void setMoves (simSystem &sys, const rapidjson::Document &doc, moves* usedMovesEq, moves* usedMovesPr) {
+    std::vector < double > ref (sys.nSpecies(), 0);
 	std::vector < std::vector < double > > probEqSwap (sys.nSpecies(), ref), probPrSwap (sys.nSpecies(), ref);
 	std::vector < double > probPrInsDel (sys.nSpecies(), 0), probPrDisp (sys.nSpecies(), 0);
 	std::vector < double > probEqInsDel (sys.nSpecies(), 0), probEqDisp (sys.nSpecies(), 0);
@@ -212,6 +234,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		assert(doc[dummy.c_str()].IsNumber());
 		probPrInsDel[i] = doc[dummy.c_str()].GetDouble();
 	}
+
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		std::string dummy = "prob_pr_displace_" + std::to_string(i+1);
 		assert(doc.HasMember(dummy.c_str()));
@@ -222,12 +245,14 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		assert(doc[dummy.c_str()].IsNumber());
 		maxPrD[i] = doc[dummy.c_str()].GetDouble();
 	}
+
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		std::string dummy = "prob_eq_ins_del_" + std::to_string(i+1);
 		assert(doc.HasMember(dummy.c_str()));
 		assert(doc[dummy.c_str()].IsNumber());
 		probEqInsDel[i] = doc[dummy.c_str()].GetDouble();
 	}
+
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		std::string dummy = "prob_eq_displace_" + std::to_string(i+1);
 		assert(doc.HasMember(dummy.c_str()));
@@ -238,6 +263,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		assert(doc[dummy.c_str()].IsNumber());
 		maxEqD[i] = doc[dummy.c_str()].GetDouble();
 	}
+
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
 			std::string name1 = "prob_pr_swap_"+std::to_string(i+1)+"_"+std::to_string(j+1);
@@ -288,8 +314,6 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		}
 	}
 
-    setPairPotentials (sys, doc);
-
     usedMovesEq->setM(sys.getTotalM());
     usedMovesPr->setM(sys.getTotalM());
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
@@ -307,16 +331,14 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
             usedMovesPr->addSwap(i, j, probPrSwap[i][j]);
         }
     }
-
-    checkBounds (sys);
-    std::cout << filename << " passed bounds checks at " << getTimeStamp() << std::endl;
-	initializeSystemBarriers (sys, doc);
-    std::cout << "Initialized barriers from " << filename << " at " << getTimeStamp() << std::endl;
-
-    std::cout << "Successfully read valid parameters from " << filename << " at " << getTimeStamp() << std::endl;
-    return sys;
 }
 
+/*!
+ * Assign the pair potentials based on the JSON input file.
+ *
+ * \param [in] sys Simulation system that has been initialized
+ * \param [in] doc JSON document corresponding to input file
+ */
 void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
     int Mtot = 1;
     if (doc.HasMember("num_expanded_states")) {
@@ -441,7 +463,7 @@ void setup (simSystem &sys, const std::string filename) {
 
         // add the same potentials
         setPairPotentials (initSys, doc);
-		initializeSystemBarriers (initSys, doc);
+		setSystemBarriers (initSys, doc);
 
         std::vector < int > initialization_order (sys.nSpecies(), 0), check_init (sys.nSpecies(), 0);
     	std::vector < double > init_frac (sys.nSpecies(), 1.0);
@@ -547,7 +569,7 @@ void setup (simSystem &sys, const std::string filename) {
  * \params [in, out] sys System to initialize with barriers
  * \params [in] doc Input JSON document
  */
-void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
+void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 	// get Mtot, first from doc, otherwise try sys, but they should be the same
 	int Mtot = 1;
 	if (doc.HasMember("num_expanded_states")) {

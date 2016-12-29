@@ -10,10 +10,12 @@
 #include "swap.h"
 #include "utilities.h"
 
-void checkBounds (simSystem &sys);
-void initializeSystemBarriers (simSystem &sys, const rapidjson::Document &doc);
-void setPairPotentials (simSystem &sys, const rapidjson::Document &doc);
-void setup (simSystem &sys, const std::string filename);
 simSystem initialize (const std::string filename, moves* eqMoves, moves* prMoves);
+
+void setup (simSystem &sys, const std::string filename);
+void setMoves (simSystem &sys, const rapidjson::Document &doc, moves* usedMovesEq, moves* usedMovesPr);
+void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc);
+void setPairPotentials (simSystem &sys, const rapidjson::Document &doc);
+void checkBounds (simSystem &sys);
 
 #endif
