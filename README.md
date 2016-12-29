@@ -32,8 +32,7 @@ $ cd ../bin; ./runUnitTests
 
 ## Dependencies
 
-1. GCC
-2. C++11 support required
+1. C++11 support required
 
 ---
 
@@ -54,17 +53,17 @@ Example input file(s) may be generated with helper/window_helper.py, and can be 
 {
 "num_species" : 2, # 2 species
 "beta" : 0.89, # 1/T* = 0.89
-"box" : [9.0, 
-  9.0, 
+"box" : [9.0,
+  9.0,
   9.0], # Box = [9, 9, 9] with a corner at (0,0,0)
-"mu" : [1.234, 
+"mu" : [1.234,
   2.345], # (Excess) Chemical potential of each species
 "seed" : -10, # RNG seed
-"max_N" : [200, 
+"max_N" : [200,
   200], # Maximum number of each species type to allow
-"min_N" : [0, 
+"min_N" : [0,
   0], # Minimum number of each species type to allow
-"window" : [10, 
+"window" : [10,
   30], # Window to sample, [N_tot,min , N_tot,max]
 "restart_file" : "", # File to read configuration from
 "num_crossover_visits" : 50, # Number of times for the TMMC to sample each point in C matrix before taking over from WL
@@ -90,18 +89,18 @@ Example input file(s) may be generated with helper/window_helper.py, and can be 
 "max_pr_displacement_2" : 0.4, # Maximum displacement for species 2 during production (TMMC)
 "max_eq_displacement_2" : 0.7, # Maximum displacement for species 2 during equilibration (WL/Crossover)
 "ppot_1_1" : "square_well", # 1-1 interaction, in this case, square well
-"ppot_1_1_params" : [1.0, 
-  0.3, 
+"ppot_1_1_params" : [1.0,
+  0.3,
   1.0], # 1-1 interaction parameters
 "ppot_1_1_use_cell_list" : true, # use cell list for this potential to accelerate
 "ppot_1_2" : "square_well",
-"ppot_1_2_params" : [1.1, 
-  0.4, 
+"ppot_1_2_params" : [1.1,
+  0.4,
   1.1],
 "ppot_1_2_use_cell_list" : true,
 "ppot_2_2" : "square_well",
-"ppot_2_2_params" : [1.2, 
-  0.5, 
+"ppot_2_2_params" : [1.2,
+  0.5,
   1.2],
 "ppot_2_2_use_cell_list" : true
 }
