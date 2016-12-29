@@ -1,4 +1,4 @@
-.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/sanity.h" 3 "Wed Dec 28 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/sanity.h" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -33,17 +33,17 @@ Perform sanity checks after simulation\&.
 .PP
 Definition at line 8 of file sanity\&.cpp\&.
 .PP
-References simSystem::atoms, simSystem::energy(), simSystem::getCurrentM(), simSystem::getFractionalAtom(), simSystem::getFractionalAtomType(), simSystem::getTotalM(), simSystem::getTotN(), atom::mState, simSystem::nSpecies(), simSystem::numSpecies, simSystem::scratchEnergy(), and SYS_FAILURE\&.
+References simSystem::atoms, simSystem::energy(), simSystem::getCurrentM(), simSystem::getFractionalAtom(), simSystem::getFractionalAtomType(), simSystem::getTotalM(), simSystem::getTotN(), atom::mState, simSystem::nSpecies(), simSystem::numSpecies, numToStr(), simSystem::scratchEnergy(), sendErr(), sendMsg(), and SYS_FAILURE\&.
 .PP
 Referenced by performCrossover(), performTMMC(), and performWALA()\&.
 .PP
 .nf
 8                                    {
 9     if (sys\&.nSpecies() != sys\&.atoms\&.size()) {
-10         std::cerr << "Error: Number of components changed throughout simulation" << std::endl;
+10         sendErr("Error, number of components changed throughout simulation");
 11         exit(SYS_FAILURE);
 12     } else {
-13         std::cout << "Passed: Number of species present check" << std::endl;
+13         sendMsg("Passed number of species present check");
 14     }
 15 
 16     long long int ns = 0;
@@ -51,32 +51,32 @@ Referenced by performCrossover(), performTMMC(), and performWALA()\&.
 18         ns += sys\&.numSpecies[i];
 19     }
 20     if (ns != sys\&.getTotN()) {
-21         std::cerr << "Sum of fully inserted atoms deviates from total counter" << std::endl;
+21         sendErr("Sum of fully inserted atoms deviates from total counter");
 22         exit(SYS_FAILURE);
 23     } else {
-24         std::cout << "Passed: Sum of atoms consistent with total counter" << std::endl;
+24         sendMsg("Passed sum of atoms consistency check with total counter");
 25     }
 26 
 27     if (sys\&.getTotalM() > 1) {
 28         if (sys\&.getFractionalAtom()->mState != sys\&.getCurrentM()) {
-29             std::cerr << "Expanded ensemble state deviates between atom ("+std::to_string(sys\&.getFractionalAtom()->mState)+") and system ("+std::to_string(sys\&.getCurrentM())+")" << std::endl;
+29             sendErr("Expanded ensemble state deviates between atom ("+numToStr(sys\&.getFractionalAtom()->mState)+") and system ("+numToStr(sys\&.getCurrentM())+")");
 30             exit(SYS_FAILURE);
-31             for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-32                 int end = sys\&.numSpecies[i];
-33                 if (i == sys\&.getFractionalAtomType()) {
-34                     end++;
-35                 }
-36                 for (unsigned int j = 0; j < end; ++j) {
-37                     if (&sys\&.atoms[i][j] != sys\&.getFractionalAtom()) {
-38                         if (sys\&.atoms[i][j]\&.mState != 0) {
-39                             std::cerr << "Atom ("+std::to_string(i)+", "+std::to_string(j)+") has non-zero expanded ensemble state ("+std::to_string(sys\&.atoms[i][j]\&.mState)+")" << std::endl;
-40                             exit(SYS_FAILURE);
-41                         }
-42                     } else {
-43                         if (sys\&.atoms[i][j]\&.mState != sys\&.getCurrentM()) {
-44                             std::cerr << "Fractional atom ("+std::to_string(i)+", "+std::to_string(j)+")'s expanded ensemble state ("+std::to_string(sys\&.atoms[i][j]\&.mState)+") does not match system's ("+std::to_string(sys\&.getCurrentM())+")" << std::endl;
-45                             exit(SYS_FAILURE);
-46                         }
+31         }
+32         for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+33             int end = sys\&.numSpecies[i];
+34             if (i == sys\&.getFractionalAtomType()) {
+35                 end++;
+36             }
+37             for (unsigned int j = 0; j < end; ++j) {
+38                 if (&sys\&.atoms[i][j] != sys\&.getFractionalAtom()) {
+39                     if (sys\&.atoms[i][j]\&.mState != 0) {
+40                         sendErr("Atom ("+numToStr(i)+", "+numToStr(j)+") has non-zero expanded ensemble state ("+numToStr(sys\&.atoms[i][j]\&.mState)+")");
+41                         exit(SYS_FAILURE);
+42                     }
+43                 } else {
+44                     if (sys\&.atoms[i][j]\&.mState != sys\&.getCurrentM()) {
+45                         sendErr("Fractional atom ("+numToStr(i)+", "+numToStr(j)+")'s expanded ensemble state ("+numToStr(sys\&.atoms[i][j]\&.mState)+") does not match system's ("+numToStr(sys\&.getCurrentM())+")");
+46                         exit(SYS_FAILURE);
 47                     }
 48                 }
 49             }
@@ -85,21 +85,21 @@ Referenced by performCrossover(), performTMMC(), and performWALA()\&.
 52         for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
 53             for (unsigned int j = 0; j < sys\&.numSpecies[i]; ++j) {
 54                 if (sys\&.atoms[i][j]\&.mState != 0) {
-55                     std::cerr << "Atom ("+std::to_string(i)+", "+std::to_string(j)+") has non-zero expanded ensemble state ("+std::to_string(sys\&.atoms[i][j]\&.mState)+")" << std::endl;
+55                     sendErr("Atom ("+numToStr(i)+", "+numToStr(j)+") has non-zero expanded ensemble state ("+numToStr(sys\&.atoms[i][j]\&.mState)+")");
 56                     exit(SYS_FAILURE);
 57                 }
 58             }
 59         }
 60     }
-61     std::cout << "Passed: Expanded ensemble state check for all atoms" << std::endl;
+61     sendMsg("Passed expanded ensemble state check for all atoms");
 62 
 63     const double tol = 1\&.0e-6;
 64     const double scratchEnergy = sys\&.scratchEnergy(), incrEnergy = sys\&.energy();
 65     if (fabs(scratchEnergy - incrEnergy) > tol) {
-66         std::cerr << "Error: scratch energy calculation = " << std::setprecision(20) << scratchEnergy << ", but incremental = " << std::setprecision(20) << incrEnergy << ", |diff| = " << std::setprecision(20) << fabs(scratchEnergy - incrEnergy) << std::endl;
+66         sendErr("Error, scratch energy calculation = "+numToStr(scratchEnergy)+", but incremental = "+numToStr(incrEnergy)+", |diff| = "+numToStr(fabs(scratchEnergy - incrEnergy)));
 67         exit(SYS_FAILURE);
 68     } else {
-69         std::cout << "Passed: Final scratch energy - incremental = " << std::setprecision(20) << scratchEnergy - incrEnergy << std::endl;
+69         sendMsg("Passed, final scratch energy - incremental = "+numToStr(scratchEnergy - incrEnergy));
 70     }
 71 }
 .fi

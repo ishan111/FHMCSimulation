@@ -1,4 +1,4 @@
-.TH "moves" 3 "Wed Dec 28 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "moves" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -87,14 +87,14 @@ Instantiate moves class\&.
 .PP
 Definition at line 8 of file mover\&.cpp\&.
 .PP
-References setM(), SYS_FAILURE, and customException::what()\&.
+References sendErr(), setM(), SYS_FAILURE, and customException::what()\&.
 .PP
 .nf
 8                          {
 9     try {
 10         setM (M);
 11     } catch (customException &ce) {
-12         std::cerr << ce\&.what() << std::endl;
+12         sendErr(ce\&.what());
 13         exit(SYS_FAILURE);
 14     }
 15 }
@@ -129,7 +129,7 @@ Add deletion move\&.
 .PP
 Definition at line 79 of file mover\&.cpp\&.
 .PP
-Referenced by initialize()\&.
+Referenced by setMoves()\&.
 .PP
 .nf
 79                                                          {
@@ -154,7 +154,7 @@ Add insertion move\&.
 .PP
 Definition at line 67 of file mover\&.cpp\&.
 .PP
-Referenced by initialize(), and setup()\&.
+Referenced by setConfig(), and setMoves()\&.
 .PP
 .nf
 67                                                          {
@@ -181,7 +181,7 @@ Add swap move\&.
 .PP
 Definition at line 92 of file mover\&.cpp\&.
 .PP
-Referenced by initialize()\&.
+Referenced by setMoves()\&.
 .PP
 .nf
 92                                                                           {
@@ -210,7 +210,7 @@ Add translate move\&.
 .PP
 Definition at line 106 of file mover\&.cpp\&.
 .PP
-Referenced by initialize()\&.
+Referenced by setMoves()\&.
 .PP
 .nf
 106                                                                                                                 {
@@ -394,7 +394,7 @@ Set the value of M\&.
 .PP
 Definition at line 22 of file mover\&.cpp\&.
 .PP
-Referenced by initialize(), and moves()\&.
+Referenced by moves(), and setMoves()\&.
 .PP
 .nf
 22                              {

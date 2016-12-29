@@ -9,7 +9,6 @@ var searchData=
   ['incrementenergy',['incrementEnergy',['../classsim_system.html#a6ad31c08955b80873f865b3069618dcb',1,'simSystem']]],
   ['incrementmstate',['incrementMState',['../classsim_system.html#a5d61d583a40931ce5643bd6429f510ba',1,'simSystem']]],
   ['initialize',['initialize',['../input_8cpp.html#a904001bba4e2facc93d1df9d214ed86e',1,'initialize(const std::string filename, moves *usedMovesEq, moves *usedMovesPr):&#160;input.cpp'],['../input_8h.html#ad56bfc4ca544015cc3b845070f627c88',1,'initialize(const std::string filename, moves *eqMoves, moves *prMoves):&#160;input.cpp']]],
-  ['initializesystembarriers',['initializeSystemBarriers',['../input_8cpp.html#a0b96c0c9384a55ad9227194045ae5f24',1,'initializeSystemBarriers(simSystem &amp;sys, const rapidjson::Document &amp;doc):&#160;input.cpp'],['../input_8h.html#a0b96c0c9384a55ad9227194045ae5f24',1,'initializeSystemBarriers(simSystem &amp;sys, const rapidjson::Document &amp;doc):&#160;input.cpp']]],
   ['input_2ecpp',['input.cpp',['../input_8cpp.html',1,'']]],
   ['input_2eh',['input.h',['../input_8h.html',1,'']]],
   ['insert_2ecpp',['insert.cpp',['../insert_8cpp.html',1,'']]],

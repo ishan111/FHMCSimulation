@@ -89,7 +89,7 @@ Implements \hyperlink{classpair_potential_a2b1e50ef9b6e50b01d89d31d5460ad76}{pai
 
 
 
-Definition at line 508 of file potentials.\-cpp.
+Definition at line 509 of file potentials.\-cpp.
 
 
 
@@ -97,29 +97,29 @@ References atom\-::m\-State, N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y, pair\-Potent
 
 
 \begin{DoxyCode}
-508                                                                                           \{
-509     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
-510         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell parameters not set"});
-511     \}
-512 
-513     \textcolor{keyword}{const} \textcolor{keywordtype}{double} r = sqrt(\hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2}(a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, a2->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, box));
-514 
-515     \textcolor{keywordtype}{int} mState = 0;
-516     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
-517         mState = a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-518     \}
-519     \textcolor{keywordflow}{if} (a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
-520         mState = a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-521     \}
-522 
-523     \textcolor{keywordflow}{if} (r < sigmaM\_[mState]) \{
-524         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
-525     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (r < rangeM\_[mState]) \{
-526         \textcolor{keywordflow}{return} epsM\_[mState];
-527     \} \textcolor{keywordflow}{else} \{
-528         \textcolor{keywordflow}{return} 0.0;
-529     \}
-530 \}
+509                                                                                           \{
+510     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+511         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell parameters not set"});
+512     \}
+513 
+514     \textcolor{keyword}{const} \textcolor{keywordtype}{double} r = sqrt(\hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2}(a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, a2->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, box));
+515 
+516     \textcolor{keywordtype}{int} mState = 0;
+517     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
+518         mState = a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+519     \}
+520     \textcolor{keywordflow}{if} (a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
+521         mState = a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+522     \}
+523 
+524     \textcolor{keywordflow}{if} (r < sigmaM\_[mState]) \{
+525         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
+526     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (r < rangeM\_[mState]) \{
+527         \textcolor{keywordflow}{return} epsM\_[mState];
+528     \} \textcolor{keywordflow}{else} \{
+529         \textcolor{keywordflow}{return} 0.0;
+530     \}
+531 \}
 \end{DoxyCode}
 \hypertarget{classsquare_well_a82e1cc1009bd8e42e79e3c5f856f1b3b}{\index{square\-Well@{square\-Well}!rcut@{rcut}}
 \index{rcut@{rcut}!squareWell@{square\-Well}}
@@ -141,7 +141,7 @@ Implements \hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{pai
 
 
 
-Definition at line 548 of file potentials.\-cpp.
+Definition at line 549 of file potentials.\-cpp.
 
 
 
@@ -149,13 +149,13 @@ References pair\-Potential\-::params\-\_\-, and pair\-Potential\-::params\-Are\-
 
 
 \begin{DoxyCode}
-548                          \{
-549     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
-550         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell parameters not set"});
-551     \} \textcolor{keywordflow}{else} \{
-552         \textcolor{keywordflow}{return} (\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1]);
-553     \}
-554 \}
+549                          \{
+550     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+551         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell parameters not set"});
+552     \} \textcolor{keywordflow}{else} \{
+553         \textcolor{keywordflow}{return} (\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1]);
+554     \}
+555 \}
 \end{DoxyCode}
 \hypertarget{classsquare_well_aa8770429044914778c2f343e025e09cc}{\index{square\-Well@{square\-Well}!set\-Parameters@{set\-Parameters}}
 \index{set\-Parameters@{set\-Parameters}!squareWell@{square\-Well}}
@@ -179,7 +179,7 @@ Implements \hyperlink{classpair_potential_ad4b237646f9de2ae9f95cc9350564bc5}{pai
 
 
 
-Definition at line 440 of file potentials.\-cpp.
+Definition at line 441 of file potentials.\-cpp.
 
 
 
@@ -187,67 +187,67 @@ References pair\-Potential\-::params\-\_\-, pair\-Potential\-::params\-Are\-Set\
 
 
 \begin{DoxyCode}
-440                                                                  \{
-441     \textcolor{keywordflow}{if} (params.size() != 4) \{
-442         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell must specify 4 parameters: sigma, wellwidth,
+441                                                                  \{
+442     \textcolor{keywordflow}{if} (params.size() != 4) \{
+443         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell must specify 4 parameters: sigma, wellwidth,
        welldepth, Mtot"});
-443     \} \textcolor{keywordflow}{else} \{
-444         \textcolor{keywordflow}{if} (params[0] < 0) \{
-445             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell, sigma > 0"});
-446         \}
-447         \textcolor{keywordflow}{if} (params[1] < 0) \{
-448             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell, wellwidth > 0"});
-449         \}
-450         \textcolor{keywordflow}{if} (params[2] < 0) \{
-451             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell, welldepth (magnitude) > 0"});
-452         \}
-453         \textcolor{keywordflow}{if} (\textcolor{keywordtype}{int}(params[3]) < 1) \{
-454             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell, total expanded ensemble states, Mtot >=
+444     \} \textcolor{keywordflow}{else} \{
+445         \textcolor{keywordflow}{if} (params[0] < 0) \{
+446             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell, sigma > 0"});
+447         \}
+448         \textcolor{keywordflow}{if} (params[1] < 0) \{
+449             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell, wellwidth > 0"});
+450         \}
+451         \textcolor{keywordflow}{if} (params[2] < 0) \{
+452             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell, welldepth (magnitude) > 0"});
+453         \}
+454         \textcolor{keywordflow}{if} (\textcolor{keywordtype}{int}(params[3]) < 1) \{
+455             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For squareWell, total expanded ensemble states, Mtot >=
        1"});
-455         \}
-456 
-457         \hyperlink{classpair_potential_ab4b4538a7e13771f50a29aaac2443037}{useTailCorrection} = \textcolor{keyword}{false};
-458 
-459         \textcolor{comment}{// use a "constant volume" scheme to distribute the stages}
-460         sigmaM\_.resize(\textcolor{keywordtype}{int}(params[3]), 0);
-461         rangeM\_.resize(\textcolor{keywordtype}{int}(params[3]), 0);
-462         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < sigmaM\_.size(); ++i) \{
-463             \textcolor{keywordflow}{if} (i == 0) \{
-464                 \textcolor{comment}{// fully inserted}
-465                 sigmaM\_[i] = params[0];
-466                 rangeM\_[i] = params[0] + params[1];
-467             \} \textcolor{keywordflow}{else} \{
-468                 \textcolor{comment}{// use volume scaling so each stage is separated from its neighbors by the same dV}
-469                 \textcolor{keywordtype}{double} lastSigma = 0;
-470                 \textcolor{keywordflow}{if} (i == 1) \{
-471                     lastSigma = 0;
-472                 \} \textcolor{keywordflow}{else} \{
-473                     lastSigma = sigmaM\_[i-1];
-474                 \}
-475                 sigmaM\_[i] = pow(params[0]*params[0]*params[0]/(8.0*\textcolor{keywordtype}{int}(params[3])) + lastSigma*lastSigma*
+456         \}
+457 
+458         \hyperlink{classpair_potential_ab4b4538a7e13771f50a29aaac2443037}{useTailCorrection} = \textcolor{keyword}{false};
+459 
+460         \textcolor{comment}{// use a "constant volume" scheme to distribute the stages}
+461         sigmaM\_.resize(\textcolor{keywordtype}{int}(params[3]), 0);
+462         rangeM\_.resize(\textcolor{keywordtype}{int}(params[3]), 0);
+463         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < sigmaM\_.size(); ++i) \{
+464             \textcolor{keywordflow}{if} (i == 0) \{
+465                 \textcolor{comment}{// fully inserted}
+466                 sigmaM\_[i] = params[0];
+467                 rangeM\_[i] = params[0] + params[1];
+468             \} \textcolor{keywordflow}{else} \{
+469                 \textcolor{comment}{// use volume scaling so each stage is separated from its neighbors by the same dV}
+470                 \textcolor{keywordtype}{double} lastSigma = 0;
+471                 \textcolor{keywordflow}{if} (i == 1) \{
+472                     lastSigma = 0;
+473                 \} \textcolor{keywordflow}{else} \{
+474                     lastSigma = sigmaM\_[i-1];
+475                 \}
+476                 sigmaM\_[i] = pow(params[0]*params[0]*params[0]/(8.0*\textcolor{keywordtype}{int}(params[3])) + lastSigma*lastSigma*
       lastSigma, 1./3.);
-476                 rangeM\_[i] = sigmaM\_[i] + params[1];
-477             \}
-478         \}
-479 
-480         \textcolor{comment}{// scale energy linearly across the stages}
-481         epsM\_.resize(\textcolor{keywordtype}{int}(params[3]), 0);
-482         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < epsM\_.size(); ++i) \{
-483             \textcolor{keywordflow}{if} (i == 0) \{
-484                 \textcolor{comment}{// fully inserted}
-485                 epsM\_[i] = -params[2];
-486             \} \textcolor{keywordflow}{else} \{
-487                 epsM\_[i] = -i*(params[2]/int(params[3]));
-488             \}
-489         \}
-490 
-491         \textcolor{comment}{// save parameters as sigma, (sigma+wellWidth), -wellDepth to speed up energy calculation}
-492         \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_} = params;
-493         \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1] = params[0] + params[1]; \textcolor{comment}{// max rcut}
-494         \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2] = -params[2];
-495         \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{true};
-496     \}
-497 \}
+477                 rangeM\_[i] = sigmaM\_[i] + params[1];
+478             \}
+479         \}
+480 
+481         \textcolor{comment}{// scale energy linearly across the stages}
+482         epsM\_.resize(\textcolor{keywordtype}{int}(params[3]), 0);
+483         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < epsM\_.size(); ++i) \{
+484             \textcolor{keywordflow}{if} (i == 0) \{
+485                 \textcolor{comment}{// fully inserted}
+486                 epsM\_[i] = -params[2];
+487             \} \textcolor{keywordflow}{else} \{
+488                 epsM\_[i] = -i*(params[2]/int(params[3]));
+489             \}
+490         \}
+491 
+492         \textcolor{comment}{// save parameters as sigma, (sigma+wellWidth), -wellDepth to speed up energy calculation}
+493         \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_} = params;
+494         \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1] = params[0] + params[1]; \textcolor{comment}{// max rcut}
+495         \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2] = -params[2];
+496         \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{true};
+497     \}
+498 \}
 \end{DoxyCode}
 \hypertarget{classsquare_well_a3a81297ea3a06f8a354c824a7ac5dc94}{\index{square\-Well@{square\-Well}!tail\-Correction@{tail\-Correction}}
 \index{tail\-Correction@{tail\-Correction}!squareWell@{square\-Well}}
@@ -274,13 +274,13 @@ Implements \hyperlink{classpair_potential_a5387d21d8d487d1d42e9eaf7cae9175b}{pai
 
 
 
-Definition at line 539 of file potentials.\-cpp.
+Definition at line 540 of file potentials.\-cpp.
 
 
 \begin{DoxyCode}
-539                                                       \{
-540     \textcolor{keywordflow}{return} 0.0;
-541 \}
+540                                                       \{
+541     \textcolor{keywordflow}{return} 0.0;
+542 \}
 \end{DoxyCode}
 
 

@@ -279,9 +279,9 @@ References append\-\_\-bins(), prepend\-\_\-bins(), and custom\-Exception\-::wha
 \begin{DoxyCode}
 161                                                           \{
 162     \textcolor{keywordtype}{int} bin = round((value - lb\_)/delta\_); \textcolor{comment}{// this "centers" the bin}
-163     \textcolor{keywordflow}{if} (fabs(bin) < tol\_) \{
-164             \textcolor{comment}{// prevent -0 case and set to 0}
-165             bin = 0;
+163     \textcolor{keywordflow}{if} (std::abs(bin) < tol\_) \{
+164         \textcolor{comment}{// prevent -0 case and set to 0}
+165         bin = 0;
 166     \}
 167 
 168     \textcolor{keywordflow}{if} (bin < 0) \{
@@ -306,7 +306,7 @@ References append\-\_\-bins(), prepend\-\_\-bins(), and custom\-Exception\-::wha
 185 
 186     \textcolor{comment}{// re-calculate after lb potentially adjusted}
 187     bin = round((value - lb\_)/delta\_);
-188     \textcolor{keywordflow}{if} (fabs(bin) < tol\_) \{
+188     \textcolor{keywordflow}{if} (std::abs(bin) < tol\_) \{
 189             \textcolor{comment}{// prevent -0 case and set to 0}
 190             bin = 0;
 191     \}

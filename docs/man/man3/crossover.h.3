@@ -1,4 +1,4 @@
-.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/crossover.h" 3 "Wed Dec 28 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/crossover.h" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -49,14 +49,14 @@ Perform crossover from Wang-Landau stage of simulation to TMMC\&.
 .PP
 Definition at line 10 of file crossover\&.cpp\&.
 .PP
-References tmmc::calculatePI(), checkpoint::check(), simSystem::checkEnergyHistogramBounds(), tmmc::checkFullyVisited(), checkpoint::crossoverDone, tmmc::dumpVisited(), wala::evaluateFlatness(), simSystem::getCurrentM(), getTimeStamp(), simSystem::getTMMCBias(), simSystem::getTotalM(), simSystem::getWALABias(), tmmc::iterateForward(), wala::iterateForward(), wala::lnF(), moves::makeMove(), checkpoint::moveCounter, simSystem::nCrossoverVisits, tmmc::numSweeps(), moves::print(), tmmc::print(), simSystem::reInitializeEnergyHistogram(), checkpoint::resFromCross, sanityChecks(), simSystem::startTMMC(), simSystem::stopWALA(), checkpoint::sweepCounter, SYS_FAILURE, simSystem::tmmcSweepSize, simSystem::useWALA, customException::what(), and simSystem::wlSweepSize\&.
+References tmmc::calculatePI(), checkpoint::check(), simSystem::checkEnergyHistogramBounds(), tmmc::checkFullyVisited(), checkpoint::crossoverDone, tmmc::dumpVisited(), wala::evaluateFlatness(), simSystem::getCurrentM(), simSystem::getTMMCBias(), simSystem::getTotalM(), simSystem::getWALABias(), tmmc::iterateForward(), wala::iterateForward(), wala::lnF(), moves::makeMove(), checkpoint::moveCounter, simSystem::nCrossoverVisits, tmmc::numSweeps(), numToStr(), moves::print(), tmmc::print(), simSystem::reInitializeEnergyHistogram(), checkpoint::resFromCross, sanityChecks(), sendErr(), sendMsg(), simSystem::startTMMC(), simSystem::stopWALA(), checkpoint::sweepCounter, SYS_FAILURE, simSystem::tmmcSweepSize, simSystem::useWALA, customException::what(), and simSystem::wlSweepSize\&.
 .PP
 .nf
 10                                                                             {
 11     if (res\&.crossoverDone) {
 12         throw customException ("Checkpoint indicates crossover already finished");
 13     }
-14     std::cout << "Crossing over to build TMMC matrix at " << getTimeStamp() << std::endl;
+14     sendMsg("Crossing over to build TMMC matrix");
 15 
 16     res\&.crossoverDone = false;
 17     long long int timesFullyVisited = 0, moveStart = 0;
@@ -70,16 +70,16 @@ References tmmc::calculatePI(), checkpoint::check(), simSystem::checkEnergyHisto
 25         moveStart = res\&.moveCounter;
 26     }
 27 
-28     std::cout << "Starting from lnF = " << sys\&.getWALABias()->lnF() << " at " << getTimeStamp() << std::endl;
-29     std::cout << "Starting from " << moveStart << " moves in current sweep at " << getTimeStamp() << std::endl;
-30     std::cout << "Starting from " << timesFullyVisited << " out of " << sys\&.nCrossoverVisits << " sweeps at " << getTimeStamp() << std::endl;
+28     sendMsg("Starting from lnF = "+numToStr(sys\&.getWALABias()->lnF()));
+29     sendMsg("Starting from "+numToStr(moveStart)+" moves in current sweep");
+30     sendMsg("Starting from "+numToStr(timesFullyVisited)+" out of "+numToStr(sys\&.nCrossoverVisits)+" sweeps");
 31 
 32     while (timesFullyVisited < sys\&.nCrossoverVisits) {
 33         for (long long int move = moveStart; move < sys\&.wlSweepSize; ++move) {
 34             try {
 35                 usedMovesEq->makeMove(sys);
 36             } catch (customException &ce) {
-37                 std::cerr << ce\&.what() << std::endl;
+37                 sendErr(ce\&.what());
 38                 exit(SYS_FAILURE);
 39             }
 40             if (sys\&.getCurrentM() == 0) {
@@ -92,45 +92,41 @@ References tmmc::calculatePI(), checkpoint::check(), simSystem::checkEnergyHisto
 47             try {
 48                 sys\&.getTMMCBias()->calculatePI();
 49             } catch (customException &ce) {
-50                 std::cerr << ce\&.what() << std::endl;
+50                 sendErr(ce\&.what());
 51                 sys\&.getTMMCBias()->print("tmmc-crossover-fail", true);
 52                 sys\&.getTMMCBias()->dumpVisited("tmmc-crossover-fail-visited");
 53                 exit(SYS_FAILURE);
 54             }
-55             sys\&.getTMMCBias()->iterateForward (); // reset the counting matrix and increment total sweep number
+55             sys\&.getTMMCBias()->iterateForward (); // Reset the counting matrix and increment total sweep number
 56             timesFullyVisited = sys\&.getTMMCBias()->numSweeps();
-57             std::cout << "Times C fully visited = " << timesFullyVisited << " at " << getTimeStamp() << std::endl;
+57             sendMsg("Times C fully visited = "+numToStr(timesFullyVisited));
 58             usedMovesEq->print("crossover\&.stats");
 59         }
 60 
 61         // Check if bias has flattened out, just for continuous improvement
 62         bool flat = sys\&.getWALABias()->evaluateFlatness();
 63         if (flat) {
-64             // If flat, need to reset H and reduce lnF
-65             sys\&.getWALABias()->iterateForward();
-66             std::cout << "Wang-Landau is now flat, new lnF = " << sys\&.getWALABias()->lnF() << " at " << getTimeStamp() << std::endl;
-67         }
-68     }
-69 
-70     // Switch over to TMMC completely
-71     std::cout << "Switching over to TMMC completely, ending Wang-Landau" << std::endl;
-72     sys\&.stopWALA();
-73     try {
-74         sys\&.getTMMCBias()->calculatePI();
-75         //sys\&.getTMMCBias()->print("tmmc-beginning-Checkpoint", true);
-76     } catch (customException &ce) {
-77         std::cerr << ce\&.what() << std::endl;
-78         sys\&.getTMMCBias()->print("tmmc-beginning-fail", true);
-79         sys\&.getTMMCBias()->dumpVisited("tmmc-beginning-fail-visited");
-80         exit(SYS_FAILURE);
-81     }
-82 
-83     // if doing initial WL "equilibration" re-initialize the histogram using bounds
-84     sys\&.reInitializeEnergyHistogram();
-85 
-86     sanityChecks(sys);
-87     res\&.crossoverDone = true;
-88 }
+64             sys\&.getWALABias()->iterateForward(); // If flat, need to reset H and reduce lnF
+65             sendMsg("Wang-Landau is now flat, new lnF = "+numToStr(sys\&.getWALABias()->lnF()));
+66         }
+67     }
+68 
+69     // Switch over to TMMC completely
+70     sendMsg("Switching over to TMMC completely, ending Wang-Landau");
+71     sys\&.stopWALA();
+72     try {
+73         sys\&.getTMMCBias()->calculatePI();
+74     } catch (customException &ce) {
+75         sendErr(ce\&.what());
+76         sys\&.getTMMCBias()->print("tmmc-beginning-fail", true);
+77         sys\&.getTMMCBias()->dumpVisited("tmmc-beginning-fail-visited");
+78         exit(SYS_FAILURE);
+79     }
+80 
+81     sys\&.reInitializeEnergyHistogram(); // If doing initial WL "equilibration" re-initialize the histogram using bounds
+82     sanityChecks(sys);
+83     res\&.crossoverDone = true;
+84 }
 .fi
 .SH "Author"
 .PP 

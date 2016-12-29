@@ -1,4 +1,4 @@
-.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/wala.h" 3 "Wed Dec 28 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/wala.h" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -47,14 +47,14 @@ Perform Wang-Landau stage of simulation\&.
 .PP
 Definition at line 10 of file wala\&.cpp\&.
 .PP
-References checkpoint::check(), simSystem::checkEnergyHistogramBounds(), wala::evaluateFlatness(), simSystem::getCurrentM(), getTimeStamp(), simSystem::getTotalM(), simSystem::getWALABias(), wala::iterateForward(), wala::lnF(), simSystem::lnF_end, simSystem::lnF_start, moves::makeMove(), checkpoint::moveCounter, moves::print(), wala::readlnPI(), checkpoint::resFromWALA, simSystem::restartFromWALA, simSystem::restartFromWALAFile, sanityChecks(), simSystem::startWALA(), SYS_FAILURE, simSystem::useTMMC, simSystem::useWALA, simSystem::wala_g, simSystem::wala_s, checkpoint::walaDone, customException::what(), and simSystem::wlSweepSize\&.
+References checkpoint::check(), simSystem::checkEnergyHistogramBounds(), wala::evaluateFlatness(), simSystem::getCurrentM(), simSystem::getTotalM(), simSystem::getWALABias(), wala::iterateForward(), wala::lnF(), simSystem::lnF_end, simSystem::lnF_start, moves::makeMove(), checkpoint::moveCounter, numToStr(), moves::print(), wala::readlnPI(), checkpoint::resFromWALA, simSystem::restartFromWALA, simSystem::restartFromWALAFile, sanityChecks(), sendErr(), sendMsg(), simSystem::startWALA(), SYS_FAILURE, simSystem::useTMMC, simSystem::useWALA, simSystem::wala_g, simSystem::wala_s, checkpoint::walaDone, customException::what(), and simSystem::wlSweepSize\&.
 .PP
 .nf
 10                                                                        {
 11     if (res\&.walaDone) {
 12         throw customException ("Checkpoint indicates WALA already finished");
 13     }
-14     std::cout << "Beginning Wang-Landau portion at " << getTimeStamp() << std::endl;
+14     sendMsg("Beginning Wang-Landau");
 15 
 16     bool flat = false;
 17     double lnF = sys\&.lnF_start;
@@ -71,25 +71,25 @@ References checkpoint::check(), simSystem::checkEnergyHistogramBounds(), wala::e
 28             try {
 29                 sys\&.getWALABias()->readlnPI(sys\&.restartFromWALAFile);
 30             } catch (customException &ce) {
-31                 std::cerr << ce\&.what() << std::endl;
+31                 sendErr(ce\&.what());
 32                 exit(SYS_FAILURE);
 33             }
-34             std::cout << "Read initial lnPI for Wang-Landau from " << sys\&.restartFromWALAFile << std::endl;
+34             sendMsg("Read initial lnPI for Wang-Landau from "+sys\&.restartFromWALAFile);
 35         }
 36     } else {
 37         lnF = sys\&.getWALABias()->lnF(); // checkpoint re-initialized to starting value
 38         moveStart = res\&.moveCounter;
 39     }
 40 
-41     std::cout << "Initial lnF = " << sys\&.getWALABias()->lnF() << " at " << getTimeStamp() << std::endl;
-42     std::cout << "Starting from " << moveStart << " moves at " << getTimeStamp() << std::endl;
+41     sendMsg("Initial lnF = "+numToStr(sys\&.getWALABias()->lnF()));
+42     sendMsg("Starting from "+numToStr(moveStart)+" moves");
 43 
 44     while (lnF > sys\&.lnF_end) {
 45         for (unsigned long long int move = moveStart; move < sys\&.wlSweepSize; ++move) {
 46             try {
 47                 usedMovesEq->makeMove(sys);
 48             } catch (customException &ce) {
-49                 std::cerr << ce\&.what() << std::endl;
+49                 sendErr(ce\&.what());
 50                 exit(SYS_FAILURE);
 51             }
 52             if (sys\&.getCurrentM() == 0){
@@ -104,7 +104,7 @@ References checkpoint::check(), simSystem::checkEnergyHistogramBounds(), wala::e
 61             sys\&.getWALABias()->iterateForward(); // if flat, need to reset H and reduce lnF
 62             lnF = sys\&.getWALABias()->lnF();
 63             flat = false;
-64             std::cout << "Wang-Landau is now flat, new lnF = " << lnF << " at " << getTimeStamp() << std::endl;
+64             sendMsg("Wang-Landau is now flat, new lnF = "+numToStr(lnF));
 65             usedMovesEq->print("wala\&.stats");
 66         }
 67     }

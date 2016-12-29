@@ -1,4 +1,4 @@
-.TH "dynamic_one_dim_histogram" 3 "Wed Dec 28 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "dynamic_one_dim_histogram" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -217,9 +217,9 @@ References append_bins(), prepend_bins(), and customException::what()\&.
 .nf
 161                                                           {
 162     int bin = round((value - lb_)/delta_); // this "centers" the bin
-163     if (fabs(bin) < tol_) {
-164             // prevent -0 case and set to 0
-165             bin = 0;
+163     if (std::abs(bin) < tol_) {
+164         // prevent -0 case and set to 0
+165         bin = 0;
 166     }
 167 
 168     if (bin < 0) {
@@ -242,7 +242,7 @@ References append_bins(), prepend_bins(), and customException::what()\&.
 185 
 186     // re-calculate after lb potentially adjusted
 187     bin = round((value - lb_)/delta_);
-188     if (fabs(bin) < tol_) {
+188     if (std::abs(bin) < tol_) {
 189             // prevent -0 case and set to 0
 190             bin = 0;
 191     }

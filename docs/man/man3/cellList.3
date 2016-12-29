@@ -1,4 +1,4 @@
-.TH "cellList" 3 "Wed Dec 28 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "cellList" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -121,10 +121,9 @@ References box, cellCount, cellCountX, cellCountXY, cellCountY, cellCountZ, cell
 28     }
 29 
 30     if (_atoms\&.size() > 0) {
-31         //std::cout << "Sorting particles into cells\&." << std::endl;
-32         sortIntoCells(_atoms);
-33     }
-34 }
+31         sortIntoCells(_atoms);
+32     }
+33 }
 .fi
 .SH "Member Function Documentation"
 .PP 
@@ -219,142 +218,142 @@ References box, cellCountX, cellCountXY, and cellSize\&.
 .SS "void cellList::insertParticle (\fBatom\fP *_a)"
 
 .PP
-Definition at line 94 of file cellList\&.cpp\&.
+Definition at line 93 of file cellList\&.cpp\&.
 .PP
 References calcIndex(), cells, and atom::pos\&.
 .PP
 Referenced by simSystem::insertAtom()\&.
 .PP
 .nf
-94                                        {
-95     const unsigned index = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
-96     cells[index]\&.push_back(_a);
-97 }
+93                                        {
+94     const unsigned index = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
+95     cells[index]\&.push_back(_a);
+96 }
 .fi
 .SS "void cellList::sortIntoCells (std::vector< \fBatom\fP * >_atoms)"
 
 .PP
-Definition at line 72 of file cellList\&.cpp\&.
+Definition at line 71 of file cellList\&.cpp\&.
 .PP
 References calcIndex(), and cells\&.
 .PP
 Referenced by cellList()\&.
 .PP
 .nf
-72                                                         {
-73     // clear all cells
-74     for (unsigned int i = 0; i < cells\&.size(); i++)
-75         cells[i]\&.clear();
-76 
-77     for (unsigned int i=0; i<_atoms\&.size(); i++) {
-78         const unsigned index = calcIndex(_atoms[i]->pos[0], _atoms[i]->pos[1], _atoms[i]->pos[2]);
-79         cells[index]\&.push_back(_atoms[i]);
-80     }
-81 }
+71                                                         {
+72     // clear all cells
+73     for (unsigned int i = 0; i < cells\&.size(); i++)
+74         cells[i]\&.clear();
+75 
+76     for (unsigned int i=0; i<_atoms\&.size(); i++) {
+77         const unsigned index = calcIndex(_atoms[i]->pos[0], _atoms[i]->pos[1], _atoms[i]->pos[2]);
+78         cells[index]\&.push_back(_atoms[i]);
+79     }
+80 }
 .fi
 .SS "void cellList::sortIntoCells (std::vector< \fBatom\fP > *_atoms)"
 
 .PP
-Definition at line 83 of file cellList\&.cpp\&.
+Definition at line 82 of file cellList\&.cpp\&.
 .PP
 References calcIndex(), and cells\&.
 .PP
 .nf
-83                                                         {
-84     // clear all cells
-85     for (unsigned int i = 0; i < cells\&.size(); i++)
-86         cells[i]\&.clear();
-87 
-88     for (unsigned int i = 0; i < _atoms->size(); i++) {
-89         const unsigned index = calcIndex(_atoms->at(i)\&.pos[0], _atoms->at(i)\&.pos[1], _atoms->at(i)\&.pos[2]);
-90         cells[index]\&.push_back(&_atoms->at(i));
-91     }
-92 }
+82                                                         {
+83     // clear all cells
+84     for (unsigned int i = 0; i < cells\&.size(); i++)
+85         cells[i]\&.clear();
+86 
+87     for (unsigned int i = 0; i < _atoms->size(); i++) {
+88         const unsigned index = calcIndex(_atoms->at(i)\&.pos[0], _atoms->at(i)\&.pos[1], _atoms->at(i)\&.pos[2]);
+89         cells[index]\&.push_back(&_atoms->at(i));
+90     }
+91 }
 .fi
 .SS "void cellList::swapAndDeleteParticle (\fBatom\fP *_a, \fBatom\fP *_b)"
 
 .PP
-Definition at line 101 of file cellList\&.cpp\&.
+Definition at line 100 of file cellList\&.cpp\&.
 .PP
 References calcIndex(), cells, and atom::pos\&.
 .PP
 Referenced by simSystem::deleteAtom()\&.
 .PP
 .nf
-101                                                         {
-102     const unsigned indexA = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
-103     const unsigned indexB = calcIndex(_b->pos[0], _b->pos[1], _b->pos[2]);
-104 
-105     unsigned int cellIndexA = 0, cellIndexB = 0;
-106     bool foundCellIndexA = false, foundCellIndexB = false;
-107 
-108     // locate position of atom _a in its cell
-109     for (unsigned int i = 0; i < cells[indexA]\&.size(); i++) { // error?
-110         if (cells[indexA][i] == _a) {
-111             cellIndexA = i;
-112             foundCellIndexA = true;
-113             break;
-114         }
-115     }
-116 
-117     // locate position of atom _b in its cell
-118     for (unsigned int i = 0; i < cells[indexB]\&.size(); i++) { // error ?
-119         if (cells[indexB][i] == _b) {
-120             cellIndexB = i;
-121             foundCellIndexB = true;
-122             break;
-123         }
-124     }
-125 
-126     if (!foundCellIndexA || !foundCellIndexB) {
-127         throw customException ("Failed to locate index in cell list properly");
-128     }
-129 
-130     // swap addresses
-131     cells[indexB][cellIndexB] = cells[indexA][cellIndexA];
-132 
-133     // remove _a from its cell
-134     cells[indexA]\&.erase(cells[indexA]\&.begin()+cellIndexA);
-135 }
+100                                                         {
+101     const unsigned indexA = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
+102     const unsigned indexB = calcIndex(_b->pos[0], _b->pos[1], _b->pos[2]);
+103 
+104     unsigned int cellIndexA = 0, cellIndexB = 0;
+105     bool foundCellIndexA = false, foundCellIndexB = false;
+106 
+107     // locate position of atom _a in its cell
+108     for (unsigned int i = 0; i < cells[indexA]\&.size(); i++) { // error?
+109         if (cells[indexA][i] == _a) {
+110             cellIndexA = i;
+111             foundCellIndexA = true;
+112             break;
+113         }
+114     }
+115 
+116     // locate position of atom _b in its cell
+117     for (unsigned int i = 0; i < cells[indexB]\&.size(); i++) { // error ?
+118         if (cells[indexB][i] == _b) {
+119             cellIndexB = i;
+120             foundCellIndexB = true;
+121             break;
+122         }
+123     }
+124 
+125     if (!foundCellIndexA || !foundCellIndexB) {
+126         throw customException ("Failed to locate index in cell list properly");
+127     }
+128 
+129     // swap addresses
+130     cells[indexB][cellIndexB] = cells[indexA][cellIndexA];
+131 
+132     // remove _a from its cell
+133     cells[indexA]\&.erase(cells[indexA]\&.begin()+cellIndexA);
+134 }
 .fi
 .SS "void cellList::translateParticle (\fBatom\fP *_a, std::vector< double >_oldPos)"
 
 .PP
-Definition at line 138 of file cellList\&.cpp\&.
+Definition at line 137 of file cellList\&.cpp\&.
 .PP
 References calcIndex(), cells, and atom::pos\&.
 .PP
 Referenced by simSystem::translateAtom()\&.
 .PP
 .nf
-138                                                                         {
-139     const unsigned indexOld = calcIndex(_oldPos[0], _oldPos[1], _oldPos[2]);
-140     const unsigned indexNew = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
-141 
-142     if (indexOld != indexNew) {
-143         unsigned int cellIndexOld = 0;
-144         bool foundCellIndexOld = false;
-145 
-146         // locate position of atom _a in its cell
-147         for (unsigned int i = 0; i < cells[indexOld]\&.size(); i++) { //error?
-148             if (cells[indexOld][i] == _a) {
-149                 cellIndexOld = i;
-150                 foundCellIndexOld = true;
-151                 break;
-152             }
-153         }
-154 
-155         if (!foundCellIndexOld) {
-156             throw customException ("Failed to locate cell index properly");
-157         }
-158 
-159         // remove _a from its cell
-160         cells[indexOld]\&.erase(cells[indexOld]\&.begin()+cellIndexOld);
-161 
-162         // insert _a into new cell
-163         cells[indexNew]\&.push_back(_a);
-164     }
-165 }
+137                                                                         {
+138     const unsigned indexOld = calcIndex(_oldPos[0], _oldPos[1], _oldPos[2]);
+139     const unsigned indexNew = calcIndex(_a->pos[0], _a->pos[1], _a->pos[2]);
+140 
+141     if (indexOld != indexNew) {
+142         unsigned int cellIndexOld = 0;
+143         bool foundCellIndexOld = false;
+144 
+145         // locate position of atom _a in its cell
+146         for (unsigned int i = 0; i < cells[indexOld]\&.size(); i++) { //error?
+147             if (cells[indexOld][i] == _a) {
+148                 cellIndexOld = i;
+149                 foundCellIndexOld = true;
+150                 break;
+151             }
+152         }
+153 
+154         if (!foundCellIndexOld) {
+155             throw customException ("Failed to locate cell index properly");
+156         }
+157 
+158         // remove _a from its cell
+159         cells[indexOld]\&.erase(cells[indexOld]\&.begin()+cellIndexOld);
+160 
+161         // insert _a into new cell
+162         cells[indexNew]\&.push_back(_a);
+163     }
+164 }
 .fi
 .SH "Field Documentation"
 .PP 

@@ -32,7 +32,7 @@ Definition at line 8 of file sanity.\-cpp.
 
 
 
-References sim\-System\-::atoms, sim\-System\-::energy(), sim\-System\-::get\-Current\-M(), sim\-System\-::get\-Fractional\-Atom(), sim\-System\-::get\-Fractional\-Atom\-Type(), sim\-System\-::get\-Total\-M(), sim\-System\-::get\-Tot\-N(), atom\-::m\-State, sim\-System\-::n\-Species(), sim\-System\-::num\-Species, sim\-System\-::scratch\-Energy(), and S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E.
+References sim\-System\-::atoms, sim\-System\-::energy(), sim\-System\-::get\-Current\-M(), sim\-System\-::get\-Fractional\-Atom(), sim\-System\-::get\-Fractional\-Atom\-Type(), sim\-System\-::get\-Total\-M(), sim\-System\-::get\-Tot\-N(), atom\-::m\-State, sim\-System\-::n\-Species(), sim\-System\-::num\-Species, num\-To\-Str(), sim\-System\-::scratch\-Energy(), send\-Err(), send\-Msg(), and S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E.
 
 
 
@@ -42,10 +42,10 @@ Referenced by perform\-Crossover(), perform\-T\-M\-M\-C(), and perform\-W\-A\-L\
 \begin{DoxyCode}
 8                                    \{
 9     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}() != sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}.size()) \{
-10         std::cerr << \textcolor{stringliteral}{"Error: Number of components changed throughout simulation"} << std::endl;
+10         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Error, number of components changed throughout simulation"});
 11         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
 12     \} \textcolor{keywordflow}{else} \{
-13         std::cout << \textcolor{stringliteral}{"Passed: Number of species present check"} << std::endl;
+13         \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Passed number of species present check"});
 14     \}
 15 
 16     \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} ns = 0;
@@ -53,38 +53,39 @@ Referenced by perform\-Crossover(), perform\-T\-M\-M\-C(), and perform\-W\-A\-L\
 18         ns += sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i];
 19     \}
 20     \textcolor{keywordflow}{if} (ns != sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}()) \{
-21         std::cerr << \textcolor{stringliteral}{"Sum of fully inserted atoms deviates from total counter"} << std::endl;
+21         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Sum of fully inserted atoms deviates from total counter"});
 22         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
 23     \} \textcolor{keywordflow}{else} \{
-24         std::cout << \textcolor{stringliteral}{"Passed: Sum of atoms consistent with total counter"} << std::endl;
+24         \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Passed sum of atoms consistency check with total counter"});
 25     \}
 26 
 27     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}() > 1) \{
 28         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a2ab77377c60e0e3109a6e875690b0ab7}{getFractionalAtom}()->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != sys.
       \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}()) \{
-29             std::cerr << \textcolor{stringliteral}{"Expanded ensemble state deviates between atom ("}+std::to\_string(sys.
-      \hyperlink{classsim_system_a2ab77377c60e0e3109a6e875690b0ab7}{getFractionalAtom}()->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState})+\textcolor{stringliteral}{") and system ("}+std::to\_string(sys.
-      \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}())+\textcolor{stringliteral}{")"} << std::endl;
+29             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Expanded ensemble state deviates between atom ("}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.\hyperlink{classsim_system_a2ab77377c60e0e3109a6e875690b0ab7}{getFractionalAtom}()->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState})+\textcolor{stringliteral}{") and system ("}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}())+\textcolor{stringliteral}{")"});
 30             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-31             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-32                 \textcolor{keywordtype}{int} end = sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i];
-33                 \textcolor{keywordflow}{if} (i == sys.\hyperlink{classsim_system_a0500a9e84eecfbde7a98cf8a34f719d5}{getFractionalAtomType}()) \{
-34                     end++;
-35                 \}
-36                 \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < end; ++j) \{
-37                     \textcolor{keywordflow}{if} (&sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j] != sys.\hyperlink{classsim_system_a2ab77377c60e0e3109a6e875690b0ab7}{getFractionalAtom}()) \{
-38                         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j].mState != 0) \{
-39                             std::cerr << \textcolor{stringliteral}{"Atom ("}+std::to\_string(i)+\textcolor{stringliteral}{", "}+std::to\_string(j)+\textcolor{stringliteral}{") has non-zero
-       expanded ensemble state ("}+std::to\_string(sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j].mState)+\textcolor{stringliteral}{")"} << std::endl;
-40                             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-41                         \}
-42                     \} \textcolor{keywordflow}{else} \{
-43                         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j].mState != sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}()) \{
-44                             std::cerr << \textcolor{stringliteral}{"Fractional atom ("}+std::to\_string(i)+\textcolor{stringliteral}{", "}+std::to\_string(j)+\textcolor{stringliteral}{")'s
-       expanded ensemble state ("}+std::to\_string(sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j].mState)+\textcolor{stringliteral}{") does not match system's ("}+
-      std::to\_string(sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}())+\textcolor{stringliteral}{")"} << std::endl;
-45                             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-46                         \}
+31         \}
+32         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+33             \textcolor{keywordtype}{int} end = sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i];
+34             \textcolor{keywordflow}{if} (i == sys.\hyperlink{classsim_system_a0500a9e84eecfbde7a98cf8a34f719d5}{getFractionalAtomType}()) \{
+35                 end++;
+36             \}
+37             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < end; ++j) \{
+38                 \textcolor{keywordflow}{if} (&sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j] != sys.\hyperlink{classsim_system_a2ab77377c60e0e3109a6e875690b0ab7}{getFractionalAtom}()) \{
+39                     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j].mState != 0) \{
+40                         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Atom ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i)+\textcolor{stringliteral}{", "}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j)+\textcolor{stringliteral}{") has non-zero expanded ensemble state ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.
+      \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j].mState)+\textcolor{stringliteral}{")"});
+41                         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+42                     \}
+43                 \} \textcolor{keywordflow}{else} \{
+44                     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j].mState != sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}()) \{
+45                         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Fractional atom ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i)+\textcolor{stringliteral}{", "}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j)+\textcolor{stringliteral}{")'s expanded ensemble state ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j].mState)+\textcolor{stringliteral}{") does
+       not match system's ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}())+\textcolor{stringliteral}{")"});
+46                         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
 47                     \}
 48                 \}
 49             \}
@@ -93,26 +94,25 @@ Referenced by perform\-Crossover(), perform\-T\-M\-M\-C(), and perform\-W\-A\-L\
 52         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
 53             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i]; ++j) \{
 54                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j].mState != 0) \{
-55                     std::cerr << \textcolor{stringliteral}{"Atom ("}+std::to\_string(i)+\textcolor{stringliteral}{", "}+std::to\_string(j)+\textcolor{stringliteral}{") has non-zero expanded
-       ensemble state ("}+std::to\_string(sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j].mState)+\textcolor{stringliteral}{")"} << std::endl;
+55                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Atom ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j)+\textcolor{stringliteral}{") has non-zero
+       expanded ensemble state ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[i][j].mState)+\textcolor{stringliteral}{")"});
 56                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
 57                 \}
 58             \}
 59         \}
 60     \}
-61     std::cout << \textcolor{stringliteral}{"Passed: Expanded ensemble state check for all atoms"} << std::endl;
+61     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Passed expanded ensemble state check for all atoms"});
 62 
 63     \textcolor{keyword}{const} \textcolor{keywordtype}{double} tol = 1.0e-6;
 64     \textcolor{keyword}{const} \textcolor{keywordtype}{double} scratchEnergy = sys.\hyperlink{classsim_system_a51539ed4c3bb4905b32ce428c1c537fe}{scratchEnergy}(), incrEnergy = sys.
       \hyperlink{classsim_system_a37b3d15faf56bf31349f5c2aaf02f858}{energy}();
 65     \textcolor{keywordflow}{if} (fabs(scratchEnergy - incrEnergy) > tol) \{
-66         std::cerr << \textcolor{stringliteral}{"Error: scratch energy calculation = "} << std::setprecision(20) << scratchEnergy << \textcolor{stringliteral}{",
-       but incremental = "} << std::setprecision(20) << incrEnergy << \textcolor{stringliteral}{", |diff| = "} << std::setprecision(20) << 
-      fabs(scratchEnergy - incrEnergy) << std::endl;
+66         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Error, scratch energy calculation = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(scratchEnergy)+\textcolor{stringliteral}{", but
+       incremental = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(incrEnergy)+\textcolor{stringliteral}{", |diff| = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(fabs(scratchEnergy - incrEnergy)));
 67         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
 68     \} \textcolor{keywordflow}{else} \{
-69         std::cout << \textcolor{stringliteral}{"Passed: Final scratch energy - incremental = "} << std::setprecision(20) << 
-      scratchEnergy - incrEnergy << std::endl;
+69         \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Passed, final scratch energy - incremental = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(scratchEnergy - 
+      incrEnergy));
 70     \}
 71 \}
 \end{DoxyCode}

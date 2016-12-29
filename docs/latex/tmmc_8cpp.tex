@@ -38,7 +38,7 @@ Definition at line 10 of file tmmc.\-cpp.
 
 
 
-References tmmc\-::calculate\-P\-I(), checkpoint\-::check(), tmmc\-::check\-Fully\-Visited(), sim\-System\-::get\-Current\-M(), get\-Time\-Stamp(), sim\-System\-::get\-T\-M\-M\-C\-Bias(), sim\-System\-::get\-Total\-M(), tmmc\-::iterate\-Forward(), moves\-::make\-Move(), checkpoint\-::move\-Counter, moves\-::print(), tmmc\-::print(), sim\-System\-::print\-Energy\-Histogram(), sim\-System\-::print\-Ext\-Moments(), sim\-System\-::print\-Pk\-Histogram(), sim\-System\-::print\-Snapshot(), tmmc\-::read\-C(), sim\-System\-::record\-Energy\-Histogram(), sim\-System\-::record\-Ext\-Moments(), sim\-System\-::record\-Pk\-Histogram(), sim\-System\-::refine\-Energy\-Histogram\-Bounds(), sim\-System\-::refine\-Pk\-Histogram\-Bounds(), checkpoint\-::res\-From\-T\-M\-M\-C, sim\-System\-::restart\-From\-T\-M\-M\-C, sim\-System\-::restart\-From\-T\-M\-M\-C\-File, sanity\-Checks(), sim\-System\-::start\-T\-M\-M\-C(), sim\-System\-::stop\-T\-M\-M\-C(), checkpoint\-::sweep\-Counter, S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, checkpoint\-::tmmc\-Done, sim\-System\-::tmmc\-Sweep\-Size, sim\-System\-::total\-T\-M\-M\-C\-Sweeps, sim\-System\-::tot\-N\-Max(), sim\-System\-::tot\-N\-Min(), sim\-System\-::use\-T\-M\-M\-C, sim\-System\-::use\-W\-A\-L\-A, and custom\-Exception\-::what().
+References tmmc\-::calculate\-P\-I(), checkpoint\-::check(), tmmc\-::check\-Fully\-Visited(), sim\-System\-::get\-Current\-M(), sim\-System\-::get\-T\-M\-M\-C\-Bias(), sim\-System\-::get\-Total\-M(), tmmc\-::iterate\-Forward(), moves\-::make\-Move(), checkpoint\-::move\-Counter, num\-To\-Str(), moves\-::print(), tmmc\-::print(), sim\-System\-::print\-Energy\-Histogram(), sim\-System\-::print\-Ext\-Moments(), sim\-System\-::print\-Pk\-Histogram(), sim\-System\-::print\-Snapshot(), tmmc\-::read\-C(), sim\-System\-::record\-Energy\-Histogram(), sim\-System\-::record\-Ext\-Moments(), sim\-System\-::record\-Pk\-Histogram(), sim\-System\-::refine\-Energy\-Histogram\-Bounds(), sim\-System\-::refine\-Pk\-Histogram\-Bounds(), checkpoint\-::res\-From\-T\-M\-M\-C, sim\-System\-::restart\-From\-T\-M\-M\-C, sim\-System\-::restart\-From\-T\-M\-M\-C\-File, sanity\-Checks(), send\-Err(), send\-Msg(), sim\-System\-::start\-T\-M\-M\-C(), sim\-System\-::stop\-T\-M\-M\-C(), checkpoint\-::sweep\-Counter, S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, checkpoint\-::tmmc\-Done, sim\-System\-::tmmc\-Sweep\-Size, sim\-System\-::total\-T\-M\-M\-C\-Sweeps, sim\-System\-::tot\-N\-Max(), sim\-System\-::tot\-N\-Min(), sim\-System\-::use\-T\-M\-M\-C, sim\-System\-::use\-W\-A\-L\-A, and custom\-Exception\-::what().
 
 
 \begin{DoxyCode}
@@ -46,7 +46,7 @@ References tmmc\-::calculate\-P\-I(), checkpoint\-::check(), tmmc\-::check\-Full
 11     \textcolor{keywordflow}{if} (res.\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone}) \{
 12         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Checkpoint indicates TMMC already finished"});
 13     \}
-14     std::cout << \textcolor{stringliteral}{"Beginning TMMC at "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+14     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Beginning TMMC"});
 15 
 16     \textcolor{comment}{// Specifically for printing progress every 1% of the simulation}
 17     \textcolor{keyword}{const} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} numSweepSnaps = 100;
@@ -73,92 +73,92 @@ References tmmc\-::calculate\-P\-I(), checkpoint\-::check(), tmmc\-::check\-Full
 36                 sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a7d9ee0505dc801cbff55bc35c3654a61}{readC}(sys.\hyperlink{classsim_system_a5ccdad82b3767ba21b1e4b1e36362082}{restartFromTMMCFile}); \textcolor{comment}{//
        read collection matrix}
 37                 sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a8e065523e9cc3c9628f91d3804cd201e}{calculatePI}();
-38                 std::cout << \textcolor{stringliteral}{"Restarted TMMC from collection matrix from "} << sys.
-      \hyperlink{classsim_system_a5ccdad82b3767ba21b1e4b1e36362082}{restartFromTMMCFile} << std::endl;
+38                 \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Restarted TMMC from collection matrix from "}+sys.
+      \hyperlink{classsim_system_a5ccdad82b3767ba21b1e4b1e36362082}{restartFromTMMCFile});
 39             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
 40                 sys.\hyperlink{classsim_system_a69edcc2c27db3d4e94002ac5635e9030}{stopTMMC}(); \textcolor{comment}{// deallocate}
-41                 std::cerr << \textcolor{stringliteral}{"Failed to initialize from TMMC collection matrix: "} << ce.
-      \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
-42                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-43             \}
-44         \}
-45     \} \textcolor{keywordflow}{else} \{
-46         printCounter = res.\hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{moveCounter};
-47         sweep = res.\hyperlink{classcheckpoint_ad011ddbca1ea708321335b1b3ac67e07}{sweepCounter};
-48     \}
-49 
-50     std::cout << \textcolor{stringliteral}{"Starting progress stage from "} << printCounter << \textcolor{stringliteral}{"/"} << std::min(numSweepSnaps, sys.
-      \hyperlink{classsim_system_a78b107e20bcbf2f818264fa076de5db3}{totalTMMCSweeps}) << \textcolor{stringliteral}{" at "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
-51     std::cout << \textcolor{stringliteral}{"Starting from "} << sweep << \textcolor{stringliteral}{"/"} << sys.\hyperlink{classsim_system_a78b107e20bcbf2f818264fa076de5db3}{totalTMMCSweeps} << \textcolor{stringliteral}{" total TMMC
-       sweeps at "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
-52 
-53     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} checkPoint = sys.\hyperlink{classsim_system_a56e284a361964d0a9ce5c45f41d56ab1}{tmmcSweepSize}*(sys.
+41                 std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+42                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Failed to initialize from TMMC collection matrix because "}+msg);
+43                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+44             \}
+45         \}
+46     \} \textcolor{keywordflow}{else} \{
+47         printCounter = res.\hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{moveCounter};
+48         sweep = res.\hyperlink{classcheckpoint_ad011ddbca1ea708321335b1b3ac67e07}{sweepCounter};
+49     \}
+50 
+51     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Starting progress stage from "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(printCounter)+\textcolor{stringliteral}{"/"}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(std::min(numSweepSnaps, sys.\hyperlink{classsim_system_a78b107e20bcbf2f818264fa076de5db3}{totalTMMCSweeps})));
+52     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Starting from "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sweep)+\textcolor{stringliteral}{"/"}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.
+      \hyperlink{classsim_system_a78b107e20bcbf2f818264fa076de5db3}{totalTMMCSweeps})+\textcolor{stringliteral}{" total TMMC sweeps"});
+53 
+54     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} checkPoint = sys.\hyperlink{classsim_system_a56e284a361964d0a9ce5c45f41d56ab1}{tmmcSweepSize}*(sys.
       \hyperlink{classsim_system_aee2c65ecb43a35c0c4d070cdb45f7dc0}{totNMax}() - sys.\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() + 1)*3; \textcolor{comment}{// how often to check full traversal of collection matrix}
-54     \textcolor{keywordflow}{while} (sweep < sys.\hyperlink{classsim_system_a78b107e20bcbf2f818264fa076de5db3}{totalTMMCSweeps}) \{
-55         \textcolor{keywordtype}{bool} done = \textcolor{keyword}{false};
-56 
-57         \textcolor{comment}{// Perform a sweep}
-58         \textcolor{keywordflow}{while} (!done) \{
-59             \textcolor{keywordflow}{try} \{
-60                 usedMovesPr->\hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{makeMove}(sys);
-61             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-62                 std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
-63                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-64             \}
-65 
-66             \textcolor{comment}{// Only record properties of the system when it is NOT in an intermediate state}
-67             \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
-68                 sys.\hyperlink{classsim_system_aa0eae4d523b5649be273e0419e9f799f}{recordEnergyHistogram}();
-69                 sys.\hyperlink{classsim_system_a71bbc9d8bdbb5042e4fa817c3e71fe53}{recordPkHistogram}();
-70                 sys.\hyperlink{classsim_system_a74ce0ab8151fd0501abf853a16cc8e58}{recordExtMoments}();
-71             \}
-72 
-73             \textcolor{comment}{// Check if sweep is done}
-74             \textcolor{keywordflow}{if} (counter%checkPoint == 0) \{
-75                 done = sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_aa51f03f958dabefcff97be4a7c3b336c}{checkFullyVisited}();
-76                 counter = 0;
-77             \}
-78 
-79             counter++;
-80             res.\hyperlink{classcheckpoint_ab9ca7cab3fd3c5dc35fe71977b81a69f}{check}(sys, printCounter, sweep);
-81         \}
-82 
-83         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a611b5a86b3887afd9e90e2e4da66de35}{iterateForward}(); \textcolor{comment}{// reset the counting matrix and
+55     \textcolor{keywordflow}{while} (sweep < sys.\hyperlink{classsim_system_a78b107e20bcbf2f818264fa076de5db3}{totalTMMCSweeps}) \{
+56         \textcolor{keywordtype}{bool} done = \textcolor{keyword}{false};
+57 
+58         \textcolor{comment}{// Perform a sweep}
+59         \textcolor{keywordflow}{while} (!done) \{
+60             \textcolor{keywordflow}{try} \{
+61                 usedMovesPr->\hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{makeMove}(sys);
+62             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+63                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
+64                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+65             \}
+66 
+67             \textcolor{comment}{// Only record properties of the system when it is NOT in an intermediate state}
+68             \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
+69                 sys.\hyperlink{classsim_system_aa0eae4d523b5649be273e0419e9f799f}{recordEnergyHistogram}();
+70                 sys.\hyperlink{classsim_system_a71bbc9d8bdbb5042e4fa817c3e71fe53}{recordPkHistogram}();
+71                 sys.\hyperlink{classsim_system_a74ce0ab8151fd0501abf853a16cc8e58}{recordExtMoments}();
+72             \}
+73 
+74             \textcolor{comment}{// Check if sweep is done}
+75             \textcolor{keywordflow}{if} (counter%checkPoint == 0) \{
+76                 done = sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_aa51f03f958dabefcff97be4a7c3b336c}{checkFullyVisited}();
+77                 counter = 0;
+78             \}
+79 
+80             counter++;
+81             res.\hyperlink{classcheckpoint_ab2f76253fde665ee149c1380e78f5c2f}{check}(sys, printCounter, sweep);
+82         \}
+83 
+84         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a611b5a86b3887afd9e90e2e4da66de35}{iterateForward}(); \textcolor{comment}{// reset the counting matrix and
        increment total sweep number}
-84         sweep++;
-85 
-86         std::cout << \textcolor{stringliteral}{"Finished "} << sweep << \textcolor{stringliteral}{"/"} << sys.\hyperlink{classsim_system_a78b107e20bcbf2f818264fa076de5db3}{totalTMMCSweeps} << \textcolor{stringliteral}{" total TMMC
-       sweeps at "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
-87 
-88         \textcolor{comment}{// Update biasing function from collection matrix}
-89         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a8e065523e9cc3c9628f91d3804cd201e}{calculatePI}();
-90 
-91         \textcolor{comment}{// Periodically write out checkpoints to monitor convergence properties later - all are used in
+85         sweep++;
+86 
+87         \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Finished "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sweep)+\textcolor{stringliteral}{"/"}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.
+      \hyperlink{classsim_system_a78b107e20bcbf2f818264fa076de5db3}{totalTMMCSweeps})+\textcolor{stringliteral}{" total TMMC sweeps"});
+88 
+89         \textcolor{comment}{// Update biasing function from collection matrix}
+90         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a8e065523e9cc3c9628f91d3804cd201e}{calculatePI}();
+91 
+92         \textcolor{comment}{// Periodically write out checkpoints to monitor convergence properties later - all are used in
        FHMCAnalysis at this point (12/22/16)}
-92         \textcolor{keywordflow}{if} (sweep%sweepPrint == 0) \{
-93             printCounter++;
-94             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ad49e147dc88b3e1c2975269598f94327}{print}(\textcolor{stringliteral}{"tmmc-Checkpoint-"}+std::to\_string(printCounter), \textcolor{keyword}{false}
+93         \textcolor{keywordflow}{if} (sweep%sweepPrint == 0) \{
+94             printCounter++;
+95             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ad49e147dc88b3e1c2975269598f94327}{print}(\textcolor{stringliteral}{"tmmc-Checkpoint-"}+std::to\_string(printCounter), \textcolor{keyword}{false}
       , \textcolor{keyword}{false}); \textcolor{comment}{// true, false);}
-95             sys.\hyperlink{classsim_system_afe05cba714a032b445cfb1a529547833}{refineEnergyHistogramBounds}();
-96             sys.\hyperlink{classsim_system_a6ef1ba3e08ec44d865436e272cdebc9b}{printEnergyHistogram}(\textcolor{stringliteral}{"eHist-Checkpoint-"}+std::to\_string(printCounter));
-97             sys.\hyperlink{classsim_system_a1e462fcb63389d59419ff6135b2d802e}{refinePkHistogramBounds}();
-98             sys.\hyperlink{classsim_system_ac29bdd6f7fa6f9526b7eafcf658d70d8}{printPkHistogram}(\textcolor{stringliteral}{"pkHist-Checkpoint-"}+std::to\_string(printCounter));
-99             sys.\hyperlink{classsim_system_a2818b2f0ff79782d5443ca0f191564f8}{printExtMoments}(\textcolor{stringliteral}{"extMom-Checkpoint-"}+std::to\_string(printCounter));
-100             usedMovesPr->\hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print}(\textcolor{stringliteral}{"tmmc.stats"});
-101         \}
-102     \}
-103 
-104     \textcolor{comment}{// Print final results}
-105     sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ad49e147dc88b3e1c2975269598f94327}{print}(\textcolor{stringliteral}{"final"}, \textcolor{keyword}{false}, \textcolor{keyword}{false});
-106     sys.\hyperlink{classsim_system_afe05cba714a032b445cfb1a529547833}{refineEnergyHistogramBounds}();
-107     sys.\hyperlink{classsim_system_a6ef1ba3e08ec44d865436e272cdebc9b}{printEnergyHistogram}(\textcolor{stringliteral}{"final\_eHist"});
-108     sys.\hyperlink{classsim_system_a1e462fcb63389d59419ff6135b2d802e}{refinePkHistogramBounds}();
-109     sys.\hyperlink{classsim_system_ac29bdd6f7fa6f9526b7eafcf658d70d8}{printPkHistogram}(\textcolor{stringliteral}{"final\_pkHist"});
-110     sys.\hyperlink{classsim_system_a2818b2f0ff79782d5443ca0f191564f8}{printExtMoments}(\textcolor{stringliteral}{"final\_extMom"});
-111     sys.\hyperlink{classsim_system_ae3096dc65acdf38cc824e507cca33370}{printSnapshot}(\textcolor{stringliteral}{"final.xyz"}, \textcolor{stringliteral}{"last configuration"});
-112     usedMovesPr->\hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print}(\textcolor{stringliteral}{"tmmc.stats"});
-113 
-114     \hyperlink{sanity_8cpp_a73138cec3a48e4523004092dc0c2954b}{sanityChecks}(sys);
-115     res.\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone} = \textcolor{keyword}{true};
-116 \}
+96             sys.\hyperlink{classsim_system_afe05cba714a032b445cfb1a529547833}{refineEnergyHistogramBounds}();
+97             sys.\hyperlink{classsim_system_a6ef1ba3e08ec44d865436e272cdebc9b}{printEnergyHistogram}(\textcolor{stringliteral}{"eHist-Checkpoint-"}+std::to\_string(printCounter));
+98             sys.\hyperlink{classsim_system_a1e462fcb63389d59419ff6135b2d802e}{refinePkHistogramBounds}();
+99             sys.\hyperlink{classsim_system_ac29bdd6f7fa6f9526b7eafcf658d70d8}{printPkHistogram}(\textcolor{stringliteral}{"pkHist-Checkpoint-"}+std::to\_string(printCounter));
+100             sys.\hyperlink{classsim_system_a2818b2f0ff79782d5443ca0f191564f8}{printExtMoments}(\textcolor{stringliteral}{"extMom-Checkpoint-"}+std::to\_string(printCounter));
+101             usedMovesPr->\hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print}(\textcolor{stringliteral}{"tmmc.stats"});
+102         \}
+103     \}
+104 
+105     \textcolor{comment}{// Print final results}
+106     sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ad49e147dc88b3e1c2975269598f94327}{print}(\textcolor{stringliteral}{"final"}, \textcolor{keyword}{false}, \textcolor{keyword}{false});
+107     sys.\hyperlink{classsim_system_afe05cba714a032b445cfb1a529547833}{refineEnergyHistogramBounds}();
+108     sys.\hyperlink{classsim_system_a6ef1ba3e08ec44d865436e272cdebc9b}{printEnergyHistogram}(\textcolor{stringliteral}{"final\_eHist"});
+109     sys.\hyperlink{classsim_system_a1e462fcb63389d59419ff6135b2d802e}{refinePkHistogramBounds}();
+110     sys.\hyperlink{classsim_system_ac29bdd6f7fa6f9526b7eafcf658d70d8}{printPkHistogram}(\textcolor{stringliteral}{"final\_pkHist"});
+111     sys.\hyperlink{classsim_system_a2818b2f0ff79782d5443ca0f191564f8}{printExtMoments}(\textcolor{stringliteral}{"final\_extMom"});
+112     sys.\hyperlink{classsim_system_ae3096dc65acdf38cc824e507cca33370}{printSnapshot}(\textcolor{stringliteral}{"final.xyz"}, \textcolor{stringliteral}{"last configuration"});
+113     usedMovesPr->\hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print}(\textcolor{stringliteral}{"tmmc.stats"});
+114 
+115     \hyperlink{sanity_8cpp_a73138cec3a48e4523004092dc0c2954b}{sanityChecks}(sys);
+116     res.\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone} = \textcolor{keyword}{true};
+117 \}
 \end{DoxyCode}

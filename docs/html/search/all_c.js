@@ -9,5 +9,6 @@ var searchData=
   ['ntab',['NTAB',['../utilities_8cpp.html#a0e93cfb2d62849853fd34957ba6e6fdc',1,'utilities.cpp']]],
   ['num_5finfinity',['NUM_INFINITY',['../potentials_8h.html#ab94ab1d09e2291d03fe92a0e24a9d33b',1,'potentials.h']]],
   ['numspecies',['numSpecies',['../classsim_system.html#a9eea865e6dc1cff377b1e79c4d9c23f0',1,'simSystem']]],
-  ['numsweeps',['numSweeps',['../classtmmc.html#afbdc037dc9b941d71d7049855e18f4be',1,'tmmc']]]
+  ['numsweeps',['numSweeps',['../classtmmc.html#afbdc037dc9b941d71d7049855e18f4be',1,'tmmc']]],
+  ['numtostr',['numToStr',['../utilities_8h.html#ae6ed8fadf719af789711a7c0e99f44bc',1,'utilities.h']]]
 ];

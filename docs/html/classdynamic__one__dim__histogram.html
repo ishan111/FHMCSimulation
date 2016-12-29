@@ -455,9 +455,9 @@ Public Member Functions</h2></td></tr>
 <p>References <a class="el" href="histogram_8cpp_source.html#l00144">append_bins()</a>, <a class="el" href="histogram_8cpp_source.html#l00127">prepend_bins()</a>, and <a class="el" href="global_8h_source.html#l00125">customException::what()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                                                          {</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">int</span> bin = round((value - lb_)/delta_); <span class="comment">// this &quot;centers&quot; the bin</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordflow">if</span> (fabs(bin) &lt; tol_) {</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;            <span class="comment">// prevent -0 case and set to 0</span></div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;            bin = 0;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordflow">if</span> (std::abs(bin) &lt; tol_) {</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        <span class="comment">// prevent -0 case and set to 0</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        bin = 0;</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    }</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordflow">if</span> (bin &lt; 0) {</div>
@@ -480,7 +480,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="comment">// re-calculate after lb potentially adjusted</span></div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    bin = round((value - lb_)/delta_);</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordflow">if</span> (fabs(bin) &lt; tol_) {</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordflow">if</span> (std::abs(bin) &lt; tol_) {</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            <span class="comment">// prevent -0 case and set to 0</span></div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;            bin = 0;</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    }</div>
@@ -640,7 +640,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 28 2016 15:07:18 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Dec 29 2016 11:09:04 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

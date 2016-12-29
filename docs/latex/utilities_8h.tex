@@ -10,25 +10,41 @@
 {\ttfamily \#include $<$iomanip$>$}\\*
 {\ttfamily \#include $<$ctime$>$}\\*
 {\ttfamily \#include $<$time.\-h$>$}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$stdio.\-h$>$}\\*
+{\ttfamily \#include \char`\"{}global.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}rapidjson/include/rapidjson/document.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}rapidjson/include/rapidjson/writer.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}rapidjson/include/rapidjson/stringbuffer.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}rapidjson/include/rapidjson/filereadstream.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}rapidjson/include/rapidjson/prettywriter.\-h\char`\"{}}\\*
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-std\-::vector$<$ std\-::string $>$ \hyperlink{utilities_8h_ac84b085638619e2d7926ef816d833f7c}{splitstr} (const std\-::string \&s, char delim)
-\begin{DoxyCompactList}\small\item\em For converting to string. \end{DoxyCompactList}\item 
+void \hyperlink{utilities_8h_a08974c73a5b36c28b8ad1ef47fca77b0}{send\-Msg} (const std\-::string msg)
+\begin{DoxyCompactList}\small\item\em Send a message to std\-::cout. \end{DoxyCompactList}\item 
+void \hyperlink{utilities_8h_a6dacf3c3c19aa1e13a4d5a148fe5114e}{send\-Err} (const std\-::string msg)
+\begin{DoxyCompactList}\small\item\em Send a message to std\-::cerr. \end{DoxyCompactList}\item 
+void \hyperlink{utilities_8h_a3f494918ff3c252de4914c9905be04e7}{parse\-Json} (const std\-::string filename, rapidjson\-::\-Document \&doc)
+\begin{DoxyCompactList}\small\item\em Parse a J\-S\-O\-N file and return the corresponding document. \end{DoxyCompactList}\item 
 void \hyperlink{utilities_8h_a2c482530b256030d81cdbfcdc1d191c3}{pause\-Code} (long int dur)
 \begin{DoxyCompactList}\small\item\em Pause the code for a certain time. \end{DoxyCompactList}\item 
 void \hyperlink{utilities_8h_ad858a38f435e9a0ee890aa0f526714d2}{pbc} (std\-::vector$<$ double $>$ \&pos, const std\-::vector$<$ double $>$ \&box)
 \begin{DoxyCompactList}\small\item\em Replace a position inside a box assuming periodic boundary conditions. \end{DoxyCompactList}\item 
 bool \hyperlink{utilities_8h_a9d1e3672fd331d4185c1763c80226307}{file\-Exists} (std\-::string file\-Name)
 \begin{DoxyCompactList}\small\item\em Function to check whether a given file exists or not. \end{DoxyCompactList}\item 
-std\-::string \hyperlink{utilities_8h_aa6d910bf51f18a75deb20c6f0fbba285}{get\-Time\-Stamp} ()
-\begin{DoxyCompactList}\small\item\em Obtain instantaneous timestamp. \end{DoxyCompactList}\item 
 double \hyperlink{utilities_8h_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (int $\ast$idum)
 \begin{DoxyCompactList}\small\item\em Random number generator (from Numerical Recipes) \end{DoxyCompactList}\item 
 double \hyperlink{utilities_8h_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbc\-Dist2} (const std\-::vector$<$ double $>$ \&p1, const std\-::vector$<$ double $>$ \&p2, const std\-::vector$<$ double $>$ \&box)
 \begin{DoxyCompactList}\small\item\em Calculate the minimum image distance squared between two coordinates assuming periodic boundary conditions. \end{DoxyCompactList}\item 
+std\-::string \hyperlink{utilities_8h_aa6d910bf51f18a75deb20c6f0fbba285}{get\-Time\-Stamp} ()
+\begin{DoxyCompactList}\small\item\em Obtain instantaneous timestamp. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T $>$ }\\std\-::string \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{num\-To\-Str} (const T \&val)
+\begin{DoxyCompactList}\small\item\em Convert a number to a string with 15 digits of precision. \end{DoxyCompactList}\item 
 std\-::vector$<$ double $>$ \hyperlink{utilities_8h_af1bc480936b7436d4e679abc5a837815}{random3\-D\-Surface\-Vector} (const double magnitude)
 \begin{DoxyCompactList}\small\item\em Chose a random vector sampled from a random distribution on the surface of a sphere. \end{DoxyCompactList}\item 
+std\-::vector$<$ std\-::string $>$ \hyperlink{utilities_8h_ac84b085638619e2d7926ef816d833f7c}{splitstr} (const std\-::string \&s, char delim)
+\begin{DoxyCompactList}\small\item\em C++ explode a string. \end{DoxyCompactList}\item 
 std\-::vector$<$ std\-::vector\\*
 $<$ double $>$ $>$ \hyperlink{utilities_8h_a2b3e32432e13d1a3feeb00de5466e456}{rotation\-Matrix} (const double alpha, const double beta, const double gamma)
 \begin{DoxyCompactList}\small\item\em Create 3\-D rotation matrix from angles (x, then y, then z) \end{DoxyCompactList}\item 
@@ -59,7 +75,7 @@ If file exists
 \end{DoxyReturn}
 
 
-Definition at line 230 of file utilities.\-cpp.
+Definition at line 271 of file utilities.\-cpp.
 
 
 
@@ -67,14 +83,14 @@ Referenced by checkpoint\-::checkpoint(), checkpoint\-::load(), and tabulated\-:
 
 
 \begin{DoxyCode}
-230                                     \{
-231     \textcolor{keyword}{struct }stat stFileInfo;
-232 
-233     \textcolor{keywordflow}{if} (stat(fileName.c\_str(),&stFileInfo) == 0)
-234         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
-235     \textcolor{keywordflow}{else}
-236         \textcolor{keywordflow}{return} \textcolor{keyword}{false};
-237 \}
+271                                     \{
+272     \textcolor{keyword}{struct }stat stFileInfo;
+273 
+274     \textcolor{keywordflow}{if} (stat(fileName.c\_str(),&stFileInfo) == 0)
+275         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+276     \textcolor{keywordflow}{else}
+277         \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+278 \}
 \end{DoxyCode}
 \hypertarget{utilities_8h_aa6d910bf51f18a75deb20c6f0fbba285}{\index{utilities.\-h@{utilities.\-h}!get\-Time\-Stamp@{get\-Time\-Stamp}}
 \index{get\-Time\-Stamp@{get\-Time\-Stamp}!utilities.h@{utilities.\-h}}
@@ -92,24 +108,24 @@ char$\ast$ timestamp
 \end{DoxyReturn}
 
 
-Definition at line 49 of file utilities.\-cpp.
+Definition at line 90 of file utilities.\-cpp.
 
 
 
-Referenced by checkpoint\-::dump(), initialize(), checkpoint\-::load(), perform\-Crossover(), perform\-T\-M\-M\-C(), perform\-W\-A\-L\-A(), moves\-::print(), and sim\-System\-::read\-Config().
+Referenced by checkpoint\-::dump(), moves\-::print(), send\-Err(), and send\-Msg().
 
 
 \begin{DoxyCode}
-49                           \{
-50     time\_t rawtime;
-51     time (&rawtime);
-52     \textcolor{keyword}{struct }tm * timeinfo;
-53     timeinfo = localtime (&rawtime);
-54     \textcolor{keywordtype}{char} timestamp [80];
-55     strftime (timestamp,80,\textcolor{stringliteral}{"%d/%m/%Y %H:%M:%S"},timeinfo);
-56     std::string ans (timestamp);
-57     \textcolor{keywordflow}{return} ans;
-58 \}
+90                           \{
+91     time\_t rawtime;
+92     time (&rawtime);
+93     \textcolor{keyword}{struct }tm * timeinfo;
+94     timeinfo = localtime (&rawtime);
+95     \textcolor{keywordtype}{char} timestamp [80];
+96     strftime (timestamp,80,\textcolor{stringliteral}{"%d/%m/%Y %H:%M:%S"},timeinfo);
+97     std::string ans (timestamp);
+98     \textcolor{keywordflow}{return} ans;
+99 \}
 \end{DoxyCode}
 \hypertarget{utilities_8h_a198e6f6658163fec9b36be3542407727}{\index{utilities.\-h@{utilities.\-h}!matrix\-Product@{matrix\-Product}}
 \index{matrix\-Product@{matrix\-Product}!utilities.h@{utilities.\-h}}
@@ -135,7 +151,7 @@ W
 \end{DoxyReturn}
 
 
-Definition at line 67 of file utilities.\-cpp.
+Definition at line 108 of file utilities.\-cpp.
 
 
 
@@ -143,19 +159,104 @@ Referenced by rotation\-Matrix().
 
 
 \begin{DoxyCode}
-67                                                                                                            
+108                                                                                                            
                                  \{
-68     std::vector < double > dummy (3, 0);
-69     std::vector < std::vector < double > > W (3, dummy);
-70 
-71     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < 3; ++i) \{
-72         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 3; ++j) \{
-73             W[i][j] = mat1[i][j]*mat2[j][i];
-74         \}
-75     \}
-76 
-77     \textcolor{keywordflow}{return} W;
-78 \}
+109     std::vector < double > dummy (3, 0);
+110     std::vector < std::vector < double > > W (3, dummy);
+111 
+112     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < 3; ++i) \{
+113         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 3; ++j) \{
+114             W[i][j] = mat1[i][j]*mat2[j][i];
+115         \}
+116     \}
+117 
+118     \textcolor{keywordflow}{return} W;
+119 \}
+\end{DoxyCode}
+\hypertarget{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{\index{utilities.\-h@{utilities.\-h}!num\-To\-Str@{num\-To\-Str}}
+\index{num\-To\-Str@{num\-To\-Str}!utilities.h@{utilities.\-h}}
+\subsubsection[{num\-To\-Str}]{\setlength{\rightskip}{0pt plus 5cm}template$<$typename T $>$ std\-::string num\-To\-Str (
+\begin{DoxyParamCaption}
+\item[{const T \&}]{val}
+\end{DoxyParamCaption}
+)}}\label{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}
+
+
+Convert a number to a string with 15 digits of precision. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em val} & Double precision value\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+string Representation of this value 
+\end{DoxyReturn}
+
+
+Definition at line 44 of file utilities.\-h.
+
+
+
+Referenced by sim\-System\-::add\-Potential(), check\-Bounds(), tabulated\-::energy(), tabulated\-::load\-Potential(), perform\-Crossover(), perform\-T\-M\-M\-C(), perform\-W\-A\-L\-A(), sanity\-Checks(), set\-Config(), set\-Moves(), and set\-Pair\-Potentials().
+
+
+\begin{DoxyCode}
+44                                                          \{
+45    std::ostringstream os;
+46    os << std::setprecision(15) << val;
+47    \textcolor{keywordflow}{return} os.str();
+48 \}
+\end{DoxyCode}
+\hypertarget{utilities_8h_a3f494918ff3c252de4914c9905be04e7}{\index{utilities.\-h@{utilities.\-h}!parse\-Json@{parse\-Json}}
+\index{parse\-Json@{parse\-Json}!utilities.h@{utilities.\-h}}
+\subsubsection[{parse\-Json}]{\setlength{\rightskip}{0pt plus 5cm}void parse\-Json (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{filename, }
+\item[{rapidjson\-::\-Document \&}]{doc}
+\end{DoxyParamCaption}
+)}}\label{utilities_8h_a3f494918ff3c252de4914c9905be04e7}
+
+
+Parse a J\-S\-O\-N file and return the corresponding document. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em filename} & Input J\-S\-O\-N document's filename \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 44 of file utilities.\-cpp.
+
+
+
+References send\-Msg().
+
+
+
+Referenced by initialize(), checkpoint\-::load(), and set\-Config().
+
+
+\begin{DoxyCode}
+44                                                                   \{
+45     \textcolor{keywordflow}{try} \{
+46         FILE* fp = fopen(filename.c\_str(), \textcolor{stringliteral}{"r"});
+47         \textcolor{keywordtype}{char} readBuffer[65536];
+48         rapidjson::FileReadStream is(fp, readBuffer, \textcolor{keyword}{sizeof}(readBuffer));
+49         doc.ParseStream(is);
+50         fclose(fp);
+51     \} \textcolor{keywordflow}{catch} (...) \{
+52         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to parse "}+filename);
+53     \}
+54 
+55     \textcolor{keywordflow}{if} (doc.IsObject()) \{
+56         \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Parsed JSON file "}+filename);
+57     \} \textcolor{keywordflow}{else} \{
+58         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Error in "}+filename+\textcolor{stringliteral}{", not begin detected as proper JSON
+       document"});
+59     \}
+60 \}
 \end{DoxyCode}
 \hypertarget{utilities_8h_a2c482530b256030d81cdbfcdc1d191c3}{\index{utilities.\-h@{utilities.\-h}!pause\-Code@{pause\-Code}}
 \index{pause\-Code@{pause\-Code}!utilities.h@{utilities.\-h}}
@@ -175,14 +276,14 @@ Pause the code for a certain time.
 \end{DoxyParams}
 
 
-Definition at line 26 of file utilities.\-cpp.
+Definition at line 67 of file utilities.\-cpp.
 
 
 \begin{DoxyCode}
-26                               \{
-27     \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} temp = time(NULL) + dur;
-28     \textcolor{keywordflow}{while}(temp > time(NULL));
-29 \}
+67                               \{
+68     \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} temp = time(NULL) + dur;
+69     \textcolor{keywordflow}{while}(temp > time(NULL));
+70 \}
 \end{DoxyCode}
 \hypertarget{utilities_8h_ad858a38f435e9a0ee890aa0f526714d2}{\index{utilities.\-h@{utilities.\-h}!pbc@{pbc}}
 \index{pbc@{pbc}!utilities.h@{utilities.\-h}}
@@ -205,7 +306,7 @@ Replace a position inside a box assuming periodic boundary conditions.
 \end{DoxyParams}
 
 
-Definition at line 186 of file utilities.\-cpp.
+Definition at line 227 of file utilities.\-cpp.
 
 
 
@@ -213,17 +314,17 @@ Referenced by hard\-Wall\-Z\-::energy(), square\-Well\-Wall\-Z\-::energy(), righ
 
 
 \begin{DoxyCode}
-186                                                                       \{
-187     \textcolor{comment}{// generally while loops are faster than round statements}
-188     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < pos.size(); ++i) \{
-189         \textcolor{keywordflow}{while} (pos[i] < 0.0) \{
-190             pos[i] += box[i];
-191         \}
-192         \textcolor{keywordflow}{while} (pos[i] >= box[i]) \{
-193             pos[i] -= box[i];
-194         \}
-195     \}
-196 \}
+227                                                                       \{
+228     \textcolor{comment}{// generally while loops are faster than round statements}
+229     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < pos.size(); ++i) \{
+230         \textcolor{keywordflow}{while} (pos[i] < 0.0) \{
+231             pos[i] += box[i];
+232         \}
+233         \textcolor{keywordflow}{while} (pos[i] >= box[i]) \{
+234             pos[i] -= box[i];
+235         \}
+236     \}
+237 \}
 \end{DoxyCode}
 \hypertarget{utilities_8h_abb1db3a8a3ac46e044bbe7b2c5684c0a}{\index{utilities.\-h@{utilities.\-h}!pbc\-Dist2@{pbc\-Dist2}}
 \index{pbc\-Dist2@{pbc\-Dist2}!utilities.h@{utilities.\-h}}
@@ -254,7 +355,7 @@ d2 (distance squared)
 \end{DoxyReturn}
 
 
-Definition at line 207 of file utilities.\-cpp.
+Definition at line 248 of file utilities.\-cpp.
 
 
 
@@ -262,22 +363,22 @@ Referenced by lennard\-Jones\-::energy(), fs\-Lennard\-Jones\-::energy(), cylind
 
 
 \begin{DoxyCode}
-207                                                                                                            
+248                                                                                                            
              \{
-208     \textcolor{keywordtype}{double} d2 = 0.0;
-209     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < p2.size(); ++i) \{
-210         \textcolor{keywordtype}{double} dr = p2[i] - p1[i];
-211         \textcolor{keywordflow}{while} (dr < -box[i]/2.0) \{
-212             dr += box[i];
-213         \}
-214         \textcolor{keywordflow}{while} (dr > box[i]/2.0) \{
-215             dr -= box[i];
-216         \}
-217         d2 += dr*dr;
-218     \}
-219 
-220     \textcolor{keywordflow}{return} d2;
-221 \}
+249     \textcolor{keywordtype}{double} d2 = 0.0;
+250     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < p2.size(); ++i) \{
+251         \textcolor{keywordtype}{double} dr = p2[i] - p1[i];
+252         \textcolor{keywordflow}{while} (dr < -box[i]/2.0) \{
+253             dr += box[i];
+254         \}
+255         \textcolor{keywordflow}{while} (dr > box[i]/2.0) \{
+256             dr -= box[i];
+257         \}
+258         d2 += dr*dr;
+259     \}
+260 
+261     \textcolor{keywordflow}{return} d2;
+262 \}
 \end{DoxyCode}
 \hypertarget{utilities_8h_af1bc480936b7436d4e679abc5a837815}{\index{utilities.\-h@{utilities.\-h}!random3\-D\-Surface\-Vector@{random3\-D\-Surface\-Vector}}
 \index{random3\-D\-Surface\-Vector@{random3\-D\-Surface\-Vector}!utilities.h@{utilities.\-h}}
@@ -300,7 +401,7 @@ ans double3 containing coordinates of vector
 \end{DoxyReturn}
 
 
-Definition at line 124 of file utilities.\-cpp.
+Definition at line 165 of file utilities.\-cpp.
 
 
 
@@ -312,22 +413,22 @@ Referenced by agg\-Vol\-Bias3\-::make().
 
 
 \begin{DoxyCode}
-124                                                                     \{
-125     \textcolor{keywordtype}{int} success = 0;
-126     std::vector < double > ans (3, 0);
-127     \textcolor{keywordflow}{while} (success == 0) \{
-128         \textcolor{keywordtype}{double} r1 = \hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng}(&\hyperlink{utilities_8cpp_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}), r2 = \hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng}(&\hyperlink{utilities_8cpp_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}), x1 = 1.0-2.0*r1, x2 = 1.0-2.
+165                                                                     \{
+166     \textcolor{keywordtype}{int} success = 0;
+167     std::vector < double > ans (3, 0);
+168     \textcolor{keywordflow}{while} (success == 0) \{
+169         \textcolor{keywordtype}{double} r1 = \hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng}(&\hyperlink{utilities_8cpp_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}), r2 = \hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng}(&\hyperlink{utilities_8cpp_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}), x1 = 1.0-2.0*r1, x2 = 1.0-2.
       0*r2;
-129         \textcolor{keywordtype}{double} sum2 = x1*x1+x2*x2;
-130         \textcolor{keywordflow}{if} (sum2 < 1.0) \{
-131             ans[0] = 2*x1*sqrt(1-sum2)*magnitude;
-132             ans[1] = 2*x2*sqrt(1-sum2)*magnitude;
-133             ans[2] = (1-2.0*sum2)*magnitude;
-134             success = 1;
-135         \}
-136     \}
-137     \textcolor{keywordflow}{return} ans;
-138 \}
+170         \textcolor{keywordtype}{double} sum2 = x1*x1+x2*x2;
+171         \textcolor{keywordflow}{if} (sum2 < 1.0) \{
+172             ans[0] = 2*x1*sqrt(1-sum2)*magnitude;
+173             ans[1] = 2*x2*sqrt(1-sum2)*magnitude;
+174             ans[2] = (1-2.0*sum2)*magnitude;
+175             success = 1;
+176         \}
+177     \}
+178     \textcolor{keywordflow}{return} ans;
+179 \}
 \end{DoxyCode}
 \hypertarget{utilities_8h_a0f9542af4b475ac79cb679d7a8d14db0}{\index{utilities.\-h@{utilities.\-h}!rng@{rng}}
 \index{rng@{rng}!utilities.h@{utilities.\-h}}
@@ -350,7 +451,7 @@ temp Pseudo-\/random number between \mbox{[}0, 1)
 \end{DoxyReturn}
 
 
-Definition at line 147 of file utilities.\-cpp.
+Definition at line 188 of file utilities.\-cpp.
 
 
 
@@ -362,38 +463,38 @@ Referenced by agg\-Vol\-Bias3\-::make(), delete\-Particle\-::make(), translate\-
 
 
 \begin{DoxyCode}
-147                        \{
-148     \textcolor{keywordtype}{int} j;
-149     \textcolor{keywordtype}{long} k;
-150     \textcolor{keyword}{static} \textcolor{keywordtype}{long} idum2=123456789;
-151     \textcolor{keyword}{static} \textcolor{keywordtype}{long} iy=0;
-152     \textcolor{keyword}{static} \textcolor{keywordtype}{long} iv[\hyperlink{utilities_8cpp_a0e93cfb2d62849853fd34957ba6e6fdc}{NTAB}];
-153     \textcolor{keywordtype}{double} temp;
-154 
-155     \textcolor{keywordflow}{if} (*idum <= 0) \{
-156         \textcolor{keywordflow}{if} (-(*idum) < 1) *idum=1;
-157         \textcolor{keywordflow}{else} *idum = -(*idum);
-158         idum2=(*idum);
-159         \textcolor{keywordflow}{for} (j=\hyperlink{utilities_8cpp_a0e93cfb2d62849853fd34957ba6e6fdc}{NTAB}+7;j>=0;j--) \{
-160             k=(*idum)/\hyperlink{utilities_8cpp_a9afa86ff22da69bda72fe271ae71ad46}{IQ1};
-161             *idum=\hyperlink{utilities_8cpp_a6ef2749dca39c605c3d033f788afe6e3}{IA1}*(*idum-k*\hyperlink{utilities_8cpp_a9afa86ff22da69bda72fe271ae71ad46}{IQ1})-k*\hyperlink{utilities_8cpp_a7b2b32709f9770a283701ffcf3723497}{IR1};
-162             \textcolor{keywordflow}{if} (*idum < 0) *idum += \hyperlink{utilities_8cpp_a78325bdf48423acef7c012567628b391}{IM1};
-163             \textcolor{keywordflow}{if} (j < \hyperlink{utilities_8cpp_a0e93cfb2d62849853fd34957ba6e6fdc}{NTAB}) iv[j] = *idum;
-164         \} iy=iv[0];
-165     \}
-166     k=(*idum)/\hyperlink{utilities_8cpp_a9afa86ff22da69bda72fe271ae71ad46}{IQ1};
-167     *idum=\hyperlink{utilities_8cpp_a6ef2749dca39c605c3d033f788afe6e3}{IA1}*(*idum-k*\hyperlink{utilities_8cpp_a9afa86ff22da69bda72fe271ae71ad46}{IQ1})-k*\hyperlink{utilities_8cpp_a7b2b32709f9770a283701ffcf3723497}{IR1};
-168     \textcolor{keywordflow}{if} (*idum < 0) *idum += \hyperlink{utilities_8cpp_a78325bdf48423acef7c012567628b391}{IM1};
-169     k=idum2/\hyperlink{utilities_8cpp_abae040385946a6acdf5e10d2efd86f3d}{IQ2};
-170     idum2=\hyperlink{utilities_8cpp_a372a58d7e9e25912fd79e7afaa06cc7a}{IA2}*(idum2-k*\hyperlink{utilities_8cpp_abae040385946a6acdf5e10d2efd86f3d}{IQ2})-k*\hyperlink{utilities_8cpp_a5a08e4f5cb3582e623cc14a6c92d48de}{IR2};
-171     \textcolor{keywordflow}{if} (idum2 < 0) idum2 += \hyperlink{utilities_8cpp_ad8c519de7e5de4ae35344ddcf21fd062}{IM2};
-172     j=iy/\hyperlink{utilities_8cpp_a62339d74dd5d9d00480e1a288cf88fe8}{NDIV};
-173     iy=iv[j]-idum2;
-174     iv[j] = *idum;
-175     \textcolor{keywordflow}{if} (iy < 1) iy += \hyperlink{utilities_8cpp_a87a6e0054f9d827c979c43aa0d5e621a}{IMM1};
-176     \textcolor{keywordflow}{if} ((temp=\hyperlink{utilities_8cpp_ad301e6a88b1c01108f4867f2ea6f683c}{AM}*iy) > \hyperlink{utilities_8cpp_aa7436c9270ffb06f8c1eae8d2e605cec}{RNMX}) \textcolor{keywordflow}{return} \hyperlink{utilities_8cpp_aa7436c9270ffb06f8c1eae8d2e605cec}{RNMX};
-177     \textcolor{keywordflow}{else} \textcolor{keywordflow}{return} temp;
-178 \}
+188                        \{
+189     \textcolor{keywordtype}{int} j;
+190     \textcolor{keywordtype}{long} k;
+191     \textcolor{keyword}{static} \textcolor{keywordtype}{long} idum2=123456789;
+192     \textcolor{keyword}{static} \textcolor{keywordtype}{long} iy=0;
+193     \textcolor{keyword}{static} \textcolor{keywordtype}{long} iv[\hyperlink{utilities_8cpp_a0e93cfb2d62849853fd34957ba6e6fdc}{NTAB}];
+194     \textcolor{keywordtype}{double} temp;
+195 
+196     \textcolor{keywordflow}{if} (*idum <= 0) \{
+197         \textcolor{keywordflow}{if} (-(*idum) < 1) *idum=1;
+198         \textcolor{keywordflow}{else} *idum = -(*idum);
+199         idum2=(*idum);
+200         \textcolor{keywordflow}{for} (j=\hyperlink{utilities_8cpp_a0e93cfb2d62849853fd34957ba6e6fdc}{NTAB}+7;j>=0;j--) \{
+201             k=(*idum)/\hyperlink{utilities_8cpp_a9afa86ff22da69bda72fe271ae71ad46}{IQ1};
+202             *idum=\hyperlink{utilities_8cpp_a6ef2749dca39c605c3d033f788afe6e3}{IA1}*(*idum-k*\hyperlink{utilities_8cpp_a9afa86ff22da69bda72fe271ae71ad46}{IQ1})-k*\hyperlink{utilities_8cpp_a7b2b32709f9770a283701ffcf3723497}{IR1};
+203             \textcolor{keywordflow}{if} (*idum < 0) *idum += \hyperlink{utilities_8cpp_a78325bdf48423acef7c012567628b391}{IM1};
+204             \textcolor{keywordflow}{if} (j < \hyperlink{utilities_8cpp_a0e93cfb2d62849853fd34957ba6e6fdc}{NTAB}) iv[j] = *idum;
+205         \} iy=iv[0];
+206     \}
+207     k=(*idum)/\hyperlink{utilities_8cpp_a9afa86ff22da69bda72fe271ae71ad46}{IQ1};
+208     *idum=\hyperlink{utilities_8cpp_a6ef2749dca39c605c3d033f788afe6e3}{IA1}*(*idum-k*\hyperlink{utilities_8cpp_a9afa86ff22da69bda72fe271ae71ad46}{IQ1})-k*\hyperlink{utilities_8cpp_a7b2b32709f9770a283701ffcf3723497}{IR1};
+209     \textcolor{keywordflow}{if} (*idum < 0) *idum += \hyperlink{utilities_8cpp_a78325bdf48423acef7c012567628b391}{IM1};
+210     k=idum2/\hyperlink{utilities_8cpp_abae040385946a6acdf5e10d2efd86f3d}{IQ2};
+211     idum2=\hyperlink{utilities_8cpp_a372a58d7e9e25912fd79e7afaa06cc7a}{IA2}*(idum2-k*\hyperlink{utilities_8cpp_abae040385946a6acdf5e10d2efd86f3d}{IQ2})-k*\hyperlink{utilities_8cpp_a5a08e4f5cb3582e623cc14a6c92d48de}{IR2};
+212     \textcolor{keywordflow}{if} (idum2 < 0) idum2 += \hyperlink{utilities_8cpp_ad8c519de7e5de4ae35344ddcf21fd062}{IM2};
+213     j=iy/\hyperlink{utilities_8cpp_a62339d74dd5d9d00480e1a288cf88fe8}{NDIV};
+214     iy=iv[j]-idum2;
+215     iv[j] = *idum;
+216     \textcolor{keywordflow}{if} (iy < 1) iy += \hyperlink{utilities_8cpp_a87a6e0054f9d827c979c43aa0d5e621a}{IMM1};
+217     \textcolor{keywordflow}{if} ((temp=\hyperlink{utilities_8cpp_ad301e6a88b1c01108f4867f2ea6f683c}{AM}*iy) > \hyperlink{utilities_8cpp_aa7436c9270ffb06f8c1eae8d2e605cec}{RNMX}) \textcolor{keywordflow}{return} \hyperlink{utilities_8cpp_aa7436c9270ffb06f8c1eae8d2e605cec}{RNMX};
+218     \textcolor{keywordflow}{else} \textcolor{keywordflow}{return} temp;
+219 \}
 \end{DoxyCode}
 \hypertarget{utilities_8h_a2b3e32432e13d1a3feeb00de5466e456}{\index{utilities.\-h@{utilities.\-h}!rotation\-Matrix@{rotation\-Matrix}}
 \index{rotation\-Matrix@{rotation\-Matrix}!utilities.h@{utilities.\-h}}
@@ -419,7 +520,7 @@ Create 3\-D rotation matrix from angles (x, then y, then z)
 \end{DoxyParams}
 
 
-Definition at line 87 of file utilities.\-cpp.
+Definition at line 128 of file utilities.\-cpp.
 
 
 
@@ -427,36 +528,104 @@ References matrix\-Product().
 
 
 \begin{DoxyCode}
-87                                                                                                            
+128                                                                                                            
          \{
-88 
-89     std::vector < double > dummy (3, 0);
-90     std::vector < std::vector < double > > Rx (3, dummy), Ry(3, dummy), Rz(3, dummy), Ryx, Rzyx;
-91 
-92     \textcolor{comment}{// https://en.wikipedia.org/wiki/Rotation\_matrix#General\_rotations}
-93     Rx[0][0] = 1.0;
-94     Rx[1][1] = cos(alpha);
-95     Rx[1][2] = -sin(alpha);
-96     Rx[2][1] = sin(alpha);
-97     Rx[2][2] = cos(alpha);
-98 
-99     Ry[0][0] = cos(beta);
-100     Ry[0][2] = sin(beta);
-101     Ry[1][1] = 1.0;
-102     Ry[2][0] = -sin(beta);
-103     Ry[2][2] = cos(beta);
-104 
-105     Rz[0][0] = cos(gamma);
-106     Rz[0][1] = -sin(gamma);
-107     Rz[1][0] = sin(gamma);
-108     Rz[1][1] = cos(gamma);
-109     Rz[2][2] = 1.0;
-110 
-111     Ryx = \hyperlink{utilities_8cpp_a198e6f6658163fec9b36be3542407727}{matrixProduct}(Ry, Rx);
-112     Rzyx = \hyperlink{utilities_8cpp_a198e6f6658163fec9b36be3542407727}{matrixProduct}(Rz, Ryx);
-113 
-114     \textcolor{keywordflow}{return} Rzyx;
-115 \}
+129 
+130     std::vector < double > dummy (3, 0);
+131     std::vector < std::vector < double > > Rx (3, dummy), Ry(3, dummy), Rz(3, dummy), Ryx, Rzyx;
+132 
+133     \textcolor{comment}{// https://en.wikipedia.org/wiki/Rotation\_matrix#General\_rotations}
+134     Rx[0][0] = 1.0;
+135     Rx[1][1] = cos(alpha);
+136     Rx[1][2] = -sin(alpha);
+137     Rx[2][1] = sin(alpha);
+138     Rx[2][2] = cos(alpha);
+139 
+140     Ry[0][0] = cos(beta);
+141     Ry[0][2] = sin(beta);
+142     Ry[1][1] = 1.0;
+143     Ry[2][0] = -sin(beta);
+144     Ry[2][2] = cos(beta);
+145 
+146     Rz[0][0] = cos(gamma);
+147     Rz[0][1] = -sin(gamma);
+148     Rz[1][0] = sin(gamma);
+149     Rz[1][1] = cos(gamma);
+150     Rz[2][2] = 1.0;
+151 
+152     Ryx = \hyperlink{utilities_8cpp_a198e6f6658163fec9b36be3542407727}{matrixProduct}(Ry, Rx);
+153     Rzyx = \hyperlink{utilities_8cpp_a198e6f6658163fec9b36be3542407727}{matrixProduct}(Rz, Ryx);
+154 
+155     \textcolor{keywordflow}{return} Rzyx;
+156 \}
+\end{DoxyCode}
+\hypertarget{utilities_8h_a6dacf3c3c19aa1e13a4d5a148fe5114e}{\index{utilities.\-h@{utilities.\-h}!send\-Err@{send\-Err}}
+\index{send\-Err@{send\-Err}!utilities.h@{utilities.\-h}}
+\subsubsection[{send\-Err}]{\setlength{\rightskip}{0pt plus 5cm}void send\-Err (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{msg}
+\end{DoxyParamCaption}
+)}}\label{utilities_8h_a6dacf3c3c19aa1e13a4d5a148fe5114e}
+
+
+Send a message to std\-::cerr. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em msg} & Message as string \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 35 of file utilities.\-cpp.
+
+
+
+References get\-Time\-Stamp().
+
+
+
+Referenced by sim\-System\-::add\-Potential(), check\-Bounds(), tabulated\-::energy(), initialize(), checkpoint\-::load(), tabulated\-::load\-Potential(), moves\-::moves(), perform\-Crossover(), perform\-T\-M\-M\-C(), perform\-W\-A\-L\-A(), sim\-System\-::read\-Config(), sanity\-Checks(), set\-Config(), set\-Moves(), set\-Pair\-Potentials(), and set\-System\-Barriers().
+
+
+\begin{DoxyCode}
+35                                    \{
+36     std::cerr << \textcolor{stringliteral}{" *** ERROR: "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << \textcolor{stringliteral}{" : "} << msg << \textcolor{stringliteral}{" *** "} << std::endl;
+37 \}
+\end{DoxyCode}
+\hypertarget{utilities_8h_a08974c73a5b36c28b8ad1ef47fca77b0}{\index{utilities.\-h@{utilities.\-h}!send\-Msg@{send\-Msg}}
+\index{send\-Msg@{send\-Msg}!utilities.h@{utilities.\-h}}
+\subsubsection[{send\-Msg}]{\setlength{\rightskip}{0pt plus 5cm}void send\-Msg (
+\begin{DoxyParamCaption}
+\item[{const std\-::string}]{msg}
+\end{DoxyParamCaption}
+)}}\label{utilities_8h_a08974c73a5b36c28b8ad1ef47fca77b0}
+
+
+Send a message to std\-::cout. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em msg} & Message as string \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 26 of file utilities.\-cpp.
+
+
+
+References get\-Time\-Stamp().
+
+
+
+Referenced by sim\-System\-::add\-Potential(), initialize(), checkpoint\-::load(), tabulated\-::load\-Potential(), parse\-Json(), perform\-Crossover(), perform\-T\-M\-M\-C(), perform\-W\-A\-L\-A(), sim\-System\-::read\-Config(), sanity\-Checks(), and set\-Config().
+
+
+\begin{DoxyCode}
+26                                    \{
+27     std::cout << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << \textcolor{stringliteral}{" : "} << msg << std::endl;
+28 \}
 \end{DoxyCode}
 \hypertarget{utilities_8h_ac84b085638619e2d7926ef816d833f7c}{\index{utilities.\-h@{utilities.\-h}!splitstr@{splitstr}}
 \index{splitstr@{splitstr}!utilities.h@{utilities.\-h}}
@@ -468,21 +637,21 @@ References matrix\-Product().
 )}}\label{utilities_8h_ac84b085638619e2d7926ef816d833f7c}
 
 
-For converting to string. 
+C++ explode a string. 
 
-For converting to string. 
 
-Definition at line 34 of file utilities.\-cpp.
+
+Definition at line 75 of file utilities.\-cpp.
 
 
 \begin{DoxyCode}
-34                                                                   \{
-35     std::stringstream ss(s);
-36     std::string item;
-37     std::vector <std::string> tokens;
-38     \textcolor{keywordflow}{while} (std::getline(ss, item, delim)) \{
-39         tokens.push\_back(item);
-40     \}
-41     \textcolor{keywordflow}{return} tokens;
-42 \}
+75                                                                   \{
+76     std::stringstream ss(s);
+77     std::string item;
+78     std::vector <std::string> tokens;
+79     \textcolor{keywordflow}{while} (std::getline(ss, item, delim)) \{
+80         tokens.push\_back(item);
+81     \}
+82     \textcolor{keywordflow}{return} tokens;
+83 \}
 \end{DoxyCode}

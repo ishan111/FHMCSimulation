@@ -113,10 +113,9 @@ References box, cell\-Count, cell\-Count\-X, cell\-Count\-X\-Y, cell\-Count\-Y, 
 28     \}
 29 
 30     \textcolor{keywordflow}{if} (\_atoms.size() > 0) \{
-31         \textcolor{comment}{//std::cout << "Sorting particles into cells." << std::endl;}
-32         \hyperlink{classcell_list_a58c091eb874dd1b88558bb92424e5ef2}{sortIntoCells}(\_atoms);
-33     \}
-34 \}
+31         \hyperlink{classcell_list_a58c091eb874dd1b88558bb92424e5ef2}{sortIntoCells}(\_atoms);
+32     \}
+33 \}
 \end{DoxyCode}
 
 
@@ -266,7 +265,7 @@ References box, cell\-Count\-X, cell\-Count\-X\-Y, and cell\-Size.
 )}}\label{classcell_list_a56c0012eed483e47248f9065bfc70fce}
 
 
-Definition at line 94 of file cell\-List.\-cpp.
+Definition at line 93 of file cell\-List.\-cpp.
 
 
 
@@ -278,11 +277,11 @@ Referenced by sim\-System\-::insert\-Atom().
 
 
 \begin{DoxyCode}
-94                                        \{
-95     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} index = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_a->
+93                                        \{
+94     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} index = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_a->
       \hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]);
-96     \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[index].push\_back(\_a);
-97 \}
+95     \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[index].push\_back(\_a);
+96 \}
 \end{DoxyCode}
 \hypertarget{classcell_list_a58c091eb874dd1b88558bb92424e5ef2}{\index{cell\-List@{cell\-List}!sort\-Into\-Cells@{sort\-Into\-Cells}}
 \index{sort\-Into\-Cells@{sort\-Into\-Cells}!cellList@{cell\-List}}
@@ -293,7 +292,7 @@ Referenced by sim\-System\-::insert\-Atom().
 )}}\label{classcell_list_a58c091eb874dd1b88558bb92424e5ef2}
 
 
-Definition at line 72 of file cell\-List.\-cpp.
+Definition at line 71 of file cell\-List.\-cpp.
 
 
 
@@ -305,16 +304,16 @@ Referenced by cell\-List().
 
 
 \begin{DoxyCode}
-72                                                         \{
-73     \textcolor{comment}{// clear all cells}
-74     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}.size(); i++)
-75         \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[i].clear();
-76 
-77     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i=0; i<\_atoms.size(); i++) \{
-78         \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} index = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_atoms[i]->pos[0], \_atoms[i]->pos[1], \_atoms[i]->pos[2]);
-79         \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[index].push\_back(\_atoms[i]);
-80     \}
-81 \}
+71                                                         \{
+72     \textcolor{comment}{// clear all cells}
+73     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}.size(); i++)
+74         \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[i].clear();
+75 
+76     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i=0; i<\_atoms.size(); i++) \{
+77         \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} index = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_atoms[i]->pos[0], \_atoms[i]->pos[1], \_atoms[i]->pos[2]);
+78         \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[index].push\_back(\_atoms[i]);
+79     \}
+80 \}
 \end{DoxyCode}
 \hypertarget{classcell_list_ac4400cd9b80c3199e6482e8bcb1990c6}{\index{cell\-List@{cell\-List}!sort\-Into\-Cells@{sort\-Into\-Cells}}
 \index{sort\-Into\-Cells@{sort\-Into\-Cells}!cellList@{cell\-List}}
@@ -325,7 +324,7 @@ Referenced by cell\-List().
 )}}\label{classcell_list_ac4400cd9b80c3199e6482e8bcb1990c6}
 
 
-Definition at line 83 of file cell\-List.\-cpp.
+Definition at line 82 of file cell\-List.\-cpp.
 
 
 
@@ -333,17 +332,17 @@ References calc\-Index(), and cells.
 
 
 \begin{DoxyCode}
-83                                                         \{
-84     \textcolor{comment}{// clear all cells}
-85     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}.size(); i++)
-86         \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[i].clear();
-87 
-88     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \_atoms->size(); i++) \{
-89         \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} index = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_atoms->at(i).pos[0], \_atoms->at(i).pos[1], \_atoms->at(i)
+82                                                         \{
+83     \textcolor{comment}{// clear all cells}
+84     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}.size(); i++)
+85         \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[i].clear();
+86 
+87     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \_atoms->size(); i++) \{
+88         \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} index = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_atoms->at(i).pos[0], \_atoms->at(i).pos[1], \_atoms->at(i)
       .pos[2]);
-90         \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[index].push\_back(&\_atoms->at(i));
-91     \}
-92 \}
+89         \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[index].push\_back(&\_atoms->at(i));
+90     \}
+91 \}
 \end{DoxyCode}
 \hypertarget{classcell_list_a31caca1e8dd05c33215ac7495d55aeea}{\index{cell\-List@{cell\-List}!swap\-And\-Delete\-Particle@{swap\-And\-Delete\-Particle}}
 \index{swap\-And\-Delete\-Particle@{swap\-And\-Delete\-Particle}!cellList@{cell\-List}}
@@ -355,7 +354,7 @@ References calc\-Index(), and cells.
 )}}\label{classcell_list_a31caca1e8dd05c33215ac7495d55aeea}
 
 
-Definition at line 101 of file cell\-List.\-cpp.
+Definition at line 100 of file cell\-List.\-cpp.
 
 
 
@@ -367,43 +366,43 @@ Referenced by sim\-System\-::delete\-Atom().
 
 
 \begin{DoxyCode}
-101                                                         \{
-102     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} indexA = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_a->
+100                                                         \{
+101     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} indexA = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_a->
       \hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]);
-103     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} indexB = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_b->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_b->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_b->
+102     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} indexB = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_b->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_b->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_b->
       \hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]);
-104 
-105     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} cellIndexA = 0, cellIndexB = 0;
-106     \textcolor{keywordtype}{bool} foundCellIndexA = \textcolor{keyword}{false}, foundCellIndexB = \textcolor{keyword}{false};
-107 
-108     \textcolor{comment}{// locate position of atom \_a in its cell}
-109     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA].size(); i++) \{ \textcolor{comment}{// error?}
-110         \textcolor{keywordflow}{if} (\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA][i] == \_a) \{
-111             cellIndexA = i;
-112             foundCellIndexA = \textcolor{keyword}{true};
-113             \textcolor{keywordflow}{break};
-114         \}
-115     \}
-116 
-117     \textcolor{comment}{// locate position of atom \_b in its cell}
-118     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexB].size(); i++) \{ \textcolor{comment}{// error ?}
-119         \textcolor{keywordflow}{if} (\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexB][i] == \_b) \{
-120             cellIndexB = i;
-121             foundCellIndexB = \textcolor{keyword}{true};
-122             \textcolor{keywordflow}{break};
-123         \}
-124     \}
-125 
-126     \textcolor{keywordflow}{if} (!foundCellIndexA || !foundCellIndexB) \{
-127         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Failed to locate index in cell list properly"});
-128     \}
-129 
-130     \textcolor{comment}{// swap addresses}
-131     \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexB][cellIndexB] = \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA][cellIndexA];
-132 
-133     \textcolor{comment}{// remove \_a from its cell}
-134     \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA].erase(\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA].begin()+cellIndexA);
-135 \}
+103 
+104     \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} cellIndexA = 0, cellIndexB = 0;
+105     \textcolor{keywordtype}{bool} foundCellIndexA = \textcolor{keyword}{false}, foundCellIndexB = \textcolor{keyword}{false};
+106 
+107     \textcolor{comment}{// locate position of atom \_a in its cell}
+108     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA].size(); i++) \{ \textcolor{comment}{// error?}
+109         \textcolor{keywordflow}{if} (\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA][i] == \_a) \{
+110             cellIndexA = i;
+111             foundCellIndexA = \textcolor{keyword}{true};
+112             \textcolor{keywordflow}{break};
+113         \}
+114     \}
+115 
+116     \textcolor{comment}{// locate position of atom \_b in its cell}
+117     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexB].size(); i++) \{ \textcolor{comment}{// error ?}
+118         \textcolor{keywordflow}{if} (\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexB][i] == \_b) \{
+119             cellIndexB = i;
+120             foundCellIndexB = \textcolor{keyword}{true};
+121             \textcolor{keywordflow}{break};
+122         \}
+123     \}
+124 
+125     \textcolor{keywordflow}{if} (!foundCellIndexA || !foundCellIndexB) \{
+126         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Failed to locate index in cell list properly"});
+127     \}
+128 
+129     \textcolor{comment}{// swap addresses}
+130     \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexB][cellIndexB] = \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA][cellIndexA];
+131 
+132     \textcolor{comment}{// remove \_a from its cell}
+133     \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA].erase(\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexA].begin()+cellIndexA);
+134 \}
 \end{DoxyCode}
 \hypertarget{classcell_list_a0d77368abdd5a4665ca2302b9a20509b}{\index{cell\-List@{cell\-List}!translate\-Particle@{translate\-Particle}}
 \index{translate\-Particle@{translate\-Particle}!cellList@{cell\-List}}
@@ -415,7 +414,7 @@ Referenced by sim\-System\-::delete\-Atom().
 )}}\label{classcell_list_a0d77368abdd5a4665ca2302b9a20509b}
 
 
-Definition at line 138 of file cell\-List.\-cpp.
+Definition at line 137 of file cell\-List.\-cpp.
 
 
 
@@ -427,35 +426,35 @@ Referenced by sim\-System\-::translate\-Atom().
 
 
 \begin{DoxyCode}
-138                                                                         \{
-139     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} indexOld = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_oldPos[0], \_oldPos[1], \_oldPos[2]);
-140     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} indexNew = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_a->
+137                                                                         \{
+138     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} indexOld = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_oldPos[0], \_oldPos[1], \_oldPos[2]);
+139     \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} indexNew = \hyperlink{classcell_list_aa6b843131cd487164a137571c7343cab}{calcIndex}(\_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[0], \_a->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[1], \_a->
       \hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]);
-141 
-142     \textcolor{keywordflow}{if} (indexOld != indexNew) \{
-143         \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} cellIndexOld = 0;
-144         \textcolor{keywordtype}{bool} foundCellIndexOld = \textcolor{keyword}{false};
-145 
-146         \textcolor{comment}{// locate position of atom \_a in its cell}
-147         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexOld].size(); i++) \{ \textcolor{comment}{//error?}
-148             \textcolor{keywordflow}{if} (\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexOld][i] == \_a) \{
-149                 cellIndexOld = i;
-150                 foundCellIndexOld = \textcolor{keyword}{true};
-151                 \textcolor{keywordflow}{break};
-152             \}
-153         \}
-154 
-155         \textcolor{keywordflow}{if} (!foundCellIndexOld) \{
-156             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Failed to locate cell index properly"});
-157         \}
-158 
-159         \textcolor{comment}{// remove \_a from its cell}
-160         \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexOld].erase(\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexOld].begin()+cellIndexOld);
-161 
-162         \textcolor{comment}{// insert \_a into new cell}
-163         \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexNew].push\_back(\_a);
-164     \}
-165 \}
+140 
+141     \textcolor{keywordflow}{if} (indexOld != indexNew) \{
+142         \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} cellIndexOld = 0;
+143         \textcolor{keywordtype}{bool} foundCellIndexOld = \textcolor{keyword}{false};
+144 
+145         \textcolor{comment}{// locate position of atom \_a in its cell}
+146         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexOld].size(); i++) \{ \textcolor{comment}{//error?}
+147             \textcolor{keywordflow}{if} (\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexOld][i] == \_a) \{
+148                 cellIndexOld = i;
+149                 foundCellIndexOld = \textcolor{keyword}{true};
+150                 \textcolor{keywordflow}{break};
+151             \}
+152         \}
+153 
+154         \textcolor{keywordflow}{if} (!foundCellIndexOld) \{
+155             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Failed to locate cell index properly"});
+156         \}
+157 
+158         \textcolor{comment}{// remove \_a from its cell}
+159         \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexOld].erase(\hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexOld].begin()+cellIndexOld);
+160 
+161         \textcolor{comment}{// insert \_a into new cell}
+162         \hyperlink{classcell_list_a10bc0c3ae819293b1e88bc7d1bfdb2aa}{cells}[indexNew].push\_back(\_a);
+163     \}
+164 \}
 \end{DoxyCode}
 
 

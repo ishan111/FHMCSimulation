@@ -210,9 +210,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;</div>
 <div class="line"><a name="l00161"></a><span class="lineno"><a class="line" href="classdynamic__one__dim__histogram.html#a2ae28c147c2dfc624ece9102603dd667">  161</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classdynamic__one__dim__histogram.html#a2ae28c147c2dfc624ece9102603dd667">dynamic_one_dim_histogram::record</a> (<span class="keyword">const</span> <span class="keywordtype">double</span> value) {</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">int</span> bin = round((value - lb_)/delta_); <span class="comment">// this &quot;centers&quot; the bin</span></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordflow">if</span> (fabs(bin) &lt; tol_) {</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;            <span class="comment">// prevent -0 case and set to 0</span></div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;            bin = 0;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordflow">if</span> (std::abs(bin) &lt; tol_) {</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        <span class="comment">// prevent -0 case and set to 0</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        bin = 0;</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    }</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordflow">if</span> (bin &lt; 0) {</div>
@@ -235,7 +235,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="comment">// re-calculate after lb potentially adjusted</span></div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    bin = round((value - lb_)/delta_);</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordflow">if</span> (fabs(bin) &lt; tol_) {</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordflow">if</span> (std::abs(bin) &lt; tol_) {</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            <span class="comment">// prevent -0 case and set to 0</span></div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;            bin = 0;</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    }</div>
@@ -398,7 +398,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 28 2016 15:07:17 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Dec 29 2016 11:09:03 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

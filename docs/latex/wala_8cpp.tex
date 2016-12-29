@@ -38,7 +38,7 @@ Definition at line 10 of file wala.\-cpp.
 
 
 
-References checkpoint\-::check(), sim\-System\-::check\-Energy\-Histogram\-Bounds(), wala\-::evaluate\-Flatness(), sim\-System\-::get\-Current\-M(), get\-Time\-Stamp(), sim\-System\-::get\-Total\-M(), sim\-System\-::get\-W\-A\-L\-A\-Bias(), wala\-::iterate\-Forward(), wala\-::ln\-F(), sim\-System\-::ln\-F\-\_\-end, sim\-System\-::ln\-F\-\_\-start, moves\-::make\-Move(), checkpoint\-::move\-Counter, moves\-::print(), wala\-::readln\-P\-I(), checkpoint\-::res\-From\-W\-A\-L\-A, sim\-System\-::restart\-From\-W\-A\-L\-A, sim\-System\-::restart\-From\-W\-A\-L\-A\-File, sanity\-Checks(), sim\-System\-::start\-W\-A\-L\-A(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, sim\-System\-::use\-T\-M\-M\-C, sim\-System\-::use\-W\-A\-L\-A, sim\-System\-::wala\-\_\-g, sim\-System\-::wala\-\_\-s, checkpoint\-::wala\-Done, custom\-Exception\-::what(), and sim\-System\-::wl\-Sweep\-Size.
+References checkpoint\-::check(), sim\-System\-::check\-Energy\-Histogram\-Bounds(), wala\-::evaluate\-Flatness(), sim\-System\-::get\-Current\-M(), sim\-System\-::get\-Total\-M(), sim\-System\-::get\-W\-A\-L\-A\-Bias(), wala\-::iterate\-Forward(), wala\-::ln\-F(), sim\-System\-::ln\-F\-\_\-end, sim\-System\-::ln\-F\-\_\-start, moves\-::make\-Move(), checkpoint\-::move\-Counter, num\-To\-Str(), moves\-::print(), wala\-::readln\-P\-I(), checkpoint\-::res\-From\-W\-A\-L\-A, sim\-System\-::restart\-From\-W\-A\-L\-A, sim\-System\-::restart\-From\-W\-A\-L\-A\-File, sanity\-Checks(), send\-Err(), send\-Msg(), sim\-System\-::start\-W\-A\-L\-A(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, sim\-System\-::use\-T\-M\-M\-C, sim\-System\-::use\-W\-A\-L\-A, sim\-System\-::wala\-\_\-g, sim\-System\-::wala\-\_\-s, checkpoint\-::wala\-Done, custom\-Exception\-::what(), and sim\-System\-::wl\-Sweep\-Size.
 
 
 \begin{DoxyCode}
@@ -46,7 +46,7 @@ References checkpoint\-::check(), sim\-System\-::check\-Energy\-Histogram\-Bound
 11     \textcolor{keywordflow}{if} (res.\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone}) \{
 12         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Checkpoint indicates WALA already finished"});
 13     \}
-14     std::cout << \textcolor{stringliteral}{"Beginning Wang-Landau portion at "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+14     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Beginning Wang-Landau"});
 15 
 16     \textcolor{keywordtype}{bool} flat = \textcolor{keyword}{false};
 17     \textcolor{keywordtype}{double} lnF = sys.\hyperlink{classsim_system_a794334e163fbeb4b4f61bcea676679ce}{lnF\_start};
@@ -66,33 +66,33 @@ References checkpoint\-::check(), sim\-System\-::check\-Energy\-Histogram\-Bound
 29                 sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ae04916f49c11b0636e813787a3906570}{readlnPI}(sys.
       \hyperlink{classsim_system_afbf0b172dc35572e71ec6d27a018e2fc}{restartFromWALAFile});
 30             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-31                 std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+31                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
 32                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
 33             \}
-34             std::cout << \textcolor{stringliteral}{"Read initial lnPI for Wang-Landau from "} << sys.
-      \hyperlink{classsim_system_afbf0b172dc35572e71ec6d27a018e2fc}{restartFromWALAFile} << std::endl;
+34             \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Read initial lnPI for Wang-Landau from "}+sys.
+      \hyperlink{classsim_system_afbf0b172dc35572e71ec6d27a018e2fc}{restartFromWALAFile});
 35         \}
 36     \} \textcolor{keywordflow}{else} \{
 37         lnF = sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF}(); \textcolor{comment}{// checkpoint re-initialized to starting value}
 38         moveStart = res.\hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{moveCounter};
 39     \}
 40 
-41     std::cout << \textcolor{stringliteral}{"Initial lnF = "} << sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF}() << \textcolor{stringliteral}{" at "} << 
-      \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
-42     std::cout << \textcolor{stringliteral}{"Starting from "} << moveStart << \textcolor{stringliteral}{" moves at "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+41     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Initial lnF = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->
+      \hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF}()));
+42     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Starting from "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(moveStart)+\textcolor{stringliteral}{" moves"});
 43 
 44     \textcolor{keywordflow}{while} (lnF > sys.\hyperlink{classsim_system_a3fb5d01fd3abf49f577c050968fba9d1}{lnF\_end}) \{
 45         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} move = moveStart; move < sys.\hyperlink{classsim_system_ae625e1026daee4f99f83fb73881875a1}{wlSweepSize}; ++move) \{
 46             \textcolor{keywordflow}{try} \{
 47                 usedMovesEq->\hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{makeMove}(sys);
 48             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-49                 std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+49                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
 50                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
 51             \}
 52             \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0)\{
 53                 sys.\hyperlink{classsim_system_a176b9ff482f1d36bc0638538bcfe0670}{checkEnergyHistogramBounds} ();
 54             \}
-55             res.\hyperlink{classcheckpoint_ab9ca7cab3fd3c5dc35fe71977b81a69f}{check}(sys, move);
+55             res.\hyperlink{classcheckpoint_ab2f76253fde665ee149c1380e78f5c2f}{check}(sys, move);
 56         \}
 57 
 58         \textcolor{comment}{// Check if bias has flattened out}
@@ -102,8 +102,7 @@ References checkpoint\-::check(), sim\-System\-::check\-Energy\-Histogram\-Bound
        reduce lnF}
 62             lnF = sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF}();
 63             flat = \textcolor{keyword}{false};
-64             std::cout << \textcolor{stringliteral}{"Wang-Landau is now flat, new lnF = "} << lnF << \textcolor{stringliteral}{" at "} << 
-      \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+64             \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Wang-Landau is now flat, new lnF = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(lnF));
 65             usedMovesEq->\hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print}(\textcolor{stringliteral}{"wala.stats"});
 66         \}
 67     \}

@@ -72,7 +72,7 @@ Definition at line 8 of file mover.\-cpp.
 
 
 
-References set\-M(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, and custom\-Exception\-::what().
+References send\-Err(), set\-M(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, and custom\-Exception\-::what().
 
 
 \begin{DoxyCode}
@@ -80,7 +80,7 @@ References set\-M(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, and custom\-Exception\-
 9     \textcolor{keywordflow}{try} \{
 10         \hyperlink{classmoves_ab603c6ce829075e3232ff41a7d5e2aab}{setM} (M);
 11     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-12         std::cerr << ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}() << std::endl;
+12         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
 13         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
 14     \}
 15 \}
@@ -134,7 +134,7 @@ Definition at line 79 of file mover.\-cpp.
 
 
 
-Referenced by initialize().
+Referenced by set\-Moves().
 
 
 \begin{DoxyCode}
@@ -169,7 +169,7 @@ Definition at line 67 of file mover.\-cpp.
 
 
 
-Referenced by initialize(), and setup().
+Referenced by set\-Config(), and set\-Moves().
 
 
 \begin{DoxyCode}
@@ -207,7 +207,7 @@ Definition at line 92 of file mover.\-cpp.
 
 
 
-Referenced by initialize().
+Referenced by set\-Moves().
 
 
 \begin{DoxyCode}
@@ -248,7 +248,7 @@ Definition at line 106 of file mover.\-cpp.
 
 
 
-Referenced by initialize().
+Referenced by set\-Moves().
 
 
 \begin{DoxyCode}
@@ -499,7 +499,7 @@ Definition at line 22 of file mover.\-cpp.
 
 
 
-Referenced by initialize(), and moves().
+Referenced by moves(), and set\-Moves().
 
 
 \begin{DoxyCode}

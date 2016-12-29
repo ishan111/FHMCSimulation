@@ -115,189 +115,219 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="utilities_8cpp.html#a6ebf6899d6c1c8b7b9d09be872c05aae">   18</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define EPS 1.2e-7</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="utilities_8cpp.html#aa7436c9270ffb06f8c1eae8d2e605cec">   19</a></span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define RNMX (1.0-EPS)</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="utilities_8h.html#a2c482530b256030d81cdbfcdc1d191c3">   26</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="utilities_8cpp.html#a2c482530b256030d81cdbfcdc1d191c3">pauseCode</a> (<span class="keywordtype">long</span> <span class="keywordtype">int</span> dur) {</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">long</span> <span class="keywordtype">int</span> temp = time(NULL) + dur;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordflow">while</span>(temp &gt; time(NULL));</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;}</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="utilities_8h.html#ac84b085638619e2d7926ef816d833f7c">   34</a></span>&#160;std::vector &lt; std::string &gt; <a class="code" href="utilities_8cpp.html#ac84b085638619e2d7926ef816d833f7c">splitstr</a> (<span class="keyword">const</span> std::string &amp;s, <span class="keywordtype">char</span> delim) {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    std::stringstream ss(s);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    std::string item;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    std::vector &lt;std::string&gt; tokens;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordflow">while</span> (std::getline(ss, item, delim)) {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        tokens.push_back(item);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    }</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordflow">return</span> tokens;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;}</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="utilities_8h.html#aa6d910bf51f18a75deb20c6f0fbba285">   49</a></span>&#160;std::string <a class="code" href="utilities_8cpp.html#aa6d910bf51f18a75deb20c6f0fbba285">getTimeStamp</a> () {</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    time_t rawtime;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    time (&amp;rawtime);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keyword">struct </span>tm * timeinfo;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    timeinfo = localtime (&amp;rawtime);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordtype">char</span> timestamp [80];</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    strftime (timestamp,80,<span class="stringliteral">&quot;%d/%m/%Y %H:%M:%S&quot;</span>,timeinfo);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    std::string ans (timestamp);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordflow">return</span> ans;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="utilities_8h.html#a198e6f6658163fec9b36be3542407727">   67</a></span>&#160;std::vector &lt; std::vector &lt; double &gt; &gt; <a class="code" href="utilities_8cpp.html#a198e6f6658163fec9b36be3542407727">matrixProduct</a> (std::vector &lt; std::vector &lt; double &gt; &gt; &amp;mat1, std::vector &lt; std::vector &lt; double &gt; &gt; &amp;mat2) {</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    std::vector &lt; double &gt; dummy (3, 0);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    std::vector &lt; std::vector &lt; double &gt; &gt; W (3, dummy);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; 3; ++i) {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; 3; ++j) {</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            W[i][j] = mat1[i][j]*mat2[j][i];</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        }</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keywordflow">return</span> W;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;}</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="utilities_8h.html#a2b3e32432e13d1a3feeb00de5466e456">   87</a></span>&#160;std::vector &lt; std::vector &lt; double &gt; &gt; <a class="code" href="utilities_8cpp.html#a2b3e32432e13d1a3feeb00de5466e456">rotationMatrix</a> (<span class="keyword">const</span> <span class="keywordtype">double</span> alpha, <span class="keyword">const</span> <span class="keywordtype">double</span> beta, <span class="keyword">const</span> <span class="keywordtype">double</span> gamma) {</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    std::vector &lt; double &gt; dummy (3, 0);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    std::vector &lt; std::vector &lt; double &gt; &gt; Rx (3, dummy), Ry(3, dummy), Rz(3, dummy), Ryx, Rzyx;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="comment">// https://en.wikipedia.org/wiki/Rotation_matrix#General_rotations</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    Rx[0][0] = 1.0;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    Rx[1][1] = cos(alpha);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    Rx[1][2] = -sin(alpha);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    Rx[2][1] = sin(alpha);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    Rx[2][2] = cos(alpha);</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    Ry[0][0] = cos(beta);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    Ry[0][2] = sin(beta);</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    Ry[1][1] = 1.0;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    Ry[2][0] = -sin(beta);</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    Ry[2][2] = cos(beta);</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    Rz[0][0] = cos(gamma);</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    Rz[0][1] = -sin(gamma);</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    Rz[1][0] = sin(gamma);</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    Rz[1][1] = cos(gamma);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    Rz[2][2] = 1.0;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    Ryx = <a class="code" href="utilities_8cpp.html#a198e6f6658163fec9b36be3542407727">matrixProduct</a>(Ry, Rx);</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    Rzyx = <a class="code" href="utilities_8cpp.html#a198e6f6658163fec9b36be3542407727">matrixProduct</a>(Rz, Ryx);</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keywordflow">return</span> Rzyx;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;}</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
-<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="utilities_8h.html#af1bc480936b7436d4e679abc5a837815">  124</a></span>&#160;std::vector &lt; double &gt; <a class="code" href="utilities_8cpp.html#af1bc480936b7436d4e679abc5a837815">random3DSurfaceVector</a> (<span class="keyword">const</span> <span class="keywordtype">double</span> magnitude) {</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keywordtype">int</span> success = 0;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    std::vector &lt; double &gt; ans (3, 0);</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordflow">while</span> (success == 0) {</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <span class="keywordtype">double</span> r1 = <a class="code" href="utilities_8cpp.html#a0f9542af4b475ac79cb679d7a8d14db0">rng</a>(&amp;<a class="code" href="utilities_8cpp.html#a3f4e4ea24d5a5c66feae55d1f329c884">RNG_SEED</a>), r2 = <a class="code" href="utilities_8cpp.html#a0f9542af4b475ac79cb679d7a8d14db0">rng</a>(&amp;<a class="code" href="utilities_8cpp.html#a3f4e4ea24d5a5c66feae55d1f329c884">RNG_SEED</a>), x1 = 1.0-2.0*r1, x2 = 1.0-2.0*r2;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        <span class="keywordtype">double</span> sum2 = x1*x1+x2*x2;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <span class="keywordflow">if</span> (sum2 &lt; 1.0) {</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            ans[0] = 2*x1*sqrt(1-sum2)*magnitude;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            ans[1] = 2*x2*sqrt(1-sum2)*magnitude;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;            ans[2] = (1-2.0*sum2)*magnitude;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            success = 1;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        }</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    }</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keywordflow">return</span> ans;</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;}</div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="utilities_8h.html#a08974c73a5b36c28b8ad1ef47fca77b0">   26</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="utilities_8cpp.html#a08974c73a5b36c28b8ad1ef47fca77b0">sendMsg</a> (<span class="keyword">const</span> std::string msg) {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    std::cout &lt;&lt; <a class="code" href="utilities_8cpp.html#aa6d910bf51f18a75deb20c6f0fbba285">getTimeStamp</a>() &lt;&lt; <span class="stringliteral">&quot; : &quot;</span> &lt;&lt; msg &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;}</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="utilities_8h.html#a6dacf3c3c19aa1e13a4d5a148fe5114e">   35</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="utilities_8cpp.html#a6dacf3c3c19aa1e13a4d5a148fe5114e">sendErr</a> (<span class="keyword">const</span> std::string msg) {</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    std::cerr &lt;&lt; <span class="stringliteral">&quot; *** ERROR: &quot;</span> &lt;&lt; <a class="code" href="utilities_8cpp.html#aa6d910bf51f18a75deb20c6f0fbba285">getTimeStamp</a>() &lt;&lt; <span class="stringliteral">&quot; : &quot;</span> &lt;&lt; msg &lt;&lt; <span class="stringliteral">&quot; *** &quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;}</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="utilities_8h.html#a3f494918ff3c252de4914c9905be04e7">   44</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="utilities_8cpp.html#a3f494918ff3c252de4914c9905be04e7">parseJson</a> (<span class="keyword">const</span> std::string filename, rapidjson::Document &amp;doc) {</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        FILE* fp = fopen(filename.c_str(), <span class="stringliteral">&quot;r&quot;</span>);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keywordtype">char</span> readBuffer[65536];</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        rapidjson::FileReadStream is(fp, readBuffer, <span class="keyword">sizeof</span>(readBuffer));</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        doc.ParseStream(is);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        fclose(fp);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    } <span class="keywordflow">catch</span> (...) {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Unable to parse &quot;</span>+filename);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">if</span> (doc.IsObject()) {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <a class="code" href="utilities_8cpp.html#a08974c73a5b36c28b8ad1ef47fca77b0">sendMsg</a>(<span class="stringliteral">&quot;Parsed JSON file &quot;</span>+filename);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Error in &quot;</span>+filename+<span class="stringliteral">&quot;, not begin detected as proper JSON document&quot;</span>);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    }</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;}</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="utilities_8h.html#a2c482530b256030d81cdbfcdc1d191c3">   67</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="utilities_8cpp.html#a2c482530b256030d81cdbfcdc1d191c3">pauseCode</a> (<span class="keywordtype">long</span> <span class="keywordtype">int</span> dur) {</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordtype">long</span> <span class="keywordtype">int</span> temp = time(NULL) + dur;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordflow">while</span>(temp &gt; time(NULL));</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="utilities_8h.html#ac84b085638619e2d7926ef816d833f7c">   75</a></span>&#160;std::vector &lt; std::string &gt; <a class="code" href="utilities_8cpp.html#ac84b085638619e2d7926ef816d833f7c">splitstr</a> (<span class="keyword">const</span> std::string &amp;s, <span class="keywordtype">char</span> delim) {</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    std::stringstream ss(s);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    std::string item;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    std::vector &lt;std::string&gt; tokens;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">while</span> (std::getline(ss, item, delim)) {</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        tokens.push_back(item);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    }</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keywordflow">return</span> tokens;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;}</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="utilities_8h.html#aa6d910bf51f18a75deb20c6f0fbba285">   90</a></span>&#160;std::string <a class="code" href="utilities_8cpp.html#aa6d910bf51f18a75deb20c6f0fbba285">getTimeStamp</a> () {</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    time_t rawtime;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    time (&amp;rawtime);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keyword">struct </span>tm * timeinfo;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    timeinfo = localtime (&amp;rawtime);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">char</span> timestamp [80];</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    strftime (timestamp,80,<span class="stringliteral">&quot;%d/%m/%Y %H:%M:%S&quot;</span>,timeinfo);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    std::string ans (timestamp);</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">return</span> ans;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;}</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
+<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="utilities_8h.html#a198e6f6658163fec9b36be3542407727">  108</a></span>&#160;std::vector &lt; std::vector &lt; double &gt; &gt; <a class="code" href="utilities_8cpp.html#a198e6f6658163fec9b36be3542407727">matrixProduct</a> (std::vector &lt; std::vector &lt; double &gt; &gt; &amp;mat1, std::vector &lt; std::vector &lt; double &gt; &gt; &amp;mat2) {</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    std::vector &lt; double &gt; dummy (3, 0);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    std::vector &lt; std::vector &lt; double &gt; &gt; W (3, dummy);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; 3; ++i) {</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; 3; ++j) {</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            W[i][j] = mat1[i][j]*mat2[j][i];</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        }</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    }</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="keywordflow">return</span> W;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;}</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="utilities_8h.html#a2b3e32432e13d1a3feeb00de5466e456">  128</a></span>&#160;std::vector &lt; std::vector &lt; double &gt; &gt; <a class="code" href="utilities_8cpp.html#a2b3e32432e13d1a3feeb00de5466e456">rotationMatrix</a> (<span class="keyword">const</span> <span class="keywordtype">double</span> alpha, <span class="keyword">const</span> <span class="keywordtype">double</span> beta, <span class="keyword">const</span> <span class="keywordtype">double</span> gamma) {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    std::vector &lt; double &gt; dummy (3, 0);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    std::vector &lt; std::vector &lt; double &gt; &gt; Rx (3, dummy), Ry(3, dummy), Rz(3, dummy), Ryx, Rzyx;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="comment">// https://en.wikipedia.org/wiki/Rotation_matrix#General_rotations</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    Rx[0][0] = 1.0;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    Rx[1][1] = cos(alpha);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    Rx[1][2] = -sin(alpha);</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    Rx[2][1] = sin(alpha);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    Rx[2][2] = cos(alpha);</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;</div>
-<div class="line"><a name="l00147"></a><span class="lineno"><a class="line" href="utilities_8h.html#a0f9542af4b475ac79cb679d7a8d14db0">  147</a></span>&#160;<span class="keywordtype">double</span> <a class="code" href="utilities_8cpp.html#a0f9542af4b475ac79cb679d7a8d14db0">rng</a> (<span class="keywordtype">int</span> *idum) {</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordtype">int</span> j;</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordtype">long</span> k;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">long</span> idum2=123456789;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">long</span> iy=0;</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">long</span> iv[<a class="code" href="utilities_8cpp.html#a0e93cfb2d62849853fd34957ba6e6fdc">NTAB</a>];</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keywordtype">double</span> temp;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    Ry[0][0] = cos(beta);</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    Ry[0][2] = sin(beta);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    Ry[1][1] = 1.0;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    Ry[2][0] = -sin(beta);</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    Ry[2][2] = cos(beta);</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    Rz[0][0] = cos(gamma);</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    Rz[0][1] = -sin(gamma);</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    Rz[1][0] = sin(gamma);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    Rz[1][1] = cos(gamma);</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    Rz[2][2] = 1.0;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    Ryx = <a class="code" href="utilities_8cpp.html#a198e6f6658163fec9b36be3542407727">matrixProduct</a>(Ry, Rx);</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    Rzyx = <a class="code" href="utilities_8cpp.html#a198e6f6658163fec9b36be3542407727">matrixProduct</a>(Rz, Ryx);</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordflow">if</span> (*idum &lt;= 0) {</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        <span class="keywordflow">if</span> (-(*idum) &lt; 1) *idum=1;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        <span class="keywordflow">else</span> *idum = -(*idum);</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        idum2=(*idum);</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        <span class="keywordflow">for</span> (j=<a class="code" href="utilities_8cpp.html#a0e93cfb2d62849853fd34957ba6e6fdc">NTAB</a>+7;j&gt;=0;j--) {</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            k=(*idum)/<a class="code" href="utilities_8cpp.html#a9afa86ff22da69bda72fe271ae71ad46">IQ1</a>;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            *idum=<a class="code" href="utilities_8cpp.html#a6ef2749dca39c605c3d033f788afe6e3">IA1</a>*(*idum-k*<a class="code" href="utilities_8cpp.html#a9afa86ff22da69bda72fe271ae71ad46">IQ1</a>)-k*<a class="code" href="utilities_8cpp.html#a7b2b32709f9770a283701ffcf3723497">IR1</a>;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            <span class="keywordflow">if</span> (*idum &lt; 0) *idum += <a class="code" href="utilities_8cpp.html#a78325bdf48423acef7c012567628b391">IM1</a>;</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            <span class="keywordflow">if</span> (j &lt; <a class="code" href="utilities_8cpp.html#a0e93cfb2d62849853fd34957ba6e6fdc">NTAB</a>) iv[j] = *idum;</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        } iy=iv[0];</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    }</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    k=(*idum)/<a class="code" href="utilities_8cpp.html#a9afa86ff22da69bda72fe271ae71ad46">IQ1</a>;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    *idum=<a class="code" href="utilities_8cpp.html#a6ef2749dca39c605c3d033f788afe6e3">IA1</a>*(*idum-k*<a class="code" href="utilities_8cpp.html#a9afa86ff22da69bda72fe271ae71ad46">IQ1</a>)-k*<a class="code" href="utilities_8cpp.html#a7b2b32709f9770a283701ffcf3723497">IR1</a>;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordflow">if</span> (*idum &lt; 0) *idum += <a class="code" href="utilities_8cpp.html#a78325bdf48423acef7c012567628b391">IM1</a>;</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    k=idum2/<a class="code" href="utilities_8cpp.html#abae040385946a6acdf5e10d2efd86f3d">IQ2</a>;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    idum2=<a class="code" href="utilities_8cpp.html#a372a58d7e9e25912fd79e7afaa06cc7a">IA2</a>*(idum2-k*<a class="code" href="utilities_8cpp.html#abae040385946a6acdf5e10d2efd86f3d">IQ2</a>)-k*<a class="code" href="utilities_8cpp.html#a5a08e4f5cb3582e623cc14a6c92d48de">IR2</a>;</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keywordflow">if</span> (idum2 &lt; 0) idum2 += <a class="code" href="utilities_8cpp.html#ad8c519de7e5de4ae35344ddcf21fd062">IM2</a>;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    j=iy/<a class="code" href="utilities_8cpp.html#a62339d74dd5d9d00480e1a288cf88fe8">NDIV</a>;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    iy=iv[j]-idum2;</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    iv[j] = *idum;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordflow">if</span> (iy &lt; 1) iy += <a class="code" href="utilities_8cpp.html#a87a6e0054f9d827c979c43aa0d5e621a">IMM1</a>;</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keywordflow">if</span> ((temp=<a class="code" href="utilities_8cpp.html#ad301e6a88b1c01108f4867f2ea6f683c">AM</a>*iy) &gt; <a class="code" href="utilities_8cpp.html#aa7436c9270ffb06f8c1eae8d2e605cec">RNMX</a>) <span class="keywordflow">return</span> <a class="code" href="utilities_8cpp.html#aa7436c9270ffb06f8c1eae8d2e605cec">RNMX</a>;</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">return</span> temp;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;}</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;</div>
-<div class="line"><a name="l00186"></a><span class="lineno"><a class="line" href="utilities_8h.html#ad858a38f435e9a0ee890aa0f526714d2">  186</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="utilities_8cpp.html#ad858a38f435e9a0ee890aa0f526714d2">pbc</a> (std::vector &lt; double &gt; &amp;pos, <span class="keyword">const</span> std::vector &lt; double &gt; &amp;box) {</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="comment">// generally while loops are faster than round statements</span></div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; pos.size(); ++i) {</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        <span class="keywordflow">while</span> (pos[i] &lt; 0.0) {</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;            pos[i] += box[i];</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        }</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="keywordflow">while</span> (pos[i] &gt;= box[i]) {</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;            pos[i] -= box[i];</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        }</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    }</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;}</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;</div>
-<div class="line"><a name="l00207"></a><span class="lineno"><a class="line" href="utilities_8h.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">  207</a></span>&#160;<span class="keywordtype">double</span> <a class="code" href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a> (<span class="keyword">const</span> std::vector &lt; double &gt; &amp;p1, <span class="keyword">const</span> std::vector &lt; double &gt; &amp;p2, <span class="keyword">const</span> std::vector &lt; double &gt; &amp;box) {</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keywordtype">double</span> d2 = 0.0;</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; p2.size(); ++i) {</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        <span class="keywordtype">double</span> dr = p2[i] - p1[i];</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        <span class="keywordflow">while</span> (dr &lt; -box[i]/2.0) {</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;            dr += box[i];</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        }</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        <span class="keywordflow">while</span> (dr &gt; box[i]/2.0) {</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;            dr -= box[i];</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        }</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        d2 += dr*dr;</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    }</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;    <span class="keywordflow">return</span> d2;</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;}</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;</div>
-<div class="line"><a name="l00230"></a><span class="lineno"><a class="line" href="utilities_8h.html#a9d1e3672fd331d4185c1763c80226307">  230</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="utilities_8cpp.html#a9d1e3672fd331d4185c1763c80226307">fileExists</a>(std::string fileName) {</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keyword">struct </span>stat stFileInfo;</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keywordflow">if</span> (stat(fileName.c_str(),&amp;stFileInfo) == 0)</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keywordflow">return</span> Rzyx;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;}</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
+<div class="line"><a name="l00165"></a><span class="lineno"><a class="line" href="utilities_8h.html#af1bc480936b7436d4e679abc5a837815">  165</a></span>&#160;std::vector &lt; double &gt; <a class="code" href="utilities_8cpp.html#af1bc480936b7436d4e679abc5a837815">random3DSurfaceVector</a> (<span class="keyword">const</span> <span class="keywordtype">double</span> magnitude) {</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordtype">int</span> success = 0;</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    std::vector &lt; double &gt; ans (3, 0);</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordflow">while</span> (success == 0) {</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        <span class="keywordtype">double</span> r1 = <a class="code" href="utilities_8cpp.html#a0f9542af4b475ac79cb679d7a8d14db0">rng</a>(&amp;<a class="code" href="utilities_8cpp.html#a3f4e4ea24d5a5c66feae55d1f329c884">RNG_SEED</a>), r2 = <a class="code" href="utilities_8cpp.html#a0f9542af4b475ac79cb679d7a8d14db0">rng</a>(&amp;<a class="code" href="utilities_8cpp.html#a3f4e4ea24d5a5c66feae55d1f329c884">RNG_SEED</a>), x1 = 1.0-2.0*r1, x2 = 1.0-2.0*r2;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        <span class="keywordtype">double</span> sum2 = x1*x1+x2*x2;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        <span class="keywordflow">if</span> (sum2 &lt; 1.0) {</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;            ans[0] = 2*x1*sqrt(1-sum2)*magnitude;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;            ans[1] = 2*x2*sqrt(1-sum2)*magnitude;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;            ans[2] = (1-2.0*sum2)*magnitude;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;            success = 1;</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;        }</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    }</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <span class="keywordflow">return</span> ans;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;}</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;</div>
+<div class="line"><a name="l00188"></a><span class="lineno"><a class="line" href="utilities_8h.html#a0f9542af4b475ac79cb679d7a8d14db0">  188</a></span>&#160;<span class="keywordtype">double</span> <a class="code" href="utilities_8cpp.html#a0f9542af4b475ac79cb679d7a8d14db0">rng</a> (<span class="keywordtype">int</span> *idum) {</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordtype">int</span> j;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="keywordtype">long</span> k;</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">long</span> idum2=123456789;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">long</span> iy=0;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">long</span> iv[<a class="code" href="utilities_8cpp.html#a0e93cfb2d62849853fd34957ba6e6fdc">NTAB</a>];</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordtype">double</span> temp;</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keywordflow">if</span> (*idum &lt;= 0) {</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        <span class="keywordflow">if</span> (-(*idum) &lt; 1) *idum=1;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        <span class="keywordflow">else</span> *idum = -(*idum);</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;        idum2=(*idum);</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        <span class="keywordflow">for</span> (j=<a class="code" href="utilities_8cpp.html#a0e93cfb2d62849853fd34957ba6e6fdc">NTAB</a>+7;j&gt;=0;j--) {</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;            k=(*idum)/<a class="code" href="utilities_8cpp.html#a9afa86ff22da69bda72fe271ae71ad46">IQ1</a>;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;            *idum=<a class="code" href="utilities_8cpp.html#a6ef2749dca39c605c3d033f788afe6e3">IA1</a>*(*idum-k*<a class="code" href="utilities_8cpp.html#a9afa86ff22da69bda72fe271ae71ad46">IQ1</a>)-k*<a class="code" href="utilities_8cpp.html#a7b2b32709f9770a283701ffcf3723497">IR1</a>;</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;            <span class="keywordflow">if</span> (*idum &lt; 0) *idum += <a class="code" href="utilities_8cpp.html#a78325bdf48423acef7c012567628b391">IM1</a>;</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;            <span class="keywordflow">if</span> (j &lt; <a class="code" href="utilities_8cpp.html#a0e93cfb2d62849853fd34957ba6e6fdc">NTAB</a>) iv[j] = *idum;</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        } iy=iv[0];</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    }</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    k=(*idum)/<a class="code" href="utilities_8cpp.html#a9afa86ff22da69bda72fe271ae71ad46">IQ1</a>;</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    *idum=<a class="code" href="utilities_8cpp.html#a6ef2749dca39c605c3d033f788afe6e3">IA1</a>*(*idum-k*<a class="code" href="utilities_8cpp.html#a9afa86ff22da69bda72fe271ae71ad46">IQ1</a>)-k*<a class="code" href="utilities_8cpp.html#a7b2b32709f9770a283701ffcf3723497">IR1</a>;</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="keywordflow">if</span> (*idum &lt; 0) *idum += <a class="code" href="utilities_8cpp.html#a78325bdf48423acef7c012567628b391">IM1</a>;</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    k=idum2/<a class="code" href="utilities_8cpp.html#abae040385946a6acdf5e10d2efd86f3d">IQ2</a>;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    idum2=<a class="code" href="utilities_8cpp.html#a372a58d7e9e25912fd79e7afaa06cc7a">IA2</a>*(idum2-k*<a class="code" href="utilities_8cpp.html#abae040385946a6acdf5e10d2efd86f3d">IQ2</a>)-k*<a class="code" href="utilities_8cpp.html#a5a08e4f5cb3582e623cc14a6c92d48de">IR2</a>;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keywordflow">if</span> (idum2 &lt; 0) idum2 += <a class="code" href="utilities_8cpp.html#ad8c519de7e5de4ae35344ddcf21fd062">IM2</a>;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    j=iy/<a class="code" href="utilities_8cpp.html#a62339d74dd5d9d00480e1a288cf88fe8">NDIV</a>;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    iy=iv[j]-idum2;</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    iv[j] = *idum;</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="keywordflow">if</span> (iy &lt; 1) iy += <a class="code" href="utilities_8cpp.html#a87a6e0054f9d827c979c43aa0d5e621a">IMM1</a>;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="keywordflow">if</span> ((temp=<a class="code" href="utilities_8cpp.html#ad301e6a88b1c01108f4867f2ea6f683c">AM</a>*iy) &gt; <a class="code" href="utilities_8cpp.html#aa7436c9270ffb06f8c1eae8d2e605cec">RNMX</a>) <span class="keywordflow">return</span> <a class="code" href="utilities_8cpp.html#aa7436c9270ffb06f8c1eae8d2e605cec">RNMX</a>;</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;    <span class="keywordflow">else</span> <span class="keywordflow">return</span> temp;</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;}</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;</div>
+<div class="line"><a name="l00227"></a><span class="lineno"><a class="line" href="utilities_8h.html#ad858a38f435e9a0ee890aa0f526714d2">  227</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="utilities_8cpp.html#ad858a38f435e9a0ee890aa0f526714d2">pbc</a> (std::vector &lt; double &gt; &amp;pos, <span class="keyword">const</span> std::vector &lt; double &gt; &amp;box) {</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    <span class="comment">// generally while loops are faster than round statements</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; pos.size(); ++i) {</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        <span class="keywordflow">while</span> (pos[i] &lt; 0.0) {</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            pos[i] += box[i];</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        }</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;        <span class="keywordflow">while</span> (pos[i] &gt;= box[i]) {</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;            pos[i] -= box[i];</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        }</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    }</div>
 <div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;}</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;</div>
+<div class="line"><a name="l00248"></a><span class="lineno"><a class="line" href="utilities_8h.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">  248</a></span>&#160;<span class="keywordtype">double</span> <a class="code" href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a> (<span class="keyword">const</span> std::vector &lt; double &gt; &amp;p1, <span class="keyword">const</span> std::vector &lt; double &gt; &amp;p2, <span class="keyword">const</span> std::vector &lt; double &gt; &amp;box) {</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="keywordtype">double</span> d2 = 0.0;</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; p2.size(); ++i) {</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        <span class="keywordtype">double</span> dr = p2[i] - p1[i];</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        <span class="keywordflow">while</span> (dr &lt; -box[i]/2.0) {</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            dr += box[i];</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        }</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <span class="keywordflow">while</span> (dr &gt; box[i]/2.0) {</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            dr -= box[i];</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        }</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        d2 += dr*dr;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    }</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="keywordflow">return</span> d2;</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;}</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;</div>
+<div class="line"><a name="l00271"></a><span class="lineno"><a class="line" href="utilities_8h.html#a9d1e3672fd331d4185c1763c80226307">  271</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="utilities_8cpp.html#a9d1e3672fd331d4185c1763c80226307">fileExists</a>(std::string fileName) {</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="keyword">struct </span>stat stFileInfo;</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="keywordflow">if</span> (stat(fileName.c_str(),&amp;stFileInfo) == 0)</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;}</div>
 <div class="ttc" id="utilities_8cpp_html_aa7436c9270ffb06f8c1eae8d2e605cec"><div class="ttname"><a href="utilities_8cpp.html#aa7436c9270ffb06f8c1eae8d2e605cec">RNMX</a></div><div class="ttdeci">#define RNMX</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00019">utilities.cpp:19</a></div></div>
 <div class="ttc" id="utilities_8h_html"><div class="ttname"><a href="utilities_8h.html">utilities.h</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a6ef2749dca39c605c3d033f788afe6e3"><div class="ttname"><a href="utilities_8cpp.html#a6ef2749dca39c605c3d033f788afe6e3">IA1</a></div><div class="ttdeci">#define IA1</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00010">utilities.cpp:10</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_ad858a38f435e9a0ee890aa0f526714d2"><div class="ttname"><a href="utilities_8cpp.html#ad858a38f435e9a0ee890aa0f526714d2">pbc</a></div><div class="ttdeci">void pbc(std::vector&lt; double &gt; &amp;pos, const std::vector&lt; double &gt; &amp;box)</div><div class="ttdoc">Replace a position inside a box assuming periodic boundary conditions. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00186">utilities.cpp:186</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_ad858a38f435e9a0ee890aa0f526714d2"><div class="ttname"><a href="utilities_8cpp.html#ad858a38f435e9a0ee890aa0f526714d2">pbc</a></div><div class="ttdeci">void pbc(std::vector&lt; double &gt; &amp;pos, const std::vector&lt; double &gt; &amp;box)</div><div class="ttdoc">Replace a position inside a box assuming periodic boundary conditions. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00227">utilities.cpp:227</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a78325bdf48423acef7c012567628b391"><div class="ttname"><a href="utilities_8cpp.html#a78325bdf48423acef7c012567628b391">IM1</a></div><div class="ttdeci">#define IM1</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00006">utilities.cpp:6</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_a0f9542af4b475ac79cb679d7a8d14db0"><div class="ttname"><a href="utilities_8cpp.html#a0f9542af4b475ac79cb679d7a8d14db0">rng</a></div><div class="ttdeci">double rng(int *idum)</div><div class="ttdoc">Random number generator (from Numerical Recipes) </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00147">utilities.cpp:147</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_a2b3e32432e13d1a3feeb00de5466e456"><div class="ttname"><a href="utilities_8cpp.html#a2b3e32432e13d1a3feeb00de5466e456">rotationMatrix</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; rotationMatrix(const double alpha, const double beta, const double gamma)</div><div class="ttdoc">Create 3D rotation matrix from angles (x, then y, then z) </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00087">utilities.cpp:87</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_a198e6f6658163fec9b36be3542407727"><div class="ttname"><a href="utilities_8cpp.html#a198e6f6658163fec9b36be3542407727">matrixProduct</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; matrixProduct(std::vector&lt; std::vector&lt; double &gt; &gt; &amp;mat1, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;mat2)</div><div class="ttdoc">Compute product of 2 matrices, W = UV. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00067">utilities.cpp:67</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_a9d1e3672fd331d4185c1763c80226307"><div class="ttname"><a href="utilities_8cpp.html#a9d1e3672fd331d4185c1763c80226307">fileExists</a></div><div class="ttdeci">bool fileExists(std::string fileName)</div><div class="ttdoc">Function to check whether a given file exists or not. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00230">utilities.cpp:230</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_af1bc480936b7436d4e679abc5a837815"><div class="ttname"><a href="utilities_8cpp.html#af1bc480936b7436d4e679abc5a837815">random3DSurfaceVector</a></div><div class="ttdeci">std::vector&lt; double &gt; random3DSurfaceVector(const double magnitude)</div><div class="ttdoc">Chose a random vector sampled from a random distribution on the surface of a sphere. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00124">utilities.cpp:124</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_a0f9542af4b475ac79cb679d7a8d14db0"><div class="ttname"><a href="utilities_8cpp.html#a0f9542af4b475ac79cb679d7a8d14db0">rng</a></div><div class="ttdeci">double rng(int *idum)</div><div class="ttdoc">Random number generator (from Numerical Recipes) </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00188">utilities.cpp:188</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_a2b3e32432e13d1a3feeb00de5466e456"><div class="ttname"><a href="utilities_8cpp.html#a2b3e32432e13d1a3feeb00de5466e456">rotationMatrix</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; rotationMatrix(const double alpha, const double beta, const double gamma)</div><div class="ttdoc">Create 3D rotation matrix from angles (x, then y, then z) </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00128">utilities.cpp:128</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_a198e6f6658163fec9b36be3542407727"><div class="ttname"><a href="utilities_8cpp.html#a198e6f6658163fec9b36be3542407727">matrixProduct</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; matrixProduct(std::vector&lt; std::vector&lt; double &gt; &gt; &amp;mat1, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;mat2)</div><div class="ttdoc">Compute product of 2 matrices, W = UV. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00108">utilities.cpp:108</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_a9d1e3672fd331d4185c1763c80226307"><div class="ttname"><a href="utilities_8cpp.html#a9d1e3672fd331d4185c1763c80226307">fileExists</a></div><div class="ttdeci">bool fileExists(std::string fileName)</div><div class="ttdoc">Function to check whether a given file exists or not. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00271">utilities.cpp:271</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_af1bc480936b7436d4e679abc5a837815"><div class="ttname"><a href="utilities_8cpp.html#af1bc480936b7436d4e679abc5a837815">random3DSurfaceVector</a></div><div class="ttdeci">std::vector&lt; double &gt; random3DSurfaceVector(const double magnitude)</div><div class="ttdoc">Chose a random vector sampled from a random distribution on the surface of a sphere. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00165">utilities.cpp:165</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a0e93cfb2d62849853fd34957ba6e6fdc"><div class="ttname"><a href="utilities_8cpp.html#a0e93cfb2d62849853fd34957ba6e6fdc">NTAB</a></div><div class="ttdeci">#define NTAB</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00016">utilities.cpp:16</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_ad301e6a88b1c01108f4867f2ea6f683c"><div class="ttname"><a href="utilities_8cpp.html#ad301e6a88b1c01108f4867f2ea6f683c">AM</a></div><div class="ttdeci">#define AM</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00008">utilities.cpp:8</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_aa6d910bf51f18a75deb20c6f0fbba285"><div class="ttname"><a href="utilities_8cpp.html#aa6d910bf51f18a75deb20c6f0fbba285">getTimeStamp</a></div><div class="ttdeci">std::string getTimeStamp()</div><div class="ttdoc">Obtain instantaneous timestamp. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00049">utilities.cpp:49</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_aa6d910bf51f18a75deb20c6f0fbba285"><div class="ttname"><a href="utilities_8cpp.html#aa6d910bf51f18a75deb20c6f0fbba285">getTimeStamp</a></div><div class="ttdeci">std::string getTimeStamp()</div><div class="ttdoc">Obtain instantaneous timestamp. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00090">utilities.cpp:90</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a62339d74dd5d9d00480e1a288cf88fe8"><div class="ttname"><a href="utilities_8cpp.html#a62339d74dd5d9d00480e1a288cf88fe8">NDIV</a></div><div class="ttdeci">#define NDIV</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00017">utilities.cpp:17</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_a2c482530b256030d81cdbfcdc1d191c3"><div class="ttname"><a href="utilities_8cpp.html#a2c482530b256030d81cdbfcdc1d191c3">pauseCode</a></div><div class="ttdeci">void pauseCode(long int dur)</div><div class="ttdoc">Pause the code for a certain time. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00026">utilities.cpp:26</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_a6dacf3c3c19aa1e13a4d5a148fe5114e"><div class="ttname"><a href="utilities_8cpp.html#a6dacf3c3c19aa1e13a4d5a148fe5114e">sendErr</a></div><div class="ttdeci">void sendErr(const std::string msg)</div><div class="ttdoc">Send a message to std::cerr. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00035">utilities.cpp:35</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_a2c482530b256030d81cdbfcdc1d191c3"><div class="ttname"><a href="utilities_8cpp.html#a2c482530b256030d81cdbfcdc1d191c3">pauseCode</a></div><div class="ttdeci">void pauseCode(long int dur)</div><div class="ttdoc">Pause the code for a certain time. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00067">utilities.cpp:67</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a87a6e0054f9d827c979c43aa0d5e621a"><div class="ttname"><a href="utilities_8cpp.html#a87a6e0054f9d827c979c43aa0d5e621a">IMM1</a></div><div class="ttdeci">#define IMM1</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00009">utilities.cpp:9</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a7b2b32709f9770a283701ffcf3723497"><div class="ttname"><a href="utilities_8cpp.html#a7b2b32709f9770a283701ffcf3723497">IR1</a></div><div class="ttdeci">#define IR1</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00014">utilities.cpp:14</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_abae040385946a6acdf5e10d2efd86f3d"><div class="ttname"><a href="utilities_8cpp.html#abae040385946a6acdf5e10d2efd86f3d">IQ2</a></div><div class="ttdeci">#define IQ2</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00013">utilities.cpp:13</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_ad8c519de7e5de4ae35344ddcf21fd062"><div class="ttname"><a href="utilities_8cpp.html#ad8c519de7e5de4ae35344ddcf21fd062">IM2</a></div><div class="ttdeci">#define IM2</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00007">utilities.cpp:7</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a5a08e4f5cb3582e623cc14a6c92d48de"><div class="ttname"><a href="utilities_8cpp.html#a5a08e4f5cb3582e623cc14a6c92d48de">IR2</a></div><div class="ttdeci">#define IR2</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00015">utilities.cpp:15</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_ac84b085638619e2d7926ef816d833f7c"><div class="ttname"><a href="utilities_8cpp.html#ac84b085638619e2d7926ef816d833f7c">splitstr</a></div><div class="ttdeci">std::vector&lt; std::string &gt; splitstr(const std::string &amp;s, char delim)</div><div class="ttdoc">C++ explode a string. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00034">utilities.cpp:34</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_ac84b085638619e2d7926ef816d833f7c"><div class="ttname"><a href="utilities_8cpp.html#ac84b085638619e2d7926ef816d833f7c">splitstr</a></div><div class="ttdeci">std::vector&lt; std::string &gt; splitstr(const std::string &amp;s, char delim)</div><div class="ttdoc">C++ explode a string. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00075">utilities.cpp:75</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a372a58d7e9e25912fd79e7afaa06cc7a"><div class="ttname"><a href="utilities_8cpp.html#a372a58d7e9e25912fd79e7afaa06cc7a">IA2</a></div><div class="ttdeci">#define IA2</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00011">utilities.cpp:11</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_abb1db3a8a3ac46e044bbe7b2c5684c0a"><div class="ttname"><a href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a></div><div class="ttdeci">double pbcDist2(const std::vector&lt; double &gt; &amp;p1, const std::vector&lt; double &gt; &amp;p2, const std::vector&lt; double &gt; &amp;box)</div><div class="ttdoc">Calculate the minimum image distance squared between two coordinates assuming periodic boundary condi...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00207">utilities.cpp:207</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_abb1db3a8a3ac46e044bbe7b2c5684c0a"><div class="ttname"><a href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a></div><div class="ttdeci">double pbcDist2(const std::vector&lt; double &gt; &amp;p1, const std::vector&lt; double &gt; &amp;p2, const std::vector&lt; double &gt; &amp;box)</div><div class="ttdoc">Calculate the minimum image distance squared between two coordinates assuming periodic boundary condi...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00248">utilities.cpp:248</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a9afa86ff22da69bda72fe271ae71ad46"><div class="ttname"><a href="utilities_8cpp.html#a9afa86ff22da69bda72fe271ae71ad46">IQ1</a></div><div class="ttdeci">#define IQ1</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00012">utilities.cpp:12</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_a08974c73a5b36c28b8ad1ef47fca77b0"><div class="ttname"><a href="utilities_8cpp.html#a08974c73a5b36c28b8ad1ef47fca77b0">sendMsg</a></div><div class="ttdeci">void sendMsg(const std::string msg)</div><div class="ttdoc">Send a message to std::cout. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00026">utilities.cpp:26</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_a3f494918ff3c252de4914c9905be04e7"><div class="ttname"><a href="utilities_8cpp.html#a3f494918ff3c252de4914c9905be04e7">parseJson</a></div><div class="ttdeci">void parseJson(const std::string filename, rapidjson::Document &amp;doc)</div><div class="ttdoc">Parse a JSON file and return the corresponding document. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00044">utilities.cpp:44</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a3f4e4ea24d5a5c66feae55d1f329c884"><div class="ttname"><a href="utilities_8cpp.html#a3f4e4ea24d5a5c66feae55d1f329c884">RNG_SEED</a></div><div class="ttdeci">int RNG_SEED</div><div class="ttdoc">Default RNG seed. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00003">utilities.cpp:3</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 28 2016 15:07:18 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Dec 29 2016 11:09:03 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
