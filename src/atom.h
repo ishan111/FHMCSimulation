@@ -11,11 +11,10 @@
 
 class atom {
 public:
-	atom () { pos.resize(3, 0); mState = 0; } // assumes no centers
+	atom () { pos.resize(3, 0); mState = 0; } // Assumes no centers
 	atom (unsigned int ncenters, std::vector < std::vector < double > > rel_or); // Instantiate with rigid centers oriented according to these vectors
 	~atom () {};
 
-	//void rotateCenters (double alpha, double beta, double gamma); // Rotate centers
 	void rotateCenters (const quaternion &q); // Rotate the atom's center(s) using quaternions
 
 	int mState; //!< State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted
