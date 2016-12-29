@@ -214,119 +214,84 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 }
 
 /*!
- * Assign the Monte Carlo moves based on the JSON input file.
+ * Assign the Monte Carlo moves based on the JSON input file.  Uses same information to specify "production" and "equilibration" phases.
  *
  * \param [in] sys Simulation system that has been initialized
  * \param [in] doc JSON document corresponding to input file
- * \params [in] usedMovesEq Pointer to move object that will be used during "equilibration" (WL)
+ * \params [in] usedMovesEq Pointer to move object that will be used during "equilibration" (WL + Crossover)
  * \params [in] usedMovesPr Pointer to move object that will be used during "production" (TMMC)
  */
 void setMoves (simSystem &sys, const rapidjson::Document &doc, moves* usedMovesEq, moves* usedMovesPr) {
     std::vector < double > ref (sys.nSpecies(), 0);
-	std::vector < std::vector < double > > probEqSwap (sys.nSpecies(), ref), probPrSwap (sys.nSpecies(), ref);
-	std::vector < double > probPrInsDel (sys.nSpecies(), 0), probPrDisp (sys.nSpecies(), 0);
-	std::vector < double > probEqInsDel (sys.nSpecies(), 0), probEqDisp (sys.nSpecies(), 0);
-	std::vector < double > maxPrD (sys.nSpecies(), 0), maxEqD (sys.nSpecies(), 0);
-	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		std::string dummy = "prob_pr_ins_del_" + std::to_string(i+1);
-		assert(doc.HasMember(dummy.c_str()));
-		assert(doc[dummy.c_str()].IsNumber());
-		probPrInsDel[i] = doc[dummy.c_str()].GetDouble();
+	std::vector < std::vector < double > > probPrSwap (sys.nSpecies(), ref);
+	std::vector < double > probPrInsDel (sys.nSpecies(), 0), probPrDisp (sys.nSpecies(), 0), maxPrD (sys.nSpecies(), 0);
+
+    if (!doc.HasMember("moves")) throw customException("Input file does not have Monte Carlo moves specified");
+    if (!doc["moves"].IsObject()) throw customException("Input file does not have Monte Carlo moves specified as correct JSON document");
+
+    // Insert/Delete moves
+    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+		std::string dummy = "ins_del_" + numToStr(i+1);
+        if (!doc["moves"].HasMember(dummy.c_str())) throw customException("Input file does not have insert/delete move specified for species "+numToStr(i+1));
+        if (!doc["moves"][dummy.c_str()].IsNumber()) throw customException("Input file does not correctly specify insert/delete move probability for species "+numToStr(i+1));
+		probPrInsDel[i] = doc["moves"][dummy.c_str()].GetDouble();
 	}
 
-	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		std::string dummy = "prob_pr_displace_" + std::to_string(i+1);
-		assert(doc.HasMember(dummy.c_str()));
-		assert(doc[dummy.c_str()].IsNumber());
-		probPrDisp[i] = doc[dummy.c_str()].GetDouble();
-		dummy = "max_pr_displacement_" + std::to_string(i+1);
-		assert(doc.HasMember(dummy.c_str()));
-		assert(doc[dummy.c_str()].IsNumber());
-		maxPrD[i] = doc[dummy.c_str()].GetDouble();
+    // Translation moves
+    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+        std::string dummy = "displace_" + numToStr(i+1);
+        if (!doc["moves"].HasMember(dummy.c_str())) throw customException("Input file does not have displacement move specified for species "+numToStr(i+1));
+        if (!doc["moves"][dummy.c_str()].IsNumber()) throw customException("Input file does not correctly specify displacement move probability for species "+numToStr(i+1));
+		probPrDisp[i] = doc["moves"][dummy.c_str()].GetDouble();
+
+        dummy = "max_displacement_" + numToStr(i+1);
+        if (!doc["moves"].HasMember(dummy.c_str())) throw customException("Input file does not have displacement magnitude specified for species "+numToStr(i+1));
+        if (!doc["moves"][dummy.c_str()].IsNumber()) throw customException("Input file does not correctly specify displacement move magnitude for species "+numToStr(i+1));
+		maxPrD[i] = doc["moves"][dummy.c_str()].GetDouble();
 	}
 
-	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		std::string dummy = "prob_eq_ins_del_" + std::to_string(i+1);
-		assert(doc.HasMember(dummy.c_str()));
-		assert(doc[dummy.c_str()].IsNumber());
-		probEqInsDel[i] = doc[dummy.c_str()].GetDouble();
-	}
-
-	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		std::string dummy = "prob_eq_displace_" + std::to_string(i+1);
-		assert(doc.HasMember(dummy.c_str()));
-		assert(doc[dummy.c_str()].IsNumber());
-		probEqDisp[i] = doc[dummy.c_str()].GetDouble();
-		dummy = "max_eq_displacement_" + std::to_string(i+1);
-		assert(doc.HasMember(dummy.c_str()));
-		assert(doc[dummy.c_str()].IsNumber());
-		maxEqD[i] = doc[dummy.c_str()].GetDouble();
-	}
-
-	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+    // Swap moves
+    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
-			std::string name1 = "prob_pr_swap_"+std::to_string(i+1)+"_"+std::to_string(j+1);
-			std::string name2 = "prob_pr_swap_"+std::to_string(j+1)+"_"+std::to_string(i+1);
+			std::string name1 = "swap_"+numToStr(i+1)+"_"+numToStr(j+1);
+			std::string name2 = "swap_"+numToStr(j+1)+"_"+numToStr(i+1);
 			std::string moveName = "";
 			bool foundIJ = false;
-			if (doc.HasMember(name1.c_str())) {
+
+			if (doc["moves"].HasMember(name1.c_str())) {
 				moveName = name1;
 				foundIJ = true;
-			} else if (doc.HasMember(name2.c_str()) && !foundIJ) {
+			} else if (doc["moves"].HasMember(name2.c_str()) && !foundIJ) {
 				moveName = name2;
 				foundIJ = true;
-			} else if (doc.HasMember(name2.c_str()) && foundIJ) {
+			} else if (doc["moves"].HasMember(name2.c_str()) && foundIJ) {
                 sendErr("Input file doubly specifies production swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
 				exit(SYS_FAILURE);
 			} else {
                 sendErr("Input file does not specify production swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
 				exit(SYS_FAILURE);
 			}
-			assert(doc[moveName.c_str()].IsNumber());
-			probPrSwap[i][j] = doc[moveName.c_str()].GetDouble();
-			probPrSwap[j][i] = doc[moveName.c_str()].GetDouble();
-		}
-	}
 
-	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
-			std::string name1 = "prob_eq_swap_"+std::to_string(i+1)+"_"+std::to_string(j+1);
-			std::string name2 = "prob_eq_swap_"+std::to_string(j+1)+"_"+std::to_string(i+1);
-			std::string moveName = "";
-			bool foundIJ = false;
-			if (doc.HasMember(name1.c_str())) {
-				moveName = name1;
-				foundIJ = true;
-			} else if (doc.HasMember(name2.c_str()) && !foundIJ) {
-				moveName = name2;
-				foundIJ = true;
-			} else if (doc.HasMember(name2.c_str()) && foundIJ) {
-                sendErr("Input file doubly specifies equilibration swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
-				exit(SYS_FAILURE);
-			} else {
-                sendErr("Input file does not specify equilibration swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
-				exit(SYS_FAILURE);
-			}
-			assert(doc[moveName.c_str()].IsNumber());
-			probEqSwap[i][j] = doc[moveName.c_str()].GetDouble();
-			probEqSwap[j][i] = doc[moveName.c_str()].GetDouble();
+            if (!doc["moves"][moveName.c_str()].IsNumber()) throw customException("Input file does not correctly specify swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
+			probPrSwap[i][j] = doc["moves"][moveName.c_str()].GetDouble();
+			probPrSwap[j][i] = doc["moves"][moveName.c_str()].GetDouble();
 		}
 	}
 
     usedMovesEq->setM(sys.getTotalM());
     usedMovesPr->setM(sys.getTotalM());
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-        usedMovesEq->addInsert(i, probEqInsDel[i]);
+        usedMovesEq->addInsert(i, probPrInsDel[i]);
         usedMovesPr->addInsert(i, probPrInsDel[i]);
 
-        usedMovesEq->addDelete(i, probEqInsDel[i]);
+        usedMovesEq->addDelete(i, probPrInsDel[i]);
         usedMovesPr->addDelete(i, probPrInsDel[i]);
 
-        usedMovesEq->addTranslate(i, probEqDisp[i], maxEqD[i], sys.box());
+        usedMovesEq->addTranslate(i, probPrDisp[i], maxPrD[i], sys.box());
         usedMovesPr->addTranslate(i, probPrDisp[i], maxPrD[i], sys.box());
 
         for (unsigned int j = i+1; j < sys.nSpecies(); ++j) {
-            usedMovesEq->addSwap(i, j, probEqSwap[i][j]);
+            usedMovesEq->addSwap(i, j, probPrSwap[i][j]);
             usedMovesPr->addSwap(i, j, probPrSwap[i][j]);
         }
     }
