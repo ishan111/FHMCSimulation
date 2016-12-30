@@ -11601,10 +11601,10 @@ TEST_F (readMovesTest, badSwap) {
 	EXPECT_TRUE(failed);
 }
 
-TEST_F (readMovesTest, badDisplace1) {
+TEST_F (readMovesTest, badTranslate1) {
 	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
 	parseJson(fname, doc);
-	doc["moves"]["displace_1"] = -1.0;
+	doc["moves"]["translate_1"] = -1.0;
 	bool failed = false;
 	try {
 		setMoves (sys, doc, &usedMovesEq, &usedMovesPr);
@@ -11617,10 +11617,10 @@ TEST_F (readMovesTest, badDisplace1) {
 	EXPECT_TRUE(failed);
 }
 
-TEST_F (readMovesTest, badDisplace2) {
+TEST_F (readMovesTest, badTranslate2) {
 	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
 	parseJson(fname, doc);
-	doc["moves"]["displace_2"] = -1.0;
+	doc["moves"]["translate_2"] = -1.0;
 	bool failed = false;
 	try {
 		setMoves (sys, doc, &usedMovesEq, &usedMovesPr);
@@ -11636,7 +11636,7 @@ TEST_F (readMovesTest, badDisplace2) {
 TEST_F (readMovesTest, badMaxTranslate1) {
 	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
 	parseJson(fname, doc);
-	doc["moves"]["max_displacement_1"] = -1.0;
+	doc["moves"]["max_translation_1"] = -1.0;
 	bool failed = false;
 	try {
 		setMoves (sys, doc, &usedMovesEq, &usedMovesPr);
@@ -11652,7 +11652,7 @@ TEST_F (readMovesTest, badMaxTranslate1) {
 TEST_F (readMovesTest, badMaxTranslate2) {
 	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
 	parseJson(fname, doc);
-	doc["moves"]["max_displacement_2"] = -1.0;
+	doc["moves"]["max_translation_2"] = -1.0;
 	bool failed = false;
 	try {
 		setMoves (sys, doc, &usedMovesEq, &usedMovesPr);

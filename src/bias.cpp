@@ -227,9 +227,9 @@ void tmmc::updateC (const int Nstart, const int Nend, const int Mstart, const in
 	C_[i] += pa;
 	C_[j] += (1-pa);
     if (pa > 0.0) {
-        HC_[i] += 1.0; // only count the transition actually proposed, not the Nstart --> Nstart unless that was what was originally proposed, and only count when transition probability is finite.
+        HC_[i] += 1.0; // Only count the transition actually proposed, not the Nstart --> Nstart unless that was what was originally proposed, and only count when transition probability is finite.
     } else if (Nstart == 0 && Nend == 0) {
-	HC_[i] += 1.0; // displacement move when 0 particles in system is "early rejected" (p = 0), but this is valid - if N_min of window is > 0 checkVisited() works fine, but if includes 0, this state is detected as never being sampled otherwise, which is the incorrect response
+		HC_[i] += 1.0; // Translation move when 0 particles in system is "early rejected" (p = 0), but this is valid - if N_min of window is > 0 checkVisited() works fine, but if includes 0, this state is detected as never being sampled otherwise, which is the incorrect response
 	}
 }
 

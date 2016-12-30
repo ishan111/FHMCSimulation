@@ -171,12 +171,12 @@ int translateParticle::make (simSystem &sys) {
 }
 
 /*!
- * Set the maximum displacement in any single move. Should be postive number lss than half the box size.
+ * Set the maximum translation in any single move. Should be postive number lss than half the box size.
  *
- * \param [in] maxD Maximium displacement
+ * \param [in] maxD Maximium translation
  * \param [in] box Box dimensions
  */
-void translateParticle::setMaxDisplacement (const double maxD, const std::vector < double > &box) {
+void translateParticle::setMaxTranslation (const double maxD, const std::vector < double > &box) {
 	for (unsigned int i = 0; i < box.size(); ++i) {
 		if (maxD >= box[i]/2.) {
 			throw customException ("Max translation too large");

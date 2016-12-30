@@ -19,30 +19,30 @@
 	"moves" : {
 		"ins_del_1" : 0.1,
 		"swap_1_2" : 0.2,
-		"displace_1" : 0.7,
+		"translate_1" : 0.7,
 		"ins_del_2" : 0.7,
-		"displace_2" : 0.1,
-		"max_displacement_1" : 0.5,
-		"max_displacement_2" : 0.4
+		"translate_2" : 0.1,
+		"max_translation_1" : 0.5,
+		"max_translation_2" : 0.4
 	},
 	"ppot_1_1" : "square_well",
 	"ppot_1_1_params" : {
-		"sigma" : 1.0, 
-		"width" : 0.3, 
+		"sigma" : 1.0,
+		"width" : 0.3,
 		"epsilon" : 1.0,
 		"cell_list"  : true
 	},
 	"ppot_1_2" : "square_well",
 	"ppot_1_2_params" : {
-		"sigma" : 1.1, 
-		"width" : 0.4, 
+		"sigma" : 1.1,
+		"width" : 0.4,
 		"epsilon" : 1.1,
 		"cell_list"  : true
 	},
 	"ppot_2_2" : "square_well",
 	"ppot_2_2_params" : {
-		"sigma" : 1.2, 
-		"width" : 0.5, 
+		"sigma" : 1.2,
+		"width" : 0.5,
 		"epsilon" : 1.2,
 		"cell_list"  : true
 	}

@@ -126,13 +126,13 @@ void moves::addSwap (const int index1, const int index2, const double prob) {
  *
  * \param [in] index Particle index to operate on
  * \param [in] prob Probability
- * \param [in] maxD Maximium displacement
+ * \param [in] maxD Maximium translation
  * \param [in] box Box dimensions
  */
 void moves::addTranslate (const int index, const double prob, const double maxD, const std::vector < double > &box) {
 	auto om = std::make_shared < translateParticle > (index, "translate");
 	try {
-		om->setMaxDisplacement (maxD, box);
+		om->setMaxTranslation (maxD, box);
 		ownedMoves_.push_back(om);
 		addOn_(ownedMoves_.back()->changeN(), prob);
 	} catch (std::exception &ex) {

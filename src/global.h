@@ -60,15 +60,15 @@
  *
  *		"swap_1_2" : 0.2, # Relative weight to apply to swap moves between species 1 and 2
  *
- *		"displace_1" : 0.7, # Relative weight to apply to displacement moves of species 1
+ *		"translate_1" : 0.7, # Relative weight to apply to translation moves of species 1
  *
  *		"ins_del_2" : 0.7, # Relative weight to apply to insert/delete moves of species 2
  *
- *		"displace_2" : 0.1, # Relative weight to apply to displacement moves of species 2
+ *		"translate_2" : 0.1, # Relative weight to apply to translation moves of species 2
  *
- *		"max_displacement_1" : 0.5, # Maximum displacement for species 1
+ *		"max_translation_1" : 0.5, # Maximum translation for species 1
  *
- *		"max_displacement_2" : 0.4 # Maximum displacement for species 2
+ *		"max_translation_2" : 0.4 # Maximum translation for species 2
  *
  *	},
  *

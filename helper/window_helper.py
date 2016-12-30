@@ -49,8 +49,8 @@ def pure_settings (settings):
 	info["wala_s"] = 0.8
 	info["moves"] = {}
 	info["moves"]["ins_del_1"] = 0.7
-	info["moves"]["displace_1"] = 0.3
-	info["moves"]["max_displacement_1"] = 0.2
+	info["moves"]["translate_1"] = 0.3
+	info["moves"]["max_translation_1"] = 0.2
 	info["ppot_1_1"] = "square_well"
 	info["ppot_1_1_params"] = {}
 	info["ppot_1_1_params"]["sigma"] = 1.0

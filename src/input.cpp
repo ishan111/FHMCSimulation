@@ -250,14 +250,14 @@ void setMoves (simSystem &sys, const rapidjson::Document &doc, moves* usedMovesE
 
     // Translation moves
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-        std::string dummy = "displace_" + numToStr(i+1);
-        if (!doc["moves"].HasMember(dummy.c_str())) throw customException("Input file does not have displacement move specified for species "+numToStr(i+1));
-        if (!doc["moves"][dummy.c_str()].IsNumber()) throw customException("Input file does not correctly specify displacement move probability for species "+numToStr(i+1));
+        std::string dummy = "translate_" + numToStr(i+1);
+        if (!doc["moves"].HasMember(dummy.c_str())) throw customException("Input file does not have translation move specified for species "+numToStr(i+1));
+        if (!doc["moves"][dummy.c_str()].IsNumber()) throw customException("Input file does not correctly specify translation move probability for species "+numToStr(i+1));
 		probPrDisp[i] = doc["moves"][dummy.c_str()].GetDouble();
 
-        dummy = "max_displacement_" + numToStr(i+1);
-        if (!doc["moves"].HasMember(dummy.c_str())) throw customException("Input file does not have displacement magnitude specified for species "+numToStr(i+1));
-        if (!doc["moves"][dummy.c_str()].IsNumber()) throw customException("Input file does not correctly specify displacement move magnitude for species "+numToStr(i+1));
+        dummy = "max_translation_" + numToStr(i+1);
+        if (!doc["moves"].HasMember(dummy.c_str())) throw customException("Input file does not have translation magnitude specified for species "+numToStr(i+1));
+        if (!doc["moves"][dummy.c_str()].IsNumber()) throw customException("Input file does not correctly specify translation move magnitude for species "+numToStr(i+1));
 		maxPrD[i] = doc["moves"][dummy.c_str()].GetDouble();
 	}
 
@@ -557,7 +557,7 @@ void setConfig (simSystem &sys, const std::string filename) {
 			moves initMove (initSys.getTotalM());
             initMove.addInsert(i, 1.0);
 
-			// Also add displacment moves for all species present
+			// Also add translation moves for all species present
 			for (unsigned int j = 0; j <= idx; ++j) {
                 sendMsg("Added translation moves for initialization of species "+numToStr(initialization_order[j]));
                 initMove.addTranslate(initialization_order[j], 2.0, 1.0, initSys.box());
