@@ -160,18 +160,18 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
         				numSpecies[typeIndex]++;
         			}
         		} else {
-	        		// inserting a new atom for the first time
+	        		// Inserting a new atom for the first time
         			atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
 
-        			// assign fractional atom
+        			// Assign fractional atom
         			fractionalAtom_ = &atoms[typeIndex][numSpecies[typeIndex]];
 	        		fractionalAtomType_ = typeIndex;
 
-        			// increment expanded state
+        			// Increment expanded state
         			fractionalAtom_->mState = 1;
         			Mcurrent_ = 1;
 
-					// add particle into appropriate cell lists
+					// Add particle into appropriate cell lists
 					for (unsigned int i = 0; i < nSpecies_; ++i) {
 						if (useCellList_[typeIndex][i]) {
 							cellList* cl = cellListsByPairType_[typeIndex][i];
@@ -180,29 +180,29 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
 					}
         		}
         	} else if (Mtot_ > 1 && override) {
-	        	// expanded ensemble behavior, but now amidst a "swap move" rather than an actual insertion or deletion.
-        		// for this, insertions involve just putting the atom "back" into the system / cellLists after being artificially completely removed
+	        	// Expanded ensemble behavior, but now amidst a "swap move" rather than an actual insertion or deletion.
+        		// For this, insertions involve just putting the atom "back" into the system / cellLists after being artificially completely removed
 
-        		// ensure we insert at the proper "end"
+        		// Ensure we insert at the proper "end"
         		int end = numSpecies[typeIndex];
         		if (Mcurrent_ > 0 && typeIndex == fractionalAtomType_ && newAtom->mState == 0) {
-        			end++; // insert after the partially inserted one since newAtom is NOT the partial one
+        			end++; // Insert after the partially inserted one since newAtom is NOT the partial one
 	        	}
         		atoms[typeIndex][end] = (*newAtom);
 
-        		// if we just added a partially inserted/deleted particle back to the system, need to update the pointer
+        		// If we just added a partially inserted/deleted particle back to the system, need to update the pointer
 	        	if (atoms[typeIndex][end].mState != 0) {
         			fractionalAtom_ = &atoms[typeIndex][end];
         			fractionalAtomType_ = typeIndex;
 
-        			// set the system's mState back to that of the atom just inserted, iff it was the partial one
+        			// Set the system's mState back to that of the atom just inserted, iff it was the partial one
         			Mcurrent_ = atoms[typeIndex][end].mState;
         		} else {
-        			totN_++; // we just added a "full" atom
-        			numSpecies[typeIndex]++; // we just added a "full" atom
+        			totN_++; // We just added a "full" atom
+        			numSpecies[typeIndex]++; // We just added a "full" atom
         		}
 
-	        	// put newAtom into the cell lists whatever its state
+	        	// Put newAtom into the cell lists whatever its state
                	for (unsigned int i = 0; i < nSpecies_; ++i) {
         	        if (useCellList_[typeIndex][i]) {
                  		cellList* cl = cellListsByPairType_[typeIndex][i];
@@ -210,12 +210,12 @@ void simSystem::insertAtom (const int typeIndex, atom *newAtom, bool override) {
 					}
             	}
         	} else {
-	        	// direct insertion (no expanded ensemble)
+	        	// Direct insertion (no expanded ensemble)
 				atoms[typeIndex][numSpecies[typeIndex]] = (*newAtom);
 				numSpecies[typeIndex]++;
                 totN_++;
 
-				// add particle into appropriate cell lists
+				// Add particle into appropriate cell lists
 				for (unsigned int i = 0; i < nSpecies_; ++i) {
 					if (useCellList_[typeIndex][i]) {
 						cellList* cl = cellListsByPairType_[typeIndex][i];

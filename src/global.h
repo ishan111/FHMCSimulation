@@ -159,7 +159,6 @@
 #define SAFE_EXIT 0		//!< Returned from main the simulation ran without error
 #define PI 3.14159265359 //!< Numerical approximation of pi
 #define H2_2PI 1.0 //!< Portion of de Broglie wavelength that is not mass or T-dependent, Delta = sqrt(H2_2PI/mass/kT)
-
 extern int RNG_SEED;	// defined elsewhere, but this allows other routines to access it
 
 /*!

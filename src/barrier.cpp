@@ -364,7 +364,6 @@ bool rightTriangleXZ::inside (const atom *a1, const std::vector < double > &box)
     } catch (customException &ce) {
         const std::string msg = ce.what();
         throw customException ("Unable to test if inside rightTriangleXZ : "+msg);
-        //exit (SYS_FAILURE);
     }
 
     if (U < NUM_INFINITY) {
