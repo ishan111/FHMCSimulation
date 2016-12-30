@@ -590,7 +590,7 @@ void setConfig (simSystem &sys, const std::string filename) {
 }
 
 /*!
- * Initialize the barriers in a system by parsing the input document.  This function is defined separately since it must be done several times.
+ * Initialize the barriers in a system by parsing the input document.
  *
  * \params [in, out] sys System to initialize with barriers
  * \params [in] doc Input JSON document
@@ -636,160 +636,100 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
     				exit(SYS_FAILURE);
     			}
             } else if (barrType == "square_well_wall_z") {
-                ;
+                // Expect lb, ub, sigma, range, epsilon
+                if (!itr->value.HasMember("lb")) throw customException (barrName+" does not contain \"lb\" parameter");
+                if (!itr->value.HasMember("ub")) throw customException (barrName+" does not contain \"ub\" parameter");
+                if (!itr->value.HasMember("sigma")) throw customException (barrName+" does not contain \"sigma\" parameter");
+                if (!itr->value.HasMember("range")) throw customException (barrName+" does not contain \"range\" parameter");
+                if (!itr->value.HasMember("epsilon")) throw customException (barrName+" does not contain \"epsilon\" parameter");
+
+                if (!itr->value["lb"].IsNumber()) throw customException ("\"lb\" for "+barrName+" is not a number");
+                if (!itr->value["ub"].IsNumber()) throw customException ("\"ub\" for "+barrName+" is not a number");
+                if (!itr->value["sigma"].IsNumber()) throw customException ("\"sigma\" for "+barrName+" is not a number");
+                if (!itr->value["range"].IsNumber()) throw customException ("\"range\" for "+barrName+" is not a number");
+                if (!itr->value["epsilon"].IsNumber()) throw customException ("\"epsilon\" for "+barrName+" is not a number");
+
+                const double lbBarr = itr->value["lb"].GetDouble();
+                const double ubBarr = itr->value["ub"].GetDouble();
+                const double sigmaBarr = itr->value["sigma"].GetDouble();
+                const double rangeBarr = itr->value["range"].GetDouble();
+                const double epsBarr = itr->value["epsilon"].GetDouble();
+
+    			try {
+    				sys.speciesBarriers[species-1].addSquareWellWallZ (lbBarr, ubBarr, sigmaBarr, rangeBarr, epsBarr, Mtot);
+    			} catch (customException &ce) {
+                    sendErr(ce.what());
+    				exit(SYS_FAILURE);
+    			}
             } else if (barrType == "cylinder_z") {
-                ;
+                // Expect x, y, radius, width, sigma, epsilon
+                if (!itr->value.HasMember("x")) throw customException (barrName+" does not contain \"x\" parameter");
+                if (!itr->value.HasMember("y")) throw customException (barrName+" does not contain \"y\" parameter");
+                if (!itr->value.HasMember("radius")) throw customException (barrName+" does not contain \"radius\" parameter");
+                if (!itr->value.HasMember("width")) throw customException (barrName+" does not contain \"width\" parameter");
+                if (!itr->value.HasMember("sigma")) throw customException (barrName+" does not contain \"sigma\" parameter");
+                if (!itr->value.HasMember("epsilon")) throw customException (barrName+" does not contain \"epsilon\" parameter");
+
+                if (!itr->value["x"].IsNumber()) throw customException ("\"x\" for "+barrName+" is not a number");
+                if (!itr->value["y"].IsNumber()) throw customException ("\"y\" for "+barrName+" is not a number");
+                if (!itr->value["radius"].IsNumber()) throw customException ("\"radius\" for "+barrName+" is not a number");
+                if (!itr->value["width"].IsNumber()) throw customException ("\"width\" for "+barrName+" is not a number");
+                if (!itr->value["sigma"].IsNumber()) throw customException ("\"sigma\" for "+barrName+" is not a number");
+                if (!itr->value["epsilon"].IsNumber()) throw customException ("\"epsilon\" for "+barrName+" is not a number");
+
+                const double xBarr = itr->value["x"].GetDouble();
+                const double yBarr = itr->value["y"].GetDouble();
+                const double radiusBarr = itr->value["radius"].GetDouble();
+                const double widthBarr = itr->value["width"].GetDouble();
+                const double sigmaBarr = itr->value["sigma"].GetDouble();
+                const double epsBarr = itr->value["epsilon"].GetDouble();
+
+    			try {
+    				sys.speciesBarriers[species-1].addCylinderZ (xBarr, yBarr, radiusBarr, widthBarr, sigmaBarr, epsBarr, Mtot);
+    			} catch (customException &ce) {
+                    sendErr(ce.what());
+    				exit(SYS_FAILURE);
+    			}
             } else if (barrType == "right_triangle_xz") {
-                ;
+                // Expect parameters width, theta, lamW, epsilon, sigma, sep, offset, zbase, top
+                if (!itr->value.HasMember("width")) throw customException (barrName+" does not contain \"width\" parameter");
+                if (!itr->value.HasMember("theta")) throw customException (barrName+" does not contain \"theta\" parameter");
+                if (!itr->value.HasMember("lamW")) throw customException (barrName+" does not contain \"lamW\" parameter");
+                if (!itr->value.HasMember("epsilon")) throw customException (barrName+" does not contain \"epsilon\" parameter");
+                if (!itr->value.HasMember("sigma")) throw customException (barrName+" does not contain \"sigma\" parameter");
+                if (!itr->value.HasMember("sep")) throw customException (barrName+" does not contain \"sep\" parameter");
+                if (!itr->value.HasMember("offset")) throw customException (barrName+" does not contain \"offset\" parameter");
+                if (!itr->value.HasMember("zbase")) throw customException (barrName+" does not contain \"zbase\" parameter");
+                if (!itr->value.HasMember("top")) throw customException (barrName+" does not contain \"top\" parameter");
+
+                if (!itr->value["width"].IsNumber()) throw customException ("\"width\" for "+barrName+" is not a number");
+                if (!itr->value["theta"].IsNumber()) throw customException ("\"theta\" for "+barrName+" is not a number");
+                if (!itr->value["lamW"].IsNumber()) throw customException ("\"lamW\" for "+barrName+" is not a number");
+                if (!itr->value["epsilon"].IsNumber()) throw customException ("\"epsilon\" for "+barrName+" is not a number");
+                if (!itr->value["sigma"].IsNumber()) throw customException ("\"sigma\" for "+barrName+" is not a number");
+                if (!itr->value["sep"].IsNumber()) throw customException ("\"sep\" for "+barrName+" is not a number");
+                if (!itr->value["offset"].IsNumber()) throw customException ("\"offset\" for "+barrName+" is not a number");
+                if (!itr->value["zbase"].IsNumber()) throw customException ("\"zbase\" for "+barrName+" is not a number");
+                if (!itr->value["top"].IsBool()) throw customException ("\"top\" for "+barrName+" is not a boolean");
+
+                const double widthBarr = itr->value["width"].GetDouble();
+                const double thetaBarr = itr->value["theta"].GetDouble();
+                const double lamwBarr = itr->value["lamW"].GetDouble();
+                const double epsBarr = itr->value["epsilon"].GetDouble();
+                const double sigmaBarr = itr->value["sigma"].GetDouble();
+                const double sepBarr = itr->value["sep"].GetDouble();
+                const double offsetBarr = itr->value["offset"].GetDouble();
+                const double zbaseBarr = itr->value["zbase"].GetDouble();
+                const double topBarr = itr->value["top"].GetDouble();
+
+    			try {
+    				sys.speciesBarriers[species-1].addRightTriangleXZ (widthBarr, thetaBarr, lamwBarr, epsBarr, sigmaBarr, sepBarr, offsetBarr, sys.box(), zbaseBarr, topBarr, Mtot);
+    			} catch (customException &ce) {
+                    sendErr(ce.what());
+    				exit(SYS_FAILURE);
+    			}
             } else {
                 throw customException ("Unrecognized barrier type "+barrType+" from barrier "+barrName);
-            }
-        }
-    }
-
-    // Square well wall (expect parameters: {lb, ub, sigma, range, eps})
-    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		bool convention0 = false;
-		std::string dummy = "squareWellWallZ_" + std::to_string(i+1);
-		std::vector < double > wallParams (5, 0);
-		if (doc.HasMember(dummy.c_str())) {
-			assert(doc[dummy.c_str()].IsArray());
-			assert(doc[dummy.c_str()].Size() == 5);
-			for (unsigned int j = 0; j < 5; ++j) {
-				wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-			}
-			try {
-				sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
-            } catch (customException &ce) {
-                sendErr(ce.what());
-                exit(SYS_FAILURE);
-            }
-            convention0 = true;
-		}
-		for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
-			// Alternatively allow multiple walls to specified with a suffix up to a max
-			std::string dummy = "squareWellWallZ_" + std::to_string(i+1) + "_" + std::to_string(j);
-			if (doc.HasMember(dummy.c_str())) {
-				if (convention0) {
-                    sendErr("Error, multiple barrier naming conventions used for the same species");
-					exit(SYS_FAILURE);
-				}
-				if (doc.HasMember(dummy.c_str())) {
-					assert(doc[dummy.c_str()].IsArray());
-					assert(doc[dummy.c_str()].Size() == 5);
-					for (unsigned int j = 0; j < 5; ++j) {
-						wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-					}
-					try {
-						sys.speciesBarriers[i].addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
-					} catch (customException &ce) {
-						sendErr(ce.what());
-						exit(SYS_FAILURE);
-					}
-                }
-            }
-        }
-	}
-
-	// cylinderZ (expect parameters: {x, y, radius, width, sigma, eps})
-    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		bool convention0 = false;
-		std::string dummy = "cylinderZ_" + std::to_string(i+1);
-		std::vector < double > wallParams (6, 0);
-		if (doc.HasMember(dummy.c_str())) {
-			assert(doc[dummy.c_str()].IsArray());
-			assert(doc[dummy.c_str()].Size() == 6);
-			for (unsigned int j = 0; j < 6; ++j) {
-				wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-			}
-			try {
-				sys.speciesBarriers[i].addCylinderZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], Mtot);
-            } catch (customException &ce) {
-                sendErr(ce.what());
-                exit(SYS_FAILURE);
-            }
-            convention0 = true;
-		}
-		for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
-			// Alternatively allow multiple walls to specified with a suffix up to a max
-			std::string dummy = "cylinderZ_" + std::to_string(i+1) + "_" + std::to_string(j);
-			if (doc.HasMember(dummy.c_str())) {
-				if (convention0) {
-                    sendErr("Error, multiple barrier naming conventions used for the same species");
-					exit(SYS_FAILURE);
-				}
-				if (doc.HasMember(dummy.c_str())) {
-					assert(doc[dummy.c_str()].IsArray());
-					assert(doc[dummy.c_str()].Size() == 6);
-					for (unsigned int j = 0; j < 6; ++j) {
-						wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-					}
-					try {
-						sys.speciesBarriers[i].addCylinderZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], Mtot);
-					} catch (customException &ce) {
-						sendErr(ce.what());
-						exit(SYS_FAILURE);
-					}
-                }
-            }
-        }
-	}
-
-    // rightTriangleXZ (expect parameters: {width, theta, lamW, eps, sigma, sep, offset, zbase, top})
-    for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-        bool convention0 = false;
-        std::string dummy = "rightTriangleXZ_" + std::to_string(i+1);
-        std::vector < double > wallParams (8, 0);
-        bool top = false;
-        assert(doc.HasMember("box"));
-        assert(doc["box"].IsArray());
-        assert(doc["box"].Size() == 3);
-        std::vector < double > sysBox (3, 0);
-        for (rapidjson::SizeType j = 0; j < doc["box"].Size(); ++j) {
-            assert(doc["box"][j].IsNumber());
-            sysBox[j] = doc["box"][j].GetDouble();
-        }
-        if (doc.HasMember(dummy.c_str())) {
-            assert(doc[dummy.c_str()].IsArray());
-            assert(doc[dummy.c_str()].Size() == 9);
-            for (unsigned int j = 0; j < 8; ++j) {
-                assert (doc[dummy.c_str()][j].IsDouble());
-                wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-            }
-            assert (doc[dummy.c_str()][8].IsBool());
-            top = doc[dummy.c_str()][8].GetBool();
-            try {
-                sys.speciesBarriers[i].addRightTriangleXZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
-            } catch (customException &ce) {
-                sendErr(ce.what());
-                exit(SYS_FAILURE);
-            }
-            convention0 = true;
-        }
-        for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
-            // Alternatively allow multiple walls to specified with a suffix up to a max
-            std::string dummy = "rightTriangleXZ_" + std::to_string(i+1) + "_" + std::to_string(j);
-            if (doc.HasMember(dummy.c_str())) {
-                if (convention0) {
-                    sendErr("Error, multiple barrier naming conventions used for the same species");
-                    exit(SYS_FAILURE);
-                }
-                if (doc.HasMember(dummy.c_str())) {
-                    assert(doc[dummy.c_str()].IsArray());
-                    assert(doc[dummy.c_str()].Size() == 9);
-                    for (unsigned int k = 0; k < 8; ++k) {
-                        assert (doc[dummy.c_str()][k].IsNumber());
-                        wallParams[k] = doc[dummy.c_str()][k].GetDouble();
-                    }
-                    assert (doc[dummy.c_str()][8].IsBool());
-                    top = doc[dummy.c_str()][8].GetBool();
-                    try {
-                        sys.speciesBarriers[i].addRightTriangleXZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
-                    } catch (customException &ce) {
-                        sendErr(ce.what());
-                        exit(SYS_FAILURE);
-                    }
-                }
             }
         }
     }

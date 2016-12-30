@@ -1,0 +1,65 @@
+{
+	"num_species" : 2,
+	"beta" : 0.89,
+	"box" : [9.0, 9.0, 9.0],
+	"mu" : [1.234, 2.345],
+	"seed" : -10,
+	"max_N" : [200, 200],
+	"min_N" : [0, 0],
+	"window" : [0, 20],
+	"restart_file" : "../data/res1.xyz",
+	"num_crossover_visits" : 2,
+	"tmmc_sweep_size" : 1e3,
+	"total_tmmc_sweeps" : 3,
+	"wala_sweep_size" : 1e4,
+	"wala_g": 0.5,
+	"wala_s" : 0.8,
+	"lnF_start" : 1.0,
+	"lnF_end" : 1.0e-5,
+	"moves" : {
+		"ins_del_1" : 0.1,
+		"swap_1_2" : 0.2,
+		"displace_1" : 0.7,
+		"ins_del_2" : 0.7,
+		"displace_2" : 0.1,
+		"max_displacement_1" : 0.5,
+		"max_displacement_2" : 0.4
+	},
+	"ppot_1_1" : "square_well",
+	"ppot_1_1_params" : {
+		"sigma" : 1.0, 
+		"width" : 0.3, 
+		"depth" : 1.0,
+		"cell_list"  : true
+	},
+	"ppot_1_2" : "square_well",
+	"ppot_1_2_params" : {
+		"sigma" : 1.1, 
+		"width" : 0.4, 
+		"depth" : 1.1,
+		"cell_list"  : true
+	},
+	"ppot_2_2" : "square_well",
+	"ppot_2_2_params" : {
+		"sigma" : 1.2, 
+		"width" : 0.5, 
+		"depth" : 1.2,
+		"cell_list"  : true
+	},
+	"barriers" : {
+		"mybarrier1" : {
+			"type" : "hard_wall_z",
+			"species" : 1,
+			"ub" : 6.0,
+			"lb" : 1.0,
+			"sigma" : 1.0
+		},
+		"mybarrier2" : {
+			"type" : "hard_wall_z"
+			"species" : 2
+			"ub" : 6.0,
+                        "lb" : 1.0,
+                        "sigma" : 1.0
+		}
+	}
+}
