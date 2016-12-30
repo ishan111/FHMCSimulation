@@ -35,12 +35,6 @@ checkpoint::checkpoint (const std::string directory, const long int frequency, s
             throw customException (a+b);
         }
     } else {
-        std::string command = "mkdir -p "+dir+" && touch "+chkptName;
-        const int succ = system(command.c_str());
-        if (succ != 0) {
-            throw customException("Unable to initialize checkpoint");
-        }
-
         // Forcible skip to TMMC stage if want to manually start TMMC
         if (sys.restartFromTMMC){
             walaDone = true;
@@ -48,7 +42,7 @@ checkpoint::checkpoint (const std::string directory, const long int frequency, s
         }
     }
 
-    time(&lastCheckPt_); // Take time when object was instantiated as initial time
+    time(&lastCheckPt_); // Take time when object was instantiated as initial time so that check() has a point of reference
 }
 
 /*!
@@ -75,8 +69,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
         moveCounter = (long long int)doc["moveCounter"].GetDouble();
         sweepCounter = (long long int)doc["sweepCounter"].GetDouble();
 
-        if (walaDone && crossoverDone) {
-            // In final TMMC stage or just finished the TMMC (end of simulation)
+        if (walaDone && crossoverDone) { // In final TMMC stage or just finished the TMMC (end of simulation)
             resFromTMMC = true;
             sys.startTMMC(sys.tmmcSweepSize, sys.getTotalM());
             sys.getTMMCBias()->readC(dir+"/tmmc_C.dat");
@@ -89,8 +82,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
             sys.restartEnergyHistogram(dir+"/eHist");
             sys.restartPkHistogram(dir+"/pkHist");
             sys.restartExtMoments(dir+"/extMom", ctr);
-        } else if (walaDone && !crossoverDone && !tmmcDone) {
-            // In crossover stage
+        } else if (walaDone && !crossoverDone && !tmmcDone) { // In crossover stage
             resFromCross = true;
             sys.startTMMC(sys.tmmcSweepSize, sys.getTotalM());
             wala_lnF = doc["wala_lnF"].GetDouble();
@@ -113,8 +105,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
                 eub[i] = doc["energyHistogramUB"][i].GetDouble();
             }
             sys.setEUB(eub);
-        } else if (!walaDone && !crossoverDone && !tmmcDone) {
-            // In WALA stage
+        } else if (!walaDone && !crossoverDone && !tmmcDone) { // In WALA stage and printed 1st checkpoint already
             resFromWALA = true;
             wala_lnF = doc["wala_lnF"].GetDouble();
             sys.startWALA (wala_lnF, sys.wala_g, sys.wala_s, sys.getTotalM());
@@ -158,7 +149,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
 }
 
 /*!
- * Save the state of a system to a json file.
+ * Save the state of a system to a json file. Creates the checkpoint directory if it doesn't exist.
  *
  * \param [in] sys System to checkpoint
  * \param [in] moveCounter Number of moves out of a given sweep that have executed
@@ -166,6 +157,14 @@ void checkpoint::load (simSystem &sys, const bool override) {
  * \param [in] refine Refine the histogram boundaries before printing any? (default=true)
  */
 void checkpoint::dump (simSystem &sys, const long long int moveCounter, const long long int sweepCounter, const bool refine) {
+    if (!fileExists(chkptName)) {
+        std::string command = "mkdir -p "+dir+" && touch "+chkptName;
+        const int succ = system(command.c_str());
+        if (succ != 0) {
+            throw customException("Unable to initialize checkpoint");
+        }
+    }
+
     rapidjson::StringBuffer s;
     rapidjson::PrettyWriter < rapidjson::StringBuffer > writer(s);
     hasCheckpoint = true;
@@ -199,8 +198,7 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
     writer.String("sweepCounter");
     writer.Double(sweepCounter);
 
-    if (walaDone && crossoverDone) {
-        // in final TMMC stage or just finished the TMMC (end of simulation)
+    if (walaDone && crossoverDone) { // In final TMMC stage or just finished the TMMC (end of simulation)
         sys.getTMMCBias()->print(dir+"/tmmc", true, true);
         if (refine) {
             sys.refineEnergyHistogramBounds();
@@ -218,15 +216,14 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
             writer.Double(*it);
         }
         writer.EndArray();
-    } else if (walaDone && !crossoverDone && !tmmcDone) {
-        // in crossover stage
+    } else if (walaDone && !crossoverDone && !tmmcDone) { // In crossover stage
         sys.getTMMCBias()->print(dir+"/tmmc", true, true);
         sys.getWALABias()->print(dir+"/wala", true);
 
         writer.String("wala_lnF");
         writer.Double(sys.getWALABias()->lnF());
 
-        // energy upper and lower bounds for histogram
+        // Energy upper and lower bounds for histogram
         std::vector < double > elb = sys.getELB(), eub = sys.getEUB();
         writer.String("energyHistogramLB");
         writer.StartArray();
@@ -240,14 +237,13 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
             writer.Double(*it);
         }
         writer.EndArray();
-    } else if (!walaDone && !crossoverDone && !tmmcDone) {
-        // in WALA stage
+    } else if (!walaDone && !crossoverDone && !tmmcDone) { // In WALA stage
         sys.getWALABias()->print(dir+"/wala", true);
 
         writer.String("wala_lnF");
         writer.Double(sys.getWALABias()->lnF());
 
-        // energy upper and lower bounds for histogram
+        // Energy upper and lower bounds for histogram
         std::vector < double > elb = sys.getELB(), eub = sys.getEUB();
         writer.String("energyHistogramLB");
         writer.StartArray();
@@ -268,9 +264,8 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
     std::ofstream outData(chkptName.c_str());
     outData << s.GetString() << std::endl;
 
-    sys.printSnapshot(dir+"/snap.xyz", getTimeStamp(), true); // instantaneous snapshot
-    if (takeSnaps) {
-        // this only prints M = 0 atoms (fully inserted) to create a movie
+    sys.printSnapshot(dir+"/snap.xyz", getTimeStamp(), true); // Instantaneous snapshot
+    if (takeSnaps) { // This only prints M = 0 atoms (fully inserted) to create a movie
         sys.printSnapshot(dir+"/movie.xyz", getTimeStamp(), false);
     }
 

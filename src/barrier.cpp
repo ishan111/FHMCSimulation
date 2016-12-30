@@ -660,6 +660,15 @@ double squareWellWallZ::energy (const atom *a1, const std::vector < double > &bo
  * \param [in] M Total number of expanded ensemble states possible for this atom type (defaults to 1)
  */
 void compositeBarrier::addHardWallZ (const double lb, const double ub, const double sigma, const int M) {
+    try {
+        auto barr = std::make_shared < hardWallZ > (lb, ub, sigma, M);
+    	sysBarriers_.push_back(barr);
+    } catch (std::exception &ex) {
+        const std::string msg = ex.what();
+        throw customException ("Cannot add hardWallZ to composite barrier : "+msg);
+    }
+
+    /*
     if (sysBarriers_.begin() == sysBarriers_.end()) {
         try {
             sysBarriers_.resize(1);
@@ -678,7 +687,7 @@ void compositeBarrier::addHardWallZ (const double lb, const double ub, const dou
     } catch (customException &ce) {
         const std::string msg = ce.what();
         throw customException ("Cannot add hardWallZ to composite barrier : "+msg);
-    }
+    }*/
 }
 
 /*!
@@ -692,7 +701,15 @@ void compositeBarrier::addHardWallZ (const double lb, const double ub, const dou
  * \param [in] M Total number of expanded ensemble states possible for this atom type (defaults to 1)
  */
 void compositeBarrier::addSquareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps, const int M) {
-    if (sysBarriers_.begin() == sysBarriers_.end()) {
+    try {
+        auto barr = std::make_shared < squareWellWallZ > (lb, ub, sigma, range, eps, M);
+    	sysBarriers_.push_back(barr);
+    } catch (std::exception &ex) {
+        const std::string msg = ex.what();
+        throw customException ("Cannot add squareWellWallZ to composite barrier : "+msg);
+    }
+
+    /*if (sysBarriers_.begin() == sysBarriers_.end()) {
         try {
             sysBarriers_.resize(1);
         } catch (std::bad_alloc &ba) {
@@ -710,7 +727,7 @@ void compositeBarrier::addSquareWellWallZ (const double lb, const double ub, con
     } catch (customException &ce) {
         const std::string msg = ce.what();
         throw customException ("Cannot add squareWellWallZ to composite barrier : "+msg);
-    }
+    }*/
 }
 
 /*!
@@ -725,7 +742,15 @@ void compositeBarrier::addSquareWellWallZ (const double lb, const double ub, con
  * \param [in] M Total number of expanded ensemble states possible for this atom type (defaults to 1)
  */
 void compositeBarrier::addCylinderZ (const double x, const double y, const double radius, const double width, const double sigma, const double eps, const int M) {
-    if (sysBarriers_.begin() == sysBarriers_.end()) {
+    try {
+        auto barr = std::make_shared < cylinderZ > (x, y, radius, width, sigma, eps, M);
+    	sysBarriers_.push_back(barr);
+    } catch (std::exception &ex) {
+        const std::string msg = ex.what();
+        throw customException ("Cannot add cylinderZ to composite barrier : "+msg);
+    }
+
+    /*if (sysBarriers_.begin() == sysBarriers_.end()) {
         try {
             sysBarriers_.resize(1);
         } catch (std::bad_alloc &ba) {
@@ -743,7 +768,7 @@ void compositeBarrier::addCylinderZ (const double x, const double y, const doubl
     } catch (customException &ce) {
         const std::string msg = ce.what();
         throw customException ("Cannot add cylinderZ to composite barrier : "+msg);
-    }
+    }*/
 }
 
 /*!
@@ -762,7 +787,15 @@ void compositeBarrier::addCylinderZ (const double x, const double y, const doubl
  * \param [in] Number of expanded ensemble states to recognize (default = 1)
  */
 void compositeBarrier::addRightTriangleXZ (const double width, const double theta, const double lamW, const double eps, const double sigma, const double sep, const double offset, const std::vector < double > &box, const double zbase, bool top, const int M) {
-    if (sysBarriers_.begin() == sysBarriers_.end()) {
+    try {
+        auto barr = std::make_shared < rightTriangleXZ > (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+    	sysBarriers_.push_back(barr);
+    } catch (std::exception &ex) {
+        const std::string msg = ex.what();
+        throw customException ("Cannot add rightTriangleXZ to composite barrier : "+msg);
+    }
+
+    /*if (sysBarriers_.begin() == sysBarriers_.end()) {
         try {
             sysBarriers_.resize(1);
         } catch (std::bad_alloc &ba) {
@@ -780,19 +813,20 @@ void compositeBarrier::addRightTriangleXZ (const double width, const double thet
     } catch (customException &ce) {
         const std::string msg = ce.what();
         throw customException ("Cannot add rightTriangleXZ to composite barrier : "+msg);
-    }
+    }*/
 }
 
 /*!
- * Deallocate any system barriers present.
+ * Free any system barriers present.
  */
 compositeBarrier::~compositeBarrier () {
-    if (sysBarriers_.begin() != sysBarriers_.end()) {
+    /*if (sysBarriers_.begin() != sysBarriers_.end()) {
         for (unsigned int i = 0; i < sysBarriers_.size(); ++i) {
             delete sysBarriers_[i];
         }
         sysBarriers_.clear();
-    }
+    }*/
+    sysBarriers_.clear();
 }
 
 /*!
@@ -802,7 +836,8 @@ compositeBarrier::~compositeBarrier () {
  * \param [in] box Simulation box
  */
 bool compositeBarrier::inside (const atom *a1, const std::vector < double > &box) {
-    for (std::vector < barrier* >::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {
+    //for (std::vector < barrier* >::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {
+    for (std::vector < std::shared_ptr < barrier > >::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {
         if (!(*it)->inside (a1, box)) {
             return false;
         }
@@ -818,7 +853,8 @@ bool compositeBarrier::inside (const atom *a1, const std::vector < double > &box
  */
 double compositeBarrier::energy (const atom *a1, const std::vector < double > &box) {
     double U = 0.0;
-    for (std::vector < barrier* >::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {
+    //for (std::vector < barrier* >::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {
+    for (std::vector < std::shared_ptr < barrier > >::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {
         double dU = (*it)->energy (a1, box);
         if (dU < NUM_INFINITY) {
             U += dU;
