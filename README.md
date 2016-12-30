@@ -47,7 +47,7 @@ The simulation produces checkpoints which allow the simulation to be restarted a
 
 ### Input File
 
-Example input file(s) may be generated with helper/window_helper.py, and can be modified by the user as needed.  A sample input.json file is given below:
+Example input file(s) may be generated with helper/window_helper.py, and can be modified by the user as needed.  A sample input.json file is given below, and a more complicated example is available for reference in helper/input.json.
 
 ```python
 {
