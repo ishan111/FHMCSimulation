@@ -157,13 +157,13 @@ void lennardJones::setParameters (const std::vector < double > params) {
 		throw customException ("For lennardJones must specify 5 parameters: epsilon, sigma, r_cut, u_shift, Mtot");
 	} else {
 		if (params[0] < 0) {
-			throw customException ("For lennardJones, epsilon > 0");
+			throw customException ("For lennardJones, epsilon >= 0");
 		}
 		if (params[1] < 0) {
-			throw customException ("For lennardJones, sigma > 0");
+			throw customException ("For lennardJones, sigma >= 0");
 		}
 		if (params[2] < 0) {
-			throw customException ("For lennardJones, r_cut > 0");
+			throw customException ("For lennardJones, r_cut >= 0");
 		}
 		if (int(params[4]) < 1) {
 			throw customException ("For lennardJones, total expanded ensemble states, Mtot >= 1");
@@ -436,20 +436,20 @@ double tabulated::rcut () {
 /*!
  * Set the parameters in the square-well equation.
  *
- * \param [in] params Vector of inputs: {sigma, wellwidth, welldepth (magnitude), Mtot}
+ * \param [in] params Vector of inputs: {sigma, width, epsilon, Mtot}
  */
 void squareWell::setParameters (const std::vector < double > params) {
 	if (params.size() != 4) {
-		throw customException ("For squareWell must specify 4 parameters: sigma, wellwidth, welldepth, Mtot");
+		throw customException ("For squareWell must specify 4 parameters: sigma, width, epsilon, Mtot");
 	} else {
 		if (params[0] < 0) {
-			throw customException ("For squareWell, sigma > 0");
+			throw customException ("For squareWell, sigma >= 0");
 		}
 		if (params[1] < 0) {
-			throw customException ("For squareWell, wellwidth > 0");
+			throw customException ("For squareWell, width >= 0");
 		}
 		if (params[2] < 0) {
-			throw customException ("For squareWell, welldepth (magnitude) > 0");
+			throw customException ("For squareWell, epsilon >= 0");
 		}
 		if (int(params[3]) < 1) {
 			throw customException ("For squareWell, total expanded ensemble states, Mtot >= 1");

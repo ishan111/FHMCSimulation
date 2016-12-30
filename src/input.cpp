@@ -433,9 +433,9 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
                 sys.ppot[i][j]->savePotential(ppotName+".dat", 0.01, 0.01);
             } catch (std::exception &ex) {
                 const std::string msg = ex.what();
-                throw customException ("Unable to add potential "+ppotType[ppotTypeIndex]+" because "+msg);
+                throw customException ("Unable to add potential "+ppotType[ppotTypeIndex]+" for species pair ("+numToStr(i+1)+","+numToStr(j+1)+") because "+msg);
             }
-            
+
 			ppotTypeIndex++;
 		}
 	}

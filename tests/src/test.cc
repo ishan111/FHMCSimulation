@@ -11563,7 +11563,37 @@ TEST_F (readPpotTest, badSquareWellSigma) {
 	} catch (std::exception &ex) {
 		failed = true;
 		const std::string msg = ex.what();
-		EXPECT_TRUE(msg.find("squareWell, sigma") != std::string::npos);
+		EXPECT_TRUE(msg.find("sigma") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readPpotTest, badSquareWellWidth) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["ppot_1_1_params"]["width"] = -1.0;
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("width") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readPpotTest, badSquareWellEpsilon) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["ppot_1_1_params"]["epsilon"] = -1.0;
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("epsilon") != std::string::npos);
 	}
 	EXPECT_TRUE(failed);
 }
