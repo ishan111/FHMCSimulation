@@ -33,7 +33,7 @@ double \hyperlink{classsquare_well_wall_z_a77c366eb9c10f6a68e3f633e9b64dc47}{ene
 \subsection{Detailed Description}
 Parallel square-\/well walls in the z-\/direction. 
 
-Definition at line 45 of file barrier.\-h.
+Definition at line 46 of file barrier.\-h.
 
 
 
@@ -47,11 +47,11 @@ Definition at line 45 of file barrier.\-h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classsquare_well_wall_z_a98e2785289630c78afcb0bc8a7fd24e1}
 
 
-Definition at line 47 of file barrier.\-h.
+Definition at line 48 of file barrier.\-h.
 
 
 \begin{DoxyCode}
-47 \{\};
+48 \{\};
 \end{DoxyCode}
 \hypertarget{classsquare_well_wall_z_a9f4c4e2e118fd68c2591a4d6f06aa594}{\index{square\-Well\-Wall\-Z@{square\-Well\-Wall\-Z}!square\-Well\-Wall\-Z@{square\-Well\-Wall\-Z}}
 \index{square\-Well\-Wall\-Z@{square\-Well\-Wall\-Z}!squareWellWallZ@{square\-Well\-Wall\-Z}}
@@ -178,17 +178,17 @@ References barrier\-::\-M\-\_\-, atom\-::m\-State, N\-U\-M\-\_\-\-I\-N\-F\-I\-N\
 633         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for squareWellWallZ"});
 634     \}
 635 
-636     \textcolor{comment}{// return infinity if out of bounds}
+636     \textcolor{comment}{// Return infinity if out of bounds}
 637     \textcolor{keywordflow}{if} (p[2] >= ub\_ - sig/2.0 || p[2] <= lb\_ + sig/2.0) \{
 638         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
 639     \}
 640 
-641     \textcolor{comment}{// interaction with top wall}
+641     \textcolor{comment}{// Interaction with top wall}
 642     \textcolor{keywordflow}{if} (p[2] > ub\_ - range\_) \{
 643         U += -eps;
 644     \}
 645 
-646     \textcolor{comment}{// interaction with lower wall}
+646     \textcolor{comment}{// Interaction with lower wall}
 647     \textcolor{keywordflow}{if} (p[2] < lb\_ + range\_) \{
 648         U += -eps;
 649     \}

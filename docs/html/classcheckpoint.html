@@ -267,7 +267,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8cpp_source.html#l00014">14</a> of file <a class="el" href="checkpoint_8cpp_source.html">checkpoint.cpp</a>.</p>
 
-<p>References <a class="el" href="checkpoint_8h_source.html#l00043">chkptName</a>, <a class="el" href="checkpoint_8h_source.html#l00034">crossoverDone</a>, <a class="el" href="checkpoint_8h_source.html#l00042">dir</a>, <a class="el" href="utilities_8cpp_source.html#l00272">fileExists()</a>, <a class="el" href="checkpoint_8h_source.html#l00037">freq</a>, <a class="el" href="checkpoint_8h_source.html#l00032">hasCheckpoint</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>, <a class="el" href="checkpoint_8h_source.html#l00038">moveCounter</a>, <a class="el" href="checkpoint_8h_source.html#l00035">resFromCross</a>, <a class="el" href="checkpoint_8h_source.html#l00035">resFromTMMC</a>, <a class="el" href="checkpoint_8h_source.html#l00035">resFromWALA</a>, <a class="el" href="system_8h_source.html#l00093">simSystem::restartFromTMMC</a>, <a class="el" href="checkpoint_8h_source.html#l00039">sweepCounter</a>, <a class="el" href="checkpoint_8h_source.html#l00033">takeSnaps</a>, <a class="el" href="checkpoint_8h_source.html#l00034">tmmcDone</a>, and <a class="el" href="checkpoint_8h_source.html#l00034">walaDone</a>.</p>
+<p>References <a class="el" href="checkpoint_8h_source.html#l00043">chkptName</a>, <a class="el" href="checkpoint_8h_source.html#l00034">crossoverDone</a>, <a class="el" href="checkpoint_8h_source.html#l00042">dir</a>, <a class="el" href="utilities_8cpp_source.html#l00272">fileExists()</a>, <a class="el" href="checkpoint_8h_source.html#l00037">freq</a>, <a class="el" href="checkpoint_8h_source.html#l00032">hasCheckpoint</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>, <a class="el" href="checkpoint_8h_source.html#l00038">moveCounter</a>, <a class="el" href="checkpoint_8h_source.html#l00035">resFromCross</a>, <a class="el" href="checkpoint_8h_source.html#l00035">resFromTMMC</a>, <a class="el" href="checkpoint_8h_source.html#l00035">resFromWALA</a>, <a class="el" href="system_8h_source.html#l00093">simSystem::restartFromTMMC</a>, <a class="el" href="checkpoint_8h_source.html#l00039">sweepCounter</a>, <a class="el" href="checkpoint_8h_source.html#l00033">takeSnaps</a>, <a class="el" href="checkpoint_8h_source.html#l00034">tmmcDone</a>, and <a class="el" href="checkpoint_8h_source.html#l00034">walaDone</a>.</p>
 <div class="fragment"><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;                                                                                                                                  {</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a> = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> = <span class="keyword">false</span>;</div>
@@ -292,26 +292,20 @@ Data Fields</h2></td></tr>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (a+b);</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        }</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        std::string command = <span class="stringliteral">&quot;mkdir -p &quot;</span>+<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot; &amp;&amp; touch &quot;</span>+<a class="code" href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">chkptName</a>;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">int</span> succ = system(command.c_str());</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keywordflow">if</span> (succ != 0) {</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a>(<span class="stringliteral">&quot;Unable to initialize checkpoint&quot;</span>);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="comment">// Forcible skip to TMMC stage if want to manually start TMMC</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keywordflow">if</span> (sys.<a class="code" href="classsim_system.html#a0c81d3b606c070c801f8d86288e44391">restartFromTMMC</a>){</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            <a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="comment">// Forcible skip to TMMC stage if want to manually start TMMC</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keywordflow">if</span> (sys.<a class="code" href="classsim_system.html#a0c81d3b606c070c801f8d86288e44391">restartFromTMMC</a>){</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        }</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    }</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    time(&amp;lastCheckPt_); <span class="comment">// Take time when object was instantiated as initial time</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;}</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    time(&amp;lastCheckPt_); <span class="comment">// Take time when object was instantiated as initial time so that check() has a point of reference</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;}</div>
 <div class="ttc" id="classsim_system_html_a0c81d3b606c070c801f8d86288e44391"><div class="ttname"><a href="classsim_system.html#a0c81d3b606c070c801f8d86288e44391">simSystem::restartFromTMMC</a></div><div class="ttdeci">bool restartFromTMMC</div><div class="ttdoc">Flags to restart from WALA or TMMC initially. </div><div class="ttdef"><b>Definition:</b> <a href="system_8h_source.html#l00093">system.h:93</a></div></div>
 <div class="ttc" id="classcheckpoint_html_a685226e8bae8084937f73f65c326c362"><div class="ttname"><a href="classcheckpoint.html#a685226e8bae8084937f73f65c326c362">checkpoint::takeSnaps</a></div><div class="ttdeci">bool takeSnaps</div><div class="ttdoc">Save snapshot of the system each time a record is made. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00033">checkpoint.h:33</a></div></div>
 <div class="ttc" id="classcheckpoint_html_aab066479e2ca6656d0031dd46a2fc1a5"><div class="ttname"><a href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">checkpoint::walaDone</a></div><div class="ttdeci">bool walaDone</div><div class="ttdoc">Progress of each stage, regardless of where the checkpoint indicated to start from. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00034">checkpoint.h:34</a></div></div>
 <div class="ttc" id="classcheckpoint_html_a477eea21621f066889660ed426dc800f"><div class="ttname"><a href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">checkpoint::chkptName</a></div><div class="ttdeci">std::string chkptName</div><div class="ttdoc">Name of checkpoint file. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00043">checkpoint.h:43</a></div></div>
-<div class="ttc" id="classcheckpoint_html_afe0ae7b3a2b83b5e321f09e9cb70a374"><div class="ttname"><a href="classcheckpoint.html#afe0ae7b3a2b83b5e321f09e9cb70a374">checkpoint::load</a></div><div class="ttdeci">void load(simSystem &amp;sys, const bool override)</div><div class="ttdoc">Read state of a system from a json file. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8cpp_source.html#l00060">checkpoint.cpp:60</a></div></div>
+<div class="ttc" id="classcheckpoint_html_afe0ae7b3a2b83b5e321f09e9cb70a374"><div class="ttname"><a href="classcheckpoint.html#afe0ae7b3a2b83b5e321f09e9cb70a374">checkpoint::load</a></div><div class="ttdeci">void load(simSystem &amp;sys, const bool override)</div><div class="ttdoc">Read state of a system from a json file. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8cpp_source.html#l00054">checkpoint.cpp:54</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a9d1e3672fd331d4185c1763c80226307"><div class="ttname"><a href="utilities_8cpp.html#a9d1e3672fd331d4185c1763c80226307">fileExists</a></div><div class="ttdeci">bool fileExists(std::string fileName)</div><div class="ttdoc">Function to check whether a given file exists or not. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00272">utilities.cpp:272</a></div></div>
 <div class="ttc" id="classcheckpoint_html_aa75f306fcb0c2360d948fa3a61adfed5"><div class="ttname"><a href="classcheckpoint.html#aa75f306fcb0c2360d948fa3a61adfed5">checkpoint::hasCheckpoint</a></div><div class="ttdeci">bool hasCheckpoint</div><div class="ttdoc">At least one checkpoint has been made that the system can restart from. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00032">checkpoint.h:32</a></div></div>
 <div class="ttc" id="classcheckpoint_html_a5ab49a355714da4874aba00eb03f701d"><div class="ttname"><a href="classcheckpoint.html#a5ab49a355714da4874aba00eb03f701d">checkpoint::moveCounter</a></div><div class="ttdeci">long long int moveCounter</div><div class="ttdoc">Tracks the number of moves in a given sweep that have executed. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00038">checkpoint.h:38</a></div></div>
@@ -402,23 +396,23 @@ Data Fields</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>bool Is a checkpoint being generated or not </dd></dl>
 
-<p>Definition at line <a class="el" href="checkpoint_8cpp_source.html#l00290">290</a> of file <a class="el" href="checkpoint_8cpp_source.html">checkpoint.cpp</a>.</p>
+<p>Definition at line <a class="el" href="checkpoint_8cpp_source.html#l00285">285</a> of file <a class="el" href="checkpoint_8cpp_source.html">checkpoint.cpp</a>.</p>
 
-<p>References <a class="el" href="checkpoint_8cpp_source.html#l00168">dump()</a>, and <a class="el" href="checkpoint_8h_source.html#l00037">freq</a>.</p>
+<p>References <a class="el" href="checkpoint_8cpp_source.html#l00159">dump()</a>, and <a class="el" href="checkpoint_8h_source.html#l00037">freq</a>.</p>
 
 <p>Referenced by <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>, and <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                                                                                                                            {</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classcheckpoint.html#a11a2d78eb0bf6045b659a4d18b53da44">freq</a> &gt; 0) {</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        <span class="keywordflow">if</span> (std::abs(difftime(time(&amp;now_), lastCheckPt_)) &gt;= <a class="code" href="classcheckpoint.html#a11a2d78eb0bf6045b659a4d18b53da44">freq</a>) {</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            <a class="code" href="classcheckpoint.html#a797b53961f8cf53bc78762144a514357">dump</a>(sys, <a class="code" href="classcheckpoint.html#a5ab49a355714da4874aba00eb03f701d">moveCounter</a>, <a class="code" href="classcheckpoint.html#ad011ddbca1ea708321335b1b3ac67e07">sweepCounter</a>, refine);</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;        }</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    }</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;}</div>
+<div class="fragment"><div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                                                                                                                            {</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classcheckpoint.html#a11a2d78eb0bf6045b659a4d18b53da44">freq</a> &gt; 0) {</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        <span class="keywordflow">if</span> (std::abs(difftime(time(&amp;now_), lastCheckPt_)) &gt;= <a class="code" href="classcheckpoint.html#a11a2d78eb0bf6045b659a4d18b53da44">freq</a>) {</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            <a class="code" href="classcheckpoint.html#a797b53961f8cf53bc78762144a514357">dump</a>(sys, <a class="code" href="classcheckpoint.html#a5ab49a355714da4874aba00eb03f701d">moveCounter</a>, <a class="code" href="classcheckpoint.html#ad011ddbca1ea708321335b1b3ac67e07">sweepCounter</a>, refine);</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;        }</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;    }</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;}</div>
 <div class="ttc" id="classcheckpoint_html_a5ab49a355714da4874aba00eb03f701d"><div class="ttname"><a href="classcheckpoint.html#a5ab49a355714da4874aba00eb03f701d">checkpoint::moveCounter</a></div><div class="ttdeci">long long int moveCounter</div><div class="ttdoc">Tracks the number of moves in a given sweep that have executed. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00038">checkpoint.h:38</a></div></div>
 <div class="ttc" id="classcheckpoint_html_ad011ddbca1ea708321335b1b3ac67e07"><div class="ttname"><a href="classcheckpoint.html#ad011ddbca1ea708321335b1b3ac67e07">checkpoint::sweepCounter</a></div><div class="ttdeci">long long int sweepCounter</div><div class="ttdoc">Tracks the number of sweeps that have executed. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00039">checkpoint.h:39</a></div></div>
-<div class="ttc" id="classcheckpoint_html_a797b53961f8cf53bc78762144a514357"><div class="ttname"><a href="classcheckpoint.html#a797b53961f8cf53bc78762144a514357">checkpoint::dump</a></div><div class="ttdeci">void dump(simSystem &amp;sys, const long long int moveCounter=0, const long long int sweepCounter=0, const bool refine=true)</div><div class="ttdoc">Save the state of a system to a json file. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8cpp_source.html#l00168">checkpoint.cpp:168</a></div></div>
+<div class="ttc" id="classcheckpoint_html_a797b53961f8cf53bc78762144a514357"><div class="ttname"><a href="classcheckpoint.html#a797b53961f8cf53bc78762144a514357">checkpoint::dump</a></div><div class="ttdeci">void dump(simSystem &amp;sys, const long long int moveCounter=0, const long long int sweepCounter=0, const bool refine=true)</div><div class="ttdoc">Save the state of a system to a json file. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8cpp_source.html#l00159">checkpoint.cpp:159</a></div></div>
 <div class="ttc" id="classcheckpoint_html_a11a2d78eb0bf6045b659a4d18b53da44"><div class="ttname"><a href="classcheckpoint.html#a11a2d78eb0bf6045b659a4d18b53da44">checkpoint::freq</a></div><div class="ttdeci">long int freq</div><div class="ttdoc">Frequency (in seconds) that the system should print a new instantaneous snapshot of itself...</div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00037">checkpoint.h:37</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -460,6 +454,7 @@ Data Fields</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Save the state of a system to a json file. </p>
+<p>Creates the checkpoint directory if it doesn't exist.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">sys</td><td>System to checkpoint </td></tr>
@@ -470,122 +465,126 @@ Data Fields</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="checkpoint_8cpp_source.html#l00168">168</a> of file <a class="el" href="checkpoint_8cpp_source.html">checkpoint.cpp</a>.</p>
+<p>Definition at line <a class="el" href="checkpoint_8cpp_source.html#l00159">159</a> of file <a class="el" href="checkpoint_8cpp_source.html">checkpoint.cpp</a>.</p>
 
-<p>References <a class="el" href="checkpoint_8h_source.html#l00043">chkptName</a>, <a class="el" href="checkpoint_8h_source.html#l00034">crossoverDone</a>, <a class="el" href="checkpoint_8h_source.html#l00042">dir</a>, <a class="el" href="checkpoint_8h_source.html#l00045">elb</a>, <a class="el" href="checkpoint_8h_source.html#l00045">eub</a>, <a class="el" href="system_8h_source.html#l00103">simSystem::extMomCounter()</a>, <a class="el" href="checkpoint_8h_source.html#l00037">freq</a>, <a class="el" href="system_8h_source.html#l00105">simSystem::getELB()</a>, <a class="el" href="system_8h_source.html#l00106">simSystem::getEUB()</a>, <a class="el" href="utilities_8cpp_source.html#l00091">getTimeStamp()</a>, <a class="el" href="system_8cpp_source.html#l01688">simSystem::getTMMCBias()</a>, <a class="el" href="system_8cpp_source.html#l01701">simSystem::getWALABias()</a>, <a class="el" href="checkpoint_8h_source.html#l00032">hasCheckpoint</a>, <a class="el" href="bias_8h_source.html#l00072">wala::lnF()</a>, <a class="el" href="bias_8cpp_source.html#l00301">tmmc::print()</a>, <a class="el" href="bias_8cpp_source.html#l00530">wala::print()</a>, <a class="el" href="system_8cpp_source.html#l00912">simSystem::printEnergyHistogram()</a>, <a class="el" href="system_8cpp_source.html#l00658">simSystem::printExtMoments()</a>, <a class="el" href="system_8cpp_source.html#l01078">simSystem::printPkHistogram()</a>, <a class="el" href="system_8cpp_source.html#l01331">simSystem::printSnapshot()</a>, <a class="el" href="system_8cpp_source.html#l00865">simSystem::refineEnergyHistogramBounds()</a>, <a class="el" href="system_8cpp_source.html#l01060">simSystem::refinePkHistogramBounds()</a>, <a class="el" href="checkpoint_8h_source.html#l00033">takeSnaps</a>, <a class="el" href="checkpoint_8h_source.html#l00034">tmmcDone</a>, and <a class="el" href="checkpoint_8h_source.html#l00034">walaDone</a>.</p>
+<p>References <a class="el" href="checkpoint_8h_source.html#l00043">chkptName</a>, <a class="el" href="checkpoint_8h_source.html#l00034">crossoverDone</a>, <a class="el" href="checkpoint_8h_source.html#l00042">dir</a>, <a class="el" href="checkpoint_8h_source.html#l00045">elb</a>, <a class="el" href="checkpoint_8h_source.html#l00045">eub</a>, <a class="el" href="system_8h_source.html#l00103">simSystem::extMomCounter()</a>, <a class="el" href="utilities_8cpp_source.html#l00272">fileExists()</a>, <a class="el" href="checkpoint_8h_source.html#l00037">freq</a>, <a class="el" href="system_8h_source.html#l00105">simSystem::getELB()</a>, <a class="el" href="system_8h_source.html#l00106">simSystem::getEUB()</a>, <a class="el" href="utilities_8cpp_source.html#l00091">getTimeStamp()</a>, <a class="el" href="system_8cpp_source.html#l01688">simSystem::getTMMCBias()</a>, <a class="el" href="system_8cpp_source.html#l01701">simSystem::getWALABias()</a>, <a class="el" href="checkpoint_8h_source.html#l00032">hasCheckpoint</a>, <a class="el" href="bias_8h_source.html#l00072">wala::lnF()</a>, <a class="el" href="bias_8cpp_source.html#l00301">tmmc::print()</a>, <a class="el" href="bias_8cpp_source.html#l00530">wala::print()</a>, <a class="el" href="system_8cpp_source.html#l00912">simSystem::printEnergyHistogram()</a>, <a class="el" href="system_8cpp_source.html#l00658">simSystem::printExtMoments()</a>, <a class="el" href="system_8cpp_source.html#l01078">simSystem::printPkHistogram()</a>, <a class="el" href="system_8cpp_source.html#l01331">simSystem::printSnapshot()</a>, <a class="el" href="system_8cpp_source.html#l00865">simSystem::refineEnergyHistogramBounds()</a>, <a class="el" href="system_8cpp_source.html#l01060">simSystem::refinePkHistogramBounds()</a>, <a class="el" href="checkpoint_8h_source.html#l00033">takeSnaps</a>, <a class="el" href="checkpoint_8h_source.html#l00034">tmmcDone</a>, and <a class="el" href="checkpoint_8h_source.html#l00034">walaDone</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00290">check()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                                                                                                                           {</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    rapidjson::StringBuffer s;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    rapidjson::PrettyWriter &lt; rapidjson::StringBuffer &gt; writer(s);</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <a class="code" href="classcheckpoint.html#aa75f306fcb0c2360d948fa3a61adfed5">hasCheckpoint</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="comment">// Write restart/checkpoint options</span></div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    writer.StartObject();</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    writer.String(<span class="stringliteral">&quot;tmmcDone&quot;</span>);</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    writer.Bool(<a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a>);</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    writer.String(<span class="stringliteral">&quot;crossoverDone&quot;</span>);</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    writer.Bool(<a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a>);</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    writer.String(<span class="stringliteral">&quot;walaDone&quot;</span>);</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    writer.Bool(<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a>);</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    writer.String(<span class="stringliteral">&quot;hasCheckpoint&quot;</span>);</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    writer.Bool(<a class="code" href="classcheckpoint.html#aa75f306fcb0c2360d948fa3a61adfed5">hasCheckpoint</a>);</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    writer.String(<span class="stringliteral">&quot;takeSnaps&quot;</span>);</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    writer.Bool(<a class="code" href="classcheckpoint.html#a685226e8bae8084937f73f65c326c362">takeSnaps</a>);</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    writer.String(<span class="stringliteral">&quot;freq&quot;</span>);</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    writer.Int64(<a class="code" href="classcheckpoint.html#a11a2d78eb0bf6045b659a4d18b53da44">freq</a>);</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    writer.String(<span class="stringliteral">&quot;dir&quot;</span>);</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    writer.String(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>.c_str());</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    writer.String(<span class="stringliteral">&quot;moveCounter&quot;</span>);</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    writer.Double(<a class="code" href="classcheckpoint.html#a5ab49a355714da4874aba00eb03f701d">moveCounter</a>);</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    writer.String(<span class="stringliteral">&quot;sweepCounter&quot;</span>);</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    writer.Double(<a class="code" href="classcheckpoint.html#ad011ddbca1ea708321335b1b3ac67e07">sweepCounter</a>);</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> &amp;&amp; <a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a>) {</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        <span class="comment">// in final TMMC stage or just finished the TMMC (end of simulation)</span></div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;        sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#ad49e147dc88b3e1c2975269598f94327">print</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/tmmc&quot;</span>, <span class="keyword">true</span>, <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <span class="keywordflow">if</span> (refine) {</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;            sys.<a class="code" href="classsim_system.html#afe05cba714a032b445cfb1a529547833">refineEnergyHistogramBounds</a>();</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        }</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        sys.<a class="code" href="classsim_system.html#a6ef1ba3e08ec44d865436e272cdebc9b">printEnergyHistogram</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/eHist&quot;</span>, <span class="keyword">false</span>); <span class="comment">// Un-normalized Energy histogram</span></div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        <span class="keywordflow">if</span> (refine) {</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;            sys.<a class="code" href="classsim_system.html#a1e462fcb63389d59419ff6135b2d802e">refinePkHistogramBounds</a>();</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        }</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        sys.<a class="code" href="classsim_system.html#ac29bdd6f7fa6f9526b7eafcf658d70d8">printPkHistogram</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/pkHist&quot;</span>, <span class="keyword">false</span>); <span class="comment">// Un-normalized Particle histogram</span></div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        sys.<a class="code" href="classsim_system.html#a2818b2f0ff79782d5443ca0f191564f8">printExtMoments</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/extMom&quot;</span>, <span class="keyword">false</span>); <span class="comment">// Un-normalized Extensive moments, plus counter (number of times each recorded)</span></div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        writer.String(<span class="stringliteral">&quot;extMomCounter&quot;</span>);</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        std::vector &lt; double &gt; ctr = sys.<a class="code" href="classsim_system.html#a1744c4c22603662081d75985bc30b754">extMomCounter</a>();</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        writer.StartArray();</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        <span class="keywordflow">for</span> (std::vector &lt; double &gt;::iterator it = ctr.begin(); it &lt; ctr.end(); ++it) {</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            writer.Double(*it);</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        }</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        writer.EndArray();</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a>) {</div>
-<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;        <span class="comment">// in crossover stage</span></div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#ad49e147dc88b3e1c2975269598f94327">print</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/tmmc&quot;</span>, <span class="keyword">true</span>, <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#a65569289fac85d0da9c336e17c9d809a">print</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/wala&quot;</span>, <span class="keyword">true</span>);</div>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00285">check()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                                                                                                                           {</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="utilities_8cpp.html#a9d1e3672fd331d4185c1763c80226307">fileExists</a>(<a class="code" href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">chkptName</a>)) {</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        std::string command = <span class="stringliteral">&quot;mkdir -p &quot;</span>+<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot; &amp;&amp; touch &quot;</span>+<a class="code" href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">chkptName</a>;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">int</span> succ = system(command.c_str());</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;        <span class="keywordflow">if</span> (succ != 0) {</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a>(<span class="stringliteral">&quot;Unable to initialize checkpoint&quot;</span>);</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        }</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    }</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    rapidjson::StringBuffer s;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    rapidjson::PrettyWriter &lt; rapidjson::StringBuffer &gt; writer(s);</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <a class="code" href="classcheckpoint.html#aa75f306fcb0c2360d948fa3a61adfed5">hasCheckpoint</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="comment">// Write restart/checkpoint options</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    writer.StartObject();</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    writer.String(<span class="stringliteral">&quot;tmmcDone&quot;</span>);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    writer.Bool(<a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a>);</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    writer.String(<span class="stringliteral">&quot;crossoverDone&quot;</span>);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    writer.Bool(<a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a>);</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    writer.String(<span class="stringliteral">&quot;walaDone&quot;</span>);</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    writer.Bool(<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a>);</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    writer.String(<span class="stringliteral">&quot;hasCheckpoint&quot;</span>);</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    writer.Bool(<a class="code" href="classcheckpoint.html#aa75f306fcb0c2360d948fa3a61adfed5">hasCheckpoint</a>);</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    writer.String(<span class="stringliteral">&quot;takeSnaps&quot;</span>);</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    writer.Bool(<a class="code" href="classcheckpoint.html#a685226e8bae8084937f73f65c326c362">takeSnaps</a>);</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    writer.String(<span class="stringliteral">&quot;freq&quot;</span>);</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    writer.Int64(<a class="code" href="classcheckpoint.html#a11a2d78eb0bf6045b659a4d18b53da44">freq</a>);</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    writer.String(<span class="stringliteral">&quot;dir&quot;</span>);</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    writer.String(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>.c_str());</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    writer.String(<span class="stringliteral">&quot;moveCounter&quot;</span>);</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    writer.Double(<a class="code" href="classcheckpoint.html#a5ab49a355714da4874aba00eb03f701d">moveCounter</a>);</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    writer.String(<span class="stringliteral">&quot;sweepCounter&quot;</span>);</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    writer.Double(<a class="code" href="classcheckpoint.html#ad011ddbca1ea708321335b1b3ac67e07">sweepCounter</a>);</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> &amp;&amp; <a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a>) { <span class="comment">// In final TMMC stage or just finished the TMMC (end of simulation)</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;        sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#ad49e147dc88b3e1c2975269598f94327">print</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/tmmc&quot;</span>, <span class="keyword">true</span>, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        <span class="keywordflow">if</span> (refine) {</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;            sys.<a class="code" href="classsim_system.html#afe05cba714a032b445cfb1a529547833">refineEnergyHistogramBounds</a>();</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        }</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;        sys.<a class="code" href="classsim_system.html#a6ef1ba3e08ec44d865436e272cdebc9b">printEnergyHistogram</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/eHist&quot;</span>, <span class="keyword">false</span>); <span class="comment">// Un-normalized Energy histogram</span></div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        <span class="keywordflow">if</span> (refine) {</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;            sys.<a class="code" href="classsim_system.html#a1e462fcb63389d59419ff6135b2d802e">refinePkHistogramBounds</a>();</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        }</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;        sys.<a class="code" href="classsim_system.html#ac29bdd6f7fa6f9526b7eafcf658d70d8">printPkHistogram</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/pkHist&quot;</span>, <span class="keyword">false</span>); <span class="comment">// Un-normalized Particle histogram</span></div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        sys.<a class="code" href="classsim_system.html#a2818b2f0ff79782d5443ca0f191564f8">printExtMoments</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/extMom&quot;</span>, <span class="keyword">false</span>); <span class="comment">// Un-normalized Extensive moments, plus counter (number of times each recorded)</span></div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;        writer.String(<span class="stringliteral">&quot;extMomCounter&quot;</span>);</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;        std::vector &lt; double &gt; ctr = sys.<a class="code" href="classsim_system.html#a1744c4c22603662081d75985bc30b754">extMomCounter</a>();</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;        writer.StartArray();</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;        <span class="keywordflow">for</span> (std::vector &lt; double &gt;::iterator it = ctr.begin(); it &lt; ctr.end(); ++it) {</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;            writer.Double(*it);</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;        }</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        writer.EndArray();</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a>) { <span class="comment">// In crossover stage</span></div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#ad49e147dc88b3e1c2975269598f94327">print</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/tmmc&quot;</span>, <span class="keyword">true</span>, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#a65569289fac85d0da9c336e17c9d809a">print</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/wala&quot;</span>, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        writer.String(<span class="stringliteral">&quot;wala_lnF&quot;</span>);</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        writer.Double(sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#acb8e59580d97bc3c5b9b4ff45eb6bb9a">lnF</a>());</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        writer.String(<span class="stringliteral">&quot;wala_lnF&quot;</span>);</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        writer.Double(sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#acb8e59580d97bc3c5b9b4ff45eb6bb9a">lnF</a>());</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;</div>
-<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        <span class="comment">// energy upper and lower bounds for histogram</span></div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        std::vector &lt; double &gt; <a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a> = sys.<a class="code" href="classsim_system.html#a610cbb1c6059151e420dbd42dd9da714">getELB</a>(), <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a> = sys.<a class="code" href="classsim_system.html#ae87e0ac03cc11259cd3b44c780a90a06">getEUB</a>();</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;        writer.String(<span class="stringliteral">&quot;energyHistogramLB&quot;</span>);</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        writer.StartArray();</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;        <span class="keywordflow">for</span> (std::vector &lt; double &gt;::iterator it = elb.begin(); it &lt; elb.end(); ++it) {</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;            writer.Double(*it);</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        }</div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        writer.EndArray();</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;        writer.String(<span class="stringliteral">&quot;energyHistogramUB&quot;</span>);</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        writer.StartArray();</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        <span class="keywordflow">for</span> (std::vector &lt; double &gt;::iterator it = <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>.begin(); it &lt; <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>.end(); ++it) {</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            writer.Double(*it);</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        }</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        writer.EndArray();</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (!<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a>) {</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        <span class="comment">// in WALA stage</span></div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#a65569289fac85d0da9c336e17c9d809a">print</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/wala&quot;</span>, <span class="keyword">true</span>);</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        writer.String(<span class="stringliteral">&quot;wala_lnF&quot;</span>);</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        writer.Double(sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#acb8e59580d97bc3c5b9b4ff45eb6bb9a">lnF</a>());</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;</div>
-<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <span class="comment">// energy upper and lower bounds for histogram</span></div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        std::vector &lt; double &gt; elb = sys.<a class="code" href="classsim_system.html#a610cbb1c6059151e420dbd42dd9da714">getELB</a>(), <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a> = sys.<a class="code" href="classsim_system.html#ae87e0ac03cc11259cd3b44c780a90a06">getEUB</a>();</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        writer.String(<span class="stringliteral">&quot;energyHistogramLB&quot;</span>);</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        writer.StartArray();</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        <span class="keywordflow">for</span> (std::vector &lt; double &gt;::iterator it = elb.begin(); it &lt; elb.end(); ++it) {</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            writer.Double(*it);</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        }</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        writer.EndArray();</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        writer.String(<span class="stringliteral">&quot;energyHistogramUB&quot;</span>);</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        writer.StartArray();</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        <span class="keywordflow">for</span> (std::vector &lt; double &gt;::iterator it = <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>.begin(); it &lt; <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>.end(); ++it) {</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            writer.Double(*it);</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        }</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        writer.EndArray();</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Uncertain which stage simulation is in, so cannot checkpoint&quot;</span>);</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    }</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    writer.EndObject();</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    std::ofstream outData(<a class="code" href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">chkptName</a>.c_str());</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    outData &lt;&lt; s.GetString() &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    sys.<a class="code" href="classsim_system.html#ae3096dc65acdf38cc824e507cca33370">printSnapshot</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/snap.xyz&quot;</span>, <a class="code" href="utilities_8cpp.html#aa6d910bf51f18a75deb20c6f0fbba285">getTimeStamp</a>(), <span class="keyword">true</span>); <span class="comment">// instantaneous snapshot</span></div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classcheckpoint.html#a685226e8bae8084937f73f65c326c362">takeSnaps</a>) {</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;        <span class="comment">// this only prints M = 0 atoms (fully inserted) to create a movie</span></div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        sys.<a class="code" href="classsim_system.html#ae3096dc65acdf38cc824e507cca33370">printSnapshot</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/movie.xyz&quot;</span>, <a class="code" href="utilities_8cpp.html#aa6d910bf51f18a75deb20c6f0fbba285">getTimeStamp</a>(), <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    }</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    time(&amp;lastCheckPt_);</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;}</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;        <span class="comment">// Energy upper and lower bounds for histogram</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        std::vector &lt; double &gt; <a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a> = sys.<a class="code" href="classsim_system.html#a610cbb1c6059151e420dbd42dd9da714">getELB</a>(), <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a> = sys.<a class="code" href="classsim_system.html#ae87e0ac03cc11259cd3b44c780a90a06">getEUB</a>();</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        writer.String(<span class="stringliteral">&quot;energyHistogramLB&quot;</span>);</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;        writer.StartArray();</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        <span class="keywordflow">for</span> (std::vector &lt; double &gt;::iterator it = elb.begin(); it &lt; elb.end(); ++it) {</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            writer.Double(*it);</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        }</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;        writer.EndArray();</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        writer.String(<span class="stringliteral">&quot;energyHistogramUB&quot;</span>);</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        writer.StartArray();</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;        <span class="keywordflow">for</span> (std::vector &lt; double &gt;::iterator it = <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>.begin(); it &lt; <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>.end(); ++it) {</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;            writer.Double(*it);</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        }</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        writer.EndArray();</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (!<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a>) { <span class="comment">// In WALA stage</span></div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#a65569289fac85d0da9c336e17c9d809a">print</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/wala&quot;</span>, <span class="keyword">true</span>);</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        writer.String(<span class="stringliteral">&quot;wala_lnF&quot;</span>);</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        writer.Double(sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#acb8e59580d97bc3c5b9b4ff45eb6bb9a">lnF</a>());</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        <span class="comment">// Energy upper and lower bounds for histogram</span></div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        std::vector &lt; double &gt; elb = sys.<a class="code" href="classsim_system.html#a610cbb1c6059151e420dbd42dd9da714">getELB</a>(), <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a> = sys.<a class="code" href="classsim_system.html#ae87e0ac03cc11259cd3b44c780a90a06">getEUB</a>();</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        writer.String(<span class="stringliteral">&quot;energyHistogramLB&quot;</span>);</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        writer.StartArray();</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <span class="keywordflow">for</span> (std::vector &lt; double &gt;::iterator it = elb.begin(); it &lt; elb.end(); ++it) {</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            writer.Double(*it);</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        }</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        writer.EndArray();</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        writer.String(<span class="stringliteral">&quot;energyHistogramUB&quot;</span>);</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        writer.StartArray();</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        <span class="keywordflow">for</span> (std::vector &lt; double &gt;::iterator it = <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>.begin(); it &lt; <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>.end(); ++it) {</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            writer.Double(*it);</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        }</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        writer.EndArray();</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Uncertain which stage simulation is in, so cannot checkpoint&quot;</span>);</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    }</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    writer.EndObject();</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    std::ofstream outData(chkptName.c_str());</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    outData &lt;&lt; s.GetString() &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    sys.<a class="code" href="classsim_system.html#ae3096dc65acdf38cc824e507cca33370">printSnapshot</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/snap.xyz&quot;</span>, <a class="code" href="utilities_8cpp.html#aa6d910bf51f18a75deb20c6f0fbba285">getTimeStamp</a>(), <span class="keyword">true</span>); <span class="comment">// Instantaneous snapshot</span></div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="keywordflow">if</span> (<a class="code" href="classcheckpoint.html#a685226e8bae8084937f73f65c326c362">takeSnaps</a>) { <span class="comment">// This only prints M = 0 atoms (fully inserted) to create a movie</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        sys.<a class="code" href="classsim_system.html#ae3096dc65acdf38cc824e507cca33370">printSnapshot</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/movie.xyz&quot;</span>, <a class="code" href="utilities_8cpp.html#aa6d910bf51f18a75deb20c6f0fbba285">getTimeStamp</a>(), <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    }</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    time(&amp;lastCheckPt_);</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;}</div>
 <div class="ttc" id="classtmmc_html_ad49e147dc88b3e1c2975269598f94327"><div class="ttname"><a href="classtmmc.html#ad49e147dc88b3e1c2975269598f94327">tmmc::print</a></div><div class="ttdeci">void print(const std::string fileName, bool printC=false, bool printHC=false)</div><div class="ttdoc">Print the UN-NORMALIZED biasing function (lnPI) and possibly collection matrix to files...</div><div class="ttdef"><b>Definition:</b> <a href="bias_8cpp_source.html#l00301">bias.cpp:301</a></div></div>
 <div class="ttc" id="classcheckpoint_html_a7071b01d0936873321d0a706e761b6ac"><div class="ttname"><a href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">checkpoint::eub</a></div><div class="ttdeci">std::vector&lt; double &gt; eub</div><div class="ttdoc">Upper and lower energy bounds for energy histogram. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00045">checkpoint.h:45</a></div></div>
 <div class="ttc" id="classcheckpoint_html_a685226e8bae8084937f73f65c326c362"><div class="ttname"><a href="classcheckpoint.html#a685226e8bae8084937f73f65c326c362">checkpoint::takeSnaps</a></div><div class="ttdeci">bool takeSnaps</div><div class="ttdoc">Save snapshot of the system each time a record is made. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00033">checkpoint.h:33</a></div></div>
@@ -597,6 +596,7 @@ Data Fields</h2></td></tr>
 <div class="ttc" id="classsim_system_html_a6ef1ba3e08ec44d865436e272cdebc9b"><div class="ttname"><a href="classsim_system.html#a6ef1ba3e08ec44d865436e272cdebc9b">simSystem::printEnergyHistogram</a></div><div class="ttdeci">void printEnergyHistogram(const std::string fileName, const bool normalize=true)</div><div class="ttdoc">Print the (normalized by default) energy histogram for each Ntot. </div><div class="ttdef"><b>Definition:</b> <a href="system_8cpp_source.html#l00912">system.cpp:912</a></div></div>
 <div class="ttc" id="classsim_system_html_ae87e0ac03cc11259cd3b44c780a90a06"><div class="ttname"><a href="classsim_system.html#ae87e0ac03cc11259cd3b44c780a90a06">simSystem::getEUB</a></div><div class="ttdeci">std::vector&lt; double &gt; getEUB()</div><div class="ttdoc">Returns current tally of energy max at each Ntot for checkpointing. </div><div class="ttdef"><b>Definition:</b> <a href="system_8h_source.html#l00106">system.h:106</a></div></div>
 <div class="ttc" id="classwala_html_a65569289fac85d0da9c336e17c9d809a"><div class="ttname"><a href="classwala.html#a65569289fac85d0da9c336e17c9d809a">wala::print</a></div><div class="ttdeci">void print(const std::string fileName, const bool printH=false)</div><div class="ttdoc">Print the UN-NORMALIZED biasing function (lnPI) and possible the visted states histogram to files...</div><div class="ttdef"><b>Definition:</b> <a href="bias_8cpp_source.html#l00530">bias.cpp:530</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_a9d1e3672fd331d4185c1763c80226307"><div class="ttname"><a href="utilities_8cpp.html#a9d1e3672fd331d4185c1763c80226307">fileExists</a></div><div class="ttdeci">bool fileExists(std::string fileName)</div><div class="ttdoc">Function to check whether a given file exists or not. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00272">utilities.cpp:272</a></div></div>
 <div class="ttc" id="classcheckpoint_html_aa75f306fcb0c2360d948fa3a61adfed5"><div class="ttname"><a href="classcheckpoint.html#aa75f306fcb0c2360d948fa3a61adfed5">checkpoint::hasCheckpoint</a></div><div class="ttdeci">bool hasCheckpoint</div><div class="ttdoc">At least one checkpoint has been made that the system can restart from. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00032">checkpoint.h:32</a></div></div>
 <div class="ttc" id="classcheckpoint_html_a5ab49a355714da4874aba00eb03f701d"><div class="ttname"><a href="classcheckpoint.html#a5ab49a355714da4874aba00eb03f701d">checkpoint::moveCounter</a></div><div class="ttdeci">long long int moveCounter</div><div class="ttdoc">Tracks the number of moves in a given sweep that have executed. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00038">checkpoint.h:38</a></div></div>
 <div class="ttc" id="classcheckpoint_html_a0e0f999ee8e0b09541e9131baa8a591d"><div class="ttname"><a href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">checkpoint::dir</a></div><div class="ttdeci">std::string dir</div><div class="ttdoc">Name of the checkpoint directory containing the information to reinitialize the system (json) ...</div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00042">checkpoint.h:42</a></div></div>
@@ -650,110 +650,107 @@ Data Fields</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="checkpoint_8cpp_source.html#l00060">60</a> of file <a class="el" href="checkpoint_8cpp_source.html">checkpoint.cpp</a>.</p>
+<p>Definition at line <a class="el" href="checkpoint_8cpp_source.html#l00054">54</a> of file <a class="el" href="checkpoint_8cpp_source.html">checkpoint.cpp</a>.</p>
 
 <p>References <a class="el" href="bias_8cpp_source.html#l00239">tmmc::calculatePI()</a>, <a class="el" href="checkpoint_8h_source.html#l00043">chkptName</a>, <a class="el" href="checkpoint_8h_source.html#l00034">crossoverDone</a>, <a class="el" href="checkpoint_8h_source.html#l00042">dir</a>, <a class="el" href="checkpoint_8h_source.html#l00045">elb</a>, <a class="el" href="checkpoint_8h_source.html#l00045">eub</a>, <a class="el" href="utilities_8cpp_source.html#l00272">fileExists()</a>, <a class="el" href="system_8cpp_source.html#l01688">simSystem::getTMMCBias()</a>, <a class="el" href="system_8h_source.html#l00081">simSystem::getTotalM()</a>, <a class="el" href="system_8cpp_source.html#l01701">simSystem::getWALABias()</a>, <a class="el" href="checkpoint_8h_source.html#l00032">hasCheckpoint</a>, <a class="el" href="checkpoint_8h_source.html#l00038">moveCounter</a>, <a class="el" href="utilities_8cpp_source.html#l00045">parseJson()</a>, <a class="el" href="bias_8cpp_source.html#l00378">tmmc::readC()</a>, <a class="el" href="system_8cpp_source.html#l01387">simSystem::readConfig()</a>, <a class="el" href="bias_8cpp_source.html#l00600">wala::readH()</a>, <a class="el" href="bias_8cpp_source.html#l00353">tmmc::readHC()</a>, <a class="el" href="bias_8cpp_source.html#l00576">wala::readlnPI()</a>, <a class="el" href="checkpoint_8h_source.html#l00035">resFromCross</a>, <a class="el" href="checkpoint_8h_source.html#l00035">resFromTMMC</a>, <a class="el" href="checkpoint_8h_source.html#l00035">resFromWALA</a>, <a class="el" href="system_8cpp_source.html#l00969">simSystem::restartEnergyHistogram()</a>, <a class="el" href="system_8cpp_source.html#l00742">simSystem::restartExtMoments()</a>, <a class="el" href="system_8cpp_source.html#l01136">simSystem::restartPkHistogram()</a>, <a class="el" href="utilities_8cpp_source.html#l00035">sendErr()</a>, <a class="el" href="utilities_8cpp_source.html#l00026">sendMsg()</a>, <a class="el" href="system_8h_source.html#l00043">simSystem::setELB()</a>, <a class="el" href="system_8h_source.html#l00042">simSystem::setEUB()</a>, <a class="el" href="system_8cpp_source.html#l01734">simSystem::startTMMC()</a>, <a class="el" href="system_8cpp_source.html#l01717">simSystem::startWALA()</a>, <a class="el" href="checkpoint_8h_source.html#l00039">sweepCounter</a>, <a class="el" href="global_8h_source.html#l00158">SYS_FAILURE</a>, <a class="el" href="checkpoint_8h_source.html#l00033">takeSnaps</a>, <a class="el" href="checkpoint_8h_source.html#l00034">tmmcDone</a>, <a class="el" href="system_8h_source.html#l00095">simSystem::tmmcSweepSize</a>, <a class="el" href="system_8h_source.html#l00101">simSystem::wala_g</a>, <a class="el" href="checkpoint_8h_source.html#l00040">wala_lnF</a>, <a class="el" href="system_8h_source.html#l00101">simSystem::wala_s</a>, and <a class="el" href="checkpoint_8h_source.html#l00034">walaDone</a>.</p>
 
 <p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                                                          {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="utilities_8cpp.html#a9d1e3672fd331d4185c1763c80226307">fileExists</a>(<a class="code" href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">chkptName</a>) &amp;&amp; !<span class="keyword">override</span>) {</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;No checkpoint by the name: &quot;</span>+<a class="code" href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">chkptName</a>);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    }</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    rapidjson::Document doc;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <a class="code" href="utilities_8cpp.html#a3f494918ff3c252de4914c9905be04e7">parseJson</a> (<a class="code" href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">chkptName</a>, doc);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a> = doc[<span class="stringliteral">&quot;tmmcDone&quot;</span>].GetBool();</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> = doc[<span class="stringliteral">&quot;crossoverDone&quot;</span>].GetBool();</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> = doc[<span class="stringliteral">&quot;walaDone&quot;</span>].GetBool();</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <a class="code" href="classcheckpoint.html#aa75f306fcb0c2360d948fa3a61adfed5">hasCheckpoint</a> = doc[<span class="stringliteral">&quot;hasCheckpoint&quot;</span>].GetBool();</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <a class="code" href="classcheckpoint.html#a685226e8bae8084937f73f65c326c362">takeSnaps</a> = doc[<span class="stringliteral">&quot;takeSnaps&quot;</span>].GetBool();</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a> = doc[<span class="stringliteral">&quot;dir&quot;</span>].GetString();</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <a class="code" href="classcheckpoint.html#a5ab49a355714da4874aba00eb03f701d">moveCounter</a> = (<span class="keywordtype">long</span> <span class="keywordtype">long</span> int)doc[<span class="stringliteral">&quot;moveCounter&quot;</span>].GetDouble();</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <a class="code" href="classcheckpoint.html#ad011ddbca1ea708321335b1b3ac67e07">sweepCounter</a> = (<span class="keywordtype">long</span> <span class="keywordtype">long</span> int)doc[<span class="stringliteral">&quot;sweepCounter&quot;</span>].GetDouble();</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> &amp;&amp; <a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a>) {</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            <span class="comment">// In final TMMC stage or just finished the TMMC (end of simulation)</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            <a class="code" href="classcheckpoint.html#ab8f6081561b8c7871eea6743d4988d8a">resFromTMMC</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            sys.<a class="code" href="classsim_system.html#ac689245cd8e9ddfdcd94d3871a5a5d6b">startTMMC</a>(sys.<a class="code" href="classsim_system.html#a56e284a361964d0a9ce5c45f41d56ab1">tmmcSweepSize</a>, sys.<a class="code" href="classsim_system.html#aa4ad1afff101bb530e1590df05035276">getTotalM</a>());</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#a7d9ee0505dc801cbff55bc35c3654a61">readC</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/tmmc_C.dat&quot;</span>);</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#ab51a593d041a65c4ca47e6c4e0c26992">readHC</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/tmmc_HC.dat&quot;</span>);</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#a8e065523e9cc3c9628f91d3804cd201e">calculatePI</a>();</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            std::vector &lt; double &gt; ctr (doc[<span class="stringliteral">&quot;extMomCounter&quot;</span>].Size(), 0);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; doc[<span class="stringliteral">&quot;extMomCounter&quot;</span>].Size(); ++i) {</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                ctr[i] = doc[<span class="stringliteral">&quot;extMomCounter&quot;</span>][i].GetDouble();</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            }</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            sys.<a class="code" href="classsim_system.html#ae073008ed44e551f0d008b2f5a0fc06f">restartEnergyHistogram</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/eHist&quot;</span>);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            sys.<a class="code" href="classsim_system.html#a3239a23e35f30e40eeecf8795386c164">restartPkHistogram</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/pkHist&quot;</span>);</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            sys.<a class="code" href="classsim_system.html#a999556fea891765c5ed4d979706665af">restartExtMoments</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/extMom&quot;</span>, ctr);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a>) {</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            <span class="comment">// In crossover stage</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            <a class="code" href="classcheckpoint.html#ac3e65d26f2b8231ae9dd7e29c72ecf3b">resFromCross</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;            sys.<a class="code" href="classsim_system.html#ac689245cd8e9ddfdcd94d3871a5a5d6b">startTMMC</a>(sys.<a class="code" href="classsim_system.html#a56e284a361964d0a9ce5c45f41d56ab1">tmmcSweepSize</a>, sys.<a class="code" href="classsim_system.html#aa4ad1afff101bb530e1590df05035276">getTotalM</a>());</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <a class="code" href="classcheckpoint.html#a34dc9c1711a8b4f9986a7a2c41b9dcd1">wala_lnF</a> = doc[<span class="stringliteral">&quot;wala_lnF&quot;</span>].GetDouble();</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            sys.<a class="code" href="classsim_system.html#a57af66c88ce4dc1aeb6a1cd3f14ff0bb">startWALA</a> (<a class="code" href="classcheckpoint.html#a34dc9c1711a8b4f9986a7a2c41b9dcd1">wala_lnF</a>, sys.<a class="code" href="classsim_system.html#aa2e866e69ebe5fa0761894212592175a">wala_g</a>, sys.<a class="code" href="classsim_system.html#a7cc3431bb59acca9165b044dbd07dcdc">wala_s</a>, sys.<a class="code" href="classsim_system.html#aa4ad1afff101bb530e1590df05035276">getTotalM</a>());</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#a7d9ee0505dc801cbff55bc35c3654a61">readC</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/tmmc_C.dat&quot;</span>);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#ab51a593d041a65c4ca47e6c4e0c26992">readHC</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/tmmc_HC.dat&quot;</span>);</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#ae04916f49c11b0636e813787a3906570">readlnPI</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/wala_lnPI.dat&quot;</span>);</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#a0b8df0fb2b7722fc4a458e527a478b6f">readH</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/wala_H.dat&quot;</span>);</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            <span class="comment">// Energy upper and lower bounds for histogram</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            <a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a>.resize(doc[<span class="stringliteral">&quot;energyHistogramLB&quot;</span>].Size(), 0);</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; doc[<span class="stringliteral">&quot;energyHistogramLB&quot;</span>].Size(); ++i) {</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                <a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a>[i] = doc[<span class="stringliteral">&quot;energyHistogramLB&quot;</span>][i].GetDouble();</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            }</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            sys.<a class="code" href="classsim_system.html#a284cf6c00f572db12db0cb263974a78a">setELB</a>(<a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a>);</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>.resize(doc[<span class="stringliteral">&quot;energyHistogramUB&quot;</span>].Size(), 0);</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; doc[<span class="stringliteral">&quot;energyHistogramUB&quot;</span>].Size(); ++i) {</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>[i] = doc[<span class="stringliteral">&quot;energyHistogramUB&quot;</span>][i].GetDouble();</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            }</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;            sys.<a class="code" href="classsim_system.html#ab894de5ccd37efa97ae799f1dc1875a1">setEUB</a>(<a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>);</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (!<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a>) {</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            <span class="comment">// In WALA stage</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            <a class="code" href="classcheckpoint.html#a46f1c17d03901292f642ccad0a325d9e">resFromWALA</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            <a class="code" href="classcheckpoint.html#a34dc9c1711a8b4f9986a7a2c41b9dcd1">wala_lnF</a> = doc[<span class="stringliteral">&quot;wala_lnF&quot;</span>].GetDouble();</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            sys.<a class="code" href="classsim_system.html#a57af66c88ce4dc1aeb6a1cd3f14ff0bb">startWALA</a> (<a class="code" href="classcheckpoint.html#a34dc9c1711a8b4f9986a7a2c41b9dcd1">wala_lnF</a>, sys.<a class="code" href="classsim_system.html#aa2e866e69ebe5fa0761894212592175a">wala_g</a>, sys.<a class="code" href="classsim_system.html#a7cc3431bb59acca9165b044dbd07dcdc">wala_s</a>, sys.<a class="code" href="classsim_system.html#aa4ad1afff101bb530e1590df05035276">getTotalM</a>());</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#ae04916f49c11b0636e813787a3906570">readlnPI</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/wala_lnPI.dat&quot;</span>);</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#a0b8df0fb2b7722fc4a458e527a478b6f">readH</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/wala_H.dat&quot;</span>);</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            <span class="comment">// Energy upper and lower bounds for histogram</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            <a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a>.resize(doc[<span class="stringliteral">&quot;energyHistogramLB&quot;</span>].Size(), 0);</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; doc[<span class="stringliteral">&quot;energyHistogramLB&quot;</span>].Size(); ++i) {</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;                <a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a>[i] = doc[<span class="stringliteral">&quot;energyHistogramLB&quot;</span>][i].GetDouble();</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            }</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;            sys.<a class="code" href="classsim_system.html#a284cf6c00f572db12db0cb263974a78a">setELB</a>(<a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a>);</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>.resize(doc[<span class="stringliteral">&quot;energyHistogramUB&quot;</span>].Size(), 0);</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; doc[<span class="stringliteral">&quot;energyHistogramUB&quot;</span>].Size(); ++i) {</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;                <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>[i] = doc[<span class="stringliteral">&quot;energyHistogramUB&quot;</span>][i].GetDouble();</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            }</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            sys.<a class="code" href="classsim_system.html#ab894de5ccd37efa97ae799f1dc1875a1">setEUB</a>(<a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>);</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;            <span class="keywordflow">if</span> (!<span class="keyword">override</span>) {</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;                <a class="code" href="utilities_8cpp.html#a6dacf3c3c19aa1e13a4d5a148fe5114e">sendErr</a>(<span class="stringliteral">&quot;Uncertain which stage simulation is in, so cannot checkpoint&quot;</span>);</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;                exit(<a class="code" href="global_8h.html#a428dfe1ef0a6ff4b1fdebf275f6aff2e">SYS_FAILURE</a>);</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            }</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        }</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        sys.<a class="code" href="classsim_system.html#a3161d95bbb800d5d95a732ac5fc32b95">readConfig</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/snap.xyz&quot;</span>);</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        <a class="code" href="classcheckpoint.html#aa75f306fcb0c2360d948fa3a61adfed5">hasCheckpoint</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    } <span class="keywordflow">catch</span> (std::exception &amp;ex) {</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        std::string msg = ex.what();</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        <span class="keywordflow">if</span> (!<span class="keyword">override</span>) {</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            <a class="code" href="classcheckpoint.html#aa75f306fcb0c2360d948fa3a61adfed5">hasCheckpoint</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;            <a class="code" href="utilities_8cpp.html#a6dacf3c3c19aa1e13a4d5a148fe5114e">sendErr</a>(<span class="stringliteral">&quot;Unable to load checkpoint &quot;</span>+msg);</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            exit(<a class="code" href="global_8h.html#a428dfe1ef0a6ff4b1fdebf275f6aff2e">SYS_FAILURE</a>);</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;            <a class="code" href="utilities_8cpp.html#a6dacf3c3c19aa1e13a4d5a148fe5114e">sendErr</a>(<span class="stringliteral">&quot;Overriding the following errors to load checkpoint &quot;</span>+msg);</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        }</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    }</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <a class="code" href="utilities_8cpp.html#a08974c73a5b36c28b8ad1ef47fca77b0">sendMsg</a>(<span class="stringliteral">&quot;Checkpoint loaded from &quot;</span>+<a class="code" href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">chkptName</a>);</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;}</div>
+<div class="fragment"><div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                                                          {</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="utilities_8cpp.html#a9d1e3672fd331d4185c1763c80226307">fileExists</a>(<a class="code" href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">chkptName</a>) &amp;&amp; !<span class="keyword">override</span>) {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;No checkpoint by the name: &quot;</span>+<a class="code" href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">chkptName</a>);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    rapidjson::Document doc;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <a class="code" href="utilities_8cpp.html#a3f494918ff3c252de4914c9905be04e7">parseJson</a> (<a class="code" href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">chkptName</a>, doc);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a> = doc[<span class="stringliteral">&quot;tmmcDone&quot;</span>].GetBool();</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> = doc[<span class="stringliteral">&quot;crossoverDone&quot;</span>].GetBool();</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> = doc[<span class="stringliteral">&quot;walaDone&quot;</span>].GetBool();</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <a class="code" href="classcheckpoint.html#aa75f306fcb0c2360d948fa3a61adfed5">hasCheckpoint</a> = doc[<span class="stringliteral">&quot;hasCheckpoint&quot;</span>].GetBool();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <a class="code" href="classcheckpoint.html#a685226e8bae8084937f73f65c326c362">takeSnaps</a> = doc[<span class="stringliteral">&quot;takeSnaps&quot;</span>].GetBool();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a> = doc[<span class="stringliteral">&quot;dir&quot;</span>].GetString();</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <a class="code" href="classcheckpoint.html#a5ab49a355714da4874aba00eb03f701d">moveCounter</a> = (<span class="keywordtype">long</span> <span class="keywordtype">long</span> int)doc[<span class="stringliteral">&quot;moveCounter&quot;</span>].GetDouble();</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <a class="code" href="classcheckpoint.html#ad011ddbca1ea708321335b1b3ac67e07">sweepCounter</a> = (<span class="keywordtype">long</span> <span class="keywordtype">long</span> int)doc[<span class="stringliteral">&quot;sweepCounter&quot;</span>].GetDouble();</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordflow">if</span> (<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> &amp;&amp; <a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a>) { <span class="comment">// In final TMMC stage or just finished the TMMC (end of simulation)</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <a class="code" href="classcheckpoint.html#ab8f6081561b8c7871eea6743d4988d8a">resFromTMMC</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            sys.<a class="code" href="classsim_system.html#ac689245cd8e9ddfdcd94d3871a5a5d6b">startTMMC</a>(sys.<a class="code" href="classsim_system.html#a56e284a361964d0a9ce5c45f41d56ab1">tmmcSweepSize</a>, sys.<a class="code" href="classsim_system.html#aa4ad1afff101bb530e1590df05035276">getTotalM</a>());</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#a7d9ee0505dc801cbff55bc35c3654a61">readC</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/tmmc_C.dat&quot;</span>);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#ab51a593d041a65c4ca47e6c4e0c26992">readHC</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/tmmc_HC.dat&quot;</span>);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#a8e065523e9cc3c9628f91d3804cd201e">calculatePI</a>();</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;            std::vector &lt; double &gt; ctr (doc[<span class="stringliteral">&quot;extMomCounter&quot;</span>].Size(), 0);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; doc[<span class="stringliteral">&quot;extMomCounter&quot;</span>].Size(); ++i) {</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                ctr[i] = doc[<span class="stringliteral">&quot;extMomCounter&quot;</span>][i].GetDouble();</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            }</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            sys.<a class="code" href="classsim_system.html#ae073008ed44e551f0d008b2f5a0fc06f">restartEnergyHistogram</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/eHist&quot;</span>);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            sys.<a class="code" href="classsim_system.html#a3239a23e35f30e40eeecf8795386c164">restartPkHistogram</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/pkHist&quot;</span>);</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            sys.<a class="code" href="classsim_system.html#a999556fea891765c5ed4d979706665af">restartExtMoments</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/extMom&quot;</span>, ctr);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a>) { <span class="comment">// In crossover stage</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <a class="code" href="classcheckpoint.html#ac3e65d26f2b8231ae9dd7e29c72ecf3b">resFromCross</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            sys.<a class="code" href="classsim_system.html#ac689245cd8e9ddfdcd94d3871a5a5d6b">startTMMC</a>(sys.<a class="code" href="classsim_system.html#a56e284a361964d0a9ce5c45f41d56ab1">tmmcSweepSize</a>, sys.<a class="code" href="classsim_system.html#aa4ad1afff101bb530e1590df05035276">getTotalM</a>());</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            <a class="code" href="classcheckpoint.html#a34dc9c1711a8b4f9986a7a2c41b9dcd1">wala_lnF</a> = doc[<span class="stringliteral">&quot;wala_lnF&quot;</span>].GetDouble();</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            sys.<a class="code" href="classsim_system.html#a57af66c88ce4dc1aeb6a1cd3f14ff0bb">startWALA</a> (<a class="code" href="classcheckpoint.html#a34dc9c1711a8b4f9986a7a2c41b9dcd1">wala_lnF</a>, sys.<a class="code" href="classsim_system.html#aa2e866e69ebe5fa0761894212592175a">wala_g</a>, sys.<a class="code" href="classsim_system.html#a7cc3431bb59acca9165b044dbd07dcdc">wala_s</a>, sys.<a class="code" href="classsim_system.html#aa4ad1afff101bb530e1590df05035276">getTotalM</a>());</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#a7d9ee0505dc801cbff55bc35c3654a61">readC</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/tmmc_C.dat&quot;</span>);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            sys.<a class="code" href="classsim_system.html#aa31d40c91cb50f143a9613d362798887">getTMMCBias</a>()-&gt;<a class="code" href="classtmmc.html#ab51a593d041a65c4ca47e6c4e0c26992">readHC</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/tmmc_HC.dat&quot;</span>);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#ae04916f49c11b0636e813787a3906570">readlnPI</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/wala_lnPI.dat&quot;</span>);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#a0b8df0fb2b7722fc4a458e527a478b6f">readH</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/wala_H.dat&quot;</span>);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <span class="comment">// Energy upper and lower bounds for histogram</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            <a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a>.resize(doc[<span class="stringliteral">&quot;energyHistogramLB&quot;</span>].Size(), 0);</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; doc[<span class="stringliteral">&quot;energyHistogramLB&quot;</span>].Size(); ++i) {</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                <a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a>[i] = doc[<span class="stringliteral">&quot;energyHistogramLB&quot;</span>][i].GetDouble();</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            }</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            sys.<a class="code" href="classsim_system.html#a284cf6c00f572db12db0cb263974a78a">setELB</a>(<a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a>);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>.resize(doc[<span class="stringliteral">&quot;energyHistogramUB&quot;</span>].Size(), 0);</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; doc[<span class="stringliteral">&quot;energyHistogramUB&quot;</span>].Size(); ++i) {</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>[i] = doc[<span class="stringliteral">&quot;energyHistogramUB&quot;</span>][i].GetDouble();</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            }</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;            sys.<a class="code" href="classsim_system.html#ab894de5ccd37efa97ae799f1dc1875a1">setEUB</a>(<a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (!<a class="code" href="classcheckpoint.html#aab066479e2ca6656d0031dd46a2fc1a5">walaDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5">crossoverDone</a> &amp;&amp; !<a class="code" href="classcheckpoint.html#acbe0c62aa82735741a9f396827966823">tmmcDone</a>) { <span class="comment">// In WALA stage and printed 1st checkpoint already</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            <a class="code" href="classcheckpoint.html#a46f1c17d03901292f642ccad0a325d9e">resFromWALA</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            <a class="code" href="classcheckpoint.html#a34dc9c1711a8b4f9986a7a2c41b9dcd1">wala_lnF</a> = doc[<span class="stringliteral">&quot;wala_lnF&quot;</span>].GetDouble();</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;            sys.<a class="code" href="classsim_system.html#a57af66c88ce4dc1aeb6a1cd3f14ff0bb">startWALA</a> (<a class="code" href="classcheckpoint.html#a34dc9c1711a8b4f9986a7a2c41b9dcd1">wala_lnF</a>, sys.<a class="code" href="classsim_system.html#aa2e866e69ebe5fa0761894212592175a">wala_g</a>, sys.<a class="code" href="classsim_system.html#a7cc3431bb59acca9165b044dbd07dcdc">wala_s</a>, sys.<a class="code" href="classsim_system.html#aa4ad1afff101bb530e1590df05035276">getTotalM</a>());</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#ae04916f49c11b0636e813787a3906570">readlnPI</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/wala_lnPI.dat&quot;</span>);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;            sys.<a class="code" href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">getWALABias</a>()-&gt;<a class="code" href="classwala.html#a0b8df0fb2b7722fc4a458e527a478b6f">readH</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/wala_H.dat&quot;</span>);</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            <span class="comment">// Energy upper and lower bounds for histogram</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            <a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a>.resize(doc[<span class="stringliteral">&quot;energyHistogramLB&quot;</span>].Size(), 0);</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; doc[<span class="stringliteral">&quot;energyHistogramLB&quot;</span>].Size(); ++i) {</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                <a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a>[i] = doc[<span class="stringliteral">&quot;energyHistogramLB&quot;</span>][i].GetDouble();</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            }</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            sys.<a class="code" href="classsim_system.html#a284cf6c00f572db12db0cb263974a78a">setELB</a>(<a class="code" href="classcheckpoint.html#a2338cb624f19eb6776c10f9bb83b2a5d">elb</a>);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>.resize(doc[<span class="stringliteral">&quot;energyHistogramUB&quot;</span>].Size(), 0);</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; doc[<span class="stringliteral">&quot;energyHistogramUB&quot;</span>].Size(); ++i) {</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                <a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>[i] = doc[<span class="stringliteral">&quot;energyHistogramUB&quot;</span>][i].GetDouble();</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            }</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            sys.<a class="code" href="classsim_system.html#ab894de5ccd37efa97ae799f1dc1875a1">setEUB</a>(<a class="code" href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">eub</a>);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            <span class="keywordflow">if</span> (!<span class="keyword">override</span>) {</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                <a class="code" href="utilities_8cpp.html#a6dacf3c3c19aa1e13a4d5a148fe5114e">sendErr</a>(<span class="stringliteral">&quot;Uncertain which stage simulation is in, so cannot checkpoint&quot;</span>);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;                exit(<a class="code" href="global_8h.html#a428dfe1ef0a6ff4b1fdebf275f6aff2e">SYS_FAILURE</a>);</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            }</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        }</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        sys.<a class="code" href="classsim_system.html#a3161d95bbb800d5d95a732ac5fc32b95">readConfig</a>(<a class="code" href="classcheckpoint.html#a0e0f999ee8e0b09541e9131baa8a591d">dir</a>+<span class="stringliteral">&quot;/snap.xyz&quot;</span>);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <a class="code" href="classcheckpoint.html#aa75f306fcb0c2360d948fa3a61adfed5">hasCheckpoint</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    } <span class="keywordflow">catch</span> (std::exception &amp;ex) {</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        std::string msg = ex.what();</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keywordflow">if</span> (!<span class="keyword">override</span>) {</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            <a class="code" href="classcheckpoint.html#aa75f306fcb0c2360d948fa3a61adfed5">hasCheckpoint</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            <a class="code" href="utilities_8cpp.html#a6dacf3c3c19aa1e13a4d5a148fe5114e">sendErr</a>(<span class="stringliteral">&quot;Unable to load checkpoint &quot;</span>+msg);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            exit(<a class="code" href="global_8h.html#a428dfe1ef0a6ff4b1fdebf275f6aff2e">SYS_FAILURE</a>);</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            <a class="code" href="utilities_8cpp.html#a6dacf3c3c19aa1e13a4d5a148fe5114e">sendErr</a>(<span class="stringliteral">&quot;Overriding the following errors to load checkpoint &quot;</span>+msg);</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        }</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    }</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <a class="code" href="utilities_8cpp.html#a08974c73a5b36c28b8ad1ef47fca77b0">sendMsg</a>(<span class="stringliteral">&quot;Checkpoint loaded from &quot;</span>+<a class="code" href="classcheckpoint.html#a477eea21621f066889660ed426dc800f">chkptName</a>);</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;}</div>
 <div class="ttc" id="classcheckpoint_html_a7071b01d0936873321d0a706e761b6ac"><div class="ttname"><a href="classcheckpoint.html#a7071b01d0936873321d0a706e761b6ac">checkpoint::eub</a></div><div class="ttdeci">std::vector&lt; double &gt; eub</div><div class="ttdoc">Upper and lower energy bounds for energy histogram. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00045">checkpoint.h:45</a></div></div>
 <div class="ttc" id="classsim_system_html_a57af66c88ce4dc1aeb6a1cd3f14ff0bb"><div class="ttname"><a href="classsim_system.html#a57af66c88ce4dc1aeb6a1cd3f14ff0bb">simSystem::startWALA</a></div><div class="ttdeci">void startWALA(const double lnF, const double g, const double s, const int Mtot)</div><div class="ttdoc">Start using Wang-Landau and instantiate the bias object. </div><div class="ttdef"><b>Definition:</b> <a href="system_8cpp_source.html#l01717">system.cpp:1717</a></div></div>
 <div class="ttc" id="classcheckpoint_html_a685226e8bae8084937f73f65c326c362"><div class="ttname"><a href="classcheckpoint.html#a685226e8bae8084937f73f65c326c362">checkpoint::takeSnaps</a></div><div class="ttdeci">bool takeSnaps</div><div class="ttdoc">Save snapshot of the system each time a record is made. </div><div class="ttdef"><b>Definition:</b> <a href="checkpoint_8h_source.html#l00033">checkpoint.h:33</a></div></div>
@@ -812,7 +809,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00043">43</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00168">dump()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00159">dump()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>.</p>
 
 </div>
 </div>
@@ -828,7 +825,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00034">34</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00168">dump()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>, and <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00159">dump()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>, and <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>.</p>
 
 </div>
 </div>
@@ -846,7 +843,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00042">42</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00168">dump()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00159">dump()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>.</p>
 
 </div>
 </div>
@@ -862,7 +859,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00045">45</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00168">dump()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00159">dump()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>.</p>
 
 </div>
 </div>
@@ -880,7 +877,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00045">45</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00168">dump()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00159">dump()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>.</p>
 
 </div>
 </div>
@@ -898,7 +895,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00037">37</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00290">check()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00168">dump()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00285">check()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00159">dump()</a>.</p>
 
 </div>
 </div>
@@ -916,7 +913,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00032">32</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00168">dump()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00159">dump()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>.</p>
 
 </div>
 </div>
@@ -934,7 +931,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00038">38</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>, <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>, and <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>, <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>, and <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>.</p>
 
 </div>
 </div>
@@ -950,7 +947,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00035">35</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>, and <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>, and <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>.</p>
 
 </div>
 </div>
@@ -968,7 +965,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00035">35</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>, and <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>, and <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>.</p>
 
 </div>
 </div>
@@ -984,7 +981,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00035">35</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>, and <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>, and <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>.</p>
 
 </div>
 </div>
@@ -1002,7 +999,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00039">39</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>, <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, and <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>, <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, and <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>.</p>
 
 </div>
 </div>
@@ -1020,7 +1017,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00033">33</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00168">dump()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00159">dump()</a>, and <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>.</p>
 
 </div>
 </div>
@@ -1036,7 +1033,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00034">34</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00168">dump()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>, and <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00159">dump()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>, and <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>.</p>
 
 </div>
 </div>
@@ -1054,7 +1051,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00040">40</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>.</p>
 
 </div>
 </div>
@@ -1072,7 +1069,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="checkpoint_8h_source.html#l00034">34</a> of file <a class="el" href="checkpoint_8h_source.html">checkpoint.h</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00168">dump()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">load()</a>, and <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00159">dump()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">load()</a>, and <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>.</p>
 
 </div>
 </div>
@@ -1083,7 +1080,7 @@ Data Fields</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 30 2016 13:19:38 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 30 2016 14:21:50 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

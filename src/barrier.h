@@ -125,7 +125,6 @@ public:
 
 private:
     std::vector < std::shared_ptr < barrier > > sysBarriers_;
-    //std::vector < barrier* > sysBarriers_;
 };
 
 #endif

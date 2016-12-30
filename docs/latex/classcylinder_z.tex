@@ -33,7 +33,7 @@ double \hyperlink{classcylinder_z_a0d1ec094ac9bf23b74e6f03f09477217}{energy} (co
 \subsection{Detailed Description}
 Cylinder along z = 0 axis at a given (x,y) coordinate. 
 
-Definition at line 63 of file barrier.\-h.
+Definition at line 64 of file barrier.\-h.
 
 
 
@@ -47,11 +47,11 @@ Definition at line 63 of file barrier.\-h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classcylinder_z_a06f3ecc97023c1806d587f93a1c6c565}
 
 
-Definition at line 65 of file barrier.\-h.
+Definition at line 66 of file barrier.\-h.
 
 
 \begin{DoxyCode}
-65 \{\};
+66 \{\};
 \end{DoxyCode}
 \hypertarget{classcylinder_z_a6891adbe87a6814239c8a143e996b1b0}{\index{cylinder\-Z@{cylinder\-Z}!cylinder\-Z@{cylinder\-Z}}
 \index{cylinder\-Z@{cylinder\-Z}!cylinderZ@{cylinder\-Z}}
@@ -184,13 +184,13 @@ References barrier\-::\-M\-\_\-, atom\-::m\-State, N\-U\-M\-\_\-\-I\-N\-F\-I\-N\
 536         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for cylinderZ"});
 537     \}
 538 
-539     \textcolor{comment}{// return infinity if out of bounds}
+539     \textcolor{comment}{// Return infinity if out of bounds}
 540     \textcolor{keywordtype}{double} rc = radius\_ - sig/2.0, ri = radius\_ - width\_;
 541     \textcolor{keywordflow}{if} (rv2 >= rc*rc) \{
 542         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
 543     \}
 544 
-545     \textcolor{comment}{// interaction with the wall - return infinity if it was out of bounds already}
+545     \textcolor{comment}{// Interaction with the wall - return infinity if it was out of bounds already}
 546     \textcolor{keywordflow}{if} (rv2 > ri*ri) \{
 547         U += -eps;
 548     \}

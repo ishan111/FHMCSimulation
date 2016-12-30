@@ -37,16 +37,16 @@ Inherits \fBbarrier\fP\&.
 .PP 
 Cylinder along z = 0 axis at a given (x,y) coordinate\&. 
 .PP
-Definition at line 63 of file barrier\&.h\&.
+Definition at line 64 of file barrier\&.h\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "cylinderZ::~cylinderZ ()\fC [inline]\fP"
 
 .PP
-Definition at line 65 of file barrier\&.h\&.
+Definition at line 66 of file barrier\&.h\&.
 .PP
 .nf
-65 {};
+66 {};
 .fi
 .SS "cylinderZ::cylinderZ (const doublex, const doubley, const doubleradius, const doublewidth, const doublesigma, const doubleeps, const intM = \fC1\fP)"
 
@@ -144,13 +144,13 @@ References barrier::M_, atom::mState, NUM_INFINITY, pbcDist2(), and atom::pos\&.
 536         throw customException ("mState out of bounds for cylinderZ");
 537     }
 538 
-539     // return infinity if out of bounds
+539     // Return infinity if out of bounds
 540     double rc = radius_ - sig/2\&.0, ri = radius_ - width_;
 541     if (rv2 >= rc*rc) {
 542         return NUM_INFINITY;
 543     }
 544 
-545     // interaction with the wall - return infinity if it was out of bounds already
+545     // Interaction with the wall - return infinity if it was out of bounds already
 546     if (rv2 > ri*ri) {
 547         U += -eps;
 548     }

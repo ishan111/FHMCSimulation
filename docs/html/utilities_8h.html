@@ -191,7 +191,7 @@ Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="utilities_8cpp_source.html#l00272">272</a> of file <a class="el" href="utilities_8cpp_source.html">utilities.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint::checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">checkpoint::load()</a>, and <a class="el" href="potentials_8cpp_source.html#l00324">tabulated::loadPotential()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00014">checkpoint::checkpoint()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00159">checkpoint::dump()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">checkpoint::load()</a>, and <a class="el" href="potentials_8cpp_source.html#l00324">tabulated::loadPotential()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                                    {</div>
 <div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    <span class="keyword">struct </span>stat stFileInfo;</div>
 <div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;</div>
@@ -221,7 +221,7 @@ Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="utilities_8cpp_source.html#l00091">91</a> of file <a class="el" href="utilities_8cpp_source.html">utilities.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00168">checkpoint::dump()</a>, <a class="el" href="mover_8cpp_source.html#l00053">moves::print()</a>, <a class="el" href="utilities_8cpp_source.html#l00035">sendErr()</a>, and <a class="el" href="utilities_8cpp_source.html#l00026">sendMsg()</a>.</p>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00159">checkpoint::dump()</a>, <a class="el" href="mover_8cpp_source.html#l00053">moves::print()</a>, <a class="el" href="utilities_8cpp_source.html#l00035">sendErr()</a>, and <a class="el" href="utilities_8cpp_source.html#l00026">sendMsg()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                          {</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    time_t rawtime;</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    time (&amp;rawtime);</div>
@@ -360,7 +360,7 @@ template&lt;typename T &gt; </div>
 
 <p>References <a class="el" href="utilities_8cpp_source.html#l00026">sendMsg()</a>.</p>
 
-<p>Referenced by <a class="el" href="input_8cpp_source.html#l00037">initialize()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">checkpoint::load()</a>, and <a class="el" href="input_8cpp_source.html#l00457">setConfig()</a>.</p>
+<p>Referenced by <a class="el" href="input_8cpp_source.html#l00037">initialize()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">checkpoint::load()</a>, and <a class="el" href="input_8cpp_source.html#l00457">setConfig()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                                                                  {</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordflow">try</span> {</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        FILE* fp = fopen(filename.c_str(), <span class="stringliteral">&quot;r&quot;</span>);</div>
@@ -752,7 +752,7 @@ template&lt;typename T &gt; </div>
 
 <p>References <a class="el" href="utilities_8cpp_source.html#l00091">getTimeStamp()</a>.</p>
 
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l01223">simSystem::addPotential()</a>, <a class="el" href="input_8cpp_source.html#l00010">checkBounds()</a>, <a class="el" href="potentials_8cpp_source.html#l00381">tabulated::energy()</a>, <a class="el" href="input_8cpp_source.html#l00037">initialize()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">checkpoint::load()</a>, <a class="el" href="mover_8cpp_source.html#l00008">moves::moves()</a>, <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>, <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>, <a class="el" href="system_8cpp_source.html#l01387">simSystem::readConfig()</a>, <a class="el" href="sanity_8cpp_source.html#l00008">sanityChecks()</a>, <a class="el" href="input_8cpp_source.html#l00457">setConfig()</a>, and <a class="el" href="input_8cpp_source.html#l00236">setMoves()</a>.</p>
+<p>Referenced by <a class="el" href="system_8cpp_source.html#l01223">simSystem::addPotential()</a>, <a class="el" href="input_8cpp_source.html#l00010">checkBounds()</a>, <a class="el" href="potentials_8cpp_source.html#l00381">tabulated::energy()</a>, <a class="el" href="input_8cpp_source.html#l00037">initialize()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">checkpoint::load()</a>, <a class="el" href="mover_8cpp_source.html#l00008">moves::moves()</a>, <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>, <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>, <a class="el" href="system_8cpp_source.html#l01387">simSystem::readConfig()</a>, <a class="el" href="sanity_8cpp_source.html#l00008">sanityChecks()</a>, <a class="el" href="input_8cpp_source.html#l00457">setConfig()</a>, and <a class="el" href="input_8cpp_source.html#l00236">setMoves()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                                   {</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    std::cerr &lt;&lt; <span class="stringliteral">&quot; *** ERROR: &quot;</span> &lt;&lt; <a class="code" href="utilities_8cpp.html#aa6d910bf51f18a75deb20c6f0fbba285">getTimeStamp</a>() &lt;&lt; <span class="stringliteral">&quot; : &quot;</span> &lt;&lt; msg &lt;&lt; <span class="stringliteral">&quot; *** &quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;}</div>
@@ -786,7 +786,7 @@ template&lt;typename T &gt; </div>
 
 <p>References <a class="el" href="utilities_8cpp_source.html#l00091">getTimeStamp()</a>.</p>
 
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l01223">simSystem::addPotential()</a>, <a class="el" href="input_8cpp_source.html#l00037">initialize()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00060">checkpoint::load()</a>, <a class="el" href="potentials_8cpp_source.html#l00324">tabulated::loadPotential()</a>, <a class="el" href="utilities_8cpp_source.html#l00045">parseJson()</a>, <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>, <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>, <a class="el" href="system_8cpp_source.html#l01387">simSystem::readConfig()</a>, <a class="el" href="sanity_8cpp_source.html#l00008">sanityChecks()</a>, <a class="el" href="input_8cpp_source.html#l00616">setBarriers()</a>, and <a class="el" href="input_8cpp_source.html#l00457">setConfig()</a>.</p>
+<p>Referenced by <a class="el" href="system_8cpp_source.html#l01223">simSystem::addPotential()</a>, <a class="el" href="input_8cpp_source.html#l00037">initialize()</a>, <a class="el" href="checkpoint_8cpp_source.html#l00054">checkpoint::load()</a>, <a class="el" href="potentials_8cpp_source.html#l00324">tabulated::loadPotential()</a>, <a class="el" href="utilities_8cpp_source.html#l00045">parseJson()</a>, <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>, <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>, <a class="el" href="system_8cpp_source.html#l01387">simSystem::readConfig()</a>, <a class="el" href="sanity_8cpp_source.html#l00008">sanityChecks()</a>, <a class="el" href="input_8cpp_source.html#l00616">setBarriers()</a>, and <a class="el" href="input_8cpp_source.html#l00457">setConfig()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                                   {</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    std::cout &lt;&lt; <a class="code" href="utilities_8cpp.html#aa6d910bf51f18a75deb20c6f0fbba285">getTimeStamp</a>() &lt;&lt; <span class="stringliteral">&quot; : &quot;</span> &lt;&lt; msg &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;}</div>
@@ -836,7 +836,7 @@ template&lt;typename T &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 30 2016 13:19:38 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 30 2016 14:21:50 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

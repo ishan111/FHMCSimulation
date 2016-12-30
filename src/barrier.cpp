@@ -536,13 +536,13 @@ double cylinderZ::energy (const atom *a1, const std::vector < double > &box) {
         throw customException ("mState out of bounds for cylinderZ");
     }
 
-    // return infinity if out of bounds
+    // Return infinity if out of bounds
     double rc = radius_ - sig/2.0, ri = radius_ - width_;
     if (rv2 >= rc*rc) {
         return NUM_INFINITY;
     }
 
-    // interaction with the wall - return infinity if it was out of bounds already
+    // Interaction with the wall - return infinity if it was out of bounds already
     if (rv2 > ri*ri) {
         U += -eps;
     }
@@ -633,17 +633,17 @@ double squareWellWallZ::energy (const atom *a1, const std::vector < double > &bo
         throw customException ("mState out of bounds for squareWellWallZ");
     }
 
-    // return infinity if out of bounds
+    // Return infinity if out of bounds
     if (p[2] >= ub_ - sig/2.0 || p[2] <= lb_ + sig/2.0) {
         return NUM_INFINITY;
     }
 
-    // interaction with top wall
+    // Interaction with top wall
     if (p[2] > ub_ - range_) {
         U += -eps;
     }
 
-    // interaction with lower wall
+    // Interaction with lower wall
     if (p[2] < lb_ + range_) {
         U += -eps;
     }
@@ -667,27 +667,6 @@ void compositeBarrier::addHardWallZ (const double lb, const double ub, const dou
         const std::string msg = ex.what();
         throw customException ("Cannot add hardWallZ to composite barrier : "+msg);
     }
-
-    /*
-    if (sysBarriers_.begin() == sysBarriers_.end()) {
-        try {
-            sysBarriers_.resize(1);
-        } catch (std::bad_alloc &ba) {
-            throw customException ("Unable to allocate space for a new barrier");
-        }
-    } else {
-        try {
-            sysBarriers_.resize(sysBarriers_.size()+1);
-        } catch (std::bad_alloc &ba) {
-            throw customException ("Unable to allocate space for a new barrier");
-        }
-    }
-    try {
-        sysBarriers_[sysBarriers_.size()-1] = new hardWallZ (lb, ub, sigma, M);
-    } catch (customException &ce) {
-        const std::string msg = ce.what();
-        throw customException ("Cannot add hardWallZ to composite barrier : "+msg);
-    }*/
 }
 
 /*!
@@ -708,26 +687,6 @@ void compositeBarrier::addSquareWellWallZ (const double lb, const double ub, con
         const std::string msg = ex.what();
         throw customException ("Cannot add squareWellWallZ to composite barrier : "+msg);
     }
-
-    /*if (sysBarriers_.begin() == sysBarriers_.end()) {
-        try {
-            sysBarriers_.resize(1);
-        } catch (std::bad_alloc &ba) {
-            throw customException ("Unable to allocate space for a new barrier");
-        }
-    } else {
-        try {
-            sysBarriers_.resize(sysBarriers_.size()+1);
-        } catch (std::bad_alloc &ba) {
-            throw customException ("Unable to allocate space for a new barrier");
-        }
-    }
-    try {
-        sysBarriers_[sysBarriers_.size()-1] = new squareWellWallZ (lb, ub, sigma, range, eps, M);
-    } catch (customException &ce) {
-        const std::string msg = ce.what();
-        throw customException ("Cannot add squareWellWallZ to composite barrier : "+msg);
-    }*/
 }
 
 /*!
@@ -749,26 +708,6 @@ void compositeBarrier::addCylinderZ (const double x, const double y, const doubl
         const std::string msg = ex.what();
         throw customException ("Cannot add cylinderZ to composite barrier : "+msg);
     }
-
-    /*if (sysBarriers_.begin() == sysBarriers_.end()) {
-        try {
-            sysBarriers_.resize(1);
-        } catch (std::bad_alloc &ba) {
-            throw customException ("Unable to allocate space for a new barrier");
-        }
-    } else {
-        try {
-            sysBarriers_.resize(sysBarriers_.size()+1);
-        } catch (std::bad_alloc &ba) {
-            throw customException ("Unable to allocate space for a new barrier");
-        }
-    }
-    try {
-        sysBarriers_[sysBarriers_.size()-1] = new cylinderZ (x, y, radius, width, sigma, eps, M);
-    } catch (customException &ce) {
-        const std::string msg = ce.what();
-        throw customException ("Cannot add cylinderZ to composite barrier : "+msg);
-    }*/
 }
 
 /*!
@@ -794,38 +733,12 @@ void compositeBarrier::addRightTriangleXZ (const double width, const double thet
         const std::string msg = ex.what();
         throw customException ("Cannot add rightTriangleXZ to composite barrier : "+msg);
     }
-
-    /*if (sysBarriers_.begin() == sysBarriers_.end()) {
-        try {
-            sysBarriers_.resize(1);
-        } catch (std::bad_alloc &ba) {
-            throw customException ("Unable to allocate space for a new barrier");
-        }
-    } else {
-        try {
-            sysBarriers_.resize(sysBarriers_.size()+1);
-        } catch (std::bad_alloc &ba) {
-            throw customException ("Unable to allocate space for a new barrier");
-        }
-    }
-    try {
-        sysBarriers_[sysBarriers_.size()-1] = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
-    } catch (customException &ce) {
-        const std::string msg = ce.what();
-        throw customException ("Cannot add rightTriangleXZ to composite barrier : "+msg);
-    }*/
 }
 
 /*!
  * Free any system barriers present.
  */
 compositeBarrier::~compositeBarrier () {
-    /*if (sysBarriers_.begin() != sysBarriers_.end()) {
-        for (unsigned int i = 0; i < sysBarriers_.size(); ++i) {
-            delete sysBarriers_[i];
-        }
-        sysBarriers_.clear();
-    }*/
     sysBarriers_.clear();
 }
 
@@ -836,7 +749,6 @@ compositeBarrier::~compositeBarrier () {
  * \param [in] box Simulation box
  */
 bool compositeBarrier::inside (const atom *a1, const std::vector < double > &box) {
-    //for (std::vector < barrier* >::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {
     for (std::vector < std::shared_ptr < barrier > >::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {
         if (!(*it)->inside (a1, box)) {
             return false;
@@ -853,7 +765,6 @@ bool compositeBarrier::inside (const atom *a1, const std::vector < double > &box
  */
 double compositeBarrier::energy (const atom *a1, const std::vector < double > &box) {
     double U = 0.0;
-    //for (std::vector < barrier* >::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {
     for (std::vector < std::shared_ptr < barrier > >::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {
         double dU = (*it)->energy (a1, box);
         if (dU < NUM_INFINITY) {

@@ -37,16 +37,16 @@ Inherits \fBbarrier\fP\&.
 .PP 
 Parallel square-well walls in the z-direction\&. 
 .PP
-Definition at line 45 of file barrier\&.h\&.
+Definition at line 46 of file barrier\&.h\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "squareWellWallZ::~squareWellWallZ ()\fC [inline]\fP"
 
 .PP
-Definition at line 47 of file barrier\&.h\&.
+Definition at line 48 of file barrier\&.h\&.
 .PP
 .nf
-47 {};
+48 {};
 .fi
 .SS "squareWellWallZ::squareWellWallZ (const doublelb, const doubleub, const doublesigma, const doublerange, const doubleeps, const intM = \fC1\fP)"
 
@@ -140,17 +140,17 @@ References barrier::M_, atom::mState, NUM_INFINITY, pbc(), and atom::pos\&.
 633         throw customException ("mState out of bounds for squareWellWallZ");
 634     }
 635 
-636     // return infinity if out of bounds
+636     // Return infinity if out of bounds
 637     if (p[2] >= ub_ - sig/2\&.0 || p[2] <= lb_ + sig/2\&.0) {
 638         return NUM_INFINITY;
 639     }
 640 
-641     // interaction with top wall
+641     // Interaction with top wall
 642     if (p[2] > ub_ - range_) {
 643         U += -eps;
 644     }
 645 
-646     // interaction with lower wall
+646     // Interaction with lower wall
 647     if (p[2] < lb_ + range_) {
 648         U += -eps;
 649     }
