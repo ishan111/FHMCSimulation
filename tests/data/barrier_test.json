@@ -55,8 +55,8 @@
 			"sigma" : 1.0
 		},
 		"mybarrier2" : {
-			"type" : "hard_wall_z"
-			"species" : 2
+			"type" : "hard_wall_z",
+			"species" : 2,
 			"ub" : 6.0,
                         "lb" : 1.0,
                         "sigma" : 1.0
