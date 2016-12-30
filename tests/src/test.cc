@@ -11535,6 +11535,7 @@ class readPpotTest : public ::testing::Test {
 protected:
 	moves usedMovesEq, usedMovesPr;
 	std::string fname;
+	rapidjson::Document doc;
 
 	virtual void SetUp() {
 		fname = "../data/ppot_test1.json";
@@ -11543,11 +11544,33 @@ protected:
 
 TEST_F (readPpotTest, readValid) {
 	// Init system and parse doc
-	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
-
-	// Current doc should pass because params are all valid
-	;
+	bool failed = false;
+	try {
+		simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	} catch (...) {
+		failed = true;
+	}
+	EXPECT_TRUE(!failed); // Current doc should pass because params are all valid
 }
+
+TEST_F (readPpotTest, badSquareWellSigma) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["ppot_1_1_params"]["sigma"] = -1.0;
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("squareWell, sigma") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+// add barrier read test
+
+// add moves read test --> in init this is tested before ppot so do this before ppot test
 
 TEST (testNone, cleanUp) {
 	// cleanup files produced after running other tests

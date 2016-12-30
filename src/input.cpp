@@ -335,11 +335,9 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
 				ppotName = name2;
 				foundIJ = true;
 			} else if (doc.HasMember(name2.c_str()) && foundIJ) {
-                sendErr("Input file doubly specifies pair potential for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
-				exit(SYS_FAILURE);
+                throw customException("Input file doubly specifies pair potential for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
 			} else {
-                sendErr("Input file does not specify pair potential for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
-				exit(SYS_FAILURE);
+                throw customException("Input file does not specify pair potential for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
 			}
 
             if (!doc[ppotName.c_str()].IsString()) throw customException ("Pair potential is not a name for ("+numToStr(i+1)+","+numToStr(j+1)+")");
@@ -429,9 +427,15 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
             }
 
             params.push_back(Mtot);
-            sys.addPotential(i, j, ppotType[ppotTypeIndex], params, useCellList, tabFile);
-            sys.ppot[i][j]->savePotential(ppotName+".dat", 0.01, 0.01);
 
+            try {
+                sys.addPotential(i, j, ppotType[ppotTypeIndex], params, useCellList, tabFile);
+                sys.ppot[i][j]->savePotential(ppotName+".dat", 0.01, 0.01);
+            } catch (std::exception &ex) {
+                const std::string msg = ex.what();
+                throw customException ("Unable to add potential "+ppotType[ppotTypeIndex]+" because "+msg);
+            }
+            
 			ppotTypeIndex++;
 		}
 	}

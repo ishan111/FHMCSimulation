@@ -40,6 +40,7 @@ void sendErr (const std::string msg) {
  * Parse a JSON file and return the corresponding document.
  *
  * \param [in] filename Input JSON document's filename
+ * \param [in,out] doc Document object to store in
  */
 void parseJson (const std::string filename, rapidjson::Document &doc) {
     try {

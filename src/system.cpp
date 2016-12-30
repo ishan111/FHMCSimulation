@@ -1236,9 +1236,8 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 			auto pp2 = std::make_shared < squareWell > ();
 			pp2->setParameters(params);
 			ppot[spec2][spec1] = pp2;
-		} catch (customException &ce) {
-			sendErr(ce.what());
-			exit(SYS_FAILURE);
+		} catch (std::exception &ex) {
+			throw customException(ex.what());
 		}
 	} else if (ppot_name == "lennard_jones") {
 		try {
@@ -1248,9 +1247,8 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 			auto pp2 = std::make_shared < lennardJones > ();
 			pp2->setParameters(params);
 			ppot[spec2][spec1] = pp2;
-		} catch (customException &ce) {
-			sendErr(ce.what());
-			exit(SYS_FAILURE);
+		} catch (std::exception &ex) {
+			throw customException(ex.what());
 		}
 	} else if (ppot_name == "fs_lennard_jones") {
 		try {
@@ -1260,9 +1258,8 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 			auto pp2 = std::make_shared < fsLennardJones > ();
 			pp2->setParameters(params);
 			ppot[spec2][spec1] = pp2;
-		} catch (customException &ce) {
-			sendErr(ce.what());
-			exit(SYS_FAILURE);
+		} catch (std::exception &ex) {
+			throw customException(ex.what());
 		}
 	} else if (ppot_name == "hard_sphere") {
 		try {
@@ -1272,9 +1269,8 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 			auto pp2 = std::make_shared < hardCore > ();
 			pp2->setParameters(params);
 			ppot[spec2][spec1] = pp2;
-		} catch (customException &ce) {
-			sendErr(ce.what());
-			exit(SYS_FAILURE);
+		} catch (std::exception &ex) {
+			throw customException(ex.what());
 		}
 	} else if (ppot_name == "tabulated") {
 		try {
@@ -1287,12 +1283,10 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 			pp2->loadPotential(tabFile);
 			ppot[spec2][spec1] = pp2;
 		} catch (std::exception &ex) {
-			sendErr(ex.what());
-			exit(SYS_FAILURE);
+			throw customException(ex.what());
 		}
 	} else {
-		sendErr("Unrecognized pair potential name for species "+numToStr(spec1)+", "+numToStr(spec2));
-		exit(SYS_FAILURE);
+		throw customException("Unrecognized pair potential name for species "+numToStr(spec1)+", "+numToStr(spec2));
 	}
 
 	ppotSet_[spec1][spec2] = true;
