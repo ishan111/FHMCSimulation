@@ -22,6 +22,7 @@ public:
     moves (const int M = 1);
     ~moves ();
 
+    void clearAll ();
     void makeMove (simSystem &sys);
 	void print (const std::string filename);
 	void addInsert (const int index, const double prob);
@@ -41,7 +42,7 @@ private:
     std::vector < std::vector < double > > attempted_; //!< Number of times each move was attempted
     std::vector < std::shared_ptr < mcMove > > ownedMoves_; //!< Moves which belong to this class
 
-    void addOn_ (bool changeN, const double probability); 
+    void addOn_ (bool changeN, const double probability);
 };
 
 #endif

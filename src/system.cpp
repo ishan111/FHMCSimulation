@@ -1221,11 +1221,11 @@ void simSystem::restartPkHistogram (const std::string prefix) {
  * \param [in] tabFile Optional argument use for tabulated potentials, this is the file to load from (default="")
  */
 void simSystem::addPotential (const int spec1, const int spec2, const std::string ppot_name, const std::vector < double > &params, const bool useCellList, const std::string tabFile) {
-	if (spec1 >= nSpecies_) {
-		throw customException ("Trying to define pair potential for species (1) that does not exist yet");
+	if (spec1 >= nSpecies_ || spec1 < 0) {
+		throw customException ("Trying to define pair potential for species (1) that does not exist yet/is invalid");
 	}
-	if (spec2 >= nSpecies_) {
-		throw customException ("Trying to define pair potential for species (2) that does not exist yet");
+	if (spec2 >= nSpecies_ || spec2 < 0) {
+		throw customException ("Trying to define pair potential for species (2) that does not exist yet/is invalid");
 	}
 
 	if (ppot_name == "square_well") {
@@ -1433,7 +1433,7 @@ void simSystem::readConfig (std::string filename) {
 	}
 
 	int maxType = -1;
-	for (std::map<int,int>::iterator it = types.begin(); it != types.end(); ++it) {
+	for (std::map < int, int >::iterator it = types.begin(); it != types.end(); ++it) {
 		maxType = std::max(maxType, it->first);
 		if (it->first < 0 || it->first >= nSpecies_) {
 			throw customException ("Restart file corrupted, types out of range");
@@ -1565,28 +1565,28 @@ const double simSystem::scratchEnergy () {
     		throw customException (a+b);
 		}
 
-		// possibly have fractionally inserted atom
+		// Possibly have fractionally inserted atom
 		if (fractionalAtomType_ == spec1 && Mcurrent_ > 0) {
 			adj1 = 1;
 		}
 
-		// wall/barrier interactions
+		// Wall/barrier interactions
 		for (unsigned int j = 0; j < num1+adj1; ++j) {
 			double dU = 0.0;
 			try {
-            	dU = speciesBarriers[spec1].energy(&atoms[spec1][j], box_);
-            } catch (customException &ce) {
-            	std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
-                throw customException (a+b);
-            }
+				dU = speciesBarriers[spec1].energy(&atoms[spec1][j], box_);
+			} catch (customException &ce) {
+				std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
+				throw customException (a+b);
+			}
 			if (dU == NUM_INFINITY) {
 				return NUM_INFINITY;
 			} else {
 				totU += dU;
 			}
-        }
+		}
 
-        // interactions with same type
+        // Interactions with same type
         for (unsigned int j = 0; j < num1+adj1; ++j) {
 	        for (unsigned int k = j+1; k < num1+adj1; ++k) {
        			try {
@@ -1598,14 +1598,14 @@ const double simSystem::scratchEnergy () {
             }
         }
 
-        // add tail correction to potential energy but only for atoms fully inserted
+        // Add tail correction to potential energy but only for atoms fully inserted
 #ifdef FLUID_PHASE_SIMULATIONS
         if ((ppot[spec1][spec1]->useTailCorrection) && (num1 > 1)) {
         	totU += (num1)*0.5*ppot[spec1][spec1]->tailCorrection((num1-1)/V);
         }
 #endif
 
-        // interactions with other unique types
+        // Interactions with other unique types
         for (unsigned int spec2 = spec1+1; spec2 < nSpecies_; ++spec2) {
             int num2 = 0, adj2 = 0;
         	try {
@@ -1630,7 +1630,7 @@ const double simSystem::scratchEnergy () {
                 }
             }
 
-        	// add tail correction to potential energy but only bewteen fully inserted species
+        	// Add tail correction to potential energy but only bewteen fully inserted species
 #ifdef FLUID_PHASE_SIMULATIONS
             if ((ppot[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) {
                 totU += (num1)*ppot[spec1][spec2]->tailCorrection(num2/V);
@@ -1644,7 +1644,7 @@ const double simSystem::scratchEnergy () {
     	for (unsigned int i = 0; i < nSpecies_; ++i) {
     		ns += numSpecies[i];
     	}
-    	totU += 1.5/beta_*ns; // only adjust for FULLY-INSERTED ATOMS
+    	totU += 1.5/beta_*ns; // Only adjust for FULLY-INSERTED ATOMS
     }
 
     return totU;

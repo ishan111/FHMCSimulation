@@ -207,6 +207,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 			exit(SYS_FAILURE);
 		}
 	}
+
     setMoves (sys, doc, usedMovesEq, usedMovesPr);
     setPairPotentials (sys, doc);
 
@@ -214,7 +215,6 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
     sendMsg("System from "+filename+" passed bounds checks");
 
     setSystemBarriers (sys, doc);
-    sendMsg("Initialized barriers from "+filename);
 
     sendMsg("Successfully read valid parameters from "+filename);
     return sys;
@@ -222,6 +222,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 
 /*!
  * Assign the Monte Carlo moves based on the JSON input file.  Uses same information to specify "production" and "equilibration" phases.
+ * Clears any existing information and will overwrite with information from doc.
  *
  * \param [in] sys Simulation system that has been initialized
  * \param [in] doc JSON document corresponding to input file
@@ -229,6 +230,9 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
  * \params [in] usedMovesPr Pointer to move object that will be used during "production" (TMMC)
  */
 void setMoves (simSystem &sys, const rapidjson::Document &doc, moves* usedMovesEq, moves* usedMovesPr) {
+    usedMovesEq->clearAll();
+    usedMovesPr->clearAll();
+
     std::vector < double > ref (sys.nSpecies(), 0);
 	std::vector < std::vector < double > > probPrSwap (sys.nSpecies(), ref);
 	std::vector < double > probPrInsDel (sys.nSpecies(), 0), probPrDisp (sys.nSpecies(), 0), maxPrD (sys.nSpecies(), 0);
@@ -306,6 +310,7 @@ void setMoves (simSystem &sys, const rapidjson::Document &doc, moves* usedMovesE
 
 /*!
  * Assign the pair potentials based on the JSON input file.
+ * Overwrites any existing pair potential information with new settings from doc.
  *
  * \param [in] sys Simulation system that has been initialized
  * \param [in] doc JSON document corresponding to input file
@@ -424,7 +429,6 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
             }
 
             params.push_back(Mtot);
-
             sys.addPotential(i, j, ppotType[ppotTypeIndex], params, useCellList, tabFile);
             sys.ppot[i][j]->savePotential(ppotName+".dat", 0.01, 0.01);
 
@@ -435,6 +439,7 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
 
 /*!
  * Setup a system's initial configuration as necessary.
+ * Will empty a system if there are currently any particles present and overwrite with new information.
  * 1. If "restart_file" in input json file, read initial config from there.
  * 2. In not, randomly generate initial configuration.
  *
@@ -595,6 +600,7 @@ void setConfig (simSystem &sys, const std::string filename) {
 
 /*!
  * Initialize the barriers in a system by parsing the input document.
+ * Clears any existing information and will overwrite with information from doc.
  *
  * \params [in, out] sys System to initialize with barriers
  * \params [in] doc Input JSON document
@@ -603,6 +609,11 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 	int Mtot = sys.getTotalM();
 
     if (doc.HasMember("barriers")) {
+        // Clear any existing barriers
+        for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+            sys.speciesBarriers[i].clearAll();
+        }
+
         // Iterate over all barriers specified for this species
         for (rapidjson::Value::ConstMemberIterator itr = doc["barriers"].MemberBegin(); itr != doc["barriers"].MemberEnd(); ++itr) {
             // Get barrier type and name
@@ -724,7 +735,7 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
                 const double sepBarr = itr->value["sep"].GetDouble();
                 const double offsetBarr = itr->value["offset"].GetDouble();
                 const double zbaseBarr = itr->value["zbase"].GetDouble();
-                const double topBarr = itr->value["top"].GetDouble();
+                const double topBarr = itr->value["top"].GetBool();
 
     			try {
     				sys.speciesBarriers[species-1].addRightTriangleXZ (widthBarr, thetaBarr, lamwBarr, epsBarr, sigmaBarr, sepBarr, offsetBarr, sys.box(), zbaseBarr, topBarr, Mtot);
@@ -736,5 +747,8 @@ void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
                 throw customException ("Unrecognized barrier type "+barrType+" from barrier "+barrName);
             }
         }
+        sendMsg("Initialized barriers");
+    } else {
+        sendMsg("No barriers to initialize");
     }
 }

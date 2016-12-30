@@ -113,6 +113,7 @@ public:
     compositeBarrier () {};
     ~compositeBarrier ();
 
+    void clearAll () { sysBarriers_.clear(); } //!< Clear any barriers that are currently in the class
     void addHardWallZ (const double lb, const double ub, const double sigma, const int M = 1);
     void addSquareWellWallZ (const double lb, const double ub, const double sigma, const double range, const double eps, const int M = 1);
     void addCylinderZ (const double x, const double y, const double radius, const double width, const double sigma, const double eps, const int M = 1);

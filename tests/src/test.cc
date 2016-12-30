@@ -11305,7 +11305,7 @@ protected:
 };
 
 TEST_F (checkpointTest, restarts) {
-	// test that system can restart from multiple configurations without error
+	// Test that system can restart from multiple configurations without error
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
 	setConfig (sys, fname);
 
@@ -11321,7 +11321,7 @@ TEST_F (checkpointTest, restarts) {
 }
 
 TEST_F (checkpointTest, load) {
-	// test the system can load info from checkpoint
+	// Test the system can load info from checkpoint
 	simSystem sys = initialize (fname, &usedMovesEq, &usedMovesPr);
 	setConfig (sys, fname);
 
@@ -11333,7 +11333,7 @@ TEST_F (checkpointTest, load) {
 	EXPECT_EQ(cpt.tmmcDone, true);
 	EXPECT_EQ(cpt.crossoverDone, true);
 	EXPECT_EQ(cpt.walaDone, true);
-	EXPECT_EQ(cpt.resFromTMMC, true); // sample was taken from completed sim, but should still flag as in tmmc stage
+	EXPECT_EQ(cpt.resFromTMMC, true); // Sample was taken from completed sim, but should still flag as in tmmc stage
 	EXPECT_EQ(cpt.freq, 900);
 	EXPECT_EQ(cpt.moveCounter, 0.0);
 	EXPECT_EQ(cpt.sweepCounter, 0.0);
@@ -11537,12 +11537,13 @@ protected:
 	std::string fname;
 
 	virtual void SetUp() {
-		fname = "../data/barrier_test.json";
+		fname = "../data/ppot_test1.json";
 	}
 };
 
 TEST_F (readPpotTest, readValid) {
 	// Init system and parse doc
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
 
 	// Current doc should pass because params are all valid
 	;

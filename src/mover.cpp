@@ -15,6 +15,24 @@ moves::moves (const int M) {
 }
 
 /*!
+ * Destructor for moves class.
+ */
+moves::~moves () {
+	;
+}
+
+/*!
+ * Clear all moves and related information from the class, but leaves M intact.
+ */
+void moves::clearAll () {
+	normProbabilities_.clear();
+	rawProbabilities_.clear();
+	succeeded_.clear();
+	attempted_.clear();
+	ownedMoves_.clear();
+}
+
+/*!
  * Set the value of M.
  *
  * \param in M Number of expanded ensemble stages for insert/delete moves
@@ -25,13 +43,6 @@ void moves::setM (const int M) {
 	} else {
         throw customException ("Error, number of expanded ensemble stages must be > 0");
 	}
-}
-
-/*!
- * Destructor for moves class.
- */
-moves::~moves () {
-	;
 }
 
 /*!
