@@ -321,7 +321,7 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
 	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
 		for (unsigned int j = i; j < sys.nSpecies(); ++j) {
 			std::string name1 = "ppot_"+std::to_string(i+1)+"_"+std::to_string(j+1), name2 = "ppot_"+std::to_string(j+1)+"_"+std::to_string(i+1);
-			std::string ppotName = "", dummy = "";
+			std::string ppotName = "", dummy = "", tabFile = "";
 			bool foundIJ = false;
 			if (doc.HasMember(name1.c_str())) {
 				ppotName = name1;
@@ -401,27 +401,31 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
                 params.push_back(doc[dummy.c_str()]["sigma"].GetDouble());
             } else if (ppotType[ppotTypeIndex] == "tabulated") {
                 // Expects r_cut, r_shift, u_shift, u_infinity
+                // Also must specify file to load potential from
                 if (!doc[dummy.c_str()].HasMember("r_cut")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"r_cut\"");
                 if (!doc[dummy.c_str()].HasMember("r_shift")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"r_shift\"");
                 if (!doc[dummy.c_str()].HasMember("u_shift")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"u_shift\"");
                 if (!doc[dummy.c_str()].HasMember("u_infinity")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"u_infinity\"");
+                if (!doc[dummy.c_str()].HasMember("filename")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"filename\"");
 
                 if (!doc[dummy.c_str()]["r_cut"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"r_cut\" is not a number");
                 if (!doc[dummy.c_str()]["r_shift"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"r_shift\" is not a number");
                 if (!doc[dummy.c_str()]["u_shift"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"u_shift\" is not a number");
                 if (!doc[dummy.c_str()]["u_infinity"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"u_infinity\" is not a number");
+                if (!doc[dummy.c_str()]["filename"].IsString()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"filename\" is not a string");
 
                 params.push_back(doc[dummy.c_str()]["r_cut"].GetDouble());
                 params.push_back(doc[dummy.c_str()]["r_shift"].GetDouble());
                 params.push_back(doc[dummy.c_str()]["u_shift"].GetDouble());
                 params.push_back(doc[dummy.c_str()]["u_infinity"].GetDouble());
+                tabFile = doc[dummy.c_str()]["filename"].GetString();
             } else {
                 throw customException ("Unrecognized pair potential "+ppotType[ppotTypeIndex]);
             }
 
             params.push_back(Mtot);
 
-            sys.addPotential(i, j, ppotType[ppotTypeIndex], params, useCellList);
+            sys.addPotential(i, j, ppotType[ppotTypeIndex], params, useCellList, tabFile);
             sys.ppot[i][j]->savePotential(ppotName+".dat", 0.01, 0.01);
 
 			ppotTypeIndex++;

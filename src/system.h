@@ -32,7 +32,7 @@ public:
     bool addKECorrection () { return toggleKE_; }
     void toggleKE ();
 	void incrementEnergy (const double dU) { energy_ += dU; } //!< Increment the system's energy
-	void addPotential (const int spec1, const int spec2, const std::string ppot_name, const std::vector < double > &params, const bool useCellList=false); //(const int spec1, const int spec2, pairPotential *pp, bool useCellList=false);
+	void addPotential (const int spec1, const int spec2, const std::string ppot_name, const std::vector < double > &params, const bool useCellList=false, const std::string tabFile=""); //(const int spec1, const int spec2, pairPotential *pp, bool useCellList=false);
 	void printSnapshot (std::string filename, std::string comment, bool overwrite=true);
 	void insertAtom (const int typeIndex, atom *newAtom, bool override=false);
 	void deleteAtom (const int typeIndex, const int atomIndex, bool override=false);

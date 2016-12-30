@@ -27,22 +27,22 @@
 	},
 	"ppot_1_1" : "square_well",
 	"ppot_1_1_params" : {
-		"sigma" : 1.0, 
-		"width" : 0.3, 
+		"sigma" : 1.0,
+		"width" : 0.3,
 		"depth" : 1.0,
 		"cell_list"  : true
 	},
-	"ppot_1_2" : "square_well",
+	"ppot_1_2" : "lennard_jones",
 	"ppot_1_2_params" : {
-		"sigma" : 1.1, 
-		"width" : 0.4, 
+		"sigma" : 1.1,
+		"width" : 0.4,
 		"depth" : 1.1,
 		"cell_list"  : true
 	},
-	"ppot_2_2" : "square_well",
+	"ppot_2_2" : "fs_lennard_jones",
 	"ppot_2_2_params" : {
-		"sigma" : 1.2, 
-		"width" : 0.5, 
+		"sigma" : 1.2,
+		"width" : 0.5,
 		"depth" : 1.2,
 		"cell_list"  : true
 	},
@@ -55,11 +55,36 @@
 			"sigma" : 1.0
 		},
 		"mybarrier2" : {
-			"type" : "hard_wall_z",
+			"type" : "square_well_wall_z",
 			"species" : 2,
 			"ub" : 6.0,
-                        "lb" : 1.0,
-                        "sigma" : 1.0
+            "lb" : 1.0,
+            "sigma" : 1.0,
+			"range" : 0.5,
+			"espilon" : 1.0
+		},
+		"mybarrier3" : {
+			"type" : "cylinder_z",
+			"species" : 1,
+			"x" : 4.5,
+            "y" : 4.5,
+			"radius" : 2.0,
+			"width" : 1.0,
+            "sigma" : 1.0,
+			"epsilon" : 1.0
+		},
+		"mybarrier4" : {
+			"type" : "right_triangle_xz",
+			"species" : 2,
+			"width" : 1.0,
+            "theta" : 30.0,
+            "lamW" : 1.0,
+			"epsilon" : 1.0,
+			"sigma" : 1.0,
+			"sep" : 0.0,
+			"offset" : 0.0,
+			"zbase" : 1.0,
+			"top" : false
 		}
 	}
 }

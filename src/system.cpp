@@ -1217,10 +1217,10 @@ void simSystem::restartPkHistogram (const std::string prefix) {
  * \param [in] spec2 Species index 2 (>= 0)
  * \param [in] ppot_name Name of pair potential
  * \param [in] params Vector of parameters which define pair potential
- * \param [in] bool Optional argument of whether or not to build and maintain a cell list for this pair (spec1, spec2)
+ * \param [in] bool Optional argument of whether or not to build and maintain a cell list for this pair (spec1, spec2) (default=false)
+ * \param [in] tabFile Optional argument use for tabulated potentials, this is the file to load from (default="")
  */
- //}, pairPotential *pp, bool useCellList) {
-void simSystem::addPotential (const int spec1, const int spec2, const std::string ppot_name, const std::vector < double > &params, const bool useCellList) {
+void simSystem::addPotential (const int spec1, const int spec2, const std::string ppot_name, const std::vector < double > &params, const bool useCellList, const std::string tabFile) {
 	if (spec1 >= nSpecies_) {
 		throw customException ("Trying to define pair potential for species (1) that does not exist yet");
 	}
@@ -1280,12 +1280,14 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 		try {
 			auto pp1 = std::make_shared < tabulated > ();
 			pp1->setParameters(params);
+			pp1->loadPotential(tabFile);
 			ppot[spec1][spec2] = pp1;
 			auto pp2 = std::make_shared < tabulated > ();
 			pp2->setParameters(params);
+			pp2->loadPotential(tabFile);
 			ppot[spec2][spec1] = pp2;
-		} catch (customException &ce) {
-			sendErr(ce.what());
+		} catch (std::exception &ex) {
+			sendErr(ex.what());
 			exit(SYS_FAILURE);
 		}
 	} else {

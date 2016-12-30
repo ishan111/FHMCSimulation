@@ -4935,9 +4935,6 @@ TEST_F (testSquareWellWallZ, energyM) {
     EXPECT_EQ (U, 0);
 }
 
-//  then add 2 square well walls with diff ranges
-// also test M
-
 class testCompositeBarrier : public ::testing::Test {
 protected:
     compositeBarrier cB;
@@ -11532,6 +11529,23 @@ TEST_F (checkpointTest, restartExtMoments) {
 	sys.printExtMoments("extMom_test", false);
 	result = system("diff ../data/extMom.dat extMom_test.dat > dmp");
 	EXPECT_EQ (result, 0);
+}
+
+class readPpotTest : public ::testing::Test {
+protected:
+	moves usedMovesEq, usedMovesPr;
+	std::string fname;
+
+	virtual void SetUp() {
+		fname = "../data/barrier_test.json";
+	}
+};
+
+TEST_F (readPpotTest, readValid) {
+	// Init system and parse doc
+
+	// Current doc should pass because params are all valid
+	;
 }
 
 TEST (testNone, cleanUp) {
