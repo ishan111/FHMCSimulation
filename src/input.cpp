@@ -36,7 +36,11 @@ void checkBounds (simSystem &sys) {
  */
 simSystem initialize (const std::string filename, moves* usedMovesEq, moves* usedMovesPr) {
 	rapidjson::Document doc;
-    parseJson (filename, doc);
+    try {
+        parseJson (filename, doc);
+    } catch (std::exception &ex) {
+        throw customException (ex.what());
+    }
 
 	// Check each member exists and is in the correct format
     if (!doc.HasMember("num_species")) throw customException("\"num_species\" is not specified in "+filename);
@@ -214,7 +218,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
     checkBounds (sys);
     sendMsg("System from "+filename+" passed bounds checks");
 
-    setSystemBarriers (sys, doc);
+    setBarriers (sys, doc);
 
     sendMsg("Successfully read valid parameters from "+filename);
     return sys;
@@ -499,7 +503,7 @@ void setConfig (simSystem &sys, const std::string filename) {
 
         // Add the same potentials
         setPairPotentials (initSys, doc);
-		setSystemBarriers (initSys, doc);
+		setBarriers (initSys, doc);
 
         std::vector < int > initialization_order (sys.nSpecies(), 0), check_init (sys.nSpecies(), 0);
     	std::vector < double > init_frac (sys.nSpecies(), 1.0);
@@ -609,7 +613,7 @@ void setConfig (simSystem &sys, const std::string filename) {
  * \params [in, out] sys System to initialize with barriers
  * \params [in] doc Input JSON document
  */
-void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
+void setBarriers (simSystem &sys, const rapidjson::Document &doc) {
 	int Mtot = sys.getTotalM();
 
     if (doc.HasMember("barriers")) {

@@ -11665,7 +11665,6 @@ TEST_F (readMovesTest, badMaxTranslate2) {
 	EXPECT_TRUE(failed);
 }
 
-/*
 class readPpotTest1 : public ::testing::Test {
 protected:
 	moves usedMovesEq, usedMovesPr;
@@ -11877,9 +11876,29 @@ TEST_F (readPpotTest2, badTabulatedFile) {
 		EXPECT_TRUE(msg.find("abcd") != std::string::npos);
 	}
 	EXPECT_TRUE(failed);
-}*/
+}
 
-// add barrier read test
+class readBarrierTest : public ::testing::Test {
+protected:
+	moves usedMovesEq, usedMovesPr;
+	std::string fname;
+	rapidjson::Document doc;
+
+	virtual void SetUp() {
+		fname = "../data/barrier_test.json";
+	}
+};
+
+TEST_F (readBarrierTest, readValid) {
+	// Init system and parse doc
+	bool failed = false;
+	try {
+		simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	} catch (...) {
+		failed = true;
+	}
+	EXPECT_TRUE(!failed); // Current doc should pass because params are all valid
+}
 
 TEST (testNone, cleanUp) {
 	// cleanup files produced after running other tests

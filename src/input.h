@@ -14,7 +14,7 @@ simSystem initialize (const std::string filename, moves* eqMoves, moves* prMoves
 void setConfig (simSystem &sys, const std::string filename);
 
 void setMoves (simSystem &sys, const rapidjson::Document &doc, moves* usedMovesEq, moves* usedMovesPr);
-void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc);
+void setBarriers (simSystem &sys, const rapidjson::Document &doc);
 void setPairPotentials (simSystem &sys, const rapidjson::Document &doc);
 void checkBounds (simSystem &sys);
 
