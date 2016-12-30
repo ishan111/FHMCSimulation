@@ -11900,6 +11900,323 @@ TEST_F (readBarrierTest, readValid) {
 	EXPECT_TRUE(!failed); // Current doc should pass because params are all valid
 }
 
+TEST_F (readBarrierTest, badName) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier1"]["type"] = "abcd";
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("barrier type abcd") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badSpeciesHi) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier1"]["species"] = 3;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("species is not valid") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badSpeciesLo) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier1"]["species"] = 0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("species is not valid") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badHardWallZUbLb) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier1"]["ub"] = 1.234;
+	doc["barriers"]["mybarrier1"]["lb"] = 1.234;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("lower bound < upper") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badHardWallZSigma) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier1"]["sigma"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("sigma") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badSquareWellWallZUbLb) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier2"]["ub"] = 1.234;
+	doc["barriers"]["mybarrier2"]["lb"] = 1.234;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("lower bound < upper") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badSquareWellWallZSigma) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier2"]["sigma"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("sigma") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badSquareWellWallZRange) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier2"]["range"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("range") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badSquareWellWallZEpsilon) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier2"]["epsilon"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("epsilon") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badCylinderZRadius) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier3"]["radius"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("radius") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badCylinderZSigma) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier3"]["sigma"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("sigma") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badCylinderZWidth) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier3"]["width"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("width") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badCylinderZEpsilon) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier3"]["epsilon"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("epsilon") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badRightTriangleXZSep) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier4"]["sep"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("sep") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badRightTriangleXZThetaHi) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier4"]["theta"] = 3.2; // > PI
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("theta") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badRightTriangleXZThetaLo) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier4"]["theta"] = -1.0;  // < 0
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("theta") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badRightTriangleXZSigma) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier4"]["sigma"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("sigma") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badRightTriangleXZLamW) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier4"]["lamW"] = 0.99;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("lamW") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badRightTriangleXZEpsilon) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier4"]["epsilon"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("epsilon") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badRightTriangleXZBase) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier4"]["zbase"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("zbase") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readBarrierTest, badRightTriangleXZOffset) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["barriers"]["mybarrier4"]["offset"] = -1.0;
+	bool failed = false;
+	try {
+		setBarriers (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("offset") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
 TEST (testNone, cleanUp) {
 	// cleanup files produced after running other tests
 	int res;

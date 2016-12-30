@@ -655,8 +655,8 @@ void setBarriers (simSystem &sys, const rapidjson::Document &doc) {
     			try {
     				sys.speciesBarriers[species-1].addHardWallZ (lbBarr, ubBarr, sigmaBarr, Mtot);
     			} catch (customException &ce) {
-                    sendErr(ce.what());
-    				exit(SYS_FAILURE);
+                    const std::string msg = ce.what();
+                    throw customException ("Cannot initialize barrier "+barrName+" : "+msg);
     			}
             } else if (barrType == "square_well_wall_z") {
                 // Expect lb, ub, sigma, range, epsilon
@@ -681,8 +681,8 @@ void setBarriers (simSystem &sys, const rapidjson::Document &doc) {
     			try {
     				sys.speciesBarriers[species-1].addSquareWellWallZ (lbBarr, ubBarr, sigmaBarr, rangeBarr, epsBarr, Mtot);
     			} catch (customException &ce) {
-                    sendErr(ce.what());
-    				exit(SYS_FAILURE);
+                    const std::string msg = ce.what();
+                    throw customException ("Cannot initialize barrier "+barrName+" : "+msg);
     			}
             } else if (barrType == "cylinder_z") {
                 // Expect x, y, radius, width, sigma, epsilon
@@ -710,8 +710,8 @@ void setBarriers (simSystem &sys, const rapidjson::Document &doc) {
     			try {
     				sys.speciesBarriers[species-1].addCylinderZ (xBarr, yBarr, radiusBarr, widthBarr, sigmaBarr, epsBarr, Mtot);
     			} catch (customException &ce) {
-                    sendErr(ce.what());
-    				exit(SYS_FAILURE);
+                    const std::string msg = ce.what();
+                    throw customException ("Cannot initialize barrier "+barrName+" : "+msg);
     			}
             } else if (barrType == "right_triangle_xz") {
                 // Expect parameters width, theta, lamW, epsilon, sigma, sep, offset, zbase, top
@@ -748,8 +748,8 @@ void setBarriers (simSystem &sys, const rapidjson::Document &doc) {
     			try {
     				sys.speciesBarriers[species-1].addRightTriangleXZ (widthBarr, thetaBarr, lamwBarr, epsBarr, sigmaBarr, sepBarr, offsetBarr, sys.box(), zbaseBarr, topBarr, Mtot);
     			} catch (customException &ce) {
-                    sendErr(ce.what());
-    				exit(SYS_FAILURE);
+                    const std::string msg = ce.what();
+                    throw customException ("Cannot initialize barrier "+barrName+" : "+msg);
     			}
             } else {
                 throw customException ("Unrecognized barrier type "+barrType+" from barrier "+barrName);

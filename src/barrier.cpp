@@ -20,29 +20,29 @@ rightTriangleXZ::rightTriangleXZ (const double width, const double theta, const 
         throw customException ("rightTriangle sep is out of bounds");
     }
     // Check the feature fits periodically in the box
-    if ( fmod(box[0]/(sep+width), 1) != 0.0 ) {
+    if (fmod(box[0]/(sep+width), 1) != 0.0) {
         throw customException ("rightTriangle width+separation is not commensurate with the box size");
     }
     if (theta <= 0.0 || theta >= PI/2.0) {
-        throw customException ("rightTriangle elevation angle is out of bounds");
+        throw customException ("rightTriangle elevation angle theta is out of bounds, must be within (0, PI)");
     }
     if (sigma <= 0.0) {
-        throw customException ("rightTriangle sigma is out of bounds");
+        throw customException ("rightTriangle sigma is out of bounds <= 0");
     }
     if (lamW < 1.0) {
-        throw customException ("rightTriangle lamW is out of bounds");
+        throw customException ("rightTriangle lamW is out of bounds < 1.0");
     }
     if (eps < 0.0) {
-        throw customException ("rightTriangle eps is out of bounds");
+        throw customException ("rightTriangle epsilon is out of bounds < 0.0");
     }
     if (M < 1) {
-        throw customException ("rightTriangle M value is out of bounds");
+        throw customException ("rightTriangle M value is out of bounds < 1");
     }
     if (zbase < 0.0 || zbase > box[2]) {
-        throw customException ("rightTriangle zbase value is out of bounds");
+        throw customException ("rightTriangle zbase value is out of bounds, must be within [0, box[2]]");
     }
     if (offset >= box[0] || offset < 0) {
-        throw customException ("rightTriangle offset value is out of bounds");
+        throw customException ("rightTriangle offset value is out of bounds, must be within [0, box[0])");
     }
 
     // store variables internally and do conversion to conventions in which derivation was done
@@ -468,10 +468,10 @@ cylinderZ::cylinderZ (const double x, const double y, const double radius, const
         throw customException ("cylinderZ must have sigma >= 0");
     }
     if (width < 0) {
-        throw customException ("cylinderZ must have range width >= 0");
+        throw customException ("cylinderZ must have width >= 0");
     }
     if (eps < 0) {
-        throw customException ("cylinderZ must have eps >= 0");
+        throw customException ("cylinderZ must have epsilon >= 0");
     }
     if (sigma/2.0 >= width) {
         throw customException ("cylinderZ must have sigma/2 < width to have a finite range of interaction");
@@ -571,7 +571,7 @@ squareWellWallZ::squareWellWallZ (const double lb, const double ub, const double
         throw customException ("squareWellWallZ must have range >= 0");
     }
     if (eps < 0) {
-        throw customException ("squareWellWallZ must have eps >= 0");
+        throw customException ("squareWellWallZ must have epsilon >= 0");
     }
     if (sigma/2.0 >= range) {
         throw customException ("squareWellWallZ must have sigma/2 < range to have a finite range of interaction");
