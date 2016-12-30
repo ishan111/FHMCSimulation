@@ -1582,26 +1582,34 @@ const double simSystem::scratchEnergy () {
 
         // Interactions with same type
         for (unsigned int j = 0; j < num1+adj1; ++j) {
+			double dU = 0.0;
 	        for (unsigned int k = j+1; k < num1+adj1; ++k) {
        			try {
-                    totU += ppot[spec1][spec1]->energy(&atoms[spec1][j], &atoms[spec1][k], box_);
+                    dU = ppot[spec1][spec1]->energy(&atoms[spec1][j], &atoms[spec1][k], box_);
                 } catch (customException &ce) {
                 	std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
                     throw customException (a+b);
                 }
+				if (dU < NUM_INFINITY) {
+					totU += dU;
+				} else {
+					return NUM_INFINITY;
+				}
             }
         }
 
         // Add tail correction to potential energy but only for atoms fully inserted
 #ifdef FLUID_PHASE_SIMULATIONS
         if ((ppot[spec1][spec1]->useTailCorrection) && (num1 > 1)) {
-        	totU += (num1)*0.5*ppot[spec1][spec1]->tailCorrection((num1-1)/V);
+        	totU += (num1)*0.5*ppot[spec1][spec1]->tailCorrection((num1-1)/V); // This is never infinite
         }
 #endif
 
         // Interactions with other unique types
         for (unsigned int spec2 = spec1+1; spec2 < nSpecies_; ++spec2) {
             int num2 = 0, adj2 = 0;
+			double dU = 0.0;
+
         	try {
                 num2 = numSpecies[spec2];
             } catch (customException &ce) {
@@ -1616,18 +1624,23 @@ const double simSystem::scratchEnergy () {
             for (unsigned int j = 0; j < num1+adj1; ++j) {
                 for (unsigned int k = 0; k < num2+adj2; ++k) {
                     try {
-                        totU += ppot[spec1][spec2]->energy(&atoms[spec1][j], &atoms[spec2][k], box_);
+                        dU = ppot[spec1][spec2]->energy(&atoms[spec1][j], &atoms[spec2][k], box_);
 					} catch (customException &ce) {
                         std::string a = "Cannot recalculate energy from scratch: ", b = ce.what();
                         throw customException (a+b);
                     }
+					if (dU < NUM_INFINITY) {
+						totU += dU;
+					} else {
+						return NUM_INFINITY;
+					}
                 }
             }
 
         	// Add tail correction to potential energy but only bewteen fully inserted species
 #ifdef FLUID_PHASE_SIMULATIONS
             if ((ppot[spec1][spec2]->useTailCorrection) && (num2 > 0) && (num1 > 0)) {
-                totU += (num1)*ppot[spec1][spec2]->tailCorrection(num2/V);
+                totU += (num1)*ppot[spec1][spec2]->tailCorrection(num2/V); // Never infinite
             }
 #endif
         }
