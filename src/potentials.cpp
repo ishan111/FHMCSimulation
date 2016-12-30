@@ -36,16 +36,16 @@ void pairPotential::savePotential(std::string filename, double start, double dr)
  */
 void fsLennardJones::setParameters (const std::vector < double > params) {
 	if (params.size() != 4) {
-		throw customException ("For fsLennardJones must specify 5 parameters: epsilon, sigma, r_cut, Mtot");
+		throw customException ("For fsLennardJones must specify 4 parameters: epsilon, sigma, r_cut, Mtot");
 	} else {
 		if (params[0] < 0) {
-			throw customException ("For fsLennardJones, epsilon > 0");
+			throw customException ("For fsLennardJones, epsilon >= 0");
 		}
 		if (params[1] < 0) {
-			throw customException ("For fsLennardJones, sigma > 0");
+			throw customException ("For fsLennardJones, sigma >= 0");
 		}
 		if (params[2] < 0) {
-			throw customException ("For fsLennardJones, r_cut > 0");
+			throw customException ("For fsLennardJones, r_cut >= 0");
 		}
 		if (int(params[3]) < 1) {
 			throw customException ("For fsLennardJones, total expanded ensemble states, Mtot >= 1");
@@ -293,7 +293,7 @@ void tabulated::setParameters (const std::vector < double > params) {
 		throw customException ("For tabulated must specify 5 parameters: r_cut, r_shift, u_shift, u_infinity, Mtot");
 	} else {
 		if (params[0] < 0) {
-			throw customException ("For tabulated, r_cut > 0");
+			throw customException ("For tabulated, r_cut >= 0");
 		}
 		if (int(params[4]) < 1) {
 			throw customException ("For tabulated, total expanded ensemble states, Mtot >= 1");
@@ -347,11 +347,12 @@ void tabulated::loadPotential(std::string filename) {
 
 		if (lineCounter < 2) {
 			paramsAreSet_ = false;
-			sendErr("Tabulated potential "+numToStr(filename)+" needs at least 2 entries, cannot setup potential");
-			return;
+			throw customException ("Tabulated potential "+numToStr(filename)+" needs at least 2 entries, cannot setup potential");
+			/*sendErr("Tabulated potential "+numToStr(filename)+" needs at least 2 entries, cannot setup potential");
+			return;*/
 		}
 
-		// if parameters are not set, set default parameters
+		// If parameters are not set, set default parameters
 		if (!paramsAreSet_) {
 			params_.assign(4, 0.0);
 			params_[0] = start + (table.size()-1)*dr;
@@ -361,8 +362,9 @@ void tabulated::loadPotential(std::string filename) {
 			paramsAreSet_ = true;
 		}
 	} else {
-		sendErr("File "+numToStr(filename)+" not found, cannot setup potential");
-		paramsAreSet_ = false;
+		throw customException ("File "+numToStr(filename)+" not found, cannot setup potential");
+		/*sendErr("File "+numToStr(filename)+" not found, cannot setup potential");
+		paramsAreSet_ = false;*/
 	}
 }
 
@@ -561,7 +563,7 @@ double squareWell::rcut () {
  */
 void hardCore::setParameters (const std::vector < double > params) {
 	if (params.size() != 2) {
-		throw customException ("For hardCore must specify 2 parameter: {sigma, Mtot}");
+		throw customException ("For hardCore must specify 2 parameter: sigma, Mtot");
 	} else {
 		if (params[0] < 0) {
 			throw customException ("For hardCore, sigma >= 0");

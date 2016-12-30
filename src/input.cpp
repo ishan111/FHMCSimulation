@@ -433,7 +433,7 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
                 sys.ppot[i][j]->savePotential(ppotName+".dat", 0.01, 0.01);
             } catch (std::exception &ex) {
                 const std::string msg = ex.what();
-                throw customException ("Unable to add potential "+ppotType[ppotTypeIndex]+" for species pair ("+numToStr(i+1)+","+numToStr(j+1)+") because "+msg);
+                throw customException ("Unable to add potential "+ppotType[ppotTypeIndex]+" for species pair ("+numToStr(i+1)+","+numToStr(j+1)+") : "+msg);
             }
 
 			ppotTypeIndex++;
@@ -578,7 +578,7 @@ void setConfig (simSystem &sys, const std::string filename) {
                     initMove.makeMove(initSys);
                 } catch (customException &ce) {
                     std::string msg = ce.what();
-                    sendErr("Failed to create an initial configuration because "+msg);
+                    sendErr("Failed to create an initial configuration : "+msg);
                     exit(SYS_FAILURE);
                 }
 				tmpCounter++;
@@ -597,7 +597,7 @@ void setConfig (simSystem &sys, const std::string filename) {
 			sys.readConfig("auto-init.xyz");
 		} catch (customException &ce) {
             std::string msg = ce.what();
-            sendErr("Failed to read auto-generated initialization file because "+msg);
+            sendErr("Failed to read auto-generated initialization file : "+msg);
         }
    	}
 }

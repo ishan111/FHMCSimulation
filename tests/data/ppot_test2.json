@@ -38,7 +38,7 @@
 		"r_shift" : 0.0,
 		"u_shift" : 0.0,
 		"u_infinity" : 0.0,
-		"filename" : "tab.pot",
+		"filename" : "../data/tab.pot",
 		"cell_list"  : true
 	},
 	"ppot_2_2" : "hard_sphere",

@@ -30,7 +30,7 @@ checkpoint::checkpoint (const std::string directory, const long int frequency, s
         try {
             load(sys, override);
         } catch (std::exception &ex) {
-            std::string a = "Unable to load checkpoint "+chkptName+" because ";
+            std::string a = "Unable to load checkpoint "+chkptName+" : ";
             std::string b = ex.what();
             throw customException (a+b);
         }

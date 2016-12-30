@@ -39,7 +39,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
     		} catch (customException &ce) {
     			sys.stopTMMC(); // deallocate
                 std::string msg = ce.what();
-                sendErr("Failed to initialize from TMMC collection matrix because "+msg);
+                sendErr("Failed to initialize from TMMC collection matrix : "+msg);
     			exit(SYS_FAILURE);
     		}
     	}

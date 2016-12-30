@@ -78,7 +78,12 @@ void moves::print (const std::string filename) {
 void moves::addInsert (const int index, const double prob) {
 	auto om = std::make_shared < insertParticle > (index, "insert");
 	ownedMoves_.push_back(om);
-	addOn_(ownedMoves_.back()->changeN(), prob);
+	try {
+		addOn_(ownedMoves_.back()->changeN(), prob);
+	} catch (std::exception &ex) {
+		const std::string msg = ex.what();
+		throw customException ("Cannot add insertion move for species "+numToStr(index+1)+" : "+msg);
+	}
 }
 
 /*!
@@ -90,7 +95,12 @@ void moves::addInsert (const int index, const double prob) {
 void moves::addDelete (const int index, const double prob) {
 	auto om = std::make_shared < deleteParticle > (index, "delete");
 	ownedMoves_.push_back(om);
-	addOn_(ownedMoves_.back()->changeN(), prob);
+	try {
+		addOn_(ownedMoves_.back()->changeN(), prob);
+	} catch (std::exception &ex) {
+		const std::string msg = ex.what();
+		throw customException ("Cannot add deletion move for species "+numToStr(index+1)+" : "+msg);
+	}
 }
 
 /*!
@@ -103,7 +113,12 @@ void moves::addDelete (const int index, const double prob) {
 void moves::addSwap (const int index1, const int index2, const double prob) {
 	auto om = std::make_shared < swapParticles > (index1, index2, "swap");
 	ownedMoves_.push_back(om);
-	addOn_(ownedMoves_.back()->changeN(), prob);
+	try {
+		addOn_(ownedMoves_.back()->changeN(), prob);
+	} catch (std::exception &ex) {
+		const std::string msg = ex.what();
+		throw customException ("Cannot add swap move for species pair ("+numToStr(index1+1)+","+numToStr(index2+1)+") : "+msg);
+	}
 }
 
 /*!
@@ -118,10 +133,19 @@ void moves::addTranslate (const int index, const double prob, const double maxD,
 	auto om = std::make_shared < translateParticle > (index, "translate");
 	om->setMaxDisplacement (maxD, box);
 	ownedMoves_.push_back(om);
-	addOn_(ownedMoves_.back()->changeN(), prob);
+	try {
+		addOn_(ownedMoves_.back()->changeN(), prob);
+	} catch (std::exception &ex) {
+		const std::string msg = ex.what();
+		throw customException ("Cannot add translation move for species "+numToStr(index+1)+" : "+msg);
+	}
 }
 
 void moves::addOn_ (bool changeN, const double probability) {
+	if (probability < 0.0) {
+		throw customException ("Probability/weight cannot be less than 0");
+	}
+
 	// add new move to the class
 	rawProbabilities_.push_back(probability);
 	normProbabilities_.resize(rawProbabilities_.size());

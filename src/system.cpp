@@ -1294,7 +1294,7 @@ void simSystem::addPotential (const int spec1, const int spec2, const std::strin
 
 	if (useCellList) {
 		sendMsg("Setting up cell list for interactions between type "+numToStr(spec1)+" and "+numToStr(spec2));
-		// add creation of cell lists
+		// Add creation of cell lists
 		if ((ppot[spec1][spec2]->rcut() > box_[0]/3.0) || (ppot[spec1][spec2]->rcut() > box_[1]/3.0) || (ppot[spec1][spec2] ->rcut() > box_[2]/3.0)) {
 			sendErr("Cutoff ("+numToStr(ppot[spec1][spec2]->rcut())+") larger than 1.0/3.0 boxsize, disabling cell lists for this interaction");
 			useCellList_[spec1][spec2] = false;

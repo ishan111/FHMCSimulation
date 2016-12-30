@@ -11531,7 +11531,7 @@ TEST_F (checkpointTest, restartExtMoments) {
 	EXPECT_EQ (result, 0);
 }
 
-class readPpotTest : public ::testing::Test {
+class readMovesTest : public ::testing::Test {
 protected:
 	moves usedMovesEq, usedMovesPr;
 	std::string fname;
@@ -11542,7 +11542,7 @@ protected:
 	}
 };
 
-TEST_F (readPpotTest, readValid) {
+TEST_F (readMovesTest, readValid) {
 	// Init system and parse doc
 	bool failed = false;
 	try {
@@ -11553,7 +11553,47 @@ TEST_F (readPpotTest, readValid) {
 	EXPECT_TRUE(!failed); // Current doc should pass because params are all valid
 }
 
-TEST_F (readPpotTest, badSquareWellSigma) {
+TEST_F (readMovesTest, badInsDel1) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["moves"]["ins_del_1"] = -1.0;
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		std::cout << ex.what() << std::endl;
+		//EXPECT_TRUE(msg.find("sigma") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+
+
+class readPpotTest1 : public ::testing::Test {
+protected:
+	moves usedMovesEq, usedMovesPr;
+	std::string fname;
+	rapidjson::Document doc;
+
+	virtual void SetUp() {
+		fname = "../data/ppot_test1.json";
+	}
+};
+
+TEST_F (readPpotTest1, readValid) {
+	// Init system and parse doc
+	bool failed = false;
+	try {
+		simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	} catch (...) {
+		failed = true;
+	}
+	EXPECT_TRUE(!failed); // Current doc should pass because params are all valid
+}
+
+TEST_F (readPpotTest1, badSquareWellSigma) {
 	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
 	parseJson(fname, doc);
 	doc["ppot_1_1_params"]["sigma"] = -1.0;
@@ -11568,7 +11608,7 @@ TEST_F (readPpotTest, badSquareWellSigma) {
 	EXPECT_TRUE(failed);
 }
 
-TEST_F (readPpotTest, badSquareWellWidth) {
+TEST_F (readPpotTest1, badSquareWellWidth) {
 	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
 	parseJson(fname, doc);
 	doc["ppot_1_1_params"]["width"] = -1.0;
@@ -11583,7 +11623,7 @@ TEST_F (readPpotTest, badSquareWellWidth) {
 	EXPECT_TRUE(failed);
 }
 
-TEST_F (readPpotTest, badSquareWellEpsilon) {
+TEST_F (readPpotTest1, badSquareWellEpsilon) {
 	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
 	parseJson(fname, doc);
 	doc["ppot_1_1_params"]["epsilon"] = -1.0;
@@ -11598,9 +11638,153 @@ TEST_F (readPpotTest, badSquareWellEpsilon) {
 	EXPECT_TRUE(failed);
 }
 
-// add barrier read test
+TEST_F (readPpotTest1, badLJSigma) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["ppot_1_2_params"]["sigma"] = -1.0;
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("sigma") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
 
-// add moves read test --> in init this is tested before ppot so do this before ppot test
+TEST_F (readPpotTest1, badLJEpsilon) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["ppot_1_2_params"]["epsilon"] = -1.0;
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("epsilon") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readPpotTest1, badLJRcut) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["ppot_1_2_params"]["r_cut"] = -1.0;
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("r_cut") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readPpotTest1, badFSLJSigma) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["ppot_2_2_params"]["sigma"] = -1.0;
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("sigma") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readPpotTest1, badFSLJEpsilon) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["ppot_2_2_params"]["epsilon"] = -1.0;
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("epsilon") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readPpotTest1, badFSLJRcut) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["ppot_2_2_params"]["r_cut"] = -1.0;
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("r_cut") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+class readPpotTest2 : public ::testing::Test {
+protected:
+	moves usedMovesEq, usedMovesPr;
+	std::string fname;
+	rapidjson::Document doc;
+
+	virtual void SetUp() {
+		fname = "../data/ppot_test2.json";
+	}
+};
+
+TEST_F (readPpotTest2, badHCSigma) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["ppot_2_2_params"]["sigma"] = -1.0;
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("sigma") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readPpotTest2, badTabulatedRcut) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["ppot_1_2_params"]["r_cut"] = -1.0;
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("r_cut") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readPpotTest2, badTabulatedFile) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["ppot_1_2_params"]["filename"] = "abcd";
+	bool failed = false;
+	try {
+		setPairPotentials (sys, doc);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		EXPECT_TRUE(msg.find("abcd") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+// add barrier read test
 
 TEST (testNone, cleanUp) {
 	// cleanup files produced after running other tests
