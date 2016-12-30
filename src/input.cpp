@@ -60,16 +60,16 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		duh = doc["delta_u_hist"].GetDouble();
 	}
 
-	int max_order = 2;
+	int maxOrder = 2;
 	if (doc.HasMember("max_order")) {
         if (!doc["max_order"].IsInt()) throw customException("\"max_order\" is not an integer in "+filename);
-		max_order = doc["max_order"].GetInt();
+		maxOrder = doc["max_order"].GetInt();
 	}
 
-	bool use_ke = false;
+	bool useKe = false;
 	if (doc.HasMember("use_ke")) {
         if (!doc["use_ke"].IsBool()) throw customException("\"use_ke\" is not a boolean in "+filename);
-		use_ke = doc["use_ke"].GetBool();
+		useKe = doc["use_ke"].GetBool();
 	}
 
     if (!doc.HasMember("mu")) throw customException("\"mu\" is not specified in "+filename);
@@ -109,8 +109,8 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		Mtot = doc["num_expanded_states"].GetInt();
 	}
 
-	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot, duh, max_order);
-	if (use_ke) {
+	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot, duh, maxOrder);
+	if (useKe) {
 		sys.toggleKE();
 		if (sys.addKECorrection() == false) {
 			throw customException ("Unable to set KE flag");
@@ -458,8 +458,8 @@ void setConfig (simSystem &sys, const std::string filename) {
 
     // Rest from existing system
     int Mtot = sys.getTotalM();
-    int max_order = sys.getMaxOrder();
-    bool use_ke = sys.addKECorrection();
+    int maxOrder = sys.getMaxOrder();
+    bool useKe = sys.addKECorrection();
     double duh = 10.0;
     std::vector < double > sysBox = sys.box();
 
@@ -476,8 +476,8 @@ void setConfig (simSystem &sys, const std::string filename) {
 		// Have to generate initial configuration manually - start with mu = INF
         std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
 
-		simSystem initSys (doc["num_species"].GetInt(), doc["beta"].GetDouble()/100.0, sysBox, initMu, sysMax, sysMin, Mtot, duh, max_order); // beta =  1/T, so low beta to have high T
-		if (use_ke) {
+		simSystem initSys (doc["num_species"].GetInt(), doc["beta"].GetDouble()/100.0, sysBox, initMu, sysMax, sysMin, Mtot, duh, maxOrder); // beta =  1/T, so low beta to have high T
+		if (useKe) {
 			initSys.toggleKE();
 			if (initSys.addKECorrection() == false) {
 				throw customException ("Unable to set KE flag");
@@ -550,10 +550,10 @@ void setConfig (simSystem &sys, const std::string filename) {
                 initMove.addTranslate(initialization_order[j], 2.0, 1.0, initSys.box());
 			}
 
-			// now do simuation until within proper range
+			// Now do simuation until within proper range
 			int targetNum = sys.totNMin()*init_frac[idx];
 			if (idx == sys.nSpecies() - 1) {
-				// to account for integer rounding
+				// To account for integer rounding
 				targetNum = sys.totNMin() - added;
 			}
 			added += targetNum;
@@ -576,10 +576,10 @@ void setConfig (simSystem &sys, const std::string filename) {
 			}
 		}
 
-		// print snapshot from Reading initial configuration
+		// Print snapshot from Reading initial configuration
 		initSys.printSnapshot("auto-init.xyz", "auto-generated initial configuration");
 
-		// read into sys
+		// Read into sys
 		try {
 			sys.readConfig("auto-init.xyz");
 		} catch (customException &ce) {
