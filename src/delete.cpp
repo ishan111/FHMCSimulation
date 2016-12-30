@@ -76,6 +76,7 @@ int deleteParticle::make (simSystem &sys) {
 				throw customException (a+b);
 			}
         }
+
         // Add tail correction to potential energy -- only enable for fluid phase simulations
 #ifdef FLUID_PHASE_SIMULATIONS
         if (sys.ppot[spec][typeIndex_]->useTailCorrection) {

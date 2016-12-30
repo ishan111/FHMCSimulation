@@ -126,57 +126,68 @@ int swapParticles::make (simSystem &sys) {
     delEnergy += sys.speciesBarriers[typeIndex2_].energy(&sys.atoms[typeIndex2_][a2], box);
 
     double insEnergy = 0.0;
-    for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
-    	// Get positions of neighboring atoms around a1's (a2's) new (old) location
-    	std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex_, &a1_new);
-    	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
-    		// With these new "copy atoms" getNeighborAtoms can't guarantee it doesn't point to old self, so must check
-    		if ((neighborAtoms[i] == &sys.atoms[typeIndex2_][a2]) || (neighborAtoms[i] == &sys.atoms[typeIndex_][a1])) {
-    			continue;
-    		} else {
-				try {
-					dU = sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &a1_new, box);
-				} catch (customException& ce) {
-					std::string a = "Cannot insert because of energy error: ", b = ce.what();
-					throw customException (a+b);
-				}
-				if (dU < NUM_INFINITY) {
-					insEnergy += dU;
-				} else {
-					insEnergy = NUM_INFINITY;
-					break;
-				}
-    		}
-    	}
-		if (insEnergy == NUM_INFINITY) break; // Don't add anything if "infinite" already
 
-    	// Add tail correction to potential energy -- only enable for fluid phase simulations
-#ifdef FLUID_PHASE_SIMULATIONS
-    	if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
-        	if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex_][a1])) {
-        		// Then a1 is not the partially inserted particle and tail interactions must be included
-        		if (spec == typeIndex_) {
-                	if (sys.numSpecies[spec]-1 > 0) {
-                    	insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V); // Never infinite
-					}
-        		} else {
-                	if (sys.numSpecies[spec] > 0) {
-                		insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V); // Never infinite
-        			}
-    			}
-			}
-    	}
-#endif
-    }
+	// Account for wall interaction energy first to be more efficient
+	dU = sys.speciesBarriers[typeIndex_].energy(&a1_new, box);
+	if (dU < NUM_INFINITY) {
+		insEnergy += dU;
+	} else {
+		insEnergy = NUM_INFINITY;
+	}
 
 	if (insEnergy < NUM_INFINITY) {
 		// Account for wall interaction energy
-	    dU = sys.speciesBarriers[typeIndex_].energy(&a1_new, box);
+	    dU = sys.speciesBarriers[typeIndex2_].energy(&a2_new, box);
 		if (dU < NUM_INFINITY) {
 			insEnergy += dU;
 		} else {
 			insEnergy = NUM_INFINITY;
 		}
+	}
+
+	if (insEnergy < NUM_INFINITY) {
+		for (unsigned int spec = 0; spec < sys.nSpecies(); ++spec) {
+	    	// Get positions of neighboring atoms around a1's (a2's) new (old) location
+	    	std::vector < atom* > neighborAtoms = sys.getNeighborAtoms(spec, typeIndex_, &a1_new);
+	    	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
+	    		// With these new "copy atoms" getNeighborAtoms can't guarantee it doesn't point to old self, so must check
+	    		if ((neighborAtoms[i] == &sys.atoms[typeIndex2_][a2]) || (neighborAtoms[i] == &sys.atoms[typeIndex_][a1])) {
+	    			continue;
+	    		} else {
+					try {
+						dU = sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], &a1_new, box);
+					} catch (customException& ce) {
+						std::string a = "Cannot insert because of energy error: ", b = ce.what();
+						throw customException (a+b);
+					}
+					if (dU < NUM_INFINITY) {
+						insEnergy += dU;
+					} else {
+						insEnergy = NUM_INFINITY;
+						break;
+					}
+	    		}
+	    	}
+			if (insEnergy == NUM_INFINITY) break; // Don't add anything if "infinite" already
+
+	    	// Add tail correction to potential energy -- only enable for fluid phase simulations
+	#ifdef FLUID_PHASE_SIMULATIONS
+	    	if (sys.ppot[spec][typeIndex_]->useTailCorrection) {
+	        	if (!(sys.getCurrentM() > 0 && sys.getFractionalAtom () == &sys.atoms[typeIndex_][a1])) {
+	        		// Then a1 is not the partially inserted particle and tail interactions must be included
+	        		if (spec == typeIndex_) {
+	                	if (sys.numSpecies[spec]-1 > 0) {
+	                    	insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection((sys.numSpecies[spec]-1)/V); // Never infinite
+						}
+	        		} else {
+	                	if (sys.numSpecies[spec] > 0) {
+	                		insEnergy += sys.ppot[spec][typeIndex_]->tailCorrection(sys.numSpecies[spec]/V); // Never infinite
+	        			}
+	    			}
+				}
+	    	}
+	#endif
+	    }
 	}
 
 	if (insEnergy < NUM_INFINITY) {
@@ -223,18 +234,11 @@ int swapParticles::make (simSystem &sys) {
 	    }
 	}
 
-	if (insEnergy < NUM_INFINITY) {
-		// Account for wall interaction energy
-	    dU = sys.speciesBarriers[typeIndex2_].energy(&a2_new, box);
-		if (dU < NUM_INFINITY) {
-			insEnergy += dU;
-		} else {
-			insEnergy = NUM_INFINITY;
-		}
-	}
-
 	// Biasing
-    const double p_u = exp(-sys.beta()*(insEnergy - delEnergy));
+    double p_u = 0.0;
+	if (insEnergy < NUM_INFINITY) {
+		p_u = exp(-sys.beta()*(insEnergy - delEnergy));
+	}
     double bias = calculateBias(sys, sys.getTotN(), sys.getCurrentM());
 
     // TMMC gets updated the same way, regardless of whether the move gets accepted
