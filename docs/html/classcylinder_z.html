@@ -233,41 +233,41 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00462">462</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
+<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00463">463</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
 
 <p>References <a class="el" href="barrier_8h_source.html#l00023">barrier::M_</a>.</p>
-<div class="fragment"><div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;                                                                                                                                                {</div>
-<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;    <span class="keywordflow">if</span> (radius &lt;= sigma) {</div>
-<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;cylinderZ radius &lt;= sigma so practically no particles will fit&quot;</span>);</div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;    }</div>
-<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;    <span class="keywordflow">if</span> (sigma &lt; 0) {</div>
-<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;cylinderZ must have sigma &gt;= 0&quot;</span>);</div>
-<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;    }</div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    <span class="keywordflow">if</span> (width &lt; 0) {</div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;cylinderZ must have range width &gt;= 0&quot;</span>);</div>
-<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    }</div>
-<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;    <span class="keywordflow">if</span> (eps &lt; 0) {</div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;cylinderZ must have eps &gt;= 0&quot;</span>);</div>
-<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;    }</div>
-<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;    <span class="keywordflow">if</span> (sigma/2.0 &gt;= width) {</div>
-<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;cylinderZ must have sigma/2 &lt; width to have a finite range of interaction&quot;</span>);</div>
-<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;    }</div>
-<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;    <span class="keywordflow">if</span> (M &lt; 1) {</div>
-<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;cylinderZ must have M &gt;= 1&quot;</span>);</div>
-<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;    }</div>
-<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;</div>
-<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;    eps_ = eps;</div>
-<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;    sigma_ = sigma;</div>
-<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;    width_ = width;</div>
-<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;    radius_ = radius;</div>
-<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;    <a class="code" href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">M_</a> = M;</div>
-<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;</div>
-<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;    center_.resize(3, 0);</div>
-<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;    center_[0] = x;</div>
-<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;    center_[1] = y;</div>
-<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;}</div>
+<div class="fragment"><div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;                                                                                                                                                {</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;    <span class="keywordflow">if</span> (radius &lt;= sigma) {</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;cylinderZ radius &lt;= sigma so practically no particles will fit&quot;</span>);</div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;    }</div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;    <span class="keywordflow">if</span> (sigma &lt; 0) {</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;cylinderZ must have sigma &gt;= 0&quot;</span>);</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    }</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;    <span class="keywordflow">if</span> (width &lt; 0) {</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;cylinderZ must have width &gt;= 0&quot;</span>);</div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;    }</div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;    <span class="keywordflow">if</span> (eps &lt; 0) {</div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;cylinderZ must have epsilon &gt;= 0&quot;</span>);</div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;    }</div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;    <span class="keywordflow">if</span> (sigma/2.0 &gt;= width) {</div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;cylinderZ must have sigma/2 &lt; width to have a finite range of interaction&quot;</span>);</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;    }</div>
+<div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;    <span class="keywordflow">if</span> (M &lt; 1) {</div>
+<div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;cylinderZ must have M &gt;= 1&quot;</span>);</div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;    }</div>
+<div class="line"><a name="l00482"></a><span class="lineno">  482</span>&#160;</div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;    eps_ = eps;</div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;    sigma_ = sigma;</div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;    width_ = width;</div>
+<div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;    radius_ = radius;</div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;    <a class="code" href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">M_</a> = M;</div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;</div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;    center_.resize(3, 0);</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;    center_[0] = x;</div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;    center_[1] = y;</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;}</div>
 <div class="ttc" id="classbarrier_html_a274cf283ffc97c22ffa9a4258369c400"><div class="ttname"><a href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">barrier::M_</a></div><div class="ttdeci">int M_</div><div class="ttdef"><b>Definition:</b> <a href="barrier_8h_source.html#l00023">barrier.h:23</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -316,41 +316,41 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classbarrier.html#a2d308cfd5709aa479d0b37733f1a0db7">barrier</a>.</p>
 
-<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00525">525</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
+<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00526">526</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
 
-<p>References <a class="el" href="barrier_8h_source.html#l00023">barrier::M_</a>, <a class="el" href="atom_8h_source.html#l00021">atom::mState</a>, <a class="el" href="potentials_8h_source.html#l00014">NUM_INFINITY</a>, <a class="el" href="utilities_8cpp_source.html#l00248">pbcDist2()</a>, and <a class="el" href="atom_8h_source.html#l00022">atom::pos</a>.</p>
-<div class="fragment"><div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;                                                                         {</div>
-<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;    center_[2] = a1-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[2]; <span class="comment">// same z-plane</span></div>
-<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;    <span class="keywordtype">double</span> rv2 = <a class="code" href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a> (a1-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>, center_, box);</div>
-<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;    <span class="keywordtype">double</span> U = 0.0, sig = sigma_, eps = eps_;</div>
-<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;</div>
-<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;    <span class="keywordflow">if</span> (a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> &gt; 0) {</div>
-<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;        sig = (sigma_/<a class="code" href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">M_</a>)*a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a>;</div>
-<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;        eps = (eps_/<a class="code" href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">M_</a>)*a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a>;</div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;    }</div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;    <span class="keywordflow">if</span> (a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> &lt; 0 || a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> &gt; <a class="code" href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">M_</a>-1) {</div>
-<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;mState out of bounds for cylinderZ&quot;</span>);</div>
-<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    }</div>
-<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;</div>
-<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;    <span class="comment">// return infinity if out of bounds</span></div>
-<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;    <span class="keywordtype">double</span> rc = radius_ - sig/2.0, ri = radius_ - width_;</div>
-<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;    <span class="keywordflow">if</span> (rv2 &gt;= rc*rc) {</div>
-<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="potentials_8h.html#ab94ab1d09e2291d03fe92a0e24a9d33b">NUM_INFINITY</a>;</div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;    }</div>
-<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;</div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;    <span class="comment">// interaction with the wall - return infinity if it was out of bounds already</span></div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;    <span class="keywordflow">if</span> (rv2 &gt; ri*ri) {</div>
-<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;        U += -eps;</div>
-<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;    }</div>
-<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;</div>
-<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;    <span class="keywordflow">return</span> U;</div>
-<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;}</div>
+<p>References <a class="el" href="barrier_8h_source.html#l00023">barrier::M_</a>, <a class="el" href="atom_8h_source.html#l00020">atom::mState</a>, <a class="el" href="potentials_8h_source.html#l00014">NUM_INFINITY</a>, <a class="el" href="utilities_8cpp_source.html#l00249">pbcDist2()</a>, and <a class="el" href="atom_8h_source.html#l00021">atom::pos</a>.</p>
+<div class="fragment"><div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;                                                                         {</div>
+<div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;    center_[2] = a1-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[2]; <span class="comment">// same z-plane</span></div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;    <span class="keywordtype">double</span> rv2 = <a class="code" href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a> (a1-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>, center_, box);</div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;    <span class="keywordtype">double</span> U = 0.0, sig = sigma_, eps = eps_;</div>
+<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;</div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;    <span class="keywordflow">if</span> (a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> &gt; 0) {</div>
+<div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;        sig = (sigma_/<a class="code" href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">M_</a>)*a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a>;</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;        eps = (eps_/<a class="code" href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">M_</a>)*a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a>;</div>
+<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;    }</div>
+<div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    <span class="keywordflow">if</span> (a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> &lt; 0 || a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> &gt; <a class="code" href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">M_</a>-1) {</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;mState out of bounds for cylinderZ&quot;</span>);</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;    }</div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;</div>
+<div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;    <span class="comment">// return infinity if out of bounds</span></div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;    <span class="keywordtype">double</span> rc = radius_ - sig/2.0, ri = radius_ - width_;</div>
+<div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;    <span class="keywordflow">if</span> (rv2 &gt;= rc*rc) {</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="potentials_8h.html#ab94ab1d09e2291d03fe92a0e24a9d33b">NUM_INFINITY</a>;</div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;    }</div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;</div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;    <span class="comment">// interaction with the wall - return infinity if it was out of bounds already</span></div>
+<div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;    <span class="keywordflow">if</span> (rv2 &gt; ri*ri) {</div>
+<div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;        U += -eps;</div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;    }</div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;    <span class="keywordflow">return</span> U;</div>
+<div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;}</div>
 <div class="ttc" id="potentials_8h_html_ab94ab1d09e2291d03fe92a0e24a9d33b"><div class="ttname"><a href="potentials_8h.html#ab94ab1d09e2291d03fe92a0e24a9d33b">NUM_INFINITY</a></div><div class="ttdeci">#define NUM_INFINITY</div><div class="ttdef"><b>Definition:</b> <a href="potentials_8h_source.html#l00014">potentials.h:14</a></div></div>
 <div class="ttc" id="classbarrier_html_a274cf283ffc97c22ffa9a4258369c400"><div class="ttname"><a href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">barrier::M_</a></div><div class="ttdeci">int M_</div><div class="ttdef"><b>Definition:</b> <a href="barrier_8h_source.html#l00023">barrier.h:23</a></div></div>
-<div class="ttc" id="classatom_html_a3ae5f4880e7831d8b2c9fda72b4eb24a"><div class="ttname"><a href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">atom::pos</a></div><div class="ttdeci">std::vector&lt; double &gt; pos</div><div class="ttdoc">3D position </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00022">atom.h:22</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_abb1db3a8a3ac46e044bbe7b2c5684c0a"><div class="ttname"><a href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a></div><div class="ttdeci">double pbcDist2(const std::vector&lt; double &gt; &amp;p1, const std::vector&lt; double &gt; &amp;p2, const std::vector&lt; double &gt; &amp;box)</div><div class="ttdoc">Calculate the minimum image distance squared between two coordinates assuming periodic boundary condi...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00248">utilities.cpp:248</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
-<div class="ttc" id="classatom_html_a3cb00c0c5b7533657e05af6ff4a42740"><div class="ttname"><a href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">atom::mState</a></div><div class="ttdeci">int mState</div><div class="ttdoc">State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted. </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00021">atom.h:21</a></div></div>
+<div class="ttc" id="classatom_html_a3ae5f4880e7831d8b2c9fda72b4eb24a"><div class="ttname"><a href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">atom::pos</a></div><div class="ttdeci">std::vector&lt; double &gt; pos</div><div class="ttdoc">3D position </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00021">atom.h:21</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_abb1db3a8a3ac46e044bbe7b2c5684c0a"><div class="ttname"><a href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a></div><div class="ttdeci">double pbcDist2(const std::vector&lt; double &gt; &amp;p1, const std::vector&lt; double &gt; &amp;p2, const std::vector&lt; double &gt; &amp;box)</div><div class="ttdoc">Calculate the minimum image distance squared between two coordinates assuming periodic boundary condi...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00249">utilities.cpp:249</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classatom_html_a3cb00c0c5b7533657e05af6ff4a42740"><div class="ttname"><a href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">atom::mState</a></div><div class="ttdeci">int mState</div><div class="ttdoc">State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted. </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00020">atom.h:20</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -398,33 +398,33 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Implements <a class="el" href="classbarrier.html#a948ebdcfac501cb75d1a1f045a7d9125">barrier</a>.</p>
 
-<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00499">499</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
+<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00500">500</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
 
-<p>References <a class="el" href="barrier_8h_source.html#l00023">barrier::M_</a>, <a class="el" href="atom_8h_source.html#l00021">atom::mState</a>, <a class="el" href="utilities_8cpp_source.html#l00248">pbcDist2()</a>, and <a class="el" href="atom_8h_source.html#l00022">atom::pos</a>.</p>
-<div class="fragment"><div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;                                                                       {</div>
-<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;    center_[2] = a1-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[2]; <span class="comment">// same z-plane</span></div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;    <span class="keywordtype">double</span> rv2 = <a class="code" href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a> (a1-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>, center_, box);</div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;</div>
-<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;    <span class="keywordtype">double</span> sig = sigma_;</div>
-<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;    <span class="keywordflow">if</span> (a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> &gt; 0) {</div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;        sig = (sigma_/<a class="code" href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">M_</a>)*a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a>;</div>
-<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;    }</div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;    <span class="keywordflow">if</span> (a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> &lt; 0 || a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> &gt; <a class="code" href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">M_</a>-1) {</div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;mState out of bounds for cylinderZ&quot;</span>);</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    }</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;</div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;    <span class="keywordtype">double</span> rc = radius_ - sig/2.0;</div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    <span class="keywordflow">if</span> (rv2 &gt;= rc*rc) {</div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;    }</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;}</div>
+<p>References <a class="el" href="barrier_8h_source.html#l00023">barrier::M_</a>, <a class="el" href="atom_8h_source.html#l00020">atom::mState</a>, <a class="el" href="utilities_8cpp_source.html#l00249">pbcDist2()</a>, and <a class="el" href="atom_8h_source.html#l00021">atom::pos</a>.</p>
+<div class="fragment"><div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;                                                                       {</div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;    center_[2] = a1-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>[2]; <span class="comment">// same z-plane</span></div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;    <span class="keywordtype">double</span> rv2 = <a class="code" href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a> (a1-&gt;<a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>, center_, box);</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;    <span class="keywordtype">double</span> sig = sigma_;</div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;    <span class="keywordflow">if</span> (a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> &gt; 0) {</div>
+<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;        sig = (sigma_/<a class="code" href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">M_</a>)*a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a>;</div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;    }</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;    <span class="keywordflow">if</span> (a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> &lt; 0 || a1-&gt;<a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> &gt; <a class="code" href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">M_</a>-1) {</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;mState out of bounds for cylinderZ&quot;</span>);</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;    }</div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;</div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    <span class="keywordtype">double</span> rc = radius_ - sig/2.0;</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;    <span class="keywordflow">if</span> (rv2 &gt;= rc*rc) {</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;    }</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;}</div>
 <div class="ttc" id="classbarrier_html_a274cf283ffc97c22ffa9a4258369c400"><div class="ttname"><a href="classbarrier.html#a274cf283ffc97c22ffa9a4258369c400">barrier::M_</a></div><div class="ttdeci">int M_</div><div class="ttdef"><b>Definition:</b> <a href="barrier_8h_source.html#l00023">barrier.h:23</a></div></div>
-<div class="ttc" id="classatom_html_a3ae5f4880e7831d8b2c9fda72b4eb24a"><div class="ttname"><a href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">atom::pos</a></div><div class="ttdeci">std::vector&lt; double &gt; pos</div><div class="ttdoc">3D position </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00022">atom.h:22</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_abb1db3a8a3ac46e044bbe7b2c5684c0a"><div class="ttname"><a href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a></div><div class="ttdeci">double pbcDist2(const std::vector&lt; double &gt; &amp;p1, const std::vector&lt; double &gt; &amp;p2, const std::vector&lt; double &gt; &amp;box)</div><div class="ttdoc">Calculate the minimum image distance squared between two coordinates assuming periodic boundary condi...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00248">utilities.cpp:248</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
-<div class="ttc" id="classatom_html_a3cb00c0c5b7533657e05af6ff4a42740"><div class="ttname"><a href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">atom::mState</a></div><div class="ttdeci">int mState</div><div class="ttdoc">State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted. </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00021">atom.h:21</a></div></div>
+<div class="ttc" id="classatom_html_a3ae5f4880e7831d8b2c9fda72b4eb24a"><div class="ttname"><a href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">atom::pos</a></div><div class="ttdeci">std::vector&lt; double &gt; pos</div><div class="ttdoc">3D position </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00021">atom.h:21</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_abb1db3a8a3ac46e044bbe7b2c5684c0a"><div class="ttname"><a href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a></div><div class="ttdeci">double pbcDist2(const std::vector&lt; double &gt; &amp;p1, const std::vector&lt; double &gt; &amp;p2, const std::vector&lt; double &gt; &amp;box)</div><div class="ttdoc">Calculate the minimum image distance squared between two coordinates assuming periodic boundary condi...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00249">utilities.cpp:249</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classatom_html_a3cb00c0c5b7533657e05af6ff4a42740"><div class="ttname"><a href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">atom::mState</a></div><div class="ttdeci">int mState</div><div class="ttdoc">State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted. </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00020">atom.h:20</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -435,7 +435,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 29 2016 11:09:04 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 30 2016 13:19:39 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

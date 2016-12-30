@@ -1,4 +1,4 @@
-.TH "tmmc" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "tmmc" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -658,9 +658,9 @@ Referenced by aggVolBias3::make(), translateParticle::make(), deleteParticle::ma
 227     C_[i] += pa;
 228     C_[j] += (1-pa);
 229     if (pa > 0\&.0) {
-230         HC_[i] += 1\&.0; // only count the transition actually proposed, not the Nstart --> Nstart unless that was what was originally proposed, and only count when transition probability is finite\&.
+230         HC_[i] += 1\&.0; // Only count the transition actually proposed, not the Nstart --> Nstart unless that was what was originally proposed, and only count when transition probability is finite\&.
 231     } else if (Nstart == 0 && Nend == 0) {
-232     HC_[i] += 1\&.0; // displacement move when 0 particles in system is "early rejected" (p = 0), but this is valid - if N_min of window is > 0 checkVisited() works fine, but if includes 0, this state is detected as never being sampled otherwise, which is the incorrect response
+232         HC_[i] += 1\&.0; // Translation move when 0 particles in system is "early rejected" (p = 0), but this is valid - if N_min of window is > 0 checkVisited() works fine, but if includes 0, this state is detected as never being sampled otherwise, which is the incorrect response
 233     }
 234 }
 .fi

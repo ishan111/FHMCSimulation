@@ -5,7 +5,7 @@ var searchData=
   ['addhardwallz',['addHardWallZ',['../classcomposite_barrier.html#a10e7f2561e3b5167b69ead011dde2e75',1,'compositeBarrier']]],
   ['addinsert',['addInsert',['../classmoves.html#ab4583b3075f51cce55c3aeb84a58430d',1,'moves']]],
   ['addkecorrection',['addKECorrection',['../classsim_system.html#a09c4ea670168c9f1d549d2a5120eb13c',1,'simSystem']]],
-  ['addpotential',['addPotential',['../classsim_system.html#a43ae18ca5e66c8e916b88b71c5ee5240',1,'simSystem']]],
+  ['addpotential',['addPotential',['../classsim_system.html#a5abdfae81ca00a79f162c0ce2b4307c9',1,'simSystem']]],
   ['addrighttrianglexz',['addRightTriangleXZ',['../classcomposite_barrier.html#aea879332cf03f00463b9c8ca4ca28680',1,'compositeBarrier']]],
   ['addsquarewellwallz',['addSquareWellWallZ',['../classcomposite_barrier.html#a3cb5df17c75d9ff8ccc44b806871b449',1,'compositeBarrier']]],
   ['addswap',['addSwap',['../classmoves.html#a03cebfa2d8d1cecf253df573fdecc5d0',1,'moves']]],

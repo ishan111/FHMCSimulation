@@ -1,4 +1,4 @@
-.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/system.h" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/system.h" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -84,38 +84,38 @@ rel_bias The value of the relative bias to apply in the metropolis criteria duri
 .PP
 
 .PP
-Definition at line 1759 of file system\&.cpp\&.
+Definition at line 1755 of file system\&.cpp\&.
 .PP
 References __BIAS_INT_TYPE__, tmmc::getAddress(), wala::getAddress(), tmmc::getBias(), wala::getBias(), simSystem::getCurrentM(), simSystem::getTotN(), simSystem::tmmcBias, simSystem::useTMMC, simSystem::useWALA, and simSystem::wlBias\&.
 .PP
 Referenced by aggVolBias3::make(), translateParticle::make(), deleteParticle::make(), insertParticle::make(), and swapParticles::make()\&.
 .PP
 .nf
-1759                                                                                    {
-1760     double rel_bias = 1\&.0;
-1761 
-1762     if (sys\&.useTMMC && !sys\&.useWALA) {
-1763         // TMMC biasing
-1764         const __BIAS_INT_TYPE__ address1 = sys\&.tmmcBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.tmmcBias->getAddress(nTotFinal, mFinal);
-1765         const double b1 = sys\&.tmmcBias->getBias (address1), b2 = sys\&.tmmcBias->getBias (address2);
-1766         rel_bias = exp(b2-b1);
-1767     } else if (!sys\&.useTMMC && sys\&.useWALA) {
-1768         // Wang-Landau Biasing
-1769         const __BIAS_INT_TYPE__ address1 = sys\&.wlBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.wlBias->getAddress(nTotFinal, mFinal);
-1770         const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
-1771         rel_bias = exp(b2-b1);
-1772     } else if (sys\&.useTMMC && sys\&.useWALA) {
-1773         // Crossover phase where we use WL but update TMMC collection matrix
-1774         const int address1 = sys\&.wlBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.wlBias->getAddress(nTotFinal, mFinal);
-1775         const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
-1776         rel_bias = exp(b2-b1);
-1777     } else {
-1778         // No biasing
-1779         rel_bias = 1\&.0;
-1780     }
-1781 
-1782     return rel_bias;
-1783 }
+1755                                                                                    {
+1756     double rel_bias = 1\&.0;
+1757 
+1758     if (sys\&.useTMMC && !sys\&.useWALA) {
+1759         // TMMC biasing
+1760         const __BIAS_INT_TYPE__ address1 = sys\&.tmmcBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.tmmcBias->getAddress(nTotFinal, mFinal);
+1761         const double b1 = sys\&.tmmcBias->getBias (address1), b2 = sys\&.tmmcBias->getBias (address2);
+1762         rel_bias = exp(b2-b1);
+1763     } else if (!sys\&.useTMMC && sys\&.useWALA) {
+1764         // Wang-Landau Biasing
+1765         const __BIAS_INT_TYPE__ address1 = sys\&.wlBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.wlBias->getAddress(nTotFinal, mFinal);
+1766         const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
+1767         rel_bias = exp(b2-b1);
+1768     } else if (sys\&.useTMMC && sys\&.useWALA) {
+1769         // Crossover phase where we use WL but update TMMC collection matrix
+1770         const int address1 = sys\&.wlBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.wlBias->getAddress(nTotFinal, mFinal);
+1771         const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
+1772         rel_bias = exp(b2-b1);
+1773     } else {
+1774         // No biasing
+1775         rel_bias = 1\&.0;
+1776     }
+1777 
+1778     return rel_bias;
+1779 }
 .fi
 .SH "Author"
 .PP 

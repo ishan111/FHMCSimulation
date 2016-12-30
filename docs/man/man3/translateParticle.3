@@ -1,4 +1,4 @@
-.TH "translateParticle" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "translateParticle" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -25,13 +25,13 @@ Inherits \fBmcMove\fP\&.
 .br
 .RI "\fITranslate a particle in the system\&. \fP"
 .ti -1c
-.RI "void \fBsetMaxDisplacement\fP (const double maxD, const std::vector< double > &box)"
+.RI "void \fBsetMaxTranslation\fP (const double maxD, const std::vector< double > &box)"
 .br
-.RI "\fISet the maximum displacement in any single move\&. \fP"
+.RI "\fISet the maximum translation in any single move\&. \fP"
 .ti -1c
-.RI "const double \fBgetMaxDisplacement\fP ()"
+.RI "const double \fBgetMaxTranslation\fP ()"
 .br
-.RI "\fIReturn the max displacement allowed in a single move\&. \fP"
+.RI "\fIReturn the max translation allowed in a single move\&. \fP"
 .in -1c
 .SS "Additional Inherited Members"
 .SH "Detailed Description"
@@ -59,10 +59,10 @@ Definition at line 16 of file translate\&.h\&.
 References mcMove::changeN_, mcMove::name_, and mcMove::typeIndex_\&.
 .SH "Member Function Documentation"
 .PP 
-.SS "const double translateParticle::getMaxDisplacement ()\fC [inline]\fP"
+.SS "const double translateParticle::getMaxTranslation ()\fC [inline]\fP"
 
 .PP
-Return the max displacement allowed in a single move\&. 
+Return the max translation allowed in a single move\&. 
 .PP
 Definition at line 19 of file translate\&.h\&.
 .SS "int translateParticle::make (\fBsimSystem\fP &sys)\fC [virtual]\fP"
@@ -252,14 +252,14 @@ References simSystem::atoms, simSystem::beta(), simSystem::box(), calculateBias(
 170     return MOVE_FAILURE;
 171 }
 .fi
-.SS "void translateParticle::setMaxDisplacement (const doublemaxD, const std::vector< double > &box)"
+.SS "void translateParticle::setMaxTranslation (const doublemaxD, const std::vector< double > &box)"
 
 .PP
-Set the maximum displacement in any single move\&. Should be postive number lss than half the box size\&.
+Set the maximum translation in any single move\&. Should be postive number lss than half the box size\&.
 .PP
 \fBParameters:\fP
 .RS 4
-\fImaxD\fP Maximium displacement 
+\fImaxD\fP Maximium translation 
 .br
 \fIbox\fP Box dimensions 
 .RE
@@ -269,16 +269,16 @@ Set the maximum displacement in any single move\&. Should be postive number lss 
 Definition at line 179 of file translate\&.cpp\&.
 .PP
 .nf
-179                                                                                               {
+179                                                                                              {
 180     for (unsigned int i = 0; i < box\&.size(); ++i) {
 181         if (maxD >= box[i]/2\&.) {
-182             throw customException ("Max displacement too large");
+182             throw customException ("Max translation too large");
 183         }
 184     }
 185     if (maxD > 0) {
 186         maxD_ = maxD;
 187     } else {
-188         throw customException ("Max displacement must be positive");
+188         throw customException ("Max translation must be positive");
 189     }
 190 }
 .fi

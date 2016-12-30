@@ -120,52 +120,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        }</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    }</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;}</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">/*void atom::rotateCenters (double alpha, double beta, double gamma) {</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">    // assert valid ranges - https://en.wikipedia.org/wiki/Euler_angles</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="comment">    if (alpha &lt; -PI or alpha &gt;= PI) {</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">        throw customException (&quot;Invalid range for alpha&quot;);</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">    }</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">    if (gamma &lt; -PI or gamma &gt;= PI) {</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">        throw customException (&quot;Invalid range for gamma&quot;);</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">    }</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">    if (beta &lt; 0 or beta &gt; PI) {</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">        throw customException (&quot;Invalid range for beta&quot;);</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">    }</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment"></span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">    std::vector &lt; std::vector &lt; double &gt; &gt; R = rotationMatrix(alpha, beta, gamma);</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment"></span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">    for (unsigned int i = 0; i &lt; vecToCenters.size(); ++i) {</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">        const double mag = sqrt(vecToCenters[i][0]*vecToCenters[i][0] + vecToCenters[i][1]*vecToCenters[i][1] + vecToCenters[i][2]*vecToCenters[i][2]);</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">        std::vector &lt; double &gt; tmpVec (3, 0), ans (3, 0);</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment"></span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">        // scale to unit vector</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">        for (unsigned int j = 0; j &lt; 3; ++j) {</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">            tmpVec[j] = vecToCenters[i][j]/mag;</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">        }</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment"></span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="comment">        // rotate</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">        for (unsigned int j = 0; j &lt; 3; ++j) {</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="comment">            for (unsigned int k = 0; k &lt; 3; ++k) {</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">                ans[j] += R[j][k]*tmpVec[k];</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">            }</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">        }</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment"></span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">        // scale back</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">        for (unsigned int j = 0; j &lt; 3; ++j) {</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">            vec_to_centers[i][j] = mag*ans[j];</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">        }</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">    }</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">}*/</span></div>
 <div class="ttc" id="utilities_8h_html"><div class="ttname"><a href="utilities_8h.html">utilities.h</a></div></div>
-<div class="ttc" id="classatom_html_a1376d52933b59a61ef76bf47f3f3732f"><div class="ttname"><a href="classatom.html#a1376d52933b59a61ef76bf47f3f3732f">atom::vecToCenters</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; vecToCenters</div><div class="ttdoc">Vectors pointing from pos to rigid centers. </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00023">atom.h:23</a></div></div>
+<div class="ttc" id="classatom_html_a1376d52933b59a61ef76bf47f3f3732f"><div class="ttname"><a href="classatom.html#a1376d52933b59a61ef76bf47f3f3732f">atom::vecToCenters</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; vecToCenters</div><div class="ttdoc">Vectors pointing from pos to rigid centers. </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00022">atom.h:22</a></div></div>
 <div class="ttc" id="atom_8h_html"><div class="ttname"><a href="atom_8h.html">atom.h</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 <div class="ttc" id="classatom_html_a2b63fdf85f714880c6af65b849bdb325"><div class="ttname"><a href="classatom.html#a2b63fdf85f714880c6af65b849bdb325">atom::atom</a></div><div class="ttdeci">atom()</div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00014">atom.h:14</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 29 2016 11:09:03 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 30 2016 13:19:38 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

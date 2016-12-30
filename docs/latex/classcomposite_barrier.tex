@@ -17,6 +17,8 @@ Class which tracks all barriers (superimposed) which interact with a given speci
 \item 
 \hyperlink{classcomposite_barrier_a1362afbee9253343a95734b10953ccee}{$\sim$composite\-Barrier} ()
 \begin{DoxyCompactList}\small\item\em Deallocate any system barriers present. \end{DoxyCompactList}\item 
+void \hyperlink{classcomposite_barrier_a9b40ae6dd65d5f92d8dc8b63301e14f6}{clear\-All} ()
+\begin{DoxyCompactList}\small\item\em Clear any barriers that are currently in the class. \end{DoxyCompactList}\item 
 void \hyperlink{classcomposite_barrier_a10e7f2561e3b5167b69ead011dde2e75}{add\-Hard\-Wall\-Z} (const double lb, const double ub, const double sigma, const int M=1)
 \begin{DoxyCompactList}\small\item\em Add a hard wall to interact with. \end{DoxyCompactList}\item 
 void \hyperlink{classcomposite_barrier_a3cb5df17c75d9ff8ccc44b806871b449}{add\-Square\-Well\-Wall\-Z} (const double lb, const double ub, const double sigma, const double range, const double eps, const int M=1)
@@ -67,18 +69,18 @@ Deallocate any system barriers present.
 
 
 
-Definition at line 784 of file barrier.\-cpp.
+Definition at line 789 of file barrier.\-cpp.
 
 
 \begin{DoxyCode}
-784                                      \{
-785     \textcolor{keywordflow}{if} (sysBarriers\_.begin() != sysBarriers\_.end()) \{
-786         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sysBarriers\_.size(); ++i) \{
-787             \textcolor{keyword}{delete} sysBarriers\_[i];
-788         \}
-789         sysBarriers\_.clear();
-790     \}
-791 \}
+789                                      \{
+790     \textcolor{keywordflow}{if} (sysBarriers\_.begin() != sysBarriers\_.end()) \{
+791         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sysBarriers\_.size(); ++i) \{
+792             \textcolor{keyword}{delete} sysBarriers\_[i];
+793         \}
+794         sysBarriers\_.clear();
+795     \}
+796 \}
 \end{DoxyCode}
 
 
@@ -119,7 +121,7 @@ Add a cylinder along z = 0 axis wall to interact with.
 \end{DoxyParams}
 
 
-Definition at line 724 of file barrier.\-cpp.
+Definition at line 727 of file barrier.\-cpp.
 
 
 
@@ -127,28 +129,28 @@ References custom\-Exception\-::what().
 
 
 \begin{DoxyCode}
-724                                                                                                            
+727                                                                                                            
                                                           \{
-725     \textcolor{keywordflow}{if} (sysBarriers\_.begin() == sysBarriers\_.end()) \{
-726         \textcolor{keywordflow}{try} \{
-727             sysBarriers\_.resize(1);
-728         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
-729             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
-730         \}
-731     \} \textcolor{keywordflow}{else} \{
-732         \textcolor{keywordflow}{try} \{
-733             sysBarriers\_.resize(sysBarriers\_.size()+1);
-734         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
-735             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
-736         \}
-737     \}
-738     \textcolor{keywordflow}{try} \{
-739         sysBarriers\_[sysBarriers\_.size()-1] = \textcolor{keyword}{new} \hyperlink{classcylinder_z}{cylinderZ} (x, y, radius, width, sigma, eps, M);
-740     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-741         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add cylinderZ to composite barrier: "}+std::to\_string(
-      *ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}()));
-742     \}
-743 \}
+728     \textcolor{keywordflow}{if} (sysBarriers\_.begin() == sysBarriers\_.end()) \{
+729         \textcolor{keywordflow}{try} \{
+730             sysBarriers\_.resize(1);
+731         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+732             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
+733         \}
+734     \} \textcolor{keywordflow}{else} \{
+735         \textcolor{keywordflow}{try} \{
+736             sysBarriers\_.resize(sysBarriers\_.size()+1);
+737         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+738             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
+739         \}
+740     \}
+741     \textcolor{keywordflow}{try} \{
+742         sysBarriers\_[sysBarriers\_.size()-1] = \textcolor{keyword}{new} \hyperlink{classcylinder_z}{cylinderZ} (x, y, radius, width, sigma, eps, M);
+743     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+744         \textcolor{keyword}{const} std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+745         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add cylinderZ to composite barrier : "}+msg);
+746     \}
+747 \}
 \end{DoxyCode}
 \hypertarget{classcomposite_barrier_a10e7f2561e3b5167b69ead011dde2e75}{\index{composite\-Barrier@{composite\-Barrier}!add\-Hard\-Wall\-Z@{add\-Hard\-Wall\-Z}}
 \index{add\-Hard\-Wall\-Z@{add\-Hard\-Wall\-Z}!compositeBarrier@{composite\-Barrier}}
@@ -177,7 +179,7 @@ Add a hard wall to interact with.
 \end{DoxyParams}
 
 
-Definition at line 661 of file barrier.\-cpp.
+Definition at line 662 of file barrier.\-cpp.
 
 
 
@@ -185,27 +187,27 @@ References custom\-Exception\-::what().
 
 
 \begin{DoxyCode}
-661                                                                                                       \{
-662     \textcolor{keywordflow}{if} (sysBarriers\_.begin() == sysBarriers\_.end()) \{
-663         \textcolor{keywordflow}{try} \{
-664             sysBarriers\_.resize(1);
-665         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
-666             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
-667         \}
-668     \} \textcolor{keywordflow}{else} \{
-669         \textcolor{keywordflow}{try} \{
-670             sysBarriers\_.resize(sysBarriers\_.size()+1);
-671         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
-672             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
-673         \}
-674     \}
-675     \textcolor{keywordflow}{try} \{
-676         sysBarriers\_[sysBarriers\_.size()-1] = \textcolor{keyword}{new} \hyperlink{classhard_wall_z}{hardWallZ} (lb, ub, sigma, M);
-677     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-678         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add hardWallZ to composite barrier: "}+std::to\_string(
-      *ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}()));
-679     \}
-680 \}
+662                                                                                                       \{
+663     \textcolor{keywordflow}{if} (sysBarriers\_.begin() == sysBarriers\_.end()) \{
+664         \textcolor{keywordflow}{try} \{
+665             sysBarriers\_.resize(1);
+666         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+667             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
+668         \}
+669     \} \textcolor{keywordflow}{else} \{
+670         \textcolor{keywordflow}{try} \{
+671             sysBarriers\_.resize(sysBarriers\_.size()+1);
+672         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+673             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
+674         \}
+675     \}
+676     \textcolor{keywordflow}{try} \{
+677         sysBarriers\_[sysBarriers\_.size()-1] = \textcolor{keyword}{new} \hyperlink{classhard_wall_z}{hardWallZ} (lb, ub, sigma, M);
+678     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+679         \textcolor{keyword}{const} std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+680         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add hardWallZ to composite barrier : "}+msg);
+681     \}
+682 \}
 \end{DoxyCode}
 \hypertarget{classcomposite_barrier_aea879332cf03f00463b9c8ca4ca28680}{\index{composite\-Barrier@{composite\-Barrier}!add\-Right\-Triangle\-X\-Z@{add\-Right\-Triangle\-X\-Z}}
 \index{add\-Right\-Triangle\-X\-Z@{add\-Right\-Triangle\-X\-Z}!compositeBarrier@{composite\-Barrier}}
@@ -255,7 +257,7 @@ Add a right\-Triangle\-Z feature to interact with.
 \end{DoxyParams}
 
 
-Definition at line 760 of file barrier.\-cpp.
+Definition at line 764 of file barrier.\-cpp.
 
 
 
@@ -263,30 +265,30 @@ References custom\-Exception\-::what().
 
 
 \begin{DoxyCode}
-760                                                                                                            
+764                                                                                                            
                                                                                                                   
                                             \{
-761     \textcolor{keywordflow}{if} (sysBarriers\_.begin() == sysBarriers\_.end()) \{
-762         \textcolor{keywordflow}{try} \{
-763             sysBarriers\_.resize(1);
-764         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
-765             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
-766         \}
-767     \} \textcolor{keywordflow}{else} \{
-768         \textcolor{keywordflow}{try} \{
-769             sysBarriers\_.resize(sysBarriers\_.size()+1);
-770         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
-771             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
-772         \}
-773     \}
-774     \textcolor{keywordflow}{try} \{
-775         sysBarriers\_[sysBarriers\_.size()-1] = \textcolor{keyword}{new} \hyperlink{classright_triangle_x_z}{rightTriangleXZ} (width, theta, lamW, eps, 
+765     \textcolor{keywordflow}{if} (sysBarriers\_.begin() == sysBarriers\_.end()) \{
+766         \textcolor{keywordflow}{try} \{
+767             sysBarriers\_.resize(1);
+768         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+769             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
+770         \}
+771     \} \textcolor{keywordflow}{else} \{
+772         \textcolor{keywordflow}{try} \{
+773             sysBarriers\_.resize(sysBarriers\_.size()+1);
+774         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+775             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
+776         \}
+777     \}
+778     \textcolor{keywordflow}{try} \{
+779         sysBarriers\_[sysBarriers\_.size()-1] = \textcolor{keyword}{new} \hyperlink{classright_triangle_x_z}{rightTriangleXZ} (width, theta, lamW, eps, 
       sigma, sep, offset, box, zbase, top, M);
-776     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-777         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add rightTriangleXZ to composite barrier: "}+
-      std::to\_string(*ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}()));
-778     \}
-779 \}
+780     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+781         \textcolor{keyword}{const} std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+782         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add rightTriangleXZ to composite barrier : "}+msg);
+783     \}
+784 \}
 \end{DoxyCode}
 \hypertarget{classcomposite_barrier_a3cb5df17c75d9ff8ccc44b806871b449}{\index{composite\-Barrier@{composite\-Barrier}!add\-Square\-Well\-Wall\-Z@{add\-Square\-Well\-Wall\-Z}}
 \index{add\-Square\-Well\-Wall\-Z@{add\-Square\-Well\-Wall\-Z}!compositeBarrier@{composite\-Barrier}}
@@ -321,7 +323,7 @@ Add a square well wall to interact with.
 \end{DoxyParams}
 
 
-Definition at line 692 of file barrier.\-cpp.
+Definition at line 694 of file barrier.\-cpp.
 
 
 
@@ -329,30 +331,45 @@ References custom\-Exception\-::what().
 
 
 \begin{DoxyCode}
-692                                                                                                            
+694                                                                                                            
                                              \{
-693     \textcolor{keywordflow}{if} (sysBarriers\_.begin() == sysBarriers\_.end()) \{
-694         \textcolor{keywordflow}{try} \{
-695             sysBarriers\_.resize(1);
-696         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
-697             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
-698         \}
-699     \} \textcolor{keywordflow}{else} \{
-700         \textcolor{keywordflow}{try} \{
-701             sysBarriers\_.resize(sysBarriers\_.size()+1);
-702         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
-703             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
-704         \}
-705     \}
-706     \textcolor{keywordflow}{try} \{
-707         sysBarriers\_[sysBarriers\_.size()-1] = \textcolor{keyword}{new} \hyperlink{classsquare_well_wall_z}{squareWellWallZ} (lb, ub, sigma, range, eps
+695     \textcolor{keywordflow}{if} (sysBarriers\_.begin() == sysBarriers\_.end()) \{
+696         \textcolor{keywordflow}{try} \{
+697             sysBarriers\_.resize(1);
+698         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+699             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
+700         \}
+701     \} \textcolor{keywordflow}{else} \{
+702         \textcolor{keywordflow}{try} \{
+703             sysBarriers\_.resize(sysBarriers\_.size()+1);
+704         \} \textcolor{keywordflow}{catch} (std::bad\_alloc &ba) \{
+705             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to allocate space for a new barrier"});
+706         \}
+707     \}
+708     \textcolor{keywordflow}{try} \{
+709         sysBarriers\_[sysBarriers\_.size()-1] = \textcolor{keyword}{new} \hyperlink{classsquare_well_wall_z}{squareWellWallZ} (lb, ub, sigma, range, eps
       , M);
-708     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-709         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add squareWellWallZ to composite barrier: "}+
-      std::to\_string(*ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}()));
-710     \}
-711 \}
+710     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+711         \textcolor{keyword}{const} std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+712         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add squareWellWallZ to composite barrier : "}+msg);
+713     \}
+714 \}
 \end{DoxyCode}
+\hypertarget{classcomposite_barrier_a9b40ae6dd65d5f92d8dc8b63301e14f6}{\index{composite\-Barrier@{composite\-Barrier}!clear\-All@{clear\-All}}
+\index{clear\-All@{clear\-All}!compositeBarrier@{composite\-Barrier}}
+\subsubsection[{clear\-All}]{\setlength{\rightskip}{0pt plus 5cm}void composite\-Barrier\-::clear\-All (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classcomposite_barrier_a9b40ae6dd65d5f92d8dc8b63301e14f6}
+
+
+Clear any barriers that are currently in the class. 
+
+
+
+Definition at line 116 of file barrier.\-h.
+
 \hypertarget{classcomposite_barrier_ac464755b3a2b31643bb70ddb84b0d399}{\index{composite\-Barrier@{composite\-Barrier}!energy@{energy}}
 \index{energy@{energy}!compositeBarrier@{composite\-Barrier}}
 \subsubsection[{energy}]{\setlength{\rightskip}{0pt plus 5cm}double composite\-Barrier\-::energy (
@@ -374,7 +391,7 @@ Find the total energy of interaction from A\-L\-L the barriers.
 \end{DoxyParams}
 
 
-Definition at line 814 of file barrier.\-cpp.
+Definition at line 819 of file barrier.\-cpp.
 
 
 
@@ -382,18 +399,18 @@ References N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y.
 
 
 \begin{DoxyCode}
-814                                                                                 \{
-815     \textcolor{keywordtype}{double} U = 0.0;
-816     \textcolor{keywordflow}{for} (std::vector < barrier* >::iterator it = sysBarriers\_.begin(); it != sysBarriers\_.end(); ++it) \{
-817         \textcolor{keywordtype}{double} dU = (*it)->energy (a1, box);
-818         \textcolor{keywordflow}{if} (dU < \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \{
-819             U += dU;
-820         \} \textcolor{keywordflow}{else} \{
-821             \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
-822         \}
-823     \}
-824     \textcolor{keywordflow}{return} U;
-825 \}
+819                                                                                 \{
+820     \textcolor{keywordtype}{double} U = 0.0;
+821     \textcolor{keywordflow}{for} (std::vector < barrier* >::iterator it = sysBarriers\_.begin(); it != sysBarriers\_.end(); ++it) \{
+822         \textcolor{keywordtype}{double} dU = (*it)->energy (a1, box);
+823         \textcolor{keywordflow}{if} (dU < \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \{
+824             U += dU;
+825         \} \textcolor{keywordflow}{else} \{
+826             \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
+827         \}
+828     \}
+829     \textcolor{keywordflow}{return} U;
+830 \}
 \end{DoxyCode}
 \hypertarget{classcomposite_barrier_a20989cccc8f4a14df710c2eb7cbd1e71}{\index{composite\-Barrier@{composite\-Barrier}!inside@{inside}}
 \index{inside@{inside}!compositeBarrier@{composite\-Barrier}}
@@ -418,18 +435,18 @@ Returns false if outside any single one, but defaults to true (infinitely far aw
 \end{DoxyParams}
 
 
-Definition at line 799 of file barrier.\-cpp.
+Definition at line 804 of file barrier.\-cpp.
 
 
 \begin{DoxyCode}
-799                                                                               \{
-800     \textcolor{keywordflow}{for} (std::vector < barrier* >::iterator it = sysBarriers\_.begin(); it != sysBarriers\_.end(); ++it) \{
-801         \textcolor{keywordflow}{if} (!(*it)->inside (a1, box)) \{
-802             \textcolor{keywordflow}{return} \textcolor{keyword}{false};
-803         \}
-804     \}
-805     \textcolor{keywordflow}{return} \textcolor{keyword}{true};
-806 \}
+804                                                                               \{
+805     \textcolor{keywordflow}{for} (std::vector < barrier* >::iterator it = sysBarriers\_.begin(); it != sysBarriers\_.end(); ++it) \{
+806         \textcolor{keywordflow}{if} (!(*it)->inside (a1, box)) \{
+807             \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+808         \}
+809     \}
+810     \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+811 \}
 \end{DoxyCode}
 
 

@@ -1,4 +1,4 @@
-.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/global.h" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/global.h" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -35,10 +35,6 @@
 .br
 .RI "\fINumerical approximation of pi\&. \fP"
 .ti -1c
-.RI "#define \fBMAX_BARRIERS_PER_SPECIES\fP   100"
-.br
-.RI "\fIMax barrier number allowed for each species in input file\&. \fP"
-.ti -1c
 .RI "#define \fBH2_2PI\fP   1\&.0"
 .br
 .RI "\fIPortion of de Broglie wavelength that is not mass or T-dependent, Delta = sqrt(H2_2PI/mass/kT) \fP"
@@ -58,23 +54,15 @@
 .PP
 Portion of de Broglie wavelength that is not mass or T-dependent, Delta = sqrt(H2_2PI/mass/kT) 
 .PP
-Definition at line 116 of file global\&.h\&.
+Definition at line 161 of file global\&.h\&.
 .PP
 Referenced by deleteParticle::make(), and insertParticle::make()\&.
-.SS "#define MAX_BARRIERS_PER_SPECIES   100"
-
-.PP
-Max barrier number allowed for each species in input file\&. 
-.PP
-Definition at line 115 of file global\&.h\&.
-.PP
-Referenced by setSystemBarriers()\&.
 .SS "#define PI   3\&.14159265359"
 
 .PP
 Numerical approximation of pi\&. 
 .PP
-Definition at line 114 of file global\&.h\&.
+Definition at line 160 of file global\&.h\&.
 .PP
 Referenced by aggVolBias3::make(), rightTriangleXZ::rightTriangleXZ(), quaternion::setRandomRot(), and lennardJones::tailCorrection()\&.
 .SS "#define SAFE_EXIT   0"
@@ -82,15 +70,15 @@ Referenced by aggVolBias3::make(), rightTriangleXZ::rightTriangleXZ(), quaternio
 .PP
 Returned from main the simulation ran without error\&. 
 .PP
-Definition at line 113 of file global\&.h\&.
+Definition at line 159 of file global\&.h\&.
 .SS "#define SYS_FAILURE   -1"
 
 .PP
 Returned from main the simualtion encountered a major error\&. 
 .PP
-Definition at line 112 of file global\&.h\&.
+Definition at line 158 of file global\&.h\&.
 .PP
-Referenced by simSystem::addPotential(), checkBounds(), initialize(), checkpoint::load(), moves::moves(), performCrossover(), performTMMC(), performWALA(), simSystem::readConfig(), sanityChecks(), setConfig(), setMoves(), setPairPotentials(), setSystemBarriers(), and simSystem::simSystem()\&.
+Referenced by checkBounds(), initialize(), checkpoint::load(), moves::moves(), performCrossover(), performTMMC(), performWALA(), simSystem::readConfig(), sanityChecks(), setConfig(), setMoves(), and simSystem::simSystem()\&.
 .SH "Variable Documentation"
 .PP 
 .SS "int RNG_SEED"

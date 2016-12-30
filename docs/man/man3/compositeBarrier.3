@@ -1,4 +1,4 @@
-.TH "compositeBarrier" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "compositeBarrier" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -21,6 +21,10 @@ Class which tracks all barriers (superimposed) which interact with a given speci
 .RI "\fB~compositeBarrier\fP ()"
 .br
 .RI "\fIDeallocate any system barriers present\&. \fP"
+.ti -1c
+.RI "void \fBclearAll\fP ()"
+.br
+.RI "\fIClear any barriers that are currently in the class\&. \fP"
 .ti -1c
 .RI "void \fBaddHardWallZ\fP (const double lb, const double ub, const double sigma, const int M=1)"
 .br
@@ -66,17 +70,17 @@ Definition at line 113 of file barrier\&.h\&.
 .PP
 Deallocate any system barriers present\&. 
 .PP
-Definition at line 784 of file barrier\&.cpp\&.
+Definition at line 789 of file barrier\&.cpp\&.
 .PP
 .nf
-784                                      {
-785     if (sysBarriers_\&.begin() != sysBarriers_\&.end()) {
-786         for (unsigned int i = 0; i < sysBarriers_\&.size(); ++i) {
-787             delete sysBarriers_[i];
-788         }
-789         sysBarriers_\&.clear();
-790     }
-791 }
+789                                      {
+790     if (sysBarriers_\&.begin() != sysBarriers_\&.end()) {
+791         for (unsigned int i = 0; i < sysBarriers_\&.size(); ++i) {
+792             delete sysBarriers_[i];
+793         }
+794         sysBarriers_\&.clear();
+795     }
+796 }
 .fi
 .SH "Member Function Documentation"
 .PP 
@@ -104,31 +108,32 @@ Add a cylinder along z = 0 axis wall to interact with\&.
 .PP
 
 .PP
-Definition at line 724 of file barrier\&.cpp\&.
+Definition at line 727 of file barrier\&.cpp\&.
 .PP
 References customException::what()\&.
 .PP
 .nf
-724                                                                                                                                                                {
-725     if (sysBarriers_\&.begin() == sysBarriers_\&.end()) {
-726         try {
-727             sysBarriers_\&.resize(1);
-728         } catch (std::bad_alloc &ba) {
-729             throw customException ("Unable to allocate space for a new barrier");
-730         }
-731     } else {
-732         try {
-733             sysBarriers_\&.resize(sysBarriers_\&.size()+1);
-734         } catch (std::bad_alloc &ba) {
-735             throw customException ("Unable to allocate space for a new barrier");
-736         }
-737     }
-738     try {
-739         sysBarriers_[sysBarriers_\&.size()-1] = new cylinderZ (x, y, radius, width, sigma, eps, M);
-740     } catch (customException &ce) {
-741         throw customException ("Cannot add cylinderZ to composite barrier: "+std::to_string(*ce\&.what()));
-742     }
-743 }
+727                                                                                                                                                                {
+728     if (sysBarriers_\&.begin() == sysBarriers_\&.end()) {
+729         try {
+730             sysBarriers_\&.resize(1);
+731         } catch (std::bad_alloc &ba) {
+732             throw customException ("Unable to allocate space for a new barrier");
+733         }
+734     } else {
+735         try {
+736             sysBarriers_\&.resize(sysBarriers_\&.size()+1);
+737         } catch (std::bad_alloc &ba) {
+738             throw customException ("Unable to allocate space for a new barrier");
+739         }
+740     }
+741     try {
+742         sysBarriers_[sysBarriers_\&.size()-1] = new cylinderZ (x, y, radius, width, sigma, eps, M);
+743     } catch (customException &ce) {
+744         const std::string msg = ce\&.what();
+745         throw customException ("Cannot add cylinderZ to composite barrier : "+msg);
+746     }
+747 }
 .fi
 .SS "void compositeBarrier::addHardWallZ (const doublelb, const doubleub, const doublesigma, const intM = \fC1\fP)"
 
@@ -148,31 +153,32 @@ Add a hard wall to interact with\&.
 .PP
 
 .PP
-Definition at line 661 of file barrier\&.cpp\&.
+Definition at line 662 of file barrier\&.cpp\&.
 .PP
 References customException::what()\&.
 .PP
 .nf
-661                                                                                                       {
-662     if (sysBarriers_\&.begin() == sysBarriers_\&.end()) {
-663         try {
-664             sysBarriers_\&.resize(1);
-665         } catch (std::bad_alloc &ba) {
-666             throw customException ("Unable to allocate space for a new barrier");
-667         }
-668     } else {
-669         try {
-670             sysBarriers_\&.resize(sysBarriers_\&.size()+1);
-671         } catch (std::bad_alloc &ba) {
-672             throw customException ("Unable to allocate space for a new barrier");
-673         }
-674     }
-675     try {
-676         sysBarriers_[sysBarriers_\&.size()-1] = new hardWallZ (lb, ub, sigma, M);
-677     } catch (customException &ce) {
-678         throw customException ("Cannot add hardWallZ to composite barrier: "+std::to_string(*ce\&.what()));
-679     }
-680 }
+662                                                                                                       {
+663     if (sysBarriers_\&.begin() == sysBarriers_\&.end()) {
+664         try {
+665             sysBarriers_\&.resize(1);
+666         } catch (std::bad_alloc &ba) {
+667             throw customException ("Unable to allocate space for a new barrier");
+668         }
+669     } else {
+670         try {
+671             sysBarriers_\&.resize(sysBarriers_\&.size()+1);
+672         } catch (std::bad_alloc &ba) {
+673             throw customException ("Unable to allocate space for a new barrier");
+674         }
+675     }
+676     try {
+677         sysBarriers_[sysBarriers_\&.size()-1] = new hardWallZ (lb, ub, sigma, M);
+678     } catch (customException &ce) {
+679         const std::string msg = ce\&.what();
+680         throw customException ("Cannot add hardWallZ to composite barrier : "+msg);
+681     }
+682 }
 .fi
 .SS "void compositeBarrier::addRightTriangleXZ (const doublewidth, const doubletheta, const doublelamW, const doubleeps, const doublesigma, const doublesep, const doubleoffset, const std::vector< double > &box, const doublezbase, booltop = \fCfalse\fP, const intM = \fC1\fP)"
 
@@ -206,31 +212,32 @@ Add a rightTriangleZ feature to interact with\&.
 .PP
 
 .PP
-Definition at line 760 of file barrier\&.cpp\&.
+Definition at line 764 of file barrier\&.cpp\&.
 .PP
 References customException::what()\&.
 .PP
 .nf
-760                                                                                                                                                                                                                                                              {
-761     if (sysBarriers_\&.begin() == sysBarriers_\&.end()) {
-762         try {
-763             sysBarriers_\&.resize(1);
-764         } catch (std::bad_alloc &ba) {
-765             throw customException ("Unable to allocate space for a new barrier");
-766         }
-767     } else {
-768         try {
-769             sysBarriers_\&.resize(sysBarriers_\&.size()+1);
-770         } catch (std::bad_alloc &ba) {
-771             throw customException ("Unable to allocate space for a new barrier");
-772         }
-773     }
-774     try {
-775         sysBarriers_[sysBarriers_\&.size()-1] = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
-776     } catch (customException &ce) {
-777         throw customException ("Cannot add rightTriangleXZ to composite barrier: "+std::to_string(*ce\&.what()));
-778     }
-779 }
+764                                                                                                                                                                                                                                                              {
+765     if (sysBarriers_\&.begin() == sysBarriers_\&.end()) {
+766         try {
+767             sysBarriers_\&.resize(1);
+768         } catch (std::bad_alloc &ba) {
+769             throw customException ("Unable to allocate space for a new barrier");
+770         }
+771     } else {
+772         try {
+773             sysBarriers_\&.resize(sysBarriers_\&.size()+1);
+774         } catch (std::bad_alloc &ba) {
+775             throw customException ("Unable to allocate space for a new barrier");
+776         }
+777     }
+778     try {
+779         sysBarriers_[sysBarriers_\&.size()-1] = new rightTriangleXZ (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+780     } catch (customException &ce) {
+781         const std::string msg = ce\&.what();
+782         throw customException ("Cannot add rightTriangleXZ to composite barrier : "+msg);
+783     }
+784 }
 .fi
 .SS "void compositeBarrier::addSquareWellWallZ (const doublelb, const doubleub, const doublesigma, const doublerange, const doubleeps, const intM = \fC1\fP)"
 
@@ -254,32 +261,39 @@ Add a square well wall to interact with\&.
 .PP
 
 .PP
-Definition at line 692 of file barrier\&.cpp\&.
+Definition at line 694 of file barrier\&.cpp\&.
 .PP
 References customException::what()\&.
 .PP
 .nf
-692                                                                                                                                                   {
-693     if (sysBarriers_\&.begin() == sysBarriers_\&.end()) {
-694         try {
-695             sysBarriers_\&.resize(1);
-696         } catch (std::bad_alloc &ba) {
-697             throw customException ("Unable to allocate space for a new barrier");
-698         }
-699     } else {
-700         try {
-701             sysBarriers_\&.resize(sysBarriers_\&.size()+1);
-702         } catch (std::bad_alloc &ba) {
-703             throw customException ("Unable to allocate space for a new barrier");
-704         }
-705     }
-706     try {
-707         sysBarriers_[sysBarriers_\&.size()-1] = new squareWellWallZ (lb, ub, sigma, range, eps, M);
-708     } catch (customException &ce) {
-709         throw customException ("Cannot add squareWellWallZ to composite barrier: "+std::to_string(*ce\&.what()));
-710     }
-711 }
+694                                                                                                                                                   {
+695     if (sysBarriers_\&.begin() == sysBarriers_\&.end()) {
+696         try {
+697             sysBarriers_\&.resize(1);
+698         } catch (std::bad_alloc &ba) {
+699             throw customException ("Unable to allocate space for a new barrier");
+700         }
+701     } else {
+702         try {
+703             sysBarriers_\&.resize(sysBarriers_\&.size()+1);
+704         } catch (std::bad_alloc &ba) {
+705             throw customException ("Unable to allocate space for a new barrier");
+706         }
+707     }
+708     try {
+709         sysBarriers_[sysBarriers_\&.size()-1] = new squareWellWallZ (lb, ub, sigma, range, eps, M);
+710     } catch (customException &ce) {
+711         const std::string msg = ce\&.what();
+712         throw customException ("Cannot add squareWellWallZ to composite barrier : "+msg);
+713     }
+714 }
 .fi
+.SS "void compositeBarrier::clearAll ()\fC [inline]\fP"
+
+.PP
+Clear any barriers that are currently in the class\&. 
+.PP
+Definition at line 116 of file barrier\&.h\&.
 .SS "double compositeBarrier::energy (const \fBatom\fP *a1, const std::vector< double > &box)"
 
 .PP
@@ -294,23 +308,23 @@ Find the total energy of interaction from ALL the barriers\&.
 .PP
 
 .PP
-Definition at line 814 of file barrier\&.cpp\&.
+Definition at line 819 of file barrier\&.cpp\&.
 .PP
 References NUM_INFINITY\&.
 .PP
 .nf
-814                                                                                 {
-815     double U = 0\&.0;
-816     for (std::vector < barrier* >::iterator it = sysBarriers_\&.begin(); it != sysBarriers_\&.end(); ++it) {
-817         double dU = (*it)->energy (a1, box);
-818         if (dU < NUM_INFINITY) {
-819             U += dU;
-820         } else {
-821             return NUM_INFINITY;
-822         }
-823     }
-824     return U;
-825 }
+819                                                                                 {
+820     double U = 0\&.0;
+821     for (std::vector < barrier* >::iterator it = sysBarriers_\&.begin(); it != sysBarriers_\&.end(); ++it) {
+822         double dU = (*it)->energy (a1, box);
+823         if (dU < NUM_INFINITY) {
+824             U += dU;
+825         } else {
+826             return NUM_INFINITY;
+827         }
+828     }
+829     return U;
+830 }
 .fi
 .SS "bool compositeBarrier::inside (const \fBatom\fP *a1, const std::vector< double > &box)"
 
@@ -326,17 +340,17 @@ Test if inside ALL the barriers\&. Returns false if outside any single one, but 
 .PP
 
 .PP
-Definition at line 799 of file barrier\&.cpp\&.
+Definition at line 804 of file barrier\&.cpp\&.
 .PP
 .nf
-799                                                                               {
-800     for (std::vector < barrier* >::iterator it = sysBarriers_\&.begin(); it != sysBarriers_\&.end(); ++it) {
-801         if (!(*it)->inside (a1, box)) {
-802             return false;
-803         }
-804     }
-805     return true;
-806 }
+804                                                                               {
+805     for (std::vector < barrier* >::iterator it = sysBarriers_\&.begin(); it != sysBarriers_\&.end(); ++it) {
+806         if (!(*it)->inside (a1, box)) {
+807             return false;
+808         }
+809     }
+810     return true;
+811 }
 .fi
 
 

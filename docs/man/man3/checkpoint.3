@@ -1,4 +1,4 @@
-.TH "checkpoint" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "checkpoint" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -161,7 +161,7 @@ References chkptName, crossoverDone, dir, fileExists(), freq, hasCheckpoint, loa
 30         try {
 31             load(sys, override);
 32         } catch (std::exception &ex) {
-33             std::string a = "Unable to load checkpoint "+chkptName+" because ";
+33             std::string a = "Unable to load checkpoint "+chkptName+" : ";
 34             std::string b = ex\&.what();
 35             throw customException (a+b);
 36         }

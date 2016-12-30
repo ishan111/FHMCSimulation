@@ -844,12 +844,12 @@ Referenced by agg\-Vol\-Bias3\-::make(), translate\-Particle\-::make(), delete\-
 227     C\_[i] += pa;
 228     C\_[j] += (1-pa);
 229     \textcolor{keywordflow}{if} (pa > 0.0) \{
-230         HC\_[i] += 1.0; \textcolor{comment}{// only count the transition actually proposed, not the Nstart --> Nstart unless
+230         HC\_[i] += 1.0; \textcolor{comment}{// Only count the transition actually proposed, not the Nstart --> Nstart unless
        that was what was originally proposed, and only count when transition probability is finite.}
 231     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (Nstart == 0 && Nend == 0) \{
-232     HC\_[i] += 1.0; \textcolor{comment}{// displacement move when 0 particles in system is "early rejected" (p = 0), but this is
-       valid - if N\_min of window is > 0 checkVisited() works fine, but if includes 0, this state is detected as
-       never being sampled otherwise, which is the incorrect response}
+232         HC\_[i] += 1.0; \textcolor{comment}{// Translation move when 0 particles in system is "early rejected" (p = 0), but this
+       is valid - if N\_min of window is > 0 checkVisited() works fine, but if includes 0, this state is detected
+       as never being sampled otherwise, which is the incorrect response}
 233     \}
 234 \}
 \end{DoxyCode}

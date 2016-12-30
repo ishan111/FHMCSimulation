@@ -151,7 +151,7 @@ References chkpt\-Name, crossover\-Done, dir, file\-Exists(), freq, has\-Checkpo
 30         \textcolor{keywordflow}{try} \{
 31             \hyperlink{classcheckpoint_afe0ae7b3a2b83b5e321f09e9cb70a374}{load}(sys, \textcolor{keyword}{override});
 32         \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
-33             std::string a = \textcolor{stringliteral}{"Unable to load checkpoint "}+\hyperlink{classcheckpoint_a477eea21621f066889660ed426dc800f}{chkptName}+\textcolor{stringliteral}{" because "};
+33             std::string a = \textcolor{stringliteral}{"Unable to load checkpoint "}+\hyperlink{classcheckpoint_a477eea21621f066889660ed426dc800f}{chkptName}+\textcolor{stringliteral}{" : "};
 34             std::string b = ex.what();
 35             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
 36         \}

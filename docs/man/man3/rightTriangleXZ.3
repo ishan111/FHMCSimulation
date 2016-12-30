@@ -1,4 +1,4 @@
-.TH "rightTriangleXZ" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "rightTriangleXZ" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -85,29 +85,29 @@ References barrier::M_, NUM_INFINITY, and PI\&.
 20         throw customException ("rightTriangle sep is out of bounds");
 21     }
 22     // Check the feature fits periodically in the box
-23     if ( fmod(box[0]/(sep+width), 1) != 0\&.0 ) {
+23     if (fmod(box[0]/(sep+width), 1) != 0\&.0) {
 24         throw customException ("rightTriangle width+separation is not commensurate with the box size");
 25     }
 26     if (theta <= 0\&.0 || theta >= PI/2\&.0) {
-27         throw customException ("rightTriangle elevation angle is out of bounds");
+27         throw customException ("rightTriangle elevation angle theta is out of bounds, must be within (0, PI)");
 28     }
 29     if (sigma <= 0\&.0) {
-30         throw customException ("rightTriangle sigma is out of bounds");
+30         throw customException ("rightTriangle sigma is out of bounds <= 0");
 31     }
 32     if (lamW < 1\&.0) {
-33         throw customException ("rightTriangle lamW is out of bounds");
+33         throw customException ("rightTriangle lamW is out of bounds < 1\&.0");
 34     }
 35     if (eps < 0\&.0) {
-36         throw customException ("rightTriangle eps is out of bounds");
+36         throw customException ("rightTriangle epsilon is out of bounds < 0\&.0");
 37     }
 38     if (M < 1) {
-39         throw customException ("rightTriangle M value is out of bounds");
+39         throw customException ("rightTriangle M value is out of bounds < 1");
 40     }
 41     if (zbase < 0\&.0 || zbase > box[2]) {
-42         throw customException ("rightTriangle zbase value is out of bounds");
+42         throw customException ("rightTriangle zbase value is out of bounds, must be within [0, box[2]]");
 43     }
 44     if (offset >= box[0] || offset < 0) {
-45         throw customException ("rightTriangle offset value is out of bounds");
+45         throw customException ("rightTriangle offset value is out of bounds, must be within [0, box[0])");
 46     }
 47 
 48     // store variables internally and do conversion to conventions in which derivation was done
@@ -411,16 +411,17 @@ References energy(), NUM_INFINITY, and customException::what()\&.
 362     try {
 363         U = energy (a1, box); // takes care of pbc internally
 364     } catch (customException &ce) {
-365         throw customException ("Unable to test if inside rightTriangleXZ : "+std::to_string(*ce\&.what()));
-366         //exit (SYS_FAILURE);
-367     }
-368 
-369     if (U < NUM_INFINITY) {
-370         return true;
-371     } else {
-372         return false;
-373     }
-374 }
+365         const std::string msg = ce\&.what();
+366         throw customException ("Unable to test if inside rightTriangleXZ : "+msg);
+367         //exit (SYS_FAILURE);
+368     }
+369 
+370     if (U < NUM_INFINITY) {
+371         return true;
+372     } else {
+373         return false;
+374     }
+375 }
 .fi
 
 

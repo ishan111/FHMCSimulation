@@ -1,4 +1,4 @@
-.TH "moves" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "moves" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -22,6 +22,10 @@ Class that tracks and decides which moves whould be made\&.
 .RI "\fB~moves\fP ()"
 .br
 .RI "\fIDestructor for moves class\&. \fP"
+.ti -1c
+.RI "void \fBclearAll\fP ()"
+.br
+.RI "\fIClear all moves and related information from the class, but leaves M intact\&. \fP"
 .ti -1c
 .RI "void \fBmakeMove\fP (\fBsimSystem\fP &sys)"
 .br
@@ -104,12 +108,12 @@ References sendErr(), setM(), SYS_FAILURE, and customException::what()\&.
 .PP
 Destructor for moves class\&. 
 .PP
-Definition at line 33 of file mover\&.cpp\&.
+Definition at line 20 of file mover\&.cpp\&.
 .PP
 .nf
-33                {
-34     ;
-35 }
+20                {
+21     ;
+22 }
 .fi
 .SH "Member Function Documentation"
 .PP 
@@ -127,16 +131,23 @@ Add deletion move\&.
 .PP
 
 .PP
-Definition at line 79 of file mover\&.cpp\&.
+Definition at line 95 of file mover\&.cpp\&.
+.PP
+References numToStr()\&.
 .PP
 Referenced by setMoves()\&.
 .PP
 .nf
-79                                                          {
-80     auto om = std::make_shared < deleteParticle > (index, "delete");
-81     ownedMoves_\&.push_back(om);
-82     addOn_(ownedMoves_\&.back()->changeN(), prob);
-83 }
+95                                                          {
+96     auto om = std::make_shared < deleteParticle > (index, "delete");
+97     ownedMoves_\&.push_back(om);
+98     try {
+99         addOn_(ownedMoves_\&.back()->changeN(), prob);
+100     } catch (std::exception &ex) {
+101         const std::string msg = ex\&.what();
+102         throw customException ("Cannot add deletion move for species "+numToStr(index+1)+" : "+msg);
+103     }
+104 }
 .fi
 .SS "void moves::addInsert (const intindex, const doubleprob)"
 
@@ -152,16 +163,23 @@ Add insertion move\&.
 .PP
 
 .PP
-Definition at line 67 of file mover\&.cpp\&.
+Definition at line 78 of file mover\&.cpp\&.
+.PP
+References numToStr()\&.
 .PP
 Referenced by setConfig(), and setMoves()\&.
 .PP
 .nf
-67                                                          {
-68     auto om = std::make_shared < insertParticle > (index, "insert");
-69     ownedMoves_\&.push_back(om);
-70     addOn_(ownedMoves_\&.back()->changeN(), prob);
-71 }
+78                                                          {
+79     auto om = std::make_shared < insertParticle > (index, "insert");
+80     ownedMoves_\&.push_back(om);
+81     try {
+82         addOn_(ownedMoves_\&.back()->changeN(), prob);
+83     } catch (std::exception &ex) {
+84         const std::string msg = ex\&.what();
+85         throw customException ("Cannot add insertion move for species "+numToStr(index+1)+" : "+msg);
+86     }
+87 }
 .fi
 .SS "void moves::addSwap (const intindex1, const intindex2, const doubleprob)"
 
@@ -179,16 +197,23 @@ Add swap move\&.
 .PP
 
 .PP
-Definition at line 92 of file mover\&.cpp\&.
+Definition at line 113 of file mover\&.cpp\&.
+.PP
+References numToStr()\&.
 .PP
 Referenced by setMoves()\&.
 .PP
 .nf
-92                                                                           {
-93     auto om = std::make_shared < swapParticles > (index1, index2, "swap");
-94     ownedMoves_\&.push_back(om);
-95     addOn_(ownedMoves_\&.back()->changeN(), prob);
-96 }
+113                                                                           {
+114     auto om = std::make_shared < swapParticles > (index1, index2, "swap");
+115     ownedMoves_\&.push_back(om);
+116     try {
+117         addOn_(ownedMoves_\&.back()->changeN(), prob);
+118     } catch (std::exception &ex) {
+119         const std::string msg = ex\&.what();
+120         throw customException ("Cannot add swap move for species pair ("+numToStr(index1+1)+","+numToStr(index2+1)+") : "+msg);
+121     }
+122 }
 .fi
 .SS "void moves::addTranslate (const intindex, const doubleprob, const doublemaxD, const std::vector< double > &box)"
 
@@ -201,32 +226,57 @@ Add translate move\&.
 .br
 \fIprob\fP Probability 
 .br
-\fImaxD\fP Maximium displacement 
+\fImaxD\fP Maximium translation 
 .br
 \fIbox\fP Box dimensions 
 .RE
 .PP
 
 .PP
-Definition at line 106 of file mover\&.cpp\&.
+Definition at line 132 of file mover\&.cpp\&.
+.PP
+References numToStr()\&.
 .PP
 Referenced by setMoves()\&.
 .PP
 .nf
-106                                                                                                                 {
-107     auto om = std::make_shared < translateParticle > (index, "translate");
-108     om->setMaxDisplacement (maxD, box);
-109     ownedMoves_\&.push_back(om);
-110     addOn_(ownedMoves_\&.back()->changeN(), prob);
-111 }
+132                                                                                                                 {
+133     auto om = std::make_shared < translateParticle > (index, "translate");
+134     try {
+135         om->setMaxTranslation (maxD, box);
+136         ownedMoves_\&.push_back(om);
+137         addOn_(ownedMoves_\&.back()->changeN(), prob);
+138     } catch (std::exception &ex) {
+139         const std::string msg = ex\&.what();
+140         throw customException ("Cannot add translation move for species "+numToStr(index+1)+" : "+msg);
+141     }
+142 }
+.fi
+.SS "void moves::clearAll ()"
+
+.PP
+Clear all moves and related information from the class, but leaves M intact\&. 
+.PP
+Definition at line 27 of file mover\&.cpp\&.
+.PP
+Referenced by setMoves()\&.
+.PP
+.nf
+27                       {
+28     normProbabilities_\&.clear();
+29     rawProbabilities_\&.clear();
+30     succeeded_\&.clear();
+31     attempted_\&.clear();
+32     ownedMoves_\&.clear();
+33 }
 .fi
 .SS "int moves::getM ()\fC [inline]\fP"
 
 .PP
-Definition at line 32 of file mover\&.h\&.
+Definition at line 33 of file mover\&.h\&.
 .PP
 .nf
-32 { return M_; }
+33 { return M_; }
 .fi
 .SS "void moves::makeMove (\fBsimSystem\fP &sys)"
 
@@ -240,71 +290,71 @@ Choose a move to make\&. If in an expanded ensemble, will restrict moves which c
 .PP
 
 .PP
-Definition at line 156 of file mover\&.cpp\&.
+Definition at line 191 of file mover\&.cpp\&.
 .PP
 References simSystem::getCurrentM(), simSystem::getFractionalAtomType(), simSystem::getTotalM(), rng(), RNG_SEED, and customException::what()\&.
 .PP
 Referenced by performCrossover(), performTMMC(), and performWALA()\&.
 .PP
 .nf
-156                                     {
-157     if (sys\&.getTotalM() != M_) {
-158         throw customException ("Error, M in system different from M in moves class operating on the system");
-159     }
-160     int moveChosen = -1, succ = 0, mIndex = 0;
-161     bool done = false;
-162     while (!done) {
-163         const double ran = rng (&RNG_SEED);
-164         for (unsigned int i = 0; i < normProbabilities_\&.size(); ++i) {
-165             if (ran < normProbabilities_[i]) {
-166                 if (sys\&.getTotalM() > 1) {
-167                     // expanded ensemble has to check the moves because have to only work on the partially inserted atom
-168                     if ((ownedMoves_[i]->changeN() == true) && (ownedMoves_[i]->whatType() != sys\&.getFractionalAtomType()) && (sys\&.getCurrentM() > 0)) {
-169                         // reject this choice because we must only insert/delete the type that is already partially inserted IFF we are *already* in a partially inserted state
-170                         // choose a new move
-171                         done = false;
-172                         break;
-173                     } else {
-174                         // get M before move happens which can change the state of the system
-175                         if (ownedMoves_[i]->changeN()) {
-176                             mIndex = sys\&.getCurrentM();
-177                         }
-178                         try {
-179                             succ = ownedMoves_[i]->make(sys);
-180                         } catch (customException &ce) {
-181                             std::string a = "Failed to make a move properly: ";
-182                             std::string b = ce\&.what();
-183                             throw customException(a+b);
-184                         }
-185                         done = true;
-186                         moveChosen = i;
-187                         break;
-188                     }
-189                 } else {
-190                     // without expanded ensemble, inserts/deletes can proceed unchecked
-191                     try {
-192                         succ = ownedMoves_[i]->make(sys);
-193                     } catch (customException &ce) {
-194                         std::string a = "Failed to make a move properly: ";
-195                         std::string b = ce\&.what();
-196                         throw customException(a+b);
-197                     }
-198                     done = true;
-199                     moveChosen = i;
-200                     mIndex = 0;
-201                     break;
-202                 }
-203             }
-204         }
-205     }
-206 
-207     if (moveChosen < 0) {
-208         throw customException("Failed to choose a move properly");
-209     }
-210 
-211     attempted_[moveChosen][mIndex] += 1\&.0;
-212     succeeded_[moveChosen][mIndex] += succ;
-213 }
+191                                     {
+192     if (sys\&.getTotalM() != M_) {
+193         throw customException ("Error, M in system different from M in moves class operating on the system");
+194     }
+195     int moveChosen = -1, succ = 0, mIndex = 0;
+196     bool done = false;
+197     while (!done) {
+198         const double ran = rng (&RNG_SEED);
+199         for (unsigned int i = 0; i < normProbabilities_\&.size(); ++i) {
+200             if (ran < normProbabilities_[i]) {
+201                 if (sys\&.getTotalM() > 1) {
+202                     // expanded ensemble has to check the moves because have to only work on the partially inserted atom
+203                     if ((ownedMoves_[i]->changeN() == true) && (ownedMoves_[i]->whatType() != sys\&.getFractionalAtomType()) && (sys\&.getCurrentM() > 0)) {
+204                         // reject this choice because we must only insert/delete the type that is already partially inserted IFF we are *already* in a partially inserted state
+205                         // choose a new move
+206                         done = false;
+207                         break;
+208                     } else {
+209                         // get M before move happens which can change the state of the system
+210                         if (ownedMoves_[i]->changeN()) {
+211                             mIndex = sys\&.getCurrentM();
+212                         }
+213                         try {
+214                             succ = ownedMoves_[i]->make(sys);
+215                         } catch (customException &ce) {
+216                             std::string a = "Failed to make a move properly: ";
+217                             std::string b = ce\&.what();
+218                             throw customException(a+b);
+219                         }
+220                         done = true;
+221                         moveChosen = i;
+222                         break;
+223                     }
+224                 } else {
+225                     // without expanded ensemble, inserts/deletes can proceed unchecked
+226                     try {
+227                         succ = ownedMoves_[i]->make(sys);
+228                     } catch (customException &ce) {
+229                         std::string a = "Failed to make a move properly: ";
+230                         std::string b = ce\&.what();
+231                         throw customException(a+b);
+232                     }
+233                     done = true;
+234                     moveChosen = i;
+235                     mIndex = 0;
+236                     break;
+237                 }
+238             }
+239         }
+240     }
+241 
+242     if (moveChosen < 0) {
+243         throw customException("Failed to choose a move properly");
+244     }
+245 
+246     attempted_[moveChosen][mIndex] += 1\&.0;
+247     succeeded_[moveChosen][mIndex] += succ;
+248 }
 .fi
 .SS "void moves::print (const std::stringfilename)"
 
@@ -318,31 +368,31 @@ Print move information to file\&. Appends by default\&.
 .PP
 
 .PP
-Definition at line 42 of file mover\&.cpp\&.
+Definition at line 53 of file mover\&.cpp\&.
 .PP
 References getTimeStamp(), and reportMoveStatistics()\&.
 .PP
 Referenced by performCrossover(), performTMMC(), and performWALA()\&.
 .PP
 .nf
-42                                            {
-43     std::ofstream statFile (filename\&.c_str(), std::ofstream::out | std::ofstream::app);
-44     std::vector < std::vector < double > > stats = reportMoveStatistics();
-45     statFile << "Time: " << getTimeStamp() << std::endl;
-46     statFile << "---------- Move Statistics --------- " << std::endl << "Move\t\% Success" << std::endl;
-47     for (unsigned int i = 0; i < stats\&.size(); ++i) {
-48         double prod = 1\&.0;
-49         for (unsigned int j = 0; j < stats[i]\&.size(); ++j) {
-50             prod *= stats[i][j];
-51             statFile << ownedMoves_[i]->myName() << " (from M = " << j << ")\t" << stats[i][j]*100\&.0 << std::endl;
-52         }
-53         if (stats[i]\&.size() > 1) {
-54             statFile << "-------------------------------------\nProduct of percentages (%) = " << prod*100 << "\n-------------------------------------" << std::endl;
-55         }
-56     }
-57     statFile << "------------------------------------ " << std::endl;
-58     statFile\&.close();
-59 }
+53                                            {
+54     std::ofstream statFile (filename\&.c_str(), std::ofstream::out | std::ofstream::app);
+55     std::vector < std::vector < double > > stats = reportMoveStatistics();
+56     statFile << "Time: " << getTimeStamp() << std::endl;
+57     statFile << "---------- Move Statistics --------- " << std::endl << "Move\t\% Success" << std::endl;
+58     for (unsigned int i = 0; i < stats\&.size(); ++i) {
+59         double prod = 1\&.0;
+60         for (unsigned int j = 0; j < stats[i]\&.size(); ++j) {
+61             prod *= stats[i][j];
+62             statFile << ownedMoves_[i]->myName() << " (from M = " << j << ")\t" << stats[i][j]*100\&.0 << std::endl;
+63         }
+64         if (stats[i]\&.size() > 1) {
+65             statFile << "-------------------------------------\nProduct of percentages (%) = " << prod*100 << "\n-------------------------------------" << std::endl;
+66         }
+67     }
+68     statFile << "------------------------------------ " << std::endl;
+69     statFile\&.close();
+70 }
 .fi
 .SS "std::vector< std::vector< double > > moves::reportMoveStatistics ()"
 
@@ -356,30 +406,30 @@ ans Number of Success / Total Attempts for each move
 .PP
 
 .PP
-Definition at line 221 of file mover\&.cpp\&.
+Definition at line 256 of file mover\&.cpp\&.
 .PP
 Referenced by print()\&.
 .PP
 .nf
-221                                                                 {
-222     std::vector < std::vector < double > > ans = succeeded_;
-223     if (attempted_\&.begin() == attempted_\&.end()) {
-224         throw customException ("No moves added to system");
-225     }
-226     for (unsigned int i = 0; i < attempted_\&.size(); ++i) {
-227         for (unsigned int j = 0; j < attempted_[i]\&.size(); ++j) {
-228             ans[i][j] /= attempted_[i][j];
-229         }
-230     }
-231     return ans;
-232 }
+256                                                                 {
+257     std::vector < std::vector < double > > ans = succeeded_;
+258     if (attempted_\&.begin() == attempted_\&.end()) {
+259         throw customException ("No moves added to system");
+260     }
+261     for (unsigned int i = 0; i < attempted_\&.size(); ++i) {
+262         for (unsigned int j = 0; j < attempted_[i]\&.size(); ++j) {
+263             ans[i][j] /= attempted_[i][j];
+264         }
+265     }
+266     return ans;
+267 }
 .fi
 .SS "std::vector< double > moves::reportProbabilities ()\fC [inline]\fP"
 
 .PP
 Echo the normalized probabilities of each move in the object\&. 
 .PP
-Definition at line 34 of file mover\&.h\&.
+Definition at line 35 of file mover\&.h\&.
 .SS "void moves::setM (const intM)"
 
 .PP
@@ -392,18 +442,18 @@ Set the value of M\&.
 .PP
 
 .PP
-Definition at line 22 of file mover\&.cpp\&.
+Definition at line 40 of file mover\&.cpp\&.
 .PP
 Referenced by moves(), and setMoves()\&.
 .PP
 .nf
-22                              {
-23     if (M > 0) {
-24         M_ = M;
-25     } else {
-26         throw customException ("Error, number of expanded ensemble stages must be > 0");
-27     }
-28 }
+40                              {
+41     if (M > 0) {
+42         M_ = M;
+43     } else {
+44         throw customException ("Error, number of expanded ensemble stages must be > 0");
+45     }
+46 }
 .fi
 
 

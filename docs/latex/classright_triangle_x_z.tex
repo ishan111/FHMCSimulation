@@ -113,30 +113,33 @@ References barrier\-::\-M\-\_\-, N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y, and P\-I
 20         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle sep is out of bounds"});
 21     \}
 22     \textcolor{comment}{// Check the feature fits periodically in the box}
-23     \textcolor{keywordflow}{if} ( fmod(box[0]/(sep+width), 1) != 0.0 ) \{
+23     \textcolor{keywordflow}{if} (fmod(box[0]/(sep+width), 1) != 0.0) \{
 24         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle width+separation is not commensurate with the
        box size"});
 25     \}
 26     \textcolor{keywordflow}{if} (theta <= 0.0 || theta >= \hyperlink{global_8h_a598a3330b3c21701223ee0ca14316eca}{PI}/2.0) \{
-27         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle elevation angle is out of bounds"});
+27         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle elevation angle theta is out of bounds, must
+       be within (0, PI)"});
 28     \}
 29     \textcolor{keywordflow}{if} (sigma <= 0.0) \{
-30         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle sigma is out of bounds"});
+30         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle sigma is out of bounds <= 0"});
 31     \}
 32     \textcolor{keywordflow}{if} (lamW < 1.0) \{
-33         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle lamW is out of bounds"});
+33         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle lamW is out of bounds < 1.0"});
 34     \}
 35     \textcolor{keywordflow}{if} (eps < 0.0) \{
-36         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle eps is out of bounds"});
+36         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle epsilon is out of bounds < 0.0"});
 37     \}
 38     \textcolor{keywordflow}{if} (M < 1) \{
-39         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle M value is out of bounds"});
+39         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle M value is out of bounds < 1"});
 40     \}
 41     \textcolor{keywordflow}{if} (zbase < 0.0 || zbase > box[2]) \{
-42         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle zbase value is out of bounds"});
+42         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle zbase value is out of bounds, must be within
+       [0, box[2]]"});
 43     \}
 44     \textcolor{keywordflow}{if} (offset >= box[0] || offset < 0) \{
-45         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle offset value is out of bounds"});
+45         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"rightTriangle offset value is out of bounds, must be within
+       [0, box[0])"});
 46     \}
 47 
 48     \textcolor{comment}{// store variables internally and do conversion to conventions in which derivation was done}
@@ -470,17 +473,17 @@ References energy(), N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y, and custom\-Exceptio
 362     \textcolor{keywordflow}{try} \{
 363         U = \hyperlink{classright_triangle_x_z_a0a15ebff4238aeb15cad052cf9904f43}{energy} (a1, box); \textcolor{comment}{// takes care of pbc internally}
 364     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-365         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to test if inside rightTriangleXZ : "}+std::to\_string(
-      *ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}()));
-366         \textcolor{comment}{//exit (SYS\_FAILURE);}
-367     \}
-368 
-369     \textcolor{keywordflow}{if} (U < \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \{
-370         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
-371     \} \textcolor{keywordflow}{else} \{
-372         \textcolor{keywordflow}{return} \textcolor{keyword}{false};
-373     \}
-374 \}
+365         \textcolor{keyword}{const} std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+366         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to test if inside rightTriangleXZ : "}+msg);
+367         \textcolor{comment}{//exit (SYS\_FAILURE);}
+368     \}
+369 
+370     \textcolor{keywordflow}{if} (U < \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \{
+371         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+372     \} \textcolor{keywordflow}{else} \{
+373         \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+374     \}
+375 \}
 \end{DoxyCode}
 
 

@@ -235,7 +235,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Definition at line <a class="el" href="potentials_8cpp_source.html#l00230">230</a> of file <a class="el" href="potentials_8cpp_source.html">potentials.cpp</a>.</p>
 
-<p>References <a class="el" href="atom_8h_source.html#l00021">atom::mState</a>, <a class="el" href="potentials_8h_source.html#l00034">pairPotential::params_</a>, <a class="el" href="potentials_8h_source.html#l00035">pairPotential::paramsAreSet_</a>, <a class="el" href="utilities_8cpp_source.html#l00248">pbcDist2()</a>, and <a class="el" href="atom_8h_source.html#l00022">atom::pos</a>.</p>
+<p>References <a class="el" href="atom_8h_source.html#l00020">atom::mState</a>, <a class="el" href="potentials_8h_source.html#l00034">pairPotential::params_</a>, <a class="el" href="potentials_8h_source.html#l00035">pairPotential::paramsAreSet_</a>, <a class="el" href="utilities_8cpp_source.html#l00249">pbcDist2()</a>, and <a class="el" href="atom_8h_source.html#l00021">atom::pos</a>.</p>
 <div class="fragment"><div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                                                                                            {</div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keywordflow">if</span> (!<a class="code" href="classpair_potential.html#a635755c0a952bfc05a4cfae230c3dbd2">paramsAreSet_</a>) {</div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;For lennardJones parameters not set&quot;</span>);</div>
@@ -259,12 +259,12 @@ Additional Inherited Members</h2></td></tr>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <span class="keywordflow">return</span> 0.0;</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    }</div>
 <div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;}</div>
-<div class="ttc" id="classatom_html_a3ae5f4880e7831d8b2c9fda72b4eb24a"><div class="ttname"><a href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">atom::pos</a></div><div class="ttdeci">std::vector&lt; double &gt; pos</div><div class="ttdoc">3D position </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00022">atom.h:22</a></div></div>
+<div class="ttc" id="classatom_html_a3ae5f4880e7831d8b2c9fda72b4eb24a"><div class="ttname"><a href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">atom::pos</a></div><div class="ttdeci">std::vector&lt; double &gt; pos</div><div class="ttdoc">3D position </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00021">atom.h:21</a></div></div>
 <div class="ttc" id="classpair_potential_html_a635755c0a952bfc05a4cfae230c3dbd2"><div class="ttname"><a href="classpair_potential.html#a635755c0a952bfc05a4cfae230c3dbd2">pairPotential::paramsAreSet_</a></div><div class="ttdeci">bool paramsAreSet_</div><div class="ttdoc">Logical check if the paramters for this potential have been specified by the user. </div><div class="ttdef"><b>Definition:</b> <a href="potentials_8h_source.html#l00035">potentials.h:35</a></div></div>
 <div class="ttc" id="classpair_potential_html_abf8ec8af983d6e9960bd149da099e883"><div class="ttname"><a href="classpair_potential.html#abf8ec8af983d6e9960bd149da099e883">pairPotential::params_</a></div><div class="ttdeci">std::vector&lt; double &gt; params_</div><div class="ttdoc">Parameters (constants) that are needed to calculate U(r) </div><div class="ttdef"><b>Definition:</b> <a href="potentials_8h_source.html#l00034">potentials.h:34</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_abb1db3a8a3ac46e044bbe7b2c5684c0a"><div class="ttname"><a href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a></div><div class="ttdeci">double pbcDist2(const std::vector&lt; double &gt; &amp;p1, const std::vector&lt; double &gt; &amp;p2, const std::vector&lt; double &gt; &amp;box)</div><div class="ttdoc">Calculate the minimum image distance squared between two coordinates assuming periodic boundary condi...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00248">utilities.cpp:248</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
-<div class="ttc" id="classatom_html_a3cb00c0c5b7533657e05af6ff4a42740"><div class="ttname"><a href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">atom::mState</a></div><div class="ttdeci">int mState</div><div class="ttdoc">State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted. </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00021">atom.h:21</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_abb1db3a8a3ac46e044bbe7b2c5684c0a"><div class="ttname"><a href="utilities_8cpp.html#abb1db3a8a3ac46e044bbe7b2c5684c0a">pbcDist2</a></div><div class="ttdeci">double pbcDist2(const std::vector&lt; double &gt; &amp;p1, const std::vector&lt; double &gt; &amp;p2, const std::vector&lt; double &gt; &amp;box)</div><div class="ttdoc">Calculate the minimum image distance squared between two coordinates assuming periodic boundary condi...</div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00249">utilities.cpp:249</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classatom_html_a3cb00c0c5b7533657e05af6ff4a42740"><div class="ttname"><a href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">atom::mState</a></div><div class="ttdeci">int mState</div><div class="ttdoc">State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted. </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00020">atom.h:20</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -306,7 +306,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;}</div>
 <div class="ttc" id="classpair_potential_html_a635755c0a952bfc05a4cfae230c3dbd2"><div class="ttname"><a href="classpair_potential.html#a635755c0a952bfc05a4cfae230c3dbd2">pairPotential::paramsAreSet_</a></div><div class="ttdeci">bool paramsAreSet_</div><div class="ttdoc">Logical check if the paramters for this potential have been specified by the user. </div><div class="ttdef"><b>Definition:</b> <a href="potentials_8h_source.html#l00035">potentials.h:35</a></div></div>
 <div class="ttc" id="classpair_potential_html_abf8ec8af983d6e9960bd149da099e883"><div class="ttname"><a href="classpair_potential.html#abf8ec8af983d6e9960bd149da099e883">pairPotential::params_</a></div><div class="ttdeci">std::vector&lt; double &gt; params_</div><div class="ttdoc">Parameters (constants) that are needed to calculate U(r) </div><div class="ttdef"><b>Definition:</b> <a href="potentials_8h_source.html#l00034">potentials.h:34</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -350,13 +350,13 @@ Additional Inherited Members</h2></td></tr>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;For lennardJones must specify 5 parameters: epsilon, sigma, r_cut, u_shift, Mtot&quot;</span>);</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;        <span class="keywordflow">if</span> (params[0] &lt; 0) {</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;For lennardJones, epsilon &gt; 0&quot;</span>);</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;For lennardJones, epsilon &gt;= 0&quot;</span>);</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        }</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        <span class="keywordflow">if</span> (params[1] &lt; 0) {</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;For lennardJones, sigma &gt; 0&quot;</span>);</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;For lennardJones, sigma &gt;= 0&quot;</span>);</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        }</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        <span class="keywordflow">if</span> (params[2] &lt; 0) {</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;For lennardJones, r_cut &gt; 0&quot;</span>);</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;For lennardJones, r_cut &gt;= 0&quot;</span>);</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        }</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        <span class="keywordflow">if</span> (<span class="keywordtype">int</span>(params[4]) &lt; 1) {</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;For lennardJones, total expanded ensemble states, Mtot &gt;= 1&quot;</span>);</div>
@@ -411,7 +411,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="ttc" id="classpair_potential_html_a635755c0a952bfc05a4cfae230c3dbd2"><div class="ttname"><a href="classpair_potential.html#a635755c0a952bfc05a4cfae230c3dbd2">pairPotential::paramsAreSet_</a></div><div class="ttdeci">bool paramsAreSet_</div><div class="ttdoc">Logical check if the paramters for this potential have been specified by the user. </div><div class="ttdef"><b>Definition:</b> <a href="potentials_8h_source.html#l00035">potentials.h:35</a></div></div>
 <div class="ttc" id="classpair_potential_html_abf8ec8af983d6e9960bd149da099e883"><div class="ttname"><a href="classpair_potential.html#abf8ec8af983d6e9960bd149da099e883">pairPotential::params_</a></div><div class="ttdeci">std::vector&lt; double &gt; params_</div><div class="ttdoc">Parameters (constants) that are needed to calculate U(r) </div><div class="ttdef"><b>Definition:</b> <a href="potentials_8h_source.html#l00034">potentials.h:34</a></div></div>
 <div class="ttc" id="classpair_potential_html_ab4b4538a7e13771f50a29aaac2443037"><div class="ttname"><a href="classpair_potential.html#ab4b4538a7e13771f50a29aaac2443037">pairPotential::useTailCorrection</a></div><div class="ttdeci">bool useTailCorrection</div><div class="ttdef"><b>Definition:</b> <a href="potentials_8h_source.html#l00027">potentials.h:27</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -451,7 +451,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Definition at line <a class="el" href="potentials_8cpp_source.html#l00263">263</a> of file <a class="el" href="potentials_8cpp_source.html">potentials.cpp</a>.</p>
 
-<p>References <a class="el" href="potentials_8h_source.html#l00034">pairPotential::params_</a>, and <a class="el" href="global_8h_source.html#l00114">PI</a>.</p>
+<p>References <a class="el" href="potentials_8h_source.html#l00034">pairPotential::params_</a>, and <a class="el" href="global_8h_source.html#l00160">PI</a>.</p>
 <div class="fragment"><div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                                                        {</div>
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keywordflow">if</span> (rhoBath &lt; 0) {</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        <span class="keywordflow">return</span> 0;</div>
@@ -461,7 +461,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;</div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    <span class="keywordflow">return</span> 2.0*(8.0/3.0*<a class="code" href="global_8h.html#a598a3330b3c21701223ee0ca14316eca">PI</a>*rhoBath*params_[0]*params_[1]*params_[1]*params_[1]*(r9/3.0 - r3));</div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;}</div>
-<div class="ttc" id="global_8h_html_a598a3330b3c21701223ee0ca14316eca"><div class="ttname"><a href="global_8h.html#a598a3330b3c21701223ee0ca14316eca">PI</a></div><div class="ttdeci">#define PI</div><div class="ttdoc">Numerical approximation of pi. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00114">global.h:114</a></div></div>
+<div class="ttc" id="global_8h_html_a598a3330b3c21701223ee0ca14316eca"><div class="ttname"><a href="global_8h.html#a598a3330b3c21701223ee0ca14316eca">PI</a></div><div class="ttdeci">#define PI</div><div class="ttdoc">Numerical approximation of pi. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00160">global.h:160</a></div></div>
 <div class="ttc" id="classpair_potential_html_abf8ec8af983d6e9960bd149da099e883"><div class="ttname"><a href="classpair_potential.html#abf8ec8af983d6e9960bd149da099e883">pairPotential::params_</a></div><div class="ttdeci">std::vector&lt; double &gt; params_</div><div class="ttdoc">Parameters (constants) that are needed to calculate U(r) </div><div class="ttdef"><b>Definition:</b> <a href="potentials_8h_source.html#l00034">potentials.h:34</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -473,7 +473,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 29 2016 11:09:04 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 30 2016 13:19:39 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -83,7 +83,7 @@ References tmmc\-::calculate\-P\-I(), checkpoint\-::check(), tmmc\-::check\-Full
 39             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
 40                 sys.\hyperlink{classsim_system_a69edcc2c27db3d4e94002ac5635e9030}{stopTMMC}(); \textcolor{comment}{// deallocate}
 41                 std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-42                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Failed to initialize from TMMC collection matrix because "}+msg);
+42                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Failed to initialize from TMMC collection matrix : "}+msg);
 43                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
 44             \}
 45         \}

@@ -17,6 +17,8 @@ Class that tracks and decides which moves whould be made.
 \begin{DoxyCompactList}\small\item\em Instantiate moves class. \end{DoxyCompactList}\item 
 \hyperlink{classmoves_a00dfff19abe056adceb0ccf41778ee0f}{$\sim$moves} ()
 \begin{DoxyCompactList}\small\item\em Destructor for moves class. \end{DoxyCompactList}\item 
+void \hyperlink{classmoves_a3695f6a6d0128e2d0d76702f718accf8}{clear\-All} ()
+\begin{DoxyCompactList}\small\item\em Clear all moves and related information from the class, but leaves M intact. \end{DoxyCompactList}\item 
 void \hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{make\-Move} (\hyperlink{classsim_system}{sim\-System} \&sys)
 \begin{DoxyCompactList}\small\item\em Choose a move to make. \end{DoxyCompactList}\item 
 void \hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print} (const std\-::string filename)
@@ -98,13 +100,13 @@ Destructor for moves class.
 
 
 
-Definition at line 33 of file mover.\-cpp.
+Definition at line 20 of file mover.\-cpp.
 
 
 \begin{DoxyCode}
-33                \{
-34     ;
-35 \}
+20                \{
+21     ;
+22 \}
 \end{DoxyCode}
 
 
@@ -130,7 +132,11 @@ Add deletion move.
 \end{DoxyParams}
 
 
-Definition at line 79 of file mover.\-cpp.
+Definition at line 95 of file mover.\-cpp.
+
+
+
+References num\-To\-Str().
 
 
 
@@ -138,11 +144,17 @@ Referenced by set\-Moves().
 
 
 \begin{DoxyCode}
-79                                                          \{
-80     \textcolor{keyword}{auto} om = std::make\_shared < deleteParticle > (index, \textcolor{stringliteral}{"delete"});
-81     ownedMoves\_.push\_back(om);
-82     addOn\_(ownedMoves\_.back()->changeN(), prob);
-83 \}
+95                                                          \{
+96     \textcolor{keyword}{auto} om = std::make\_shared < deleteParticle > (index, \textcolor{stringliteral}{"delete"});
+97     ownedMoves\_.push\_back(om);
+98     \textcolor{keywordflow}{try} \{
+99         addOn\_(ownedMoves\_.back()->changeN(), prob);
+100     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
+101         \textcolor{keyword}{const} std::string msg = ex.what();
+102         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add deletion move for species "}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(index+1)+\textcolor{stringliteral}{" : "}+msg);
+103     \}
+104 \}
 \end{DoxyCode}
 \hypertarget{classmoves_ab4583b3075f51cce55c3aeb84a58430d}{\index{moves@{moves}!add\-Insert@{add\-Insert}}
 \index{add\-Insert@{add\-Insert}!moves@{moves}}
@@ -165,7 +177,11 @@ Add insertion move.
 \end{DoxyParams}
 
 
-Definition at line 67 of file mover.\-cpp.
+Definition at line 78 of file mover.\-cpp.
+
+
+
+References num\-To\-Str().
 
 
 
@@ -173,11 +189,17 @@ Referenced by set\-Config(), and set\-Moves().
 
 
 \begin{DoxyCode}
-67                                                          \{
-68     \textcolor{keyword}{auto} om = std::make\_shared < insertParticle > (index, \textcolor{stringliteral}{"insert"});
-69     ownedMoves\_.push\_back(om);
-70     addOn\_(ownedMoves\_.back()->changeN(), prob);
-71 \}
+78                                                          \{
+79     \textcolor{keyword}{auto} om = std::make\_shared < insertParticle > (index, \textcolor{stringliteral}{"insert"});
+80     ownedMoves\_.push\_back(om);
+81     \textcolor{keywordflow}{try} \{
+82         addOn\_(ownedMoves\_.back()->changeN(), prob);
+83     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
+84         \textcolor{keyword}{const} std::string msg = ex.what();
+85         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add insertion move for species "}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(index+1)+\textcolor{stringliteral}{" : "}+msg);
+86     \}
+87 \}
 \end{DoxyCode}
 \hypertarget{classmoves_a03cebfa2d8d1cecf253df573fdecc5d0}{\index{moves@{moves}!add\-Swap@{add\-Swap}}
 \index{add\-Swap@{add\-Swap}!moves@{moves}}
@@ -203,7 +225,11 @@ Add swap move.
 \end{DoxyParams}
 
 
-Definition at line 92 of file mover.\-cpp.
+Definition at line 113 of file mover.\-cpp.
+
+
+
+References num\-To\-Str().
 
 
 
@@ -211,11 +237,17 @@ Referenced by set\-Moves().
 
 
 \begin{DoxyCode}
-92                                                                           \{
-93     \textcolor{keyword}{auto} om = std::make\_shared < swapParticles > (index1, index2, \textcolor{stringliteral}{"swap"});
-94     ownedMoves\_.push\_back(om);
-95     addOn\_(ownedMoves\_.back()->changeN(), prob);
-96 \}
+113                                                                           \{
+114     \textcolor{keyword}{auto} om = std::make\_shared < swapParticles > (index1, index2, \textcolor{stringliteral}{"swap"});
+115     ownedMoves\_.push\_back(om);
+116     \textcolor{keywordflow}{try} \{
+117         addOn\_(ownedMoves\_.back()->changeN(), prob);
+118     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
+119         \textcolor{keyword}{const} std::string msg = ex.what();
+120         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add swap move for species pair ("}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(index1+1)+\textcolor{stringliteral}{","}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(index2+1)+\textcolor{stringliteral}{") : "}+msg);
+121     \}
+122 \}
 \end{DoxyCode}
 \hypertarget{classmoves_a91bb7969368fdbb66920a11d79fe7552}{\index{moves@{moves}!add\-Translate@{add\-Translate}}
 \index{add\-Translate@{add\-Translate}!moves@{moves}}
@@ -237,14 +269,18 @@ Add translate move.
 \hline
 \mbox{\tt in}  & {\em prob} & Probability \\
 \hline
-\mbox{\tt in}  & {\em max\-D} & Maximium displacement \\
+\mbox{\tt in}  & {\em max\-D} & Maximium translation \\
 \hline
 \mbox{\tt in}  & {\em box} & Box dimensions \\
 \hline
 \end{DoxyParams}
 
 
-Definition at line 106 of file mover.\-cpp.
+Definition at line 132 of file mover.\-cpp.
+
+
+
+References num\-To\-Str().
 
 
 
@@ -252,13 +288,48 @@ Referenced by set\-Moves().
 
 
 \begin{DoxyCode}
-106                                                                                                            
+132                                                                                                            
            \{
-107     \textcolor{keyword}{auto} om = std::make\_shared < translateParticle > (index, \textcolor{stringliteral}{"translate"});
-108     om->setMaxDisplacement (maxD, box);
-109     ownedMoves\_.push\_back(om);
-110     addOn\_(ownedMoves\_.back()->changeN(), prob);
-111 \}
+133     \textcolor{keyword}{auto} om = std::make\_shared < translateParticle > (index, \textcolor{stringliteral}{"translate"});
+134     \textcolor{keywordflow}{try} \{
+135         om->setMaxTranslation (maxD, box);
+136         ownedMoves\_.push\_back(om);
+137         addOn\_(ownedMoves\_.back()->changeN(), prob);
+138     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
+139         \textcolor{keyword}{const} std::string msg = ex.what();
+140         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add translation move for species "}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(index+1)+\textcolor{stringliteral}{" : "}+msg);
+141     \}
+142 \}
+\end{DoxyCode}
+\hypertarget{classmoves_a3695f6a6d0128e2d0d76702f718accf8}{\index{moves@{moves}!clear\-All@{clear\-All}}
+\index{clear\-All@{clear\-All}!moves@{moves}}
+\subsubsection[{clear\-All}]{\setlength{\rightskip}{0pt plus 5cm}void moves\-::clear\-All (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classmoves_a3695f6a6d0128e2d0d76702f718accf8}
+
+
+Clear all moves and related information from the class, but leaves M intact. 
+
+
+
+Definition at line 27 of file mover.\-cpp.
+
+
+
+Referenced by set\-Moves().
+
+
+\begin{DoxyCode}
+27                       \{
+28     normProbabilities\_.clear();
+29     rawProbabilities\_.clear();
+30     succeeded\_.clear();
+31     attempted\_.clear();
+32     ownedMoves\_.clear();
+33 \}
 \end{DoxyCode}
 \hypertarget{classmoves_a57e814fe08153419f92a983cbf33796d}{\index{moves@{moves}!get\-M@{get\-M}}
 \index{get\-M@{get\-M}!moves@{moves}}
@@ -269,11 +340,11 @@ Referenced by set\-Moves().
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classmoves_a57e814fe08153419f92a983cbf33796d}
 
 
-Definition at line 32 of file mover.\-h.
+Definition at line 33 of file mover.\-h.
 
 
 \begin{DoxyCode}
-32 \{ \textcolor{keywordflow}{return} M\_; \}
+33 \{ \textcolor{keywordflow}{return} M\_; \}
 \end{DoxyCode}
 \hypertarget{classmoves_a7f023913b80bb62604b99f4dbf005c37}{\index{moves@{moves}!make\-Move@{make\-Move}}
 \index{make\-Move@{make\-Move}!moves@{moves}}
@@ -295,7 +366,7 @@ If in an expanded ensemble, will restrict moves which change the number of parti
 \end{DoxyParams}
 
 
-Definition at line 156 of file mover.\-cpp.
+Definition at line 191 of file mover.\-cpp.
 
 
 
@@ -307,68 +378,68 @@ Referenced by perform\-Crossover(), perform\-T\-M\-M\-C(), and perform\-W\-A\-L\
 
 
 \begin{DoxyCode}
-156                                     \{
-157     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}() != M\_) \{
-158         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Error, M in system different from M in moves class operating
+191                                     \{
+192     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}() != M\_) \{
+193         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Error, M in system different from M in moves class operating
        on the system"});
-159     \}
-160     \textcolor{keywordtype}{int} moveChosen = -1, succ = 0, mIndex = 0;
-161     \textcolor{keywordtype}{bool} done = \textcolor{keyword}{false};
-162     \textcolor{keywordflow}{while} (!done) \{
-163         \textcolor{keyword}{const} \textcolor{keywordtype}{double} ran = \hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED});
-164         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < normProbabilities\_.size(); ++i) \{
-165             \textcolor{keywordflow}{if} (ran < normProbabilities\_[i]) \{
-166                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}() > 1) \{
-167                     \textcolor{comment}{// expanded ensemble has to check the moves because have to only work on the partially
+194     \}
+195     \textcolor{keywordtype}{int} moveChosen = -1, succ = 0, mIndex = 0;
+196     \textcolor{keywordtype}{bool} done = \textcolor{keyword}{false};
+197     \textcolor{keywordflow}{while} (!done) \{
+198         \textcolor{keyword}{const} \textcolor{keywordtype}{double} ran = \hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED});
+199         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < normProbabilities\_.size(); ++i) \{
+200             \textcolor{keywordflow}{if} (ran < normProbabilities\_[i]) \{
+201                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}() > 1) \{
+202                     \textcolor{comment}{// expanded ensemble has to check the moves because have to only work on the partially
        inserted atom}
-168                     \textcolor{keywordflow}{if} ((ownedMoves\_[i]->changeN() == \textcolor{keyword}{true}) && (ownedMoves\_[i]->whatType() != sys.
+203                     \textcolor{keywordflow}{if} ((ownedMoves\_[i]->changeN() == \textcolor{keyword}{true}) && (ownedMoves\_[i]->whatType() != sys.
       \hyperlink{classsim_system_a0500a9e84eecfbde7a98cf8a34f719d5}{getFractionalAtomType}()) && (sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() > 0)) \{
-169                         \textcolor{comment}{// reject this choice because we must only insert/delete the type that is already
+204                         \textcolor{comment}{// reject this choice because we must only insert/delete the type that is already
        partially inserted IFF we are *already* in a partially inserted state}
-170                         \textcolor{comment}{// choose a new move}
-171                         done = \textcolor{keyword}{false};
-172                         \textcolor{keywordflow}{break};
-173                     \} \textcolor{keywordflow}{else} \{
-174                         \textcolor{comment}{// get M before move happens which can change the state of the system}
-175                         \textcolor{keywordflow}{if} (ownedMoves\_[i]->changeN()) \{
-176                             mIndex = sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}();
-177                         \}
-178                         \textcolor{keywordflow}{try} \{
-179                             succ = ownedMoves\_[i]->make(sys);
-180                         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-181                             std::string a = \textcolor{stringliteral}{"Failed to make a move properly: "};
-182                             std::string b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-183                             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(a+b);
-184                         \}
-185                         done = \textcolor{keyword}{true};
-186                         moveChosen = i;
-187                         \textcolor{keywordflow}{break};
-188                     \}
-189                 \} \textcolor{keywordflow}{else} \{
-190                     \textcolor{comment}{// without expanded ensemble, inserts/deletes can proceed unchecked}
-191                     \textcolor{keywordflow}{try} \{
-192                         succ = ownedMoves\_[i]->make(sys);
-193                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-194                         std::string a = \textcolor{stringliteral}{"Failed to make a move properly: "};
-195                         std::string b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-196                         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(a+b);
-197                     \}
-198                     done = \textcolor{keyword}{true};
-199                     moveChosen = i;
-200                     mIndex = 0;
-201                     \textcolor{keywordflow}{break};
-202                 \}
-203             \}
-204         \}
-205     \}
-206 
-207     \textcolor{keywordflow}{if} (moveChosen < 0) \{
-208         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Failed to choose a move properly"});
-209     \}
-210 
-211     attempted\_[moveChosen][mIndex] += 1.0;
-212     succeeded\_[moveChosen][mIndex] += succ;
-213 \}
+205                         \textcolor{comment}{// choose a new move}
+206                         done = \textcolor{keyword}{false};
+207                         \textcolor{keywordflow}{break};
+208                     \} \textcolor{keywordflow}{else} \{
+209                         \textcolor{comment}{// get M before move happens which can change the state of the system}
+210                         \textcolor{keywordflow}{if} (ownedMoves\_[i]->changeN()) \{
+211                             mIndex = sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}();
+212                         \}
+213                         \textcolor{keywordflow}{try} \{
+214                             succ = ownedMoves\_[i]->make(sys);
+215                         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+216                             std::string a = \textcolor{stringliteral}{"Failed to make a move properly: "};
+217                             std::string b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+218                             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(a+b);
+219                         \}
+220                         done = \textcolor{keyword}{true};
+221                         moveChosen = i;
+222                         \textcolor{keywordflow}{break};
+223                     \}
+224                 \} \textcolor{keywordflow}{else} \{
+225                     \textcolor{comment}{// without expanded ensemble, inserts/deletes can proceed unchecked}
+226                     \textcolor{keywordflow}{try} \{
+227                         succ = ownedMoves\_[i]->make(sys);
+228                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+229                         std::string a = \textcolor{stringliteral}{"Failed to make a move properly: "};
+230                         std::string b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+231                         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(a+b);
+232                     \}
+233                     done = \textcolor{keyword}{true};
+234                     moveChosen = i;
+235                     mIndex = 0;
+236                     \textcolor{keywordflow}{break};
+237                 \}
+238             \}
+239         \}
+240     \}
+241 
+242     \textcolor{keywordflow}{if} (moveChosen < 0) \{
+243         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Failed to choose a move properly"});
+244     \}
+245 
+246     attempted\_[moveChosen][mIndex] += 1.0;
+247     succeeded\_[moveChosen][mIndex] += succ;
+248 \}
 \end{DoxyCode}
 \hypertarget{classmoves_acc6415d4000f01b93235d1a533aa6880}{\index{moves@{moves}!print@{print}}
 \index{print@{print}!moves@{moves}}
@@ -390,7 +461,7 @@ Appends by default.
 \end{DoxyParams}
 
 
-Definition at line 42 of file mover.\-cpp.
+Definition at line 53 of file mover.\-cpp.
 
 
 
@@ -402,26 +473,26 @@ Referenced by perform\-Crossover(), perform\-T\-M\-M\-C(), and perform\-W\-A\-L\
 
 
 \begin{DoxyCode}
-42                                            \{
-43     std::ofstream statFile (filename.c\_str(), std::ofstream::out | std::ofstream::app);
-44     std::vector < std::vector < double > > stats = \hyperlink{classmoves_ad3e937628d85cdbbe02732648cb533e2}{reportMoveStatistics}();
-45     statFile << \textcolor{stringliteral}{"Time: "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
-46     statFile << \textcolor{stringliteral}{"---------- Move Statistics --------- "} << std::endl << \textcolor{stringliteral}{"Move\(\backslash\)t\(\backslash\)% Success"} << std::endl;
-47     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < stats.size(); ++i) \{
-48         \textcolor{keywordtype}{double} prod = 1.0;
-49         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < stats[i].size(); ++j) \{
-50             prod *= stats[i][j];
-51             statFile << ownedMoves\_[i]->myName() << \textcolor{stringliteral}{" (from M = "} << j << \textcolor{stringliteral}{")\(\backslash\)t"} << stats[i][j]*100.0 << 
+53                                            \{
+54     std::ofstream statFile (filename.c\_str(), std::ofstream::out | std::ofstream::app);
+55     std::vector < std::vector < double > > stats = \hyperlink{classmoves_ad3e937628d85cdbbe02732648cb533e2}{reportMoveStatistics}();
+56     statFile << \textcolor{stringliteral}{"Time: "} << \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}() << std::endl;
+57     statFile << \textcolor{stringliteral}{"---------- Move Statistics --------- "} << std::endl << \textcolor{stringliteral}{"Move\(\backslash\)t\(\backslash\)% Success"} << std::endl;
+58     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < stats.size(); ++i) \{
+59         \textcolor{keywordtype}{double} prod = 1.0;
+60         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < stats[i].size(); ++j) \{
+61             prod *= stats[i][j];
+62             statFile << ownedMoves\_[i]->myName() << \textcolor{stringliteral}{" (from M = "} << j << \textcolor{stringliteral}{")\(\backslash\)t"} << stats[i][j]*100.0 << 
       std::endl;
-52         \}
-53         \textcolor{keywordflow}{if} (stats[i].size() > 1) \{
-54             statFile << \textcolor{stringliteral}{"-------------------------------------\(\backslash\)nProduct of percentages (%) = "} << prod*100 
+63         \}
+64         \textcolor{keywordflow}{if} (stats[i].size() > 1) \{
+65             statFile << \textcolor{stringliteral}{"-------------------------------------\(\backslash\)nProduct of percentages (%) = "} << prod*100 
       << \textcolor{stringliteral}{"\(\backslash\)n-------------------------------------"} << std::endl;
-55         \}
-56     \}
-57     statFile << \textcolor{stringliteral}{"------------------------------------ "} << std::endl;
-58     statFile.close();
-59 \}
+66         \}
+67     \}
+68     statFile << \textcolor{stringliteral}{"------------------------------------ "} << std::endl;
+69     statFile.close();
+70 \}
 \end{DoxyCode}
 \hypertarget{classmoves_ad3e937628d85cdbbe02732648cb533e2}{\index{moves@{moves}!report\-Move\-Statistics@{report\-Move\-Statistics}}
 \index{report\-Move\-Statistics@{report\-Move\-Statistics}!moves@{moves}}
@@ -441,7 +512,7 @@ ans Number of Success / Total Attempts for each move
 \end{DoxyReturn}
 
 
-Definition at line 221 of file mover.\-cpp.
+Definition at line 256 of file mover.\-cpp.
 
 
 
@@ -449,18 +520,18 @@ Referenced by print().
 
 
 \begin{DoxyCode}
-221                                                                 \{
-222     std::vector < std::vector < double > > ans = succeeded\_;
-223     \textcolor{keywordflow}{if} (attempted\_.begin() == attempted\_.end()) \{
-224         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"No moves added to system"});
-225     \}
-226     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < attempted\_.size(); ++i) \{
-227         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < attempted\_[i].size(); ++j) \{
-228             ans[i][j] /= attempted\_[i][j];
-229         \}
-230     \}
-231     \textcolor{keywordflow}{return} ans;
-232 \}
+256                                                                 \{
+257     std::vector < std::vector < double > > ans = succeeded\_;
+258     \textcolor{keywordflow}{if} (attempted\_.begin() == attempted\_.end()) \{
+259         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"No moves added to system"});
+260     \}
+261     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < attempted\_.size(); ++i) \{
+262         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < attempted\_[i].size(); ++j) \{
+263             ans[i][j] /= attempted\_[i][j];
+264         \}
+265     \}
+266     \textcolor{keywordflow}{return} ans;
+267 \}
 \end{DoxyCode}
 \hypertarget{classmoves_a84f8198bd43c0f6b8b52dce3abdfa6a4}{\index{moves@{moves}!report\-Probabilities@{report\-Probabilities}}
 \index{report\-Probabilities@{report\-Probabilities}!moves@{moves}}
@@ -475,7 +546,7 @@ Echo the normalized probabilities of each move in the object.
 
 
 
-Definition at line 34 of file mover.\-h.
+Definition at line 35 of file mover.\-h.
 
 \hypertarget{classmoves_ab603c6ce829075e3232ff41a7d5e2aab}{\index{moves@{moves}!set\-M@{set\-M}}
 \index{set\-M@{set\-M}!moves@{moves}}
@@ -495,7 +566,7 @@ Set the value of M.
 \end{DoxyParams}
 
 
-Definition at line 22 of file mover.\-cpp.
+Definition at line 40 of file mover.\-cpp.
 
 
 
@@ -503,13 +574,13 @@ Referenced by moves(), and set\-Moves().
 
 
 \begin{DoxyCode}
-22                              \{
-23     \textcolor{keywordflow}{if} (M > 0) \{
-24         M\_ = M;
-25     \} \textcolor{keywordflow}{else} \{
-26         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Error, number of expanded ensemble stages must be > 0"});
-27     \}
-28 \}
+40                              \{
+41     \textcolor{keywordflow}{if} (M > 0) \{
+42         M\_ = M;
+43     \} \textcolor{keywordflow}{else} \{
+44         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Error, number of expanded ensemble stages must be > 0"});
+45     \}
+46 \}
 \end{DoxyCode}
 
 

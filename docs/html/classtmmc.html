@@ -300,7 +300,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Out of memory, cannot allocate space for macrostate distribution matrix in tmmc&quot;</span>);</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    }</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 <div class="ttc" id="bias_8h_html_a1ceb524363fcb94da0c64d297ea27438"><div class="ttname"><a href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a></div><div class="ttdeci">#define __BIAS_INT_TYPE__</div><div class="ttdoc">For biasing, need to address things with large indices. </div><div class="ttdef"><b>Definition:</b> <a href="bias_8h_source.html#l00016">bias.h:16</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -380,7 +380,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    }</div>
 <div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;}</div>
 <div class="ttc" id="classtmmc_html_ae296df3336ebf0fa1db7c34972c544eb"><div class="ttname"><a href="classtmmc.html#ae296df3336ebf0fa1db7c34972c544eb">tmmc::getTransitionAddress</a></div><div class="ttdeci">const __BIAS_INT_TYPE__ getTransitionAddress(const int Nstart, const int Nend, const int Mstart, const int Mend)</div><div class="ttdoc">For a given multidimensional array which has been cast into 1D, find the address that refers to a giv...</div><div class="ttdef"><b>Definition:</b> <a href="bias_8cpp_source.html#l00141">bias.cpp:141</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 <div class="ttc" id="bias_8h_html_a1ceb524363fcb94da0c64d297ea27438"><div class="ttname"><a href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a></div><div class="ttdeci">#define __BIAS_INT_TYPE__</div><div class="ttdoc">For biasing, need to address things with large indices. </div><div class="ttdef"><b>Definition:</b> <a href="bias_8h_source.html#l00016">bias.h:16</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -474,7 +474,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    }</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    of.close();</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -513,14 +513,14 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="bias_8cpp_source.html#l00199">199</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l01759">calculateBias()</a>.</p>
+<p>Referenced by <a class="el" href="system_8cpp_source.html#l01755">calculateBias()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                                                                        {</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="keywordflow">if</span> (Nval &gt; Nmax_ || Nval &lt; Nmin_ || Mval &lt; 0 || Mval &gt; Mtot_-1) {</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;N, M out of bounds in TMMC object, cannot retrieve address&quot;</span>);</div>
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    }</div>
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="keywordflow">return</span> (Nval - Nmin_)*Mtot_ + Mval;</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -548,7 +548,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="bias_8h_source.html#l00041">41</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
 
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l01759">calculateBias()</a>.</p>
+<p>Referenced by <a class="el" href="system_8cpp_source.html#l01755">calculateBias()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;{ <span class="keywordflow">return</span> -lnPI_[address]; }</div>
 </div><!-- fragment -->
 </div>
@@ -710,7 +710,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        <span class="keywordflow">return</span> x*3 + y; <span class="comment">// equivalent to expanded ensemble because Mstart = 0 always, and Mtot_ = 1</span></div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    }</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 <div class="ttc" id="bias_8h_html_a1ceb524363fcb94da0c64d297ea27438"><div class="ttname"><a href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a></div><div class="ttdeci">#define __BIAS_INT_TYPE__</div><div class="ttdoc">For biasing, need to address things with large indices. </div><div class="ttdef"><b>Definition:</b> <a href="bias_8h_source.html#l00016">bias.h:16</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -859,7 +859,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    of.close();</div>
 <div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;}</div>
 <div class="ttc" id="classtmmc_html_a295886d2f7a947a9de890bcb3adb51c7"><div class="ttname"><a href="classtmmc.html#a295886d2f7a947a9de890bcb3adb51c7">tmmc::dumpVisited</a></div><div class="ttdeci">void dumpVisited(const std::string fileName)</div><div class="ttdoc">Dump the current visited states counter. </div><div class="ttdef"><b>Definition:</b> <a href="bias_8cpp_source.html#l00079">bias.cpp:79</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -906,7 +906,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    }</div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    infile.close();</div>
 <div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -953,7 +953,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    }</div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    infile.close();</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1042,7 +1042,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="bias_8cpp_source.html#l00215">215</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
 
-<p>References <a class="el" href="bias_8cpp_source.html#l00141">getTransitionAddress()</a>, and <a class="el" href="global_8h_source.html#l00125">customException::what()</a>.</p>
+<p>References <a class="el" href="bias_8cpp_source.html#l00141">getTransitionAddress()</a>, and <a class="el" href="global_8h_source.html#l00170">customException::what()</a>.</p>
 
 <p>Referenced by <a class="el" href="aggvolbias_8cpp_source.html#l00142">aggVolBias3::make()</a>, <a class="el" href="translate_8cpp_source.html#l00010">translateParticle::make()</a>, <a class="el" href="delete_8cpp_source.html#l00010">deleteParticle::make()</a>, <a class="el" href="insert_8cpp_source.html#l00010">insertParticle::make()</a>, and <a class="el" href="swap_8cpp_source.html#l00010">swapParticles::make()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                                                                                                       {</div>
@@ -1060,14 +1060,14 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;    C_[i] += pa;</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    C_[j] += (1-pa);</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    <span class="keywordflow">if</span> (pa &gt; 0.0) {</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        HC_[i] += 1.0; <span class="comment">// only count the transition actually proposed, not the Nstart --&gt; Nstart unless that was what was originally proposed, and only count when transition probability is finite.</span></div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;        HC_[i] += 1.0; <span class="comment">// Only count the transition actually proposed, not the Nstart --&gt; Nstart unless that was what was originally proposed, and only count when transition probability is finite.</span></div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (Nstart == 0 &amp;&amp; Nend == 0) {</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    HC_[i] += 1.0; <span class="comment">// displacement move when 0 particles in system is &quot;early rejected&quot; (p = 0), but this is valid - if N_min of window is &gt; 0 checkVisited() works fine, but if includes 0, this state is detected as never being sampled otherwise, which is the incorrect response</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        HC_[i] += 1.0; <span class="comment">// Translation move when 0 particles in system is &quot;early rejected&quot; (p = 0), but this is valid - if N_min of window is &gt; 0 checkVisited() works fine, but if includes 0, this state is detected as never being sampled otherwise, which is the incorrect response</span></div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    }</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html_aeb6ab5848b038adfc68fde86a512f691"><div class="ttname"><a href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">customException::what</a></div><div class="ttdeci">const char * what() const </div><div class="ttdoc">Return the user&#39;s message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00125">global.h:125</a></div></div>
+<div class="ttc" id="classcustom_exception_html_aeb6ab5848b038adfc68fde86a512f691"><div class="ttname"><a href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">customException::what</a></div><div class="ttdeci">const char * what() const </div><div class="ttdoc">Return the user&#39;s message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00170">global.h:170</a></div></div>
 <div class="ttc" id="classtmmc_html_ae296df3336ebf0fa1db7c34972c544eb"><div class="ttname"><a href="classtmmc.html#ae296df3336ebf0fa1db7c34972c544eb">tmmc::getTransitionAddress</a></div><div class="ttdeci">const __BIAS_INT_TYPE__ getTransitionAddress(const int Nstart, const int Nend, const int Mstart, const int Mend)</div><div class="ttdoc">For a given multidimensional array which has been cast into 1D, find the address that refers to a giv...</div><div class="ttdef"><b>Definition:</b> <a href="bias_8cpp_source.html#l00141">bias.cpp:141</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1078,7 +1078,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 29 2016 11:09:05 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 30 2016 13:19:40 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

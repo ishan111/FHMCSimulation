@@ -1,4 +1,4 @@
-.TH "lennardJones" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "lennardJones" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -157,13 +157,13 @@ References pairPotential::params_, pairPotential::paramsAreSet_, and pairPotenti
 157         throw customException ("For lennardJones must specify 5 parameters: epsilon, sigma, r_cut, u_shift, Mtot");
 158     } else {
 159         if (params[0] < 0) {
-160             throw customException ("For lennardJones, epsilon > 0");
+160             throw customException ("For lennardJones, epsilon >= 0");
 161         }
 162         if (params[1] < 0) {
-163             throw customException ("For lennardJones, sigma > 0");
+163             throw customException ("For lennardJones, sigma >= 0");
 164         }
 165         if (params[2] < 0) {
-166             throw customException ("For lennardJones, r_cut > 0");
+166             throw customException ("For lennardJones, r_cut >= 0");
 167         }
 168         if (int(params[4]) < 1) {
 169             throw customException ("For lennardJones, total expanded ensemble states, Mtot >= 1");

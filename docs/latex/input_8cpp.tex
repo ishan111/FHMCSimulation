@@ -15,7 +15,7 @@ void \hyperlink{input_8cpp_afcd470506b012754a93b2012b65e3fc4}{set\-Pair\-Potenti
 \begin{DoxyCompactList}\small\item\em Assign the pair potentials based on the J\-S\-O\-N input file. \end{DoxyCompactList}\item 
 void \hyperlink{input_8cpp_abb58279d5b9992aef3dcd304a3963954}{set\-Config} (\hyperlink{classsim_system}{sim\-System} \&sys, const std\-::string filename)
 \begin{DoxyCompactList}\small\item\em Setup a system's initial configuration as necessary. \end{DoxyCompactList}\item 
-void \hyperlink{input_8cpp_a76e6e0f38bf684278b7bebb317b71e5b}{set\-System\-Barriers} (\hyperlink{classsim_system}{sim\-System} \&sys, const rapidjson\-::\-Document \&doc)
+void \hyperlink{input_8cpp_ab6dc74f7fbe4f517a72a21da3b795dfa}{set\-Barriers} (\hyperlink{classsim_system}{sim\-System} \&sys, const rapidjson\-::\-Document \&doc)
 \begin{DoxyCompactList}\small\item\em Initialize the barriers in a system by parsing the input document. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
@@ -96,191 +96,478 @@ Definition at line 37 of file input.\-cpp.
 
 
 
-References sim\-System\-::add\-K\-E\-Correction(), check\-Bounds(), sim\-System\-::ln\-F\-\_\-end, sim\-System\-::ln\-F\-\_\-start, sim\-System\-::n\-Crossover\-Visits, parse\-Json(), sim\-System\-::restart\-From\-T\-M\-M\-C, sim\-System\-::restart\-From\-T\-M\-M\-C\-File, sim\-System\-::restart\-From\-W\-A\-L\-A, sim\-System\-::restart\-From\-W\-A\-L\-A\-File, R\-N\-G\-\_\-\-S\-E\-E\-D, send\-Err(), send\-Msg(), set\-Moves(), set\-Pair\-Potentials(), set\-System\-Barriers(), sim\-System\-::set\-Tot\-N\-Bounds(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, sim\-System\-::tmmc\-Sweep\-Size, sim\-System\-::toggle\-K\-E(), sim\-System\-::total\-T\-M\-M\-C\-Sweeps, sim\-System\-::wala\-\_\-g, sim\-System\-::wala\-\_\-s, and sim\-System\-::wl\-Sweep\-Size.
+References sim\-System\-::add\-K\-E\-Correction(), check\-Bounds(), sim\-System\-::ln\-F\-\_\-end, sim\-System\-::ln\-F\-\_\-start, sim\-System\-::n\-Crossover\-Visits, num\-To\-Str(), parse\-Json(), sim\-System\-::restart\-From\-T\-M\-M\-C, sim\-System\-::restart\-From\-T\-M\-M\-C\-File, sim\-System\-::restart\-From\-W\-A\-L\-A, sim\-System\-::restart\-From\-W\-A\-L\-A\-File, R\-N\-G\-\_\-\-S\-E\-E\-D, send\-Err(), send\-Msg(), set\-Barriers(), set\-Moves(), set\-Pair\-Potentials(), sim\-System\-::set\-Tot\-N\-Bounds(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, sim\-System\-::tmmc\-Sweep\-Size, sim\-System\-::toggle\-K\-E(), sim\-System\-::total\-T\-M\-M\-C\-Sweeps, sim\-System\-::wala\-\_\-g, sim\-System\-::wala\-\_\-s, and sim\-System\-::wl\-Sweep\-Size.
 
 
 \begin{DoxyCode}
 37                                                                                         \{
 38     rapidjson::Document doc;
-39     \hyperlink{utilities_8cpp_a3f494918ff3c252de4914c9905be04e7}{parseJson} (filename, doc);
-40 
-41     \textcolor{comment}{// Check each member exists and is in the correct format}
-42     assert(doc.HasMember(\textcolor{stringliteral}{"num\_species"}));
-43     assert(doc[\textcolor{stringliteral}{"num\_species"}].IsInt());
-44     assert(doc.HasMember(\textcolor{stringliteral}{"beta"}));
-45     assert(doc[\textcolor{stringliteral}{"beta"}].IsNumber());
-46 
-47     assert(doc.HasMember(\textcolor{stringliteral}{"box"}));
-48     assert(doc[\textcolor{stringliteral}{"box"}].IsArray());
-49     assert(doc[\textcolor{stringliteral}{"box"}].Size() == 3);
-50     std::vector < double > sysBox (3, 0);
-51     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"box"}].Size(); ++i) \{
-52         assert(doc[\textcolor{stringliteral}{"box"}][i].IsNumber());
-53         sysBox[i] = doc[\textcolor{stringliteral}{"box"}][i].GetDouble();
-54     \}
-55 
-56     \textcolor{keywordtype}{double} duh = 10.0;
-57     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"delta\_u\_hist"})) \{
-58         assert(doc[\textcolor{stringliteral}{"delta\_u\_hist"}].IsNumber());
-59         duh = doc[\textcolor{stringliteral}{"delta\_u\_hist"}].GetDouble();
-60     \}
-61 
-62     \textcolor{keywordtype}{int} max\_order = 2;
-63     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"max\_order"})) \{
-64         assert(doc[\textcolor{stringliteral}{"max\_order"}].IsNumber());
-65         max\_order = doc[\textcolor{stringliteral}{"max\_order"}].GetInt();
-66     \}
-67 
-68     \textcolor{keywordtype}{bool} use\_ke = \textcolor{keyword}{false};
-69     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"use\_ke"})) \{
-70         assert(doc[\textcolor{stringliteral}{"use\_ke"}].IsBool());
-71         use\_ke = doc[\textcolor{stringliteral}{"use\_ke"}].GetBool();
-72     \}
-73 
-74     assert(doc.HasMember(\textcolor{stringliteral}{"mu"}));
-75     assert(doc[\textcolor{stringliteral}{"mu"}].IsArray());
-76     assert(doc[\textcolor{stringliteral}{"mu"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
-77     std::vector < double > sysMu (doc[\textcolor{stringliteral}{"mu"}].Size(), 0);
-78     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"mu"}].Size(); ++i) \{
-79         assert(doc[\textcolor{stringliteral}{"mu"}][i].IsNumber());
-80         sysMu[i] = doc[\textcolor{stringliteral}{"mu"}][i].GetDouble();
-81     \}
-82 
-83     assert(doc.HasMember(\textcolor{stringliteral}{"seed"}));
-84     assert(doc[\textcolor{stringliteral}{"seed"}].IsInt());
-85     \hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED} = doc[\textcolor{stringliteral}{"seed"}].GetInt();
-86 
-87     assert(doc.HasMember(\textcolor{stringliteral}{"max\_N"}));
-88     assert(doc[\textcolor{stringliteral}{"max\_N"}].IsArray());
-89     assert(doc[\textcolor{stringliteral}{"max\_N"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
-90     std::vector < int > sysMax (doc[\textcolor{stringliteral}{"max\_N"}].Size(), 0);
-91     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"max\_N"}].Size(); ++i) \{
-92         assert(doc[\textcolor{stringliteral}{"max\_N"}][i].IsInt());
-93         sysMax[i] = doc[\textcolor{stringliteral}{"max\_N"}][i].GetInt();
-94     \}
-95 
-96     assert(doc.HasMember(\textcolor{stringliteral}{"min\_N"}));
-97     assert(doc[\textcolor{stringliteral}{"min\_N"}].IsArray());
-98     assert(doc[\textcolor{stringliteral}{"min\_N"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
-99     std::vector < int > sysMin (doc[\textcolor{stringliteral}{"min\_N"}].Size(), 0);
-100     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"min\_N"}].Size(); ++i) \{
-101         assert(doc[\textcolor{stringliteral}{"min\_N"}][i].IsInt());
-102         sysMin[i] = doc[\textcolor{stringliteral}{"min\_N"}][i].GetInt();
-103     \}
-104 
-105     \textcolor{keywordtype}{int} Mtot = 1;
-106     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"num\_expanded\_states"})) \{
-107         assert(doc[\textcolor{stringliteral}{"num\_expanded\_states"}].IsInt());
-108         Mtot = doc[\textcolor{stringliteral}{"num\_expanded\_states"}].GetInt();
-109     \}
-110 
-111     \hyperlink{classsim_system}{simSystem} sys (doc[\textcolor{stringliteral}{"num\_species"}].GetInt(), doc[\textcolor{stringliteral}{"beta"}].GetDouble(), sysBox, sysMu, sysMax, 
-      sysMin, Mtot, duh, max\_order);
-112     \textcolor{keywordflow}{if} (use\_ke) \{
-113         sys.toggleKE();
-114         \textcolor{keywordflow}{if} (sys.addKECorrection() == \textcolor{keyword}{false}) \{
-115             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to set KE flag"});
-116         \}
-117     \}
-118 
-119     std::vector < int > sysWindow;
-120     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"window"})) \{
-121         assert(doc[\textcolor{stringliteral}{"window"}].IsArray());
-122         assert(doc[\textcolor{stringliteral}{"window"}].Size() == 2);
-123         sysWindow.resize(2, 0);
-124         sysWindow[0] = doc[\textcolor{stringliteral}{"window"}][0].GetInt();
-125         sysWindow[1] = doc[\textcolor{stringliteral}{"window"}][1].GetInt();
-126     \}
-127 
-128     \textcolor{keywordflow}{if} (sysWindow.begin() != sysWindow.end()) \{
-129         sys.setTotNBounds(sysWindow);
-130     \}
-131 
-132     assert(doc.HasMember(\textcolor{stringliteral}{"tmmc\_sweep\_size"}));
-133     assert(doc[\textcolor{stringliteral}{"tmmc\_sweep\_size"}].IsNumber());
-134     \textcolor{keywordtype}{double} tmpT = doc[\textcolor{stringliteral}{"tmmc\_sweep\_size"}].GetDouble(); \textcolor{comment}{// possibly in scientific notation}
-135     sys.tmmcSweepSize = tmpT; \textcolor{comment}{// convert}
-136 
-137     assert(doc.HasMember(\textcolor{stringliteral}{"total\_tmmc\_sweeps"}));
-138     assert(doc[\textcolor{stringliteral}{"total\_tmmc\_sweeps"}].IsNumber());
-139     \textcolor{keywordtype}{double} tmpS = doc[\textcolor{stringliteral}{"total\_tmmc\_sweeps"}].GetDouble(); \textcolor{comment}{// possibly in scientific notation}
-140     sys.totalTMMCSweeps = tmpS; \textcolor{comment}{// convert}
-141 
-142     assert(doc.HasMember(\textcolor{stringliteral}{"wala\_sweep\_size"}));
-143     assert(doc[\textcolor{stringliteral}{"wala\_sweep\_size"}].IsNumber());
-144     \textcolor{keywordtype}{double} tmpW = doc[\textcolor{stringliteral}{"wala\_sweep\_size"}].GetDouble(); \textcolor{comment}{// possibly in scientific notation}
-145     sys.wlSweepSize = tmpW; \textcolor{comment}{// convert}
-146 
-147     assert(doc.HasMember(\textcolor{stringliteral}{"wala\_g"}));
-148     assert(doc[\textcolor{stringliteral}{"wala\_g"}].IsNumber());
-149     sys.wala\_g = doc[\textcolor{stringliteral}{"wala\_g"}].GetDouble();
-150 
-151     assert(doc.HasMember(\textcolor{stringliteral}{"wala\_s"}));
-152     assert(doc[\textcolor{stringliteral}{"wala\_s"}].IsNumber());
-153     sys.wala\_s = doc[\textcolor{stringliteral}{"wala\_s"}].GetDouble();
-154 
-155     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"lnF\_start"})) \{
-156         assert(doc[\textcolor{stringliteral}{"lnF\_start"}].IsNumber());
-157         sys.lnF\_start = doc[\textcolor{stringliteral}{"lnF\_start"}].GetDouble(); \textcolor{comment}{// bounds are checked later}
-158     \}
-159 
-160     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"lnF\_end"})) \{
-161         assert(doc[\textcolor{stringliteral}{"lnF\_end"}].IsNumber());
-162         sys.lnF\_end = doc[\textcolor{stringliteral}{"lnF\_end"}].GetDouble();
-163         \textcolor{keywordflow}{if} (sys.lnF\_end >= 1.0) \{
-164             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Terminal lnF factor for Wang-Landau must be < 1"});
-165             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-166         \}
-167     \}
-168     \textcolor{keywordflow}{if} (sys.lnF\_end >= sys.lnF\_start) \{
-169         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"lnF\_end must be < lnF\_start for Wang-Landau to proceed forward"});
-170         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-171     \}
-172 
-173     sys.restartFromWALA = \textcolor{keyword}{false};
-174     sys.restartFromWALAFile = \textcolor{stringliteral}{""};
-175     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"restart\_from\_wala\_lnPI"})) \{
-176         assert(doc[\textcolor{stringliteral}{"restart\_from\_wala\_lnPI"}].IsString());
-177         sys.restartFromWALAFile = doc[\textcolor{stringliteral}{"restart\_from\_wala\_lnPI"}].GetString();
-178         \textcolor{keywordflow}{if} (sys.restartFromWALAFile != \textcolor{stringliteral}{""}) \{
-179             sys.restartFromWALA = \textcolor{keyword}{true};
-180         \}
-181     \}
-182 
-183     \textcolor{comment}{// restarting from TMMC overrides WL by skipping that portion altogether}
-184     sys.restartFromTMMC = \textcolor{keyword}{false};
-185     sys.restartFromTMMCFile = \textcolor{stringliteral}{""};
-186     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"restart\_from\_tmmc\_C"})) \{
-187         assert(doc[\textcolor{stringliteral}{"restart\_from\_tmmc\_C"}].IsString());
-188         sys.restartFromTMMCFile = doc[\textcolor{stringliteral}{"restart\_from\_tmmc\_C"}].GetString();
-189         \textcolor{keywordflow}{if} (sys.restartFromTMMCFile != \textcolor{stringliteral}{""}) \{
-190             sys.restartFromTMMC = \textcolor{keyword}{true};
+39     \textcolor{keywordflow}{try} \{
+40         \hyperlink{utilities_8cpp_a3f494918ff3c252de4914c9905be04e7}{parseJson} (filename, doc);
+41     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
+42         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (ex.what());
+43     \}
+44 
+45     \textcolor{comment}{// Check each member exists and is in the correct format}
+46     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"num\_species"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"num\_species\(\backslash\)" is not
+       specified in "}+filename);
+47     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"num\_species"}].IsInt()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"num\_species\(\backslash\)" is not an
+       integer in "}+filename);
+48 
+49     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"beta"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"beta\(\backslash\)" is not specified in "}+
+      filename);
+50     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"beta"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"beta\(\backslash\)" is not a number in "}+
+      filename);
+51 
+52     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"box"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"box\(\backslash\)" is not specified in "}+filename
+      );
+53     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"box"}].IsArray()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"box\(\backslash\)" is not an array in "}+filename)
+      ;
+54     \textcolor{keywordflow}{if} (doc[\textcolor{stringliteral}{"box"}].Size() != 3) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"box\(\backslash\)" is not a length 3 array in "}+
+      filename);
+55     std::vector < double > sysBox (3, 0);
+56     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"box"}].Size(); ++i) \{
+57         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"box"}][i].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"box index "}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i)+\textcolor{stringliteral}{" is not a number in "}+filename);
+58         sysBox[i] = doc[\textcolor{stringliteral}{"box"}][i].GetDouble();
+59     \}
+60 
+61     \textcolor{keywordtype}{double} duh = 10.0;
+62     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"delta\_u\_hist"})) \{
+63         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"delta\_u\_hist"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"delta\_u\_hist\(\backslash\)" is not
+       a number in "}+filename);
+64         duh = doc[\textcolor{stringliteral}{"delta\_u\_hist"}].GetDouble();
+65     \}
+66 
+67     \textcolor{keywordtype}{int} maxOrder = 2;
+68     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"max\_order"})) \{
+69         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"max\_order"}].IsInt()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"max\_order\(\backslash\)" is not an
+       integer in "}+filename);
+70         maxOrder = doc[\textcolor{stringliteral}{"max\_order"}].GetInt();
+71     \}
+72 
+73     \textcolor{keywordtype}{bool} useKe = \textcolor{keyword}{false};
+74     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"use\_ke"})) \{
+75         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"use\_ke"}].IsBool()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"use\_ke\(\backslash\)" is not a boolean in "}
+      +filename);
+76         useKe = doc[\textcolor{stringliteral}{"use\_ke"}].GetBool();
+77     \}
+78 
+79     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"mu"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"mu\(\backslash\)" is not specified in "}+filename);
+80     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"mu"}].IsArray()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"mu\(\backslash\)" is not an array in "}+filename);
+81     \textcolor{keywordflow}{if} (doc[\textcolor{stringliteral}{"mu"}].Size() != doc[\textcolor{stringliteral}{"num\_species"}].GetInt()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"mu\(\backslash\)" is
+       not specified for each species in "}+filename);
+82     std::vector < double > sysMu (doc[\textcolor{stringliteral}{"mu"}].Size(), 0);
+83     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"mu"}].Size(); ++i) \{
+84         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"mu"}][i].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"mu\(\backslash\)" for species "}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{" is not a number in "}+filename);
+85         sysMu[i] = doc[\textcolor{stringliteral}{"mu"}][i].GetDouble();
+86     \}
+87 
+88     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"seed"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"seed\(\backslash\)" is not specified in "}+
+      filename);
+89     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"seed"}].IsInt()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"seed\(\backslash\)" is not an integer in "}+
+      filename);
+90     \hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED} = doc[\textcolor{stringliteral}{"seed"}].GetInt();
+91 
+92     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"max\_N"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"max\_N\(\backslash\)" is not specified in "}+
+      filename);
+93     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"max\_N"}].IsArray()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"max\_N\(\backslash\)" is not an array in "}+
+      filename);
+94     \textcolor{keywordflow}{if} (doc[\textcolor{stringliteral}{"max\_N"}].Size() != doc[\textcolor{stringliteral}{"num\_species"}].GetInt()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"max\_N\(\backslash\)" is not specified for each species in "}+filename);
+95     std::vector < int > sysMax (doc[\textcolor{stringliteral}{"max\_N"}].Size(), 0);
+96     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"max\_N"}].Size(); ++i) \{
+97         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"max\_N"}][i].IsInt()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"max\_N\(\backslash\)" of species "}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{" is not an integer in "}+filename);
+98         sysMax[i] = doc[\textcolor{stringliteral}{"max\_N"}][i].GetInt();
+99     \}
+100 
+101     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"min\_N"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"min\_N\(\backslash\)" is not specified in "}+
+      filename);
+102     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"min\_N"}].IsArray()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"min\_N\(\backslash\)" is not an array in "}+
+      filename);
+103     \textcolor{keywordflow}{if} (doc[\textcolor{stringliteral}{"min\_N"}].Size() != doc[\textcolor{stringliteral}{"num\_species"}].GetInt()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"min\_N\(\backslash\)" is not specified for each species in "}+filename);
+104     std::vector < int > sysMin (doc[\textcolor{stringliteral}{"min\_N"}].Size(), 0);
+105     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"min\_N"}].Size(); ++i) \{
+106         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"min\_N"}][i].IsInt()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"min\_N\(\backslash\)" of species "}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{" is not an integer in "}+filename);
+107         sysMin[i] = doc[\textcolor{stringliteral}{"min\_N"}][i].GetInt();
+108     \}
+109 
+110     \textcolor{keywordtype}{int} Mtot = 1;
+111     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"num\_expanded\_states"})) \{
+112         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"num\_expanded\_states"}].IsInt()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"
+      num\_expanded\_states\(\backslash\)" is not an integer in "}+filename);
+113         Mtot = doc[\textcolor{stringliteral}{"num\_expanded\_states"}].GetInt();
+114     \}
+115 
+116     \hyperlink{classsim_system}{simSystem} sys (doc[\textcolor{stringliteral}{"num\_species"}].GetInt(), doc[\textcolor{stringliteral}{"beta"}].GetDouble(), sysBox, sysMu, sysMax, 
+      sysMin, Mtot, duh, maxOrder);
+117     \textcolor{keywordflow}{if} (useKe) \{
+118         sys.toggleKE();
+119         \textcolor{keywordflow}{if} (sys.addKECorrection() == \textcolor{keyword}{false}) \{
+120             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to set KE flag"});
+121         \}
+122     \}
+123 
+124     std::vector < int > sysWindow;
+125     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"window"})) \{
+126         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"window"}].IsArray()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"window\(\backslash\)" is not an array in "}
+      +filename);
+127         \textcolor{keywordflow}{if} (doc[\textcolor{stringliteral}{"window"}].Size() != 2) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"window\(\backslash\)" should have 2
+       entries (min,max) in "}+filename);
+128         sysWindow.resize(2, 0);
+129         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"window"}][0].IsInt()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"window\(\backslash\)" min is not an
+       integer in "}+filename);
+130         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"window"}][1].IsInt()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"window\(\backslash\)" max is not an
+       integer in "}+filename);
+131         sysWindow[0] = doc[\textcolor{stringliteral}{"window"}][0].GetInt();
+132         sysWindow[1] = doc[\textcolor{stringliteral}{"window"}][1].GetInt();
+133     \}
+134 
+135     \textcolor{keywordflow}{if} (sysWindow.begin() != sysWindow.end()) \{
+136         sys.setTotNBounds(sysWindow);
+137     \}
+138 
+139     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"tmmc\_sweep\_size"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"tmmc\_sweep\_size\(\backslash\)" is not
+       specified in "}+filename);
+140     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"tmmc\_sweep\_size"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"tmmc\_sweep\_size\(\backslash\)" is
+       not a number in "}+filename);
+141     \textcolor{keywordtype}{double} tmpT = doc[\textcolor{stringliteral}{"tmmc\_sweep\_size"}].GetDouble(); \textcolor{comment}{// Possibly in scientific notation}
+142     sys.tmmcSweepSize = tmpT; \textcolor{comment}{// Convert}
+143 
+144     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"total\_tmmc\_sweeps"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"total\_tmmc\_sweeps\(\backslash\)" is
+       not specified in "}+filename);
+145     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"total\_tmmc\_sweeps"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"total\_tmmc\_sweeps\(\backslash\)"
+       is not a number in "}+filename);
+146     \textcolor{keywordtype}{double} tmpS = doc[\textcolor{stringliteral}{"total\_tmmc\_sweeps"}].GetDouble(); \textcolor{comment}{// Possibly in scientific notation}
+147     sys.totalTMMCSweeps = tmpS; \textcolor{comment}{// Convert}
+148 
+149     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"wala\_sweep\_size"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"wala\_sweep\_size\(\backslash\)" is not
+       specified in "}+filename);
+150     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"wala\_sweep\_size"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"wala\_sweep\_size\(\backslash\)" is
+       not a number in "}+filename);
+151     \textcolor{keywordtype}{double} tmpW = doc[\textcolor{stringliteral}{"wala\_sweep\_size"}].GetDouble(); \textcolor{comment}{// Possibly in scientific notation}
+152     sys.wlSweepSize = tmpW; \textcolor{comment}{// Convert}
+153 
+154     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"wala\_g"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"wala\_g\(\backslash\)" is not specified in "}+
+      filename);
+155     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"wala\_g"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"wala\_g\(\backslash\)" is not a number in "}+
+      filename);
+156     sys.wala\_g = doc[\textcolor{stringliteral}{"wala\_g"}].GetDouble();
+157 
+158     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"wala\_s"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"wala\_s\(\backslash\)" is not specified in "}+
+      filename);
+159     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"wala\_s"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"wala\_s\(\backslash\)" is not a number in "}+
+      filename);
+160     sys.wala\_s = doc[\textcolor{stringliteral}{"wala\_s"}].GetDouble();
+161 
+162     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"lnF\_start"})) \{
+163         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"lnF\_start"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"lnF\_start\(\backslash\)" is not a
+       number in "}+filename);
+164         sys.lnF\_start = doc[\textcolor{stringliteral}{"lnF\_start"}].GetDouble(); \textcolor{comment}{// Bounds are checked later}
+165     \}
+166 
+167     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"lnF\_end"})) \{
+168         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"lnF\_end"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"lnF\_end\(\backslash\)" is not a number
+       in "}+filename);
+169         sys.lnF\_end = doc[\textcolor{stringliteral}{"lnF\_end"}].GetDouble();
+170         \textcolor{keywordflow}{if} (sys.lnF\_end >= 1.0) \{
+171             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Terminal lnF factor for Wang-Landau must be < 1"});
+172             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+173         \}
+174         \textcolor{keywordflow}{if} (sys.lnF\_end <= 0.0) \{
+175             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Terminal lnF factor for Wang-Landau must be a positive number"});
+176             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+177         \}
+178     \}
+179     \textcolor{keywordflow}{if} (sys.lnF\_end >= sys.lnF\_start) \{
+180         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"lnF\_end must be < lnF\_start for Wang-Landau to proceed forward"});
+181         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+182     \}
+183 
+184     sys.restartFromWALA = \textcolor{keyword}{false};
+185     sys.restartFromWALAFile = \textcolor{stringliteral}{""};
+186     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"restart\_from\_wala\_lnPI"})) \{
+187         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"restart\_from\_wala\_lnPI"}].IsString()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"
+      restart\_from\_wala\_lnPI\(\backslash\)" filename is not a string in "}+filename);
+188         sys.restartFromWALAFile = doc[\textcolor{stringliteral}{"restart\_from\_wala\_lnPI"}].GetString();
+189         \textcolor{keywordflow}{if} (sys.restartFromWALAFile != \textcolor{stringliteral}{""}) \{
+190             sys.restartFromWALA = \textcolor{keyword}{true};
 191         \}
 192     \}
 193 
-194     \textcolor{comment}{// number of times the TMMC C matrix has to be traversed during the WALA --> TMMC crossover}
-195     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"num\_crossover\_visits"})) \{
-196         assert(doc[\textcolor{stringliteral}{"num\_crossover\_visits"}].IsNumber());
-197         sys.nCrossoverVisits = doc[\textcolor{stringliteral}{"num\_crossover\_visits"}].GetDouble(); \textcolor{comment}{// convert}
-198         \textcolor{keywordflow}{if} (sys.nCrossoverVisits < 1) \{
-199             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Must allow the collection matrix to be traversed at least once in the crossover
+194     \textcolor{comment}{// Restarting from TMMC overrides WL by skipping that portion altogether}
+195     sys.restartFromTMMC = \textcolor{keyword}{false};
+196     sys.restartFromTMMCFile = \textcolor{stringliteral}{""};
+197     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"restart\_from\_tmmc\_C"})) \{
+198         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"restart\_from\_tmmc\_C"}].IsString()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"
+      restart\_from\_tmmc\_C\(\backslash\)" filename is not a string in "}+filename);
+199         sys.restartFromTMMCFile = doc[\textcolor{stringliteral}{"restart\_from\_tmmc\_C"}].GetString();
+200         \textcolor{keywordflow}{if} (sys.restartFromTMMCFile != \textcolor{stringliteral}{""}) \{
+201             sys.restartFromTMMC = \textcolor{keyword}{true};
+202         \}
+203     \}
+204 
+205     \textcolor{comment}{// Number of times the TMMC C matrix has to be traversed during the WALA --> TMMC crossover}
+206     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"num\_crossover\_visits"})) \{
+207         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"num\_crossover\_visits"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"
+      num\_crossover\_visits\(\backslash\)" is not a number in "}+filename);
+208         sys.nCrossoverVisits = doc[\textcolor{stringliteral}{"num\_crossover\_visits"}].GetDouble(); \textcolor{comment}{// convert}
+209         \textcolor{keywordflow}{if} (sys.nCrossoverVisits < 1) \{
+210             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Must allow the collection matrix to be traversed at least once in the crossover
        from Wang-Landau to TMMC"});
-200             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-201         \}
-202     \}
-203 
-204     \hyperlink{input_8cpp_a4541b66a5d6bfc7c4d90c3cf5c58ba27}{setMoves} (sys, doc, usedMovesEq, usedMovesPr);
-205     \hyperlink{input_8cpp_afcd470506b012754a93b2012b65e3fc4}{setPairPotentials} (sys, doc);
-206 
-207     \hyperlink{input_8cpp_aa89df4b08049cfd9bdd875d78591ba5b}{checkBounds} (sys);
-208     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"System from "}+filename+\textcolor{stringliteral}{" passed bounds checks"});
-209 
-210     \hyperlink{input_8cpp_a76e6e0f38bf684278b7bebb317b71e5b}{setSystemBarriers} (sys, doc);
-211     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Initialized barriers from "}+filename);
-212 
-213     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Successfully read valid parameters from "}+filename);
-214     \textcolor{keywordflow}{return} sys;
-215 \}
+211             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+212         \}
+213     \}
+214 
+215     \hyperlink{input_8cpp_a4541b66a5d6bfc7c4d90c3cf5c58ba27}{setMoves} (sys, doc, usedMovesEq, usedMovesPr);
+216     \hyperlink{input_8cpp_afcd470506b012754a93b2012b65e3fc4}{setPairPotentials} (sys, doc);
+217 
+218     \hyperlink{input_8cpp_aa89df4b08049cfd9bdd875d78591ba5b}{checkBounds} (sys);
+219     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"System from "}+filename+\textcolor{stringliteral}{" passed bounds checks"});
+220 
+221     \hyperlink{input_8cpp_ab6dc74f7fbe4f517a72a21da3b795dfa}{setBarriers} (sys, doc);
+222 
+223     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Successfully read valid parameters from "}+filename);
+224     \textcolor{keywordflow}{return} sys;
+225 \}
+\end{DoxyCode}
+\hypertarget{input_8cpp_ab6dc74f7fbe4f517a72a21da3b795dfa}{\index{input.\-cpp@{input.\-cpp}!set\-Barriers@{set\-Barriers}}
+\index{set\-Barriers@{set\-Barriers}!input.cpp@{input.\-cpp}}
+\subsubsection[{set\-Barriers}]{\setlength{\rightskip}{0pt plus 5cm}void set\-Barriers (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\-System} \&}]{sys, }
+\item[{const rapidjson\-::\-Document \&}]{doc}
+\end{DoxyParamCaption}
+)}}\label{input_8cpp_ab6dc74f7fbe4f517a72a21da3b795dfa}
+
+
+Initialize the barriers in a system by parsing the input document. 
+
+Clears any existing information and will overwrite with information from doc.
+
+\mbox{[}in, out\mbox{]} sys System to initialize with barriers  \mbox{[}in\mbox{]} doc Input J\-S\-O\-N document 
+
+Definition at line 616 of file input.\-cpp.
+
+
+
+References sim\-System\-::box(), sim\-System\-::get\-Total\-M(), sim\-System\-::n\-Species(), send\-Msg(), sim\-System\-::species\-Barriers, and custom\-Exception\-::what().
+
+
+
+Referenced by initialize(), and set\-Config().
+
+
+\begin{DoxyCode}
+616                                                                 \{
+617     \textcolor{keywordtype}{int} Mtot = sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}();
+618 
+619     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"barriers"})) \{
+620         \textcolor{comment}{// Clear any existing barriers}
+621         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+622             sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].clearAll();
+623         \}
+624 
+625         \textcolor{comment}{// Iterate over all barriers specified for this species}
+626         \textcolor{keywordflow}{for} (rapidjson::Value::ConstMemberIterator itr = doc[\textcolor{stringliteral}{"barriers"}].MemberBegin(); itr != doc[\textcolor{stringliteral}{"
+      barriers"}].MemberEnd(); ++itr) \{
+627             \textcolor{comment}{// Get barrier type and name}
+628             std::string barrName = itr->name.GetString();
+629             \textcolor{keywordflow}{if} (!itr->value.IsObject()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Barrier "}+barrName+\textcolor{stringliteral}{" is not
+       in a valid json document"});
+630             \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"type"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Barrier "}+barrName+\textcolor{stringliteral}{"
+       does not specify a type"});
+631             \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"type"}].IsString()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Barrier "}+barrName+\textcolor{stringliteral}{"
+       type is not a string"});
+632             std::string barrType = itr->value[\textcolor{stringliteral}{"type"}].GetString();
+633 
+634             \textcolor{comment}{// Get the species this barrier interacts with}
+635             \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"species"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Barrier "}+barrName
+      +\textcolor{stringliteral}{" does not specify a species to interact with"});
+636             \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"species"}].IsInt()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Barrier "}+barrName+\textcolor{stringliteral}{"
+       species is not an integer"});
+637             \textcolor{keyword}{const} \textcolor{keywordtype}{int} species = itr->value[\textcolor{stringliteral}{"species"}].GetInt();
+638             \textcolor{keywordflow}{if} (species < 1 || species > sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Barrier "}+barrName+\textcolor{stringliteral}{" species is not valid for this system"});
+639 
+640             \textcolor{comment}{// Depending on barrier type, read parameters and initialize}
+641             \textcolor{keywordflow}{if} (barrType == \textcolor{stringliteral}{"hard\_wall\_z"}) \{
+642                 \textcolor{comment}{// Expects lb, ub, sigma}
+643                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"lb"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does not
+       contain \(\backslash\)"lb\(\backslash\)" parameter"});
+644                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"ub"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does not
+       contain \(\backslash\)"ub\(\backslash\)" parameter"});
+645                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"sigma"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"sigma\(\backslash\)" parameter"});
+646 
+647                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"lb"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"lb\(\backslash\)" for "}+
+      barrName+\textcolor{stringliteral}{" is not a number"});
+648                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"ub"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"ub\(\backslash\)" for "}+
+      barrName+\textcolor{stringliteral}{" is not a number"});
+649                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"sigma"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"sigma\(\backslash\)" for "}
+      +barrName+\textcolor{stringliteral}{" is not a number"});
+650 
+651                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} lbBarr = itr->value[\textcolor{stringliteral}{"lb"}].GetDouble();
+652                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} ubBarr = itr->value[\textcolor{stringliteral}{"ub"}].GetDouble();
+653                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} sigmaBarr = itr->value[\textcolor{stringliteral}{"sigma"}].GetDouble();
+654 
+655                 \textcolor{keywordflow}{try} \{
+656                     sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[species-1].addHardWallZ (lbBarr, ubBarr, sigmaBarr, 
+      Mtot);
+657                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+658                     \textcolor{keyword}{const} std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+659                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot initialize barrier "}+barrName+\textcolor{stringliteral}{" : "}+msg);
+660                 \}
+661             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (barrType == \textcolor{stringliteral}{"square\_well\_wall\_z"}) \{
+662                 \textcolor{comment}{// Expect lb, ub, sigma, range, epsilon}
+663                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"lb"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does not
+       contain \(\backslash\)"lb\(\backslash\)" parameter"});
+664                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"ub"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does not
+       contain \(\backslash\)"ub\(\backslash\)" parameter"});
+665                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"sigma"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"sigma\(\backslash\)" parameter"});
+666                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"range"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"range\(\backslash\)" parameter"});
+667                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"epsilon"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"epsilon\(\backslash\)" parameter"});
+668 
+669                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"lb"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"lb\(\backslash\)" for "}+
+      barrName+\textcolor{stringliteral}{" is not a number"});
+670                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"ub"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"ub\(\backslash\)" for "}+
+      barrName+\textcolor{stringliteral}{" is not a number"});
+671                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"sigma"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"sigma\(\backslash\)" for "}
+      +barrName+\textcolor{stringliteral}{" is not a number"});
+672                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"range"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"range\(\backslash\)" for "}
+      +barrName+\textcolor{stringliteral}{" is not a number"});
+673                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"epsilon"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"epsilon\(\backslash\)"
+       for "}+barrName+\textcolor{stringliteral}{" is not a number"});
+674 
+675                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} lbBarr = itr->value[\textcolor{stringliteral}{"lb"}].GetDouble();
+676                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} ubBarr = itr->value[\textcolor{stringliteral}{"ub"}].GetDouble();
+677                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} sigmaBarr = itr->value[\textcolor{stringliteral}{"sigma"}].GetDouble();
+678                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} rangeBarr = itr->value[\textcolor{stringliteral}{"range"}].GetDouble();
+679                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} epsBarr = itr->value[\textcolor{stringliteral}{"epsilon"}].GetDouble();
+680 
+681                 \textcolor{keywordflow}{try} \{
+682                     sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[species-1].addSquareWellWallZ (lbBarr, ubBarr, 
+      sigmaBarr, rangeBarr, epsBarr, Mtot);
+683                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+684                     \textcolor{keyword}{const} std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+685                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot initialize barrier "}+barrName+\textcolor{stringliteral}{" : "}+msg);
+686                 \}
+687             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (barrType == \textcolor{stringliteral}{"cylinder\_z"}) \{
+688                 \textcolor{comment}{// Expect x, y, radius, width, sigma, epsilon}
+689                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"x"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does not
+       contain \(\backslash\)"x\(\backslash\)" parameter"});
+690                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"y"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does not
+       contain \(\backslash\)"y\(\backslash\)" parameter"});
+691                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"radius"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"radius\(\backslash\)" parameter"});
+692                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"width"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"width\(\backslash\)" parameter"});
+693                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"sigma"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"sigma\(\backslash\)" parameter"});
+694                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"epsilon"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"epsilon\(\backslash\)" parameter"});
+695 
+696                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"x"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"x\(\backslash\)" for "}+
+      barrName+\textcolor{stringliteral}{" is not a number"});
+697                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"y"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"y\(\backslash\)" for "}+
+      barrName+\textcolor{stringliteral}{" is not a number"});
+698                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"radius"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"radius\(\backslash\)" for
+       "}+barrName+\textcolor{stringliteral}{" is not a number"});
+699                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"width"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"width\(\backslash\)" for "}
+      +barrName+\textcolor{stringliteral}{" is not a number"});
+700                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"sigma"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"sigma\(\backslash\)" for "}
+      +barrName+\textcolor{stringliteral}{" is not a number"});
+701                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"epsilon"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"epsilon\(\backslash\)"
+       for "}+barrName+\textcolor{stringliteral}{" is not a number"});
+702 
+703                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} xBarr = itr->value[\textcolor{stringliteral}{"x"}].GetDouble();
+704                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} yBarr = itr->value[\textcolor{stringliteral}{"y"}].GetDouble();
+705                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} radiusBarr = itr->value[\textcolor{stringliteral}{"radius"}].GetDouble();
+706                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} widthBarr = itr->value[\textcolor{stringliteral}{"width"}].GetDouble();
+707                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} sigmaBarr = itr->value[\textcolor{stringliteral}{"sigma"}].GetDouble();
+708                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} epsBarr = itr->value[\textcolor{stringliteral}{"epsilon"}].GetDouble();
+709 
+710                 \textcolor{keywordflow}{try} \{
+711                     sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[species-1].addCylinderZ (xBarr, yBarr, radiusBarr, 
+      widthBarr, sigmaBarr, epsBarr, Mtot);
+712                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+713                     \textcolor{keyword}{const} std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+714                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot initialize barrier "}+barrName+\textcolor{stringliteral}{" : "}+msg);
+715                 \}
+716             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (barrType == \textcolor{stringliteral}{"right\_triangle\_xz"}) \{
+717                 \textcolor{comment}{// Expect parameters width, theta, lamW, epsilon, sigma, sep, offset, zbase, top}
+718                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"width"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"width\(\backslash\)" parameter"});
+719                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"theta"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"theta\(\backslash\)" parameter"});
+720                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"lamW"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"lamW\(\backslash\)" parameter"});
+721                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"epsilon"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"epsilon\(\backslash\)" parameter"});
+722                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"sigma"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"sigma\(\backslash\)" parameter"});
+723                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"sep"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does not
+       contain \(\backslash\)"sep\(\backslash\)" parameter"});
+724                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"offset"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"offset\(\backslash\)" parameter"});
+725                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"zbase"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does
+       not contain \(\backslash\)"zbase\(\backslash\)" parameter"});
+726                 \textcolor{keywordflow}{if} (!itr->value.HasMember(\textcolor{stringliteral}{"top"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (barrName+\textcolor{stringliteral}{" does not
+       contain \(\backslash\)"top\(\backslash\)" parameter"});
+727 
+728                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"width"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"width\(\backslash\)" for "}
+      +barrName+\textcolor{stringliteral}{" is not a number"});
+729                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"theta"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"theta\(\backslash\)" for "}
+      +barrName+\textcolor{stringliteral}{" is not a number"});
+730                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"lamW"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"lamW\(\backslash\)" for "}+
+      barrName+\textcolor{stringliteral}{" is not a number"});
+731                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"epsilon"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"epsilon\(\backslash\)"
+       for "}+barrName+\textcolor{stringliteral}{" is not a number"});
+732                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"sigma"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"sigma\(\backslash\)" for "}
+      +barrName+\textcolor{stringliteral}{" is not a number"});
+733                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"sep"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"sep\(\backslash\)" for "}+
+      barrName+\textcolor{stringliteral}{" is not a number"});
+734                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"offset"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"offset\(\backslash\)" for
+       "}+barrName+\textcolor{stringliteral}{" is not a number"});
+735                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"zbase"}].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"zbase\(\backslash\)" for "}
+      +barrName+\textcolor{stringliteral}{" is not a number"});
+736                 \textcolor{keywordflow}{if} (!itr->value[\textcolor{stringliteral}{"top"}].IsBool()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"\(\backslash\)"top\(\backslash\)" for "}+
+      barrName+\textcolor{stringliteral}{" is not a boolean"});
+737 
+738                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} widthBarr = itr->value[\textcolor{stringliteral}{"width"}].GetDouble();
+739                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} thetaBarr = itr->value[\textcolor{stringliteral}{"theta"}].GetDouble();
+740                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} lamwBarr = itr->value[\textcolor{stringliteral}{"lamW"}].GetDouble();
+741                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} epsBarr = itr->value[\textcolor{stringliteral}{"epsilon"}].GetDouble();
+742                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} sigmaBarr = itr->value[\textcolor{stringliteral}{"sigma"}].GetDouble();
+743                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} sepBarr = itr->value[\textcolor{stringliteral}{"sep"}].GetDouble();
+744                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} offsetBarr = itr->value[\textcolor{stringliteral}{"offset"}].GetDouble();
+745                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} zbaseBarr = itr->value[\textcolor{stringliteral}{"zbase"}].GetDouble();
+746                 \textcolor{keyword}{const} \textcolor{keywordtype}{double} topBarr = itr->value[\textcolor{stringliteral}{"top"}].GetBool();
+747 
+748                 \textcolor{keywordflow}{try} \{
+749                     sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[species-1].addRightTriangleXZ (widthBarr, thetaBarr,
+       lamwBarr, epsBarr, sigmaBarr, sepBarr, offsetBarr, sys.\hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}(), zbaseBarr, topBarr, Mtot);
+750                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+751                     \textcolor{keyword}{const} std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+752                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot initialize barrier "}+barrName+\textcolor{stringliteral}{" : "}+msg);
+753                 \}
+754             \} \textcolor{keywordflow}{else} \{
+755                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unrecognized barrier type "}+barrType+\textcolor{stringliteral}{" from barrier 
+      "}+barrName);
+756             \}
+757         \}
+758         \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Initialized barriers"});
+759     \} \textcolor{keywordflow}{else} \{
+760         \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"No barriers to initialize"});
+761     \}
+762 \}
 \end{DoxyCode}
 \hypertarget{input_8cpp_abb58279d5b9992aef3dcd304a3963954}{\index{input.\-cpp@{input.\-cpp}!set\-Config@{set\-Config}}
 \index{set\-Config@{set\-Config}!input.cpp@{input.\-cpp}}
@@ -294,7 +581,7 @@ References sim\-System\-::add\-K\-E\-Correction(), check\-Bounds(), sim\-System\
 
 Setup a system's initial configuration as necessary. 
 
-
+Will empty a system if there are currently any particles present and overwrite with new information.
 \begin{DoxyEnumerate}
 \item If \char`\"{}restart\-\_\-file\char`\"{} in input json file, read initial config from there.
 \item In not, randomly generate initial configuration.
@@ -309,185 +596,178 @@ Setup a system's initial configuration as necessary.
 \end{DoxyParams}
 
 
-Definition at line 404 of file input.\-cpp.
+Definition at line 457 of file input.\-cpp.
 
 
 
-References moves\-::add\-Insert(), sim\-System\-::add\-K\-E\-Correction(), sim\-System\-::box(), sim\-System\-::get\-Total\-M(), sim\-System\-::n\-Species(), sim\-System\-::num\-Species, num\-To\-Str(), parse\-Json(), sim\-System\-::print\-Snapshot(), sim\-System\-::read\-Config(), send\-Err(), send\-Msg(), set\-Pair\-Potentials(), set\-System\-Barriers(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, sim\-System\-::toggle\-K\-E(), sim\-System\-::tot\-N\-Min(), and custom\-Exception\-::what().
+References moves\-::add\-Insert(), sim\-System\-::add\-K\-E\-Correction(), sim\-System\-::box(), sim\-System\-::get\-Max\-Order(), sim\-System\-::get\-Total\-M(), sim\-System\-::n\-Species(), sim\-System\-::num\-Species, num\-To\-Str(), parse\-Json(), sim\-System\-::print\-Snapshot(), sim\-System\-::read\-Config(), send\-Err(), send\-Msg(), set\-Barriers(), set\-Pair\-Potentials(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, sim\-System\-::toggle\-K\-E(), sim\-System\-::tot\-N\-Min(), and custom\-Exception\-::what().
 
 
 \begin{DoxyCode}
-404                                                           \{
-405     rapidjson::Document doc;
-406     \hyperlink{utilities_8cpp_a3f494918ff3c252de4914c9905be04e7}{parseJson} (filename, doc);
-407 
-408     std::string restart\_file = \textcolor{stringliteral}{""};
-409     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"restart\_file"})) \{
-410         assert(doc[\textcolor{stringliteral}{"restart\_file"}].IsString());
-411         restart\_file = doc[\textcolor{stringliteral}{"restart\_file"}].GetString();
-412     \}
-413 
-414     std::vector < double > sysBox = sys.\hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}();
-415 
-416     \textcolor{keywordtype}{double} duh = 10.0;
-417     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"delta\_u\_hist"})) \{
-418         assert(doc[\textcolor{stringliteral}{"delta\_u\_hist"}].IsNumber());
-419         duh = doc[\textcolor{stringliteral}{"delta\_u\_hist"}].GetDouble();
-420     \}
-421 
-422     \textcolor{keywordtype}{int} max\_order = 2;
-423     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"max\_order"})) \{
-424         assert(doc[\textcolor{stringliteral}{"max\_order"}].IsNumber());
-425         max\_order = doc[\textcolor{stringliteral}{"max\_order"}].GetInt();
-426     \}
-427 
-428     \textcolor{keywordtype}{bool} use\_ke = sys.\hyperlink{classsim_system_a09c4ea670168c9f1d549d2a5120eb13c}{addKECorrection}();
-429     \textcolor{keywordtype}{int} Mtot = sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}();
-430 
-431     std::vector < double > sysMu (doc[\textcolor{stringliteral}{"mu"}].Size(), 0);
-432     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"mu"}].Size(); ++i) \{
-433         sysMu[i] = doc[\textcolor{stringliteral}{"mu"}][i].GetDouble();
-434     \}
-435     std::vector < int > sysMax (doc[\textcolor{stringliteral}{"max\_N"}].Size(), 0);
-436     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"max\_N"}].Size(); ++i) \{
-437         sysMax[i] = doc[\textcolor{stringliteral}{"max\_N"}][i].GetInt();
-438     \}
-439     std::vector < int > sysMin (doc[\textcolor{stringliteral}{"min\_N"}].Size(), 0);
-440     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"min\_N"}].Size(); ++i) \{
-441         sysMin[i] = doc[\textcolor{stringliteral}{"min\_N"}][i].GetInt();
-442     \}
-443 
-444     \textcolor{comment}{// Read from restart file if specified}
-445     \textcolor{keywordflow}{if} (restart\_file != \textcolor{stringliteral}{""}) \{
-446         \textcolor{keywordflow}{try} \{
-447             sys.\hyperlink{classsim_system_a3161d95bbb800d5d95a732ac5fc32b95}{readConfig}(restart\_file);
-448         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-449             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-450         \}
-451     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (restart\_file == \textcolor{stringliteral}{""} && sys.\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() > 0) \{
-452         \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Automatically generating the initial configuration"});
-453 
-454         \textcolor{comment}{// have to generate initial configuration manually - start with mu = INF}
-455         std::vector < double > initMu (doc[\textcolor{stringliteral}{"num\_species"}].GetInt(), 1.0e2);
-456 
-457         \hyperlink{classsim_system}{simSystem} initSys (doc[\textcolor{stringliteral}{"num\_species"}].GetInt(), doc[\textcolor{stringliteral}{"beta"}].GetDouble()/100.0, sysBox, 
-      initMu, sysMax, sysMin, Mtot, duh, max\_order); \textcolor{comment}{// beta =  1/T, so low beta to have high T}
-458         \textcolor{keywordflow}{if} (use\_ke) \{
-459             initSys.toggleKE();
-460             \textcolor{keywordflow}{if} (initSys.addKECorrection() == \textcolor{keyword}{false}) \{
-461                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to set KE flag"});
-462             \}
-463         \}
-464 
-465         \textcolor{comment}{// add the same potentials}
-466         \hyperlink{input_8cpp_afcd470506b012754a93b2012b65e3fc4}{setPairPotentials} (initSys, doc);
-467         \hyperlink{input_8cpp_a76e6e0f38bf684278b7bebb317b71e5b}{setSystemBarriers} (initSys, doc);
-468 
-469         std::vector < int > initialization\_order (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0), check\_init (sys.
+457                                                           \{
+458     rapidjson::Document doc;
+459     \hyperlink{utilities_8cpp_a3f494918ff3c252de4914c9905be04e7}{parseJson} (filename, doc);
+460 
+461     \textcolor{comment}{// Get a few things from file not easily accessible from system object}
+462     std::string restart\_file = \textcolor{stringliteral}{""};
+463     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"restart\_file"})) \{
+464         restart\_file = doc[\textcolor{stringliteral}{"restart\_file"}].GetString();
+465     \}
+466 
+467     std::vector < int > sysMax (doc[\textcolor{stringliteral}{"max\_N"}].Size(), 0);
+468     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"max\_N"}].Size(); ++i) \{
+469         sysMax[i] = doc[\textcolor{stringliteral}{"max\_N"}][i].GetInt();
+470     \}
+471     std::vector < int > sysMin (doc[\textcolor{stringliteral}{"min\_N"}].Size(), 0);
+472     \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"min\_N"}].Size(); ++i) \{
+473         sysMin[i] = doc[\textcolor{stringliteral}{"min\_N"}][i].GetInt();
+474     \}
+475 
+476     \textcolor{comment}{// Rest from existing system}
+477     \textcolor{keywordtype}{int} Mtot = sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}();
+478     \textcolor{keywordtype}{int} maxOrder = sys.\hyperlink{classsim_system_afe08187d318113c33bda890c69570c36}{getMaxOrder}();
+479     \textcolor{keywordtype}{bool} useKe = sys.\hyperlink{classsim_system_a09c4ea670168c9f1d549d2a5120eb13c}{addKECorrection}();
+480     \textcolor{keywordtype}{double} duh = 10.0;
+481     std::vector < double > sysBox = sys.\hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}();
+482 
+483     \textcolor{comment}{// Read from restart file if specified}
+484     \textcolor{keywordflow}{if} (restart\_file != \textcolor{stringliteral}{""}) \{
+485         \textcolor{keywordflow}{try} \{
+486             sys.\hyperlink{classsim_system_a3161d95bbb800d5d95a732ac5fc32b95}{readConfig}(restart\_file);
+487         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+488             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
+489         \}
+490     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (restart\_file == \textcolor{stringliteral}{""} && sys.\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() > 0) \{
+491         \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Automatically generating the initial configuration"});
+492 
+493         \textcolor{comment}{// Have to generate initial configuration manually - start with mu = INF}
+494         std::vector < double > initMu (doc[\textcolor{stringliteral}{"num\_species"}].GetInt(), 1.0e2);
+495 
+496         \hyperlink{classsim_system}{simSystem} initSys (doc[\textcolor{stringliteral}{"num\_species"}].GetInt(), doc[\textcolor{stringliteral}{"beta"}].GetDouble()/100.0, sysBox, 
+      initMu, sysMax, sysMin, Mtot, duh, maxOrder); \textcolor{comment}{// beta =  1/T, so low beta to have high T}
+497         \textcolor{keywordflow}{if} (useKe) \{
+498             initSys.toggleKE();
+499             \textcolor{keywordflow}{if} (initSys.addKECorrection() == \textcolor{keyword}{false}) \{
+500                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to set KE flag"});
+501             \}
+502         \}
+503 
+504         \textcolor{comment}{// Add the same potentials}
+505         \hyperlink{input_8cpp_afcd470506b012754a93b2012b65e3fc4}{setPairPotentials} (initSys, doc);
+506         \hyperlink{input_8cpp_ab6dc74f7fbe4f517a72a21da3b795dfa}{setBarriers} (initSys, doc);
+507 
+508         std::vector < int > initialization\_order (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0), check\_init (sys.
       \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0);
-470         std::vector < double > init\_frac (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 1.0);
-471         \textcolor{keywordtype}{double} sum = 0.0;
-472         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-473             initialization\_order[i] = i;
-474             \textcolor{keywordflow}{if} (i > 0) init\_frac[i] = 0.0;
-475             sum += init\_frac[i];
-476         \}
-477         \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"init\_order"})) \{
-478             assert(doc[\textcolor{stringliteral}{"init\_order"}].IsArray());
-479             assert(doc[\textcolor{stringliteral}{"init\_order"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
-480 
-481             \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"init\_order"}].Size(); ++i) \{
-482                 assert(doc[\textcolor{stringliteral}{"init\_order"}][i].IsInt());
-483                 initialization\_order[i] = doc[\textcolor{stringliteral}{"init\_order"}][i].GetInt();
-484                 \textcolor{keywordflow}{if} (initialization\_order[i] < 0 || initialization\_order[i] >= sys.
-      \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}()) \{
-485                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Order of initialization goes out of bounds, should include 0 <= i <
-       nSpec"});
-486                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-487                 \}
-488                 \textcolor{keywordflow}{if} (check\_init[initialization\_order[i]] != 0) \{
-489                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Order of initialization repeats itself"});
-490                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-491                 \} \textcolor{keywordflow}{else} \{
-492                     check\_init[initialization\_order[i]] = 1;
-493                 \}
-494             \}
-495         \}
-496         \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"init\_frac"})) \{
-497             assert(doc[\textcolor{stringliteral}{"init\_frac"}].IsArray());
-498             assert(doc[\textcolor{stringliteral}{"init\_frac"}].Size() == doc[\textcolor{stringliteral}{"num\_species"}].GetInt());
-499             sum = 0.0;
-500             \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"init\_frac"}].Size(); ++i) \{
-501                 assert(doc[\textcolor{stringliteral}{"init\_frac"}][i].IsNumber());
-502                 init\_frac[i] = doc[\textcolor{stringliteral}{"init\_frac"}][i].GetDouble();
-503                 \textcolor{keywordflow}{if} (init\_frac[i] < 0 || init\_frac[i] >= 1.0) \{
-504                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Initialization fraction out of bounds"});
-505                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-506                 \}
-507                 sum += init\_frac[i];
-508             \}
-509         \}
-510         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-511             init\_frac[i] /= sum;
-512         \}
-513 
-514         \textcolor{comment}{// iteratively add each individual species, assume we want an equimolar mixture to start from}
-515         \textcolor{keywordtype}{int} added = 0;
-516         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} idx = 0; idx < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++idx) \{
-517             \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = initialization\_order[idx];
-518             \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Initializing species "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i)+\textcolor{stringliteral}{" configurations"});
+509         std::vector < double > init\_frac (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 1.0);
+510         \textcolor{keywordtype}{double} sum = 0.0;
+511         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+512             initialization\_order[i] = i;
+513             \textcolor{keywordflow}{if} (i > 0) init\_frac[i] = 0.0;
+514             sum += init\_frac[i];
+515         \}
+516         \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"init\_order"})) \{
+517             \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"init\_order"}].IsArray()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"init\_order\(\backslash\)" is not
+       an array in "}+filename);
+518             \textcolor{keywordflow}{if} (doc[\textcolor{stringliteral}{"init\_order"}].Size() != doc[\textcolor{stringliteral}{"num\_species"}].GetInt()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"init\_order\(\backslash\)" not specified for each species in "}+filename);
 519 
-520             \textcolor{comment}{// insert this species i}
-521             \hyperlink{classmoves}{moves} initMove (initSys.getTotalM());
-522             initMove.\hyperlink{classmoves_ab4583b3075f51cce55c3aeb84a58430d}{addInsert}(i, 1.0);
-523 
-524             \textcolor{comment}{// also add displacment moves for all species present}
-525             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j <= idx; ++j) \{
-526                 \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Added translation moves for initialization of species "}+
+520             \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"init\_order"}].Size(); ++i) \{
+521                 \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"init\_order"}][i].IsInt()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"init\_order\(\backslash\)" is
+       not an integer for species "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{" in "}+filename);
+522                 initialization\_order[i] = doc[\textcolor{stringliteral}{"init\_order"}][i].GetInt();
+523                 \textcolor{keywordflow}{if} (initialization\_order[i] < 0 || initialization\_order[i] >= sys.
+      \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}()) \{
+524                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Order of initialization goes out of bounds, should include 0 <= i <
+       nSpec"});
+525                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+526                 \}
+527                 \textcolor{keywordflow}{if} (check\_init[initialization\_order[i]] != 0) \{
+528                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Order of initialization repeats itself"});
+529                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+530                 \} \textcolor{keywordflow}{else} \{
+531                     check\_init[initialization\_order[i]] = 1;
+532                 \}
+533             \}
+534         \}
+535         \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"init\_frac"})) \{
+536             \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"init\_frac"}].IsArray()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"init\_frac\(\backslash\)" is not an
+       array in "}+filename);
+537             \textcolor{keywordflow}{if} (doc[\textcolor{stringliteral}{"init\_frac"}].Size() != doc[\textcolor{stringliteral}{"num\_species"}].GetInt()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"init\_frac\(\backslash\)" not specified for each species in "}+filename);
+538 
+539             sum = 0.0;
+540             \textcolor{keywordflow}{for} (rapidjson::SizeType i = 0; i < doc[\textcolor{stringliteral}{"init\_frac"}].Size(); ++i) \{
+541                 \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"init\_frac"}][i].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"\(\backslash\)"init\_frac\(\backslash\)" is
+       not a number for species "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{" in "}+filename);
+542                 init\_frac[i] = doc[\textcolor{stringliteral}{"init\_frac"}][i].GetDouble();
+543                 \textcolor{keywordflow}{if} (init\_frac[i] < 0 || init\_frac[i] >= 1.0) \{
+544                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Initialization fraction out of bounds"});
+545                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+546                 \}
+547                 sum += init\_frac[i];
+548             \}
+549         \}
+550         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+551             init\_frac[i] /= sum;
+552         \}
+553 
+554         \textcolor{comment}{// Iteratively add each individual species, assume we want an equimolar mixture to start from}
+555         \textcolor{keywordtype}{int} added = 0;
+556         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} idx = 0; idx < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++idx) \{
+557             \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = initialization\_order[idx];
+558             \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Initializing species "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i)+\textcolor{stringliteral}{" configurations"});
+559 
+560             \textcolor{comment}{// Insert this species i}
+561             \hyperlink{classmoves}{moves} initMove (initSys.getTotalM());
+562             initMove.\hyperlink{classmoves_ab4583b3075f51cce55c3aeb84a58430d}{addInsert}(i, 1.0);
+563 
+564             \textcolor{comment}{// Also add translation moves for all species present}
+565             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j <= idx; ++j) \{
+566                 \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Added translation moves for initialization of species "}+
       \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(initialization\_order[j]));
-527                 initMove.addTranslate(initialization\_order[j], 2.0, 1.0, initSys.box());
-528             \}
-529 
-530             \textcolor{comment}{// now do simuation until within proper range}
-531             \textcolor{keywordtype}{int} targetNum = sys.\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}()*init\_frac[idx];
-532             \textcolor{keywordflow}{if} (idx == sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}() - 1) \{
-533                 \textcolor{comment}{// to account for integer rounding}
-534                 targetNum = sys.\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() - added;
-535             \}
-536             added += targetNum;
-537 
-538             \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Target number = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(targetNum)+\textcolor{stringliteral}{" for species "}+
+567                 initMove.addTranslate(initialization\_order[j], 2.0, 1.0, initSys.box());
+568             \}
+569 
+570             \textcolor{comment}{// Now do simuation until within proper range}
+571             \textcolor{keywordtype}{int} targetNum = sys.\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}()*init\_frac[idx];
+572             \textcolor{keywordflow}{if} (idx == sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}() - 1) \{
+573                 \textcolor{comment}{// To account for integer rounding}
+574                 targetNum = sys.\hyperlink{classsim_system_af10842e0eaa638373b8717c87b47e6bc}{totNMin}() - added;
+575             \}
+576             added += targetNum;
+577 
+578             \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Target number = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(targetNum)+\textcolor{stringliteral}{" for species "}+
       \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1));
-539             \textcolor{keywordtype}{int} tmpCounter = 0, statusPrint = 10e6;
-540             \textcolor{keywordflow}{while} (initSys.numSpecies[i] < targetNum) \{
-541                 \textcolor{keywordflow}{try} \{
-542                     initMove.makeMove(initSys);
-543                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-544                     std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-545                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Failed to create an initial configuration because "}+msg);
-546                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-547                 \}
-548                 tmpCounter++;
-549                 \textcolor{keywordflow}{if} (tmpCounter%statusPrint == 0) \{
-550                     tmpCounter = 0;
-551                     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Grew "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(initSys.numSpecies[i])+\textcolor{stringliteral}{" atoms of type "}+
+579             \textcolor{keywordtype}{int} tmpCounter = 0, statusPrint = 10e6;
+580             \textcolor{keywordflow}{while} (initSys.numSpecies[i] < targetNum) \{
+581                 \textcolor{keywordflow}{try} \{
+582                     initMove.makeMove(initSys);
+583                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+584                     std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+585                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Failed to create an initial configuration : "}+msg);
+586                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+587                 \}
+588                 tmpCounter++;
+589                 \textcolor{keywordflow}{if} (tmpCounter%statusPrint == 0) \{
+590                     tmpCounter = 0;
+591                     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Grew "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(initSys.numSpecies[i])+\textcolor{stringliteral}{" atoms of type "}+
       \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i)+\textcolor{stringliteral}{" so far"});
-552                 \}
-553             \}
-554         \}
-555 
-556         \textcolor{comment}{// print snapshot from Reading initial configuration}
-557         initSys.printSnapshot(\textcolor{stringliteral}{"auto-init.xyz"}, \textcolor{stringliteral}{"auto-generated initial configuration"});
-558 
-559         \textcolor{comment}{// read into sys}
-560         \textcolor{keywordflow}{try} \{
-561             sys.\hyperlink{classsim_system_a3161d95bbb800d5d95a732ac5fc32b95}{readConfig}(\textcolor{stringliteral}{"auto-init.xyz"});
-562         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-563             std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-564             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Failed to read auto-generated initialization file because "}+msg);
-565         \}
-566     \}
-567 \}
+592                 \}
+593             \}
+594         \}
+595 
+596         \textcolor{comment}{// Print snapshot from Reading initial configuration}
+597         initSys.printSnapshot(\textcolor{stringliteral}{"auto-init.xyz"}, \textcolor{stringliteral}{"auto-generated initial configuration"});
+598 
+599         \textcolor{comment}{// Read into sys}
+600         \textcolor{keywordflow}{try} \{
+601             sys.\hyperlink{classsim_system_a3161d95bbb800d5d95a732ac5fc32b95}{readConfig}(\textcolor{stringliteral}{"auto-init.xyz"});
+602         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+603             std::string msg = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+604             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Failed to read auto-generated initialization file : "}+msg);
+605         \}
+606     \}
+607 \}
 \end{DoxyCode}
 \hypertarget{input_8cpp_a4541b66a5d6bfc7c4d90c3cf5c58ba27}{\index{input.\-cpp@{input.\-cpp}!set\-Moves@{set\-Moves}}
 \index{set\-Moves@{set\-Moves}!input.cpp@{input.\-cpp}}
@@ -503,20 +783,22 @@ References moves\-::add\-Insert(), sim\-System\-::add\-K\-E\-Correction(), sim\-
 
 Assign the Monte Carlo moves based on the J\-S\-O\-N input file. 
 
+Uses same information to specify \char`\"{}production\char`\"{} and \char`\"{}equilibration\char`\"{} phases. Clears any existing information and will overwrite with information from doc.
+
 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em sys} & Simulation system that has been initialized \\
 \hline
-\mbox{\tt in}  & {\em doc} & J\-S\-O\-N document corresponding to input file  \mbox{[}in\mbox{]} used\-Moves\-Eq Pointer to move object that will be used during \char`\"{}equilibration\char`\"{} (W\-L)  \mbox{[}in\mbox{]} used\-Moves\-Pr Pointer to move object that will be used during \char`\"{}production\char`\"{} (T\-M\-M\-C) \\
+\mbox{\tt in}  & {\em doc} & J\-S\-O\-N document corresponding to input file  \mbox{[}in\mbox{]} used\-Moves\-Eq Pointer to move object that will be used during \char`\"{}equilibration\char`\"{} (W\-L + Crossover)  \mbox{[}in\mbox{]} used\-Moves\-Pr Pointer to move object that will be used during \char`\"{}production\char`\"{} (T\-M\-M\-C) \\
 \hline
 \end{DoxyParams}
 
 
-Definition at line 225 of file input.\-cpp.
+Definition at line 236 of file input.\-cpp.
 
 
 
-References moves\-::add\-Delete(), moves\-::add\-Insert(), moves\-::add\-Swap(), moves\-::add\-Translate(), sim\-System\-::box(), sim\-System\-::get\-Total\-M(), sim\-System\-::n\-Species(), num\-To\-Str(), send\-Err(), moves\-::set\-M(), and S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E.
+References moves\-::add\-Delete(), moves\-::add\-Insert(), moves\-::add\-Swap(), moves\-::add\-Translate(), sim\-System\-::box(), moves\-::clear\-All(), sim\-System\-::get\-Total\-M(), sim\-System\-::n\-Species(), num\-To\-Str(), send\-Err(), moves\-::set\-M(), and S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E.
 
 
 
@@ -524,126 +806,99 @@ Referenced by initialize().
 
 
 \begin{DoxyCode}
-225                                                                                                      \{
-226     std::vector < double > ref (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0);
-227     std::vector < std::vector < double > > probEqSwap (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), ref), probPrSwap (sys.
-      \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), ref);
-228     std::vector < double > probPrInsDel (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0), probPrDisp (sys.
-      \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0);
-229     std::vector < double > probEqInsDel (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0), probEqDisp (sys.
-      \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0);
-230     std::vector < double > maxPrD (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0), maxEqD (sys.
-      \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0);
-231     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-232         std::string dummy = \textcolor{stringliteral}{"prob\_pr\_ins\_del\_"} + std::to\_string(i+1);
-233         assert(doc.HasMember(dummy.c\_str()));
-234         assert(doc[dummy.c\_str()].IsNumber());
-235         probPrInsDel[i] = doc[dummy.c\_str()].GetDouble();
-236     \}
-237 
-238     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-239         std::string dummy = \textcolor{stringliteral}{"prob\_pr\_displace\_"} + std::to\_string(i+1);
-240         assert(doc.HasMember(dummy.c\_str()));
-241         assert(doc[dummy.c\_str()].IsNumber());
-242         probPrDisp[i] = doc[dummy.c\_str()].GetDouble();
-243         dummy = \textcolor{stringliteral}{"max\_pr\_displacement\_"} + std::to\_string(i+1);
-244         assert(doc.HasMember(dummy.c\_str()));
-245         assert(doc[dummy.c\_str()].IsNumber());
-246         maxPrD[i] = doc[dummy.c\_str()].GetDouble();
-247     \}
-248 
-249     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-250         std::string dummy = \textcolor{stringliteral}{"prob\_eq\_ins\_del\_"} + std::to\_string(i+1);
-251         assert(doc.HasMember(dummy.c\_str()));
-252         assert(doc[dummy.c\_str()].IsNumber());
-253         probEqInsDel[i] = doc[dummy.c\_str()].GetDouble();
-254     \}
-255 
+236                                                                                                      \{
+237     usedMovesEq->\hyperlink{classmoves_a3695f6a6d0128e2d0d76702f718accf8}{clearAll}();
+238     usedMovesPr->\hyperlink{classmoves_a3695f6a6d0128e2d0d76702f718accf8}{clearAll}();
+239 
+240     std::vector < double > ref (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0);
+241     std::vector < std::vector < double > > probPrSwap (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), ref);
+242     std::vector < double > probPrInsDel (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0), probPrDisp (sys.
+      \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0), maxPrD (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(), 0);
+243 
+244     \textcolor{keywordflow}{if} (!doc.HasMember(\textcolor{stringliteral}{"moves"})) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Input file does not have Monte Carlo
+       moves specified"});
+245     \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"moves"}].IsObject()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Input file does not have Monte
+       Carlo moves specified as correct JSON document"});
+246 
+247     \textcolor{comment}{// Insert/Delete moves}
+248     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+249         std::string dummy = \textcolor{stringliteral}{"ins\_del\_"} + \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1);
+250         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"moves"}].HasMember(dummy.c\_str())) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Input file does
+       not have insert/delete move specified for species "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1));
+251         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"moves"}][dummy.c\_str()].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Input file does
+       not correctly specify insert/delete move probability for species "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1));
+252         probPrInsDel[i] = doc[\textcolor{stringliteral}{"moves"}][dummy.c\_str()].GetDouble();
+253     \}
+254 
+255     \textcolor{comment}{// Translation moves}
 256     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-257         std::string dummy = \textcolor{stringliteral}{"prob\_eq\_displace\_"} + std::to\_string(i+1);
-258         assert(doc.HasMember(dummy.c\_str()));
-259         assert(doc[dummy.c\_str()].IsNumber());
-260         probEqDisp[i] = doc[dummy.c\_str()].GetDouble();
-261         dummy = \textcolor{stringliteral}{"max\_eq\_displacement\_"} + std::to\_string(i+1);
-262         assert(doc.HasMember(dummy.c\_str()));
-263         assert(doc[dummy.c\_str()].IsNumber());
-264         maxEqD[i] = doc[dummy.c\_str()].GetDouble();
-265     \}
-266 
-267     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-268         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i+1; j < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++j) \{
-269             std::string name1 = \textcolor{stringliteral}{"prob\_pr\_swap\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(j+1);
-270             std::string name2 = \textcolor{stringliteral}{"prob\_pr\_swap\_"}+std::to\_string(j+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(i+1);
-271             std::string moveName = \textcolor{stringliteral}{""};
-272             \textcolor{keywordtype}{bool} foundIJ = \textcolor{keyword}{false};
-273             \textcolor{keywordflow}{if} (doc.HasMember(name1.c\_str())) \{
-274                 moveName = name1;
-275                 foundIJ = \textcolor{keyword}{true};
-276             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && !foundIJ) \{
-277                 moveName = name2;
+257         std::string dummy = \textcolor{stringliteral}{"translate\_"} + \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1);
+258         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"moves"}].HasMember(dummy.c\_str())) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Input file does
+       not have translation move specified for species "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1));
+259         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"moves"}][dummy.c\_str()].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Input file does
+       not correctly specify translation move probability for species "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1));
+260         probPrDisp[i] = doc[\textcolor{stringliteral}{"moves"}][dummy.c\_str()].GetDouble();
+261 
+262         dummy = \textcolor{stringliteral}{"max\_translation\_"} + \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1);
+263         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"moves"}].HasMember(dummy.c\_str())) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Input file does
+       not have translation magnitude specified for species "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1));
+264         \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"moves"}][dummy.c\_str()].IsNumber()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Input file does
+       not correctly specify translation move magnitude for species "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1));
+265         maxPrD[i] = doc[\textcolor{stringliteral}{"moves"}][dummy.c\_str()].GetDouble();
+266     \}
+267 
+268     \textcolor{comment}{// Swap moves}
+269     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+270         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i+1; j < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++j) \{
+271             std::string name1 = \textcolor{stringliteral}{"swap\_"}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{"\_"}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1);
+272             std::string name2 = \textcolor{stringliteral}{"swap\_"}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{"\_"}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1);
+273             std::string moveName = \textcolor{stringliteral}{""};
+274             \textcolor{keywordtype}{bool} foundIJ = \textcolor{keyword}{false};
+275 
+276             \textcolor{keywordflow}{if} (doc[\textcolor{stringliteral}{"moves"}].HasMember(name1.c\_str())) \{
+277                 moveName = name1;
 278                 foundIJ = \textcolor{keyword}{true};
-279             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && foundIJ) \{
-280                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Input file doubly specifies production swap move probability for species
-       pair ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{")"});
-281                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-282             \} \textcolor{keywordflow}{else} \{
-283                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Input file does not specify production swap move probability for species
+279             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc[\textcolor{stringliteral}{"moves"}].HasMember(name2.c\_str()) && !foundIJ) \{
+280                 moveName = name2;
+281                 foundIJ = \textcolor{keyword}{true};
+282             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc[\textcolor{stringliteral}{"moves"}].HasMember(name2.c\_str()) && foundIJ) \{
+283                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Input file doubly specifies production swap move probability for species
        pair ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{")"});
 284                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-285             \}
-286             assert(doc[moveName.c\_str()].IsNumber());
-287             probPrSwap[i][j] = doc[moveName.c\_str()].GetDouble();
-288             probPrSwap[j][i] = doc[moveName.c\_str()].GetDouble();
-289         \}
-290     \}
-291 
-292     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-293         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i+1; j < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++j) \{
-294             std::string name1 = \textcolor{stringliteral}{"prob\_eq\_swap\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(j+1);
-295             std::string name2 = \textcolor{stringliteral}{"prob\_eq\_swap\_"}+std::to\_string(j+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(i+1);
-296             std::string moveName = \textcolor{stringliteral}{""};
-297             \textcolor{keywordtype}{bool} foundIJ = \textcolor{keyword}{false};
-298             \textcolor{keywordflow}{if} (doc.HasMember(name1.c\_str())) \{
-299                 moveName = name1;
-300                 foundIJ = \textcolor{keyword}{true};
-301             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && !foundIJ) \{
-302                 moveName = name2;
-303                 foundIJ = \textcolor{keyword}{true};
-304             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && foundIJ) \{
-305                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Input file doubly specifies equilibration swap move probability for species
+285             \} \textcolor{keywordflow}{else} \{
+286                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Input file does not specify production swap move probability for species
        pair ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{")"});
-306                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-307             \} \textcolor{keywordflow}{else} \{
-308                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Input file does not specify equilibration swap move probability for species
+287                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+288             \}
+289 
+290             \textcolor{keywordflow}{if} (!doc[\textcolor{stringliteral}{"moves"}][moveName.c\_str()].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Input file does not correctly specify swap move probability for species
        pair ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{")"});
-309                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-310             \}
-311             assert(doc[moveName.c\_str()].IsNumber());
-312             probEqSwap[i][j] = doc[moveName.c\_str()].GetDouble();
-313             probEqSwap[j][i] = doc[moveName.c\_str()].GetDouble();
-314         \}
-315     \}
-316 
-317     usedMovesEq->\hyperlink{classmoves_ab603c6ce829075e3232ff41a7d5e2aab}{setM}(sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}());
-318     usedMovesPr->\hyperlink{classmoves_ab603c6ce829075e3232ff41a7d5e2aab}{setM}(sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}());
-319     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-320         usedMovesEq->\hyperlink{classmoves_ab4583b3075f51cce55c3aeb84a58430d}{addInsert}(i, probEqInsDel[i]);
-321         usedMovesPr->\hyperlink{classmoves_ab4583b3075f51cce55c3aeb84a58430d}{addInsert}(i, probPrInsDel[i]);
-322 
-323         usedMovesEq->\hyperlink{classmoves_ac4307636570c4d4bc07c4cba3887005e}{addDelete}(i, probEqInsDel[i]);
-324         usedMovesPr->\hyperlink{classmoves_ac4307636570c4d4bc07c4cba3887005e}{addDelete}(i, probPrInsDel[i]);
-325 
-326         usedMovesEq->\hyperlink{classmoves_a91bb7969368fdbb66920a11d79fe7552}{addTranslate}(i, probEqDisp[i], maxEqD[i], sys.
+291             probPrSwap[i][j] = doc[\textcolor{stringliteral}{"moves"}][moveName.c\_str()].GetDouble();
+292             probPrSwap[j][i] = doc[\textcolor{stringliteral}{"moves"}][moveName.c\_str()].GetDouble();
+293         \}
+294     \}
+295 
+296     usedMovesEq->\hyperlink{classmoves_ab603c6ce829075e3232ff41a7d5e2aab}{setM}(sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}());
+297     usedMovesPr->\hyperlink{classmoves_ab603c6ce829075e3232ff41a7d5e2aab}{setM}(sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}());
+298     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+299         usedMovesEq->\hyperlink{classmoves_ab4583b3075f51cce55c3aeb84a58430d}{addInsert}(i, probPrInsDel[i]);
+300         usedMovesPr->\hyperlink{classmoves_ab4583b3075f51cce55c3aeb84a58430d}{addInsert}(i, probPrInsDel[i]);
+301 
+302         usedMovesEq->\hyperlink{classmoves_ac4307636570c4d4bc07c4cba3887005e}{addDelete}(i, probPrInsDel[i]);
+303         usedMovesPr->\hyperlink{classmoves_ac4307636570c4d4bc07c4cba3887005e}{addDelete}(i, probPrInsDel[i]);
+304 
+305         usedMovesEq->\hyperlink{classmoves_a91bb7969368fdbb66920a11d79fe7552}{addTranslate}(i, probPrDisp[i], maxPrD[i], sys.
       \hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}());
-327         usedMovesPr->\hyperlink{classmoves_a91bb7969368fdbb66920a11d79fe7552}{addTranslate}(i, probPrDisp[i], maxPrD[i], sys.
+306         usedMovesPr->\hyperlink{classmoves_a91bb7969368fdbb66920a11d79fe7552}{addTranslate}(i, probPrDisp[i], maxPrD[i], sys.
       \hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}());
-328 
-329         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i+1; j < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++j) \{
-330             usedMovesEq->\hyperlink{classmoves_a03cebfa2d8d1cecf253df573fdecc5d0}{addSwap}(i, j, probEqSwap[i][j]);
-331             usedMovesPr->\hyperlink{classmoves_a03cebfa2d8d1cecf253df573fdecc5d0}{addSwap}(i, j, probPrSwap[i][j]);
-332         \}
-333     \}
-334 \}
+307 
+308         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i+1; j < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++j) \{
+309             usedMovesEq->\hyperlink{classmoves_a03cebfa2d8d1cecf253df573fdecc5d0}{addSwap}(i, j, probPrSwap[i][j]);
+310             usedMovesPr->\hyperlink{classmoves_a03cebfa2d8d1cecf253df573fdecc5d0}{addSwap}(i, j, probPrSwap[i][j]);
+311         \}
+312     \}
+313 \}
 \end{DoxyCode}
 \hypertarget{input_8cpp_afcd470506b012754a93b2012b65e3fc4}{\index{input.\-cpp@{input.\-cpp}!set\-Pair\-Potentials@{set\-Pair\-Potentials}}
 \index{set\-Pair\-Potentials@{set\-Pair\-Potentials}!input.cpp@{input.\-cpp}}
@@ -657,6 +912,8 @@ Referenced by initialize().
 
 Assign the pair potentials based on the J\-S\-O\-N input file. 
 
+Overwrites any existing pair potential information with new settings from doc.
+
 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em sys} & Simulation system that has been initialized \\
@@ -666,11 +923,11 @@ Assign the pair potentials based on the J\-S\-O\-N input file.
 \end{DoxyParams}
 
 
-Definition at line 342 of file input.\-cpp.
+Definition at line 322 of file input.\-cpp.
 
 
 
-References sim\-System\-::add\-Potential(), sim\-System\-::n\-Species(), num\-To\-Str(), sim\-System\-::ppot, send\-Err(), and S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E.
+References sim\-System\-::add\-Potential(), sim\-System\-::n\-Species(), num\-To\-Str(), and sim\-System\-::ppot.
 
 
 
@@ -678,300 +935,202 @@ Referenced by initialize(), and set\-Config().
 
 
 \begin{DoxyCode}
-342                                                                       \{
-343     \textcolor{keywordtype}{int} Mtot = 1;
-344     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"num\_expanded\_states"})) \{
-345         Mtot = doc[\textcolor{stringliteral}{"num\_expanded\_states"}].GetInt();
-346     \}
-347 
-348     \textcolor{comment}{//std::vector < pairPotential* > ppotArray (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());}
-349     std::vector < std::string > ppotType (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}()*(sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}()-1)/2 + sys.
+322                                                                       \{
+323     \textcolor{keywordtype}{int} Mtot = 1;
+324     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"num\_expanded\_states"})) \{
+325         Mtot = doc[\textcolor{stringliteral}{"num\_expanded\_states"}].GetInt();
+326     \}
+327 
+328     std::vector < std::string > ppotType (sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}()*(sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}()-1)/2 + sys.
       \hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}());
-350     \textcolor{keywordtype}{int} ppotTypeIndex = 0;
-351     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-352         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i; j < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++j) \{
-353             std::string name1 = \textcolor{stringliteral}{"ppot\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(j+1), name2 = \textcolor{stringliteral}{"ppot\_"}+
+329     \textcolor{keywordtype}{int} ppotTypeIndex = 0;
+330     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+331         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = i; j < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++j) \{
+332             std::string name1 = \textcolor{stringliteral}{"ppot\_"}+std::to\_string(i+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(j+1), name2 = \textcolor{stringliteral}{"ppot\_"}+
       std::to\_string(j+1)+\textcolor{stringliteral}{"\_"}+std::to\_string(i+1);
-354             std::string ppotName = \textcolor{stringliteral}{""}, dummy = \textcolor{stringliteral}{""};
-355             \textcolor{keywordtype}{bool} foundIJ = \textcolor{keyword}{false};
-356             \textcolor{keywordflow}{if} (doc.HasMember(name1.c\_str())) \{
-357                 ppotName = name1;
-358                 foundIJ = \textcolor{keyword}{true};
-359             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && !foundIJ) \{
-360                 ppotName = name2;
-361                 foundIJ = \textcolor{keyword}{true};
-362             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && foundIJ) \{
-363                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Input file doubly specifies pair potential for species pair ("}+
-      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{")"});
-364                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-365             \} \textcolor{keywordflow}{else} \{
-366                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Input file does not specify pair potential for species pair ("}+
-      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{")"});
-367                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-368             \}
-369             assert(doc[ppotName.c\_str()].IsString());
-370             ppotType[ppotTypeIndex] = doc[ppotName.c\_str()].GetString();
-371             dummy = ppotName+\textcolor{stringliteral}{"\_params"};
-372             assert(doc.HasMember(dummy.c\_str()));
-373             assert(doc[dummy.c\_str()].IsArray());
-374             std::vector < double > params (doc[dummy.c\_str()].Size()+1, 0);
-375             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < params.size()-1; ++k) \{
-376                 assert(doc[dummy.c\_str()][k].IsNumber());
-377                 params[k] = doc[dummy.c\_str()][k].GetDouble();
-378             \}
-379             params[params.size()-1] = Mtot;
-380 
-381             \textcolor{keywordtype}{bool} useCellList = \textcolor{keyword}{false}; \textcolor{comment}{// default}
-382             dummy = ppotName+\textcolor{stringliteral}{"\_use\_cell\_list"};
-383             \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-384                 assert(doc[dummy.c\_str()].IsBool());
-385                 useCellList = doc[dummy.c\_str()].GetBool();
-386             \}
-387 
-388             sys.\hyperlink{classsim_system_a43ae18ca5e66c8e916b88b71c5ee5240}{addPotential}(i, j, ppotType[ppotTypeIndex], params, useCellList);
-389             sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[i][j]->savePotential(ppotName+\textcolor{stringliteral}{".dat"}, 0.01, 0.01);
-390 
-391             ppotTypeIndex++;
-392         \}
-393     \}
-394 \}
-\end{DoxyCode}
-\hypertarget{input_8cpp_a76e6e0f38bf684278b7bebb317b71e5b}{\index{input.\-cpp@{input.\-cpp}!set\-System\-Barriers@{set\-System\-Barriers}}
-\index{set\-System\-Barriers@{set\-System\-Barriers}!input.cpp@{input.\-cpp}}
-\subsubsection[{set\-System\-Barriers}]{\setlength{\rightskip}{0pt plus 5cm}void set\-System\-Barriers (
-\begin{DoxyParamCaption}
-\item[{{\bf sim\-System} \&}]{sys, }
-\item[{const rapidjson\-::\-Document \&}]{doc}
-\end{DoxyParamCaption}
-)}}\label{input_8cpp_a76e6e0f38bf684278b7bebb317b71e5b}
-
-
-Initialize the barriers in a system by parsing the input document. 
-
-This function is defined separately since it must be done several times.
-
-\mbox{[}in, out\mbox{]} sys System to initialize with barriers  \mbox{[}in\mbox{]} doc Input J\-S\-O\-N document 
-
-Definition at line 575 of file input.\-cpp.
-
-
-
-References sim\-System\-::get\-Total\-M(), M\-A\-X\-\_\-\-B\-A\-R\-R\-I\-E\-R\-S\-\_\-\-P\-E\-R\-\_\-\-S\-P\-E\-C\-I\-E\-S, sim\-System\-::n\-Species(), send\-Err(), sim\-System\-::species\-Barriers, S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, and custom\-Exception\-::what().
-
-
-
-Referenced by initialize(), and set\-Config().
-
-
-\begin{DoxyCode}
-575                                                                       \{
-576     \textcolor{comment}{// get Mtot, first from doc, otherwise try sys, but they should be the same}
-577     \textcolor{keywordtype}{int} Mtot = 1;
-578     \textcolor{keywordflow}{if} (doc.HasMember(\textcolor{stringliteral}{"num\_expanded\_states"})) \{
-579         assert(doc[\textcolor{stringliteral}{"num\_expanded\_states"}].IsInt());
-580         Mtot = doc[\textcolor{stringliteral}{"num\_expanded\_states"}].GetInt();
-581     \} \textcolor{keywordflow}{else} \{
-582         Mtot = sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}();
-583     \}
-584 
-585     \textcolor{comment}{// Hard wall (expect parameters: \{lb, ub, sigma\})}
-586     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-587         \textcolor{keywordtype}{bool} convention0 = \textcolor{keyword}{false};
-588         std::string dummy = \textcolor{stringliteral}{"hardWallZ\_"} + std::to\_string(i+1);
-589         std::vector < double > wallParams (3, 0);
-590         \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-591             assert(doc[dummy.c\_str()].IsArray());
-592             assert(doc[dummy.c\_str()].Size() == 3);
-593             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 3; ++j) \{
-594                 wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
-595             \}
-596             \textcolor{keywordflow}{try} \{
-597                 sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addHardWallZ (wallParams[0], wallParams[1], 
-      wallParams[2], Mtot);
-598             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-599                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-600                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-601             \}
-602             convention0 = \textcolor{keyword}{true};
-603         \}
-604         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 1; j <= \hyperlink{global_8h_a85f9382b07ebd88cde9cd3667d50c0a6}{MAX\_BARRIERS\_PER\_SPECIES}; ++j) \{
-605             \textcolor{comment}{// alternatively allow multiple walls to specified with a suffix up to a max}
-606             std::string dummy = \textcolor{stringliteral}{"hardWallZ\_"} + std::to\_string(i+1) + \textcolor{stringliteral}{"\_"} + std::to\_string(j);
-607             \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-608                 \textcolor{keywordflow}{if} (convention0) \{
-609                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Error, multiple barrier naming conventions used for the same species"});
-610                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-611                 \}
-612                 \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-613                     assert(doc[dummy.c\_str()].IsArray());
-614                     assert(doc[dummy.c\_str()].Size() == 3);
-615                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 3; ++j) \{
-616                         wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
-617                     \}
-618                     \textcolor{keywordflow}{try} \{
-619                         sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addHardWallZ (wallParams[0], wallParams[1], 
-      wallParams[2], Mtot);
-620                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-621                         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-622                         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-623                     \}
-624                 \}
-625             \}
-626         \}
-627     \}
-628 
-629     \textcolor{comment}{// Square well wall (expect parameters: \{lb, ub, sigma, range, eps\})}
-630     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-631         \textcolor{keywordtype}{bool} convention0 = \textcolor{keyword}{false};
-632         std::string dummy = \textcolor{stringliteral}{"squareWellWallZ\_"} + std::to\_string(i+1);
-633         std::vector < double > wallParams (5, 0);
-634         \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-635             assert(doc[dummy.c\_str()].IsArray());
-636             assert(doc[dummy.c\_str()].Size() == 5);
-637             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 5; ++j) \{
-638                 wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
-639             \}
-640             \textcolor{keywordflow}{try} \{
-641                 sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addSquareWellWallZ (wallParams[0], wallParams[1], 
-      wallParams[2], wallParams[3], wallParams[4], Mtot);
-642             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-643                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-644                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-645             \}
-646             convention0 = \textcolor{keyword}{true};
-647         \}
-648         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 1; j <= \hyperlink{global_8h_a85f9382b07ebd88cde9cd3667d50c0a6}{MAX\_BARRIERS\_PER\_SPECIES}; ++j) \{
-649             \textcolor{comment}{// alternatively allow multiple walls to specified with a suffix up to a max}
-650             std::string dummy = \textcolor{stringliteral}{"squareWellWallZ\_"} + std::to\_string(i+1) + \textcolor{stringliteral}{"\_"} + std::to\_string(j);
-651             \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-652                 \textcolor{keywordflow}{if} (convention0) \{
-653                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Error, multiple barrier naming conventions used for the same species"});
-654                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-655                 \}
-656                 \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-657                     assert(doc[dummy.c\_str()].IsArray());
-658                     assert(doc[dummy.c\_str()].Size() == 5);
-659                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 5; ++j) \{
-660                         wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
-661                     \}
-662                     \textcolor{keywordflow}{try} \{
-663                         sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addSquareWellWallZ (wallParams[0], wallParams
-      [1], wallParams[2], wallParams[3], wallParams[4], Mtot);
-664                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-665                         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-666                         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-667                     \}
-668                 \}
-669             \}
-670         \}
-671     \}
-672 
-673     \textcolor{comment}{// cylinderZ (expect parameters: \{x, y, radius, width, sigma, eps\})}
-674     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-675         \textcolor{keywordtype}{bool} convention0 = \textcolor{keyword}{false};
-676         std::string dummy = \textcolor{stringliteral}{"cylinderZ\_"} + std::to\_string(i+1);
-677         std::vector < double > wallParams (6, 0);
-678         \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-679             assert(doc[dummy.c\_str()].IsArray());
-680             assert(doc[dummy.c\_str()].Size() == 6);
-681             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 6; ++j) \{
-682                 wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
-683             \}
-684             \textcolor{keywordflow}{try} \{
-685                 sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addCylinderZ (wallParams[0], wallParams[1], 
-      wallParams[2], wallParams[3], wallParams[4], wallParams[5], Mtot);
-686             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-687                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-688                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-689             \}
-690             convention0 = \textcolor{keyword}{true};
-691         \}
-692         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 1; j <= \hyperlink{global_8h_a85f9382b07ebd88cde9cd3667d50c0a6}{MAX\_BARRIERS\_PER\_SPECIES}; ++j) \{
-693             \textcolor{comment}{// alternatively allow multiple walls to specified with a suffix up to a max}
-694             std::string dummy = \textcolor{stringliteral}{"cylinderZ\_"} + std::to\_string(i+1) + \textcolor{stringliteral}{"\_"} + std::to\_string(j);
-695             \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-696                 \textcolor{keywordflow}{if} (convention0) \{
-697                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Error, multiple barrier naming conventions used for the same species"});
-698                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-699                 \}
-700                 \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-701                     assert(doc[dummy.c\_str()].IsArray());
-702                     assert(doc[dummy.c\_str()].Size() == 6);
-703                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 6; ++j) \{
-704                         wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
-705                     \}
-706                     \textcolor{keywordflow}{try} \{
-707                         sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addCylinderZ (wallParams[0], wallParams[1], 
-      wallParams[2], wallParams[3], wallParams[4], wallParams[5], Mtot);
-708                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-709                         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-710                         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-711                     \}
-712                 \}
-713             \}
-714         \}
-715     \}
-716 
-717     \textcolor{comment}{// rightTriangleXZ (expect parameters: \{width, theta, lamW, eps, sigma, sep, offset, zbase, top\})}
-718     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
-719         \textcolor{keywordtype}{bool} convention0 = \textcolor{keyword}{false};
-720         std::string dummy = \textcolor{stringliteral}{"rightTriangleXZ\_"} + std::to\_string(i+1);
-721         std::vector < double > wallParams (8, 0);
-722         \textcolor{keywordtype}{bool} top = \textcolor{keyword}{false};
-723         assert(doc.HasMember(\textcolor{stringliteral}{"box"}));
-724         assert(doc[\textcolor{stringliteral}{"box"}].IsArray());
-725         assert(doc[\textcolor{stringliteral}{"box"}].Size() == 3);
-726         std::vector < double > sysBox (3, 0);
-727         \textcolor{keywordflow}{for} (rapidjson::SizeType j = 0; j < doc[\textcolor{stringliteral}{"box"}].Size(); ++j) \{
-728             assert(doc[\textcolor{stringliteral}{"box"}][j].IsNumber());
-729             sysBox[j] = doc[\textcolor{stringliteral}{"box"}][j].GetDouble();
-730         \}
-731         \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-732             assert(doc[dummy.c\_str()].IsArray());
-733             assert(doc[dummy.c\_str()].Size() == 9);
-734             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 8; ++j) \{
-735                 assert (doc[dummy.c\_str()][j].IsDouble());
-736                 wallParams[j] = doc[dummy.c\_str()][j].GetDouble();
-737             \}
-738             assert (doc[dummy.c\_str()][8].IsBool());
-739             top = doc[dummy.c\_str()][8].GetBool();
-740             \textcolor{keywordflow}{try} \{
-741                 sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addRightTriangleXZ (wallParams[0], wallParams[1], 
-      wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
-742             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-743                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-744                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-745             \}
-746             convention0 = \textcolor{keyword}{true};
-747         \}
-748         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 1; j <= \hyperlink{global_8h_a85f9382b07ebd88cde9cd3667d50c0a6}{MAX\_BARRIERS\_PER\_SPECIES}; ++j) \{
-749             \textcolor{comment}{// alternatively allow multiple walls to specified with a suffix up to a max}
-750             std::string dummy = \textcolor{stringliteral}{"rightTriangleXZ\_"} + std::to\_string(i+1) + \textcolor{stringliteral}{"\_"} + std::to\_string(j);
-751             \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-752                 \textcolor{keywordflow}{if} (convention0) \{
-753                     \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Error, multiple barrier naming conventions used for the same species"});
-754                     exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-755                 \}
-756                 \textcolor{keywordflow}{if} (doc.HasMember(dummy.c\_str())) \{
-757                     assert(doc[dummy.c\_str()].IsArray());
-758                     assert(doc[dummy.c\_str()].Size() == 9);
-759                     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} k = 0; k < 8; ++k) \{
-760                         assert (doc[dummy.c\_str()][k].IsNumber());
-761                         wallParams[k] = doc[dummy.c\_str()][k].GetDouble();
-762                     \}
-763                     assert (doc[dummy.c\_str()][8].IsBool());
-764                     top = doc[dummy.c\_str()][8].GetBool();
-765                     \textcolor{keywordflow}{try} \{
-766                         sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[i].addRightTriangleXZ (wallParams[0], wallParams
-      [1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, 
-      Mtot);
-767                     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-768                         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-769                         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-770                     \}
-771                 \}
-772             \}
-773         \}
-774     \}
-775 \}
+333             std::string ppotName = \textcolor{stringliteral}{""}, dummy = \textcolor{stringliteral}{""}, tabFile = \textcolor{stringliteral}{""};
+334             \textcolor{keywordtype}{bool} foundIJ = \textcolor{keyword}{false};
+335             \textcolor{keywordflow}{if} (doc.HasMember(name1.c\_str())) \{
+336                 ppotName = name1;
+337                 foundIJ = \textcolor{keyword}{true};
+338             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && !foundIJ) \{
+339                 ppotName = name2;
+340                 foundIJ = \textcolor{keyword}{true};
+341             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (doc.HasMember(name2.c\_str()) && foundIJ) \{
+342                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Input file doubly specifies pair potential for
+       species pair ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{")"});
+343             \} \textcolor{keywordflow}{else} \{
+344                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Input file does not specify pair potential for
+       species pair ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{", "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{")"});
+345             \}
+346 
+347             \textcolor{keywordflow}{if} (!doc[ppotName.c\_str()].IsString()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential is
+       not a name for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{")"});
+348             ppotType[ppotTypeIndex] = doc[ppotName.c\_str()].GetString();
+349             dummy = ppotName+\textcolor{stringliteral}{"\_params"};
+350             \textcolor{keywordflow}{if} (!doc.HasMember(dummy.c\_str())) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Input file missing
+       pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{")"});
+351             \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].IsObject()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential's
+       parameters are not valid json document"});
+352 
+353             std::vector < double > params;
+354 
+355             \textcolor{keywordtype}{bool} useCellList = \textcolor{keyword}{false}; \textcolor{comment}{// default}
+356             \textcolor{keywordflow}{if} (doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"cell\_list"})) \{
+357                 useCellList = doc[dummy.c\_str()][\textcolor{stringliteral}{"cell\_list"}].GetBool();
+358             \}
+359 
+360             \textcolor{keywordflow}{if} (ppotType[ppotTypeIndex] == \textcolor{stringliteral}{"square\_well"}) \{
+361                 \textcolor{comment}{// Expects sigma, width, epsilon, cell\_list}
+362                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"sigma"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"sigma\(\backslash\)""});
+363                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"width"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"width\(\backslash\)""});
+364                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"epsilon"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"epsilon\(\backslash\)""});
+365 
+366                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"sigma"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"sigma\(\backslash\)" is not a number"});
+367                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"width"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"width\(\backslash\)" is not a number"});
+368                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"epsilon"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"epsilon\(\backslash\)" is not a number"});
+369 
+370                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"sigma"}].GetDouble());
+371                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"width"}].GetDouble());
+372                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"epsilon"}].GetDouble());
+373             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppotType[ppotTypeIndex] == \textcolor{stringliteral}{"lennard\_jones"}) \{
+374                 \textcolor{comment}{// Expects epsilon, sigma, r\_cut, u\_shift}
+375                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"epsilon"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"epsilon\(\backslash\)""});
+376                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"sigma"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"sigma\(\backslash\)""});
+377                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"r\_cut"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"r\_cut\(\backslash\)""});
+378                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"u\_shift"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"u\_shift\(\backslash\)""});
+379 
+380                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"epsilon"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"epsilon\(\backslash\)" is not a number"});
+381                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"sigma"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"sigma\(\backslash\)" is not a number"});
+382                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"r\_cut"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"r\_cut\(\backslash\)" is not a number"});
+383                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"u\_shift"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"u\_shift\(\backslash\)" is not a number"});
+384 
+385                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"epsilon"}].GetDouble());
+386                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"sigma"}].GetDouble());
+387                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"r\_cut"}].GetDouble());
+388                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"u\_shift"}].GetDouble());
+389             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppotType[ppotTypeIndex] == \textcolor{stringliteral}{"fs\_lennard\_jones"}) \{
+390                 \textcolor{comment}{// Expects epsilon, sigma, r\_cut}
+391                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"epsilon"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"epsilon\(\backslash\)""});
+392                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"sigma"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"sigma\(\backslash\)""});
+393                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"r\_cut"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"r\_cut\(\backslash\)""});
+394 
+395                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"epsilon"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"epsilon\(\backslash\)" is not a number"});
+396                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"sigma"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"sigma\(\backslash\)" is not a number"});
+397                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"r\_cut"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"r\_cut\(\backslash\)" is not a number"});
+398 
+399                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"epsilon"}].GetDouble());
+400                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"sigma"}].GetDouble());
+401                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"r\_cut"}].GetDouble());
+402             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppotType[ppotTypeIndex] == \textcolor{stringliteral}{"hard\_sphere"}) \{
+403                 \textcolor{comment}{// Expects sigma}
+404                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"sigma"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"sigma\(\backslash\)""});
+405 
+406                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"sigma"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"sigma\(\backslash\)" is not a number"});
+407 
+408                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"sigma"}].GetDouble());
+409             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (ppotType[ppotTypeIndex] == \textcolor{stringliteral}{"tabulated"}) \{
+410                 \textcolor{comment}{// Expects r\_cut, r\_shift, u\_shift, u\_infinity}
+411                 \textcolor{comment}{// Also must specify file to load potential from}
+412                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"r\_cut"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"r\_cut\(\backslash\)""});
+413                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"r\_shift"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"r\_shift\(\backslash\)""});
+414                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"u\_shift"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"u\_shift\(\backslash\)""});
+415                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"u\_infinity"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"u\_infinity\(\backslash\)""});
+416                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()].HasMember(\textcolor{stringliteral}{"filename"})) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") is missing \(\backslash\)"filename\(\backslash\)""});
+417 
+418                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"r\_cut"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"r\_cut\(\backslash\)" is not a number"});
+419                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"r\_shift"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"r\_shift\(\backslash\)" is not a number"});
+420                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"u\_shift"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"u\_shift\(\backslash\)" is not a number"});
+421                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"u\_infinity"}].IsNumber()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"u\_infinity\(\backslash\)" is not a number"});
+422                 \textcolor{keywordflow}{if} (!doc[dummy.c\_str()][\textcolor{stringliteral}{"filename"}].IsString()) \textcolor{keywordflow}{throw} 
+      \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Pair potential parameters for ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") parameter \(\backslash\)"filename\(\backslash\)" is not a string"});
+423 
+424                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"r\_cut"}].GetDouble());
+425                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"r\_shift"}].GetDouble());
+426                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"u\_shift"}].GetDouble());
+427                 params.push\_back(doc[dummy.c\_str()][\textcolor{stringliteral}{"u\_infinity"}].GetDouble());
+428                 tabFile = doc[dummy.c\_str()][\textcolor{stringliteral}{"filename"}].GetString();
+429             \} \textcolor{keywordflow}{else} \{
+430                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unrecognized pair potential "}+ppotType[ppotTypeIndex
+      ]);
+431             \}
+432 
+433             params.push\_back(Mtot);
+434 
+435             \textcolor{keywordflow}{try} \{
+436                 sys.\hyperlink{classsim_system_a5abdfae81ca00a79f162c0ce2b4307c9}{addPotential}(i, j, ppotType[ppotTypeIndex], params, useCellList, tabFile);
+437                 sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[i][j]->savePotential(ppotName+\textcolor{stringliteral}{".dat"}, 0.01, 0.01);
+438             \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
+439                 \textcolor{keyword}{const} std::string msg = ex.what();
+440                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to add potential "}+ppotType[ppotTypeIndex]+\textcolor{stringliteral}{"
+       for species pair ("}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{","}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(j+1)+\textcolor{stringliteral}{") : "}+msg);
+441             \}
+442 
+443             ppotTypeIndex++;
+444         \}
+445     \}
+446 \}
 \end{DoxyCode}

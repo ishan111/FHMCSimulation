@@ -1,4 +1,4 @@
-.TH "hardWallZ" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "hardWallZ" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -66,27 +66,27 @@ Instantiate a hard wall with boundaries in the +/- z direction\&. Expanded ensem
 .PP
 
 .PP
-Definition at line 384 of file barrier\&.cpp\&.
+Definition at line 385 of file barrier\&.cpp\&.
 .PP
 References barrier::M_\&.
 .PP
 .nf
-384                                                                                        {
-385     if (lb >= ub) {
-386         throw customException ("hardWallZ must have lower bound < upper bound");
-387     }
-388     if (sigma < 0) {
-389         throw customException ("hardWallZ must have sigma >= 0");
-390     }
-391     if (M < 1) {
-392         throw customException ("hardWallZ must have M >= 1");
-393     }
-394 
-395     sigma_ = sigma;
-396     ub_ = ub;
-397     lb_ = lb;
-398     M_ = M;
-399 }
+385                                                                                        {
+386     if (lb >= ub) {
+387         throw customException ("hardWallZ must have lower bound < upper bound");
+388     }
+389     if (sigma < 0) {
+390         throw customException ("hardWallZ must have sigma >= 0");
+391     }
+392     if (M < 1) {
+393         throw customException ("hardWallZ must have M >= 1");
+394     }
+395 
+396     sigma_ = sigma;
+397     ub_ = ub;
+398     lb_ = lb;
+399     M_ = M;
+400 }
 .fi
 .SH "Member Function Documentation"
 .PP 
@@ -106,29 +106,29 @@ Interaction energy with the wall\&. Sigma is scaled linearly with expanded ensem
 .PP
 Implements \fBbarrier\fP\&.
 .PP
-Definition at line 432 of file barrier\&.cpp\&.
+Definition at line 433 of file barrier\&.cpp\&.
 .PP
 References barrier::M_, atom::mState, NUM_INFINITY, pbc(), and atom::pos\&.
 .PP
 .nf
-432                                                                          {
-433     std::vector < double > p = a1->pos;
-434     pbc (p, box);
-435 
-436     double sig = sigma_;
-437     if (a1->mState > 0) {
-438         sig = (sigma_/M_)*a1->mState;
-439     }
-440     if (a1->mState < 0 || a1->mState > M_-1) {
-441         throw customException ("mState out of bounds for hardWallZ");
-442     }
-443 
-444     if (p[2] >= ub_ - sig/2\&.0 || p[2] <= lb_ + sig/2\&.0) {
-445         return NUM_INFINITY;
-446     } else {
-447         return 0\&.0;
-448     }
-449 }
+433                                                                          {
+434     std::vector < double > p = a1->pos;
+435     pbc (p, box);
+436 
+437     double sig = sigma_;
+438     if (a1->mState > 0) {
+439         sig = (sigma_/M_)*a1->mState;
+440     }
+441     if (a1->mState < 0 || a1->mState > M_-1) {
+442         throw customException ("mState out of bounds for hardWallZ");
+443     }
+444 
+445     if (p[2] >= ub_ - sig/2\&.0 || p[2] <= lb_ + sig/2\&.0) {
+446         return NUM_INFINITY;
+447     } else {
+448         return 0\&.0;
+449     }
+450 }
 .fi
 .SS "bool hardWallZ::inside (const \fBatom\fP *a1, const std::vector< double > &box)\fC [virtual]\fP"
 
@@ -146,29 +146,29 @@ Return whether or not a point falls between the walls (subject to a hard-sphere 
 .PP
 Implements \fBbarrier\fP\&.
 .PP
-Definition at line 407 of file barrier\&.cpp\&.
+Definition at line 408 of file barrier\&.cpp\&.
 .PP
 References barrier::M_, atom::mState, pbc(), and atom::pos\&.
 .PP
 .nf
-407                                                                        {
-408     std::vector < double > p = a1->pos;
-409     pbc (p, box);
-410 
-411     double sig = sigma_;
-412     if (a1->mState > 0) {
-413         sig = (sigma_/M_)*a1->mState;
-414     }
-415     if (a1->mState < 0 || a1->mState > M_-1) {
-416         throw customException ("mState out of bounds for hardWallZ");
-417     }
-418 
-419     if (p[2] >= ub_ - sig/2\&.0 || p[2] <= lb_ + sig/2\&.0) {
-420         return false;
-421     } else {
-422         return true;
-423     }
-424 }
+408                                                                        {
+409     std::vector < double > p = a1->pos;
+410     pbc (p, box);
+411 
+412     double sig = sigma_;
+413     if (a1->mState > 0) {
+414         sig = (sigma_/M_)*a1->mState;
+415     }
+416     if (a1->mState < 0 || a1->mState > M_-1) {
+417         throw customException ("mState out of bounds for hardWallZ");
+418     }
+419 
+420     if (p[2] >= ub_ - sig/2\&.0 || p[2] <= lb_ + sig/2\&.0) {
+421         return false;
+422     } else {
+423         return true;
+424     }
+425 }
 .fi
 
 

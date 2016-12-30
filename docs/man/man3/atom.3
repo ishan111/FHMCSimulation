@@ -1,4 +1,4 @@
-.TH "atom" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "atom" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -61,7 +61,7 @@ Definition at line 14 of file atom\&.h\&.
 References mState, and pos\&.
 .PP
 .nf
-14 { pos\&.resize(3, 0); mState = 0; } // assumes no centers
+14 { pos\&.resize(3, 0); mState = 0; } // Assumes no centers
 .fi
 .SS "atom::atom (unsigned intncenters, std::vector< std::vector< double > >relOr)"
 
@@ -121,7 +121,7 @@ Definition at line 16 of file atom\&.h\&.
 .PP
 State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted\&. 
 .PP
-Definition at line 21 of file atom\&.h\&.
+Definition at line 20 of file atom\&.h\&.
 .PP
 Referenced by atom(), simSystem::deleteAtom(), hardWallZ::energy(), lennardJones::energy(), squareWellWallZ::energy(), fsLennardJones::energy(), cylinderZ::energy(), tabulated::energy(), rightTriangleXZ::energy(), squareWell::energy(), hardCore::energy(), simSystem::insertAtom(), hardWallZ::inside(), squareWellWallZ::inside(), cylinderZ::inside(), deleteParticle::make(), insertParticle::make(), and sanityChecks()\&.
 .SS "std::vector< double > atom::pos"
@@ -129,7 +129,7 @@ Referenced by atom(), simSystem::deleteAtom(), hardWallZ::energy(), lennardJones
 .PP
 3D position 
 .PP
-Definition at line 22 of file atom\&.h\&.
+Definition at line 21 of file atom\&.h\&.
 .PP
 Referenced by atom(), hardWallZ::energy(), lennardJones::energy(), squareWellWallZ::energy(), fsLennardJones::energy(), cylinderZ::energy(), tabulated::energy(), rightTriangleXZ::energy(), squareWell::energy(), hardCore::energy(), simSystem::getNeighborAtoms(), cellList::insertParticle(), hardWallZ::inside(), squareWellWallZ::inside(), cylinderZ::inside(), aggVolBias3::make(), swapParticles::make(), insertParticle::make(), cellList::swapAndDeleteParticle(), and cellList::translateParticle()\&.
 .SS "std::vector< std::vector < double > > atom::vecToCenters"
@@ -137,7 +137,7 @@ Referenced by atom(), hardWallZ::energy(), lennardJones::energy(), squareWellWal
 .PP
 Vectors pointing from pos to rigid centers\&. 
 .PP
-Definition at line 23 of file atom\&.h\&.
+Definition at line 22 of file atom\&.h\&.
 .PP
 Referenced by atom()\&.
 

@@ -1,4 +1,4 @@
-.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/input.h" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/input.h" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -39,7 +39,7 @@
 .br
 .RI "\fIAssign the Monte Carlo moves based on the JSON input file\&. \fP"
 .ti -1c
-.RI "void \fBsetSystemBarriers\fP (\fBsimSystem\fP &sys, const rapidjson::Document &doc)"
+.RI "void \fBsetBarriers\fP (\fBsimSystem\fP &sys, const rapidjson::Document &doc)"
 .br
 .RI "\fIInitialize the barriers in a system by parsing the input document\&. \fP"
 .ti -1c
@@ -104,193 +104,365 @@ Parse a json input file and initialize system object accordingly\&. [in] filenam
 .PP
 Definition at line 37 of file input\&.cpp\&.
 .PP
-References simSystem::addKECorrection(), checkBounds(), simSystem::lnF_end, simSystem::lnF_start, simSystem::nCrossoverVisits, parseJson(), simSystem::restartFromTMMC, simSystem::restartFromTMMCFile, simSystem::restartFromWALA, simSystem::restartFromWALAFile, RNG_SEED, sendErr(), sendMsg(), setMoves(), setPairPotentials(), setSystemBarriers(), simSystem::setTotNBounds(), SYS_FAILURE, simSystem::tmmcSweepSize, simSystem::toggleKE(), simSystem::totalTMMCSweeps, simSystem::wala_g, simSystem::wala_s, and simSystem::wlSweepSize\&.
+References simSystem::addKECorrection(), checkBounds(), simSystem::lnF_end, simSystem::lnF_start, simSystem::nCrossoverVisits, numToStr(), parseJson(), simSystem::restartFromTMMC, simSystem::restartFromTMMCFile, simSystem::restartFromWALA, simSystem::restartFromWALAFile, RNG_SEED, sendErr(), sendMsg(), setBarriers(), setMoves(), setPairPotentials(), simSystem::setTotNBounds(), SYS_FAILURE, simSystem::tmmcSweepSize, simSystem::toggleKE(), simSystem::totalTMMCSweeps, simSystem::wala_g, simSystem::wala_s, and simSystem::wlSweepSize\&.
 .PP
 .nf
 37                                                                                         {
 38     rapidjson::Document doc;
-39     parseJson (filename, doc);
-40 
-41     // Check each member exists and is in the correct format
-42     assert(doc\&.HasMember("num_species"));
-43     assert(doc["num_species"]\&.IsInt());
-44     assert(doc\&.HasMember("beta"));
-45     assert(doc["beta"]\&.IsNumber());
-46 
-47     assert(doc\&.HasMember("box"));
-48     assert(doc["box"]\&.IsArray());
-49     assert(doc["box"]\&.Size() == 3);
-50     std::vector < double > sysBox (3, 0);
-51     for (rapidjson::SizeType i = 0; i < doc["box"]\&.Size(); ++i) {
-52         assert(doc["box"][i]\&.IsNumber());
-53         sysBox[i] = doc["box"][i]\&.GetDouble();
-54     }
-55 
-56     double duh = 10\&.0;
-57     if (doc\&.HasMember("delta_u_hist")) {
-58         assert(doc["delta_u_hist"]\&.IsNumber());
-59         duh = doc["delta_u_hist"]\&.GetDouble();
-60     }
-61 
-62     int max_order = 2;
-63     if (doc\&.HasMember("max_order")) {
-64         assert(doc["max_order"]\&.IsNumber());
-65         max_order = doc["max_order"]\&.GetInt();
-66     }
-67 
-68     bool use_ke = false;
-69     if (doc\&.HasMember("use_ke")) {
-70         assert(doc["use_ke"]\&.IsBool());
-71         use_ke = doc["use_ke"]\&.GetBool();
-72     }
-73 
-74     assert(doc\&.HasMember("mu"));
-75     assert(doc["mu"]\&.IsArray());
-76     assert(doc["mu"]\&.Size() == doc["num_species"]\&.GetInt());
-77     std::vector < double > sysMu (doc["mu"]\&.Size(), 0);
-78     for (rapidjson::SizeType i = 0; i < doc["mu"]\&.Size(); ++i) {
-79         assert(doc["mu"][i]\&.IsNumber());
-80         sysMu[i] = doc["mu"][i]\&.GetDouble();
-81     }
-82 
-83     assert(doc\&.HasMember("seed"));
-84     assert(doc["seed"]\&.IsInt());
-85     RNG_SEED = doc["seed"]\&.GetInt();
-86 
-87     assert(doc\&.HasMember("max_N"));
-88     assert(doc["max_N"]\&.IsArray());
-89     assert(doc["max_N"]\&.Size() == doc["num_species"]\&.GetInt());
-90     std::vector < int > sysMax (doc["max_N"]\&.Size(), 0);
-91     for (rapidjson::SizeType i = 0; i < doc["max_N"]\&.Size(); ++i) {
-92         assert(doc["max_N"][i]\&.IsInt());
-93         sysMax[i] = doc["max_N"][i]\&.GetInt();
-94     }
-95 
-96     assert(doc\&.HasMember("min_N"));
-97     assert(doc["min_N"]\&.IsArray());
-98     assert(doc["min_N"]\&.Size() == doc["num_species"]\&.GetInt());
-99     std::vector < int > sysMin (doc["min_N"]\&.Size(), 0);
-100     for (rapidjson::SizeType i = 0; i < doc["min_N"]\&.Size(); ++i) {
-101         assert(doc["min_N"][i]\&.IsInt());
-102         sysMin[i] = doc["min_N"][i]\&.GetInt();
-103     }
-104 
-105     int Mtot = 1;
-106     if (doc\&.HasMember("num_expanded_states")) {
-107         assert(doc["num_expanded_states"]\&.IsInt());
-108         Mtot = doc["num_expanded_states"]\&.GetInt();
-109     }
-110 
-111     simSystem sys (doc["num_species"]\&.GetInt(), doc["beta"]\&.GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot, duh, max_order);
-112     if (use_ke) {
-113         sys\&.toggleKE();
-114         if (sys\&.addKECorrection() == false) {
-115             throw customException ("Unable to set KE flag");
-116         }
-117     }
-118 
-119     std::vector < int > sysWindow;
-120     if (doc\&.HasMember("window")) {
-121         assert(doc["window"]\&.IsArray());
-122         assert(doc["window"]\&.Size() == 2);
-123         sysWindow\&.resize(2, 0);
-124         sysWindow[0] = doc["window"][0]\&.GetInt();
-125         sysWindow[1] = doc["window"][1]\&.GetInt();
-126     }
-127 
-128     if (sysWindow\&.begin() != sysWindow\&.end()) {
-129         sys\&.setTotNBounds(sysWindow);
-130     }
-131 
-132     assert(doc\&.HasMember("tmmc_sweep_size"));
-133     assert(doc["tmmc_sweep_size"]\&.IsNumber());
-134     double tmpT = doc["tmmc_sweep_size"]\&.GetDouble(); // possibly in scientific notation
-135     sys\&.tmmcSweepSize = tmpT; // convert
-136 
-137     assert(doc\&.HasMember("total_tmmc_sweeps"));
-138     assert(doc["total_tmmc_sweeps"]\&.IsNumber());
-139     double tmpS = doc["total_tmmc_sweeps"]\&.GetDouble(); // possibly in scientific notation
-140     sys\&.totalTMMCSweeps = tmpS; // convert
-141 
-142     assert(doc\&.HasMember("wala_sweep_size"));
-143     assert(doc["wala_sweep_size"]\&.IsNumber());
-144     double tmpW = doc["wala_sweep_size"]\&.GetDouble(); // possibly in scientific notation
-145     sys\&.wlSweepSize = tmpW; // convert
-146 
-147     assert(doc\&.HasMember("wala_g"));
-148     assert(doc["wala_g"]\&.IsNumber());
-149     sys\&.wala_g = doc["wala_g"]\&.GetDouble();
-150 
-151     assert(doc\&.HasMember("wala_s"));
-152     assert(doc["wala_s"]\&.IsNumber());
-153     sys\&.wala_s = doc["wala_s"]\&.GetDouble();
-154 
-155     if (doc\&.HasMember("lnF_start")) {
-156         assert(doc["lnF_start"]\&.IsNumber());
-157         sys\&.lnF_start = doc["lnF_start"]\&.GetDouble(); // bounds are checked later
-158     }
-159 
-160     if (doc\&.HasMember("lnF_end")) {
-161         assert(doc["lnF_end"]\&.IsNumber());
-162         sys\&.lnF_end = doc["lnF_end"]\&.GetDouble();
-163         if (sys\&.lnF_end >= 1\&.0) {
-164             sendErr("Terminal lnF factor for Wang-Landau must be < 1");
-165             exit(SYS_FAILURE);
-166         }
-167     }
-168     if (sys\&.lnF_end >= sys\&.lnF_start) {
-169         sendErr("lnF_end must be < lnF_start for Wang-Landau to proceed forward");
-170         exit(SYS_FAILURE);
-171     }
-172 
-173     sys\&.restartFromWALA = false;
-174     sys\&.restartFromWALAFile = "";
-175     if (doc\&.HasMember("restart_from_wala_lnPI")) {
-176         assert(doc["restart_from_wala_lnPI"]\&.IsString());
-177         sys\&.restartFromWALAFile = doc["restart_from_wala_lnPI"]\&.GetString();
-178         if (sys\&.restartFromWALAFile != "") {
-179             sys\&.restartFromWALA = true;
-180         }
-181     }
-182 
-183     // restarting from TMMC overrides WL by skipping that portion altogether
-184     sys\&.restartFromTMMC = false;
-185     sys\&.restartFromTMMCFile = "";
-186     if (doc\&.HasMember("restart_from_tmmc_C")) {
-187         assert(doc["restart_from_tmmc_C"]\&.IsString());
-188         sys\&.restartFromTMMCFile = doc["restart_from_tmmc_C"]\&.GetString();
-189         if (sys\&.restartFromTMMCFile != "") {
-190             sys\&.restartFromTMMC = true;
+39     try {
+40         parseJson (filename, doc);
+41     } catch (std::exception &ex) {
+42         throw customException (ex\&.what());
+43     }
+44 
+45     // Check each member exists and is in the correct format
+46     if (!doc\&.HasMember("num_species")) throw customException("\"num_species\" is not specified in "+filename);
+47     if (!doc["num_species"]\&.IsInt()) throw customException("\"num_species\" is not an integer in "+filename);
+48 
+49     if (!doc\&.HasMember("beta")) throw customException("\"beta\" is not specified in "+filename);
+50     if (!doc["beta"]\&.IsNumber()) throw customException("\"beta\" is not a number in "+filename);
+51 
+52     if (!doc\&.HasMember("box")) throw customException("\"box\" is not specified in "+filename);
+53     if (!doc["box"]\&.IsArray()) throw customException("\"box\" is not an array in "+filename);
+54     if (doc["box"]\&.Size() != 3) throw customException("\"box\" is not a length 3 array in "+filename);
+55     std::vector < double > sysBox (3, 0);
+56     for (rapidjson::SizeType i = 0; i < doc["box"]\&.Size(); ++i) {
+57         if (!doc["box"][i]\&.IsNumber()) throw customException("box index "+numToStr(i)+" is not a number in "+filename);
+58         sysBox[i] = doc["box"][i]\&.GetDouble();
+59     }
+60 
+61     double duh = 10\&.0;
+62     if (doc\&.HasMember("delta_u_hist")) {
+63         if (!doc["delta_u_hist"]\&.IsNumber()) throw customException("\"delta_u_hist\" is not a number in "+filename);
+64         duh = doc["delta_u_hist"]\&.GetDouble();
+65     }
+66 
+67     int maxOrder = 2;
+68     if (doc\&.HasMember("max_order")) {
+69         if (!doc["max_order"]\&.IsInt()) throw customException("\"max_order\" is not an integer in "+filename);
+70         maxOrder = doc["max_order"]\&.GetInt();
+71     }
+72 
+73     bool useKe = false;
+74     if (doc\&.HasMember("use_ke")) {
+75         if (!doc["use_ke"]\&.IsBool()) throw customException("\"use_ke\" is not a boolean in "+filename);
+76         useKe = doc["use_ke"]\&.GetBool();
+77     }
+78 
+79     if (!doc\&.HasMember("mu")) throw customException("\"mu\" is not specified in "+filename);
+80     if (!doc["mu"]\&.IsArray()) throw customException("\"mu\" is not an array in "+filename);
+81     if (doc["mu"]\&.Size() != doc["num_species"]\&.GetInt()) throw customException("\"mu\" is not specified for each species in "+filename);
+82     std::vector < double > sysMu (doc["mu"]\&.Size(), 0);
+83     for (rapidjson::SizeType i = 0; i < doc["mu"]\&.Size(); ++i) {
+84         if (!doc["mu"][i]\&.IsNumber()) throw customException("\"mu\" for species "+numToStr(i+1)+" is not a number in "+filename);
+85         sysMu[i] = doc["mu"][i]\&.GetDouble();
+86     }
+87 
+88     if (!doc\&.HasMember("seed")) throw customException("\"seed\" is not specified in "+filename);
+89     if (!doc["seed"]\&.IsInt()) throw customException("\"seed\" is not an integer in "+filename);
+90     RNG_SEED = doc["seed"]\&.GetInt();
+91 
+92     if (!doc\&.HasMember("max_N")) throw customException("\"max_N\" is not specified in "+filename);
+93     if (!doc["max_N"]\&.IsArray()) throw customException("\"max_N\" is not an array in "+filename);
+94     if (doc["max_N"]\&.Size() != doc["num_species"]\&.GetInt()) throw customException("\"max_N\" is not specified for each species in "+filename);
+95     std::vector < int > sysMax (doc["max_N"]\&.Size(), 0);
+96     for (rapidjson::SizeType i = 0; i < doc["max_N"]\&.Size(); ++i) {
+97         if (!doc["max_N"][i]\&.IsInt()) throw customException("\"max_N\" of species "+numToStr(i+1)+" is not an integer in "+filename);
+98         sysMax[i] = doc["max_N"][i]\&.GetInt();
+99     }
+100 
+101     if (!doc\&.HasMember("min_N")) throw customException("\"min_N\" is not specified in "+filename);
+102     if (!doc["min_N"]\&.IsArray()) throw customException("\"min_N\" is not an array in "+filename);
+103     if (doc["min_N"]\&.Size() != doc["num_species"]\&.GetInt()) throw customException("\"min_N\" is not specified for each species in "+filename);
+104     std::vector < int > sysMin (doc["min_N"]\&.Size(), 0);
+105     for (rapidjson::SizeType i = 0; i < doc["min_N"]\&.Size(); ++i) {
+106         if (!doc["min_N"][i]\&.IsInt()) throw customException("\"min_N\" of species "+numToStr(i+1)+" is not an integer in "+filename);
+107         sysMin[i] = doc["min_N"][i]\&.GetInt();
+108     }
+109 
+110     int Mtot = 1;
+111     if (doc\&.HasMember("num_expanded_states")) {
+112         if (!doc["num_expanded_states"]\&.IsInt()) throw customException("\"num_expanded_states\" is not an integer in "+filename);
+113         Mtot = doc["num_expanded_states"]\&.GetInt();
+114     }
+115 
+116     simSystem sys (doc["num_species"]\&.GetInt(), doc["beta"]\&.GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot, duh, maxOrder);
+117     if (useKe) {
+118         sys\&.toggleKE();
+119         if (sys\&.addKECorrection() == false) {
+120             throw customException ("Unable to set KE flag");
+121         }
+122     }
+123 
+124     std::vector < int > sysWindow;
+125     if (doc\&.HasMember("window")) {
+126         if (!doc["window"]\&.IsArray()) throw customException("\"window\" is not an array in "+filename);
+127         if (doc["window"]\&.Size() != 2) throw customException("\"window\" should have 2 entries (min,max) in "+filename);
+128         sysWindow\&.resize(2, 0);
+129         if (!doc["window"][0]\&.IsInt()) throw customException("\"window\" min is not an integer in "+filename);
+130         if (!doc["window"][1]\&.IsInt()) throw customException("\"window\" max is not an integer in "+filename);
+131         sysWindow[0] = doc["window"][0]\&.GetInt();
+132         sysWindow[1] = doc["window"][1]\&.GetInt();
+133     }
+134 
+135     if (sysWindow\&.begin() != sysWindow\&.end()) {
+136         sys\&.setTotNBounds(sysWindow);
+137     }
+138 
+139     if (!doc\&.HasMember("tmmc_sweep_size")) throw customException("\"tmmc_sweep_size\" is not specified in "+filename);
+140     if (!doc["tmmc_sweep_size"]\&.IsNumber()) throw customException("\"tmmc_sweep_size\" is not a number in "+filename);
+141     double tmpT = doc["tmmc_sweep_size"]\&.GetDouble(); // Possibly in scientific notation
+142     sys\&.tmmcSweepSize = tmpT; // Convert
+143 
+144     if (!doc\&.HasMember("total_tmmc_sweeps")) throw customException("\"total_tmmc_sweeps\" is not specified in "+filename);
+145     if (!doc["total_tmmc_sweeps"]\&.IsNumber()) throw customException("\"total_tmmc_sweeps\" is not a number in "+filename);
+146     double tmpS = doc["total_tmmc_sweeps"]\&.GetDouble(); // Possibly in scientific notation
+147     sys\&.totalTMMCSweeps = tmpS; // Convert
+148 
+149     if (!doc\&.HasMember("wala_sweep_size")) throw customException("\"wala_sweep_size\" is not specified in "+filename);
+150     if (!doc["wala_sweep_size"]\&.IsNumber()) throw customException("\"wala_sweep_size\" is not a number in "+filename);
+151     double tmpW = doc["wala_sweep_size"]\&.GetDouble(); // Possibly in scientific notation
+152     sys\&.wlSweepSize = tmpW; // Convert
+153 
+154     if (!doc\&.HasMember("wala_g")) throw customException("\"wala_g\" is not specified in "+filename);
+155     if (!doc["wala_g"]\&.IsNumber()) throw customException("\"wala_g\" is not a number in "+filename);
+156     sys\&.wala_g = doc["wala_g"]\&.GetDouble();
+157 
+158     if (!doc\&.HasMember("wala_s")) throw customException("\"wala_s\" is not specified in "+filename);
+159     if (!doc["wala_s"]\&.IsNumber()) throw customException("\"wala_s\" is not a number in "+filename);
+160     sys\&.wala_s = doc["wala_s"]\&.GetDouble();
+161 
+162     if (doc\&.HasMember("lnF_start")) {
+163         if (!doc["lnF_start"]\&.IsNumber()) throw customException("\"lnF_start\" is not a number in "+filename);
+164         sys\&.lnF_start = doc["lnF_start"]\&.GetDouble(); // Bounds are checked later
+165     }
+166 
+167     if (doc\&.HasMember("lnF_end")) {
+168         if (!doc["lnF_end"]\&.IsNumber()) throw customException("\"lnF_end\" is not a number in "+filename);
+169         sys\&.lnF_end = doc["lnF_end"]\&.GetDouble();
+170         if (sys\&.lnF_end >= 1\&.0) {
+171             sendErr("Terminal lnF factor for Wang-Landau must be < 1");
+172             exit(SYS_FAILURE);
+173         }
+174         if (sys\&.lnF_end <= 0\&.0) {
+175             sendErr("Terminal lnF factor for Wang-Landau must be a positive number");
+176             exit(SYS_FAILURE);
+177         }
+178     }
+179     if (sys\&.lnF_end >= sys\&.lnF_start) {
+180         sendErr("lnF_end must be < lnF_start for Wang-Landau to proceed forward");
+181         exit(SYS_FAILURE);
+182     }
+183 
+184     sys\&.restartFromWALA = false;
+185     sys\&.restartFromWALAFile = "";
+186     if (doc\&.HasMember("restart_from_wala_lnPI")) {
+187         if (!doc["restart_from_wala_lnPI"]\&.IsString()) throw customException("\"restart_from_wala_lnPI\" filename is not a string in "+filename);
+188         sys\&.restartFromWALAFile = doc["restart_from_wala_lnPI"]\&.GetString();
+189         if (sys\&.restartFromWALAFile != "") {
+190             sys\&.restartFromWALA = true;
 191         }
 192     }
 193 
-194     // number of times the TMMC C matrix has to be traversed during the WALA --> TMMC crossover
-195     if (doc\&.HasMember("num_crossover_visits")) {
-196         assert(doc["num_crossover_visits"]\&.IsNumber());
-197         sys\&.nCrossoverVisits = doc["num_crossover_visits"]\&.GetDouble(); // convert
-198         if (sys\&.nCrossoverVisits < 1) {
-199             sendErr("Must allow the collection matrix to be traversed at least once in the crossover from Wang-Landau to TMMC");
-200             exit(SYS_FAILURE);
-201         }
-202     }
-203 
-204     setMoves (sys, doc, usedMovesEq, usedMovesPr);
-205     setPairPotentials (sys, doc);
-206 
-207     checkBounds (sys);
-208     sendMsg("System from "+filename+" passed bounds checks");
-209 
-210     setSystemBarriers (sys, doc);
-211     sendMsg("Initialized barriers from "+filename);
-212 
-213     sendMsg("Successfully read valid parameters from "+filename);
-214     return sys;
-215 }
+194     // Restarting from TMMC overrides WL by skipping that portion altogether
+195     sys\&.restartFromTMMC = false;
+196     sys\&.restartFromTMMCFile = "";
+197     if (doc\&.HasMember("restart_from_tmmc_C")) {
+198         if (!doc["restart_from_tmmc_C"]\&.IsString()) throw customException("\"restart_from_tmmc_C\" filename is not a string in "+filename);
+199         sys\&.restartFromTMMCFile = doc["restart_from_tmmc_C"]\&.GetString();
+200         if (sys\&.restartFromTMMCFile != "") {
+201             sys\&.restartFromTMMC = true;
+202         }
+203     }
+204 
+205     // Number of times the TMMC C matrix has to be traversed during the WALA --> TMMC crossover
+206     if (doc\&.HasMember("num_crossover_visits")) {
+207         if (!doc["num_crossover_visits"]\&.IsNumber()) throw customException("\"num_crossover_visits\" is not a number in "+filename);
+208         sys\&.nCrossoverVisits = doc["num_crossover_visits"]\&.GetDouble(); // convert
+209         if (sys\&.nCrossoverVisits < 1) {
+210             sendErr("Must allow the collection matrix to be traversed at least once in the crossover from Wang-Landau to TMMC");
+211             exit(SYS_FAILURE);
+212         }
+213     }
+214 
+215     setMoves (sys, doc, usedMovesEq, usedMovesPr);
+216     setPairPotentials (sys, doc);
+217 
+218     checkBounds (sys);
+219     sendMsg("System from "+filename+" passed bounds checks");
+220 
+221     setBarriers (sys, doc);
+222 
+223     sendMsg("Successfully read valid parameters from "+filename);
+224     return sys;
+225 }
+.fi
+.SS "void setBarriers (\fBsimSystem\fP &sys, const rapidjson::Document &doc)"
+
+.PP
+Initialize the barriers in a system by parsing the input document\&. Clears any existing information and will overwrite with information from doc\&.
+.PP
+[in, out] sys System to initialize with barriers  [in] doc Input JSON document 
+.PP
+Definition at line 616 of file input\&.cpp\&.
+.PP
+References simSystem::box(), simSystem::getTotalM(), simSystem::nSpecies(), sendMsg(), simSystem::speciesBarriers, and customException::what()\&.
+.PP
+Referenced by initialize(), and setConfig()\&.
+.PP
+.nf
+616                                                                 {
+617     int Mtot = sys\&.getTotalM();
+618 
+619     if (doc\&.HasMember("barriers")) {
+620         // Clear any existing barriers
+621         for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+622             sys\&.speciesBarriers[i]\&.clearAll();
+623         }
+624 
+625         // Iterate over all barriers specified for this species
+626         for (rapidjson::Value::ConstMemberIterator itr = doc["barriers"]\&.MemberBegin(); itr != doc["barriers"]\&.MemberEnd(); ++itr) {
+627             // Get barrier type and name
+628             std::string barrName = itr->name\&.GetString();
+629             if (!itr->value\&.IsObject()) throw customException ("Barrier "+barrName+" is not in a valid json document");
+630             if (!itr->value\&.HasMember("type")) throw customException ("Barrier "+barrName+" does not specify a type");
+631             if (!itr->value["type"]\&.IsString()) throw customException ("Barrier "+barrName+" type is not a string");
+632             std::string barrType = itr->value["type"]\&.GetString();
+633 
+634             // Get the species this barrier interacts with
+635             if (!itr->value\&.HasMember("species")) throw customException ("Barrier "+barrName+" does not specify a species to interact with");
+636             if (!itr->value["species"]\&.IsInt()) throw customException ("Barrier "+barrName+" species is not an integer");
+637             const int species = itr->value["species"]\&.GetInt();
+638             if (species < 1 || species > sys\&.nSpecies()) throw customException ("Barrier "+barrName+" species is not valid for this system");
+639 
+640             // Depending on barrier type, read parameters and initialize
+641             if (barrType == "hard_wall_z") {
+642                 // Expects lb, ub, sigma
+643                 if (!itr->value\&.HasMember("lb")) throw customException (barrName+" does not contain \"lb\" parameter");
+644                 if (!itr->value\&.HasMember("ub")) throw customException (barrName+" does not contain \"ub\" parameter");
+645                 if (!itr->value\&.HasMember("sigma")) throw customException (barrName+" does not contain \"sigma\" parameter");
+646 
+647                 if (!itr->value["lb"]\&.IsNumber()) throw customException ("\"lb\" for "+barrName+" is not a number");
+648                 if (!itr->value["ub"]\&.IsNumber()) throw customException ("\"ub\" for "+barrName+" is not a number");
+649                 if (!itr->value["sigma"]\&.IsNumber()) throw customException ("\"sigma\" for "+barrName+" is not a number");
+650 
+651                 const double lbBarr = itr->value["lb"]\&.GetDouble();
+652                 const double ubBarr = itr->value["ub"]\&.GetDouble();
+653                 const double sigmaBarr = itr->value["sigma"]\&.GetDouble();
+654 
+655                 try {
+656                     sys\&.speciesBarriers[species-1]\&.addHardWallZ (lbBarr, ubBarr, sigmaBarr, Mtot);
+657                 } catch (customException &ce) {
+658                     const std::string msg = ce\&.what();
+659                     throw customException ("Cannot initialize barrier "+barrName+" : "+msg);
+660                 }
+661             } else if (barrType == "square_well_wall_z") {
+662                 // Expect lb, ub, sigma, range, epsilon
+663                 if (!itr->value\&.HasMember("lb")) throw customException (barrName+" does not contain \"lb\" parameter");
+664                 if (!itr->value\&.HasMember("ub")) throw customException (barrName+" does not contain \"ub\" parameter");
+665                 if (!itr->value\&.HasMember("sigma")) throw customException (barrName+" does not contain \"sigma\" parameter");
+666                 if (!itr->value\&.HasMember("range")) throw customException (barrName+" does not contain \"range\" parameter");
+667                 if (!itr->value\&.HasMember("epsilon")) throw customException (barrName+" does not contain \"epsilon\" parameter");
+668 
+669                 if (!itr->value["lb"]\&.IsNumber()) throw customException ("\"lb\" for "+barrName+" is not a number");
+670                 if (!itr->value["ub"]\&.IsNumber()) throw customException ("\"ub\" for "+barrName+" is not a number");
+671                 if (!itr->value["sigma"]\&.IsNumber()) throw customException ("\"sigma\" for "+barrName+" is not a number");
+672                 if (!itr->value["range"]\&.IsNumber()) throw customException ("\"range\" for "+barrName+" is not a number");
+673                 if (!itr->value["epsilon"]\&.IsNumber()) throw customException ("\"epsilon\" for "+barrName+" is not a number");
+674 
+675                 const double lbBarr = itr->value["lb"]\&.GetDouble();
+676                 const double ubBarr = itr->value["ub"]\&.GetDouble();
+677                 const double sigmaBarr = itr->value["sigma"]\&.GetDouble();
+678                 const double rangeBarr = itr->value["range"]\&.GetDouble();
+679                 const double epsBarr = itr->value["epsilon"]\&.GetDouble();
+680 
+681                 try {
+682                     sys\&.speciesBarriers[species-1]\&.addSquareWellWallZ (lbBarr, ubBarr, sigmaBarr, rangeBarr, epsBarr, Mtot);
+683                 } catch (customException &ce) {
+684                     const std::string msg = ce\&.what();
+685                     throw customException ("Cannot initialize barrier "+barrName+" : "+msg);
+686                 }
+687             } else if (barrType == "cylinder_z") {
+688                 // Expect x, y, radius, width, sigma, epsilon
+689                 if (!itr->value\&.HasMember("x")) throw customException (barrName+" does not contain \"x\" parameter");
+690                 if (!itr->value\&.HasMember("y")) throw customException (barrName+" does not contain \"y\" parameter");
+691                 if (!itr->value\&.HasMember("radius")) throw customException (barrName+" does not contain \"radius\" parameter");
+692                 if (!itr->value\&.HasMember("width")) throw customException (barrName+" does not contain \"width\" parameter");
+693                 if (!itr->value\&.HasMember("sigma")) throw customException (barrName+" does not contain \"sigma\" parameter");
+694                 if (!itr->value\&.HasMember("epsilon")) throw customException (barrName+" does not contain \"epsilon\" parameter");
+695 
+696                 if (!itr->value["x"]\&.IsNumber()) throw customException ("\"x\" for "+barrName+" is not a number");
+697                 if (!itr->value["y"]\&.IsNumber()) throw customException ("\"y\" for "+barrName+" is not a number");
+698                 if (!itr->value["radius"]\&.IsNumber()) throw customException ("\"radius\" for "+barrName+" is not a number");
+699                 if (!itr->value["width"]\&.IsNumber()) throw customException ("\"width\" for "+barrName+" is not a number");
+700                 if (!itr->value["sigma"]\&.IsNumber()) throw customException ("\"sigma\" for "+barrName+" is not a number");
+701                 if (!itr->value["epsilon"]\&.IsNumber()) throw customException ("\"epsilon\" for "+barrName+" is not a number");
+702 
+703                 const double xBarr = itr->value["x"]\&.GetDouble();
+704                 const double yBarr = itr->value["y"]\&.GetDouble();
+705                 const double radiusBarr = itr->value["radius"]\&.GetDouble();
+706                 const double widthBarr = itr->value["width"]\&.GetDouble();
+707                 const double sigmaBarr = itr->value["sigma"]\&.GetDouble();
+708                 const double epsBarr = itr->value["epsilon"]\&.GetDouble();
+709 
+710                 try {
+711                     sys\&.speciesBarriers[species-1]\&.addCylinderZ (xBarr, yBarr, radiusBarr, widthBarr, sigmaBarr, epsBarr, Mtot);
+712                 } catch (customException &ce) {
+713                     const std::string msg = ce\&.what();
+714                     throw customException ("Cannot initialize barrier "+barrName+" : "+msg);
+715                 }
+716             } else if (barrType == "right_triangle_xz") {
+717                 // Expect parameters width, theta, lamW, epsilon, sigma, sep, offset, zbase, top
+718                 if (!itr->value\&.HasMember("width")) throw customException (barrName+" does not contain \"width\" parameter");
+719                 if (!itr->value\&.HasMember("theta")) throw customException (barrName+" does not contain \"theta\" parameter");
+720                 if (!itr->value\&.HasMember("lamW")) throw customException (barrName+" does not contain \"lamW\" parameter");
+721                 if (!itr->value\&.HasMember("epsilon")) throw customException (barrName+" does not contain \"epsilon\" parameter");
+722                 if (!itr->value\&.HasMember("sigma")) throw customException (barrName+" does not contain \"sigma\" parameter");
+723                 if (!itr->value\&.HasMember("sep")) throw customException (barrName+" does not contain \"sep\" parameter");
+724                 if (!itr->value\&.HasMember("offset")) throw customException (barrName+" does not contain \"offset\" parameter");
+725                 if (!itr->value\&.HasMember("zbase")) throw customException (barrName+" does not contain \"zbase\" parameter");
+726                 if (!itr->value\&.HasMember("top")) throw customException (barrName+" does not contain \"top\" parameter");
+727 
+728                 if (!itr->value["width"]\&.IsNumber()) throw customException ("\"width\" for "+barrName+" is not a number");
+729                 if (!itr->value["theta"]\&.IsNumber()) throw customException ("\"theta\" for "+barrName+" is not a number");
+730                 if (!itr->value["lamW"]\&.IsNumber()) throw customException ("\"lamW\" for "+barrName+" is not a number");
+731                 if (!itr->value["epsilon"]\&.IsNumber()) throw customException ("\"epsilon\" for "+barrName+" is not a number");
+732                 if (!itr->value["sigma"]\&.IsNumber()) throw customException ("\"sigma\" for "+barrName+" is not a number");
+733                 if (!itr->value["sep"]\&.IsNumber()) throw customException ("\"sep\" for "+barrName+" is not a number");
+734                 if (!itr->value["offset"]\&.IsNumber()) throw customException ("\"offset\" for "+barrName+" is not a number");
+735                 if (!itr->value["zbase"]\&.IsNumber()) throw customException ("\"zbase\" for "+barrName+" is not a number");
+736                 if (!itr->value["top"]\&.IsBool()) throw customException ("\"top\" for "+barrName+" is not a boolean");
+737 
+738                 const double widthBarr = itr->value["width"]\&.GetDouble();
+739                 const double thetaBarr = itr->value["theta"]\&.GetDouble();
+740                 const double lamwBarr = itr->value["lamW"]\&.GetDouble();
+741                 const double epsBarr = itr->value["epsilon"]\&.GetDouble();
+742                 const double sigmaBarr = itr->value["sigma"]\&.GetDouble();
+743                 const double sepBarr = itr->value["sep"]\&.GetDouble();
+744                 const double offsetBarr = itr->value["offset"]\&.GetDouble();
+745                 const double zbaseBarr = itr->value["zbase"]\&.GetDouble();
+746                 const double topBarr = itr->value["top"]\&.GetBool();
+747 
+748                 try {
+749                     sys\&.speciesBarriers[species-1]\&.addRightTriangleXZ (widthBarr, thetaBarr, lamwBarr, epsBarr, sigmaBarr, sepBarr, offsetBarr, sys\&.box(), zbaseBarr, topBarr, Mtot);
+750                 } catch (customException &ce) {
+751                     const std::string msg = ce\&.what();
+752                     throw customException ("Cannot initialize barrier "+barrName+" : "+msg);
+753                 }
+754             } else {
+755                 throw customException ("Unrecognized barrier type "+barrType+" from barrier "+barrName);
+756             }
+757         }
+758         sendMsg("Initialized barriers");
+759     } else {
+760         sendMsg("No barriers to initialize");
+761     }
+762 }
 .fi
 .SS "void setConfig (\fBsimSystem\fP &sys, const std::stringfilename)"
 
 .PP
-Setup a system's initial configuration as necessary\&. 
+Setup a system's initial configuration as necessary\&. Will empty a system if there are currently any particles present and overwrite with new information\&.
 .IP "1." 4
 If 'restart_file' in input json file, read initial config from there\&.
 .IP "2." 4
@@ -306,312 +478,267 @@ In not, randomly generate initial configuration\&.
 .PP
 
 .PP
-Definition at line 404 of file input\&.cpp\&.
+Definition at line 457 of file input\&.cpp\&.
 .PP
-References moves::addInsert(), simSystem::addKECorrection(), simSystem::box(), simSystem::getTotalM(), simSystem::nSpecies(), simSystem::numSpecies, numToStr(), parseJson(), simSystem::printSnapshot(), simSystem::readConfig(), sendErr(), sendMsg(), setPairPotentials(), setSystemBarriers(), SYS_FAILURE, simSystem::toggleKE(), simSystem::totNMin(), and customException::what()\&.
+References moves::addInsert(), simSystem::addKECorrection(), simSystem::box(), simSystem::getMaxOrder(), simSystem::getTotalM(), simSystem::nSpecies(), simSystem::numSpecies, numToStr(), parseJson(), simSystem::printSnapshot(), simSystem::readConfig(), sendErr(), sendMsg(), setBarriers(), setPairPotentials(), SYS_FAILURE, simSystem::toggleKE(), simSystem::totNMin(), and customException::what()\&.
 .PP
 .nf
-404                                                           {
-405     rapidjson::Document doc;
-406     parseJson (filename, doc);
-407 
-408     std::string restart_file = "";
-409     if (doc\&.HasMember("restart_file")) {
-410         assert(doc["restart_file"]\&.IsString());
-411         restart_file = doc["restart_file"]\&.GetString();
-412     }
-413 
-414     std::vector < double > sysBox = sys\&.box();
-415 
-416     double duh = 10\&.0;
-417     if (doc\&.HasMember("delta_u_hist")) {
-418         assert(doc["delta_u_hist"]\&.IsNumber());
-419         duh = doc["delta_u_hist"]\&.GetDouble();
-420     }
-421 
-422     int max_order = 2;
-423     if (doc\&.HasMember("max_order")) {
-424         assert(doc["max_order"]\&.IsNumber());
-425         max_order = doc["max_order"]\&.GetInt();
-426     }
-427 
-428     bool use_ke = sys\&.addKECorrection();
-429     int Mtot = sys\&.getTotalM();
-430 
-431     std::vector < double > sysMu (doc["mu"]\&.Size(), 0);
-432     for (rapidjson::SizeType i = 0; i < doc["mu"]\&.Size(); ++i) {
-433         sysMu[i] = doc["mu"][i]\&.GetDouble();
-434     }
-435     std::vector < int > sysMax (doc["max_N"]\&.Size(), 0);
-436     for (rapidjson::SizeType i = 0; i < doc["max_N"]\&.Size(); ++i) {
-437         sysMax[i] = doc["max_N"][i]\&.GetInt();
-438     }
-439     std::vector < int > sysMin (doc["min_N"]\&.Size(), 0);
-440     for (rapidjson::SizeType i = 0; i < doc["min_N"]\&.Size(); ++i) {
-441         sysMin[i] = doc["min_N"][i]\&.GetInt();
-442     }
-443 
-444     // Read from restart file if specified
-445     if (restart_file != "") {
-446         try {
-447             sys\&.readConfig(restart_file);
-448         } catch (customException &ce) {
-449             sendErr(ce\&.what());
-450         }
-451     } else if (restart_file == "" && sys\&.totNMin() > 0) {
-452         sendMsg("Automatically generating the initial configuration");
-453 
-454         // have to generate initial configuration manually - start with mu = INF
-455         std::vector < double > initMu (doc["num_species"]\&.GetInt(), 1\&.0e2);
-456 
-457         simSystem initSys (doc["num_species"]\&.GetInt(), doc["beta"]\&.GetDouble()/100\&.0, sysBox, initMu, sysMax, sysMin, Mtot, duh, max_order); // beta =  1/T, so low beta to have high T
-458         if (use_ke) {
-459             initSys\&.toggleKE();
-460             if (initSys\&.addKECorrection() == false) {
-461                 throw customException ("Unable to set KE flag");
-462             }
-463         }
-464 
-465         // add the same potentials
-466         setPairPotentials (initSys, doc);
-467         setSystemBarriers (initSys, doc);
-468 
-469         std::vector < int > initialization_order (sys\&.nSpecies(), 0), check_init (sys\&.nSpecies(), 0);
-470         std::vector < double > init_frac (sys\&.nSpecies(), 1\&.0);
-471         double sum = 0\&.0;
-472         for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-473             initialization_order[i] = i;
-474             if (i > 0) init_frac[i] = 0\&.0;
-475             sum += init_frac[i];
-476         }
-477         if (doc\&.HasMember("init_order")) {
-478             assert(doc["init_order"]\&.IsArray());
-479             assert(doc["init_order"]\&.Size() == doc["num_species"]\&.GetInt());
-480 
-481             for (rapidjson::SizeType i = 0; i < doc["init_order"]\&.Size(); ++i) {
-482                 assert(doc["init_order"][i]\&.IsInt());
-483                 initialization_order[i] = doc["init_order"][i]\&.GetInt();
-484                 if (initialization_order[i] < 0 || initialization_order[i] >= sys\&.nSpecies()) {
-485                     sendErr("Order of initialization goes out of bounds, should include 0 <= i < nSpec");
-486                     exit(SYS_FAILURE);
-487                 }
-488                 if (check_init[initialization_order[i]] != 0) {
-489                     sendErr("Order of initialization repeats itself");
-490                     exit(SYS_FAILURE);
-491                 } else {
-492                     check_init[initialization_order[i]] = 1;
-493                 }
-494             }
-495         }
-496         if (doc\&.HasMember("init_frac")) {
-497             assert(doc["init_frac"]\&.IsArray());
-498             assert(doc["init_frac"]\&.Size() == doc["num_species"]\&.GetInt());
-499             sum = 0\&.0;
-500             for (rapidjson::SizeType i = 0; i < doc["init_frac"]\&.Size(); ++i) {
-501                 assert(doc["init_frac"][i]\&.IsNumber());
-502                 init_frac[i] = doc["init_frac"][i]\&.GetDouble();
-503                 if (init_frac[i] < 0 || init_frac[i] >= 1\&.0) {
-504                     sendErr("Initialization fraction out of bounds");
-505                     exit(SYS_FAILURE);
-506                 }
-507                 sum += init_frac[i];
-508             }
-509         }
-510         for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-511             init_frac[i] /= sum;
-512         }
-513 
-514         // iteratively add each individual species, assume we want an equimolar mixture to start from
-515         int added = 0;
-516         for (unsigned int idx = 0; idx < sys\&.nSpecies(); ++idx) {
-517             unsigned int i = initialization_order[idx];
-518             sendMsg("Initializing species "+numToStr(i)+" configurations");
+457                                                           {
+458     rapidjson::Document doc;
+459     parseJson (filename, doc);
+460 
+461     // Get a few things from file not easily accessible from system object
+462     std::string restart_file = "";
+463     if (doc\&.HasMember("restart_file")) {
+464         restart_file = doc["restart_file"]\&.GetString();
+465     }
+466 
+467     std::vector < int > sysMax (doc["max_N"]\&.Size(), 0);
+468     for (rapidjson::SizeType i = 0; i < doc["max_N"]\&.Size(); ++i) {
+469         sysMax[i] = doc["max_N"][i]\&.GetInt();
+470     }
+471     std::vector < int > sysMin (doc["min_N"]\&.Size(), 0);
+472     for (rapidjson::SizeType i = 0; i < doc["min_N"]\&.Size(); ++i) {
+473         sysMin[i] = doc["min_N"][i]\&.GetInt();
+474     }
+475 
+476     // Rest from existing system
+477     int Mtot = sys\&.getTotalM();
+478     int maxOrder = sys\&.getMaxOrder();
+479     bool useKe = sys\&.addKECorrection();
+480     double duh = 10\&.0;
+481     std::vector < double > sysBox = sys\&.box();
+482 
+483     // Read from restart file if specified
+484     if (restart_file != "") {
+485         try {
+486             sys\&.readConfig(restart_file);
+487         } catch (customException &ce) {
+488             sendErr(ce\&.what());
+489         }
+490     } else if (restart_file == "" && sys\&.totNMin() > 0) {
+491         sendMsg("Automatically generating the initial configuration");
+492 
+493         // Have to generate initial configuration manually - start with mu = INF
+494         std::vector < double > initMu (doc["num_species"]\&.GetInt(), 1\&.0e2);
+495 
+496         simSystem initSys (doc["num_species"]\&.GetInt(), doc["beta"]\&.GetDouble()/100\&.0, sysBox, initMu, sysMax, sysMin, Mtot, duh, maxOrder); // beta =  1/T, so low beta to have high T
+497         if (useKe) {
+498             initSys\&.toggleKE();
+499             if (initSys\&.addKECorrection() == false) {
+500                 throw customException ("Unable to set KE flag");
+501             }
+502         }
+503 
+504         // Add the same potentials
+505         setPairPotentials (initSys, doc);
+506         setBarriers (initSys, doc);
+507 
+508         std::vector < int > initialization_order (sys\&.nSpecies(), 0), check_init (sys\&.nSpecies(), 0);
+509         std::vector < double > init_frac (sys\&.nSpecies(), 1\&.0);
+510         double sum = 0\&.0;
+511         for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+512             initialization_order[i] = i;
+513             if (i > 0) init_frac[i] = 0\&.0;
+514             sum += init_frac[i];
+515         }
+516         if (doc\&.HasMember("init_order")) {
+517             if (!doc["init_order"]\&.IsArray()) throw customException("\"init_order\" is not an array in "+filename);
+518             if (doc["init_order"]\&.Size() != doc["num_species"]\&.GetInt()) throw customException("\"init_order\" not specified for each species in "+filename);
 519 
-520             // insert this species i
-521             moves initMove (initSys\&.getTotalM());
-522             initMove\&.addInsert(i, 1\&.0);
-523 
-524             // also add displacment moves for all species present
-525             for (unsigned int j = 0; j <= idx; ++j) {
-526                 sendMsg("Added translation moves for initialization of species "+numToStr(initialization_order[j]));
-527                 initMove\&.addTranslate(initialization_order[j], 2\&.0, 1\&.0, initSys\&.box());
-528             }
-529 
-530             // now do simuation until within proper range
-531             int targetNum = sys\&.totNMin()*init_frac[idx];
-532             if (idx == sys\&.nSpecies() - 1) {
-533                 // to account for integer rounding
-534                 targetNum = sys\&.totNMin() - added;
-535             }
-536             added += targetNum;
-537 
-538             sendMsg("Target number = "+numToStr(targetNum)+" for species "+numToStr(i+1));
-539             int tmpCounter = 0, statusPrint = 10e6;
-540             while (initSys\&.numSpecies[i] < targetNum) {
-541                 try {
-542                     initMove\&.makeMove(initSys);
-543                 } catch (customException &ce) {
-544                     std::string msg = ce\&.what();
-545                     sendErr("Failed to create an initial configuration because "+msg);
-546                     exit(SYS_FAILURE);
-547                 }
-548                 tmpCounter++;
-549                 if (tmpCounter%statusPrint == 0) {
-550                     tmpCounter = 0;
-551                     sendMsg("Grew "+numToStr(initSys\&.numSpecies[i])+" atoms of type "+numToStr(i)+" so far");
-552                 }
-553             }
-554         }
-555 
-556         // print snapshot from Reading initial configuration
-557         initSys\&.printSnapshot("auto-init\&.xyz", "auto-generated initial configuration");
-558 
-559         // read into sys
-560         try {
-561             sys\&.readConfig("auto-init\&.xyz");
-562         } catch (customException &ce) {
-563             std::string msg = ce\&.what();
-564             sendErr("Failed to read auto-generated initialization file because "+msg);
-565         }
-566     }
-567 }
+520             for (rapidjson::SizeType i = 0; i < doc["init_order"]\&.Size(); ++i) {
+521                 if (!doc["init_order"][i]\&.IsInt()) throw customException("\"init_order\" is not an integer for species "+numToStr(i+1)+" in "+filename);
+522                 initialization_order[i] = doc["init_order"][i]\&.GetInt();
+523                 if (initialization_order[i] < 0 || initialization_order[i] >= sys\&.nSpecies()) {
+524                     sendErr("Order of initialization goes out of bounds, should include 0 <= i < nSpec");
+525                     exit(SYS_FAILURE);
+526                 }
+527                 if (check_init[initialization_order[i]] != 0) {
+528                     sendErr("Order of initialization repeats itself");
+529                     exit(SYS_FAILURE);
+530                 } else {
+531                     check_init[initialization_order[i]] = 1;
+532                 }
+533             }
+534         }
+535         if (doc\&.HasMember("init_frac")) {
+536             if (!doc["init_frac"]\&.IsArray()) throw customException("\"init_frac\" is not an array in "+filename);
+537             if (doc["init_frac"]\&.Size() != doc["num_species"]\&.GetInt()) throw customException("\"init_frac\" not specified for each species in "+filename);
+538 
+539             sum = 0\&.0;
+540             for (rapidjson::SizeType i = 0; i < doc["init_frac"]\&.Size(); ++i) {
+541                 if (!doc["init_frac"][i]\&.IsNumber()) throw customException("\"init_frac\" is not a number for species "+numToStr(i+1)+" in "+filename);
+542                 init_frac[i] = doc["init_frac"][i]\&.GetDouble();
+543                 if (init_frac[i] < 0 || init_frac[i] >= 1\&.0) {
+544                     sendErr("Initialization fraction out of bounds");
+545                     exit(SYS_FAILURE);
+546                 }
+547                 sum += init_frac[i];
+548             }
+549         }
+550         for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+551             init_frac[i] /= sum;
+552         }
+553 
+554         // Iteratively add each individual species, assume we want an equimolar mixture to start from
+555         int added = 0;
+556         for (unsigned int idx = 0; idx < sys\&.nSpecies(); ++idx) {
+557             unsigned int i = initialization_order[idx];
+558             sendMsg("Initializing species "+numToStr(i)+" configurations");
+559 
+560             // Insert this species i
+561             moves initMove (initSys\&.getTotalM());
+562             initMove\&.addInsert(i, 1\&.0);
+563 
+564             // Also add translation moves for all species present
+565             for (unsigned int j = 0; j <= idx; ++j) {
+566                 sendMsg("Added translation moves for initialization of species "+numToStr(initialization_order[j]));
+567                 initMove\&.addTranslate(initialization_order[j], 2\&.0, 1\&.0, initSys\&.box());
+568             }
+569 
+570             // Now do simuation until within proper range
+571             int targetNum = sys\&.totNMin()*init_frac[idx];
+572             if (idx == sys\&.nSpecies() - 1) {
+573                 // To account for integer rounding
+574                 targetNum = sys\&.totNMin() - added;
+575             }
+576             added += targetNum;
+577 
+578             sendMsg("Target number = "+numToStr(targetNum)+" for species "+numToStr(i+1));
+579             int tmpCounter = 0, statusPrint = 10e6;
+580             while (initSys\&.numSpecies[i] < targetNum) {
+581                 try {
+582                     initMove\&.makeMove(initSys);
+583                 } catch (customException &ce) {
+584                     std::string msg = ce\&.what();
+585                     sendErr("Failed to create an initial configuration : "+msg);
+586                     exit(SYS_FAILURE);
+587                 }
+588                 tmpCounter++;
+589                 if (tmpCounter%statusPrint == 0) {
+590                     tmpCounter = 0;
+591                     sendMsg("Grew "+numToStr(initSys\&.numSpecies[i])+" atoms of type "+numToStr(i)+" so far");
+592                 }
+593             }
+594         }
+595 
+596         // Print snapshot from Reading initial configuration
+597         initSys\&.printSnapshot("auto-init\&.xyz", "auto-generated initial configuration");
+598 
+599         // Read into sys
+600         try {
+601             sys\&.readConfig("auto-init\&.xyz");
+602         } catch (customException &ce) {
+603             std::string msg = ce\&.what();
+604             sendErr("Failed to read auto-generated initialization file : "+msg);
+605         }
+606     }
+607 }
 .fi
 .SS "void setMoves (\fBsimSystem\fP &sys, const rapidjson::Document &doc, \fBmoves\fP *usedMovesEq, \fBmoves\fP *usedMovesPr)"
 
 .PP
-Assign the Monte Carlo moves based on the JSON input file\&. 
+Assign the Monte Carlo moves based on the JSON input file\&. Uses same information to specify 'production' and 'equilibration' phases\&. Clears any existing information and will overwrite with information from doc\&.
 .PP
 \fBParameters:\fP
 .RS 4
 \fIsys\fP Simulation system that has been initialized 
 .br
-\fIdoc\fP JSON document corresponding to input file  [in] usedMovesEq Pointer to move object that will be used during 'equilibration' (WL)  [in] usedMovesPr Pointer to move object that will be used during 'production' (TMMC) 
+\fIdoc\fP JSON document corresponding to input file  [in] usedMovesEq Pointer to move object that will be used during 'equilibration' (WL + Crossover)  [in] usedMovesPr Pointer to move object that will be used during 'production' (TMMC) 
 .RE
 .PP
 
 .PP
-Definition at line 225 of file input\&.cpp\&.
+Definition at line 236 of file input\&.cpp\&.
 .PP
-References moves::addDelete(), moves::addInsert(), moves::addSwap(), moves::addTranslate(), simSystem::box(), simSystem::getTotalM(), simSystem::nSpecies(), numToStr(), sendErr(), moves::setM(), and SYS_FAILURE\&.
+References moves::addDelete(), moves::addInsert(), moves::addSwap(), moves::addTranslate(), simSystem::box(), moves::clearAll(), simSystem::getTotalM(), simSystem::nSpecies(), numToStr(), sendErr(), moves::setM(), and SYS_FAILURE\&.
 .PP
 Referenced by initialize()\&.
 .PP
 .nf
-225                                                                                                      {
-226     std::vector < double > ref (sys\&.nSpecies(), 0);
-227     std::vector < std::vector < double > > probEqSwap (sys\&.nSpecies(), ref), probPrSwap (sys\&.nSpecies(), ref);
-228     std::vector < double > probPrInsDel (sys\&.nSpecies(), 0), probPrDisp (sys\&.nSpecies(), 0);
-229     std::vector < double > probEqInsDel (sys\&.nSpecies(), 0), probEqDisp (sys\&.nSpecies(), 0);
-230     std::vector < double > maxPrD (sys\&.nSpecies(), 0), maxEqD (sys\&.nSpecies(), 0);
-231     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-232         std::string dummy = "prob_pr_ins_del_" + std::to_string(i+1);
-233         assert(doc\&.HasMember(dummy\&.c_str()));
-234         assert(doc[dummy\&.c_str()]\&.IsNumber());
-235         probPrInsDel[i] = doc[dummy\&.c_str()]\&.GetDouble();
-236     }
-237 
-238     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-239         std::string dummy = "prob_pr_displace_" + std::to_string(i+1);
-240         assert(doc\&.HasMember(dummy\&.c_str()));
-241         assert(doc[dummy\&.c_str()]\&.IsNumber());
-242         probPrDisp[i] = doc[dummy\&.c_str()]\&.GetDouble();
-243         dummy = "max_pr_displacement_" + std::to_string(i+1);
-244         assert(doc\&.HasMember(dummy\&.c_str()));
-245         assert(doc[dummy\&.c_str()]\&.IsNumber());
-246         maxPrD[i] = doc[dummy\&.c_str()]\&.GetDouble();
-247     }
-248 
-249     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-250         std::string dummy = "prob_eq_ins_del_" + std::to_string(i+1);
-251         assert(doc\&.HasMember(dummy\&.c_str()));
-252         assert(doc[dummy\&.c_str()]\&.IsNumber());
-253         probEqInsDel[i] = doc[dummy\&.c_str()]\&.GetDouble();
-254     }
-255 
+236                                                                                                      {
+237     usedMovesEq->clearAll();
+238     usedMovesPr->clearAll();
+239 
+240     std::vector < double > ref (sys\&.nSpecies(), 0);
+241     std::vector < std::vector < double > > probPrSwap (sys\&.nSpecies(), ref);
+242     std::vector < double > probPrInsDel (sys\&.nSpecies(), 0), probPrDisp (sys\&.nSpecies(), 0), maxPrD (sys\&.nSpecies(), 0);
+243 
+244     if (!doc\&.HasMember("moves")) throw customException("Input file does not have Monte Carlo moves specified");
+245     if (!doc["moves"]\&.IsObject()) throw customException("Input file does not have Monte Carlo moves specified as correct JSON document");
+246 
+247     // Insert/Delete moves
+248     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+249         std::string dummy = "ins_del_" + numToStr(i+1);
+250         if (!doc["moves"]\&.HasMember(dummy\&.c_str())) throw customException("Input file does not have insert/delete move specified for species "+numToStr(i+1));
+251         if (!doc["moves"][dummy\&.c_str()]\&.IsNumber()) throw customException("Input file does not correctly specify insert/delete move probability for species "+numToStr(i+1));
+252         probPrInsDel[i] = doc["moves"][dummy\&.c_str()]\&.GetDouble();
+253     }
+254 
+255     // Translation moves
 256     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-257         std::string dummy = "prob_eq_displace_" + std::to_string(i+1);
-258         assert(doc\&.HasMember(dummy\&.c_str()));
-259         assert(doc[dummy\&.c_str()]\&.IsNumber());
-260         probEqDisp[i] = doc[dummy\&.c_str()]\&.GetDouble();
-261         dummy = "max_eq_displacement_" + std::to_string(i+1);
-262         assert(doc\&.HasMember(dummy\&.c_str()));
-263         assert(doc[dummy\&.c_str()]\&.IsNumber());
-264         maxEqD[i] = doc[dummy\&.c_str()]\&.GetDouble();
-265     }
-266 
-267     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-268         for (unsigned int j = i+1; j < sys\&.nSpecies(); ++j) {
-269             std::string name1 = "prob_pr_swap_"+std::to_string(i+1)+"_"+std::to_string(j+1);
-270             std::string name2 = "prob_pr_swap_"+std::to_string(j+1)+"_"+std::to_string(i+1);
-271             std::string moveName = "";
-272             bool foundIJ = false;
-273             if (doc\&.HasMember(name1\&.c_str())) {
-274                 moveName = name1;
-275                 foundIJ = true;
-276             } else if (doc\&.HasMember(name2\&.c_str()) && !foundIJ) {
-277                 moveName = name2;
+257         std::string dummy = "translate_" + numToStr(i+1);
+258         if (!doc["moves"]\&.HasMember(dummy\&.c_str())) throw customException("Input file does not have translation move specified for species "+numToStr(i+1));
+259         if (!doc["moves"][dummy\&.c_str()]\&.IsNumber()) throw customException("Input file does not correctly specify translation move probability for species "+numToStr(i+1));
+260         probPrDisp[i] = doc["moves"][dummy\&.c_str()]\&.GetDouble();
+261 
+262         dummy = "max_translation_" + numToStr(i+1);
+263         if (!doc["moves"]\&.HasMember(dummy\&.c_str())) throw customException("Input file does not have translation magnitude specified for species "+numToStr(i+1));
+264         if (!doc["moves"][dummy\&.c_str()]\&.IsNumber()) throw customException("Input file does not correctly specify translation move magnitude for species "+numToStr(i+1));
+265         maxPrD[i] = doc["moves"][dummy\&.c_str()]\&.GetDouble();
+266     }
+267 
+268     // Swap moves
+269     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+270         for (unsigned int j = i+1; j < sys\&.nSpecies(); ++j) {
+271             std::string name1 = "swap_"+numToStr(i+1)+"_"+numToStr(j+1);
+272             std::string name2 = "swap_"+numToStr(j+1)+"_"+numToStr(i+1);
+273             std::string moveName = "";
+274             bool foundIJ = false;
+275 
+276             if (doc["moves"]\&.HasMember(name1\&.c_str())) {
+277                 moveName = name1;
 278                 foundIJ = true;
-279             } else if (doc\&.HasMember(name2\&.c_str()) && foundIJ) {
-280                 sendErr("Input file doubly specifies production swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
-281                 exit(SYS_FAILURE);
-282             } else {
-283                 sendErr("Input file does not specify production swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
+279             } else if (doc["moves"]\&.HasMember(name2\&.c_str()) && !foundIJ) {
+280                 moveName = name2;
+281                 foundIJ = true;
+282             } else if (doc["moves"]\&.HasMember(name2\&.c_str()) && foundIJ) {
+283                 sendErr("Input file doubly specifies production swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
 284                 exit(SYS_FAILURE);
-285             }
-286             assert(doc[moveName\&.c_str()]\&.IsNumber());
-287             probPrSwap[i][j] = doc[moveName\&.c_str()]\&.GetDouble();
-288             probPrSwap[j][i] = doc[moveName\&.c_str()]\&.GetDouble();
-289         }
-290     }
-291 
-292     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-293         for (unsigned int j = i+1; j < sys\&.nSpecies(); ++j) {
-294             std::string name1 = "prob_eq_swap_"+std::to_string(i+1)+"_"+std::to_string(j+1);
-295             std::string name2 = "prob_eq_swap_"+std::to_string(j+1)+"_"+std::to_string(i+1);
-296             std::string moveName = "";
-297             bool foundIJ = false;
-298             if (doc\&.HasMember(name1\&.c_str())) {
-299                 moveName = name1;
-300                 foundIJ = true;
-301             } else if (doc\&.HasMember(name2\&.c_str()) && !foundIJ) {
-302                 moveName = name2;
-303                 foundIJ = true;
-304             } else if (doc\&.HasMember(name2\&.c_str()) && foundIJ) {
-305                 sendErr("Input file doubly specifies equilibration swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
-306                 exit(SYS_FAILURE);
-307             } else {
-308                 sendErr("Input file does not specify equilibration swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
-309                 exit(SYS_FAILURE);
-310             }
-311             assert(doc[moveName\&.c_str()]\&.IsNumber());
-312             probEqSwap[i][j] = doc[moveName\&.c_str()]\&.GetDouble();
-313             probEqSwap[j][i] = doc[moveName\&.c_str()]\&.GetDouble();
-314         }
-315     }
-316 
-317     usedMovesEq->setM(sys\&.getTotalM());
-318     usedMovesPr->setM(sys\&.getTotalM());
-319     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-320         usedMovesEq->addInsert(i, probEqInsDel[i]);
-321         usedMovesPr->addInsert(i, probPrInsDel[i]);
-322 
-323         usedMovesEq->addDelete(i, probEqInsDel[i]);
-324         usedMovesPr->addDelete(i, probPrInsDel[i]);
-325 
-326         usedMovesEq->addTranslate(i, probEqDisp[i], maxEqD[i], sys\&.box());
-327         usedMovesPr->addTranslate(i, probPrDisp[i], maxPrD[i], sys\&.box());
-328 
-329         for (unsigned int j = i+1; j < sys\&.nSpecies(); ++j) {
-330             usedMovesEq->addSwap(i, j, probEqSwap[i][j]);
-331             usedMovesPr->addSwap(i, j, probPrSwap[i][j]);
-332         }
-333     }
-334 }
+285             } else {
+286                 sendErr("Input file does not specify production swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
+287                 exit(SYS_FAILURE);
+288             }
+289 
+290             if (!doc["moves"][moveName\&.c_str()]\&.IsNumber()) throw customException("Input file does not correctly specify swap move probability for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
+291             probPrSwap[i][j] = doc["moves"][moveName\&.c_str()]\&.GetDouble();
+292             probPrSwap[j][i] = doc["moves"][moveName\&.c_str()]\&.GetDouble();
+293         }
+294     }
+295 
+296     usedMovesEq->setM(sys\&.getTotalM());
+297     usedMovesPr->setM(sys\&.getTotalM());
+298     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+299         usedMovesEq->addInsert(i, probPrInsDel[i]);
+300         usedMovesPr->addInsert(i, probPrInsDel[i]);
+301 
+302         usedMovesEq->addDelete(i, probPrInsDel[i]);
+303         usedMovesPr->addDelete(i, probPrInsDel[i]);
+304 
+305         usedMovesEq->addTranslate(i, probPrDisp[i], maxPrD[i], sys\&.box());
+306         usedMovesPr->addTranslate(i, probPrDisp[i], maxPrD[i], sys\&.box());
+307 
+308         for (unsigned int j = i+1; j < sys\&.nSpecies(); ++j) {
+309             usedMovesEq->addSwap(i, j, probPrSwap[i][j]);
+310             usedMovesPr->addSwap(i, j, probPrSwap[i][j]);
+311         }
+312     }
+313 }
 .fi
 .SS "void setPairPotentials (\fBsimSystem\fP &sys, const rapidjson::Document &doc)"
 
 .PP
-Assign the pair potentials based on the JSON input file\&. 
+Assign the pair potentials based on the JSON input file\&. Overwrites any existing pair potential information with new settings from doc\&.
 .PP
 \fBParameters:\fP
 .RS 4
@@ -622,282 +749,138 @@ Assign the pair potentials based on the JSON input file\&.
 .PP
 
 .PP
-Definition at line 342 of file input\&.cpp\&.
+Definition at line 322 of file input\&.cpp\&.
 .PP
-References simSystem::addPotential(), simSystem::nSpecies(), numToStr(), simSystem::ppot, sendErr(), and SYS_FAILURE\&.
-.PP
-Referenced by initialize(), and setConfig()\&.
-.PP
-.nf
-342                                                                       {
-343     int Mtot = 1;
-344     if (doc\&.HasMember("num_expanded_states")) {
-345         Mtot = doc["num_expanded_states"]\&.GetInt();
-346     }
-347 
-348     //std::vector < pairPotential* > ppotArray (sys\&.nSpecies()*(sys\&.nSpecies()-1)/2 + sys\&.nSpecies());
-349     std::vector < std::string > ppotType (sys\&.nSpecies()*(sys\&.nSpecies()-1)/2 + sys\&.nSpecies());
-350     int ppotTypeIndex = 0;
-351     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-352         for (unsigned int j = i; j < sys\&.nSpecies(); ++j) {
-353             std::string name1 = "ppot_"+std::to_string(i+1)+"_"+std::to_string(j+1), name2 = "ppot_"+std::to_string(j+1)+"_"+std::to_string(i+1);
-354             std::string ppotName = "", dummy = "";
-355             bool foundIJ = false;
-356             if (doc\&.HasMember(name1\&.c_str())) {
-357                 ppotName = name1;
-358                 foundIJ = true;
-359             } else if (doc\&.HasMember(name2\&.c_str()) && !foundIJ) {
-360                 ppotName = name2;
-361                 foundIJ = true;
-362             } else if (doc\&.HasMember(name2\&.c_str()) && foundIJ) {
-363                 sendErr("Input file doubly specifies pair potential for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
-364                 exit(SYS_FAILURE);
-365             } else {
-366                 sendErr("Input file does not specify pair potential for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
-367                 exit(SYS_FAILURE);
-368             }
-369             assert(doc[ppotName\&.c_str()]\&.IsString());
-370             ppotType[ppotTypeIndex] = doc[ppotName\&.c_str()]\&.GetString();
-371             dummy = ppotName+"_params";
-372             assert(doc\&.HasMember(dummy\&.c_str()));
-373             assert(doc[dummy\&.c_str()]\&.IsArray());
-374             std::vector < double > params (doc[dummy\&.c_str()]\&.Size()+1, 0);
-375             for (unsigned int k = 0; k < params\&.size()-1; ++k) {
-376                 assert(doc[dummy\&.c_str()][k]\&.IsNumber());
-377                 params[k] = doc[dummy\&.c_str()][k]\&.GetDouble();
-378             }
-379             params[params\&.size()-1] = Mtot;
-380 
-381             bool useCellList = false; // default
-382             dummy = ppotName+"_use_cell_list";
-383             if (doc\&.HasMember(dummy\&.c_str())) {
-384                 assert(doc[dummy\&.c_str()]\&.IsBool());
-385                 useCellList = doc[dummy\&.c_str()]\&.GetBool();
-386             }
-387 
-388             sys\&.addPotential(i, j, ppotType[ppotTypeIndex], params, useCellList);
-389             sys\&.ppot[i][j]->savePotential(ppotName+"\&.dat", 0\&.01, 0\&.01);
-390 
-391             ppotTypeIndex++;
-392         }
-393     }
-394 }
-.fi
-.SS "void setSystemBarriers (\fBsimSystem\fP &sys, const rapidjson::Document &doc)"
-
-.PP
-Initialize the barriers in a system by parsing the input document\&. This function is defined separately since it must be done several times\&.
-.PP
-[in, out] sys System to initialize with barriers  [in] doc Input JSON document 
-.PP
-Definition at line 575 of file input\&.cpp\&.
-.PP
-References simSystem::getTotalM(), MAX_BARRIERS_PER_SPECIES, simSystem::nSpecies(), sendErr(), simSystem::speciesBarriers, SYS_FAILURE, and customException::what()\&.
+References simSystem::addPotential(), simSystem::nSpecies(), numToStr(), and simSystem::ppot\&.
 .PP
 Referenced by initialize(), and setConfig()\&.
 .PP
 .nf
-575                                                                       {
-576     // get Mtot, first from doc, otherwise try sys, but they should be the same
-577     int Mtot = 1;
-578     if (doc\&.HasMember("num_expanded_states")) {
-579         assert(doc["num_expanded_states"]\&.IsInt());
-580         Mtot = doc["num_expanded_states"]\&.GetInt();
-581     } else {
-582         Mtot = sys\&.getTotalM();
-583     }
-584 
-585     // Hard wall (expect parameters: {lb, ub, sigma})
-586     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-587         bool convention0 = false;
-588         std::string dummy = "hardWallZ_" + std::to_string(i+1);
-589         std::vector < double > wallParams (3, 0);
-590         if (doc\&.HasMember(dummy\&.c_str())) {
-591             assert(doc[dummy\&.c_str()]\&.IsArray());
-592             assert(doc[dummy\&.c_str()]\&.Size() == 3);
-593             for (unsigned int j = 0; j < 3; ++j) {
-594                 wallParams[j] = doc[dummy\&.c_str()][j]\&.GetDouble();
-595             }
-596             try {
-597                 sys\&.speciesBarriers[i]\&.addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
-598             } catch (customException &ce) {
-599                 sendErr(ce\&.what());
-600                 exit(SYS_FAILURE);
-601             }
-602             convention0 = true;
-603         }
-604         for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
-605             // alternatively allow multiple walls to specified with a suffix up to a max
-606             std::string dummy = "hardWallZ_" + std::to_string(i+1) + "_" + std::to_string(j);
-607             if (doc\&.HasMember(dummy\&.c_str())) {
-608                 if (convention0) {
-609                     sendErr("Error, multiple barrier naming conventions used for the same species");
-610                     exit(SYS_FAILURE);
-611                 }
-612                 if (doc\&.HasMember(dummy\&.c_str())) {
-613                     assert(doc[dummy\&.c_str()]\&.IsArray());
-614                     assert(doc[dummy\&.c_str()]\&.Size() == 3);
-615                     for (unsigned int j = 0; j < 3; ++j) {
-616                         wallParams[j] = doc[dummy\&.c_str()][j]\&.GetDouble();
-617                     }
-618                     try {
-619                         sys\&.speciesBarriers[i]\&.addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
-620                     } catch (customException &ce) {
-621                         sendErr(ce\&.what());
-622                         exit(SYS_FAILURE);
-623                     }
-624                 }
-625             }
-626         }
-627     }
-628 
-629     // Square well wall (expect parameters: {lb, ub, sigma, range, eps})
-630     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-631         bool convention0 = false;
-632         std::string dummy = "squareWellWallZ_" + std::to_string(i+1);
-633         std::vector < double > wallParams (5, 0);
-634         if (doc\&.HasMember(dummy\&.c_str())) {
-635             assert(doc[dummy\&.c_str()]\&.IsArray());
-636             assert(doc[dummy\&.c_str()]\&.Size() == 5);
-637             for (unsigned int j = 0; j < 5; ++j) {
-638                 wallParams[j] = doc[dummy\&.c_str()][j]\&.GetDouble();
-639             }
-640             try {
-641                 sys\&.speciesBarriers[i]\&.addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
-642             } catch (customException &ce) {
-643                 sendErr(ce\&.what());
-644                 exit(SYS_FAILURE);
-645             }
-646             convention0 = true;
-647         }
-648         for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
-649             // alternatively allow multiple walls to specified with a suffix up to a max
-650             std::string dummy = "squareWellWallZ_" + std::to_string(i+1) + "_" + std::to_string(j);
-651             if (doc\&.HasMember(dummy\&.c_str())) {
-652                 if (convention0) {
-653                     sendErr("Error, multiple barrier naming conventions used for the same species");
-654                     exit(SYS_FAILURE);
-655                 }
-656                 if (doc\&.HasMember(dummy\&.c_str())) {
-657                     assert(doc[dummy\&.c_str()]\&.IsArray());
-658                     assert(doc[dummy\&.c_str()]\&.Size() == 5);
-659                     for (unsigned int j = 0; j < 5; ++j) {
-660                         wallParams[j] = doc[dummy\&.c_str()][j]\&.GetDouble();
-661                     }
-662                     try {
-663                         sys\&.speciesBarriers[i]\&.addSquareWellWallZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], Mtot);
-664                     } catch (customException &ce) {
-665                         sendErr(ce\&.what());
-666                         exit(SYS_FAILURE);
-667                     }
-668                 }
-669             }
-670         }
-671     }
-672 
-673     // cylinderZ (expect parameters: {x, y, radius, width, sigma, eps})
-674     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-675         bool convention0 = false;
-676         std::string dummy = "cylinderZ_" + std::to_string(i+1);
-677         std::vector < double > wallParams (6, 0);
-678         if (doc\&.HasMember(dummy\&.c_str())) {
-679             assert(doc[dummy\&.c_str()]\&.IsArray());
-680             assert(doc[dummy\&.c_str()]\&.Size() == 6);
-681             for (unsigned int j = 0; j < 6; ++j) {
-682                 wallParams[j] = doc[dummy\&.c_str()][j]\&.GetDouble();
-683             }
-684             try {
-685                 sys\&.speciesBarriers[i]\&.addCylinderZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], Mtot);
-686             } catch (customException &ce) {
-687                 sendErr(ce\&.what());
-688                 exit(SYS_FAILURE);
-689             }
-690             convention0 = true;
-691         }
-692         for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
-693             // alternatively allow multiple walls to specified with a suffix up to a max
-694             std::string dummy = "cylinderZ_" + std::to_string(i+1) + "_" + std::to_string(j);
-695             if (doc\&.HasMember(dummy\&.c_str())) {
-696                 if (convention0) {
-697                     sendErr("Error, multiple barrier naming conventions used for the same species");
-698                     exit(SYS_FAILURE);
-699                 }
-700                 if (doc\&.HasMember(dummy\&.c_str())) {
-701                     assert(doc[dummy\&.c_str()]\&.IsArray());
-702                     assert(doc[dummy\&.c_str()]\&.Size() == 6);
-703                     for (unsigned int j = 0; j < 6; ++j) {
-704                         wallParams[j] = doc[dummy\&.c_str()][j]\&.GetDouble();
-705                     }
-706                     try {
-707                         sys\&.speciesBarriers[i]\&.addCylinderZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], Mtot);
-708                     } catch (customException &ce) {
-709                         sendErr(ce\&.what());
-710                         exit(SYS_FAILURE);
-711                     }
-712                 }
-713             }
-714         }
-715     }
-716 
-717     // rightTriangleXZ (expect parameters: {width, theta, lamW, eps, sigma, sep, offset, zbase, top})
-718     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
-719         bool convention0 = false;
-720         std::string dummy = "rightTriangleXZ_" + std::to_string(i+1);
-721         std::vector < double > wallParams (8, 0);
-722         bool top = false;
-723         assert(doc\&.HasMember("box"));
-724         assert(doc["box"]\&.IsArray());
-725         assert(doc["box"]\&.Size() == 3);
-726         std::vector < double > sysBox (3, 0);
-727         for (rapidjson::SizeType j = 0; j < doc["box"]\&.Size(); ++j) {
-728             assert(doc["box"][j]\&.IsNumber());
-729             sysBox[j] = doc["box"][j]\&.GetDouble();
-730         }
-731         if (doc\&.HasMember(dummy\&.c_str())) {
-732             assert(doc[dummy\&.c_str()]\&.IsArray());
-733             assert(doc[dummy\&.c_str()]\&.Size() == 9);
-734             for (unsigned int j = 0; j < 8; ++j) {
-735                 assert (doc[dummy\&.c_str()][j]\&.IsDouble());
-736                 wallParams[j] = doc[dummy\&.c_str()][j]\&.GetDouble();
-737             }
-738             assert (doc[dummy\&.c_str()][8]\&.IsBool());
-739             top = doc[dummy\&.c_str()][8]\&.GetBool();
-740             try {
-741                 sys\&.speciesBarriers[i]\&.addRightTriangleXZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
-742             } catch (customException &ce) {
-743                 sendErr(ce\&.what());
-744                 exit(SYS_FAILURE);
-745             }
-746             convention0 = true;
-747         }
-748         for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
-749             // alternatively allow multiple walls to specified with a suffix up to a max
-750             std::string dummy = "rightTriangleXZ_" + std::to_string(i+1) + "_" + std::to_string(j);
-751             if (doc\&.HasMember(dummy\&.c_str())) {
-752                 if (convention0) {
-753                     sendErr("Error, multiple barrier naming conventions used for the same species");
-754                     exit(SYS_FAILURE);
-755                 }
-756                 if (doc\&.HasMember(dummy\&.c_str())) {
-757                     assert(doc[dummy\&.c_str()]\&.IsArray());
-758                     assert(doc[dummy\&.c_str()]\&.Size() == 9);
-759                     for (unsigned int k = 0; k < 8; ++k) {
-760                         assert (doc[dummy\&.c_str()][k]\&.IsNumber());
-761                         wallParams[k] = doc[dummy\&.c_str()][k]\&.GetDouble();
-762                     }
-763                     assert (doc[dummy\&.c_str()][8]\&.IsBool());
-764                     top = doc[dummy\&.c_str()][8]\&.GetBool();
-765                     try {
-766                         sys\&.speciesBarriers[i]\&.addRightTriangleXZ (wallParams[0], wallParams[1], wallParams[2], wallParams[3], wallParams[4], wallParams[5], wallParams[6], sysBox, wallParams[7], top, Mtot);
-767                     } catch (customException &ce) {
-768                         sendErr(ce\&.what());
-769                         exit(SYS_FAILURE);
-770                     }
-771                 }
-772             }
-773         }
-774     }
-775 }
+322                                                                       {
+323     int Mtot = 1;
+324     if (doc\&.HasMember("num_expanded_states")) {
+325         Mtot = doc["num_expanded_states"]\&.GetInt();
+326     }
+327 
+328     std::vector < std::string > ppotType (sys\&.nSpecies()*(sys\&.nSpecies()-1)/2 + sys\&.nSpecies());
+329     int ppotTypeIndex = 0;
+330     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+331         for (unsigned int j = i; j < sys\&.nSpecies(); ++j) {
+332             std::string name1 = "ppot_"+std::to_string(i+1)+"_"+std::to_string(j+1), name2 = "ppot_"+std::to_string(j+1)+"_"+std::to_string(i+1);
+333             std::string ppotName = "", dummy = "", tabFile = "";
+334             bool foundIJ = false;
+335             if (doc\&.HasMember(name1\&.c_str())) {
+336                 ppotName = name1;
+337                 foundIJ = true;
+338             } else if (doc\&.HasMember(name2\&.c_str()) && !foundIJ) {
+339                 ppotName = name2;
+340                 foundIJ = true;
+341             } else if (doc\&.HasMember(name2\&.c_str()) && foundIJ) {
+342                 throw customException("Input file doubly specifies pair potential for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
+343             } else {
+344                 throw customException("Input file does not specify pair potential for species pair ("+numToStr(i+1)+", "+numToStr(j+1)+")");
+345             }
+346 
+347             if (!doc[ppotName\&.c_str()]\&.IsString()) throw customException ("Pair potential is not a name for ("+numToStr(i+1)+","+numToStr(j+1)+")");
+348             ppotType[ppotTypeIndex] = doc[ppotName\&.c_str()]\&.GetString();
+349             dummy = ppotName+"_params";
+350             if (!doc\&.HasMember(dummy\&.c_str())) throw customException ("Input file missing pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+")");
+351             if (!doc[dummy\&.c_str()]\&.IsObject()) throw customException ("Pair potential's parameters are not valid json document");
+352 
+353             std::vector < double > params;
+354 
+355             bool useCellList = false; // default
+356             if (doc[dummy\&.c_str()]\&.HasMember("cell_list")) {
+357                 useCellList = doc[dummy\&.c_str()]["cell_list"]\&.GetBool();
+358             }
+359 
+360             if (ppotType[ppotTypeIndex] == "square_well") {
+361                 // Expects sigma, width, epsilon, cell_list
+362                 if (!doc[dummy\&.c_str()]\&.HasMember("sigma")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"sigma\"");
+363                 if (!doc[dummy\&.c_str()]\&.HasMember("width")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"width\"");
+364                 if (!doc[dummy\&.c_str()]\&.HasMember("epsilon")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"epsilon\"");
+365 
+366                 if (!doc[dummy\&.c_str()]["sigma"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"sigma\" is not a number");
+367                 if (!doc[dummy\&.c_str()]["width"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"width\" is not a number");
+368                 if (!doc[dummy\&.c_str()]["epsilon"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"epsilon\" is not a number");
+369 
+370                 params\&.push_back(doc[dummy\&.c_str()]["sigma"]\&.GetDouble());
+371                 params\&.push_back(doc[dummy\&.c_str()]["width"]\&.GetDouble());
+372                 params\&.push_back(doc[dummy\&.c_str()]["epsilon"]\&.GetDouble());
+373             } else if (ppotType[ppotTypeIndex] == "lennard_jones") {
+374                 // Expects epsilon, sigma, r_cut, u_shift
+375                 if (!doc[dummy\&.c_str()]\&.HasMember("epsilon")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"epsilon\"");
+376                 if (!doc[dummy\&.c_str()]\&.HasMember("sigma")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"sigma\"");
+377                 if (!doc[dummy\&.c_str()]\&.HasMember("r_cut")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"r_cut\"");
+378                 if (!doc[dummy\&.c_str()]\&.HasMember("u_shift")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"u_shift\"");
+379 
+380                 if (!doc[dummy\&.c_str()]["epsilon"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"epsilon\" is not a number");
+381                 if (!doc[dummy\&.c_str()]["sigma"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"sigma\" is not a number");
+382                 if (!doc[dummy\&.c_str()]["r_cut"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"r_cut\" is not a number");
+383                 if (!doc[dummy\&.c_str()]["u_shift"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"u_shift\" is not a number");
+384 
+385                 params\&.push_back(doc[dummy\&.c_str()]["epsilon"]\&.GetDouble());
+386                 params\&.push_back(doc[dummy\&.c_str()]["sigma"]\&.GetDouble());
+387                 params\&.push_back(doc[dummy\&.c_str()]["r_cut"]\&.GetDouble());
+388                 params\&.push_back(doc[dummy\&.c_str()]["u_shift"]\&.GetDouble());
+389             } else if (ppotType[ppotTypeIndex] == "fs_lennard_jones") {
+390                 // Expects epsilon, sigma, r_cut
+391                 if (!doc[dummy\&.c_str()]\&.HasMember("epsilon")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"epsilon\"");
+392                 if (!doc[dummy\&.c_str()]\&.HasMember("sigma")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"sigma\"");
+393                 if (!doc[dummy\&.c_str()]\&.HasMember("r_cut")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"r_cut\"");
+394 
+395                 if (!doc[dummy\&.c_str()]["epsilon"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"epsilon\" is not a number");
+396                 if (!doc[dummy\&.c_str()]["sigma"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"sigma\" is not a number");
+397                 if (!doc[dummy\&.c_str()]["r_cut"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"r_cut\" is not a number");
+398 
+399                 params\&.push_back(doc[dummy\&.c_str()]["epsilon"]\&.GetDouble());
+400                 params\&.push_back(doc[dummy\&.c_str()]["sigma"]\&.GetDouble());
+401                 params\&.push_back(doc[dummy\&.c_str()]["r_cut"]\&.GetDouble());
+402             } else if (ppotType[ppotTypeIndex] == "hard_sphere") {
+403                 // Expects sigma
+404                 if (!doc[dummy\&.c_str()]\&.HasMember("sigma")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"sigma\"");
+405 
+406                 if (!doc[dummy\&.c_str()]["sigma"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"sigma\" is not a number");
+407 
+408                 params\&.push_back(doc[dummy\&.c_str()]["sigma"]\&.GetDouble());
+409             } else if (ppotType[ppotTypeIndex] == "tabulated") {
+410                 // Expects r_cut, r_shift, u_shift, u_infinity
+411                 // Also must specify file to load potential from
+412                 if (!doc[dummy\&.c_str()]\&.HasMember("r_cut")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"r_cut\"");
+413                 if (!doc[dummy\&.c_str()]\&.HasMember("r_shift")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"r_shift\"");
+414                 if (!doc[dummy\&.c_str()]\&.HasMember("u_shift")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"u_shift\"");
+415                 if (!doc[dummy\&.c_str()]\&.HasMember("u_infinity")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"u_infinity\"");
+416                 if (!doc[dummy\&.c_str()]\&.HasMember("filename")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"filename\"");
+417 
+418                 if (!doc[dummy\&.c_str()]["r_cut"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"r_cut\" is not a number");
+419                 if (!doc[dummy\&.c_str()]["r_shift"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"r_shift\" is not a number");
+420                 if (!doc[dummy\&.c_str()]["u_shift"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"u_shift\" is not a number");
+421                 if (!doc[dummy\&.c_str()]["u_infinity"]\&.IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"u_infinity\" is not a number");
+422                 if (!doc[dummy\&.c_str()]["filename"]\&.IsString()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"filename\" is not a string");
+423 
+424                 params\&.push_back(doc[dummy\&.c_str()]["r_cut"]\&.GetDouble());
+425                 params\&.push_back(doc[dummy\&.c_str()]["r_shift"]\&.GetDouble());
+426                 params\&.push_back(doc[dummy\&.c_str()]["u_shift"]\&.GetDouble());
+427                 params\&.push_back(doc[dummy\&.c_str()]["u_infinity"]\&.GetDouble());
+428                 tabFile = doc[dummy\&.c_str()]["filename"]\&.GetString();
+429             } else {
+430                 throw customException ("Unrecognized pair potential "+ppotType[ppotTypeIndex]);
+431             }
+432 
+433             params\&.push_back(Mtot);
+434 
+435             try {
+436                 sys\&.addPotential(i, j, ppotType[ppotTypeIndex], params, useCellList, tabFile);
+437                 sys\&.ppot[i][j]->savePotential(ppotName+"\&.dat", 0\&.01, 0\&.01);
+438             } catch (std::exception &ex) {
+439                 const std::string msg = ex\&.what();
+440                 throw customException ("Unable to add potential "+ppotType[ppotTypeIndex]+" for species pair ("+numToStr(i+1)+","+numToStr(j+1)+") : "+msg);
+441             }
+442 
+443             ppotTypeIndex++;
+444         }
+445     }
+446 }
 .fi
 .SH "Author"
 .PP 

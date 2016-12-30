@@ -1,4 +1,4 @@
-.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/utilities.cpp" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/utilities.cpp" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -226,19 +226,19 @@ If file exists
 .PP
 
 .PP
-Definition at line 271 of file utilities\&.cpp\&.
+Definition at line 272 of file utilities\&.cpp\&.
 .PP
 Referenced by checkpoint::checkpoint(), checkpoint::load(), and tabulated::loadPotential()\&.
 .PP
 .nf
-271                                     {
-272     struct stat stFileInfo;
-273 
-274     if (stat(fileName\&.c_str(),&stFileInfo) == 0)
-275         return true;
-276     else
-277         return false;
-278 }
+272                                     {
+273     struct stat stFileInfo;
+274 
+275     if (stat(fileName\&.c_str(),&stFileInfo) == 0)
+276         return true;
+277     else
+278         return false;
+279 }
 .fi
 .SS "std::string getTimeStamp ()"
 
@@ -252,21 +252,21 @@ char* timestamp
 .PP
 
 .PP
-Definition at line 90 of file utilities\&.cpp\&.
+Definition at line 91 of file utilities\&.cpp\&.
 .PP
 Referenced by checkpoint::dump(), moves::print(), sendErr(), and sendMsg()\&.
 .PP
 .nf
-90                           {
-91     time_t rawtime;
-92     time (&rawtime);
-93     struct tm * timeinfo;
-94     timeinfo = localtime (&rawtime);
-95     char timestamp [80];
-96     strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
-97     std::string ans (timestamp);
-98     return ans;
-99 }
+91                           {
+92     time_t rawtime;
+93     time (&rawtime);
+94     struct tm * timeinfo;
+95     timeinfo = localtime (&rawtime);
+96     char timestamp [80];
+97     strftime (timestamp,80,"%d/%m/%Y %H:%M:%S",timeinfo);
+98     std::string ans (timestamp);
+99     return ans;
+100 }
 .fi
 .SS "std::vector< std::vector < double > > matrixProduct (std::vector< std::vector< double > > &mat1, std::vector< std::vector< double > > &mat2)"
 
@@ -287,23 +287,23 @@ W
 .PP
 
 .PP
-Definition at line 108 of file utilities\&.cpp\&.
+Definition at line 109 of file utilities\&.cpp\&.
 .PP
 Referenced by rotationMatrix()\&.
 .PP
 .nf
-108                                                                                                                                       {
-109     std::vector < double > dummy (3, 0);
-110     std::vector < std::vector < double > > W (3, dummy);
-111 
-112     for (unsigned int i = 0; i < 3; ++i) {
-113         for (unsigned int j = 0; j < 3; ++j) {
-114             W[i][j] = mat1[i][j]*mat2[j][i];
-115         }
-116     }
-117 
-118     return W;
-119 }
+109                                                                                                                                       {
+110     std::vector < double > dummy (3, 0);
+111     std::vector < std::vector < double > > W (3, dummy);
+112 
+113     for (unsigned int i = 0; i < 3; ++i) {
+114         for (unsigned int j = 0; j < 3; ++j) {
+115             W[i][j] = mat1[i][j]*mat2[j][i];
+116         }
+117     }
+118 
+119     return W;
+120 }
 .fi
 .SS "void parseJson (const std::stringfilename, rapidjson::Document &doc)"
 
@@ -313,34 +313,36 @@ Parse a JSON file and return the corresponding document\&.
 \fBParameters:\fP
 .RS 4
 \fIfilename\fP Input JSON document's filename 
+.br
+\fIdoc\fP Document object to store in 
 .RE
 .PP
 
 .PP
-Definition at line 44 of file utilities\&.cpp\&.
+Definition at line 45 of file utilities\&.cpp\&.
 .PP
 References sendMsg()\&.
 .PP
 Referenced by initialize(), checkpoint::load(), and setConfig()\&.
 .PP
 .nf
-44                                                                   {
-45     try {
-46         FILE* fp = fopen(filename\&.c_str(), "r");
-47         char readBuffer[65536];
-48         rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-49         doc\&.ParseStream(is);
-50         fclose(fp);
-51     } catch (\&.\&.\&.) {
-52         throw customException ("Unable to parse "+filename);
-53     }
-54 
-55     if (doc\&.IsObject()) {
-56         sendMsg("Parsed JSON file "+filename);
-57     } else {
-58         throw customException ("Error in "+filename+", not begin detected as proper JSON document");
-59     }
-60 }
+45                                                                   {
+46     try {
+47         FILE* fp = fopen(filename\&.c_str(), "r");
+48         char readBuffer[65536];
+49         rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+50         doc\&.ParseStream(is);
+51         fclose(fp);
+52     } catch (\&.\&.\&.) {
+53         throw customException ("Unable to parse "+filename);
+54     }
+55 
+56     if (doc\&.IsObject()) {
+57         sendMsg("Parsed JSON file "+filename);
+58     } else {
+59         throw customException ("Error in "+filename+", not begin detected as proper JSON document");
+60     }
+61 }
 .fi
 .SS "void pauseCode (long intdur)"
 
@@ -354,13 +356,13 @@ Pause the code for a certain time\&.
 .PP
 
 .PP
-Definition at line 67 of file utilities\&.cpp\&.
+Definition at line 68 of file utilities\&.cpp\&.
 .PP
 .nf
-67                               {
-68     long int temp = time(NULL) + dur;
-69     while(temp > time(NULL));
-70 }
+68                               {
+69     long int temp = time(NULL) + dur;
+70     while(temp > time(NULL));
+71 }
 .fi
 .SS "void pbc (std::vector< double > &pos, const std::vector< double > &box)"
 
@@ -376,22 +378,22 @@ Replace a position inside a box assuming periodic boundary conditions\&.
 .PP
 
 .PP
-Definition at line 227 of file utilities\&.cpp\&.
+Definition at line 228 of file utilities\&.cpp\&.
 .PP
 Referenced by hardWallZ::energy(), squareWellWallZ::energy(), rightTriangleXZ::energy(), hardWallZ::inside(), and squareWellWallZ::inside()\&.
 .PP
 .nf
-227                                                                       {
-228     // generally while loops are faster than round statements
-229     for (unsigned int i = 0; i < pos\&.size(); ++i) {
-230         while (pos[i] < 0\&.0) {
-231             pos[i] += box[i];
-232         }
-233         while (pos[i] >= box[i]) {
-234             pos[i] -= box[i];
-235         }
-236     }
-237 }
+228                                                                       {
+229     // generally while loops are faster than round statements
+230     for (unsigned int i = 0; i < pos\&.size(); ++i) {
+231         while (pos[i] < 0\&.0) {
+232             pos[i] += box[i];
+233         }
+234         while (pos[i] >= box[i]) {
+235             pos[i] -= box[i];
+236         }
+237     }
+238 }
 .fi
 .SS "double pbcDist2 (const std::vector< double > &p1, const std::vector< double > &p2, const std::vector< double > &box)"
 
@@ -414,26 +416,26 @@ d2 (distance squared)
 .PP
 
 .PP
-Definition at line 248 of file utilities\&.cpp\&.
+Definition at line 249 of file utilities\&.cpp\&.
 .PP
 Referenced by lennardJones::energy(), fsLennardJones::energy(), cylinderZ::energy(), tabulated::energy(), squareWell::energy(), hardCore::energy(), cylinderZ::inside(), and aggVolBias3::make()\&.
 .PP
 .nf
-248                                                                                                                   {
-249     double d2 = 0\&.0;
-250     for (unsigned int i = 0; i < p2\&.size(); ++i) {
-251         double dr = p2[i] - p1[i];
-252         while (dr < -box[i]/2\&.0) {
-253             dr += box[i];
-254         }
-255         while (dr > box[i]/2\&.0) {
-256             dr -= box[i];
-257         }
-258         d2 += dr*dr;
-259     }
-260 
-261     return d2;
-262 }
+249                                                                                                                   {
+250     double d2 = 0\&.0;
+251     for (unsigned int i = 0; i < p2\&.size(); ++i) {
+252         double dr = p2[i] - p1[i];
+253         while (dr < -box[i]/2\&.0) {
+254             dr += box[i];
+255         }
+256         while (dr > box[i]/2\&.0) {
+257             dr -= box[i];
+258         }
+259         d2 += dr*dr;
+260     }
+261 
+262     return d2;
+263 }
 .fi
 .SS "std::vector< double > random3DSurfaceVector (const doublemagnitude)"
 
@@ -452,28 +454,28 @@ ans double3 containing coordinates of vector
 .PP
 
 .PP
-Definition at line 165 of file utilities\&.cpp\&.
+Definition at line 166 of file utilities\&.cpp\&.
 .PP
 References rng(), and RNG_SEED\&.
 .PP
 Referenced by aggVolBias3::make()\&.
 .PP
 .nf
-165                                                                     {
-166     int success = 0;
-167     std::vector < double > ans (3, 0);
-168     while (success == 0) {
-169         double r1 = rng(&RNG_SEED), r2 = rng(&RNG_SEED), x1 = 1\&.0-2\&.0*r1, x2 = 1\&.0-2\&.0*r2;
-170         double sum2 = x1*x1+x2*x2;
-171         if (sum2 < 1\&.0) {
-172             ans[0] = 2*x1*sqrt(1-sum2)*magnitude;
-173             ans[1] = 2*x2*sqrt(1-sum2)*magnitude;
-174             ans[2] = (1-2\&.0*sum2)*magnitude;
-175             success = 1;
-176         }
-177     }
-178     return ans;
-179 }
+166                                                                     {
+167     int success = 0;
+168     std::vector < double > ans (3, 0);
+169     while (success == 0) {
+170         double r1 = rng(&RNG_SEED), r2 = rng(&RNG_SEED), x1 = 1\&.0-2\&.0*r1, x2 = 1\&.0-2\&.0*r2;
+171         double sum2 = x1*x1+x2*x2;
+172         if (sum2 < 1\&.0) {
+173             ans[0] = 2*x1*sqrt(1-sum2)*magnitude;
+174             ans[1] = 2*x2*sqrt(1-sum2)*magnitude;
+175             ans[2] = (1-2\&.0*sum2)*magnitude;
+176             success = 1;
+177         }
+178     }
+179     return ans;
+180 }
 .fi
 .SS "double rng (int *idum)"
 
@@ -492,45 +494,45 @@ temp Pseudo-random number between [0, 1)
 .PP
 
 .PP
-Definition at line 188 of file utilities\&.cpp\&.
+Definition at line 189 of file utilities\&.cpp\&.
 .PP
 References AM, IA1, IA2, IM1, IM2, IMM1, IQ1, IQ2, IR1, IR2, NDIV, NTAB, and RNMX\&.
 .PP
 Referenced by aggVolBias3::make(), deleteParticle::make(), translateParticle::make(), swapParticles::make(), insertParticle::make(), moves::makeMove(), random3DSurfaceVector(), and quaternion::setRandomRot()\&.
 .PP
 .nf
-188                        {
-189     int j;
-190     long k;
-191     static long idum2=123456789;
-192     static long iy=0;
-193     static long iv[NTAB];
-194     double temp;
-195 
-196     if (*idum <= 0) {
-197         if (-(*idum) < 1) *idum=1;
-198         else *idum = -(*idum);
-199         idum2=(*idum);
-200         for (j=NTAB+7;j>=0;j--) {
-201             k=(*idum)/IQ1;
-202             *idum=IA1*(*idum-k*IQ1)-k*IR1;
-203             if (*idum < 0) *idum += IM1;
-204             if (j < NTAB) iv[j] = *idum;
-205         } iy=iv[0];
-206     }
-207     k=(*idum)/IQ1;
-208     *idum=IA1*(*idum-k*IQ1)-k*IR1;
-209     if (*idum < 0) *idum += IM1;
-210     k=idum2/IQ2;
-211     idum2=IA2*(idum2-k*IQ2)-k*IR2;
-212     if (idum2 < 0) idum2 += IM2;
-213     j=iy/NDIV;
-214     iy=iv[j]-idum2;
-215     iv[j] = *idum;
-216     if (iy < 1) iy += IMM1;
-217     if ((temp=AM*iy) > RNMX) return RNMX;
-218     else return temp;
-219 }
+189                        {
+190     int j;
+191     long k;
+192     static long idum2=123456789;
+193     static long iy=0;
+194     static long iv[NTAB];
+195     double temp;
+196 
+197     if (*idum <= 0) {
+198         if (-(*idum) < 1) *idum=1;
+199         else *idum = -(*idum);
+200         idum2=(*idum);
+201         for (j=NTAB+7;j>=0;j--) {
+202             k=(*idum)/IQ1;
+203             *idum=IA1*(*idum-k*IQ1)-k*IR1;
+204             if (*idum < 0) *idum += IM1;
+205             if (j < NTAB) iv[j] = *idum;
+206         } iy=iv[0];
+207     }
+208     k=(*idum)/IQ1;
+209     *idum=IA1*(*idum-k*IQ1)-k*IR1;
+210     if (*idum < 0) *idum += IM1;
+211     k=idum2/IQ2;
+212     idum2=IA2*(idum2-k*IQ2)-k*IR2;
+213     if (idum2 < 0) idum2 += IM2;
+214     j=iy/NDIV;
+215     iy=iv[j]-idum2;
+216     iv[j] = *idum;
+217     if (iy < 1) iy += IMM1;
+218     if ((temp=AM*iy) > RNMX) return RNMX;
+219     else return temp;
+220 }
 .fi
 .SS "std::vector< std::vector < double > > rotationMatrix (const doublealpha, const doublebeta, const doublegamma)"
 
@@ -548,40 +550,40 @@ Create 3D rotation matrix from angles (x, then y, then z)
 .PP
 
 .PP
-Definition at line 128 of file utilities\&.cpp\&.
+Definition at line 129 of file utilities\&.cpp\&.
 .PP
 References matrixProduct()\&.
 .PP
 .nf
-128                                                                                                               {
-129 
-130     std::vector < double > dummy (3, 0);
-131     std::vector < std::vector < double > > Rx (3, dummy), Ry(3, dummy), Rz(3, dummy), Ryx, Rzyx;
-132 
-133     // https://en\&.wikipedia\&.org/wiki/Rotation_matrix#General_rotations
-134     Rx[0][0] = 1\&.0;
-135     Rx[1][1] = cos(alpha);
-136     Rx[1][2] = -sin(alpha);
-137     Rx[2][1] = sin(alpha);
-138     Rx[2][2] = cos(alpha);
-139 
-140     Ry[0][0] = cos(beta);
-141     Ry[0][2] = sin(beta);
-142     Ry[1][1] = 1\&.0;
-143     Ry[2][0] = -sin(beta);
-144     Ry[2][2] = cos(beta);
-145 
-146     Rz[0][0] = cos(gamma);
-147     Rz[0][1] = -sin(gamma);
-148     Rz[1][0] = sin(gamma);
-149     Rz[1][1] = cos(gamma);
-150     Rz[2][2] = 1\&.0;
-151 
-152     Ryx = matrixProduct(Ry, Rx);
-153     Rzyx = matrixProduct(Rz, Ryx);
-154 
-155     return Rzyx;
-156 }
+129                                                                                                               {
+130 
+131     std::vector < double > dummy (3, 0);
+132     std::vector < std::vector < double > > Rx (3, dummy), Ry(3, dummy), Rz(3, dummy), Ryx, Rzyx;
+133 
+134     // https://en\&.wikipedia\&.org/wiki/Rotation_matrix#General_rotations
+135     Rx[0][0] = 1\&.0;
+136     Rx[1][1] = cos(alpha);
+137     Rx[1][2] = -sin(alpha);
+138     Rx[2][1] = sin(alpha);
+139     Rx[2][2] = cos(alpha);
+140 
+141     Ry[0][0] = cos(beta);
+142     Ry[0][2] = sin(beta);
+143     Ry[1][1] = 1\&.0;
+144     Ry[2][0] = -sin(beta);
+145     Ry[2][2] = cos(beta);
+146 
+147     Rz[0][0] = cos(gamma);
+148     Rz[0][1] = -sin(gamma);
+149     Rz[1][0] = sin(gamma);
+150     Rz[1][1] = cos(gamma);
+151     Rz[2][2] = 1\&.0;
+152 
+153     Ryx = matrixProduct(Ry, Rx);
+154     Rzyx = matrixProduct(Rz, Ryx);
+155 
+156     return Rzyx;
+157 }
 .fi
 .SS "void sendErr (const std::stringmsg)"
 
@@ -599,7 +601,7 @@ Definition at line 35 of file utilities\&.cpp\&.
 .PP
 References getTimeStamp()\&.
 .PP
-Referenced by simSystem::addPotential(), checkBounds(), tabulated::energy(), initialize(), checkpoint::load(), tabulated::loadPotential(), moves::moves(), performCrossover(), performTMMC(), performWALA(), simSystem::readConfig(), sanityChecks(), setConfig(), setMoves(), setPairPotentials(), and setSystemBarriers()\&.
+Referenced by simSystem::addPotential(), checkBounds(), tabulated::energy(), initialize(), checkpoint::load(), moves::moves(), performCrossover(), performTMMC(), performWALA(), simSystem::readConfig(), sanityChecks(), setConfig(), and setMoves()\&.
 .PP
 .nf
 35                                    {
@@ -622,7 +624,7 @@ Definition at line 26 of file utilities\&.cpp\&.
 .PP
 References getTimeStamp()\&.
 .PP
-Referenced by simSystem::addPotential(), initialize(), checkpoint::load(), tabulated::loadPotential(), parseJson(), performCrossover(), performTMMC(), performWALA(), simSystem::readConfig(), sanityChecks(), and setConfig()\&.
+Referenced by simSystem::addPotential(), initialize(), checkpoint::load(), tabulated::loadPotential(), parseJson(), performCrossover(), performTMMC(), performWALA(), simSystem::readConfig(), sanityChecks(), setBarriers(), and setConfig()\&.
 .PP
 .nf
 26                                    {
@@ -634,18 +636,18 @@ Referenced by simSystem::addPotential(), initialize(), checkpoint::load(), tabul
 .PP
 C++ explode a string\&. 
 .PP
-Definition at line 75 of file utilities\&.cpp\&.
+Definition at line 76 of file utilities\&.cpp\&.
 .PP
 .nf
-75                                                                   {
-76     std::stringstream ss(s);
-77     std::string item;
-78     std::vector <std::string> tokens;
-79     while (std::getline(ss, item, delim)) {
-80         tokens\&.push_back(item);
-81     }
-82     return tokens;
-83 }
+76                                                                   {
+77     std::stringstream ss(s);
+78     std::string item;
+79     std::vector <std::string> tokens;
+80     while (std::getline(ss, item, delim)) {
+81         tokens\&.push_back(item);
+82     }
+83     return tokens;
+84 }
 .fi
 .SH "Variable Documentation"
 .PP 

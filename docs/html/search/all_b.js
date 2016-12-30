@@ -5,7 +5,6 @@ var searchData=
   ['makemove',['makeMove',['../classmoves.html#a7f023913b80bb62604b99f4dbf005c37',1,'moves']]],
   ['mass',['mass',['../classsim_system.html#a7c75052458072e1267bc20594b58d8cd',1,'simSystem']]],
   ['matrixproduct',['matrixProduct',['../utilities_8cpp.html#a198e6f6658163fec9b36be3542407727',1,'matrixProduct(std::vector&lt; std::vector&lt; double &gt; &gt; &amp;mat1, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;mat2):&#160;utilities.cpp'],['../utilities_8h.html#a198e6f6658163fec9b36be3542407727',1,'matrixProduct(std::vector&lt; std::vector&lt; double &gt; &gt; &amp;mat1, std::vector&lt; std::vector&lt; double &gt; &gt; &amp;mat2):&#160;utilities.cpp']]],
-  ['max_5fbarriers_5fper_5fspecies',['MAX_BARRIERS_PER_SPECIES',['../global_8h.html#a85f9382b07ebd88cde9cd3667d50c0a6',1,'global.h']]],
   ['maxspecies',['maxSpecies',['../classsim_system.html#a93259b517f449f1ac610d132ac66b551',1,'simSystem']]],
   ['mcmove',['mcMove',['../classmc_move.html',1,'mcMove'],['../classmc_move.html#a27a375cf5fcce904dc1ba6bc315b4e1c',1,'mcMove::mcMove()'],['../classmc_move.html#ab0145ba0532e4d47156e2e4565d54c3f',1,'mcMove::mcMove(const int typeIndex, const std::string tag)']]],
   ['minspecies',['minSpecies',['../classsim_system.html#afafda4a09ed180ee9c5580d196d8ca9f',1,'simSystem']]],

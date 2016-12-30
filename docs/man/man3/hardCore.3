@@ -1,4 +1,4 @@
-.TH "hardCore" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "hardCore" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -77,32 +77,32 @@ U(r)
 .PP
 Implements \fBpairPotential\fP\&.
 .PP
-Definition at line 607 of file potentials\&.cpp\&.
+Definition at line 609 of file potentials\&.cpp\&.
 .PP
 References atom::mState, NUM_INFINITY, pairPotential::paramsAreSet_, pbcDist2(), and atom::pos\&.
 .PP
 .nf
-607                                                                                         {
-608     if (!paramsAreSet_) {
-609         throw customException ("For hardCore parameters not set");
-610     }
-611 
-612     int mState = 0;
-613     if (a1->mState != 0) {
-614         mState = a1->mState;
-615     }
-616     if (a2->mState != 0) {
-617         mState = a2->mState;
-618     }
-619 
-620     const double r = sqrt(pbcDist2(a1->pos, a2->pos, box));
+609                                                                                         {
+610     if (!paramsAreSet_) {
+611         throw customException ("For hardCore parameters not set");
+612     }
+613 
+614     int mState = 0;
+615     if (a1->mState != 0) {
+616         mState = a1->mState;
+617     }
+618     if (a2->mState != 0) {
+619         mState = a2->mState;
+620     }
 621 
-622     if (r < sigmaM_[mState]) {
-623         return NUM_INFINITY;
-624     } else {
-625         return 0\&.0;
-626     }
-627 }
+622     const double r = sqrt(pbcDist2(a1->pos, a2->pos, box));
+623 
+624     if (r < sigmaM_[mState]) {
+625         return NUM_INFINITY;
+626     } else {
+627         return 0\&.0;
+628     }
+629 }
 .fi
 .SS "double hardCore::rcut ()\fC [virtual]\fP"
 
@@ -118,23 +118,23 @@ r_cut
 .PP
 Implements \fBpairPotential\fP\&.
 .PP
-Definition at line 645 of file potentials\&.cpp\&.
+Definition at line 647 of file potentials\&.cpp\&.
 .PP
 References pairPotential::params_, and pairPotential::paramsAreSet_\&.
 .PP
 .nf
-645                        {
-646     if (!paramsAreSet_) {
-647         throw customException ("For hardCore parameters not set");
-648     } else {
-649         if (fabs(params_[0]) < 1\&.0e-12) {
-650             // in case sigma = 0 (used for ideal gas case) just return finite value for cell lists
-651             return 1\&.0;
-652         } else {
-653             return (params_[0]);
-654         }
-655     }
-656 }
+647                        {
+648     if (!paramsAreSet_) {
+649         throw customException ("For hardCore parameters not set");
+650     } else {
+651         if (fabs(params_[0]) < 1\&.0e-12) {
+652             // in case sigma = 0 (used for ideal gas case) just return finite value for cell lists
+653             return 1\&.0;
+654         } else {
+655             return (params_[0]);
+656         }
+657     }
+658 }
 .fi
 .SS "void hardCore::setParameters (const std::vector< double >params)\fC [virtual]\fP"
 
@@ -150,46 +150,46 @@ Set the parameters in the hard-core potential\&.
 .PP
 Implements \fBpairPotential\fP\&.
 .PP
-Definition at line 562 of file potentials\&.cpp\&.
+Definition at line 564 of file potentials\&.cpp\&.
 .PP
 References pairPotential::params_, pairPotential::paramsAreSet_, and pairPotential::useTailCorrection\&.
 .PP
 .nf
-562                                                                {
-563     if (params\&.size() != 2) {
-564         throw customException ("For hardCore must specify 2 parameter: {sigma, Mtot}");
-565     } else {
-566         if (params[0] < 0) {
-567             throw customException ("For hardCore, sigma >= 0");
-568         }
-569         if (int(params[1]) < 1) {
-570             throw customException ("For hardCore, total expanded ensemble state, Mtot >= 1");
-571         }
-572 
-573         params_ = params;
-574         paramsAreSet_ = true;
-575 
-576         useTailCorrection = false;
+564                                                                {
+565     if (params\&.size() != 2) {
+566         throw customException ("For hardCore must specify 2 parameter: sigma, Mtot");
+567     } else {
+568         if (params[0] < 0) {
+569             throw customException ("For hardCore, sigma >= 0");
+570         }
+571         if (int(params[1]) < 1) {
+572             throw customException ("For hardCore, total expanded ensemble state, Mtot >= 1");
+573         }
+574 
+575         params_ = params;
+576         paramsAreSet_ = true;
 577 
-578         // use a "constant volume" scheme to distribute the stages
-579         sigmaM_\&.resize(int(params[1]), 0);
-580         for (int i = 0; i < sigmaM_\&.size(); ++i) {
-581             if (i == 0) {
-582                 // fully inserted
-583                 sigmaM_[i] = params[0];
-584             } else {
-585                 // use volume scaling so each stage is separated from its neighbors by the same dV
-586                 double lastSigma = 0;
-587                 if (i == 1) {
-588                     lastSigma = 0;
-589                 } else {
-590                     lastSigma = sigmaM_[i-1];
-591                 }
-592                 sigmaM_[i] = pow(params[0]*params[0]*params[0]/(8\&.0*int(params[1])) + lastSigma*lastSigma*lastSigma, 1\&./3\&.);
-593             }
-594         }
-595     }
-596 }
+578         useTailCorrection = false;
+579 
+580         // use a "constant volume" scheme to distribute the stages
+581         sigmaM_\&.resize(int(params[1]), 0);
+582         for (int i = 0; i < sigmaM_\&.size(); ++i) {
+583             if (i == 0) {
+584                 // fully inserted
+585                 sigmaM_[i] = params[0];
+586             } else {
+587                 // use volume scaling so each stage is separated from its neighbors by the same dV
+588                 double lastSigma = 0;
+589                 if (i == 1) {
+590                     lastSigma = 0;
+591                 } else {
+592                     lastSigma = sigmaM_[i-1];
+593                 }
+594                 sigmaM_[i] = pow(params[0]*params[0]*params[0]/(8\&.0*int(params[1])) + lastSigma*lastSigma*lastSigma, 1\&./3\&.);
+595             }
+596         }
+597     }
+598 }
 .fi
 .SS "double hardCore::tailCorrection (const doublerhoBath)\fC [virtual]\fP"
 
@@ -210,12 +210,12 @@ U_tail
 .PP
 Implements \fBpairPotential\fP\&.
 .PP
-Definition at line 636 of file potentials\&.cpp\&.
+Definition at line 638 of file potentials\&.cpp\&.
 .PP
 .nf
-636                                                     {
-637     return 0\&.0;
-638 }
+638                                                     {
+639     return 0\&.0;
+640 }
 .fi
 
 

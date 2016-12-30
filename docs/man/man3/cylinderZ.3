@@ -1,4 +1,4 @@
-.TH "cylinderZ" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "cylinderZ" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -72,41 +72,41 @@ Instantiate a cylinderical pore in the z-direction\&. Expanded ensembles primari
 .PP
 
 .PP
-Definition at line 462 of file barrier\&.cpp\&.
+Definition at line 463 of file barrier\&.cpp\&.
 .PP
 References barrier::M_\&.
 .PP
 .nf
-462                                                                                                                                                 {
-463     if (radius <= sigma) {
-464         throw customException ("cylinderZ radius <= sigma so practically no particles will fit");
-465     }
-466     if (sigma < 0) {
-467         throw customException ("cylinderZ must have sigma >= 0");
-468     }
-469     if (width < 0) {
-470         throw customException ("cylinderZ must have range width >= 0");
-471     }
-472     if (eps < 0) {
-473         throw customException ("cylinderZ must have eps >= 0");
-474     }
-475     if (sigma/2\&.0 >= width) {
-476         throw customException ("cylinderZ must have sigma/2 < width to have a finite range of interaction");
-477     }
-478     if (M < 1) {
-479         throw customException ("cylinderZ must have M >= 1");
-480     }
-481 
-482     eps_ = eps;
-483     sigma_ = sigma;
-484     width_ = width;
-485     radius_ = radius;
-486     M_ = M;
-487 
-488     center_\&.resize(3, 0);
-489     center_[0] = x;
-490     center_[1] = y;
-491 }
+463                                                                                                                                                 {
+464     if (radius <= sigma) {
+465         throw customException ("cylinderZ radius <= sigma so practically no particles will fit");
+466     }
+467     if (sigma < 0) {
+468         throw customException ("cylinderZ must have sigma >= 0");
+469     }
+470     if (width < 0) {
+471         throw customException ("cylinderZ must have width >= 0");
+472     }
+473     if (eps < 0) {
+474         throw customException ("cylinderZ must have epsilon >= 0");
+475     }
+476     if (sigma/2\&.0 >= width) {
+477         throw customException ("cylinderZ must have sigma/2 < width to have a finite range of interaction");
+478     }
+479     if (M < 1) {
+480         throw customException ("cylinderZ must have M >= 1");
+481     }
+482 
+483     eps_ = eps;
+484     sigma_ = sigma;
+485     width_ = width;
+486     radius_ = radius;
+487     M_ = M;
+488 
+489     center_\&.resize(3, 0);
+490     center_[0] = x;
+491     center_[1] = y;
+492 }
 .fi
 .SH "Member Function Documentation"
 .PP 
@@ -126,37 +126,37 @@ Interaction energy with the cylinder\&. Sigma and epsilon are scaled linearly wi
 .PP
 Implements \fBbarrier\fP\&.
 .PP
-Definition at line 525 of file barrier\&.cpp\&.
+Definition at line 526 of file barrier\&.cpp\&.
 .PP
 References barrier::M_, atom::mState, NUM_INFINITY, pbcDist2(), and atom::pos\&.
 .PP
 .nf
-525                                                                          {
-526     center_[2] = a1->pos[2]; // same z-plane
-527     double rv2 = pbcDist2 (a1->pos, center_, box);
-528     double U = 0\&.0, sig = sigma_, eps = eps_;
-529 
-530     if (a1->mState > 0) {
-531         sig = (sigma_/M_)*a1->mState;
-532         eps = (eps_/M_)*a1->mState;
-533     }
-534     if (a1->mState < 0 || a1->mState > M_-1) {
-535         throw customException ("mState out of bounds for cylinderZ");
-536     }
-537 
-538     // return infinity if out of bounds
-539     double rc = radius_ - sig/2\&.0, ri = radius_ - width_;
-540     if (rv2 >= rc*rc) {
-541         return NUM_INFINITY;
-542     }
-543 
-544     // interaction with the wall - return infinity if it was out of bounds already
-545     if (rv2 > ri*ri) {
-546         U += -eps;
-547     }
-548 
-549     return U;
-550 }
+526                                                                          {
+527     center_[2] = a1->pos[2]; // same z-plane
+528     double rv2 = pbcDist2 (a1->pos, center_, box);
+529     double U = 0\&.0, sig = sigma_, eps = eps_;
+530 
+531     if (a1->mState > 0) {
+532         sig = (sigma_/M_)*a1->mState;
+533         eps = (eps_/M_)*a1->mState;
+534     }
+535     if (a1->mState < 0 || a1->mState > M_-1) {
+536         throw customException ("mState out of bounds for cylinderZ");
+537     }
+538 
+539     // return infinity if out of bounds
+540     double rc = radius_ - sig/2\&.0, ri = radius_ - width_;
+541     if (rv2 >= rc*rc) {
+542         return NUM_INFINITY;
+543     }
+544 
+545     // interaction with the wall - return infinity if it was out of bounds already
+546     if (rv2 > ri*ri) {
+547         U += -eps;
+548     }
+549 
+550     return U;
+551 }
 .fi
 .SS "bool cylinderZ::inside (const \fBatom\fP *a1, const std::vector< double > &box)\fC [virtual]\fP"
 
@@ -174,30 +174,30 @@ Return whether or not a point falls inside the cylinder (subject to a hard-spher
 .PP
 Implements \fBbarrier\fP\&.
 .PP
-Definition at line 499 of file barrier\&.cpp\&.
+Definition at line 500 of file barrier\&.cpp\&.
 .PP
 References barrier::M_, atom::mState, pbcDist2(), and atom::pos\&.
 .PP
 .nf
-499                                                                        {
-500     center_[2] = a1->pos[2]; // same z-plane
-501     double rv2 = pbcDist2 (a1->pos, center_, box);
-502 
-503     double sig = sigma_;
-504     if (a1->mState > 0) {
-505         sig = (sigma_/M_)*a1->mState;
-506     }
-507     if (a1->mState < 0 || a1->mState > M_-1) {
-508         throw customException ("mState out of bounds for cylinderZ");
-509     }
-510 
-511     double rc = radius_ - sig/2\&.0;
-512     if (rv2 >= rc*rc) {
-513         return false;
-514     } else {
-515         return true;
-516     }
-517 }
+500                                                                        {
+501     center_[2] = a1->pos[2]; // same z-plane
+502     double rv2 = pbcDist2 (a1->pos, center_, box);
+503 
+504     double sig = sigma_;
+505     if (a1->mState > 0) {
+506         sig = (sigma_/M_)*a1->mState;
+507     }
+508     if (a1->mState < 0 || a1->mState > M_-1) {
+509         throw customException ("mState out of bounds for cylinderZ");
+510     }
+511 
+512     double rc = radius_ - sig/2\&.0;
+513     if (rv2 >= rc*rc) {
+514         return false;
+515     } else {
+516         return true;
+517     }
+518 }
 .fi
 
 

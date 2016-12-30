@@ -49,50 +49,94 @@ This is a sample input json file for a binary system.
 
 \char`\"{}ln\-F\-\_\-end\char`\"{} \-: 1.\-0e-\/5, \# Where to end W\-L
 
-\char`\"{}prob\-\_\-pr\-\_\-ins\-\_\-del\-\_\-1\char`\"{} \-: 0.\-1, \# Relative weight to apply to insert/delete moves during production (T\-M\-M\-C) for species 1
+\char`\"{}moves\char`\"{} \-: \{ \begin{DoxyVerb}"ins_del_1" : 0.1, # Relative weight to apply to insert/delete moves of species 1
 
-\char`\"{}prob\-\_\-pr\-\_\-swap\-\_\-1\-\_\-2\char`\"{} \-: 0.\-2, \# Relative weight to apply to swap moves during production (T\-M\-M\-C) for species 1 and 2
+"swap_1_2" : 0.2, # Relative weight to apply to swap moves between species 1 and 2
 
-\char`\"{}prob\-\_\-pr\-\_\-displace\-\_\-1\char`\"{} \-: 0.\-7, \# Relative weight to apply to displacement moves during production (T\-M\-M\-C) for species 1
+"translate_1" : 0.7, # Relative weight to apply to translation moves of species 1
 
-\char`\"{}prob\-\_\-pr\-\_\-ins\-\_\-del\-\_\-2\char`\"{} \-: 0.\-7, \# Relative weight to apply to insert/delete moves during production (T\-M\-M\-C) for species 2
+"ins_del_2" : 0.7, # Relative weight to apply to insert/delete moves of species 2
 
-\char`\"{}prob\-\_\-pr\-\_\-displace\-\_\-2\char`\"{} \-: 0.\-1, \# Relative weight to apply to displacement moves during production (T\-M\-M\-C) for species 2
+"translate_2" : 0.1, # Relative weight to apply to translation moves of species 2
 
-\char`\"{}prob\-\_\-eq\-\_\-ins\-\_\-del\-\_\-1\char`\"{} \-: 0.\-25, \# Relative weight to apply to insert/delete moves during equilibration (W\-L/\-Crossover) for species 1
+"max_translation_1" : 0.5, # Maximum translation for species 1
 
-\char`\"{}prob\-\_\-eq\-\_\-swap\-\_\-1\-\_\-2\char`\"{} \-: 0.\-15, \# Relative weight to apply to swap moves during equilibration (W\-L/\-Crossover) for species 1 and 2
+"max_translation_2" : 0.4 # Maximum translation for species 2
+\end{DoxyVerb}
 
-\char`\"{}prob\-\_\-eq\-\_\-displace\-\_\-1\char`\"{} \-: 0.\-6, \# Relative weight to apply to displacement moves during equilibration (W\-L/\-Crossover) for species 1
 
-\char`\"{}prob\-\_\-eq\-\_\-ins\-\_\-del\-\_\-2\char`\"{} \-: 0.\-4, \# Relative weight to apply to insert/delete moves during equilibration (W\-L/\-Crossover) for species 2
-
-\char`\"{}prob\-\_\-eq\-\_\-displace\-\_\-2\char`\"{} \-: 0.\-6, \# Relative weight to apply to displacement moves during equilibration (W\-L/\-Crossover) for species 2
-
-\char`\"{}max\-\_\-pr\-\_\-displacement\-\_\-1\char`\"{} \-: 0.\-5, \# Maximum displacement for species 1 during production (T\-M\-M\-C)
-
-\char`\"{}max\-\_\-eq\-\_\-displacement\-\_\-1\char`\"{} \-: 0.\-6, \# Maximum displacement for species 1 during equilibration (W\-L/\-Crossover)
-
-\char`\"{}max\-\_\-pr\-\_\-displacement\-\_\-2\char`\"{} \-: 0.\-4, \# Maximum displacement for species 2 during production (T\-M\-M\-C)
-
-\char`\"{}max\-\_\-eq\-\_\-displacement\-\_\-2\char`\"{} \-: 0.\-7, \# Maximum displacement for species 2 during equilibration (W\-L/\-Crossover)
+\},
 
 \char`\"{}ppot\-\_\-1\-\_\-1\char`\"{} \-: \char`\"{}square\-\_\-well\char`\"{}, \# 1-\/1 interaction, in this case, square well
 
-\char`\"{}ppot\-\_\-1\-\_\-1\-\_\-params\char`\"{} \-: \mbox{[}1.\-0, 0.\-3, 1.\-0\mbox{]}, \# 1-\/1 interaction parameters
+\char`\"{}ppot\-\_\-1\-\_\-1\-\_\-params\char`\"{} \-: \{ \begin{DoxyVerb}"sigma" : 1.0,
 
-\char`\"{}ppot\-\_\-1\-\_\-1\-\_\-use\-\_\-cell\-\_\-list\char`\"{} \-: true, \# use cell list for this potential to accelerate
+"width" : 0.3,
 
-\char`\"{}ppot\-\_\-1\-\_\-2\char`\"{} \-: \char`\"{}square\-\_\-well\char`\"{},
+"epsilon" : 1.0,
 
-\char`\"{}ppot\-\_\-1\-\_\-2\-\_\-params\char`\"{} \-: \mbox{[}1.\-1, 0.\-4, 1.\-1\mbox{]},
+"cell_list"  : true
+\end{DoxyVerb}
 
-\char`\"{}ppot\-\_\-1\-\_\-2\-\_\-use\-\_\-cell\-\_\-list\char`\"{} \-: true,
 
-\char`\"{}ppot\-\_\-2\-\_\-2\char`\"{} \-: \char`\"{}square\-\_\-well\char`\"{},
+\},
 
-\char`\"{}ppot\-\_\-2\-\_\-2\-\_\-params\char`\"{} \-: \mbox{[}1.\-2, 0.\-5, 1.\-2\mbox{]},
+\char`\"{}ppot\-\_\-1\-\_\-2\char`\"{} \-: \char`\"{}square\-\_\-well\char`\"{}, \# 1-\/2 interaction, in this case, square well
 
-\char`\"{}ppot\-\_\-2\-\_\-2\-\_\-use\-\_\-cell\-\_\-list\char`\"{} \-: true
+\char`\"{}ppot\-\_\-1\-\_\-2\-\_\-params\char`\"{} \-: \{ \begin{DoxyVerb}"sigma" : 1.1,
+
+"width" : 0.4,
+
+"epsilon" : 1.1,
+
+"cell_list"  : true
+\end{DoxyVerb}
+
+
+\}, \char`\"{}ppot\-\_\-2\-\_\-2\char`\"{} \-: \char`\"{}square\-\_\-well\char`\"{}, \# 2-\/2 interaction, in this case, square well
+
+\char`\"{}ppot\-\_\-2\-\_\-2\-\_\-params\char`\"{} \-: \{ \begin{DoxyVerb}"sigma" : 1.2,
+
+"width" : 0.5,
+
+"epsilon" : 1.2,
+
+"cell_list"  : true
+\end{DoxyVerb}
+
+
+\},
+
+\char`\"{}barriers\char`\"{} \-: \{ \begin{DoxyVerb}"mybarrier1" : {
+
+    "type" : "hard_wall_z", # A barrier that interacts with species 1 as a hard wall in the z-direction
+
+    "species" : 1,
+
+    "ub" : 6.0,
+
+    "lb" : 1.0,
+
+    "sigma" : 1.0
+
+},
+
+"mybarrier2" : {
+
+    "type" : "hard_wall_z", # A barrier that interacts with species 2 as a hard wall in the z-direction
+
+    "species" : 2,
+
+    "ub" : 6.0,
+
+    "lb" : 1.0,
+
+    "sigma" : 1.0
+
+}
+\end{DoxyVerb}
+
+
+\}
 
 \} 

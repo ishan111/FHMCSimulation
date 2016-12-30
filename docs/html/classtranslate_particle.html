@@ -117,12 +117,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7ec5c9259f1aae3f7aefdb4db3ee5468"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtranslate_particle.html#a7ec5c9259f1aae3f7aefdb4db3ee5468">make</a> (<a class="el" href="classsim_system.html">simSystem</a> &amp;sys)</td></tr>
 <tr class="memdesc:a7ec5c9259f1aae3f7aefdb4db3ee5468"><td class="mdescLeft">&#160;</td><td class="mdescRight">Translate a particle in the system.  <a href="#a7ec5c9259f1aae3f7aefdb4db3ee5468">More...</a><br/></td></tr>
 <tr class="separator:a7ec5c9259f1aae3f7aefdb4db3ee5468"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65beec2511e79198e6241ad2bc18b02c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtranslate_particle.html#a65beec2511e79198e6241ad2bc18b02c">setMaxDisplacement</a> (const double maxD, const std::vector&lt; double &gt; &amp;box)</td></tr>
-<tr class="memdesc:a65beec2511e79198e6241ad2bc18b02c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum displacement in any single move.  <a href="#a65beec2511e79198e6241ad2bc18b02c">More...</a><br/></td></tr>
-<tr class="separator:a65beec2511e79198e6241ad2bc18b02c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f1e76a0e8f20978b1c1069f698f89e6"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtranslate_particle.html#a5f1e76a0e8f20978b1c1069f698f89e6">getMaxDisplacement</a> ()</td></tr>
-<tr class="memdesc:a5f1e76a0e8f20978b1c1069f698f89e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the max displacement allowed in a single move.  <a href="#a5f1e76a0e8f20978b1c1069f698f89e6">More...</a><br/></td></tr>
-<tr class="separator:a5f1e76a0e8f20978b1c1069f698f89e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2018196eaabe3a5b76761951b2991c41"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtranslate_particle.html#a2018196eaabe3a5b76761951b2991c41">setMaxTranslation</a> (const double maxD, const std::vector&lt; double &gt; &amp;box)</td></tr>
+<tr class="memdesc:a2018196eaabe3a5b76761951b2991c41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the maximum translation in any single move.  <a href="#a2018196eaabe3a5b76761951b2991c41">More...</a><br/></td></tr>
+<tr class="separator:a2018196eaabe3a5b76761951b2991c41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1366867b0290b66f50c631bf2fd71946"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtranslate_particle.html#a1366867b0290b66f50c631bf2fd71946">getMaxTranslation</a> ()</td></tr>
+<tr class="memdesc:a1366867b0290b66f50c631bf2fd71946"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the max translation allowed in a single move.  <a href="#a1366867b0290b66f50c631bf2fd71946">More...</a><br/></td></tr>
+<tr class="separator:a1366867b0290b66f50c631bf2fd71946"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classmc_move"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classmc_move')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classmc_move.html">mcMove</a></td></tr>
 <tr class="memitem:a27a375cf5fcce904dc1ba6bc315b4e1c inherit pub_methods_classmc_move"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmc_move.html#a27a375cf5fcce904dc1ba6bc315b4e1c">mcMove</a> ()</td></tr>
 <tr class="separator:a27a375cf5fcce904dc1ba6bc315b4e1c inherit pub_methods_classmc_move"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -227,7 +227,7 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a5f1e76a0e8f20978b1c1069f698f89e6"></a>
+<a class="anchor" id="a1366867b0290b66f50c631bf2fd71946"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -235,7 +235,7 @@ Additional Inherited Members</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const double translateParticle::getMaxDisplacement </td>
+          <td class="memname">const double translateParticle::getMaxTranslation </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -248,7 +248,7 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Return the max displacement allowed in a single move. </p>
+<p>Return the max translation allowed in a single move. </p>
 
 <p>Definition at line <a class="el" href="translate_8h_source.html#l00019">19</a> of file <a class="el" href="translate_8h_source.html">translate.h</a>.</p>
 
@@ -290,7 +290,7 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Definition at line <a class="el" href="translate_8cpp_source.html#l00010">10</a> of file <a class="el" href="translate_8cpp_source.html">translate.cpp</a>.</p>
 
-<p>References <a class="el" href="system_8h_source.html#l00118">simSystem::atoms</a>, <a class="el" href="system_8h_source.html#l00087">simSystem::beta()</a>, <a class="el" href="system_8h_source.html#l00104">simSystem::box()</a>, <a class="el" href="system_8cpp_source.html#l01759">calculateBias()</a>, <a class="el" href="system_8h_source.html#l00080">simSystem::getCurrentM()</a>, <a class="el" href="system_8h_source.html#l00110">simSystem::getFractionalAtom()</a>, <a class="el" href="system_8h_source.html#l00082">simSystem::getFractionalAtomType()</a>, <a class="el" href="system_8cpp_source.html#l01502">simSystem::getNeighborAtoms()</a>, <a class="el" href="system_8h_source.html#l00077">simSystem::getTotN()</a>, <a class="el" href="system_8cpp_source.html#l01705">simSystem::getWALABias()</a>, <a class="el" href="system_8h_source.html#l00034">simSystem::incrementEnergy()</a>, <a class="el" href="moves_8h_source.html#l00005">MOVE_FAILURE</a>, <a class="el" href="moves_8h_source.html#l00004">MOVE_SUCCESS</a>, <a class="el" href="system_8h_source.html#l00072">simSystem::nSpecies()</a>, <a class="el" href="system_8h_source.html#l00117">simSystem::numSpecies</a>, <a class="el" href="system_8h_source.html#l00119">simSystem::ppot</a>, <a class="el" href="utilities_8cpp_source.html#l00188">rng()</a>, <a class="el" href="utilities_8cpp_source.html#l00003">RNG_SEED</a>, <a class="el" href="system_8h_source.html#l00120">simSystem::speciesBarriers</a>, <a class="el" href="system_8h_source.html#l00112">simSystem::tmmcBias</a>, <a class="el" href="system_8cpp_source.html#l00378">simSystem::translateAtom()</a>, <a class="el" href="moves_8h_source.html#l00027">mcMove::typeIndex_</a>, <a class="el" href="bias_8cpp_source.html#l00486">wala::update()</a>, <a class="el" href="bias_8cpp_source.html#l00215">tmmc::updateC()</a>, <a class="el" href="system_8h_source.html#l00091">simSystem::useTMMC</a>, <a class="el" href="system_8h_source.html#l00092">simSystem::useWALA</a>, and <a class="el" href="global_8h_source.html#l00125">customException::what()</a>.</p>
+<p>References <a class="el" href="system_8h_source.html#l00118">simSystem::atoms</a>, <a class="el" href="system_8h_source.html#l00087">simSystem::beta()</a>, <a class="el" href="system_8h_source.html#l00104">simSystem::box()</a>, <a class="el" href="system_8cpp_source.html#l01755">calculateBias()</a>, <a class="el" href="system_8h_source.html#l00080">simSystem::getCurrentM()</a>, <a class="el" href="system_8h_source.html#l00110">simSystem::getFractionalAtom()</a>, <a class="el" href="system_8h_source.html#l00082">simSystem::getFractionalAtomType()</a>, <a class="el" href="system_8cpp_source.html#l01498">simSystem::getNeighborAtoms()</a>, <a class="el" href="system_8h_source.html#l00077">simSystem::getTotN()</a>, <a class="el" href="system_8cpp_source.html#l01701">simSystem::getWALABias()</a>, <a class="el" href="system_8h_source.html#l00034">simSystem::incrementEnergy()</a>, <a class="el" href="moves_8h_source.html#l00005">MOVE_FAILURE</a>, <a class="el" href="moves_8h_source.html#l00004">MOVE_SUCCESS</a>, <a class="el" href="system_8h_source.html#l00072">simSystem::nSpecies()</a>, <a class="el" href="system_8h_source.html#l00117">simSystem::numSpecies</a>, <a class="el" href="system_8h_source.html#l00119">simSystem::ppot</a>, <a class="el" href="utilities_8cpp_source.html#l00189">rng()</a>, <a class="el" href="utilities_8cpp_source.html#l00003">RNG_SEED</a>, <a class="el" href="system_8h_source.html#l00120">simSystem::speciesBarriers</a>, <a class="el" href="system_8h_source.html#l00112">simSystem::tmmcBias</a>, <a class="el" href="system_8cpp_source.html#l00378">simSystem::translateAtom()</a>, <a class="el" href="moves_8h_source.html#l00027">mcMove::typeIndex_</a>, <a class="el" href="bias_8cpp_source.html#l00486">wala::update()</a>, <a class="el" href="bias_8cpp_source.html#l00215">tmmc::updateC()</a>, <a class="el" href="system_8h_source.html#l00091">simSystem::useTMMC</a>, <a class="el" href="system_8h_source.html#l00092">simSystem::useWALA</a>, and <a class="el" href="global_8h_source.html#l00170">customException::what()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;                                           {</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keywordtype">bool</span> earlyReject = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
@@ -454,10 +454,10 @@ Additional Inherited Members</h2></td></tr>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="moves_8h.html#a9832cf5fcfa8c0894545b591c9908e39">MOVE_FAILURE</a>;</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;}</div>
 <div class="ttc" id="classsim_system_html_ad2e290b5963f132e6a3a56cee35c8e9f"><div class="ttname"><a href="classsim_system.html#ad2e290b5963f132e6a3a56cee35c8e9f">simSystem::ppot</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; std::shared_ptr&lt; pairPotential &gt; &gt; &gt; ppot</div><div class="ttdoc">Matrix of pair potentials for atom types i, j. </div><div class="ttdef"><b>Definition:</b> <a href="system_8h_source.html#l00119">system.h:119</a></div></div>
-<div class="ttc" id="classcustom_exception_html_aeb6ab5848b038adfc68fde86a512f691"><div class="ttname"><a href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">customException::what</a></div><div class="ttdeci">const char * what() const </div><div class="ttdoc">Return the user&#39;s message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00125">global.h:125</a></div></div>
+<div class="ttc" id="classcustom_exception_html_aeb6ab5848b038adfc68fde86a512f691"><div class="ttname"><a href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">customException::what</a></div><div class="ttdeci">const char * what() const </div><div class="ttdoc">Return the user&#39;s message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00170">global.h:170</a></div></div>
 <div class="ttc" id="classtmmc_html_ae067afc5b52af203b9d45f18d9737219"><div class="ttname"><a href="classtmmc.html#ae067afc5b52af203b9d45f18d9737219">tmmc::updateC</a></div><div class="ttdeci">void updateC(const int Nstart, const int Nend, const int Mstart, const int Mend, const double pa)</div><div class="ttdoc">Update the collection matrix. </div><div class="ttdef"><b>Definition:</b> <a href="bias_8cpp_source.html#l00215">bias.cpp:215</a></div></div>
-<div class="ttc" id="classsim_system_html_a9b3aeefa22c3b50b5913df6eea753bc6"><div class="ttname"><a href="classsim_system.html#a9b3aeefa22c3b50b5913df6eea753bc6">simSystem::getNeighborAtoms</a></div><div class="ttdeci">std::vector&lt; atom * &gt; getNeighborAtoms(const unsigned int typeIndexA, const unsigned int typeIndexB, atom *_atom)</div><div class="ttdoc">Return the list of neighbors of type A, around a particle of type B which is passed. </div><div class="ttdef"><b>Definition:</b> <a href="system_8cpp_source.html#l01502">system.cpp:1502</a></div></div>
-<div class="ttc" id="utilities_8cpp_html_a0f9542af4b475ac79cb679d7a8d14db0"><div class="ttname"><a href="utilities_8cpp.html#a0f9542af4b475ac79cb679d7a8d14db0">rng</a></div><div class="ttdeci">double rng(int *idum)</div><div class="ttdoc">Random number generator (from Numerical Recipes) </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00188">utilities.cpp:188</a></div></div>
+<div class="ttc" id="classsim_system_html_a9b3aeefa22c3b50b5913df6eea753bc6"><div class="ttname"><a href="classsim_system.html#a9b3aeefa22c3b50b5913df6eea753bc6">simSystem::getNeighborAtoms</a></div><div class="ttdeci">std::vector&lt; atom * &gt; getNeighborAtoms(const unsigned int typeIndexA, const unsigned int typeIndexB, atom *_atom)</div><div class="ttdoc">Return the list of neighbors of type A, around a particle of type B which is passed. </div><div class="ttdef"><b>Definition:</b> <a href="system_8cpp_source.html#l01498">system.cpp:1498</a></div></div>
+<div class="ttc" id="utilities_8cpp_html_a0f9542af4b475ac79cb679d7a8d14db0"><div class="ttname"><a href="utilities_8cpp.html#a0f9542af4b475ac79cb679d7a8d14db0">rng</a></div><div class="ttdeci">double rng(int *idum)</div><div class="ttdoc">Random number generator (from Numerical Recipes) </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00189">utilities.cpp:189</a></div></div>
 <div class="ttc" id="classsim_system_html_a2ab77377c60e0e3109a6e875690b0ab7"><div class="ttname"><a href="classsim_system.html#a2ab77377c60e0e3109a6e875690b0ab7">simSystem::getFractionalAtom</a></div><div class="ttdeci">atom * getFractionalAtom()</div><div class="ttdoc">Returns a pointer the atom in the system that is currently only fractionally inserted/deleted. </div><div class="ttdef"><b>Definition:</b> <a href="system_8h_source.html#l00110">system.h:110</a></div></div>
 <div class="ttc" id="classsim_system_html_a22fdaceea44abd6cd021bac1ecd11890"><div class="ttname"><a href="classsim_system.html#a22fdaceea44abd6cd021bac1ecd11890">simSystem::translateAtom</a></div><div class="ttdeci">void translateAtom(const int typeIndex, const int atomIndex, std::vector&lt; double &gt; oldPos)</div><div class="ttdoc">Translate an atom in the system. </div><div class="ttdef"><b>Definition:</b> <a href="system_8cpp_source.html#l00378">system.cpp:378</a></div></div>
 <div class="ttc" id="classsim_system_html_a9eea865e6dc1cff377b1e79c4d9c23f0"><div class="ttname"><a href="classsim_system.html#a9eea865e6dc1cff377b1e79c4d9c23f0">simSystem::numSpecies</a></div><div class="ttdeci">std::vector&lt; int &gt; numSpecies</div><div class="ttdoc">Total number of each type of atom the system contains. </div><div class="ttdef"><b>Definition:</b> <a href="system_8h_source.html#l00117">system.h:117</a></div></div>
@@ -474,22 +474,22 @@ Additional Inherited Members</h2></td></tr>
 <div class="ttc" id="global_8h_html_a3f4e4ea24d5a5c66feae55d1f329c884"><div class="ttname"><a href="global_8h.html#a3f4e4ea24d5a5c66feae55d1f329c884">RNG_SEED</a></div><div class="ttdeci">int RNG_SEED</div><div class="ttdoc">Default RNG seed. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00003">utilities.cpp:3</a></div></div>
 <div class="ttc" id="moves_8h_html_a9832cf5fcfa8c0894545b591c9908e39"><div class="ttname"><a href="moves_8h.html#a9832cf5fcfa8c0894545b591c9908e39">MOVE_FAILURE</a></div><div class="ttdeci">#define MOVE_FAILURE</div><div class="ttdoc">Returned by mcMove if move was not successful. </div><div class="ttdef"><b>Definition:</b> <a href="moves_8h_source.html#l00005">moves.h:5</a></div></div>
 <div class="ttc" id="classsim_system_html_a299fe4372e610b554eaaf5f5957b2dbc"><div class="ttname"><a href="classsim_system.html#a299fe4372e610b554eaaf5f5957b2dbc">simSystem::getCurrentM</a></div><div class="ttdeci">const int getCurrentM()</div><div class="ttdoc">Return the system&#39;s current expanded ensemble fractional state. </div><div class="ttdef"><b>Definition:</b> <a href="system_8h_source.html#l00080">system.h:80</a></div></div>
-<div class="ttc" id="classsim_system_html_a7cb5049de8b0988349e89e30e4000407"><div class="ttname"><a href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">simSystem::getWALABias</a></div><div class="ttdeci">wala * getWALABias()</div><div class="ttdoc">Return pointer to the Wang-Landau bias. </div><div class="ttdef"><b>Definition:</b> <a href="system_8cpp_source.html#l01705">system.cpp:1705</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classsim_system_html_a7cb5049de8b0988349e89e30e4000407"><div class="ttname"><a href="classsim_system.html#a7cb5049de8b0988349e89e30e4000407">simSystem::getWALABias</a></div><div class="ttdeci">wala * getWALABias()</div><div class="ttdoc">Return pointer to the Wang-Landau bias. </div><div class="ttdef"><b>Definition:</b> <a href="system_8cpp_source.html#l01701">system.cpp:1701</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 <div class="ttc" id="classsim_system_html_a13173f45a1e40a5f5a3552b0ebe15b54"><div class="ttname"><a href="classsim_system.html#a13173f45a1e40a5f5a3552b0ebe15b54">simSystem::tmmcBias</a></div><div class="ttdeci">tmmc * tmmcBias</div><div class="ttdoc">TMMC biasing function. </div><div class="ttdef"><b>Definition:</b> <a href="system_8h_source.html#l00112">system.h:112</a></div></div>
 <div class="ttc" id="moves_8h_html_ae8285cbddc5d21f73f49dcbad82a775a"><div class="ttname"><a href="moves_8h.html#ae8285cbddc5d21f73f49dcbad82a775a">MOVE_SUCCESS</a></div><div class="ttdeci">#define MOVE_SUCCESS</div><div class="ttdoc">Returned by mcMove if move was successful. </div><div class="ttdef"><b>Definition:</b> <a href="moves_8h_source.html#l00004">moves.h:4</a></div></div>
 <div class="ttc" id="classsim_system_html_a3eeec9678902f8d7fce4dad6064aaf4c"><div class="ttname"><a href="classsim_system.html#a3eeec9678902f8d7fce4dad6064aaf4c">simSystem::beta</a></div><div class="ttdeci">const double beta()</div><div class="ttdoc">Return 1/kT. </div><div class="ttdef"><b>Definition:</b> <a href="system_8h_source.html#l00087">system.h:87</a></div></div>
-<div class="ttc" id="system_8cpp_html_acfe185adf03db047fd3753c0d788e0e3"><div class="ttname"><a href="system_8cpp.html#acfe185adf03db047fd3753c0d788e0e3">calculateBias</a></div><div class="ttdeci">const double calculateBias(simSystem &amp;sys, const int nTotFinal, const int mFinal)</div><div class="ttdoc">Calculate the bias based on a systems current state and the next state being proposed. </div><div class="ttdef"><b>Definition:</b> <a href="system_8cpp_source.html#l01759">system.cpp:1759</a></div></div>
+<div class="ttc" id="system_8cpp_html_acfe185adf03db047fd3753c0d788e0e3"><div class="ttname"><a href="system_8cpp.html#acfe185adf03db047fd3753c0d788e0e3">calculateBias</a></div><div class="ttdeci">const double calculateBias(simSystem &amp;sys, const int nTotFinal, const int mFinal)</div><div class="ttdoc">Calculate the bias based on a systems current state and the next state being proposed. </div><div class="ttdef"><b>Definition:</b> <a href="system_8cpp_source.html#l01755">system.cpp:1755</a></div></div>
 <div class="ttc" id="classsim_system_html_ab5e2e9b6204de15520302fe1d51688dd"><div class="ttname"><a href="classsim_system.html#ab5e2e9b6204de15520302fe1d51688dd">simSystem::nSpecies</a></div><div class="ttdeci">const int nSpecies()</div><div class="ttdoc">Return the number of different species in the system. </div><div class="ttdef"><b>Definition:</b> <a href="system_8h_source.html#l00072">system.h:72</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
-<a class="anchor" id="a65beec2511e79198e6241ad2bc18b02c"></a>
+<a class="anchor" id="a2018196eaabe3a5b76761951b2991c41"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void translateParticle::setMaxDisplacement </td>
+          <td class="memname">void translateParticle::setMaxTranslation </td>
           <td>(</td>
           <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>maxD</em>, </td>
@@ -508,30 +508,30 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Set the maximum displacement in any single move. </p>
+<p>Set the maximum translation in any single move. </p>
 <p>Should be postive number lss than half the box size.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">maxD</td><td>Maximium displacement </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">maxD</td><td>Maximium translation </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">box</td><td>Box dimensions </td></tr>
   </table>
   </dd>
 </dl>
 
 <p>Definition at line <a class="el" href="translate_8cpp_source.html#l00179">179</a> of file <a class="el" href="translate_8cpp_source.html">translate.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                                                                                              {</div>
+<div class="fragment"><div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;                                                                                             {</div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> i = 0; i &lt; box.size(); ++i) {</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;        <span class="keywordflow">if</span> (maxD &gt;= box[i]/2.) {</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Max displacement too large&quot;</span>);</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Max translation too large&quot;</span>);</div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        }</div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    }</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keywordflow">if</span> (maxD &gt; 0) {</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        maxD_ = maxD;</div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Max displacement must be positive&quot;</span>);</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Max translation must be positive&quot;</span>);</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    }</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -542,7 +542,7 @@ Additional Inherited Members</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 29 2016 11:09:05 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 30 2016 13:19:40 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

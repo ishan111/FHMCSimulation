@@ -89,7 +89,7 @@ Implements \hyperlink{classpair_potential_a2b1e50ef9b6e50b01d89d31d5460ad76}{pai
 
 
 
-Definition at line 607 of file potentials.\-cpp.
+Definition at line 609 of file potentials.\-cpp.
 
 
 
@@ -97,27 +97,27 @@ References atom\-::m\-State, N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y, pair\-Potent
 
 
 \begin{DoxyCode}
-607                                                                                         \{
-608     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
-609         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore parameters not set"});
-610     \}
-611 
-612     \textcolor{keywordtype}{int} mState = 0;
-613     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
-614         mState = a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-615     \}
-616     \textcolor{keywordflow}{if} (a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
-617         mState = a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-618     \}
-619 
-620     \textcolor{keyword}{const} \textcolor{keywordtype}{double} r = sqrt(\hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2}(a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, a2->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, box));
+609                                                                                         \{
+610     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+611         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore parameters not set"});
+612     \}
+613 
+614     \textcolor{keywordtype}{int} mState = 0;
+615     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
+616         mState = a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+617     \}
+618     \textcolor{keywordflow}{if} (a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
+619         mState = a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+620     \}
 621 
-622     \textcolor{keywordflow}{if} (r < sigmaM\_[mState]) \{
-623         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
-624     \} \textcolor{keywordflow}{else} \{
-625         \textcolor{keywordflow}{return} 0.0;
-626     \}
-627 \}
+622     \textcolor{keyword}{const} \textcolor{keywordtype}{double} r = sqrt(\hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2}(a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, a2->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, box));
+623 
+624     \textcolor{keywordflow}{if} (r < sigmaM\_[mState]) \{
+625         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
+626     \} \textcolor{keywordflow}{else} \{
+627         \textcolor{keywordflow}{return} 0.0;
+628     \}
+629 \}
 \end{DoxyCode}
 \hypertarget{classhard_core_a3cbf5ecde18b2f2798a4b1aba1801ca5}{\index{hard\-Core@{hard\-Core}!rcut@{rcut}}
 \index{rcut@{rcut}!hardCore@{hard\-Core}}
@@ -139,7 +139,7 @@ Implements \hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{pai
 
 
 
-Definition at line 645 of file potentials.\-cpp.
+Definition at line 647 of file potentials.\-cpp.
 
 
 
@@ -147,18 +147,18 @@ References pair\-Potential\-::params\-\_\-, and pair\-Potential\-::params\-Are\-
 
 
 \begin{DoxyCode}
-645                        \{
-646     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
-647         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore parameters not set"});
-648     \} \textcolor{keywordflow}{else} \{
-649         \textcolor{keywordflow}{if} (fabs(\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0]) < 1.0e-12) \{
-650             \textcolor{comment}{// in case sigma = 0 (used for ideal gas case) just return finite value for cell lists}
-651             \textcolor{keywordflow}{return} 1.0;
-652         \} \textcolor{keywordflow}{else} \{
-653             \textcolor{keywordflow}{return} (\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0]);
-654         \}
-655     \}
-656 \}
+647                        \{
+648     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+649         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore parameters not set"});
+650     \} \textcolor{keywordflow}{else} \{
+651         \textcolor{keywordflow}{if} (fabs(\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0]) < 1.0e-12) \{
+652             \textcolor{comment}{// in case sigma = 0 (used for ideal gas case) just return finite value for cell lists}
+653             \textcolor{keywordflow}{return} 1.0;
+654         \} \textcolor{keywordflow}{else} \{
+655             \textcolor{keywordflow}{return} (\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0]);
+656         \}
+657     \}
+658 \}
 \end{DoxyCode}
 \hypertarget{classhard_core_a2bbf6a77445f5cb5fc1a3c37ba0e6566}{\index{hard\-Core@{hard\-Core}!set\-Parameters@{set\-Parameters}}
 \index{set\-Parameters@{set\-Parameters}!hardCore@{hard\-Core}}
@@ -182,7 +182,7 @@ Implements \hyperlink{classpair_potential_ad4b237646f9de2ae9f95cc9350564bc5}{pai
 
 
 
-Definition at line 562 of file potentials.\-cpp.
+Definition at line 564 of file potentials.\-cpp.
 
 
 
@@ -190,43 +190,43 @@ References pair\-Potential\-::params\-\_\-, pair\-Potential\-::params\-Are\-Set\
 
 
 \begin{DoxyCode}
-562                                                                \{
-563     \textcolor{keywordflow}{if} (params.size() != 2) \{
-564         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore must specify 2 parameter: \{sigma, Mtot\}"});
-565     \} \textcolor{keywordflow}{else} \{
-566         \textcolor{keywordflow}{if} (params[0] < 0) \{
-567             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore, sigma >= 0"});
-568         \}
-569         \textcolor{keywordflow}{if} (\textcolor{keywordtype}{int}(params[1]) < 1) \{
-570             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore, total expanded ensemble state, Mtot >= 1"})
+564                                                                \{
+565     \textcolor{keywordflow}{if} (params.size() != 2) \{
+566         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore must specify 2 parameter: sigma, Mtot"});
+567     \} \textcolor{keywordflow}{else} \{
+568         \textcolor{keywordflow}{if} (params[0] < 0) \{
+569             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore, sigma >= 0"});
+570         \}
+571         \textcolor{keywordflow}{if} (\textcolor{keywordtype}{int}(params[1]) < 1) \{
+572             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For hardCore, total expanded ensemble state, Mtot >= 1"})
       ;
-571         \}
-572 
-573         \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_} = params;
-574         \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{true};
-575 
-576         \hyperlink{classpair_potential_ab4b4538a7e13771f50a29aaac2443037}{useTailCorrection} = \textcolor{keyword}{false};
+573         \}
+574 
+575         \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_} = params;
+576         \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{true};
 577 
-578         \textcolor{comment}{// use a "constant volume" scheme to distribute the stages}
-579         sigmaM\_.resize(\textcolor{keywordtype}{int}(params[1]), 0);
-580         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < sigmaM\_.size(); ++i) \{
-581             \textcolor{keywordflow}{if} (i == 0) \{
-582                 \textcolor{comment}{// fully inserted}
-583                 sigmaM\_[i] = params[0];
-584             \} \textcolor{keywordflow}{else} \{
-585                 \textcolor{comment}{// use volume scaling so each stage is separated from its neighbors by the same dV}
-586                 \textcolor{keywordtype}{double} lastSigma = 0;
-587                 \textcolor{keywordflow}{if} (i == 1) \{
-588                     lastSigma = 0;
-589                 \} \textcolor{keywordflow}{else} \{
-590                     lastSigma = sigmaM\_[i-1];
-591                 \}
-592                 sigmaM\_[i] = pow(params[0]*params[0]*params[0]/(8.0*\textcolor{keywordtype}{int}(params[1])) + lastSigma*lastSigma*
+578         \hyperlink{classpair_potential_ab4b4538a7e13771f50a29aaac2443037}{useTailCorrection} = \textcolor{keyword}{false};
+579 
+580         \textcolor{comment}{// use a "constant volume" scheme to distribute the stages}
+581         sigmaM\_.resize(\textcolor{keywordtype}{int}(params[1]), 0);
+582         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < sigmaM\_.size(); ++i) \{
+583             \textcolor{keywordflow}{if} (i == 0) \{
+584                 \textcolor{comment}{// fully inserted}
+585                 sigmaM\_[i] = params[0];
+586             \} \textcolor{keywordflow}{else} \{
+587                 \textcolor{comment}{// use volume scaling so each stage is separated from its neighbors by the same dV}
+588                 \textcolor{keywordtype}{double} lastSigma = 0;
+589                 \textcolor{keywordflow}{if} (i == 1) \{
+590                     lastSigma = 0;
+591                 \} \textcolor{keywordflow}{else} \{
+592                     lastSigma = sigmaM\_[i-1];
+593                 \}
+594                 sigmaM\_[i] = pow(params[0]*params[0]*params[0]/(8.0*\textcolor{keywordtype}{int}(params[1])) + lastSigma*lastSigma*
       lastSigma, 1./3.);
-593             \}
-594         \}
-595     \}
-596 \}
+595             \}
+596         \}
+597     \}
+598 \}
 \end{DoxyCode}
 \hypertarget{classhard_core_a90c73dbda39a9c48f1f26474474183e4}{\index{hard\-Core@{hard\-Core}!tail\-Correction@{tail\-Correction}}
 \index{tail\-Correction@{tail\-Correction}!hardCore@{hard\-Core}}
@@ -253,13 +253,13 @@ Implements \hyperlink{classpair_potential_a5387d21d8d487d1d42e9eaf7cae9175b}{pai
 
 
 
-Definition at line 636 of file potentials.\-cpp.
+Definition at line 638 of file potentials.\-cpp.
 
 
 \begin{DoxyCode}
-636                                                     \{
-637     \textcolor{keywordflow}{return} 0.0;
-638 \}
+638                                                     \{
+639     \textcolor{keywordflow}{return} 0.0;
+640 \}
 \end{DoxyCode}
 
 

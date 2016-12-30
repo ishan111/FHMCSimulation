@@ -93,7 +93,7 @@ Implements \hyperlink{classpair_potential_a2b1e50ef9b6e50b01d89d31d5460ad76}{pai
 
 
 
-Definition at line 379 of file potentials.\-cpp.
+Definition at line 381 of file potentials.\-cpp.
 
 
 
@@ -101,40 +101,40 @@ References atom\-::m\-State, num\-To\-Str(), pair\-Potential\-::params\-\_\-, pa
 
 
 \begin{DoxyCode}
-379                                                                                          \{
-380     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
-381         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For tabulated parameters not set"});
-382     \}
-383 
-384     \textcolor{keyword}{const} \textcolor{keywordtype}{double} r = sqrt(\hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2}(a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, a2->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, box));
-385     \textcolor{keywordtype}{double} en = 0.0;
-386 
-387     \textcolor{comment}{// only one of these atoms (at most) should be "partially" inserted}
-388     \textcolor{keywordtype}{int} mState = 0;
-389     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
-390         mState = a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-391     \}
-392     \textcolor{keywordflow}{if} (a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
-393         mState = a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-394     \}
-395 
-396     \textcolor{keywordflow}{if} (r < \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1]) \{
-397         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Distance r too small in energy calculation in tabulated potential. Returning value
+381                                                                                          \{
+382     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+383         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For tabulated parameters not set"});
+384     \}
+385 
+386     \textcolor{keyword}{const} \textcolor{keywordtype}{double} r = sqrt(\hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2}(a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, a2->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, box));
+387     \textcolor{keywordtype}{double} en = 0.0;
+388 
+389     \textcolor{comment}{// only one of these atoms (at most) should be "partially" inserted}
+390     \textcolor{keywordtype}{int} mState = 0;
+391     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
+392         mState = a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+393     \}
+394     \textcolor{keywordflow}{if} (a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} != 0) \{
+395         mState = a2->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+396     \}
+397 
+398     \textcolor{keywordflow}{if} (r < \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1]) \{
+399         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Distance r too small in energy calculation in tabulated potential. Returning value
        at r = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(start));
-398         en = table[0];
-399     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (r > \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0]) \{
-400         en = \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[3];
-401     \} \textcolor{keywordflow}{else} \{
-402         \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} lowerIndex = floor((r-\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1])/dr);
-403         \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} upperIndex = ceil((r-\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1])/dr);
-404         \textcolor{keyword}{const} \textcolor{keywordtype}{double} upperFraction = (r-\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1])/dr-lowerIndex;
-405         \textcolor{keyword}{const} \textcolor{keywordtype}{double} lowerFraction = 1.0-upperFraction;
-406         en = (lowerFraction*table[lowerIndex] + upperFraction*table[upperIndex] + 
+400         en = table[0];
+401     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (r > \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0]) \{
+402         en = \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[3];
+403     \} \textcolor{keywordflow}{else} \{
+404         \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} lowerIndex = floor((r-\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1])/dr);
+405         \textcolor{keyword}{const} \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} upperIndex = ceil((r-\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1])/dr);
+406         \textcolor{keyword}{const} \textcolor{keywordtype}{double} upperFraction = (r-\hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1])/dr-lowerIndex;
+407         \textcolor{keyword}{const} \textcolor{keywordtype}{double} lowerFraction = 1.0-upperFraction;
+408         en = (lowerFraction*table[lowerIndex] + upperFraction*table[upperIndex] + 
       \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[2])*mScale[mState];
-407     \}
-408 
-409     \textcolor{keywordflow}{return} en;
-410 \}
+409     \}
+410 
+411     \textcolor{keywordflow}{return} en;
+412 \}
 \end{DoxyCode}
 \hypertarget{classtabulated_ad3b3fb94b5db44e91d6768cfe21683c3}{\index{tabulated@{tabulated}!load\-Potential@{load\-Potential}}
 \index{load\-Potential@{load\-Potential}!tabulated@{tabulated}}
@@ -158,7 +158,7 @@ Definition at line 324 of file potentials.\-cpp.
 
 
 
-References file\-Exists(), num\-To\-Str(), pair\-Potential\-::params\-\_\-, pair\-Potential\-::params\-Are\-Set\-\_\-, send\-Err(), and send\-Msg().
+References file\-Exists(), num\-To\-Str(), pair\-Potential\-::params\-\_\-, pair\-Potential\-::params\-Are\-Set\-\_\-, and send\-Msg().
 
 
 \begin{DoxyCode}
@@ -188,25 +188,29 @@ References file\-Exists(), num\-To\-Str(), pair\-Potential\-::params\-\_\-, pair
 347 
 348         \textcolor{keywordflow}{if} (lineCounter < 2) \{
 349             \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{false};
-350             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Tabulated potential "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(filename)+\textcolor{stringliteral}{" needs at least 2 entries,
-       cannot setup potential"});
-351             \textcolor{keywordflow}{return};
-352         \}
-353 
-354         \textcolor{comment}{// if parameters are not set, set default parameters}
-355         \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
-356             \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}.assign(4, 0.0);
-357             \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0] = start + (table.size()-1)*dr;
-358             \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1] = start;
-359             params\_[2] = 0.0;
-360             params\_[3] = 0.0;
-361             \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{true};
-362         \}
-363     \} \textcolor{keywordflow}{else} \{
-364         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"File "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(filename)+\textcolor{stringliteral}{" not found, cannot setup potential"});
-365         \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{false};
-366     \}
-367 \}
+350             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Tabulated potential "}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(filename)+\textcolor{stringliteral}{" needs at least 2 entries, cannot setup potential"});
+351             \textcolor{comment}{/*sendErr("Tabulated potential "+numToStr(filename)+" needs at least 2 entries, cannot setup
+       potential");}
+352 \textcolor{comment}{            return;*/}
+353         \}
+354 
+355         \textcolor{comment}{// If parameters are not set, set default parameters}
+356         \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+357             \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}.assign(4, 0.0);
+358             \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0] = start + (table.size()-1)*dr;
+359             \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[1] = start;
+360             params\_[2] = 0.0;
+361             params\_[3] = 0.0;
+362             \hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_} = \textcolor{keyword}{true};
+363         \}
+364     \} \textcolor{keywordflow}{else} \{
+365         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"File "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(filename)+\textcolor{stringliteral}{" not found, cannot setup
+       potential"});
+366         \textcolor{comment}{/*sendErr("File "+numToStr(filename)+" not found, cannot setup potential");}
+367 \textcolor{comment}{        paramsAreSet\_ = false;*/}
+368     \}
+369 \}
 \end{DoxyCode}
 \hypertarget{classtabulated_a1826f920afd53d74e17c8fa5253a2d2b}{\index{tabulated@{tabulated}!rcut@{rcut}}
 \index{rcut@{rcut}!tabulated@{tabulated}}
@@ -228,7 +232,7 @@ Implements \hyperlink{classpair_potential_abf4f8d231c5e2e36d72916d33dcd75f0}{pai
 
 
 
-Definition at line 428 of file potentials.\-cpp.
+Definition at line 430 of file potentials.\-cpp.
 
 
 
@@ -236,13 +240,13 @@ References pair\-Potential\-::params\-\_\-, and pair\-Potential\-::params\-Are\-
 
 
 \begin{DoxyCode}
-428                         \{
-429     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
-430         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For tabulated parameters not set"});
-431     \} \textcolor{keywordflow}{else} \{
-432         \textcolor{keywordflow}{return} \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0];
-433     \}
-434 \}
+430                         \{
+431     \textcolor{keywordflow}{if} (!\hyperlink{classpair_potential_a635755c0a952bfc05a4cfae230c3dbd2}{paramsAreSet\_}) \{
+432         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For tabulated parameters not set"});
+433     \} \textcolor{keywordflow}{else} \{
+434         \textcolor{keywordflow}{return} \hyperlink{classpair_potential_abf8ec8af983d6e9960bd149da099e883}{params\_}[0];
+435     \}
+436 \}
 \end{DoxyCode}
 \hypertarget{classtabulated_a6a52e8a5b99ddd16fcbd3e404c90f559}{\index{tabulated@{tabulated}!set\-Parameters@{set\-Parameters}}
 \index{set\-Parameters@{set\-Parameters}!tabulated@{tabulated}}
@@ -280,7 +284,7 @@ References pair\-Potential\-::params\-\_\-, pair\-Potential\-::params\-Are\-Set\
        u\_shift, u\_infinity, Mtot"});
 294     \} \textcolor{keywordflow}{else} \{
 295         \textcolor{keywordflow}{if} (params[0] < 0) \{
-296             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For tabulated, r\_cut > 0"});
+296             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For tabulated, r\_cut >= 0"});
 297         \}
 298         \textcolor{keywordflow}{if} (\textcolor{keywordtype}{int}(params[4]) < 1) \{
 299             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"For tabulated, total expanded ensemble states, Mtot >= 1
@@ -329,13 +333,13 @@ Implements \hyperlink{classpair_potential_a5387d21d8d487d1d42e9eaf7cae9175b}{pai
 
 
 
-Definition at line 419 of file potentials.\-cpp.
+Definition at line 421 of file potentials.\-cpp.
 
 
 \begin{DoxyCode}
-419                                                      \{
-420     \textcolor{keywordflow}{return} 0.0;
-421 \}
+421                                                      \{
+422     \textcolor{keywordflow}{return} 0.0;
+423 \}
 \end{DoxyCode}
 
 

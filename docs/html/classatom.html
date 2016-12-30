@@ -155,10 +155,10 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="atom_8h_source.html#l00014">14</a> of file <a class="el" href="atom_8h_source.html">atom.h</a>.</p>
 
-<p>References <a class="el" href="atom_8h_source.html#l00021">mState</a>, and <a class="el" href="atom_8h_source.html#l00022">pos</a>.</p>
-<div class="fragment"><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;{ <a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>.resize(3, 0); <a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> = 0; } <span class="comment">// assumes no centers</span></div>
-<div class="ttc" id="classatom_html_a3ae5f4880e7831d8b2c9fda72b4eb24a"><div class="ttname"><a href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">atom::pos</a></div><div class="ttdeci">std::vector&lt; double &gt; pos</div><div class="ttdoc">3D position </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00022">atom.h:22</a></div></div>
-<div class="ttc" id="classatom_html_a3cb00c0c5b7533657e05af6ff4a42740"><div class="ttname"><a href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">atom::mState</a></div><div class="ttdeci">int mState</div><div class="ttdoc">State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted. </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00021">atom.h:21</a></div></div>
+<p>References <a class="el" href="atom_8h_source.html#l00020">mState</a>, and <a class="el" href="atom_8h_source.html#l00021">pos</a>.</p>
+<div class="fragment"><div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;{ <a class="code" href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">pos</a>.resize(3, 0); <a class="code" href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">mState</a> = 0; } <span class="comment">// Assumes no centers</span></div>
+<div class="ttc" id="classatom_html_a3ae5f4880e7831d8b2c9fda72b4eb24a"><div class="ttname"><a href="classatom.html#a3ae5f4880e7831d8b2c9fda72b4eb24a">atom::pos</a></div><div class="ttdeci">std::vector&lt; double &gt; pos</div><div class="ttdoc">3D position </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00021">atom.h:21</a></div></div>
+<div class="ttc" id="classatom_html_a3cb00c0c5b7533657e05af6ff4a42740"><div class="ttname"><a href="classatom.html#a3cb00c0c5b7533657e05af6ff4a42740">atom::mState</a></div><div class="ttdeci">int mState</div><div class="ttdoc">State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted. </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00020">atom.h:20</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -196,7 +196,7 @@ Data Fields</h2></td></tr>
 
 <p>Definition at line <a class="el" href="atom_8cpp_source.html#l00011">11</a> of file <a class="el" href="atom_8cpp_source.html">atom.cpp</a>.</p>
 
-<p>References <a class="el" href="atom_8h_source.html#l00023">vecToCenters</a>.</p>
+<p>References <a class="el" href="atom_8h_source.html#l00022">vecToCenters</a>.</p>
 <div class="fragment"><div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;                                                                           {</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="keywordflow">try</span> {</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        std::vector &lt; double &gt; dummy (3, 0);</div>
@@ -218,8 +218,8 @@ Data Fields</h2></td></tr>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        }</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    }</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;}</div>
-<div class="ttc" id="classatom_html_a1376d52933b59a61ef76bf47f3f3732f"><div class="ttname"><a href="classatom.html#a1376d52933b59a61ef76bf47f3f3732f">atom::vecToCenters</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; vecToCenters</div><div class="ttdoc">Vectors pointing from pos to rigid centers. </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00023">atom.h:23</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classatom_html_a1376d52933b59a61ef76bf47f3f3732f"><div class="ttname"><a href="classatom.html#a1376d52933b59a61ef76bf47f3f3732f">atom::vecToCenters</a></div><div class="ttdeci">std::vector&lt; std::vector&lt; double &gt; &gt; vecToCenters</div><div class="ttdoc">Vectors pointing from pos to rigid centers. </div><div class="ttdef"><b>Definition:</b> <a href="atom_8h_source.html#l00022">atom.h:22</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -279,9 +279,9 @@ Data Fields</h2></td></tr>
 
 <p>State of fraction insertion of the atom in the expanded ensemble, 0 = fully inserted. </p>
 
-<p>Definition at line <a class="el" href="atom_8h_source.html#l00021">21</a> of file <a class="el" href="atom_8h_source.html">atom.h</a>.</p>
+<p>Definition at line <a class="el" href="atom_8h_source.html#l00020">20</a> of file <a class="el" href="atom_8h_source.html">atom.h</a>.</p>
 
-<p>Referenced by <a class="el" href="atom_8h_source.html#l00014">atom()</a>, <a class="el" href="system_8cpp_source.html#l00241">simSystem::deleteAtom()</a>, <a class="el" href="barrier_8cpp_source.html#l00432">hardWallZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00230">lennardJones::energy()</a>, <a class="el" href="barrier_8cpp_source.html#l00621">squareWellWallZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00101">fsLennardJones::energy()</a>, <a class="el" href="barrier_8cpp_source.html#l00525">cylinderZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00379">tabulated::energy()</a>, <a class="el" href="barrier_8cpp_source.html#l00292">rightTriangleXZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00509">squareWell::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00607">hardCore::energy()</a>, <a class="el" href="system_8cpp_source.html#l00140">simSystem::insertAtom()</a>, <a class="el" href="barrier_8cpp_source.html#l00407">hardWallZ::inside()</a>, <a class="el" href="barrier_8cpp_source.html#l00596">squareWellWallZ::inside()</a>, <a class="el" href="barrier_8cpp_source.html#l00499">cylinderZ::inside()</a>, <a class="el" href="delete_8cpp_source.html#l00010">deleteParticle::make()</a>, <a class="el" href="insert_8cpp_source.html#l00010">insertParticle::make()</a>, and <a class="el" href="sanity_8cpp_source.html#l00008">sanityChecks()</a>.</p>
+<p>Referenced by <a class="el" href="atom_8h_source.html#l00014">atom()</a>, <a class="el" href="system_8cpp_source.html#l00241">simSystem::deleteAtom()</a>, <a class="el" href="barrier_8cpp_source.html#l00433">hardWallZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00230">lennardJones::energy()</a>, <a class="el" href="barrier_8cpp_source.html#l00622">squareWellWallZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00101">fsLennardJones::energy()</a>, <a class="el" href="barrier_8cpp_source.html#l00526">cylinderZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00381">tabulated::energy()</a>, <a class="el" href="barrier_8cpp_source.html#l00292">rightTriangleXZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00511">squareWell::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00609">hardCore::energy()</a>, <a class="el" href="system_8cpp_source.html#l00140">simSystem::insertAtom()</a>, <a class="el" href="barrier_8cpp_source.html#l00408">hardWallZ::inside()</a>, <a class="el" href="barrier_8cpp_source.html#l00597">squareWellWallZ::inside()</a>, <a class="el" href="barrier_8cpp_source.html#l00500">cylinderZ::inside()</a>, <a class="el" href="delete_8cpp_source.html#l00010">deleteParticle::make()</a>, <a class="el" href="insert_8cpp_source.html#l00010">insertParticle::make()</a>, and <a class="el" href="sanity_8cpp_source.html#l00008">sanityChecks()</a>.</p>
 
 </div>
 </div>
@@ -297,9 +297,9 @@ Data Fields</h2></td></tr>
 
 <p>3D position </p>
 
-<p>Definition at line <a class="el" href="atom_8h_source.html#l00022">22</a> of file <a class="el" href="atom_8h_source.html">atom.h</a>.</p>
+<p>Definition at line <a class="el" href="atom_8h_source.html#l00021">21</a> of file <a class="el" href="atom_8h_source.html">atom.h</a>.</p>
 
-<p>Referenced by <a class="el" href="atom_8h_source.html#l00014">atom()</a>, <a class="el" href="barrier_8cpp_source.html#l00432">hardWallZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00230">lennardJones::energy()</a>, <a class="el" href="barrier_8cpp_source.html#l00621">squareWellWallZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00101">fsLennardJones::energy()</a>, <a class="el" href="barrier_8cpp_source.html#l00525">cylinderZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00379">tabulated::energy()</a>, <a class="el" href="barrier_8cpp_source.html#l00292">rightTriangleXZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00509">squareWell::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00607">hardCore::energy()</a>, <a class="el" href="system_8cpp_source.html#l01502">simSystem::getNeighborAtoms()</a>, <a class="el" href="cell_list_8cpp_source.html#l00093">cellList::insertParticle()</a>, <a class="el" href="barrier_8cpp_source.html#l00407">hardWallZ::inside()</a>, <a class="el" href="barrier_8cpp_source.html#l00596">squareWellWallZ::inside()</a>, <a class="el" href="barrier_8cpp_source.html#l00499">cylinderZ::inside()</a>, <a class="el" href="aggvolbias_8cpp_source.html#l00142">aggVolBias3::make()</a>, <a class="el" href="swap_8cpp_source.html#l00010">swapParticles::make()</a>, <a class="el" href="insert_8cpp_source.html#l00010">insertParticle::make()</a>, <a class="el" href="cell_list_8cpp_source.html#l00100">cellList::swapAndDeleteParticle()</a>, and <a class="el" href="cell_list_8cpp_source.html#l00137">cellList::translateParticle()</a>.</p>
+<p>Referenced by <a class="el" href="atom_8h_source.html#l00014">atom()</a>, <a class="el" href="barrier_8cpp_source.html#l00433">hardWallZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00230">lennardJones::energy()</a>, <a class="el" href="barrier_8cpp_source.html#l00622">squareWellWallZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00101">fsLennardJones::energy()</a>, <a class="el" href="barrier_8cpp_source.html#l00526">cylinderZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00381">tabulated::energy()</a>, <a class="el" href="barrier_8cpp_source.html#l00292">rightTriangleXZ::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00511">squareWell::energy()</a>, <a class="el" href="potentials_8cpp_source.html#l00609">hardCore::energy()</a>, <a class="el" href="system_8cpp_source.html#l01498">simSystem::getNeighborAtoms()</a>, <a class="el" href="cell_list_8cpp_source.html#l00093">cellList::insertParticle()</a>, <a class="el" href="barrier_8cpp_source.html#l00408">hardWallZ::inside()</a>, <a class="el" href="barrier_8cpp_source.html#l00597">squareWellWallZ::inside()</a>, <a class="el" href="barrier_8cpp_source.html#l00500">cylinderZ::inside()</a>, <a class="el" href="aggvolbias_8cpp_source.html#l00142">aggVolBias3::make()</a>, <a class="el" href="swap_8cpp_source.html#l00010">swapParticles::make()</a>, <a class="el" href="insert_8cpp_source.html#l00010">insertParticle::make()</a>, <a class="el" href="cell_list_8cpp_source.html#l00100">cellList::swapAndDeleteParticle()</a>, and <a class="el" href="cell_list_8cpp_source.html#l00137">cellList::translateParticle()</a>.</p>
 
 </div>
 </div>
@@ -315,7 +315,7 @@ Data Fields</h2></td></tr>
 
 <p>Vectors pointing from pos to rigid centers. </p>
 
-<p>Definition at line <a class="el" href="atom_8h_source.html#l00023">23</a> of file <a class="el" href="atom_8h_source.html">atom.h</a>.</p>
+<p>Definition at line <a class="el" href="atom_8h_source.html#l00022">22</a> of file <a class="el" href="atom_8h_source.html">atom.h</a>.</p>
 
 <p>Referenced by <a class="el" href="atom_8cpp_source.html#l00011">atom()</a>.</p>
 
@@ -328,7 +328,7 @@ Data Fields</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 29 2016 11:09:03 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 30 2016 13:19:38 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

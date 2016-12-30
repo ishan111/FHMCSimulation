@@ -305,7 +305,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;    }</div>
 <div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;}</div>
 <div class="ttc" id="classwala_html_acb8e59580d97bc3c5b9b4ff45eb6bb9a"><div class="ttname"><a href="classwala.html#acb8e59580d97bc3c5b9b4ff45eb6bb9a">wala::lnF</a></div><div class="ttdeci">const double lnF()</div><div class="ttdef"><b>Definition:</b> <a href="bias_8h_source.html#l00072">bias.h:72</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 <div class="ttc" id="bias_8h_html_a1ceb524363fcb94da0c64d297ea27438"><div class="ttname"><a href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a></div><div class="ttdeci">#define __BIAS_INT_TYPE__</div><div class="ttdoc">For biasing, need to address things with large indices. </div><div class="ttdef"><b>Definition:</b> <a href="bias_8h_source.html#l00016">bias.h:16</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -388,14 +388,14 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="bias_8cpp_source.html#l00473">473</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l01759">calculateBias()</a>, and <a class="el" href="bias_8cpp_source.html#l00486">update()</a>.</p>
+<p>Referenced by <a class="el" href="system_8cpp_source.html#l01755">calculateBias()</a>, and <a class="el" href="bias_8cpp_source.html#l00486">update()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;                                                                        {</div>
 <div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;    <span class="keywordflow">if</span> (Nval &gt; Nmax_ || Nval &lt; Nmin_ || Mval &lt; 0 || Mval &gt; Mtot_-1) {</div>
 <div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;N, M out of bounds in Wang-Landau object, cannot retrieve address&quot;</span>);</div>
 <div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;    }</div>
 <div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;    <span class="keywordflow">return</span> (Nval - Nmin_)*Mtot_ + Mval;</div>
 <div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -423,7 +423,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="bias_8h_source.html#l00073">73</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
 
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l01759">calculateBias()</a>.</p>
+<p>Referenced by <a class="el" href="system_8cpp_source.html#l01755">calculateBias()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;{ <span class="keywordflow">return</span> -lnPI_[address]; }</div>
 </div><!-- fragment -->
 </div>
@@ -611,7 +611,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;    }</div>
 <div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;    of.close();</div>
 <div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -657,7 +657,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;        }</div>
 <div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;    }</div>
 <div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -703,7 +703,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;        }</div>
 <div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;    }</div>
 <div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00123">global.h:123</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -790,7 +790,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 29 2016 11:09:05 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 30 2016 13:19:40 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

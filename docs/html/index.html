@@ -118,34 +118,84 @@ Input</h1>
 <p>"wala_s" : 0.8, # WL flatness criterion</p>
 <p>"lnF_start" : 1.0, # Where to start WL</p>
 <p>"lnF_end" : 1.0e-5, # Where to end WL</p>
-<p>"prob_pr_ins_del_1" : 0.1, # Relative weight to apply to insert/delete moves during production (TMMC) for species 1</p>
-<p>"prob_pr_swap_1_2" : 0.2, # Relative weight to apply to swap moves during production (TMMC) for species 1 and 2</p>
-<p>"prob_pr_displace_1" : 0.7, # Relative weight to apply to displacement moves during production (TMMC) for species 1</p>
-<p>"prob_pr_ins_del_2" : 0.7, # Relative weight to apply to insert/delete moves during production (TMMC) for species 2</p>
-<p>"prob_pr_displace_2" : 0.1, # Relative weight to apply to displacement moves during production (TMMC) for species 2</p>
-<p>"prob_eq_ins_del_1" : 0.25, # Relative weight to apply to insert/delete moves during equilibration (WL/Crossover) for species 1</p>
-<p>"prob_eq_swap_1_2" : 0.15, # Relative weight to apply to swap moves during equilibration (WL/Crossover) for species 1 and 2</p>
-<p>"prob_eq_displace_1" : 0.6, # Relative weight to apply to displacement moves during equilibration (WL/Crossover) for species 1</p>
-<p>"prob_eq_ins_del_2" : 0.4, # Relative weight to apply to insert/delete moves during equilibration (WL/Crossover) for species 2</p>
-<p>"prob_eq_displace_2" : 0.6, # Relative weight to apply to displacement moves during equilibration (WL/Crossover) for species 2</p>
-<p>"max_pr_displacement_1" : 0.5, # Maximum displacement for species 1 during production (TMMC)</p>
-<p>"max_eq_displacement_1" : 0.6, # Maximum displacement for species 1 during equilibration (WL/Crossover)</p>
-<p>"max_pr_displacement_2" : 0.4, # Maximum displacement for species 2 during production (TMMC)</p>
-<p>"max_eq_displacement_2" : 0.7, # Maximum displacement for species 2 during equilibration (WL/Crossover)</p>
+<p>"moves" : { </p>
+<pre class="fragment">"ins_del_1" : 0.1, # Relative weight to apply to insert/delete moves of species 1
+
+"swap_1_2" : 0.2, # Relative weight to apply to swap moves between species 1 and 2
+
+"translate_1" : 0.7, # Relative weight to apply to translation moves of species 1
+
+"ins_del_2" : 0.7, # Relative weight to apply to insert/delete moves of species 2
+
+"translate_2" : 0.1, # Relative weight to apply to translation moves of species 2
+
+"max_translation_1" : 0.5, # Maximum translation for species 1
+
+"max_translation_2" : 0.4 # Maximum translation for species 2
+</pre><p>},</p>
 <p>"ppot_1_1" : "square_well", # 1-1 interaction, in this case, square well</p>
-<p>"ppot_1_1_params" : [1.0, 0.3, 1.0], # 1-1 interaction parameters</p>
-<p>"ppot_1_1_use_cell_list" : true, # use cell list for this potential to accelerate</p>
-<p>"ppot_1_2" : "square_well",</p>
-<p>"ppot_1_2_params" : [1.1, 0.4, 1.1],</p>
-<p>"ppot_1_2_use_cell_list" : true,</p>
-<p>"ppot_2_2" : "square_well",</p>
-<p>"ppot_2_2_params" : [1.2, 0.5, 1.2],</p>
-<p>"ppot_2_2_use_cell_list" : true</p>
+<p>"ppot_1_1_params" : { </p>
+<pre class="fragment">"sigma" : 1.0,
+
+"width" : 0.3,
+
+"epsilon" : 1.0,
+
+"cell_list"  : true
+</pre><p>},</p>
+<p>"ppot_1_2" : "square_well", # 1-2 interaction, in this case, square well</p>
+<p>"ppot_1_2_params" : { </p>
+<pre class="fragment">"sigma" : 1.1,
+
+"width" : 0.4,
+
+"epsilon" : 1.1,
+
+"cell_list"  : true
+</pre><p>}, "ppot_2_2" : "square_well", # 2-2 interaction, in this case, square well</p>
+<p>"ppot_2_2_params" : { </p>
+<pre class="fragment">"sigma" : 1.2,
+
+"width" : 0.5,
+
+"epsilon" : 1.2,
+
+"cell_list"  : true
+</pre><p>},</p>
+<p>"barriers" : { </p>
+<pre class="fragment">"mybarrier1" : {
+
+    "type" : "hard_wall_z", # A barrier that interacts with species 1 as a hard wall in the z-direction
+
+    "species" : 1,
+
+    "ub" : 6.0,
+
+    "lb" : 1.0,
+
+    "sigma" : 1.0
+
+},
+
+"mybarrier2" : {
+
+    "type" : "hard_wall_z", # A barrier that interacts with species 2 as a hard wall in the z-direction
+
+    "species" : 2,
+
+    "ub" : 6.0,
+
+    "lb" : 1.0,
+
+    "sigma" : 1.0
+
+}
+</pre><p>}</p>
 <p>} </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 29 2016 11:09:05 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Dec 30 2016 13:19:40 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

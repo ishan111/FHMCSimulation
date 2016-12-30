@@ -1,4 +1,4 @@
-.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/tmmc.cpp" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/tmmc.cpp" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -72,7 +72,7 @@ References tmmc::calculatePI(), checkpoint::check(), tmmc::checkFullyVisited(), 
 39             } catch (customException &ce) {
 40                 sys\&.stopTMMC(); // deallocate
 41                 std::string msg = ce\&.what();
-42                 sendErr("Failed to initialize from TMMC collection matrix because "+msg);
+42                 sendErr("Failed to initialize from TMMC collection matrix : "+msg);
 43                 exit(SYS_FAILURE);
 44             }
 45         }

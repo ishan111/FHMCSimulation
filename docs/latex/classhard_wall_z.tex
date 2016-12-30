@@ -82,7 +82,7 @@ Expanded ensembles scale the range of interaction via the sigma parameter.
 \end{DoxyParams}
 
 
-Definition at line 384 of file barrier.\-cpp.
+Definition at line 385 of file barrier.\-cpp.
 
 
 
@@ -90,22 +90,22 @@ References barrier\-::\-M\-\_\-.
 
 
 \begin{DoxyCode}
-384                                                                                        \{
-385     \textcolor{keywordflow}{if} (lb >= ub) \{
-386         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"hardWallZ must have lower bound < upper bound"});
-387     \}
-388     \textcolor{keywordflow}{if} (sigma < 0) \{
-389         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"hardWallZ must have sigma >= 0"});
-390     \}
-391     \textcolor{keywordflow}{if} (M < 1) \{
-392         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"hardWallZ must have M >= 1"});
-393     \}
-394 
-395     sigma\_ = sigma;
-396     ub\_ = ub;
-397     lb\_ = lb;
-398     \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_} = M;
-399 \}
+385                                                                                        \{
+386     \textcolor{keywordflow}{if} (lb >= ub) \{
+387         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"hardWallZ must have lower bound < upper bound"});
+388     \}
+389     \textcolor{keywordflow}{if} (sigma < 0) \{
+390         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"hardWallZ must have sigma >= 0"});
+391     \}
+392     \textcolor{keywordflow}{if} (M < 1) \{
+393         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"hardWallZ must have M >= 1"});
+394     \}
+395 
+396     sigma\_ = sigma;
+397     ub\_ = ub;
+398     lb\_ = lb;
+399     \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_} = M;
+400 \}
 \end{DoxyCode}
 
 
@@ -137,7 +137,7 @@ Implements \hyperlink{classbarrier_a2d308cfd5709aa479d0b37733f1a0db7}{barrier}.
 
 
 
-Definition at line 432 of file barrier.\-cpp.
+Definition at line 433 of file barrier.\-cpp.
 
 
 
@@ -145,24 +145,24 @@ References barrier\-::\-M\-\_\-, atom\-::m\-State, N\-U\-M\-\_\-\-I\-N\-F\-I\-N\
 
 
 \begin{DoxyCode}
-432                                                                          \{
-433     std::vector < double > p = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos};
-434     \hyperlink{utilities_8cpp_ad858a38f435e9a0ee890aa0f526714d2}{pbc} (p, box);
-435 
-436     \textcolor{keywordtype}{double} sig = sigma\_;
-437     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
-438         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-439     \}
-440     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
-441         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for hardWallZ"});
-442     \}
-443 
-444     \textcolor{keywordflow}{if} (p[2] >= ub\_ - sig/2.0 || p[2] <= lb\_ + sig/2.0) \{
-445         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
-446     \} \textcolor{keywordflow}{else} \{
-447         \textcolor{keywordflow}{return} 0.0;
-448     \}
-449 \}
+433                                                                          \{
+434     std::vector < double > p = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos};
+435     \hyperlink{utilities_8cpp_ad858a38f435e9a0ee890aa0f526714d2}{pbc} (p, box);
+436 
+437     \textcolor{keywordtype}{double} sig = sigma\_;
+438     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
+439         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+440     \}
+441     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
+442         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for hardWallZ"});
+443     \}
+444 
+445     \textcolor{keywordflow}{if} (p[2] >= ub\_ - sig/2.0 || p[2] <= lb\_ + sig/2.0) \{
+446         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
+447     \} \textcolor{keywordflow}{else} \{
+448         \textcolor{keywordflow}{return} 0.0;
+449     \}
+450 \}
 \end{DoxyCode}
 \hypertarget{classhard_wall_z_ac4c72aa32e0cdfe40c6765642ffb78d7}{\index{hard\-Wall\-Z@{hard\-Wall\-Z}!inside@{inside}}
 \index{inside@{inside}!hardWallZ@{hard\-Wall\-Z}}
@@ -191,7 +191,7 @@ Implements \hyperlink{classbarrier_a948ebdcfac501cb75d1a1f045a7d9125}{barrier}.
 
 
 
-Definition at line 407 of file barrier.\-cpp.
+Definition at line 408 of file barrier.\-cpp.
 
 
 
@@ -199,24 +199,24 @@ References barrier\-::\-M\-\_\-, atom\-::m\-State, pbc(), and atom\-::pos.
 
 
 \begin{DoxyCode}
-407                                                                        \{
-408     std::vector < double > p = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos};
-409     \hyperlink{utilities_8cpp_ad858a38f435e9a0ee890aa0f526714d2}{pbc} (p, box);
-410 
-411     \textcolor{keywordtype}{double} sig = sigma\_;
-412     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
-413         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-414     \}
-415     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
-416         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for hardWallZ"});
-417     \}
-418 
-419     \textcolor{keywordflow}{if} (p[2] >= ub\_ - sig/2.0 || p[2] <= lb\_ + sig/2.0) \{
-420         \textcolor{keywordflow}{return} \textcolor{keyword}{false};
-421     \} \textcolor{keywordflow}{else} \{
-422         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
-423     \}
-424 \}
+408                                                                        \{
+409     std::vector < double > p = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos};
+410     \hyperlink{utilities_8cpp_ad858a38f435e9a0ee890aa0f526714d2}{pbc} (p, box);
+411 
+412     \textcolor{keywordtype}{double} sig = sigma\_;
+413     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
+414         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+415     \}
+416     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
+417         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for hardWallZ"});
+418     \}
+419 
+420     \textcolor{keywordflow}{if} (p[2] >= ub\_ - sig/2.0 || p[2] <= lb\_ + sig/2.0) \{
+421         \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+422     \} \textcolor{keywordflow}{else} \{
+423         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+424     \}
+425 \}
 \end{DoxyCode}
 
 

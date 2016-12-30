@@ -1,4 +1,4 @@
-.TH "squareWellWallZ" 3 "Thu Dec 29 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "squareWellWallZ" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -70,38 +70,38 @@ Instantiate a square well wall with boundaries in the +/- z direction\&. Expande
 .PP
 
 .PP
-Definition at line 562 of file barrier\&.cpp\&.
+Definition at line 563 of file barrier\&.cpp\&.
 .PP
 References barrier::M_\&.
 .PP
 .nf
-562                                                                                                                                          {
-563     if (lb >= ub) {
-564         throw customException ("squareWellWallZ must have lower bound < upper bound");
-565     }
-566     if (sigma < 0) {
-567         throw customException ("squareWellWallZ must have sigma >= 0");
-568     }
-569     if (range < 0) {
-570         throw customException ("squareWellWallZ must have range >= 0");
-571     }
-572     if (eps < 0) {
-573         throw customException ("squareWellWallZ must have eps >= 0");
-574     }
-575     if (sigma/2\&.0 >= range) {
-576         throw customException ("squareWellWallZ must have sigma/2 < range to have a finite range of interaction");
-577     }
-578     if (M < 1) {
-579         throw customException ("squareWellWallZ must have M >= 1");
-580     }
-581 
-582     eps_ = eps;
-583     sigma_ = sigma;
-584     range_ = range;
-585     ub_ = ub;
-586     lb_ = lb;
-587     M_ = M;
-588 }
+563                                                                                                                                          {
+564     if (lb >= ub) {
+565         throw customException ("squareWellWallZ must have lower bound < upper bound");
+566     }
+567     if (sigma < 0) {
+568         throw customException ("squareWellWallZ must have sigma >= 0");
+569     }
+570     if (range < 0) {
+571         throw customException ("squareWellWallZ must have range >= 0");
+572     }
+573     if (eps < 0) {
+574         throw customException ("squareWellWallZ must have epsilon >= 0");
+575     }
+576     if (sigma/2\&.0 >= range) {
+577         throw customException ("squareWellWallZ must have sigma/2 < range to have a finite range of interaction");
+578     }
+579     if (M < 1) {
+580         throw customException ("squareWellWallZ must have M >= 1");
+581     }
+582 
+583     eps_ = eps;
+584     sigma_ = sigma;
+585     range_ = range;
+586     ub_ = ub;
+587     lb_ = lb;
+588     M_ = M;
+589 }
 .fi
 .SH "Member Function Documentation"
 .PP 
@@ -121,42 +121,42 @@ Interaction energy with the wall\&. Sigma and epsilon are scaled linearly with e
 .PP
 Implements \fBbarrier\fP\&.
 .PP
-Definition at line 621 of file barrier\&.cpp\&.
+Definition at line 622 of file barrier\&.cpp\&.
 .PP
 References barrier::M_, atom::mState, NUM_INFINITY, pbc(), and atom::pos\&.
 .PP
 .nf
-621                                                                                {
-622     std::vector < double > p = a1->pos;
-623     pbc (p, box);
-624     double U = 0\&.0;
-625 
-626     double sig = sigma_, eps = eps_;
-627     if (a1->mState > 0) {
-628         sig = (sigma_/M_)*a1->mState;
-629         eps = (eps_/M_)*a1->mState;
-630     }
-631     if (a1->mState < 0 || a1->mState > M_-1) {
-632         throw customException ("mState out of bounds for squareWellWallZ");
-633     }
-634 
-635     // return infinity if out of bounds
-636     if (p[2] >= ub_ - sig/2\&.0 || p[2] <= lb_ + sig/2\&.0) {
-637         return NUM_INFINITY;
-638     }
-639 
-640     // interaction with top wall
-641     if (p[2] > ub_ - range_) {
-642         U += -eps;
-643     }
-644 
-645     // interaction with lower wall
-646     if (p[2] < lb_ + range_) {
-647         U += -eps;
-648     }
-649 
-650     return U;
-651 }
+622                                                                                {
+623     std::vector < double > p = a1->pos;
+624     pbc (p, box);
+625     double U = 0\&.0;
+626 
+627     double sig = sigma_, eps = eps_;
+628     if (a1->mState > 0) {
+629         sig = (sigma_/M_)*a1->mState;
+630         eps = (eps_/M_)*a1->mState;
+631     }
+632     if (a1->mState < 0 || a1->mState > M_-1) {
+633         throw customException ("mState out of bounds for squareWellWallZ");
+634     }
+635 
+636     // return infinity if out of bounds
+637     if (p[2] >= ub_ - sig/2\&.0 || p[2] <= lb_ + sig/2\&.0) {
+638         return NUM_INFINITY;
+639     }
+640 
+641     // interaction with top wall
+642     if (p[2] > ub_ - range_) {
+643         U += -eps;
+644     }
+645 
+646     // interaction with lower wall
+647     if (p[2] < lb_ + range_) {
+648         U += -eps;
+649     }
+650 
+651     return U;
+652 }
 .fi
 .SS "bool squareWellWallZ::inside (const \fBatom\fP *a1, const std::vector< double > &box)\fC [virtual]\fP"
 
@@ -174,29 +174,29 @@ Return whether or not a point falls between the walls (subject to a hard-sphere 
 .PP
 Implements \fBbarrier\fP\&.
 .PP
-Definition at line 596 of file barrier\&.cpp\&.
+Definition at line 597 of file barrier\&.cpp\&.
 .PP
 References barrier::M_, atom::mState, pbc(), and atom::pos\&.
 .PP
 .nf
-596                                                                              {
-597     std::vector < double > p = a1->pos;
-598     pbc (p, box);
-599 
-600     double sig = sigma_;
-601     if (a1->mState > 0) {
-602         sig = (sigma_/M_)*a1->mState;
-603     }
-604     if (a1->mState < 0 || a1->mState > M_-1) {
-605         throw customException ("mState out of bounds for squareWellWallZ");
-606     }
-607 
-608     if (p[2] >= ub_ - sig/2\&.0 || p[2] <= lb_ + sig/2\&.0) {
-609         return false;
-610     } else {
-611         return true;
-612     }
-613 }
+597                                                                              {
+598     std::vector < double > p = a1->pos;
+599     pbc (p, box);
+600 
+601     double sig = sigma_;
+602     if (a1->mState > 0) {
+603         sig = (sigma_/M_)*a1->mState;
+604     }
+605     if (a1->mState < 0 || a1->mState > M_-1) {
+606         throw customException ("mState out of bounds for squareWellWallZ");
+607     }
+608 
+609     if (p[2] >= ub_ - sig/2\&.0 || p[2] <= lb_ + sig/2\&.0) {
+610         return false;
+611     } else {
+612         return true;
+613     }
+614 }
 .fi
 
 

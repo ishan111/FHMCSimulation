@@ -20,10 +20,10 @@ Inheritance diagram for translate\-Particle\-:\begin{figure}[H]
 \begin{DoxyCompactList}\small\item\em Instantiate a new move, also give a name which is the combination of auser-\/defined tag + the particle index it operates on. \end{DoxyCompactList}\item 
 int \hyperlink{classtranslate_particle_a7ec5c9259f1aae3f7aefdb4db3ee5468}{make} (\hyperlink{classsim_system}{sim\-System} \&sys)
 \begin{DoxyCompactList}\small\item\em Translate a particle in the system. \end{DoxyCompactList}\item 
-void \hyperlink{classtranslate_particle_a65beec2511e79198e6241ad2bc18b02c}{set\-Max\-Displacement} (const double max\-D, const std\-::vector$<$ double $>$ \&box)
-\begin{DoxyCompactList}\small\item\em Set the maximum displacement in any single move. \end{DoxyCompactList}\item 
-const double \hyperlink{classtranslate_particle_a5f1e76a0e8f20978b1c1069f698f89e6}{get\-Max\-Displacement} ()
-\begin{DoxyCompactList}\small\item\em Return the max displacement allowed in a single move. \end{DoxyCompactList}\end{DoxyCompactItemize}
+void \hyperlink{classtranslate_particle_a2018196eaabe3a5b76761951b2991c41}{set\-Max\-Translation} (const double max\-D, const std\-::vector$<$ double $>$ \&box)
+\begin{DoxyCompactList}\small\item\em Set the maximum translation in any single move. \end{DoxyCompactList}\item 
+const double \hyperlink{classtranslate_particle_a1366867b0290b66f50c631bf2fd71946}{get\-Max\-Translation} ()
+\begin{DoxyCompactList}\small\item\em Return the max translation allowed in a single move. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Additional Inherited Members}
 
 
@@ -77,16 +77,16 @@ References mc\-Move\-::change\-N\-\_\-, mc\-Move\-::name\-\_\-, and mc\-Move\-::
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classtranslate_particle_a5f1e76a0e8f20978b1c1069f698f89e6}{\index{translate\-Particle@{translate\-Particle}!get\-Max\-Displacement@{get\-Max\-Displacement}}
-\index{get\-Max\-Displacement@{get\-Max\-Displacement}!translateParticle@{translate\-Particle}}
-\subsubsection[{get\-Max\-Displacement}]{\setlength{\rightskip}{0pt plus 5cm}const double translate\-Particle\-::get\-Max\-Displacement (
+\hypertarget{classtranslate_particle_a1366867b0290b66f50c631bf2fd71946}{\index{translate\-Particle@{translate\-Particle}!get\-Max\-Translation@{get\-Max\-Translation}}
+\index{get\-Max\-Translation@{get\-Max\-Translation}!translateParticle@{translate\-Particle}}
+\subsubsection[{get\-Max\-Translation}]{\setlength{\rightskip}{0pt plus 5cm}const double translate\-Particle\-::get\-Max\-Translation (
 \begin{DoxyParamCaption}
 {}
 \end{DoxyParamCaption}
-)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classtranslate_particle_a5f1e76a0e8f20978b1c1069f698f89e6}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classtranslate_particle_a1366867b0290b66f50c631bf2fd71946}
 
 
-Return the max displacement allowed in a single move. 
+Return the max translation allowed in a single move. 
 
 
 
@@ -318,23 +318,23 @@ References sim\-System\-::atoms, sim\-System\-::beta(), sim\-System\-::box(), ca
 170     \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
 171 \}
 \end{DoxyCode}
-\hypertarget{classtranslate_particle_a65beec2511e79198e6241ad2bc18b02c}{\index{translate\-Particle@{translate\-Particle}!set\-Max\-Displacement@{set\-Max\-Displacement}}
-\index{set\-Max\-Displacement@{set\-Max\-Displacement}!translateParticle@{translate\-Particle}}
-\subsubsection[{set\-Max\-Displacement}]{\setlength{\rightskip}{0pt plus 5cm}void translate\-Particle\-::set\-Max\-Displacement (
+\hypertarget{classtranslate_particle_a2018196eaabe3a5b76761951b2991c41}{\index{translate\-Particle@{translate\-Particle}!set\-Max\-Translation@{set\-Max\-Translation}}
+\index{set\-Max\-Translation@{set\-Max\-Translation}!translateParticle@{translate\-Particle}}
+\subsubsection[{set\-Max\-Translation}]{\setlength{\rightskip}{0pt plus 5cm}void translate\-Particle\-::set\-Max\-Translation (
 \begin{DoxyParamCaption}
 \item[{const double}]{max\-D, }
 \item[{const std\-::vector$<$ double $>$ \&}]{box}
 \end{DoxyParamCaption}
-)}}\label{classtranslate_particle_a65beec2511e79198e6241ad2bc18b02c}
+)}}\label{classtranslate_particle_a2018196eaabe3a5b76761951b2991c41}
 
 
-Set the maximum displacement in any single move. 
+Set the maximum translation in any single move. 
 
 Should be postive number lss than half the box size.
 
 
 \begin{DoxyParams}[1]{Parameters}
-\mbox{\tt in}  & {\em max\-D} & Maximium displacement \\
+\mbox{\tt in}  & {\em max\-D} & Maximium translation \\
 \hline
 \mbox{\tt in}  & {\em box} & Box dimensions \\
 \hline
@@ -345,16 +345,16 @@ Definition at line 179 of file translate.\-cpp.
 
 
 \begin{DoxyCode}
-179                                                                                               \{
+179                                                                                              \{
 180     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box.size(); ++i) \{
 181         \textcolor{keywordflow}{if} (maxD >= box[i]/2.) \{
-182             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max displacement too large"});
+182             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max translation too large"});
 183         \}
 184     \}
 185     \textcolor{keywordflow}{if} (maxD > 0) \{
 186         maxD\_ = maxD;
 187     \} \textcolor{keywordflow}{else} \{
-188         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max displacement must be positive"});
+188         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max translation must be positive"});
 189     \}
 190 \}
 \end{DoxyCode}
