@@ -107,18 +107,18 @@ int insertParticle::make (simSystem &sys) {
 	    	for (unsigned int i = 0; i < neighborAtoms.size(); ++i) {
 				try {
 					dU = sys.ppot[spec][typeIndex_]->energy(neighborAtoms[i], newAtom, box);
-					if (dU < NUM_INFINITY) {
-						insEnergy += dU;
-					} else {
-						insEnergy = NUM_INFINITY;
-						break;
-					}
 				} catch (customException& ce) {
 					std::string a = "Cannot insert because of energy error: ", b = ce.what();
 					if (createdAtom) {
 						delete newAtom;
 					}
 					throw customException (a+b);
+				}
+				if (dU < NUM_INFINITY) {
+					insEnergy += dU;
+				} else {
+					insEnergy = NUM_INFINITY;
+					break;
 				}
 	    	}
 			if (insEnergy == NUM_INFINITY) break; // Don't add anything if "infinite" already
