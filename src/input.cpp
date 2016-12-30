@@ -351,18 +351,18 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
             }
 
             if (ppotType[ppotTypeIndex] == "square_well") {
-                // Expects sigma, width, depth, cell_list
+                // Expects sigma, width, epsilon, cell_list
                 if (!doc[dummy.c_str()].HasMember("sigma")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"sigma\"");
                 if (!doc[dummy.c_str()].HasMember("width")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"width\"");
-                if (!doc[dummy.c_str()].HasMember("depth")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"depth\"");
+                if (!doc[dummy.c_str()].HasMember("epsilon")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"epsilon\"");
 
                 if (!doc[dummy.c_str()]["sigma"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"sigma\" is not a number");
                 if (!doc[dummy.c_str()]["width"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"width\" is not a number");
-                if (!doc[dummy.c_str()]["depth"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"depth\" is not a number");
+                if (!doc[dummy.c_str()]["epsilon"].IsNumber()) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") parameter \"epsilon\" is not a number");
 
                 params.push_back(doc[dummy.c_str()]["sigma"].GetDouble());
                 params.push_back(doc[dummy.c_str()]["width"].GetDouble());
-                params.push_back(doc[dummy.c_str()]["depth"].GetDouble());
+                params.push_back(doc[dummy.c_str()]["epsilon"].GetDouble());
             } else if (ppotType[ppotTypeIndex] == "lennard_jones") {
                 // Expects epsilon, sigma, r_cut, u_shift
                 if (!doc[dummy.c_str()].HasMember("epsilon")) throw customException ("Pair potential parameters for ("+numToStr(i+1)+","+numToStr(j+1)+") is missing \"epsilon\"");

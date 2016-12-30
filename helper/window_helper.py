@@ -47,15 +47,16 @@ def pure_settings (settings):
 	info["lnF_end"] = 1.0e-8
 	info["wala_g"] = 0.5
 	info["wala_s"] = 0.8
-	info["prob_pr_ins_del_1"] = 0.7
-	info["prob_pr_displace_1"] = 0.3
-	info["prob_eq_ins_del_1"] = 0.7
-	info["prob_eq_displace_1"] = 0.3
-	info["max_pr_displacement_1"] = 0.2
-	info["max_eq_displacement_1"] = 0.2
+	info["moves"] = {}
+	info["moves"]["ins_del_1"] = 0.7
+	info["moves"]["displace_1"] = 0.3
+	info["moves"]["max_displacement_1"] = 0.2
 	info["ppot_1_1"] = "square_well"
-	info["ppot_1_1_params"] = [1.0, 0.5, 1.0] # [sig, width, eps]
-	info["ppot_1_1_use_cell_list"] = True
+	info["ppot_1_1_params"] = {}
+	info["ppot_1_1_params"]["sigma"] = 1.0
+	info["ppot_1_1_params"]["width"] = 0.5
+	info["ppot_1_1_params"]["epsilon"] = 1.0
+	info["ppot_1_1_params"]["cell_list"] = True
 
 	return info
 
@@ -70,7 +71,7 @@ def make_input (filename, settings, generator):
 	settings : dict
 		Dictionary of settings, user defined
 	generator : function
-		Takes settings tuple as only argument and returns json input as dictionaryi, e.g., pure_settings()
+		Takes settings tuple as only argument and returns json input as dictionary, e.g., pure_settings()
 
 	"""
 
