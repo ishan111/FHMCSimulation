@@ -598,49 +598,54 @@ void setConfig (simSystem &sys, const std::string filename) {
 void setSystemBarriers (simSystem &sys, const rapidjson::Document &doc) {
 	int Mtot = sys.getTotalM();
 
-	// Hard wall (expect parameters: {lb, ub, sigma})
-	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-		bool convention0 = false;
-		std::string dummy = "hardWallZ_" + std::to_string(i+1);
-		std::vector < double > wallParams (3, 0);
-		if (doc.HasMember(dummy.c_str())) {
-			assert(doc[dummy.c_str()].IsArray());
-			assert(doc[dummy.c_str()].Size() == 3);
-			for (unsigned int j = 0; j < 3; ++j) {
-				wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-			}
-			try {
-				sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
-			} catch (customException &ce) {
-                sendErr(ce.what());
-				exit(SYS_FAILURE);
-			}
-			convention0 = true;
-		}
-		for (unsigned int j = 1; j <= MAX_BARRIERS_PER_SPECIES; ++j) {
-			// Alternatively allow multiple walls to specified with a suffix up to a max
-			std::string dummy = "hardWallZ_" + std::to_string(i+1) + "_" + std::to_string(j);
-            if (doc.HasMember(dummy.c_str())) {
-				if (convention0) {
-                    sendErr("Error, multiple barrier naming conventions used for the same species");
-					exit(SYS_FAILURE);
-                }
-				if (doc.HasMember(dummy.c_str())) {
-					assert(doc[dummy.c_str()].IsArray());
-					assert(doc[dummy.c_str()].Size() == 3);
-					for (unsigned int j = 0; j < 3; ++j) {
-						wallParams[j] = doc[dummy.c_str()][j].GetDouble();
-					}
-                    try {
-						sys.speciesBarriers[i].addHardWallZ (wallParams[0], wallParams[1], wallParams[2], Mtot);
-					} catch (customException &ce) {
-						sendErr(ce.what());
-						exit(SYS_FAILURE);
-                    }
-                }
+    if (doc.HasMember("barriers")) {
+        // Iterate over all barriers specified for this species
+        for (rapidjson::Value::ConstMemberIterator itr = doc["barriers"].MemberBegin(); itr != doc["barriers"].MemberEnd(); ++itr) {
+            // Get barrier type and name
+            std::string barrName = itr->name.GetString();
+            if (!itr->value.IsObject()) throw customException ("Barrier "+barrName+" is not in a valid json document");
+            if (!itr->value.HasMember("type")) throw customException ("Barrier "+barrName+" does not specify a type");
+            if (!itr->value["type"].IsString()) throw customException ("Barrier "+barrName+" type is not a string");
+            std::string barrType = itr->value["type"].GetString();
+
+            // Get the species this barrier interacts with
+            if (!itr->value.HasMember("species")) throw customException ("Barrier "+barrName+" does not specify a species to interact with");
+            if (!itr->value["species"].IsInt()) throw customException ("Barrier "+barrName+" species is not an integer");
+            const int species = itr->value["species"].GetInt();
+            if (species < 1 || species > sys.nSpecies()) throw customException ("Barrier "+barrName+" species is not valid for this system");
+
+            // Depending on barrier type, read parameters and initialize
+            if (barrType == "hard_wall_z") {
+                // Expects lb, ub, sigma
+                if (!itr->value.HasMember("lb")) throw customException (barrName+" does not contain \"lb\" parameter");
+                if (!itr->value.HasMember("ub")) throw customException (barrName+" does not contain \"ub\" parameter");
+                if (!itr->value.HasMember("sigma")) throw customException (barrName+" does not contain \"sigma\" parameter");
+
+                if (!itr->value["lb"].IsNumber()) throw customException ("\"lb\" for "+barrName+" is not a number");
+                if (!itr->value["ub"].IsNumber()) throw customException ("\"ub\" for "+barrName+" is not a number");
+                if (!itr->value["sigma"].IsNumber()) throw customException ("\"sigma\" for "+barrName+" is not a number");
+
+                const double lbBarr = itr->value["lb"].GetDouble();
+                const double ubBarr = itr->value["ub"].GetDouble();
+                const double sigmaBarr = itr->value["sigma"].GetDouble();
+
+    			try {
+    				sys.speciesBarriers[species-1].addHardWallZ (lbBarr, ubBarr, sigmaBarr, Mtot);
+    			} catch (customException &ce) {
+                    sendErr(ce.what());
+    				exit(SYS_FAILURE);
+    			}
+            } else if (barrType == "square_well_wall_z") {
+                ;
+            } else if (barrType == "cylinder_z") {
+                ;
+            } else if (barrType == "right_triangle_xz") {
+                ;
+            } else {
+                throw customException ("Unrecognized barrier type "+barrType+" from barrier "+barrName);
             }
         }
-	}
+    }
 
     // Square well wall (expect parameters: {lb, ub, sigma, range, eps})
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
