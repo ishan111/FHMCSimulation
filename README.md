@@ -113,8 +113,8 @@ Example input file(s) may be generated with helper/window_helper.py, and can be 
             "sigma" : 1.0
         },
         "mybarrier2" : {
-            "type" : "hard_wall_z" # A barrier that interacts with species 2 as a hard wall in the z-direction
-            "species" : 2
+            "type" : "hard_wall_z", # A barrier that interacts with species 2 as a hard wall in the z-direction
+            "species" : 2,
             "ub" : 6.0,
             "lb" : 1.0,
             "sigma" : 1.0

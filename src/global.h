@@ -54,53 +54,99 @@
  *
  *	"lnF_end" : 1.0e-5, # Where to end WL
  *
- *	"prob_pr_ins_del_1" : 0.1, # Relative weight to apply to insert/delete moves during production (TMMC) for species 1
+ *	"moves" : {
  *
- *	"prob_pr_swap_1_2" : 0.2, # Relative weight to apply to swap moves during production (TMMC) for species 1 and 2
+ *		"ins_del_1" : 0.1, # Relative weight to apply to insert/delete moves of species 1
  *
- *	"prob_pr_displace_1" : 0.7, # Relative weight to apply to displacement moves during production (TMMC) for species 1
+ *		"swap_1_2" : 0.2, # Relative weight to apply to swap moves between species 1 and 2
  *
- *	"prob_pr_ins_del_2" : 0.7, # Relative weight to apply to insert/delete moves during production (TMMC) for species 2
+ *		"displace_1" : 0.7, # Relative weight to apply to displacement moves of species 1
  *
- *	"prob_pr_displace_2" : 0.1, # Relative weight to apply to displacement moves during production (TMMC) for species 2
+ *		"ins_del_2" : 0.7, # Relative weight to apply to insert/delete moves of species 2
  *
- *	"prob_eq_ins_del_1" : 0.25, # Relative weight to apply to insert/delete moves during equilibration (WL/Crossover) for species 1
+ *		"displace_2" : 0.1, # Relative weight to apply to displacement moves of species 2
  *
- *	"prob_eq_swap_1_2" : 0.15, # Relative weight to apply to swap moves during equilibration (WL/Crossover) for species 1 and 2
+ *		"max_displacement_1" : 0.5, # Maximum displacement for species 1
  *
- *	"prob_eq_displace_1" : 0.6, # Relative weight to apply to displacement moves during equilibration (WL/Crossover) for species 1
+ *		"max_displacement_2" : 0.4 # Maximum displacement for species 2
  *
- *	"prob_eq_ins_del_2" : 0.4, # Relative weight to apply to insert/delete moves during equilibration (WL/Crossover) for species 2
- *
- *	"prob_eq_displace_2" : 0.6, # Relative weight to apply to displacement moves during equilibration (WL/Crossover) for species 2
- *
- *	"max_pr_displacement_1" : 0.5, # Maximum displacement for species 1 during production (TMMC)
- *
- *	"max_eq_displacement_1" : 0.6, # Maximum displacement for species 1 during equilibration (WL/Crossover)
- *
- *	"max_pr_displacement_2" : 0.4, # Maximum displacement for species 2 during production (TMMC)
- *
- *	"max_eq_displacement_2" : 0.7, # Maximum displacement for species 2 during equilibration (WL/Crossover)
+ *	},
  *
  *	"ppot_1_1" : "square_well", # 1-1 interaction, in this case, square well
  *
- *	"ppot_1_1_params" : [1.0, 0.3, 1.0], # 1-1 interaction parameters
+ *	"ppot_1_1_params" : {
  *
- *	"ppot_1_1_use_cell_list" : true, # use cell list for this potential to accelerate
+ *		"sigma" : 1.0,
  *
- *	"ppot_1_2" : "square_well",
+ *		"width" : 0.3,
  *
- *	"ppot_1_2_params" : [1.1, 0.4, 1.1],
+ *		"epsilon" : 1.0,
  *
- *	"ppot_1_2_use_cell_list" : true,
+ *		"cell_list"  : true
  *
- * 	"ppot_2_2" : "square_well",
+ *	},
  *
- *	"ppot_2_2_params" : [1.2, 0.5, 1.2],
+ *	"ppot_1_2" : "square_well", # 1-2 interaction, in this case, square well
  *
- *	"ppot_2_2_use_cell_list" : true
+ *	"ppot_1_2_params" : {
+ *
+ *		"sigma" : 1.1,
+ *
+ *		"width" : 0.4,
+ *
+ *		"epsilon" : 1.1,
+ *
+ * 		"cell_list"  : true
+ *
+ *	},
+ *	"ppot_2_2" : "square_well", # 2-2 interaction, in this case, square well
+ *
+ *	"ppot_2_2_params" : {
+ *
+ *		"sigma" : 1.2,
+ *
+ *		"width" : 0.5,
+ *
+ *		"epsilon" : 1.2,
+ *
+ *		"cell_list"  : true
+ *
+ *	},
+ *
+ *	"barriers" : {
+ *
+ *		"mybarrier1" : {
+ *
+ *			"type" : "hard_wall_z", # A barrier that interacts with species 1 as a hard wall in the z-direction
+ *
+ *			"species" : 1,
+ *
+ *			"ub" : 6.0,
+ *
+ *			"lb" : 1.0,
+ *
+ *			"sigma" : 1.0
+ *
+ *		},
+ *
+ *		"mybarrier2" : {
+ *
+ *			"type" : "hard_wall_z", # A barrier that interacts with species 2 as a hard wall in the z-direction
+ *
+ *			"species" : 2,
+ *
+ *			"ub" : 6.0,
+ *
+ *			"lb" : 1.0,
+ *
+ *			"sigma" : 1.0
+ *
+ *		}
+ *
+ *	}
  *
  *}
+ *
  */
 
 #ifndef GLOBAL_H_
@@ -112,7 +158,6 @@
 #define SYS_FAILURE -1	//!< Returned from main the simualtion encountered a major error
 #define SAFE_EXIT 0		//!< Returned from main the simulation ran without error
 #define PI 3.14159265359 //!< Numerical approximation of pi
-#define MAX_BARRIERS_PER_SPECIES 100 //!< Max barrier number allowed for each species in input file
 #define H2_2PI 1.0 //!< Portion of de Broglie wavelength that is not mass or T-dependent, Delta = sqrt(H2_2PI/mass/kT)
 
 extern int RNG_SEED;	// defined elsewhere, but this allows other routines to access it
