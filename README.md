@@ -87,21 +87,21 @@ Example input file(s) may be generated with helper/window_helper.py, and can be 
     "ppot_1_1_params" : {
         "sigma" : 1.0,
         "width" : 0.3,
-        "depth" : 1.0,
+        "epsilon" : 1.0,
         "cell_list"  : true
     },
     "ppot_1_2" : "square_well", # 1-2 interaction, in this case, square well
     "ppot_1_2_params" : {
         "sigma" : 1.1,
         "width" : 0.4,
-        "depth" : 1.1,
+        "epsilon" : 1.1,
         "cell_list"  : true
     },
     "ppot_2_2" : "square_well", # 2-2 interaction, in this case, square well
     "ppot_2_2_params" : {
         "sigma" : 1.2,
         "width" : 0.5,
-        "depth" : 1.2,
+        "epsilon" : 1.2,
         "cell_list"  : true
     },
     "barriers" : {

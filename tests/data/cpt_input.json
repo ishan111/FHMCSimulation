@@ -29,21 +29,21 @@
 	"ppot_1_1_params" : {
 		"sigma" : 1.0, 
 		"width" : 0.3, 
-		"depth" : 1.0,
+		"epsilon" : 1.0,
 		"cell_list"  : true
 	},
 	"ppot_1_2" : "square_well",
 	"ppot_1_2_params" : {
 		"sigma" : 1.1, 
 		"width" : 0.4, 
-		"depth" : 1.1,
+		"epsilon" : 1.1,
 		"cell_list"  : true
 	},
 	"ppot_2_2" : "square_well",
 	"ppot_2_2_params" : {
 		"sigma" : 1.2, 
 		"width" : 0.5, 
-		"depth" : 1.2,
+		"epsilon" : 1.2,
 		"cell_list"  : true
 	}
 }
