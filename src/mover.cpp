@@ -131,9 +131,9 @@ void moves::addSwap (const int index1, const int index2, const double prob) {
  */
 void moves::addTranslate (const int index, const double prob, const double maxD, const std::vector < double > &box) {
 	auto om = std::make_shared < translateParticle > (index, "translate");
-	om->setMaxDisplacement (maxD, box);
-	ownedMoves_.push_back(om);
 	try {
+		om->setMaxDisplacement (maxD, box);
+		ownedMoves_.push_back(om);
 		addOn_(ownedMoves_.back()->changeN(), prob);
 	} catch (std::exception &ex) {
 		const std::string msg = ex.what();

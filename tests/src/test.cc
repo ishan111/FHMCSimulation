@@ -11559,18 +11559,113 @@ TEST_F (readMovesTest, badInsDel1) {
 	doc["moves"]["ins_del_1"] = -1.0;
 	bool failed = false;
 	try {
-		setPairPotentials (sys, doc);
+		setMoves (sys, doc, &usedMovesEq, &usedMovesPr);
 	} catch (std::exception &ex) {
 		failed = true;
 		const std::string msg = ex.what();
 		std::cout << ex.what() << std::endl;
-		//EXPECT_TRUE(msg.find("sigma") != std::string::npos);
+		EXPECT_TRUE(msg.find("Probability/weight") != std::string::npos);
 	}
 	EXPECT_TRUE(failed);
 }
 
+TEST_F (readMovesTest, badInsDel2) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["moves"]["ins_del_2"] = -1.0;
+	bool failed = false;
+	try {
+		setMoves (sys, doc, &usedMovesEq, &usedMovesPr);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		std::cout << ex.what() << std::endl;
+		EXPECT_TRUE(msg.find("Probability/weight") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
 
+TEST_F (readMovesTest, badSwap) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["moves"]["swap_1_2"] = -1.0;
+	bool failed = false;
+	try {
+		setMoves (sys, doc, &usedMovesEq, &usedMovesPr);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		std::cout << ex.what() << std::endl;
+		EXPECT_TRUE(msg.find("Probability/weight") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
 
+TEST_F (readMovesTest, badDisplace1) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["moves"]["displace_1"] = -1.0;
+	bool failed = false;
+	try {
+		setMoves (sys, doc, &usedMovesEq, &usedMovesPr);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		std::cout << ex.what() << std::endl;
+		EXPECT_TRUE(msg.find("Probability/weight") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readMovesTest, badDisplace2) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["moves"]["displace_2"] = -1.0;
+	bool failed = false;
+	try {
+		setMoves (sys, doc, &usedMovesEq, &usedMovesPr);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		std::cout << ex.what() << std::endl;
+		EXPECT_TRUE(msg.find("Probability/weight") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readMovesTest, badMaxTranslate1) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["moves"]["max_displacement_1"] = -1.0;
+	bool failed = false;
+	try {
+		setMoves (sys, doc, &usedMovesEq, &usedMovesPr);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		std::cout << ex.what() << std::endl;
+		EXPECT_TRUE(msg.find("Max translation") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+TEST_F (readMovesTest, badMaxTranslate2) {
+	simSystem sys = initialize(fname, &usedMovesEq, &usedMovesPr);
+	parseJson(fname, doc);
+	doc["moves"]["max_displacement_2"] = -1.0;
+	bool failed = false;
+	try {
+		setMoves (sys, doc, &usedMovesEq, &usedMovesPr);
+	} catch (std::exception &ex) {
+		failed = true;
+		const std::string msg = ex.what();
+		std::cout << ex.what() << std::endl;
+		EXPECT_TRUE(msg.find("Max translation") != std::string::npos);
+	}
+	EXPECT_TRUE(failed);
+}
+
+/*
 class readPpotTest1 : public ::testing::Test {
 protected:
 	moves usedMovesEq, usedMovesPr;
@@ -11782,7 +11877,7 @@ TEST_F (readPpotTest2, badTabulatedFile) {
 		EXPECT_TRUE(msg.find("abcd") != std::string::npos);
 	}
 	EXPECT_TRUE(failed);
-}
+}*/
 
 // add barrier read test
 

@@ -179,12 +179,12 @@ int translateParticle::make (simSystem &sys) {
 void translateParticle::setMaxDisplacement (const double maxD, const std::vector < double > &box) {
 	for (unsigned int i = 0; i < box.size(); ++i) {
 		if (maxD >= box[i]/2.) {
-			throw customException ("Max displacement too large");
+			throw customException ("Max translation too large");
 		}
 	}
 	if (maxD > 0) {
 		maxD_ = maxD;
 	} else {
-		throw customException ("Max displacement must be positive");
+		throw customException ("Max translation must be positive");
 	}
 }
