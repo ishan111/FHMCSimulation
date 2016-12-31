@@ -58,19 +58,19 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		sysBox[i] = doc["box"][i].GetDouble();
 	}
 
-	double duh = 10.0;
+	double duh = 10.0; // Default
 	if (doc.HasMember("delta_u_hist")) {
         if (!doc["delta_u_hist"].IsNumber()) throw customException("\"delta_u_hist\" is not a number in "+filename);
 		duh = doc["delta_u_hist"].GetDouble();
 	}
 
-	int maxOrder = 2;
+	int maxOrder = 2; // Default
 	if (doc.HasMember("max_order")) {
         if (!doc["max_order"].IsInt()) throw customException("\"max_order\" is not an integer in "+filename);
 		maxOrder = doc["max_order"].GetInt();
 	}
 
-	bool useKe = false;
+	bool useKe = false; // Default
 	if (doc.HasMember("use_ke")) {
         if (!doc["use_ke"].IsBool()) throw customException("\"use_ke\" is not a boolean in "+filename);
 		useKe = doc["use_ke"].GetBool();
@@ -85,9 +85,11 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		sysMu[i] = doc["mu"][i].GetDouble();
 	}
 
-    if (!doc.HasMember("seed")) throw customException("\"seed\" is not specified in "+filename);
-    if (!doc["seed"].IsInt()) throw customException("\"seed\" is not an integer in "+filename);
-	RNG_SEED = doc["seed"].GetInt();
+    RNG_SEED = -10; // Default
+    if (doc.HasMember("seed")) {
+        if (!doc["seed"].IsInt()) throw customException("\"seed\" is not an integer in "+filename);
+    	RNG_SEED = doc["seed"].GetInt();
+    }
 
     if (!doc.HasMember("max_N")) throw customException("\"max_N\" is not specified in "+filename);
     if (!doc["max_N"].IsArray()) throw customException("\"max_N\" is not an array in "+filename);
@@ -107,7 +109,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		sysMin[i] = doc["min_N"][i].GetInt();
 	}
 
-	int Mtot = 1;
+	int Mtot = 1; // Default
 	if (doc.HasMember("num_expanded_states")) {
         if (!doc["num_expanded_states"].IsInt()) throw customException("\"num_expanded_states\" is not an integer in "+filename);
 		Mtot = doc["num_expanded_states"].GetInt();
@@ -116,13 +118,11 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot, duh, maxOrder);
 	if (useKe) {
 		sys.toggleKE();
-		if (sys.addKECorrection() == false) {
-			throw customException ("Unable to set KE flag");
-		}
+		if (sys.addKECorrection() == false) throw customException ("Unable to set KE flag");
 	}
 
 	std::vector < int > sysWindow;
-	if (doc.HasMember("window")) {
+	if (doc.HasMember("window")) { // Window defaults to sum of individual species' min and max
         if (!doc["window"].IsArray()) throw customException("\"window\" is not an array in "+filename);
         if (doc["window"].Size() != 2) throw customException("\"window\" should have 2 entries (min,max) in "+filename);
 		sysWindow.resize(2, 0);
@@ -131,31 +131,37 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		sysWindow[0] = doc["window"][0].GetInt();
 		sysWindow[1] = doc["window"][1].GetInt();
 	}
-
 	if (sysWindow.begin() != sysWindow.end()) {
 		sys.setTotNBounds(sysWindow);
 	}
 
-    if (!doc.HasMember("tmmc_sweep_size")) throw customException("\"tmmc_sweep_size\" is not specified in "+filename);
-    if (!doc["tmmc_sweep_size"].IsNumber()) throw customException("\"tmmc_sweep_size\" is not a number in "+filename);
-	double tmpT = doc["tmmc_sweep_size"].GetDouble(); // Possibly in scientific notation
-	sys.tmmcSweepSize = tmpT; // Convert
+    sys.tmmcSweepSize = 0; // Default
+    if (doc.HasMember("tmmc_sweep_size")) {
+        if (!doc["tmmc_sweep_size"].IsNumber()) throw customException("\"tmmc_sweep_size\" is not a number in "+filename);
+    	double tmpT = doc["tmmc_sweep_size"].GetDouble(); // Possibly in scientific notation
+    	sys.tmmcSweepSize = tmpT; // Convert
+    }
 
-    if (!doc.HasMember("total_tmmc_sweeps")) throw customException("\"total_tmmc_sweeps\" is not specified in "+filename);
-    if (!doc["total_tmmc_sweeps"].IsNumber()) throw customException("\"total_tmmc_sweeps\" is not a number in "+filename);
-	double tmpS = doc["total_tmmc_sweeps"].GetDouble(); // Possibly in scientific notation
-	sys.totalTMMCSweeps = tmpS; // Convert
+    sys.totalTMMCSweeps = 0; // Default
+    if (doc.HasMember("total_tmmc_sweeps")) {
+        if (!doc["total_tmmc_sweeps"].IsNumber()) throw customException("\"total_tmmc_sweeps\" is not a number in "+filename);
+    	double tmpS = doc["total_tmmc_sweeps"].GetDouble(); // Possibly in scientific notation
+    	sys.totalTMMCSweeps = tmpS; // Convert
+    }
 
-    if (!doc.HasMember("wala_sweep_size")) throw customException("\"wala_sweep_size\" is not specified in "+filename);
-    if (!doc["wala_sweep_size"].IsNumber()) throw customException("\"wala_sweep_size\" is not a number in "+filename);
-	double tmpW = doc["wala_sweep_size"].GetDouble(); // Possibly in scientific notation
-	sys.wlSweepSize = tmpW; // Convert
+    sys.wlSweepSize = 0; // Default
+    if (doc.HasMember("wala_sweep_size")) {
+        if (!doc["wala_sweep_size"].IsNumber()) throw customException("\"wala_sweep_size\" is not a number in "+filename);
+        double tmpW = doc["wala_sweep_size"].GetDouble(); // Possibly in scientific notation
+        sys.wlSweepSize = tmpW; // Convert
+    }
 
     sys.wala_g = 0.5; // Default
     if (doc.HasMember("wala_g")) {
         if (!doc["wala_g"].IsNumber()) throw customException("\"wala_g\" is not a number in "+filename);
         sys.wala_g = doc["wala_g"].GetDouble();
     }
+
     sys.wala_s = 0.8; // Default
     if (doc.HasMember("wala_s")) {
         if (!doc["wala_s"].IsNumber()) throw customException("\"wala_s\" is not a number in "+filename);
@@ -208,6 +214,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 	}
 
 	// Number of times the TMMC C matrix has to be traversed during the WALA --> TMMC crossover
+    sys.nCrossoverVisits = 0;
 	if (doc.HasMember("num_crossover_visits")) {
         if (!doc["num_crossover_visits"].IsNumber()) throw customException("\"num_crossover_visits\" is not a number in "+filename);
 		sys.nCrossoverVisits = doc["num_crossover_visits"].GetDouble(); // convert
@@ -325,9 +332,9 @@ void setMoves (simSystem &sys, const rapidjson::Document &doc, moves* usedMovesE
  * \param [in] doc JSON document corresponding to input file
  */
 void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
-    int Mtot = 1;
+    const int Mtot = sys.getTotalM();
     if (doc.HasMember("num_expanded_states")) {
-        Mtot = doc["num_expanded_states"].GetInt();
+        if (Mtot != doc["num_expanded_states"].GetInt()) throw customException ("Mtot in JSON document not same as in system, cannot set pair potentials");
     }
 
 	std::vector < std::string > ppotType (sys.nSpecies()*(sys.nSpecies()-1)/2 + sys.nSpecies());
@@ -357,7 +364,7 @@ void setPairPotentials (simSystem &sys, const rapidjson::Document &doc) {
 
             std::vector < double > params;
 
-            bool useCellList = false; // default
+            bool useCellList = false; // Default
             if (doc[dummy.c_str()].HasMember("cell_list")) {
                 useCellList = doc[dummy.c_str()]["cell_list"].GetBool();
             }
@@ -479,11 +486,11 @@ void setConfig (simSystem &sys, const std::string filename) {
 	}
 
     // Rest from existing system
-    int Mtot = sys.getTotalM();
-    int maxOrder = sys.getMaxOrder();
-    bool useKe = sys.addKECorrection();
-    double duh = 10.0;
-    std::vector < double > sysBox = sys.box();
+    const int Mtot = sys.getTotalM();
+    const int maxOrder = sys.getMaxOrder();
+    const bool useKe = sys.addKECorrection();
+    const double duh = 10.0;
+    const std::vector < double > sysBox = sys.box();
 
     // Read from restart file if specified
 	if (restart_file != "") {
@@ -526,12 +533,10 @@ void setConfig (simSystem &sys, const std::string filename) {
                 if (!doc["init_order"][i].IsInt()) throw customException("\"init_order\" is not an integer for species "+numToStr(i+1)+" in "+filename);
     			initialization_order[i] = doc["init_order"][i].GetInt();
     			if (initialization_order[i] < 0 || initialization_order[i] >= sys.nSpecies()) {
-                    sendErr("Order of initialization goes out of bounds, should include 0 <= i < nSpec");
-    				exit(SYS_FAILURE);
+                    throw customException ("Order of initialization goes out of bounds, should include 0 <= i < nSpec");
     			}
     			if (check_init[initialization_order[i]] != 0) {
-                    sendErr("Order of initialization repeats itself");
-    				exit(SYS_FAILURE);
+                    throw customException ("Order of initialization repeats itself");
     			} else {
     				check_init[initialization_order[i]] = 1;
     			}
@@ -546,8 +551,7 @@ void setConfig (simSystem &sys, const std::string filename) {
                 if (!doc["init_frac"][i].IsNumber()) throw customException("\"init_frac\" is not a number for species "+numToStr(i+1)+" in "+filename);
     			init_frac[i] = doc["init_frac"][i].GetDouble();
     			if (init_frac[i] < 0 || init_frac[i] >= 1.0) {
-                    sendErr("Initialization fraction out of bounds");
-    				exit(SYS_FAILURE);
+                    throw customException  ("Initialization fraction out of bounds");
     			}
     			sum += init_frac[i];
     		}
@@ -606,7 +610,7 @@ void setConfig (simSystem &sys, const std::string filename) {
 			sys.readConfig("auto-init.xyz");
 		} catch (customException &ce) {
             std::string msg = ce.what();
-            sendErr("Failed to read auto-generated initialization file : "+msg);
+            throw customException ("Failed to read auto-generated initialization file : "+msg);
         }
    	}
 }
@@ -619,7 +623,7 @@ void setConfig (simSystem &sys, const std::string filename) {
  * \params [in] doc Input JSON document
  */
 void setBarriers (simSystem &sys, const rapidjson::Document &doc) {
-	int Mtot = sys.getTotalM();
+	const int Mtot = sys.getTotalM();
 
     if (doc.HasMember("barriers")) {
         // Clear any existing barriers
