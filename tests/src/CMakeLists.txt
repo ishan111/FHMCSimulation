@@ -36,28 +36,7 @@ set(CMAKE_CXX_FLAGS "-Wall -Wno-sign-compare")
 include_directories("../../src/")
 file(GLOB omcs_SRC
 	"../../src/*.h"
-	"../../src/atom.cpp"
-	"../../src/barrier.cpp"
-	"../../src/bias.cpp"
-	"../../src/cellList.cpp"
-	"../../src/crossover.cpp"
-	"../../src/delete.cpp"
-    "../../src/gcmc.cpp"
-	"../../src/histogram.cpp"
-	"../../src/input.cpp"
-	"../../src/insert.cpp"
-	"../../src/mover.cpp"
-	"../../src/moves.cpp"
-	"../../src/potentials.cpp"
-	"../../src/quaternion.cpp"
-	"../../src/checkpoint.cpp"
-	"../../src/sanity.cpp"
-	"../../src/swap.cpp"
-	"../../src/system.cpp"
-	"../../src/tmmc.cpp"
-	"../../src/translate.cpp"
-	"../../src/utilities.cpp"
-	"../../src/wala.cpp"
+	"../../src/*.cpp"
 )
 
 ################################
