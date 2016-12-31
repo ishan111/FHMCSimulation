@@ -92,12 +92,12 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 		// Periodically write out checkpoints to monitor convergence properties later - all are used in FHMCAnalysis at this point (12/22/16)
 		if (sweep%sweepPrint == 0) {
 			printCounter++;
-			sys.getTMMCBias()->print("tmmc-Checkpoint-"+std::to_string(printCounter), false, false); // true, false);
+			sys.getTMMCBias()->print("tmmc-Checkpoint-"+numToStr(printCounter), false, false); // true, false);
             sys.refineEnergyHistogramBounds();
-			sys.printEnergyHistogram("eHist-Checkpoint-"+std::to_string(printCounter));
+			sys.printEnergyHistogram("eHist-Checkpoint-"+numToStr(printCounter));
             sys.refinePkHistogramBounds();
-            sys.printPkHistogram("pkHist-Checkpoint-"+std::to_string(printCounter));
-            sys.printExtMoments("extMom-Checkpoint-"+std::to_string(printCounter));
+            sys.printPkHistogram("pkHist-Checkpoint-"+numToStr(printCounter));
+            sys.printExtMoments("extMom-Checkpoint-"+numToStr(printCounter));
             usedMovesPr->print("tmmc.stats");
 		}
 	}

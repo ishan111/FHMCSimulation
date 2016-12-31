@@ -11,7 +11,7 @@ LIBS = -lstdc++
 SRC_DIR = ../src/
 DRIVER_DIR = ../driver/
 DRIVER_SUFFIX = tmmc
-SRCS = ${SRC_DIR}aggvolbias.cpp  ${SRC_DIR}atom.cpp  ${SRC_DIR}barrier.cpp  ${SRC_DIR}bias.cpp  ${SRC_DIR}cellList.cpp  ${SRC_DIR}crossover.cpp  ${SRC_DIR}delete.cpp  ${SRC_DIR}histogram.cpp  ${SRC_DIR}input.cpp ${SRC_DIR}insert.cpp  ${SRC_DIR}mover.cpp ${SRC_DIR}moves.cpp ${SRC_DIR}potentials.cpp ${SRC_DIR}quaternion.cpp ${SRC_DIR}checkpoint.cpp ${SRC_DIR}sanity.cpp ${SRC_DIR}swap.cpp ${SRC_DIR}system.cpp ${SRC_DIR}tmmc.cpp ${SRC_DIR}translate.cpp ${SRC_DIR}utilities.cpp ${SRC_DIR}wala.cpp ${DRIVER_DIR}main-${DRIVER_SUFFIX}.cpp
+SRCS = ${SRC_DIR}aggvolbias.cpp  ${SRC_DIR}atom.cpp  ${SRC_DIR}barrier.cpp  ${SRC_DIR}bias.cpp ${SRC_DIR}cellList.cpp ${SRC_DIR}crossover.cpp  ${SRC_DIR}delete.cpp ${SRC_DIR}gcmc.cpp ${SRC_DIR}histogram.cpp ${SRC_DIR}input.cpp ${SRC_DIR}insert.cpp ${SRC_DIR}mover.cpp ${SRC_DIR}moves.cpp ${SRC_DIR}potentials.cpp ${SRC_DIR}quaternion.cpp ${SRC_DIR}checkpoint.cpp ${SRC_DIR}sanity.cpp ${SRC_DIR}swap.cpp ${SRC_DIR}system.cpp ${SRC_DIR}tmmc.cpp ${SRC_DIR}translate.cpp ${SRC_DIR}utilities.cpp ${SRC_DIR}wala.cpp ${DRIVER_DIR}main-${DRIVER_SUFFIX}.cpp
 
 _OBJS = $(SRCS:.cpp=.o)
 ODIR = ./

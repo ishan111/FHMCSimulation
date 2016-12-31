@@ -29,20 +29,20 @@ else()
 endif()
 
 add_definitions(-D_GLIBCXX_DEBUG)
-#add_definitions(-fsanitize=address -mllvm -asan-stack)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wno-sign-compare")# -std=c++11 -stdlib=libc++")
+set(CMAKE_CXX_FLAGS "-Wall -Wno-sign-compare")
 
 # do not include main.cpp
 include_directories("../../src/")
 file(GLOB omcs_SRC
 	"../../src/*.h"
-	"../../srd/atom.h"
+	"../../src/atom.cpp"
 	"../../src/barrier.cpp"
 	"../../src/bias.cpp"
 	"../../src/cellList.cpp"
 	"../../src/crossover.cpp"
 	"../../src/delete.cpp"
+    "../../src/gcmc.cpp"
 	"../../src/histogram.cpp"
 	"../../src/input.cpp"
 	"../../src/insert.cpp"
@@ -57,7 +57,7 @@ file(GLOB omcs_SRC
 	"../../src/tmmc.cpp"
 	"../../src/translate.cpp"
 	"../../src/utilities.cpp"
-	"../../src/wala.cpp"	
+	"../../src/wala.cpp"
 )
 
 ################################

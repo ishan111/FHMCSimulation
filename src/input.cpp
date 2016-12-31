@@ -135,6 +135,8 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		sys.setTotNBounds(sysWindow);
 	}
 
+    /* ---------- Begin exclusively WL-TMMC block ---------- */
+
     sys.tmmcSweepSize = 0; // Default
     if (doc.HasMember("tmmc_sweep_size")) {
         if (!doc["tmmc_sweep_size"].IsNumber()) throw customException("\"tmmc_sweep_size\" is not a number in "+filename);
@@ -223,6 +225,36 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 			exit(SYS_FAILURE);
 		}
 	}
+
+    /* ---------- End exclusively WL-TMMC block ---------- */
+
+    /* ---------- Begin exclusively GCMC block ---------- */
+
+    sys.gcmcEqSteps = 0;
+    if (doc.HasMember("gcmc_eq_steps")) {
+        if (!doc["gcmc_eq_steps"].IsNumber()) throw customException ("\"gcmc_eq_steps\" is not a number in "+filename);
+        sys.gcmcEqSteps = doc["gcmc_eq_steps"].GetDouble();
+    }
+
+    sys.gcmcPrSteps = 0;
+    if (doc.HasMember("gcmc_pr_steps")) {
+        if (!doc["gcmc_pr_steps"].IsNumber()) throw customException ("\"gcmc_pr_steps\" is not a number in "+filename);
+        sys.gcmcPrSteps = doc["gcmc_pr_steps"].GetDouble();
+    }
+
+    sys.gcmcSnapFreq = std::max(sys.gcmcPrSteps/100, 1.0);
+    if (doc.HasMember("gcmc_snap_freq")) {
+        if (!doc["gcmc_snap_freq"].IsNumber()) throw customException ("\"gcmc_snap_freq\" is not a number in "+filename);
+        sys.gcmcSnapFreq = doc["gcmc_snap_freq"].GetDouble();
+    }
+
+    sys.gcmcThermoFreq = std::max(sys.gcmcPrSteps/100, 1.0);
+    if (doc.HasMember("gcmc_thermo_freq")) {
+        if (!doc["gcmc_thermo_freq"].IsNumber()) throw customException ("\"gcmc_thermo_freq\" is not a number in "+filename);
+        sys.gcmcThermoFreq = doc["gcmc_thermo_freq"].GetDouble();
+    }
+
+    /* ---------- End exclusively GCMC block ---------- */
 
     setMoves (sys, doc, usedMovesEq, usedMovesPr);
     setPairPotentials (sys, doc);

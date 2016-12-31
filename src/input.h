@@ -1,6 +1,7 @@
 #ifndef INPUT_H_
 #define INPUT_H_
 
+#include <algorithm>
 #include <string>
 #include "mover.h"
 #include "system.h"

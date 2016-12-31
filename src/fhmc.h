@@ -6,6 +6,7 @@
 #include "cellList.h"
 #include "crossover.h"
 #include "delete.h"
+#include "gcmc.h"
 #include "global.h"
 #include "histogram.h"
 #include "input.h"

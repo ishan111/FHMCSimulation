@@ -99,6 +99,10 @@ public:
 
 	double lnF_start, lnF_end; //!< Starting and ending lnF for Wang-Landau
 	double wala_g, wala_s; //!< Wang-Landau g and s factors
+	double gcmcEqSteps; //!< In the case of unbiased GCMC, number of equilibration steps to perform
+	double gcmcPrSteps; //!< In the case of unbiased GCMC, number of production steps to perform
+	double gcmcSnapFreq; //!< In the case of unbiased GCMC, frequency with which to take snapshots of the system
+	double gcmcThermoFreq; //!< In the case of unbiased GCMC, frequency with which to record thermo properties 
 
 	const std::vector < double > extMomCounter () { return extensive_moments_.getCounter(); } //!< Get counter for extensive moments needed for restarting system from a checkpoint
 	const std::vector < double > box () { return box_; } //!< Return the system box dimensions
