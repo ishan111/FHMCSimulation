@@ -151,19 +151,24 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 	double tmpW = doc["wala_sweep_size"].GetDouble(); // Possibly in scientific notation
 	sys.wlSweepSize = tmpW; // Convert
 
-    if (!doc.HasMember("wala_g")) throw customException("\"wala_g\" is not specified in "+filename);
-    if (!doc["wala_g"].IsNumber()) throw customException("\"wala_g\" is not a number in "+filename);
-	sys.wala_g = doc["wala_g"].GetDouble();
+    sys.wala_g = 0.5; // Default
+    if (doc.HasMember("wala_g")) {
+        if (!doc["wala_g"].IsNumber()) throw customException("\"wala_g\" is not a number in "+filename);
+        sys.wala_g = doc["wala_g"].GetDouble();
+    }
+    sys.wala_s = 0.8; // Default
+    if (doc.HasMember("wala_s")) {
+        if (!doc["wala_s"].IsNumber()) throw customException("\"wala_s\" is not a number in "+filename);
+    	sys.wala_s = doc["wala_s"].GetDouble();
+    }
 
-    if (!doc.HasMember("wala_s")) throw customException("\"wala_s\" is not specified in "+filename);
-    if (!doc["wala_s"].IsNumber()) throw customException("\"wala_s\" is not a number in "+filename);
-	sys.wala_s = doc["wala_s"].GetDouble();
-
+    sys.lnF_start = 1.0; // Default
 	if (doc.HasMember("lnF_start")) {
         if (!doc["lnF_start"].IsNumber()) throw customException("\"lnF_start\" is not a number in "+filename);
 		sys.lnF_start = doc["lnF_start"].GetDouble(); // Bounds are checked later
 	}
 
+    sys.lnF_end = 1.0e-8; // Default
 	if (doc.HasMember("lnF_end")) {
         if (!doc["lnF_end"].IsNumber()) throw customException("\"lnF_end\" is not a number in "+filename);
 		sys.lnF_end = doc["lnF_end"].GetDouble();

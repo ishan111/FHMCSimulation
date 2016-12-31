@@ -64,7 +64,7 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
 		throw customException ("Lower total N bound is lower than the sum of all individual lower bounds, region cannot be completely sampled");
 	}
 
-	// recheck bounds and possibly resize
+	// Recheck bounds and possibly resize
 	int tmpTot = 0;
     for (unsigned int i = 0; i < nSpecies_; ++i) {
     	if (maxSpecies_[i] < minSpecies_[i]) {
@@ -75,7 +75,7 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
 		} catch (std::exception &e) {
 			throw customException (e.what());
 		}
-		// if numSpecies[i] above maxSpecies_[i] for some reason, destroy the atoms beyond bound
+		// If numSpecies[i] above maxSpecies_[i] for some reason, destroy the atoms beyond bound
 		if (numSpecies[i] > (int)atoms[i].size()) {
 			numSpecies[i] = atoms[i].size();
 		}
@@ -109,7 +109,7 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
 		throw customException ("Out of memory for particle histogram for each Ntot");
    	}
 
-   	// initialize moments
+   	// Initialize moments
 	std::vector < double > lbn (6,0), ubn(6,0);
 	std::vector < long long unsigned int > nbn (6,0);
 	ubn[0] = nSpecies_-1;
