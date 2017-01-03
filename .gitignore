@@ -8,3 +8,4 @@
 *~
 *.a
 *.pyc
+*.ipynb_checkpoints*
