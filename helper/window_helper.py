@@ -31,7 +31,7 @@ def pure_settings (settings):
 
 	info["num_species"] = 1
 	info["beta"] = beta
-	info["box"] = [8.0, 8.0, 8.0]
+	info["box"] = [9.0, 9.0, 9.0]
 	info["mu"] = [0.0*i for i in xrange(info["num_species"])]
 	info["seed"] = -10
 	info["max_N"] = [int(1200)]
