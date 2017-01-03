@@ -36,18 +36,19 @@ if __name__ == "__main__":
 	eps_11 = 1.0
 	sig_11 = 1.0
 	
-        sett = {}
+	sett = {}
 	sett["beta"] = 1.0*eps_11
-        sett["sig"] = [sig_11, 1.2*sig_11] 
-        sett["eps"] = [eps_11, 1.0*eps_11]
+	sett["sig"] = [sig_11, 1.2*sig_11] 
+	sett["eps"] = [eps_11, 1.0*eps_11]
 	sett["D_cyl"] = 9.0*sig_11
 	sett["lam_w"] = []
-        sett["eps_w"] = []
+	sett["eps_w"] = []
 
 	ff_range = max(np.array(sett["lam"])*np.array(sett["sig"]))
 	fw_range = max(np.array(sett["lam_w"])*np.array(sett["sig"]))
 	Lxy = D_cyl + 2*max(ff_range, fw_range) 
-	ntot_max = 600
+	eta = 0.63 # max packing efficiency
+	ntot_max = eta*np.pi*Lz*(D_cyl - np.min(sett["sig"]))**2/4.0
 	Lz = 22.0
 	sett["box"] = [Lxy, Lxy, Lz]
 

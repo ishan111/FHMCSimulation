@@ -56,7 +56,7 @@ def fslj_settings (settings):
 	info["ppot_1_1_params"]["sigma"] = 1.0
 	info["ppot_1_1_params"]["epsilon"] = 1.0
 	info["ppot_1_1_params"]["r_cut"] = 3.0
-	info["ppot_1_1_params"]["cell_list"] = True
+	info["ppot_1_1_params"]["cell_list"] = False # < 3 cells per dimension so not worth it
 
 	return info
 
