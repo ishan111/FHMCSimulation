@@ -47,11 +47,13 @@ The simulation produces checkpoints which allow the simulation to be restarted a
 
 ### Input File
 
-Example input file(s) may be generated with helper/window_helper.py, and can be modified by the user as needed.  A sample input.json file is given below, and a more complicated example is available for reference in helper/input.json. Note than the helper/ directory can be directly imported into other python scripts if FHMCSimulation is in the path.
+Example input file(s) may be generated with helper/window_helper.py, and can be modified by the user as needed.  Note than the helper/ directory can be directly imported into other python scripts if FHMCSimulation is in the path.
 
 ```python
 import FHMCSimulation.helper.window_helper as hP
 ```
+
+A sample input.json file is given below, and a more complicated example is available for reference in helper/input.json.
 
 ```python
 {
