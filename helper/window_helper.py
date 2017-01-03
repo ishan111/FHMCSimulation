@@ -8,6 +8,58 @@
 import re, json
 import math as m
 
+def fslj_settings (settings):
+	"""
+	Example of settings for the prototypical pure linear force-shifted Lennard-Jones fluid at 3 sigma
+
+	Parameters
+	----------
+	settings : dict
+		Dictionary containing (beta, bounds) where, beta = 1/T for the simulation, bounds = (low, high) for Ntot
+
+	Returns
+	-------
+	dict
+		Information for input file to be read by FHMCSimulation binary
+
+	"""
+
+	bounds = settings["bounds"]
+	beta = settings["beta"]
+
+	info = {}
+
+	info["num_species"] = 1
+	info["beta"] = beta
+	info["box"] = [8.0, 8.0, 8.0]
+	info["mu"] = [0.0*i for i in xrange(info["num_species"])]
+	info["seed"] = -10
+	info["max_N"] = [int(900)]
+	info["min_N"] = [int(0)]
+	info["window"] = [bounds[0], bounds[1]]
+	info["restart_file"] = ""
+	info["num_expanded_states"] = int(1)
+	info["tmmc_sweep_size"] = int(100)
+	info["total_tmmc_sweeps"] = int(1e3)
+	info["wala_sweep_size"] = int(1e6)
+	info["num_crossover_visits"] = int(100)
+	info["lnF_start"] = 1.0
+	info["lnF_end"] = 1.0e-8
+	info["wala_g"] = 0.5
+	info["wala_s"] = 0.8
+	info["moves"] = {}
+	info["moves"]["ins_del_1"] = 0.6
+	info["moves"]["translate_1"] = 0.4
+	info["moves"]["max_translation_1"] = 0.2
+	info["ppot_1_1"] = "fs_lennard_jones"
+	info["ppot_1_1_params"] = {}
+	info["ppot_1_1_params"]["sigma"] = 1.0
+	info["ppot_1_1_params"]["epsilon"] = 1.0
+	info["ppot_1_1_params"]["r_cut"] = 3.0
+	info["ppot_1_1_params"]["cell_list"] = True
+
+	return info
+
 def pure_settings (settings):
 	"""
 	Example of settings for the prototypical pure "lambda 1.5" square-well fluid
@@ -15,7 +67,7 @@ def pure_settings (settings):
 	Parameters
 	----------
 	settings : dict
-		Dictionary containing (beta, bounds) where, beta = 1/T* for the simulation, bounds = (low, high) for Ntot
+		Dictionary containing (beta, bounds) where, beta = 1/T for the simulation, bounds = (low, high) for Ntot
 
 	Returns
 	-------

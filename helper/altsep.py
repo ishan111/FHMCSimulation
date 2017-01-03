@@ -27,10 +27,7 @@ if __name__ == "__main__":
 	sys.path.append(FHMCLIB)
 	import FHMCAnalysis
 	import FHMCAnalysis.moments.win_patch.windows as win
-	
-	HELPLIB = "/home/nam4/FHMCSimulation/helper/"
-	sys.path.append(HELPLIB)
-	import window_helper as hP
+	import FHMCSimulation.helper.window_helper as hP
 
 	# Overwrite existing inputs
 	overwrite = True
@@ -51,7 +48,7 @@ if __name__ == "__main__":
 	fw_range = max(np.array(sett["lam_w"])*np.array(sett["sig"]))
 	Lxy = D_cyl + 2*max(ff_range, fw_range) 
 	ntot_max = 600
-	Lz = 
+	Lz = 22.0
 	sett["box"] = [Lxy, Lxy, Lz]
 
 	# Establish bounds for windows
@@ -72,7 +69,7 @@ if __name__ == "__main__":
 	# Window settings
 	input_name = "input.json"
 	
-	for dMu2 in [-2.9, -1.4, 0.0, 1.4, 2.9]:	
+	for dMu2 in [-2.94, -1.1, 0.0, 1.1, 2.94]:	
 		prefix = "./dMu2_"+str(dMu2)
 		bounds = win.ntot_window_scaling (ntot_max, final_window_width, num_windows, num_overlap)
 
