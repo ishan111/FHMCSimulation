@@ -135,14 +135,14 @@ def gibbs_qsub (num_windows, binary, git_head, tag, prefix, input_name="input.js
 	new_string = re.sub('__INPUTNAME__', str(input_name), new_string)
 
 	jobs_remaining = num_windows
-	for idx in xrange(0, int(m.ceil(num_windows/float(jobs_per)))):
-		start = idx*jobs_per+1
-		end = idx*jobs_per+min([jobs_remaining,jobs_per])
+	for idx in xrange(0, int(m.ceil(num_windows/float(jobs_per_node)))):
+		start = idx*jobs_per_node+1
+		end = idx*jobs_per_node+min([jobs_remaining,jobs_per_node])
 		i_string = re.sub('__MINWIN__', str(start), new_string)
 		i_string = re.sub('__MAXWIN__', str(end), i_string)
 		i_string = re.sub('__TAGNAME__', str(tag+"_"+str(idx+1)), i_string)
 		i_string = re.sub('__PPNVIS__', str(2*(end-start+1)), i_string) # double to deal with hyperthreading
-		jobs_remaining -= jobs_per
+		jobs_remaining -= jobs_per_node
 
 		f = open(prefix+"/qsub_"+str(idx+1)+".pbs", 'w')
 		f.write(i_string)
@@ -199,9 +199,9 @@ def raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name="inpu
 	new_string = re.sub('__SMINUTES__', str(sminutes), new_string)
 
 	jobs_remaining = num_windows
-	for idx in xrange(0, int(m.ceil(num_windows/float(jobs_per)))):
-		start = idx*jobs_per+1
-		end = idx*jobs_per+min([jobs_remaining,jobs_per])
+	for idx in xrange(0, int(m.ceil(num_windows/float(jobs_per_node)))):
+		start = idx*jobs_per_node+1
+		end = idx*jobs_per_node+min([jobs_remaining,jobs_per_node])
 		totmem = 100*(end-start+1) # MB/job, assuming 100MB per job
 		totmem = max(totmem, 4000) # Impose a 4GB min reservation on raritan
 		i_string = re.sub('__MINWIN__', str(start), new_string)
@@ -209,7 +209,7 @@ def raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name="inpu
 		i_string = re.sub('__TAGNAME__', str(tag+"_"+str(idx+1)), i_string)
 		i_string = re.sub('__PPNVIS__', str(2*(end-start+1)), i_string) # double to deal with hyperthreading
 		i_string = re.sub('__TOTMEM__', str(totmem), i_string)
-		jobs_remaining -= jobs_per
+		jobs_remaining -= jobs_per_node
 
 		f = open(prefix+"/sbatch_"+str(idx+1)+".sb", 'w')
 		f.write(i_string)
@@ -251,7 +251,7 @@ if __name__ == "__main__":
 	install_dir = "/home/nam4/FHMCSimulation/"
 	binary = install_dir+"/bin/fhmc_tmmc"
 	git_head = install_dir+"/.git/logs/HEAD"
-	jobs_per = 12
+	jobs_per_node = 12
 	scratch_dir = "/tmp/nam4/"
 	q = "medium"
 	tag = "example"
@@ -275,6 +275,6 @@ if __name__ == "__main__":
 		hP.make_input (dname+"/"+input_name, sett, hP.pure_settings)
 		hP.make_sleeper (dname+"/sleeper.sh")
 
-	hP.gibbs_qsub (num_windows, binary, git_head, tag, './', input_name, jobs_per, q, scratch_dir)
+	hP.gibbs_qsub (num_windows, binary, git_head, tag, './', input_name, jobs_per_node, q, scratch_dir)
 	"""
 
