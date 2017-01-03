@@ -189,7 +189,10 @@ def raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name="inpu
 
 	base_string = "#!/bin/bash\n#\n#SBATCH -n __PPNVIS__\n#SBATCH -N 1\n#SBATCH -p __QUEUE__\n#SBATCH -t __SDAYS__-__SHOURS__:__SMINUTES__\n#SBATCH --mem=__TOTMEM__\n#SBATCH -o hostname_%j.out\n#SBATCH -e hostname_%j.err\n#SBATCH --mail-type=FAIL\n#SBATCH --mail-user=nathan.mahynski@nist.gov\n#SBATCH -J __TAGNAME__\n#SBATCH --export=all\n\n# move to dir pbs was launched from\ncd $SLURM_SUBMIT_DIR;\n\n# report\necho \"Running on $(hostname)\";\necho \"Time: $(date)\";\necho \"Starting directory: $PWD\";\nheaddir=$PWD;\npids=\"\";\nfor i in {__MINWIN__..__MAXWIN__}; do\n\t# create and move to tmpdir\n\ttmpdir=__SCRATCHDIR__/$SLURM_JOBID/$i;\n\thomedir=$headdir/$i;\n\tmkdir -p $tmpdir;\n\techo \"Moving to temporary directory: $tmpdir\";\n\tcp -r $homedir/* $tmpdir/;\n\tcd $tmpdir;\n\n\t# get info about binary\n\ttail -1 __GITHEAD__ > binary.info;\n\n\t# run sleeper and binary\n\tsh sleeper.sh ./ $homedir &\n\t__BINARY__ __INPUTNAME__ 2>> err >> log &\n\tpids=\"$pids $!\"\ndone\n\n# wait for all process ids\nfor p in $pids; do\n\twait $p;\ndone\n\n# final sync and clean up\ncd $headdir;\nsids=\"\";\nfor i in {__MINWIN__..__MAXWIN__}; do\n\ttmpdir=__SCRATCHDIR__/$SLURM_JOBID/$i;\n\thomedir=$headdir/$i;\n\techo \"Final sync from $tmpdir to $homedir\";\n\trsync -a $tmpdir/ $homedir/;\n\techo \"Removing $tmpdir\";\n\trm -r $tmpdir;\n\tsids=\"$sids $!\"\ndone\n\n# wait for all syncs to finish\nfor s in $sids; do\n\twait $s;\ndone\n\necho \"Finished on $(date)\";"
 
-	new_string = re.sub('__QUEUE__', str(q), base_string)
+	if (q != ""):
+		new_string = re.sub('__QUEUE__', str(q), base_string)
+	else:
+		new_string = re.sub('#SBATCH\ -p\ __QUEUE__\\n', str(q), base_string)
 	new_string = re.sub('__SCRATCHDIR__', str(scratch_dir), new_string)
 	new_string = re.sub('__GITHEAD__', str(git_head), new_string)
 	new_string = re.sub('__BINARY__', str(binary), new_string)
