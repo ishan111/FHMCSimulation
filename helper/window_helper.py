@@ -231,9 +231,9 @@ if __name__ == "__main__":
 	import FHMCAnalysis
 	import FHMCAnalysis.moments.win_patch.windows as win
 	
-	HELPLIB = "./"
+	HELPLIB = "/home/nam4/Desktop/sandbox/"
 	sys.path.append(HELPLIB)
-	import window_helper as hP
+	import FHMCSimulation.helper.window_helper as hP
 
 	# Overwrite existing inputs
 	overwrite = True
