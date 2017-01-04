@@ -224,6 +224,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
         if (!doc["num_crossover_visits"].IsNumber()) throw customException("\"num_crossover_visits\" is not a number in "+filename);
         double tmpC = doc["num_crossover_visits"].GetDouble();
         if (tmpC > std::numeric_limits<long long int>::max()) throw customException ("num_crossover_visits exceeds maximum possible value");
+        sys.nCrossoverVisits = tmpC;
 		if (sys.nCrossoverVisits < 1) {
             sendErr("Must allow the collection matrix to be traversed at least once in the crossover from Wang-Landau to TMMC");
 			exit(SYS_FAILURE);

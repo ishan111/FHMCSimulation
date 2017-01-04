@@ -15,6 +15,7 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
 
     bool flat = false;
     double lnF = sys.lnF_start;
+    long double total_step_counter = 0;
     long long int moveStart = 0;
 
     if (!res.resFromWALA) {
