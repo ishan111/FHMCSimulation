@@ -7,6 +7,9 @@
 
 import numpy as np
 
+def random_word (length):
+   return ''.join(random.choice(string.lowercase) for i in range(length))
+
 def binary_fslj_pore (settings):
 	"""
 	Create settings for binary FS-LJ system inside a cylindrical pore.
@@ -154,7 +157,7 @@ if __name__ == "__main__":
 
 	# Overwrite existing inputs
 	overwrite = True
-	
+
 	# Establish bounds for windows
 	final_window_width = 20
 	num_windows = 24
@@ -168,7 +171,7 @@ if __name__ == "__main__":
 	scratch_dir = "/scratch/nam4/"
 	q = "mml"
 	hours = 72
-	tag = "altsep-"+randomword(6)
+	tag = "altsep-"+altsep.random_word(6)
 
 	# Window settings
 	input_name = "input.json"
@@ -177,7 +180,7 @@ if __name__ == "__main__":
 		prefix = "./dMu2_"+str(dMu2)
 		bounds = win.ntot_window_scaling (ntot_max, final_window_width, num_windows, num_overlap)
 
-		if (!os.path.isdir(prefix)):
+		if (not os.path.isdir(prefix)):
 			os.makedirs(prefix)
 
 		settings["mu"] = [0.0, dMu2]
