@@ -62,7 +62,7 @@ def binary_fslj_pore (settings):
 	info["barriers"]["cylindrical_pore1"] = {}
 	info["barriers"]["cylindrical_pore1"]["type"] = "cylinder_z"
 	info["barriers"]["cylindrical_pore1"]["species"] = 1
-	info["barriers"]["cylindrical_pore1"]["radius"] = r_pore
+	info["barriers"]["cylindrical_pore1"]["radius"] = settings["r_pore"]
 	info["barriers"]["cylindrical_pore1"]["sigma"] = sig11
 	info["barriers"]["cylindrical_pore1"]["epsilon"] = settings["eps1w_eps11"]*eps11
 	info["barriers"]["cylindrical_pore1"]["width"] = settings["lam1w"]*info["barriers"]["cylindrical_pore1"]["sigma"]
@@ -70,14 +70,14 @@ def binary_fslj_pore (settings):
 	info["barriers"]["cylindrical_pore2"] = {}
 	info["barriers"]["cylindrical_pore2"]["type"] = "cylinder_z"
 	info["barriers"]["cylindrical_pore2"]["species"] = 2
-	info["barriers"]["cylindrical_pore2"]["radius"] = r_pore
+	info["barriers"]["cylindrical_pore2"]["radius"] = settings["r_pore"]
 	info["barriers"]["cylindrical_pore2"]["sigma"] = settings["sig22_sig11"]*sig11
 	info["barriers"]["cylindrical_pore2"]["epsilon"] = settings["eps2w_eps11"]*eps11
 	info["barriers"]["cylindrical_pore2"]["width"] = settings["lam2w"]*info["barriers"]["cylindrical_pore2"]["sigma"]
 
 	# Determine global max particle bounds based on max packing efficiency stipulated
-	maxN1 = int(np.ceil(eta_p*np.pi*((r_pore - info["barriers"]["cylindrical_pore1"]["sigma"]/2.0)**2)*Lz))
-	maxN2 = int(np.ceil(eta_p*np.pi*((r_pore - info["barriers"]["cylindrical_pore2"]["sigma"]/2.0)**2)*Lz))
+	maxN1 = int(np.ceil(eta_p*np.pi*((settings["r_pore"] - info["barriers"]["cylindrical_pore1"]["sigma"]/2.0)**2)*Lz))
+	maxN2 = int(np.ceil(eta_p*np.pi*((settings["r_pore"] - info["barriers"]["cylindrical_pore2"]["sigma"]/2.0)**2)*Lz))
 	info["max_N"] = [maxN1+maxN2, maxN1+maxN2] # Produce an overestimate of upper bound so that bounds on Ntot do not exceed either of these numbers
 	info["__maxN1__"] = maxN1
 	info["__maxN2__"] = maxN2
@@ -117,7 +117,7 @@ def binary_fslj_pore (settings):
 	# Compute box size that prevents any periodic interactions (technically cylinder doesn't create that effect, but do anyway)
 	ff_range = np.max([info["ppot_1_1_params"]["r_cut"], info["ppot_1_2_params"]["r_cut"], info["ppot_2_2_params"]["r_cut"]])
 	fw_range = np.max([info["barriers"]["cylindrical_pore1"]["width"], info["barriers"]["cylindrical_pore2"]["width"]])
-	Lxy = (2*r_pore + np.max([ff_range, fw_range]))*1.05 # 5% fudge factor
+	Lxy = (2*settings["r_pore"] + np.max([ff_range, fw_range]))*1.05 # 5% fudge factor
 
 	# Ensure that cell list will always be created (need 3 cells in each direction)
 	Lxy = np.max([Lxy, 3.0*ff_range*1.05]) # 5% fudge factor
@@ -181,7 +181,7 @@ if __name__ == "__main__":
 	for dMu2 in [-2.94, -1.1, 0.0, 1.1, 2.94]:
 		prefix = "./dMu2_"+str(dMu2)
 		settings["mu"] = [0.0, dMu2]
-		settings["bounds"] = bounds[0] # Dummy setting for now
+		settings["bounds"] = [0,0] # Dummy setting for now
 
 		info = altsep.binary_fslj_pore(settings)
 		ntot_max = max(info["__maxN1__"],info["__maxN2__"])
