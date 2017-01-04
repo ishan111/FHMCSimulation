@@ -144,10 +144,10 @@ const long long int tmmc::getTransitionAddress (const int Nstart, const int Nend
 	}
 
 	if (Mtot_ > 1) {
-		// expanded ensemble
+		// Expanded ensemble
 		int y = 0;
 		if (Nstart == Nend) {
-			// moving within an expanded set
+			// Moving within an expanded set
 			int addOrSubtract = Mend - Mstart;
 			if (addOrSubtract == 0) {
 				y = 0;
@@ -159,7 +159,7 @@ const long long int tmmc::getTransitionAddress (const int Nstart, const int Nend
 				throw customException ("Illegal addOrSubtract value");
 			}
 		} else {
-			// crossing over
+			// Crossing over
 			if (Nend > Nstart) {
 				y = 1;
 				if (Mstart != Mtot_ - 1 || Mend != 0) {
@@ -174,7 +174,7 @@ const long long int tmmc::getTransitionAddress (const int Nstart, const int Nend
 		}
 		return 3*((Nstart - Nmin_)*Mtot_ + Mstart) + y;
 	} else {
-		// no expanded ensemble
+		// No expanded ensemble
 		int addOrSubtract = (Nend - Nstart), y = 0;
 		if (addOrSubtract == 0) {
 			y = 0;
@@ -186,7 +186,7 @@ const long long int tmmc::getTransitionAddress (const int Nstart, const int Nend
 			throw customException ("Illegal addOrSubtract value");
 		}
 		long long int x = Nstart - Nmin_;
-		return x*3 + y; // equivalent to expanded ensemble because Mstart = 0 always, and Mtot_ = 1
+		return x*3 + y; // Equivalent to expanded ensemble because Mstart = 0 always, and Mtot_ = 1
 	}
 }
 
