@@ -123,9 +123,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
         throw customException ("Unable to print final TMMC results : "+msg);
     }
 
-    res.tmmcDone = true;
-    res.dump(sys, printCounter, sweep, false); // Also dump checkpoint
-
+    res.tmmcDone = true; // Do not need to dump a checkpoint
     sendMsg("Completed "+numToStr(sys.tmmcTotalStepCounter)+" total MC steps as part of TMMC stage");
     sendMsg("Total MC steps taken in simulation: "+numToStr(sys.walaTotalStepCounter+sys.crossoverTotalStepCounter+sys.tmmcTotalStepCounter));
 }

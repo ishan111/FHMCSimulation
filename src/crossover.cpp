@@ -81,10 +81,7 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
 
     sys.reInitializeEnergyHistogram(); // If doing initial WL "equilibration" re-initialize the histogram using bounds
     sanityChecks(sys);
-
-    res.crossoverDone = true;
-    res.dump(sys, sys.wlSweepSize, timesFullyVisited, false); // Also dump checkpoint
-
+    res.crossoverDone = true; // Do not need to dump a checkpoint
     sendMsg("Completed "+numToStr(sys.crossoverTotalStepCounter)+" total MC steps as part of crossover stage");
     sendMsg("Total MC steps taken in simulation: "+numToStr(sys.walaTotalStepCounter+sys.crossoverTotalStepCounter));
 }

@@ -68,10 +68,7 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
     }
 
     sanityChecks(sys);
-
-    res.walaDone = true;
-    res.dump(sys, sys.wlSweepSize, 0, false); // Also dump checkpoint
-
+    res.walaDone = true; // Do not need to dump a checkpoint
     sendMsg("Completed "+numToStr(sys.walaTotalStepCounter)+" total MC steps as part of Wang-Landau stage");
     sendMsg("Total MC steps taken in simulation: "+numToStr(sys.walaTotalStepCounter));
 }
