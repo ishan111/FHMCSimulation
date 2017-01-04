@@ -454,7 +454,7 @@ double hardWallZ::energy (const atom *a1, const std::vector < double > &box) {
  * \param [in] x x-coordinate of cylinder's center
  * \param [in] y y-coordinate of cylinder's center
  * \param [in] radius Radius of cylinder
- * \param [in] width Width of square-well-like interaction (distance from wall)
+ * \param [in] width Width of interaction range (distance from wall)
  * \param [in] sigma Hard-sphere diameter the species this wall interacts with can approach within
  * \param [in] eps Magnitude of the wall interaction (U = -eps)
  * \param [in] M Total number of expanded ensemble states possible for this atom type (defaults to 1)

@@ -8,7 +8,80 @@
 import re, json
 import math as m
 
-def fslj_settings (settings):
+def sqw_pore_benchmark (settings):
+	"""
+	Example of settings for the prototypical pure "lambda 1.5" square-well fluid in a cylindrical pore
+
+	Parameters
+	----------
+	settings : dict
+		Dictionary containing (beta, bounds) where, beta = 1/T for the simulation, bounds = (low, high) for Ntot
+
+	Returns
+	-------
+	dict
+		Information for input file to be read by FHMCSimulation binary
+
+	"""
+
+	bounds = settings["bounds"]
+	beta = settings["beta"]
+
+	info = {}
+
+	r_pore = 3.5
+
+	info["barriers"] = {}
+	info["barriers"]["cylindrical_pore"] = {}
+	info["barriers"]["cylindrical_pore"]["type"] = "cylinder_z"
+	info["barriers"]["cylindrical_pore"]["species"] = 1
+	info["barriers"]["cylindrical_pore"]["radius"] = r_pore
+	info["barriers"]["cylindrical_pore"]["sigma"] = 1.0
+	info["barriers"]["cylindrical_pore"]["epsilon"] = 5.0
+	info["barriers"]["cylindrical_pore"]["width"] = 1.5
+
+	info["num_species"] = 1
+	info["beta"] = beta
+	info["mu"] = [0.0*i for i in xrange(info["num_species"])]
+	info["seed"] = -10
+	info["max_N"] = [int(600)]
+	info["min_N"] = [int(0)]
+	info["window"] = [bounds[0], bounds[1]]
+	info["restart_file"] = ""
+	info["num_expanded_states"] = int(1)
+	info["tmmc_sweep_size"] = int(100)
+	info["total_tmmc_sweeps"] = int(1e3)
+	info["wala_sweep_size"] = int(1e6)
+	info["num_crossover_visits"] = int(100)
+	info["lnF_start"] = 1.0
+	info["lnF_end"] = 1.0e-8
+	info["wala_g"] = 0.5
+	info["wala_s"] = 0.8
+	info["moves"] = {}
+	info["moves"]["ins_del_1"] = 0.7
+	info["moves"]["translate_1"] = 0.3
+	info["moves"]["max_translation_1"] = 0.2
+	info["ppot_1_1"] = "square_well"
+	info["ppot_1_1_params"] = {}
+	info["ppot_1_1_params"]["sigma"] = 1.0
+	info["ppot_1_1_params"]["width"] = 0.5
+	info["ppot_1_1_params"]["epsilon"] = 1.0
+	info["ppot_1_1_params"]["cell_list"] = True
+
+	ff_range = info["ppot_1_1_params"]["sigma"]+info["ppot_1_1_params"]["width"]
+	fw_range = info["barriers"]["cylindrical_pore"]["width"]
+	Lxy = (2*r_pore + max([ff_range, fw_range]))*1.05 # 5% fudge factor
+
+	eta = 0.63 # max packing efficiency
+	Lz = info["max_N"]/(eta*3.14159*(2*r_pore - info["barriers"]["cylindrical_pore"]["sigma"])**2/4.0)
+
+	info["barriers"]["cylindrical_pore"]["x"] = Lxy/2.0
+	info["barriers"]["cylindrical_pore"]["y"] = Lxy/2.0
+	info["box"] = [Lxy, Lxy, Lz]
+
+	return info
+
+def fslj_benchmark (settings):
 	"""
 	Example of settings for the prototypical pure linear force-shifted Lennard-Jones fluid at 3 sigma
 
@@ -60,7 +133,7 @@ def fslj_settings (settings):
 
 	return info
 
-def pure_settings (settings):
+def sqw_benchmark (settings):
 	"""
 	Example of settings for the prototypical pure "lambda 1.5" square-well fluid
 
@@ -321,11 +394,11 @@ if __name__ == "__main__":
 	for w in range(num_windows):
 		dname = prefix+"/"+str(w+1)
 		if ((str(w+1) in os.listdir(prefix)) and overwrite):
-			shutil.rmtree(dname, pure_settings)
+			shutil.rmtree(dname, sqw_benchmark)
 		os.makedirs(dname)
 
 		sett["bounds"] = bounds[w]
-		hP.make_input (dname+"/"+input_name, sett, hP.pure_settings)
+		hP.make_input (dname+"/"+input_name, sett, hP.sqw_benchmark)
 		hP.make_sleeper (dname+"/sleeper.sh")
 
 	hP.raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name, jobs_per, q, hours, scratch_dir)
