@@ -53,7 +53,7 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             if (sys.getCurrentM() == 0){
                 sys.checkEnergyHistogramBounds ();
             }
-            res.check(sys, move);
+            res.check(sys, move, 0, false);
         }
 
         // Check if bias has flattened out
@@ -68,7 +68,10 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
     }
 
     sanityChecks(sys);
+
     res.walaDone = true;
+    res.dump(sys, sys.wlSweepSize, 0, false); // Also dump checkpoint
+
     sendMsg("Completed "+numToStr(sys.walaTotalStepCounter)+" total MC steps as part of Wang-Landau stage");
     sendMsg("Total MC steps taken in simulation: "+numToStr(sys.walaTotalStepCounter));
 }

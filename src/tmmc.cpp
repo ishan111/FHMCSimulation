@@ -37,7 +37,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
     			sys.getTMMCBias()->calculatePI();
                 sendMsg("Restarted TMMC from collection matrix from "+sys.restartFromTMMCFile);
     		} catch (customException &ce) {
-    			sys.stopTMMC(); // deallocate
+    			sys.stopTMMC(); // Deallocate
                 std::string msg = ce.what();
                 sendErr("Failed to initialize from TMMC collection matrix : "+msg);
     			exit(SYS_FAILURE);
@@ -79,7 +79,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 			}
 
 			counter++;
-            res.check(sys, printCounter, sweep);
+            res.check(sys, printCounter, sweep, false);
 		}
 
 		sys.getTMMCBias()->iterateForward(); // Reset the counting matrix and increment total sweep number
@@ -91,29 +91,41 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 
 		// Periodically write out checkpoints to monitor convergence properties later - all are used in FHMCAnalysis at this point (12/22/16)
 		if (sweep%sweepPrint == 0) {
-			printCounter++;
-			sys.getTMMCBias()->print("tmmc-Checkpoint-"+numToStr(printCounter), false, false); // true, false);
-            sys.refineEnergyHistogramBounds();
-			sys.printEnergyHistogram("eHist-Checkpoint-"+numToStr(printCounter));
-            sys.refinePkHistogramBounds();
-            sys.printPkHistogram("pkHist-Checkpoint-"+numToStr(printCounter));
-            sys.printExtMoments("extMom-Checkpoint-"+numToStr(printCounter));
-            usedMovesPr->print("tmmc.stats");
+            try {
+                printCounter++;
+    			sys.getTMMCBias()->print("tmmc-Checkpoint-"+numToStr(printCounter), false, false); // true, false);
+                sys.refineEnergyHistogramBounds();
+    			sys.printEnergyHistogram("eHist-Checkpoint-"+numToStr(printCounter));
+                sys.refinePkHistogramBounds();
+                sys.printPkHistogram("pkHist-Checkpoint-"+numToStr(printCounter));
+                sys.printExtMoments("extMom-Checkpoint-"+numToStr(printCounter));
+                usedMovesPr->print("tmmc.stats");
+            } catch (std::exception &ex) {
+                const std::string msg = ex.what();
+                throw customException ("Unable to print checkpoint : "+msg);
+            }
 		}
 	}
 
     // Print final results
-    sys.getTMMCBias()->print("final", false, false);
-    sys.refineEnergyHistogramBounds();
-    sys.printEnergyHistogram("final_eHist");
-    sys.refinePkHistogramBounds();
-    sys.printPkHistogram("final_pkHist");
-    sys.printExtMoments("final_extMom");
-    sys.printSnapshot("final.xyz", "last configuration");
-    usedMovesPr->print("tmmc.stats");
+    try {
+        sys.getTMMCBias()->print("final", false, false);
+        sys.refineEnergyHistogramBounds();
+        sys.printEnergyHistogram("final_eHist");
+        sys.refinePkHistogramBounds();
+        sys.printPkHistogram("final_pkHist");
+        sys.printExtMoments("final_extMom");
+        sys.printSnapshot("final.xyz", "last configuration");
+        usedMovesPr->print("tmmc.stats");
+        sanityChecks(sys);
+    } catch (std::exception &ex) {
+        const std::string msg = ex.what();
+        throw customException ("Unable to print final TMMC results : "+msg);
+    }
 
-    sanityChecks(sys);
     res.tmmcDone = true;
+    res.dump(sys, printCounter, sweep, false); // Also dump checkpoint
+
     sendMsg("Completed "+numToStr(sys.tmmcTotalStepCounter)+" total MC steps as part of TMMC stage");
     sendMsg("Total MC steps taken in simulation: "+numToStr(sys.walaTotalStepCounter+sys.crossoverTotalStepCounter+sys.tmmcTotalStepCounter));
 }

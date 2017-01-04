@@ -157,7 +157,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
  * \param [in] sys System to checkpoint
  * \param [in] moveCounter Number of moves out of a given sweep that have executed
  * \param [in] sweepCounter Number of loops/sweeps that have executed
- * \param [in] refine Refine the histogram boundaries before printing any? (default=true)
+ * \param [in] refine Refine the histogram boundaries before printing any? (default=false)
  */
 void checkpoint::dump (simSystem &sys, const long long int moveCounter, const long long int sweepCounter, const bool refine) {
     if (!fileExists(chkptName)) {
@@ -290,7 +290,7 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
  * \param [in] sys System to checkpoint
  * \param [in] moveCounter Number of moves out of a given sweep that have executed
  * \param [in] sweepCounter Number of loops/sweeps that have executed
- * \param [in] refine Refine the histogram boundaries before printing any? (default=true)
+ * \param [in] refine Refine the histogram boundaries before printing any? (default=false)
  *
  * \returns bool Is a checkpoint being generated or not
  */
