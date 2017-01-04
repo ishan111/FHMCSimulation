@@ -161,8 +161,8 @@ if __name__ == "__main__":
 	overwrite = True
 
 	# Establish bounds for windows
-	final_window_width = 20
-	num_windows = 24
+	final_window_width = 40
+	num_windows = 20
 	num_overlap = 6
 
 	# Need installation information
