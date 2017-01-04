@@ -141,6 +141,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
     if (doc.HasMember("tmmc_sweep_size")) {
         if (!doc["tmmc_sweep_size"].IsNumber()) throw customException("\"tmmc_sweep_size\" is not a number in "+filename);
     	double tmpT = doc["tmmc_sweep_size"].GetDouble(); // Possibly in scientific notation
+        if (tmpT > std::numeric_limits<long long int>::max()) throw customException ("tmmc_sweep_size exceeds maximum possible value");
     	sys.tmmcSweepSize = tmpT; // Convert
     }
 
@@ -148,6 +149,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
     if (doc.HasMember("total_tmmc_sweeps")) {
         if (!doc["total_tmmc_sweeps"].IsNumber()) throw customException("\"total_tmmc_sweeps\" is not a number in "+filename);
     	double tmpS = doc["total_tmmc_sweeps"].GetDouble(); // Possibly in scientific notation
+        if (tmpS > std::numeric_limits<long long int>::max()) throw customException ("total_tmmc_sweeps exceeds maximum possible value");
     	sys.totalTMMCSweeps = tmpS; // Convert
     }
 
@@ -155,6 +157,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
     if (doc.HasMember("wala_sweep_size")) {
         if (!doc["wala_sweep_size"].IsNumber()) throw customException("\"wala_sweep_size\" is not a number in "+filename);
         double tmpW = doc["wala_sweep_size"].GetDouble(); // Possibly in scientific notation
+        if (tmpW > std::numeric_limits<long long int>::max()) throw customException ("wala_sweep_size exceeds maximum possible value");
         sys.wlSweepSize = tmpW; // Convert
     }
 
@@ -219,7 +222,8 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
     sys.nCrossoverVisits = 0;
 	if (doc.HasMember("num_crossover_visits")) {
         if (!doc["num_crossover_visits"].IsNumber()) throw customException("\"num_crossover_visits\" is not a number in "+filename);
-		sys.nCrossoverVisits = doc["num_crossover_visits"].GetDouble(); // convert
+        double tmpC = doc["num_crossover_visits"].GetDouble();
+        if (tmpC > std::numeric_limits<long long int>::max()) throw customException ("num_crossover_visits exceeds maximum possible value");
 		if (sys.nCrossoverVisits < 1) {
             sendErr("Must allow the collection matrix to be traversed at least once in the crossover from Wang-Landau to TMMC");
 			exit(SYS_FAILURE);

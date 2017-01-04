@@ -248,11 +248,9 @@ void tmmc::calculatePI () {
 				P_[i+j] = C_[i+j] / sum;
 			}
 		} else {
-			// This state has not been visited at all if sum = 0.  However, at high system densities this could be the "correct"
-			// result so this error may need to be discarded later in favor of:
-			// P_[i+j] = 0;
-			// However, having this throw an exception is also a good way to find that upper bound where the system is completely packed
-			// so I will keep it this way for now.
+			// This state has not been visited at all if sum = 0.  However, at high system densities this could be the "correct" result so this error may need to be discarded later in favor of: P_[i+j] = 0;
+			// However, having this throw an exception is also a good way to find that upper bound where the system is completely packed so I will keep it this way for now.
+			// Under current philosophy of a "sweep" requiring all entries in C to be filled with finite values, this is acutally protected against.
 			throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros");
 		}
 	}
@@ -261,7 +259,7 @@ void tmmc::calculatePI () {
 	lnPI_[0] = 0.0;
 	int counter = 0;
 	long long int address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, nEndForward = 0, mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;
-	for (long long int i = 0; i < (Nmax_ - Nmin_); ++i) { // don't calculate the last N = Nmax when M > 0, stops initially at N = Nmax, M = 0
+	for (long long int i = 0; i < (Nmax_ - Nmin_); ++i) { // Don't calculate the last N = Nmax when M > 0, stops initially at N = Nmax, M = 0
 		nStartForward = Nmin_+i;
 		for (long long int j = 0; j < Mtot_; ++j) {
 			mStartForward = j;
@@ -284,7 +282,7 @@ void tmmc::calculatePI () {
 			if (!(P_[address1] > 0) || !(P_[address2] > 0)) {
 				throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros at address: P["+std::to_string(address1)+"] = "+std::to_string(P_[address1])+", P["+std::to_string(address2)+"] = "+std::to_string(P_[address2]));
 			}
-			lnPI_[counter+1] = lnPI_[counter] + log(P_[address1]/P_[address2]); // this is why P_ cannot be zero
+			lnPI_[counter+1] = lnPI_[counter] + log(P_[address1]/P_[address2]); // This is why P_ cannot be zero
 			counter++;
 		}
 	}
@@ -301,7 +299,7 @@ void tmmc::calculatePI () {
 void tmmc::print (const std::string fileName, bool printC, bool printHC) {
 	// Print collection matrix
 	if (printC) {
-		// print all states, including partial ones, so this can be used to restart from, etc.
+		// Print all states, including partial ones, so this can be used to restart from, etc.
 		std::ofstream of;
 		std::string name = fileName+"_C.dat";
 		of.open(name.c_str(), std::ofstream::out);

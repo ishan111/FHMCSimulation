@@ -81,13 +81,12 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
             res.check(sys, printCounter, sweep);
 		}
 
-		sys.getTMMCBias()->iterateForward(); // reset the counting matrix and increment total sweep number
+		sys.getTMMCBias()->iterateForward(); // Reset the counting matrix and increment total sweep number
 		sweep++;
 
         sendMsg("Finished "+numToStr(sweep)+"/"+numToStr(sys.totalTMMCSweeps)+" total TMMC sweeps");
 
-		// Update biasing function from collection matrix
-		sys.getTMMCBias()->calculatePI();
+		sys.getTMMCBias()->calculatePI(); // Update biasing function from collection matrix
 
 		// Periodically write out checkpoints to monitor convergence properties later - all are used in FHMCAnalysis at this point (12/22/16)
 		if (sweep%sweepPrint == 0) {
