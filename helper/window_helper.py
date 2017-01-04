@@ -5,7 +5,7 @@
 @filename window_helper.py
 """
 
-import re, json
+import re, json, copy
 import math as m
 
 def sqw_pore_benchmark (settings):
@@ -186,7 +186,7 @@ def sqw_benchmark (settings):
 
 	return info
 
-def make_input (filename, settings, generator):
+def make_input (filename, settings, generator, remove=[]):
 	"""
 	Example production of input file for FHMCSimulation.
 
@@ -197,11 +197,17 @@ def make_input (filename, settings, generator):
 	settings : dict
 		Dictionary of settings, user defined
 	generator : function
-		Takes settings tuple as only argument and returns json input as dictionary, e.g., pure_settings()
+		Takes settings tuple as only argument and returns json input as dictionary, e.g., sqw_benchmark()
+	remove : array
+		Any keys to remove/skip from generator output before printing to file (default=[])
 
 	"""
 
-	info = generator(settings)
+	new_sett = copy.deepcopy(settings)
+	for key in remove:
+		del new_sett[key]
+
+	info = generator(new_sett)
 	f = open(filename, 'w')
 	json.dump(info, f, sort_keys=True, indent=4)
 	f.close()

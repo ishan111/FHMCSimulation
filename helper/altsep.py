@@ -177,10 +177,12 @@ if __name__ == "__main__":
 	# Window settings
 	input_name = "input.json"
 
+	remove = ["__maxN1__", "__maxN2__"]
+
 	for dMu2 in [-2.94, -1.1, 0.0, 1.1, 2.94]:
 		prefix = "./dMu2_"+str(dMu2)
 		settings["mu"] = [0.0, dMu2]
-		settings["bounds"] = [0,0] # Dummy setting for now
+		settings["bounds"] = [0, 0] # Dummy setting for now
 
 		info = altsep.binary_fslj_pore(settings)
 		ntot_max = max(info["__maxN1__"],info["__maxN2__"])
@@ -196,7 +198,7 @@ if __name__ == "__main__":
 			os.makedirs(dname)
 
 			settings["bounds"] = bounds[w]
-			hP.make_input (dname+"/"+input_name, settings, altsep.binary_fslj_pore)
+			hP.make_input (dname+"/"+input_name, settings, altsep.binary_fslj_pore, remove)
 			hP.make_sleeper (dname+"/sleeper.sh")
 
 		tag = "altsep-"+altsep.random_word(6)
