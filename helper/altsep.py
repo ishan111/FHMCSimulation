@@ -78,7 +78,9 @@ def binary_fslj_pore (settings):
 	# Determine global max particle bounds based on max packing efficiency stipulated
 	maxN1 = int(np.ceil(eta_p*np.pi*((r_pore - info["barriers"]["cylindrical_pore1"]["sigma"]/2.0)**2)*Lz))
 	maxN2 = int(np.ceil(eta_p*np.pi*((r_pore - info["barriers"]["cylindrical_pore2"]["sigma"]/2.0)**2)*Lz))
-	info["max_N"] = [maxN1, maxN2]
+	info["max_N"] = [maxN1+maxN2, maxN1+maxN2] # Produce an overestimate of upper bound so that bounds on Ntot do not exceed either of these numbers
+	info["__maxN1__"] = maxN1
+	info["__maxN2__"] = maxN2
 
 	# Monte Carlo moves
 	info["moves"] = {}
@@ -178,6 +180,8 @@ if __name__ == "__main__":
 
 	for dMu2 in [-2.94, -1.1, 0.0, 1.1, 2.94]:
 		prefix = "./dMu2_"+str(dMu2)
+		info = altsep.binary_fslj_pore(settings)
+		ntot_max = max(info["__maxN1__"],info["__maxN2__"])
 		bounds = win.ntot_window_scaling (ntot_max, final_window_width, num_windows, num_overlap)
 
 		if (not os.path.isdir(prefix)):
