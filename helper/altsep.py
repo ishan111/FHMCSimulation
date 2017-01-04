@@ -41,7 +41,7 @@ def binary_fslj_pore (settings):
 
 	# Simulation information
 	info["num_species"] = 2
-	info["beta"] = 1.0/settings["T_eps11"]*eps11
+	info["beta"] = 1.0/(settings["T_eps11"]*eps11)
 	info["mu"] = [settings["mu"][0], settings["mu"][1]]
 	info["seed"] = -10
 	info["min_N"] = [int(0), int(0)]
@@ -185,7 +185,8 @@ if __name__ == "__main__":
 		settings["bounds"] = [0, 0] # Dummy setting for now
 
 		info = altsep.binary_fslj_pore(settings)
-		ntot_max = max(info["__maxN1__"],info["__maxN2__"])
+        x1_guess = 1.0/(1.0 + np.exp(dMu2/settings["T_eps11"])) # In ideal-gas limit
+        ntot_max = int(1.2*(info["__maxN1__"]*x1 + (1-x1)*info["__maxN2__"])) # 20% fudge factor
 		bounds = win.ntot_window_scaling (ntot_max, final_window_width, num_windows, num_overlap)
 
 		if (not os.path.isdir(prefix)):
