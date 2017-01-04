@@ -49,9 +49,9 @@ def binary_fslj_pore (settings):
 	info["restart_file"] = ""
 	info["num_expanded_states"] = int(1)
 	info["tmmc_sweep_size"] = int(200)
-	info["total_tmmc_sweeps"] = int(1e3)
+	info["total_tmmc_sweeps"] = int(1e4)
 	info["wala_sweep_size"] = int(1e6)
-	info["num_crossover_visits"] = int(1000)
+	info["num_crossover_visits"] = int(1e3)
 	info["lnF_start"] = 1.0
 	info["lnF_end"] = 1.0e-8
 	info["wala_g"] = 0.5
