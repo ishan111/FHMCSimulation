@@ -108,12 +108,12 @@ def binary_fslj_pore (settings):
 	info["ppot_1_2_params"]["cell_list"] = True
 
     # Determine global max particle bounds based on max packing efficiency stipulated
-	maxN1 = int(np.ceil(eta_p*np.pi*((settings["r_pore"] - info["barriers"]["cylindrical_pore1"]["sigma"]/2.0)**2)*Lz*6.0/info["ppot_1_1_params"]["sigma"]**3))
-	maxN2 = int(np.ceil(eta_p*np.pi*((settings["r_pore"] - info["barriers"]["cylindrical_pore2"]["sigma"]/2.0)**2)*Lz*6.0/info["ppot_2_2_params"]["sigma"]**3))
+	maxN1 = int(np.ceil(eta_p*((settings["r_pore"] - info["barriers"]["cylindrical_pore1"]["sigma"]/2.0)**2)*Lz*6.0/info["ppot_1_1_params"]["sigma"]**3))
+	maxN2 = int(np.ceil(eta_p*((settings["r_pore"] - info["barriers"]["cylindrical_pore2"]["sigma"]/2.0)**2)*Lz*6.0/info["ppot_2_2_params"]["sigma"]**3))
 	info["max_N"] = [maxN1+maxN2, maxN1+maxN2] # Produce an overestimate of upper bound so that bounds on Ntot do not exceed either of these numbers
 	info["__maxN1__"] = maxN1
 	info["__maxN2__"] = maxN2
-    
+
 	# Compute box size that prevents any periodic interactions (technically cylinder doesn't create that effect, but do anyway)
 	ff_range = np.max([info["ppot_1_1_params"]["r_cut"], info["ppot_1_2_params"]["r_cut"], info["ppot_2_2_params"]["r_cut"]])
 	fw_range = np.max([info["barriers"]["cylindrical_pore1"]["width"], info["barriers"]["cylindrical_pore2"]["width"]])
