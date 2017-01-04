@@ -180,6 +180,9 @@ if __name__ == "__main__":
 
 	for dMu2 in [-2.94, -1.1, 0.0, 1.1, 2.94]:
 		prefix = "./dMu2_"+str(dMu2)
+		settings["mu"] = [0.0, dMu2]
+		settings["bounds"] = bounds[0] # Dummy setting for now
+
 		info = altsep.binary_fslj_pore(settings)
 		ntot_max = max(info["__maxN1__"],info["__maxN2__"])
 		bounds = win.ntot_window_scaling (ntot_max, final_window_width, num_windows, num_overlap)
@@ -187,7 +190,6 @@ if __name__ == "__main__":
 		if (not os.path.isdir(prefix)):
 			os.makedirs(prefix)
 
-		settings["mu"] = [0.0, dMu2]
 		for w in range(num_windows):
 			dname = prefix+"/"+str(w+1)
 			if ((str(w+1) in os.listdir(prefix)) and overwrite):
