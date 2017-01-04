@@ -203,11 +203,13 @@ def make_input (filename, settings, generator, remove=[]):
 
 	"""
 
-	new_sett = copy.deepcopy(settings)
-	for key in remove:
-		del new_sett[key]
-
 	info = generator(new_sett)
+	for key in remove:
+		if (key in info):
+			del info[key]
+		else:
+			print key+" not found in generated settings"
+
 	f = open(filename, 'w')
 	json.dump(info, f, sort_keys=True, indent=4)
 	f.close()
