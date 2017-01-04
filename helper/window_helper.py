@@ -285,9 +285,6 @@ if __name__ == "__main__":
 	sys.path.append(FHMCLIB)
 	import FHMCAnalysis
 	import FHMCAnalysis.moments.win_patch.windows as win
-	
-	HELPLIB = "/home/nam4/Desktop/sandbox/"
-	sys.path.append(HELPLIB)
 	import FHMCSimulation.helper.window_helper as hP
 
 	# Overwrite existing inputs
@@ -306,10 +303,11 @@ if __name__ == "__main__":
 	install_dir = "/home/nam4/FHMCSimulation/"
 	binary = install_dir+"/bin/fhmc_tmmc"
 	git_head = install_dir+"/.git/logs/HEAD"
-	jobs_per_node = 12
-	scratch_dir = "/tmp/nam4/"
-	q = "medium"
+	jobs_per = 12
+	scratch_dir = "/scratch/nam4/"
+	q = "mml"
 	tag = "example"
+	hours = 72
 
 	# Window settings
 	input_name = "input.json"
@@ -330,6 +328,6 @@ if __name__ == "__main__":
 		hP.make_input (dname+"/"+input_name, sett, hP.pure_settings)
 		hP.make_sleeper (dname+"/sleeper.sh")
 
-	hP.gibbs_qsub (num_windows, binary, git_head, tag, './', input_name, jobs_per_node, q, scratch_dir)
+	hP.raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name, jobs_per, q, hours, scratch_dir)
 	"""
 
