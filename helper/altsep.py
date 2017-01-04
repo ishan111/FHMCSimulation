@@ -160,11 +160,6 @@ if __name__ == "__main__":
 	# Overwrite existing inputs
 	overwrite = True
 
-	# Establish bounds for windows
-	final_window_width = 40
-	num_windows = 20
-	num_overlap = 6
-
 	# Need installation information
 	install_dir = "/home/nam4/FHMCSimulation/"
 	binary = install_dir+"/bin/fhmc_tmmc"
