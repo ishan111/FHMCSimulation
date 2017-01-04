@@ -26,6 +26,7 @@ def sqw_pore_benchmark (settings):
 
 	bounds = settings["bounds"]
 	beta = settings["beta"]
+	maxN = settings["maxN"]
 
 	info = {}
 
@@ -44,7 +45,7 @@ def sqw_pore_benchmark (settings):
 	info["beta"] = beta
 	info["mu"] = [0.0*i for i in xrange(info["num_species"])]
 	info["seed"] = -10
-	info["max_N"] = [int(600)]
+	info["max_N"] = [maxN]
 	info["min_N"] = [int(0)]
 	info["window"] = [bounds[0], bounds[1]]
 	info["restart_file"] = ""
