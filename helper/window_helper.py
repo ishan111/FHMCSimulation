@@ -203,7 +203,7 @@ def make_input (filename, settings, generator, remove=[]):
 
 	"""
 
-	info = generator(new_sett)
+	info = generator(settings)
 	for key in remove:
 		if (key in info):
 			del info[key]
