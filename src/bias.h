@@ -12,9 +12,6 @@
 #include "global.h"
 #include "utilities.h"
 
-//! For biasing, need to address things with large indices
-//#define __BIAS_INT_TYPE__ long long int
-
 /*! Jacobi method for evaluating natural logarithm of a sum of exponentials
  * E.g. ln( exp(a) + exp(b) ) = specExp(a, b)
  */

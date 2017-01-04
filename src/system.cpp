@@ -1770,12 +1770,12 @@ const double calculateBias (simSystem &sys, const int nTotFinal, const int mFina
 
 	if (sys.useTMMC && !sys.useWALA) {
 		// TMMC biasing
-		const __BIAS_INT_TYPE__ address1 = sys.tmmcBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.tmmcBias->getAddress(nTotFinal, mFinal);
+		const long long int address1 = sys.tmmcBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.tmmcBias->getAddress(nTotFinal, mFinal);
 		const double b1 = sys.tmmcBias->getBias (address1), b2 = sys.tmmcBias->getBias (address2);
 		rel_bias = exp(b2-b1);
     } else if (!sys.useTMMC && sys.useWALA) {
     	// Wang-Landau Biasing
-    	const __BIAS_INT_TYPE__ address1 = sys.wlBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.wlBias->getAddress(nTotFinal, mFinal);
+    	const long long int address1 = sys.wlBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.wlBias->getAddress(nTotFinal, mFinal);
     	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
     	rel_bias = exp(b2-b1);
     } else if (sys.useTMMC && sys.useWALA) {
