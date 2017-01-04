@@ -74,7 +74,7 @@ def sqw_pore_benchmark (settings):
 	Lxy = (2*r_pore + max([ff_range, fw_range]))*1.05 # 5% fudge factor
 
 	eta = 0.63 # max packing efficiency
-	Lz = info["max_N"][0]/(eta*3.14159*(2*r_pore - info["barriers"]["cylindrical_pore"]["sigma"])**2/4.0)
+	Lz = info["max_N"][0]/(eta*((r_pore - info["barriers"]["cylindrical_pore"]["sigma"]/2.0)**2)*6.0/info["ppot_1_1_params"]["sigma"]**3)
 
 	info["barriers"]["cylindrical_pore"]["x"] = Lxy/2.0
 	info["barriers"]["cylindrical_pore"]["y"] = Lxy/2.0
