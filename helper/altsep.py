@@ -6,6 +6,7 @@
 """
 
 import numpy as np
+import random, string
 
 def random_word (length):
    return ''.join(random.choice(string.lowercase) for i in range(length))
@@ -135,7 +136,6 @@ if __name__ == "__main__":
 	* Tutorial: Below is an example of a script to generate input for FHMCSimulation for the ALTSEP project
 
 	import os, sys, shutil
-	import random, string
 	FHMCLIB = "/home/nam4/"
 	sys.path.append(FHMCLIB)
 	import FHMCAnalysis
