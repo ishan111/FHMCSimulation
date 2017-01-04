@@ -8,6 +8,9 @@
     "dir": "../data/checkpt",
     "moveCounter": 0.0,
     "sweepCounter": 0.0,
+    "walaTotalStepCounter": 0.0,
+    "crossoverTotalStepCounter": 0.0,
+    "tmmcTotalStepCounter": 0.0,
     "extMomCounter": [
         0.0,
         0.0,

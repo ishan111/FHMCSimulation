@@ -59,6 +59,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 		while (!done) {
 			try {
 				usedMovesPr->makeMove(sys);
+                sys.tmmcTotalStepCounter += 1.0;
 			} catch (customException &ce) {
                 sendErr(ce.what());
 				exit(SYS_FAILURE);
@@ -113,4 +114,6 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 
     sanityChecks(sys);
     res.tmmcDone = true;
+    sendMsg("Completed "+numToStr(sys.tmmcTotalStepCounter)+" total MC steps as part of TMMC stage");
+    sendMsg("Total MC steps taken in simulation: "+numToStr(sys.walaTotalStepCounter+sys.crossoverTotalStepCounter+sys.tmmcTotalStepCounter));
 }

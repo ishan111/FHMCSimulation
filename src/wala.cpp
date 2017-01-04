@@ -15,7 +15,6 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
 
     bool flat = false;
     double lnF = sys.lnF_start;
-    long double total_step_counter = 0;
     long long int moveStart = 0;
 
     if (!res.resFromWALA) {
@@ -25,7 +24,7 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
 
         sys.startWALA (lnF, sys.wala_g, sys.wala_s, sys.getTotalM());
         if (sys.restartFromWALA) {
-            // specified to start WALA from a lnPI guess, and this is not a restart from a checkpoint
+            // Specified to start WALA from a lnPI guess, and this is not a restart from a checkpoint
             try {
                 sys.getWALABias()->readlnPI(sys.restartFromWALAFile);
             } catch (customException &ce) {
@@ -35,8 +34,8 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
             sendMsg("Read initial lnPI for Wang-Landau from "+sys.restartFromWALAFile);
         }
     } else {
-        lnF = sys.getWALABias()->lnF(); // checkpoint re-initialized to starting value
-        moveStart = res.moveCounter;
+        lnF = sys.getWALABias()->lnF(); // Checkpoint re-initialized to starting value
+        moveStart = res.moveCounter; // Loop in current lnF stage
     }
 
     sendMsg("Initial lnF = "+numToStr(sys.getWALABias()->lnF()));
@@ -46,6 +45,7 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
         for (unsigned long long int move = moveStart; move < sys.wlSweepSize; ++move) {
             try {
                 usedMovesEq->makeMove(sys);
+                sys.walaTotalStepCounter += 1.0;
             } catch (customException &ce) {
                 sendErr(ce.what());
                 exit(SYS_FAILURE);
@@ -59,7 +59,7 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
         // Check if bias has flattened out
         flat = sys.getWALABias()->evaluateFlatness();
         if (flat) {
-            sys.getWALABias()->iterateForward(); // if flat, need to reset H and reduce lnF
+            sys.getWALABias()->iterateForward(); // If flat, need to reset H and reduce lnF
             lnF = sys.getWALABias()->lnF();
             flat = false;
             sendMsg("Wang-Landau is now flat, new lnF = "+numToStr(lnF));
@@ -69,4 +69,6 @@ void performWALA (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
 
     sanityChecks(sys);
     res.walaDone = true;
+    sendMsg("Completed "+numToStr(sys.walaTotalStepCounter)+" total MC steps as part of Wang-Landau stage");
+    sendMsg("Total MC steps taken in simulation: "+numToStr(sys.walaTotalStepCounter));
 }

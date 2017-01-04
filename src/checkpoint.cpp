@@ -68,6 +68,9 @@ void checkpoint::load (simSystem &sys, const bool override) {
         dir = doc["dir"].GetString();
         moveCounter = (long long int)doc["moveCounter"].GetDouble();
         sweepCounter = (long long int)doc["sweepCounter"].GetDouble();
+        sys.walaTotalStepCounter = (long double)doc["walaTotalStepCounter"].GetDouble();
+    	sys.crossoverTotalStepCounter = (long double)doc["crossoverTotalStepCounter"].GetDouble();
+    	sys.tmmcTotalStepCounter = (long double)doc["tmmcTotalStepCounter"].GetDouble();
 
         if (walaDone && crossoverDone) { // In final TMMC stage or just finished the TMMC (end of simulation)
             resFromTMMC = true;
@@ -197,6 +200,15 @@ void checkpoint::dump (simSystem &sys, const long long int moveCounter, const lo
 
     writer.String("sweepCounter");
     writer.Double(sweepCounter);
+
+    writer.String("walaTotalStepCounter");
+    writer.Double(sys.walaTotalStepCounter);
+
+    writer.String("crossoverTotalStepCounter");
+    writer.Double(sys.crossoverTotalStepCounter);
+
+    writer.String("tmmcTotalStepCounter");
+    writer.Double(sys.tmmcTotalStepCounter);
 
     if (walaDone && crossoverDone) { // In final TMMC stage or just finished the TMMC (end of simulation)
         sys.getTMMCBias()->print(dir+"/tmmc", true, true);

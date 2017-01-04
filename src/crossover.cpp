@@ -33,6 +33,7 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
         for (long long int move = moveStart; move < sys.wlSweepSize; ++move) {
             try {
                 usedMovesEq->makeMove(sys);
+                sys.crossoverTotalStepCounter += 1.0;
             } catch (customException &ce) {
                 sendErr(ce.what());
                 exit(SYS_FAILURE);
@@ -81,4 +82,6 @@ void performCrossover (simSystem &sys, checkpoint &res, moves *usedMovesEq) {
     sys.reInitializeEnergyHistogram(); // If doing initial WL "equilibration" re-initialize the histogram using bounds
     sanityChecks(sys);
     res.crossoverDone = true;
+    sendMsg("Completed "+numToStr(sys.crossoverTotalStepCounter)+" total MC steps as part of crossover stage");
+    sendMsg("Total MC steps taken in simulation: "+numToStr(sys.walaTotalStepCounter+sys.crossoverTotalStepCounter));
 }

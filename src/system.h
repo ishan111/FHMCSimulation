@@ -102,7 +102,11 @@ public:
 	double gcmcEqSteps; //!< In the case of unbiased GCMC, number of equilibration steps to perform
 	double gcmcPrSteps; //!< In the case of unbiased GCMC, number of production steps to perform
 	double gcmcSnapFreq; //!< In the case of unbiased GCMC, frequency with which to take snapshots of the system
-	double gcmcThermoFreq; //!< In the case of unbiased GCMC, frequency with which to record thermo properties 
+	double gcmcThermoFreq; //!< In the case of unbiased GCMC, frequency with which to record thermo properties
+
+	long double walaTotalStepCounter; //!< Tracks the total MC steps taken during WALA stage
+	long double crossoverTotalStepCounter; //!< Tracks the total MC steps taken during crossover stage
+	long double tmmcTotalStepCounter; //!< Tracks the total MC steps taken during TMMC stage
 
 	const std::vector < double > extMomCounter () { return extensive_moments_.getCounter(); } //!< Get counter for extensive moments needed for restarting system from a checkpoint
 	const std::vector < double > box () { return box_; } //!< Return the system box dimensions
@@ -114,7 +118,7 @@ public:
 	atom* getFractionalAtom () { return fractionalAtom_; } //!< Returns a pointer the atom in the system that is currently only fractionally inserted/deleted
 
 	tmmc* tmmcBias; //!< TMMC biasing function
-	wala* wlBias; //!< WL biasing function
+	wala* wlBias; //!< WALA biasing function
 
 	std::string restartFromWALAFile, restartFromTMMCFile; //!< Files to restart from WALA or TMMC initially
 

@@ -449,6 +449,9 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 	wala_g = 0.5;
 	wala_s = 0.8;
 	nCrossoverVisits = 5;
+	walaTotalStepCounter = 0;
+	crossoverTotalStepCounter = 0;
+	tmmcTotalStepCounter = 0;
 
 	if (max_order < 1){
 		throw customException ("max_order must be >= 1");
