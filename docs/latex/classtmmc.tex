@@ -35,9 +35,9 @@ void \hyperlink{classtmmc_a295886d2f7a947a9de890bcb3adb51c7}{dump\-Visited} (con
 \begin{DoxyCompactList}\small\item\em Dump the current visited states counter. \end{DoxyCompactList}\item 
 bool \hyperlink{classtmmc_aa51f03f958dabefcff97be4a7c3b336c}{check\-Fully\-Visited} ()
 \begin{DoxyCompactList}\small\item\em Check if the the collection matrix has been samples sufficiently, i.\-e., if each state and transition has been visited tmmc\-Sweep\-Size\-\_\- times. \end{DoxyCompactList}\item 
-const \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-} \hyperlink{classtmmc_ae296df3336ebf0fa1db7c34972c544eb}{get\-Transition\-Address} (const int Nstart, const int Nend, const int Mstart, const int Mend)
+const long long int \hyperlink{classtmmc_a8649336b47195c6ad50c437ff1f443e3}{get\-Transition\-Address} (const int Nstart, const int Nend, const int Mstart, const int Mend)
 \begin{DoxyCompactList}\small\item\em For a given multidimensional array which has been cast into 1\-D, find the address that refers to a given transition. \end{DoxyCompactList}\item 
-const \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-} \hyperlink{classtmmc_a62acddd907713a4b2a8a142b209ddaad}{get\-Address} (const int Nval, const int Mval)
+const long long int \hyperlink{classtmmc_a3e19bc0fd6a06aea2d1c23563c441eba}{get\-Address} (const int Nval, const int Mval)
 \begin{DoxyCompactList}\small\item\em Get the address in ln\-P\-I that corresponds to a given macrostate. \end{DoxyCompactList}\item 
 const long long int \hyperlink{classtmmc_afbdc037dc9b941d71d7049855e18f4be}{num\-Sweeps} ()
 \item 
@@ -52,7 +52,7 @@ const std\-::vector$<$ double $>$ \hyperlink{classtmmc_a9e61aead97aef135db0895e7
 \subsection{Detailed Description}
 Transition Matrix Monte Carlo biasing class. 
 
-Definition at line 24 of file bias.\-h.
+Definition at line 21 of file bias.\-h.
 
 
 
@@ -66,11 +66,11 @@ Definition at line 24 of file bias.\-h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classtmmc_a2dd6a666daae3a9b7c3978d8ecff887e}
 
 
-Definition at line 26 of file bias.\-h.
+Definition at line 23 of file bias.\-h.
 
 
 \begin{DoxyCode}
-26 \{\};
+23 \{\};
 \end{DoxyCode}
 \hypertarget{classtmmc_ae09ec510cf4ba97b612fa0b42b811d20}{\index{tmmc@{tmmc}!tmmc@{tmmc}}
 \index{tmmc@{tmmc}!tmmc@{tmmc}}
@@ -105,10 +105,6 @@ Initialize the tmmc object.
 Definition at line 12 of file bias.\-cpp.
 
 
-
-References \-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-.
-
-
 \begin{DoxyCode}
 12                                                                                                            
                        \{
@@ -123,7 +119,7 @@ References \-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-
 20         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Mtot < 1 in TMMC bias"});
 21     \}
 22 
-23     \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} size = (Nmax - Nmin + 1);
+23     \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} size = (Nmax - Nmin + 1);
 24     Nmin\_ = Nmin;
 25     Nmax\_ = Nmax;
 26     Mtot\_ = Mtot;
@@ -198,7 +194,7 @@ Definition at line 239 of file bias.\-cpp.
 
 
 
-References \-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-, and get\-Transition\-Address().
+References get\-Transition\-Address().
 
 
 
@@ -208,7 +204,7 @@ Referenced by checkpoint\-::load(), perform\-Crossover(), and perform\-T\-M\-M\-
 \begin{DoxyCode}
 239                         \{
 240     \textcolor{keyword}{const} \textcolor{keywordtype}{int} endPoint = C\_.size() - (Mtot\_-1)*3;
-241     \textcolor{keywordflow}{for} (\hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} i = 0; i < endPoint; i += 3) \{
+241     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < endPoint; i += 3) \{
 242         \textcolor{keywordtype}{double} sum = 0.0;
 243         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} j = 0; j < 3; ++j) \{
 244             sum += C\_[i+j];
@@ -219,56 +215,55 @@ Referenced by checkpoint\-::load(), perform\-Crossover(), and perform\-T\-M\-M\-
 249             \}
 250         \} \textcolor{keywordflow}{else} \{
 251             \textcolor{comment}{// This state has not been visited at all if sum = 0.  However, at high system densities this
-       could be the "correct"}
-252             \textcolor{comment}{// result so this error may need to be discarded later in favor of:}
-253             \textcolor{comment}{// P\_[i+j] = 0;}
-254             \textcolor{comment}{// However, having this throw an exception is also a good way to find that upper bound where
-       the system is completely packed}
-255             \textcolor{comment}{// so I will keep it this way for now.}
-256             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot compute TMMC macrostate distribution because
+       could be the "correct" result so this error may need to be discarded later in favor of: P\_[i+j] = 0;}
+252             \textcolor{comment}{// However, having this throw an exception is also a good way to find that upper bound where
+       the system is completely packed so I will keep it this way for now.}
+253             \textcolor{comment}{// Under current philosophy of a "sweep" requiring all entries in C to be filled with finite
+       values, this is acutally protected against.}
+254             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot compute TMMC macrostate distribution because
        probability matrix contains zeros"});
-257         \}
-258     \}
-259 
-260     \textcolor{comment}{// Reset first value to zero just to start fresh. Since only ratios matter this is perfectly fair.}
-261     lnPI\_[0] = 0.0;
-262     \textcolor{keywordtype}{int} counter = 0;
-263     \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, 
-      nEndForward = 0, mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;
-264     \textcolor{keywordflow}{for} (\hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} i = 0; i < (Nmax\_ - Nmin\_); ++i) \{ \textcolor{comment}{// don't calculate the last
-       N = Nmax when M > 0, stops initially at N = Nmax, M = 0}
-265         nStartForward = Nmin\_+i;
-266         \textcolor{keywordflow}{for} (\hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} j = 0; j < Mtot\_; ++j) \{
-267             mStartForward = j;
-268             \textcolor{keywordflow}{if} (j == Mtot\_-1) \{
-269                 nEndForward = nStartForward + 1;
-270                 mEndForward = 0;
-271             \} \textcolor{keywordflow}{else} \{
-272                 nEndForward = nStartForward;
-273                 mEndForward = j + 1;
-274             \}
-275 
-276             nStartBackward = nEndForward;
-277             nEndBackward = nStartForward;
-278             mStartBackward = mEndForward;
-279             mEndBackward = mStartForward;
-280 
-281             address1 = \hyperlink{classtmmc_ae296df3336ebf0fa1db7c34972c544eb}{getTransitionAddress}(nStartForward, nEndForward, mStartForward, 
+255         \}
+256     \}
+257 
+258     \textcolor{comment}{// Reset first value to zero just to start fresh. Since only ratios matter this is perfectly fair.}
+259     lnPI\_[0] = 0.0;
+260     \textcolor{keywordtype}{int} counter = 0;
+261     \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, nEndForward = 0, 
+      mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;
+262     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < (Nmax\_ - Nmin\_); ++i) \{ \textcolor{comment}{// Don't calculate the last N = Nmax when M > 0,
+       stops initially at N = Nmax, M = 0}
+263         nStartForward = Nmin\_+i;
+264         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} j = 0; j < Mtot\_; ++j) \{
+265             mStartForward = j;
+266             \textcolor{keywordflow}{if} (j == Mtot\_-1) \{
+267                 nEndForward = nStartForward + 1;
+268                 mEndForward = 0;
+269             \} \textcolor{keywordflow}{else} \{
+270                 nEndForward = nStartForward;
+271                 mEndForward = j + 1;
+272             \}
+273 
+274             nStartBackward = nEndForward;
+275             nEndBackward = nStartForward;
+276             mStartBackward = mEndForward;
+277             mEndBackward = mStartForward;
+278 
+279             address1 = \hyperlink{classtmmc_a8649336b47195c6ad50c437ff1f443e3}{getTransitionAddress}(nStartForward, nEndForward, mStartForward, 
       mEndForward);
-282             address2 = \hyperlink{classtmmc_ae296df3336ebf0fa1db7c34972c544eb}{getTransitionAddress}(nStartBackward, nEndBackward, 
+280             address2 = \hyperlink{classtmmc_a8649336b47195c6ad50c437ff1f443e3}{getTransitionAddress}(nStartBackward, nEndBackward, 
       mStartBackward, mEndBackward);
-283 
-284             \textcolor{keywordflow}{if} (!(P\_[address1] > 0) || !(P\_[address2] > 0)) \{
-285                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot compute TMMC macrostate distribution because
+281 
+282             \textcolor{keywordflow}{if} (!(P\_[address1] > 0) || !(P\_[address2] > 0)) \{
+283                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot compute TMMC macrostate distribution because
        probability matrix contains zeros at address: P["}+std::to\_string(address1)+\textcolor{stringliteral}{"] = "}+std::to\_string(P\_[address1
       ])+\textcolor{stringliteral}{", P["}+std::to\_string(address2)+\textcolor{stringliteral}{"] = "}+std::to\_string(P\_[address2]));
-286             \}
-287             lnPI\_[counter+1] = lnPI\_[counter] + log(P\_[address1]/P\_[address2]); \textcolor{comment}{// this is why P\_ cannot be
+284             \}
+285             lnPI\_[counter+1] = lnPI\_[counter] + log(P\_[address1]/P\_[address2]); \textcolor{comment}{// This is why P\_ cannot be
        zero}
-288             counter++;
-289         \}
-290     \}
-291 \}
+286             counter++;
+287         \}
+288     \}
+289 \}
 \end{DoxyCode}
 \hypertarget{classtmmc_aa51f03f958dabefcff97be4a7c3b336c}{\index{tmmc@{tmmc}!check\-Fully\-Visited@{check\-Fully\-Visited}}
 \index{check\-Fully\-Visited@{check\-Fully\-Visited}!tmmc@{tmmc}}
@@ -287,10 +282,6 @@ Definition at line 100 of file bias.\-cpp.
 
 
 
-References \-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-.
-
-
-
 Referenced by perform\-Crossover(), and perform\-T\-M\-M\-C().
 
 
@@ -298,7 +289,7 @@ Referenced by perform\-Crossover(), and perform\-T\-M\-M\-C().
 100                               \{
 101     \textcolor{keyword}{const} \textcolor{keywordtype}{int} endPoint = HC\_.size() - (Mtot\_-1)*3; \textcolor{comment}{// we don't care about the last chunk where N = Nmax,
        but M > 0 - stop at N = Nmax, M = 0}
-102     \textcolor{keywordflow}{for} (\hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} i = 0; i < endPoint; i += 3) \{
+102     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < endPoint; i += 3) \{
 103         \textcolor{keywordflow}{if} (i == 0) \{
 104             \textcolor{comment}{// lower bound, so only +1 and 0 moves must be sampled}
 105             \textcolor{keywordflow}{if} ((HC\_[i+1] < tmmcSweepSize\_) || (HC\_[i] < tmmcSweepSize\_)) \{
@@ -364,14 +355,14 @@ Referenced by perform\-Crossover(), and print().
 94     of.close();
 95 \}
 \end{DoxyCode}
-\hypertarget{classtmmc_a62acddd907713a4b2a8a142b209ddaad}{\index{tmmc@{tmmc}!get\-Address@{get\-Address}}
+\hypertarget{classtmmc_a3e19bc0fd6a06aea2d1c23563c441eba}{\index{tmmc@{tmmc}!get\-Address@{get\-Address}}
 \index{get\-Address@{get\-Address}!tmmc@{tmmc}}
-\subsubsection[{get\-Address}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf \-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-} tmmc\-::get\-Address (
+\subsubsection[{get\-Address}]{\setlength{\rightskip}{0pt plus 5cm}const long long int tmmc\-::get\-Address (
 \begin{DoxyParamCaption}
 \item[{const int}]{Nval, }
 \item[{const int}]{Mval}
 \end{DoxyParamCaption}
-)}}\label{classtmmc_a62acddd907713a4b2a8a142b209ddaad}
+)}}\label{classtmmc_a3e19bc0fd6a06aea2d1c23563c441eba}
 
 
 Get the address in ln\-P\-I that corresponds to a given macrostate. 
@@ -393,7 +384,7 @@ Referenced by calculate\-Bias().
 
 
 \begin{DoxyCode}
-199                                                                         \{
+199                                                                     \{
 200     \textcolor{keywordflow}{if} (Nval > Nmax\_ || Nval < Nmin\_ || Mval < 0 || Mval > Mtot\_-1) \{
 201         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"N, M out of bounds in TMMC object, cannot retrieve address"})
       ;
@@ -410,7 +401,7 @@ Referenced by calculate\-Bias().
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classtmmc_afbcaaf974280aad6d78ca7e112438641}
 
 
-Definition at line 41 of file bias.\-h.
+Definition at line 38 of file bias.\-h.
 
 
 
@@ -418,7 +409,7 @@ Referenced by calculate\-Bias().
 
 
 \begin{DoxyCode}
-41 \{ \textcolor{keywordflow}{return} -lnPI\_[address]; \}
+38 \{ \textcolor{keywordflow}{return} -lnPI\_[address]; \}
 \end{DoxyCode}
 \hypertarget{classtmmc_a281634902422824ca2905fad6478f0c0}{\index{tmmc@{tmmc}!get\-C@{get\-C}}
 \index{get\-C@{get\-C}!tmmc@{tmmc}}
@@ -433,7 +424,7 @@ Return the collection matrix as it is.
 
 
 
-Definition at line 42 of file bias.\-h.
+Definition at line 39 of file bias.\-h.
 
 \hypertarget{classtmmc_a9e61aead97aef135db0895e749186f47}{\index{tmmc@{tmmc}!get\-H\-C@{get\-H\-C}}
 \index{get\-H\-C@{get\-H\-C}!tmmc@{tmmc}}
@@ -444,22 +435,22 @@ Definition at line 42 of file bias.\-h.
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classtmmc_a9e61aead97aef135db0895e749186f47}
 
 
-Definition at line 43 of file bias.\-h.
+Definition at line 40 of file bias.\-h.
 
 
 \begin{DoxyCode}
-43 \{ \textcolor{keywordflow}{return} HC\_; \}
+40 \{ \textcolor{keywordflow}{return} HC\_; \}
 \end{DoxyCode}
-\hypertarget{classtmmc_ae296df3336ebf0fa1db7c34972c544eb}{\index{tmmc@{tmmc}!get\-Transition\-Address@{get\-Transition\-Address}}
+\hypertarget{classtmmc_a8649336b47195c6ad50c437ff1f443e3}{\index{tmmc@{tmmc}!get\-Transition\-Address@{get\-Transition\-Address}}
 \index{get\-Transition\-Address@{get\-Transition\-Address}!tmmc@{tmmc}}
-\subsubsection[{get\-Transition\-Address}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf \-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-} tmmc\-::get\-Transition\-Address (
+\subsubsection[{get\-Transition\-Address}]{\setlength{\rightskip}{0pt plus 5cm}const long long int tmmc\-::get\-Transition\-Address (
 \begin{DoxyParamCaption}
 \item[{const int}]{Nstart, }
 \item[{const int}]{Nend, }
 \item[{const int}]{Mstart, }
 \item[{const int}]{Mend}
 \end{DoxyParamCaption}
-)}}\label{classtmmc_ae296df3336ebf0fa1db7c34972c544eb}
+)}}\label{classtmmc_a8649336b47195c6ad50c437ff1f443e3}
 
 
 For a given multidimensional array which has been cast into 1\-D, find the address that refers to a given transition. 
@@ -483,16 +474,12 @@ Definition at line 141 of file bias.\-cpp.
 
 
 
-References \-\_\-\-\_\-\-B\-I\-A\-S\-\_\-\-I\-N\-T\-\_\-\-T\-Y\-P\-E\-\_\-\-\_\-.
-
-
-
 Referenced by calculate\-P\-I(), and update\-C().
 
 
 \begin{DoxyCode}
 141                                                                                                            
-                 \{
+             \{
 142     \textcolor{keywordflow}{if} (Nstart > Nmax\_ || Nstart < Nmin\_ || Nend > (Nmax\_+1) || Nend < (Nmin\_-1) || Mstart < 0 || Mstart > 
       Mtot\_-1 || Mend < 0 || Mend > Mtot\_-1) \{ \textcolor{comment}{// Nend has array positions for going over end of bounds but are
        never used, still they are valid}
@@ -501,10 +488,10 @@ Referenced by calculate\-P\-I(), and update\-C().
 144     \}
 145 
 146     \textcolor{keywordflow}{if} (Mtot\_ > 1) \{
-147         \textcolor{comment}{// expanded ensemble}
+147         \textcolor{comment}{// Expanded ensemble}
 148         \textcolor{keywordtype}{int} y = 0;
 149         \textcolor{keywordflow}{if} (Nstart == Nend) \{
-150             \textcolor{comment}{// moving within an expanded set}
+150             \textcolor{comment}{// Moving within an expanded set}
 151             \textcolor{keywordtype}{int} addOrSubtract = Mend - Mstart;
 152             \textcolor{keywordflow}{if} (addOrSubtract == 0) \{
 153                 y = 0;
@@ -516,7 +503,7 @@ Referenced by calculate\-P\-I(), and update\-C().
 159                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Illegal addOrSubtract value"});
 160             \}
 161         \} \textcolor{keywordflow}{else} \{
-162             \textcolor{comment}{// crossing over}
+162             \textcolor{comment}{// Crossing over}
 163             \textcolor{keywordflow}{if} (Nend > Nstart) \{
 164                 y = 1;
 165                 \textcolor{keywordflow}{if} (Mstart != Mtot\_ - 1 || Mend != 0) \{
@@ -531,7 +518,7 @@ Referenced by calculate\-P\-I(), and update\-C().
 174         \}
 175         \textcolor{keywordflow}{return} 3*((Nstart - Nmin\_)*Mtot\_ + Mstart) + y;
 176     \} \textcolor{keywordflow}{else} \{
-177         \textcolor{comment}{// no expanded ensemble}
+177         \textcolor{comment}{// No expanded ensemble}
 178         \textcolor{keywordtype}{int} addOrSubtract = (Nend - Nstart), y = 0;
 179         \textcolor{keywordflow}{if} (addOrSubtract == 0) \{
 180             y = 0;
@@ -542,8 +529,8 @@ Referenced by calculate\-P\-I(), and update\-C().
 185         \} \textcolor{keywordflow}{else} \{
 186             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Illegal addOrSubtract value"});
 187         \}
-188         \hyperlink{bias_8h_a1ceb524363fcb94da0c64d297ea27438}{\_\_BIAS\_INT\_TYPE\_\_} x = Nstart - Nmin\_;
-189         \textcolor{keywordflow}{return} x*3 + y; \textcolor{comment}{// equivalent to expanded ensemble because Mstart = 0 always, and Mtot\_ = 1}
+188         \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} x = Nstart - Nmin\_;
+189         \textcolor{keywordflow}{return} x*3 + y; \textcolor{comment}{// Equivalent to expanded ensemble because Mstart = 0 always, and Mtot\_ = 1}
 190     \}
 191 \}
 \end{DoxyCode}
@@ -582,7 +569,7 @@ Referenced by perform\-Crossover(), and perform\-T\-M\-M\-C().
 )\hspace{0.3cm}{\ttfamily [inline]}}}\label{classtmmc_afbdc037dc9b941d71d7049855e18f4be}
 
 
-Definition at line 40 of file bias.\-h.
+Definition at line 37 of file bias.\-h.
 
 
 
@@ -590,7 +577,7 @@ Referenced by perform\-Crossover().
 
 
 \begin{DoxyCode}
-40 \{ \textcolor{keywordflow}{return} nSweeps\_; \}
+37 \{ \textcolor{keywordflow}{return} nSweeps\_; \}
 \end{DoxyCode}
 \hypertarget{classtmmc_ad49e147dc88b3e1c2975269598f94327}{\index{tmmc@{tmmc}!print@{print}}
 \index{print@{print}!tmmc@{tmmc}}
@@ -618,7 +605,7 @@ Will overwrite the files if another with that name exists.
 \end{DoxyParams}
 
 
-Definition at line 301 of file bias.\-cpp.
+Definition at line 299 of file bias.\-cpp.
 
 
 
@@ -630,50 +617,50 @@ Referenced by checkpoint\-::dump(), perform\-Crossover(), and perform\-T\-M\-M\-
 
 
 \begin{DoxyCode}
-301                                                                      \{
-302     \textcolor{comment}{// Print collection matrix}
-303     \textcolor{keywordflow}{if} (printC) \{
-304         \textcolor{comment}{// print all states, including partial ones, so this can be used to restart from, etc.}
-305         std::ofstream of;
-306         std::string name = fileName+\textcolor{stringliteral}{"\_C.dat"};
-307         of.open(name.c\_str(), std::ofstream::out);
-308         \textcolor{keywordflow}{if} (!of.is\_open()) \{
-309             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write TMMC collection matrix to "}+name);
-310         \}
-311         of << \textcolor{stringliteral}{"# Collection matrix in single row (vectorized) notation."} << std::endl;
-312         of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
-313         of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
-314         \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-315         of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
-316         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < C\_.size(); ++i) \{
-317             of << std::setprecision(15) << C\_[i] << std::endl;
-318         \}
-319         of.close();
-320     \}
-321 
-322     \textcolor{comment}{// Print visited states matrix}
-323     \textcolor{keywordflow}{if} (printHC) \{
-324         \textcolor{comment}{// print all states, including partial ones, so this can be used to restart from, etc.}
-325         \hyperlink{classtmmc_a295886d2f7a947a9de890bcb3adb51c7}{dumpVisited}(fileName+\textcolor{stringliteral}{"\_HC"});
-326     \}
-327 
-328     \textcolor{comment}{// Print lnPI (bias) matrix}
-329     std::ofstream of;
-330     std::string name = fileName+\textcolor{stringliteral}{"\_lnPI.dat"};
-331     of.open(name.c\_str(), std::ofstream::out);
-332     \textcolor{keywordflow}{if} (!of.is\_open()) \{
-333         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write TMMC lnPI to "}+name);
-334     \}
-335     of << \textcolor{stringliteral}{"# lnPI (bias) matrix in single row (vectorized) notation."} << std::endl;
-336     of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
-337     of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
-338     \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
-339     of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
-340     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < lnPI\_.size(); i += Mtot\_) \{
-341         of << std::setprecision(15) << lnPI\_[i] << std::endl; \textcolor{comment}{// only print the integral states}
-342     \}
-343     of.close();
-344 \}
+299                                                                      \{
+300     \textcolor{comment}{// Print collection matrix}
+301     \textcolor{keywordflow}{if} (printC) \{
+302         \textcolor{comment}{// Print all states, including partial ones, so this can be used to restart from, etc.}
+303         std::ofstream of;
+304         std::string name = fileName+\textcolor{stringliteral}{"\_C.dat"};
+305         of.open(name.c\_str(), std::ofstream::out);
+306         \textcolor{keywordflow}{if} (!of.is\_open()) \{
+307             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write TMMC collection matrix to "}+name);
+308         \}
+309         of << \textcolor{stringliteral}{"# Collection matrix in single row (vectorized) notation."} << std::endl;
+310         of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
+311         of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
+312         \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
+313         of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
+314         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < C\_.size(); ++i) \{
+315             of << std::setprecision(15) << C\_[i] << std::endl;
+316         \}
+317         of.close();
+318     \}
+319 
+320     \textcolor{comment}{// Print visited states matrix}
+321     \textcolor{keywordflow}{if} (printHC) \{
+322         \textcolor{comment}{// print all states, including partial ones, so this can be used to restart from, etc.}
+323         \hyperlink{classtmmc_a295886d2f7a947a9de890bcb3adb51c7}{dumpVisited}(fileName+\textcolor{stringliteral}{"\_HC"});
+324     \}
+325 
+326     \textcolor{comment}{// Print lnPI (bias) matrix}
+327     std::ofstream of;
+328     std::string name = fileName+\textcolor{stringliteral}{"\_lnPI.dat"};
+329     of.open(name.c\_str(), std::ofstream::out);
+330     \textcolor{keywordflow}{if} (!of.is\_open()) \{
+331         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to write TMMC lnPI to "}+name);
+332     \}
+333     of << \textcolor{stringliteral}{"# lnPI (bias) matrix in single row (vectorized) notation."} << std::endl;
+334     of << \textcolor{stringliteral}{"# species\_total\_upper\_bound: "} << Nmax\_ << std::endl;
+335     of << \textcolor{stringliteral}{"# species\_total\_lower\_bound: "} << Nmin\_ << std::endl;
+336     \textcolor{keywordtype}{double} V = box\_[0]*box\_[1]*box\_[2];
+337     of << \textcolor{stringliteral}{"# volume: "} << std::setprecision(15) << V << std::endl;
+338     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} i = 0; i < lnPI\_.size(); i += Mtot\_) \{
+339         of << std::setprecision(15) << lnPI\_[i] << std::endl; \textcolor{comment}{// only print the integral states}
+340     \}
+341     of.close();
+342 \}
 \end{DoxyCode}
 \hypertarget{classtmmc_a7d9ee0505dc801cbff55bc35c3654a61}{\index{tmmc@{tmmc}!read\-C@{read\-C}}
 \index{read\-C@{read\-C}!tmmc@{tmmc}}
@@ -695,7 +682,7 @@ This assumes the user has already guaranteed that the bounds are consistent, e.\
 \end{DoxyParams}
 
 
-Definition at line 378 of file bias.\-cpp.
+Definition at line 376 of file bias.\-cpp.
 
 
 
@@ -703,23 +690,23 @@ Referenced by checkpoint\-::load(), and perform\-T\-M\-M\-C().
 
 
 \begin{DoxyCode}
-378                                           \{
-379     std::ifstream infile (fileName.c\_str());
-380     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
-381         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Unable to read collection matrix from ASCII file "}+fileName);
-382     \}
-383     std::string line;
-384     \textcolor{keywordtype}{int} lineIndex = 0;
-385     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
-386         std::stringstream lineStream(line);
-387         \textcolor{comment}{// skip any header information}
-388         \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
-389             C\_[lineIndex] = atof(line.c\_str());
-390             lineIndex++;
-391         \}
-392     \}
-393     infile.close();
-394 \}
+376                                           \{
+377     std::ifstream infile (fileName.c\_str());
+378     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
+379         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Unable to read collection matrix from ASCII file "}+fileName);
+380     \}
+381     std::string line;
+382     \textcolor{keywordtype}{int} lineIndex = 0;
+383     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
+384         std::stringstream lineStream(line);
+385         \textcolor{comment}{// skip any header information}
+386         \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
+387             C\_[lineIndex] = atof(line.c\_str());
+388             lineIndex++;
+389         \}
+390     \}
+391     infile.close();
+392 \}
 \end{DoxyCode}
 \hypertarget{classtmmc_ab51a593d041a65c4ca47e6c4e0c26992}{\index{tmmc@{tmmc}!read\-H\-C@{read\-H\-C}}
 \index{read\-H\-C@{read\-H\-C}!tmmc@{tmmc}}
@@ -741,7 +728,7 @@ This assumes the user has already guaranteed that the bounds are consistent, e.\
 \end{DoxyParams}
 
 
-Definition at line 353 of file bias.\-cpp.
+Definition at line 351 of file bias.\-cpp.
 
 
 
@@ -749,24 +736,24 @@ Referenced by checkpoint\-::load().
 
 
 \begin{DoxyCode}
-353                                            \{
-354     std::ifstream infile (fileName.c\_str());
-355     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
-356         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Unable to read visited states matrix from ASCII file "}+
+351                                            \{
+352     std::ifstream infile (fileName.c\_str());
+353     \textcolor{keywordflow}{if} (!infile.is\_open()) \{
+354         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Unable to read visited states matrix from ASCII file "}+
       fileName);
-357     \}
-358     std::string line;
-359     \textcolor{keywordtype}{int} lineIndex = 0;
-360     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
-361         std::stringstream lineStream(line);
-362         \textcolor{comment}{// skip any header information}
-363         \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
-364             HC\_[lineIndex] = atof(line.c\_str());
-365             lineIndex++;
-366         \}
-367     \}
-368     infile.close();
-369 \}
+355     \}
+356     std::string line;
+357     \textcolor{keywordtype}{int} lineIndex = 0;
+358     \textcolor{keywordflow}{while}(std::getline(infile,line)) \{
+359         std::stringstream lineStream(line);
+360         \textcolor{comment}{// skip any header information}
+361         \textcolor{keywordflow}{if} (line.compare(0,1,\textcolor{stringliteral}{"#"},0,1) != 0) \{
+362             HC\_[lineIndex] = atof(line.c\_str());
+363             lineIndex++;
+364         \}
+365     \}
+366     infile.close();
+367 \}
 \end{DoxyCode}
 \hypertarget{classtmmc_a416db4e54e3d2ab23daed2e33468df4d}{\index{tmmc@{tmmc}!setln\-P\-I@{setln\-P\-I}}
 \index{setln\-P\-I@{setln\-P\-I}!tmmc@{tmmc}}
@@ -781,7 +768,7 @@ Blindly assign a guess of the macrostate distribution.
 
 
 
-Definition at line 34 of file bias.\-h.
+Definition at line 31 of file bias.\-h.
 
 \hypertarget{classtmmc_ae067afc5b52af203b9d45f18d9737219}{\index{tmmc@{tmmc}!update\-C@{update\-C}}
 \index{update\-C@{update\-C}!tmmc@{tmmc}}
@@ -830,13 +817,13 @@ Referenced by agg\-Vol\-Bias3\-::make(), translate\-Particle\-::make(), delete\-
 215                                                                                                        \{
 216     \textcolor{keywordtype}{int} i = 0, j = 0;
 217     \textcolor{keywordflow}{try} \{
-218         i = \hyperlink{classtmmc_ae296df3336ebf0fa1db7c34972c544eb}{getTransitionAddress}(Nstart, Nend, Mstart, Mend);
+218         i = \hyperlink{classtmmc_a8649336b47195c6ad50c437ff1f443e3}{getTransitionAddress}(Nstart, Nend, Mstart, Mend);
 219     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
 220         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot update collection matrix: "} + std::to\_string(*ce.
       \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}()));
 221     \}
 222     \textcolor{keywordflow}{try} \{
-223         j = \hyperlink{classtmmc_ae296df3336ebf0fa1db7c34972c544eb}{getTransitionAddress}(Nstart, Nstart, Mstart, Mstart);
+223         j = \hyperlink{classtmmc_a8649336b47195c6ad50c437ff1f443e3}{getTransitionAddress}(Nstart, Nstart, Mstart, Mstart);
 224     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
 225         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot update collection matrix: "} + std::to\_string(*ce.
       \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}()));

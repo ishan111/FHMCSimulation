@@ -1,4 +1,4 @@
-.TH "rightTriangleXZ" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "rightTriangleXZ" 3 "Wed Jan 4 2017" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -413,15 +413,14 @@ References energy(), NUM_INFINITY, and customException::what()\&.
 364     } catch (customException &ce) {
 365         const std::string msg = ce\&.what();
 366         throw customException ("Unable to test if inside rightTriangleXZ : "+msg);
-367         //exit (SYS_FAILURE);
-368     }
-369 
-370     if (U < NUM_INFINITY) {
-371         return true;
-372     } else {
-373         return false;
-374     }
-375 }
+367     }
+368 
+369     if (U < NUM_INFINITY) {
+370         return true;
+371     } else {
+372         return false;
+373     }
+374 }
 .fi
 
 

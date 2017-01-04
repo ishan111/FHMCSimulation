@@ -5,7 +5,7 @@ var searchData=
   ['get_5fhist',['get_hist',['../classdynamic__one__dim__histogram.html#ac3903fa9339e78a5b9abe908af279b0a',1,'dynamic_one_dim_histogram']]],
   ['get_5flb',['get_lb',['../classdynamic__one__dim__histogram.html#a3849f19cd0c77e153cf32b0acefacc4d',1,'dynamic_one_dim_histogram']]],
   ['get_5fub',['get_ub',['../classdynamic__one__dim__histogram.html#a50871ffa445bce5f4443770a18db84aa',1,'dynamic_one_dim_histogram']]],
-  ['getaddress',['getAddress',['../classtmmc.html#a62acddd907713a4b2a8a142b209ddaad',1,'tmmc::getAddress()'],['../classwala.html#a6120a0549bee60f2acabf6db132ff9d9',1,'wala::getAddress()'],['../classhistogram.html#ae52fa58934b56e05846a66e43c3184bd',1,'histogram::getAddress()']]],
+  ['getaddress',['getAddress',['../classtmmc.html#a3e19bc0fd6a06aea2d1c23563c441eba',1,'tmmc::getAddress()'],['../classwala.html#a85b637b892b3c24cb252397433cbfad0',1,'wala::getAddress()'],['../classhistogram.html#ae52fa58934b56e05846a66e43c3184bd',1,'histogram::getAddress()']]],
   ['getbias',['getBias',['../classtmmc.html#afbcaaf974280aad6d78ca7e112438641',1,'tmmc::getBias()'],['../classwala.html#a03f7b333aa0a280e78060bd9af7ec318',1,'wala::getBias()']]],
   ['getc',['getC',['../classtmmc.html#a281634902422824ca2905fad6478f0c0',1,'tmmc']]],
   ['getcoords',['getCoords',['../classhistogram.html#a51aaf60b509809204f21934a18005b38',1,'histogram']]],
@@ -28,6 +28,6 @@ var searchData=
   ['gettmmcbias',['getTMMCBias',['../classsim_system.html#aa31d40c91cb50f143a9613d362798887',1,'simSystem']]],
   ['gettotalm',['getTotalM',['../classsim_system.html#aa4ad1afff101bb530e1590df05035276',1,'simSystem']]],
   ['gettotn',['getTotN',['../classsim_system.html#a37dd827f4057049763351510147b9f1d',1,'simSystem']]],
-  ['gettransitionaddress',['getTransitionAddress',['../classtmmc.html#ae296df3336ebf0fa1db7c34972c544eb',1,'tmmc']]],
+  ['gettransitionaddress',['getTransitionAddress',['../classtmmc.html#a8649336b47195c6ad50c437ff1f443e3',1,'tmmc']]],
   ['getwalabias',['getWALABias',['../classsim_system.html#a7cb5049de8b0988349e89e30e4000407',1,'simSystem']]]
 ];

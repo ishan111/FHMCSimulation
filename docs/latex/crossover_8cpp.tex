@@ -38,7 +38,7 @@ Definition at line 10 of file crossover.\-cpp.
 
 
 
-References tmmc\-::calculate\-P\-I(), checkpoint\-::check(), sim\-System\-::check\-Energy\-Histogram\-Bounds(), tmmc\-::check\-Fully\-Visited(), checkpoint\-::crossover\-Done, tmmc\-::dump\-Visited(), wala\-::evaluate\-Flatness(), sim\-System\-::get\-Current\-M(), sim\-System\-::get\-T\-M\-M\-C\-Bias(), sim\-System\-::get\-Total\-M(), sim\-System\-::get\-W\-A\-L\-A\-Bias(), tmmc\-::iterate\-Forward(), wala\-::iterate\-Forward(), wala\-::ln\-F(), moves\-::make\-Move(), checkpoint\-::move\-Counter, sim\-System\-::n\-Crossover\-Visits, tmmc\-::num\-Sweeps(), num\-To\-Str(), moves\-::print(), tmmc\-::print(), sim\-System\-::re\-Initialize\-Energy\-Histogram(), checkpoint\-::res\-From\-Cross, sanity\-Checks(), send\-Err(), send\-Msg(), sim\-System\-::start\-T\-M\-M\-C(), sim\-System\-::stop\-W\-A\-L\-A(), checkpoint\-::sweep\-Counter, S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, sim\-System\-::tmmc\-Sweep\-Size, sim\-System\-::use\-W\-A\-L\-A, custom\-Exception\-::what(), and sim\-System\-::wl\-Sweep\-Size.
+References tmmc\-::calculate\-P\-I(), checkpoint\-::check(), sim\-System\-::check\-Energy\-Histogram\-Bounds(), tmmc\-::check\-Fully\-Visited(), checkpoint\-::crossover\-Done, sim\-System\-::crossover\-Total\-Step\-Counter, tmmc\-::dump\-Visited(), wala\-::evaluate\-Flatness(), sim\-System\-::get\-Current\-M(), sim\-System\-::get\-T\-M\-M\-C\-Bias(), sim\-System\-::get\-Total\-M(), sim\-System\-::get\-W\-A\-L\-A\-Bias(), tmmc\-::iterate\-Forward(), wala\-::iterate\-Forward(), wala\-::ln\-F(), moves\-::make\-Move(), checkpoint\-::move\-Counter, sim\-System\-::n\-Crossover\-Visits, tmmc\-::num\-Sweeps(), num\-To\-Str(), moves\-::print(), tmmc\-::print(), sim\-System\-::re\-Initialize\-Energy\-Histogram(), checkpoint\-::res\-From\-Cross, sanity\-Checks(), send\-Err(), send\-Msg(), sim\-System\-::start\-T\-M\-M\-C(), sim\-System\-::stop\-W\-A\-L\-A(), checkpoint\-::sweep\-Counter, S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, sim\-System\-::tmmc\-Sweep\-Size, sim\-System\-::use\-W\-A\-L\-A, sim\-System\-::wala\-Total\-Step\-Counter, custom\-Exception\-::what(), and sim\-System\-::wl\-Sweep\-Size.
 
 
 \begin{DoxyCode}
@@ -70,57 +70,62 @@ References tmmc\-::calculate\-P\-I(), checkpoint\-::check(), sim\-System\-::chec
 33         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} \textcolor{keywordtype}{int} move = moveStart; move < sys.\hyperlink{classsim_system_ae625e1026daee4f99f83fb73881875a1}{wlSweepSize}; ++move) \{
 34             \textcolor{keywordflow}{try} \{
 35                 usedMovesEq->\hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{makeMove}(sys);
-36             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-37                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-38                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-39             \}
-40             \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
-41                 sys.\hyperlink{classsim_system_a176b9ff482f1d36bc0638538bcfe0670}{checkEnergyHistogramBounds} ();
-42             \}
-43             res.\hyperlink{classcheckpoint_ab2f76253fde665ee149c1380e78f5c2f}{check}(sys, move, timesFullyVisited);
-44         \}
-45 
-46         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_aa51f03f958dabefcff97be4a7c3b336c}{checkFullyVisited}()) \{
-47             \textcolor{keywordflow}{try} \{
-48                 sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a8e065523e9cc3c9628f91d3804cd201e}{calculatePI}();
-49             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-50                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-51                 sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ad49e147dc88b3e1c2975269598f94327}{print}(\textcolor{stringliteral}{"tmmc-crossover-fail"}, \textcolor{keyword}{true});
-52                 sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a295886d2f7a947a9de890bcb3adb51c7}{dumpVisited}(\textcolor{stringliteral}{"tmmc-crossover-fail-visited"});
-53                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-54             \}
-55             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a611b5a86b3887afd9e90e2e4da66de35}{iterateForward} (); \textcolor{comment}{// Reset the counting matrix and
+36                 sys.\hyperlink{classsim_system_a1d71d1df76bba70136853e30823d2db9}{crossoverTotalStepCounter} += 1.0;
+37             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+38                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
+39                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+40             \}
+41             \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
+42                 sys.\hyperlink{classsim_system_a176b9ff482f1d36bc0638538bcfe0670}{checkEnergyHistogramBounds} ();
+43             \}
+44             res.\hyperlink{classcheckpoint_a66cc1e90f61d47baafb9564c5c40ef9a}{check}(sys, move, timesFullyVisited, \textcolor{keyword}{false});
+45         \}
+46 
+47         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_aa51f03f958dabefcff97be4a7c3b336c}{checkFullyVisited}()) \{
+48             \textcolor{keywordflow}{try} \{
+49                 sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a8e065523e9cc3c9628f91d3804cd201e}{calculatePI}();
+50             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+51                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
+52                 sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ad49e147dc88b3e1c2975269598f94327}{print}(\textcolor{stringliteral}{"tmmc-crossover-fail"}, \textcolor{keyword}{true});
+53                 sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a295886d2f7a947a9de890bcb3adb51c7}{dumpVisited}(\textcolor{stringliteral}{"tmmc-crossover-fail-visited"});
+54                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+55             \}
+56             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a611b5a86b3887afd9e90e2e4da66de35}{iterateForward} (); \textcolor{comment}{// Reset the counting matrix and
        increment total sweep number}
-56             timesFullyVisited = sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_afbdc037dc9b941d71d7049855e18f4be}{numSweeps}();
-57             \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Times C fully visited = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(timesFullyVisited));
-58             usedMovesEq->\hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print}(\textcolor{stringliteral}{"crossover.stats"});
-59         \}
-60 
-61         \textcolor{comment}{// Check if bias has flattened out, just for continuous improvement}
-62         \textcolor{keywordtype}{bool} flat = sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_add6302db96fcc45811b2944de2936525}{evaluateFlatness}();
-63         \textcolor{keywordflow}{if} (flat) \{
-64             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ae06c2f1475702ec9d1b0a243b7f34e4b}{iterateForward}(); \textcolor{comment}{// If flat, need to reset H and
+57             timesFullyVisited = sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_afbdc037dc9b941d71d7049855e18f4be}{numSweeps}();
+58             \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Times C fully visited = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(timesFullyVisited));
+59             usedMovesEq->\hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print}(\textcolor{stringliteral}{"crossover.stats"});
+60         \}
+61 
+62         \textcolor{comment}{// Check if bias has flattened out, just for continuous improvement}
+63         \textcolor{keywordtype}{bool} flat = sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_add6302db96fcc45811b2944de2936525}{evaluateFlatness}();
+64         \textcolor{keywordflow}{if} (flat) \{
+65             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ae06c2f1475702ec9d1b0a243b7f34e4b}{iterateForward}(); \textcolor{comment}{// If flat, need to reset H and
        reduce lnF}
-65             \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Wang-Landau is now flat, new lnF = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.
+66             \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Wang-Landau is now flat, new lnF = "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.
       \hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF}()));
-66         \}
-67     \}
-68 
-69     \textcolor{comment}{// Switch over to TMMC completely}
-70     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Switching over to TMMC completely, ending Wang-Landau"});
-71     sys.\hyperlink{classsim_system_ad6febde00f19ae0787771f2d1d9e391b}{stopWALA}();
-72     \textcolor{keywordflow}{try} \{
-73         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a8e065523e9cc3c9628f91d3804cd201e}{calculatePI}();
-74     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-75         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
-76         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ad49e147dc88b3e1c2975269598f94327}{print}(\textcolor{stringliteral}{"tmmc-beginning-fail"}, \textcolor{keyword}{true});
-77         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a295886d2f7a947a9de890bcb3adb51c7}{dumpVisited}(\textcolor{stringliteral}{"tmmc-beginning-fail-visited"});
-78         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-79     \}
-80 
-81     sys.\hyperlink{classsim_system_a861dd81718ef1c069fa7cfb9b7efe83c}{reInitializeEnergyHistogram}(); \textcolor{comment}{// If doing initial WL "equilibration"
+67         \}
+68     \}
+69 
+70     \textcolor{comment}{// Switch over to TMMC completely}
+71     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Switching over to TMMC completely, ending Wang-Landau"});
+72     sys.\hyperlink{classsim_system_ad6febde00f19ae0787771f2d1d9e391b}{stopWALA}();
+73     \textcolor{keywordflow}{try} \{
+74         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a8e065523e9cc3c9628f91d3804cd201e}{calculatePI}();
+75     \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+76         \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
+77         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ad49e147dc88b3e1c2975269598f94327}{print}(\textcolor{stringliteral}{"tmmc-beginning-fail"}, \textcolor{keyword}{true});
+78         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a295886d2f7a947a9de890bcb3adb51c7}{dumpVisited}(\textcolor{stringliteral}{"tmmc-beginning-fail-visited"});
+79         exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+80     \}
+81 
+82     sys.\hyperlink{classsim_system_a861dd81718ef1c069fa7cfb9b7efe83c}{reInitializeEnergyHistogram}(); \textcolor{comment}{// If doing initial WL "equilibration"
        re-initialize the histogram using bounds}
-82     \hyperlink{sanity_8cpp_a73138cec3a48e4523004092dc0c2954b}{sanityChecks}(sys);
-83     res.\hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone} = \textcolor{keyword}{true};
-84 \}
+83     \hyperlink{sanity_8cpp_a73138cec3a48e4523004092dc0c2954b}{sanityChecks}(sys);
+84     res.\hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone} = \textcolor{keyword}{true}; \textcolor{comment}{// Do not need to dump a checkpoint}
+85     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Completed "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.\hyperlink{classsim_system_a1d71d1df76bba70136853e30823d2db9}{crossoverTotalStepCounter})+\textcolor{stringliteral}{"
+       total MC steps as part of crossover stage"});
+86     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Total MC steps taken in simulation: "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.
+      \hyperlink{classsim_system_a46f5d3a8843821b45fd3f4d9234a177f}{walaTotalStepCounter}+sys.\hyperlink{classsim_system_a1d71d1df76bba70136853e30823d2db9}{crossoverTotalStepCounter}));
+87 \}
 \end{DoxyCode}

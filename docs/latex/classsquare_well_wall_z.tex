@@ -88,7 +88,7 @@ Expanded ensembles primarily scale the magnitude of interaction. The repulsive b
 \end{DoxyParams}
 
 
-Definition at line 563 of file barrier.\-cpp.
+Definition at line 562 of file barrier.\-cpp.
 
 
 
@@ -96,35 +96,35 @@ References barrier\-::\-M\-\_\-.
 
 
 \begin{DoxyCode}
-563                                                                                                            
+562                                                                                                            
                                     \{
-564     \textcolor{keywordflow}{if} (lb >= ub) \{
-565         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have lower bound < upper bound"});
-566     \}
-567     \textcolor{keywordflow}{if} (sigma < 0) \{
-568         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have sigma >= 0"});
-569     \}
-570     \textcolor{keywordflow}{if} (range < 0) \{
-571         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have range >= 0"});
-572     \}
-573     \textcolor{keywordflow}{if} (eps < 0) \{
-574         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have epsilon >= 0"});
-575     \}
-576     \textcolor{keywordflow}{if} (sigma/2.0 >= range) \{
-577         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have sigma/2 < range to have a finite
+563     \textcolor{keywordflow}{if} (lb >= ub) \{
+564         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have lower bound < upper bound"});
+565     \}
+566     \textcolor{keywordflow}{if} (sigma < 0) \{
+567         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have sigma >= 0"});
+568     \}
+569     \textcolor{keywordflow}{if} (range < 0) \{
+570         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have range >= 0"});
+571     \}
+572     \textcolor{keywordflow}{if} (eps < 0) \{
+573         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have epsilon >= 0"});
+574     \}
+575     \textcolor{keywordflow}{if} (sigma/2.0 >= range) \{
+576         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have sigma/2 < range to have a finite
        range of interaction"});
-578     \}
-579     \textcolor{keywordflow}{if} (M < 1) \{
-580         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have M >= 1"});
-581     \}
-582 
-583     eps\_ = eps;
-584     sigma\_ = sigma;
-585     range\_ = range;
-586     ub\_ = ub;
-587     lb\_ = lb;
-588     \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_} = M;
-589 \}
+577     \}
+578     \textcolor{keywordflow}{if} (M < 1) \{
+579         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"squareWellWallZ must have M >= 1"});
+580     \}
+581 
+582     eps\_ = eps;
+583     sigma\_ = sigma;
+584     range\_ = range;
+585     ub\_ = ub;
+586     lb\_ = lb;
+587     \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_} = M;
+588 \}
 \end{DoxyCode}
 
 
@@ -156,7 +156,7 @@ Implements \hyperlink{classbarrier_a2d308cfd5709aa479d0b37733f1a0db7}{barrier}.
 
 
 
-Definition at line 622 of file barrier.\-cpp.
+Definition at line 621 of file barrier.\-cpp.
 
 
 
@@ -164,37 +164,37 @@ References barrier\-::\-M\-\_\-, atom\-::m\-State, N\-U\-M\-\_\-\-I\-N\-F\-I\-N\
 
 
 \begin{DoxyCode}
-622                                                                                \{
-623     std::vector < double > p = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos};
-624     \hyperlink{utilities_8cpp_ad858a38f435e9a0ee890aa0f526714d2}{pbc} (p, box);
-625     \textcolor{keywordtype}{double} U = 0.0;
-626 
-627     \textcolor{keywordtype}{double} sig = sigma\_, eps = eps\_;
-628     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
-629         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-630         eps = (eps\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-631     \}
-632     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
-633         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for squareWellWallZ"});
-634     \}
-635 
-636     \textcolor{comment}{// Return infinity if out of bounds}
-637     \textcolor{keywordflow}{if} (p[2] >= ub\_ - sig/2.0 || p[2] <= lb\_ + sig/2.0) \{
-638         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
-639     \}
-640 
-641     \textcolor{comment}{// Interaction with top wall}
-642     \textcolor{keywordflow}{if} (p[2] > ub\_ - range\_) \{
-643         U += -eps;
-644     \}
-645 
-646     \textcolor{comment}{// Interaction with lower wall}
-647     \textcolor{keywordflow}{if} (p[2] < lb\_ + range\_) \{
-648         U += -eps;
-649     \}
-650 
-651     \textcolor{keywordflow}{return} U;
-652 \}
+621                                                                                \{
+622     std::vector < double > p = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos};
+623     \hyperlink{utilities_8cpp_ad858a38f435e9a0ee890aa0f526714d2}{pbc} (p, box);
+624     \textcolor{keywordtype}{double} U = 0.0;
+625 
+626     \textcolor{keywordtype}{double} sig = sigma\_, eps = eps\_;
+627     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
+628         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+629         eps = (eps\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+630     \}
+631     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
+632         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for squareWellWallZ"});
+633     \}
+634 
+635     \textcolor{comment}{// Return infinity if out of bounds}
+636     \textcolor{keywordflow}{if} (p[2] >= ub\_ - sig/2.0 || p[2] <= lb\_ + sig/2.0) \{
+637         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
+638     \}
+639 
+640     \textcolor{comment}{// Interaction with top wall}
+641     \textcolor{keywordflow}{if} (p[2] > ub\_ - range\_) \{
+642         U += -eps;
+643     \}
+644 
+645     \textcolor{comment}{// Interaction with lower wall}
+646     \textcolor{keywordflow}{if} (p[2] < lb\_ + range\_) \{
+647         U += -eps;
+648     \}
+649 
+650     \textcolor{keywordflow}{return} U;
+651 \}
 \end{DoxyCode}
 \hypertarget{classsquare_well_wall_z_a10fc7a357ac1ec6bb0cd1d1e95570195}{\index{square\-Well\-Wall\-Z@{square\-Well\-Wall\-Z}!inside@{inside}}
 \index{inside@{inside}!squareWellWallZ@{square\-Well\-Wall\-Z}}
@@ -223,7 +223,7 @@ Implements \hyperlink{classbarrier_a948ebdcfac501cb75d1a1f045a7d9125}{barrier}.
 
 
 
-Definition at line 597 of file barrier.\-cpp.
+Definition at line 596 of file barrier.\-cpp.
 
 
 
@@ -231,24 +231,24 @@ References barrier\-::\-M\-\_\-, atom\-::m\-State, pbc(), and atom\-::pos.
 
 
 \begin{DoxyCode}
-597                                                                              \{
-598     std::vector < double > p = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos};
-599     \hyperlink{utilities_8cpp_ad858a38f435e9a0ee890aa0f526714d2}{pbc} (p, box);
-600 
-601     \textcolor{keywordtype}{double} sig = sigma\_;
-602     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
-603         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-604     \}
-605     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
-606         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for squareWellWallZ"});
-607     \}
-608 
-609     \textcolor{keywordflow}{if} (p[2] >= ub\_ - sig/2.0 || p[2] <= lb\_ + sig/2.0) \{
-610         \textcolor{keywordflow}{return} \textcolor{keyword}{false};
-611     \} \textcolor{keywordflow}{else} \{
-612         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
-613     \}
-614 \}
+596                                                                              \{
+597     std::vector < double > p = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos};
+598     \hyperlink{utilities_8cpp_ad858a38f435e9a0ee890aa0f526714d2}{pbc} (p, box);
+599 
+600     \textcolor{keywordtype}{double} sig = sigma\_;
+601     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
+602         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+603     \}
+604     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
+605         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for squareWellWallZ"});
+606     \}
+607 
+608     \textcolor{keywordflow}{if} (p[2] >= ub\_ - sig/2.0 || p[2] <= lb\_ + sig/2.0) \{
+609         \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+610     \} \textcolor{keywordflow}{else} \{
+611         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+612     \}
+613 \}
 \end{DoxyCode}
 
 

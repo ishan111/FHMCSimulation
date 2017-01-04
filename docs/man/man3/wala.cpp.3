@@ -1,4 +1,4 @@
-.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/wala.cpp" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/wala.cpp" 3 "Wed Jan 4 2017" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -37,7 +37,7 @@ Perform Wang-Landau stage of simulation\&.
 .PP
 Definition at line 10 of file wala\&.cpp\&.
 .PP
-References checkpoint::check(), simSystem::checkEnergyHistogramBounds(), wala::evaluateFlatness(), simSystem::getCurrentM(), simSystem::getTotalM(), simSystem::getWALABias(), wala::iterateForward(), wala::lnF(), simSystem::lnF_end, simSystem::lnF_start, moves::makeMove(), checkpoint::moveCounter, numToStr(), moves::print(), wala::readlnPI(), checkpoint::resFromWALA, simSystem::restartFromWALA, simSystem::restartFromWALAFile, sanityChecks(), sendErr(), sendMsg(), simSystem::startWALA(), SYS_FAILURE, simSystem::useTMMC, simSystem::useWALA, simSystem::wala_g, simSystem::wala_s, checkpoint::walaDone, customException::what(), and simSystem::wlSweepSize\&.
+References checkpoint::check(), simSystem::checkEnergyHistogramBounds(), wala::evaluateFlatness(), simSystem::getCurrentM(), simSystem::getTotalM(), simSystem::getWALABias(), wala::iterateForward(), wala::lnF(), simSystem::lnF_end, simSystem::lnF_start, moves::makeMove(), checkpoint::moveCounter, numToStr(), moves::print(), wala::readlnPI(), checkpoint::resFromWALA, simSystem::restartFromWALA, simSystem::restartFromWALAFile, sanityChecks(), sendErr(), sendMsg(), simSystem::startWALA(), SYS_FAILURE, simSystem::useTMMC, simSystem::useWALA, simSystem::wala_g, simSystem::wala_s, checkpoint::walaDone, simSystem::walaTotalStepCounter, customException::what(), and simSystem::wlSweepSize\&.
 .PP
 .nf
 10                                                                        {
@@ -57,7 +57,7 @@ References checkpoint::check(), simSystem::checkEnergyHistogramBounds(), wala::e
 24 
 25         sys\&.startWALA (lnF, sys\&.wala_g, sys\&.wala_s, sys\&.getTotalM());
 26         if (sys\&.restartFromWALA) {
-27             // specified to start WALA from a lnPI guess, and this is not a restart from a checkpoint
+27             // Specified to start WALA from a lnPI guess, and this is not a restart from a checkpoint
 28             try {
 29                 sys\&.getWALABias()->readlnPI(sys\&.restartFromWALAFile);
 30             } catch (customException &ce) {
@@ -67,8 +67,8 @@ References checkpoint::check(), simSystem::checkEnergyHistogramBounds(), wala::e
 34             sendMsg("Read initial lnPI for Wang-Landau from "+sys\&.restartFromWALAFile);
 35         }
 36     } else {
-37         lnF = sys\&.getWALABias()->lnF(); // checkpoint re-initialized to starting value
-38         moveStart = res\&.moveCounter;
+37         lnF = sys\&.getWALABias()->lnF(); // Checkpoint re-initialized to starting value
+38         moveStart = res\&.moveCounter; // Loop in current lnF stage
 39     }
 40 
 41     sendMsg("Initial lnF = "+numToStr(sys\&.getWALABias()->lnF()));
@@ -78,30 +78,33 @@ References checkpoint::check(), simSystem::checkEnergyHistogramBounds(), wala::e
 45         for (unsigned long long int move = moveStart; move < sys\&.wlSweepSize; ++move) {
 46             try {
 47                 usedMovesEq->makeMove(sys);
-48             } catch (customException &ce) {
-49                 sendErr(ce\&.what());
-50                 exit(SYS_FAILURE);
-51             }
-52             if (sys\&.getCurrentM() == 0){
-53                 sys\&.checkEnergyHistogramBounds ();
-54             }
-55             res\&.check(sys, move);
-56         }
-57 
-58         // Check if bias has flattened out
-59         flat = sys\&.getWALABias()->evaluateFlatness();
-60         if (flat) {
-61             sys\&.getWALABias()->iterateForward(); // if flat, need to reset H and reduce lnF
-62             lnF = sys\&.getWALABias()->lnF();
-63             flat = false;
-64             sendMsg("Wang-Landau is now flat, new lnF = "+numToStr(lnF));
-65             usedMovesEq->print("wala\&.stats");
-66         }
-67     }
-68 
-69     sanityChecks(sys);
-70     res\&.walaDone = true;
-71 }
+48                 sys\&.walaTotalStepCounter += 1\&.0;
+49             } catch (customException &ce) {
+50                 sendErr(ce\&.what());
+51                 exit(SYS_FAILURE);
+52             }
+53             if (sys\&.getCurrentM() == 0){
+54                 sys\&.checkEnergyHistogramBounds ();
+55             }
+56             res\&.check(sys, move, 0, false);
+57         }
+58 
+59         // Check if bias has flattened out
+60         flat = sys\&.getWALABias()->evaluateFlatness();
+61         if (flat) {
+62             sys\&.getWALABias()->iterateForward(); // If flat, need to reset H and reduce lnF
+63             lnF = sys\&.getWALABias()->lnF();
+64             flat = false;
+65             sendMsg("Wang-Landau is now flat, new lnF = "+numToStr(lnF));
+66             usedMovesEq->print("wala\&.stats");
+67         }
+68     }
+69 
+70     sanityChecks(sys);
+71     res\&.walaDone = true; // Do not need to dump a checkpoint
+72     sendMsg("Completed "+numToStr(sys\&.walaTotalStepCounter)+" total MC steps as part of Wang-Landau stage");
+73     sendMsg("Total MC steps taken in simulation: "+numToStr(sys\&.walaTotalStepCounter));
+74 }
 .fi
 .SH "Author"
 .PP 

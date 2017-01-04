@@ -21,9 +21,9 @@ Information to restart/checkpoint the simulation.
 \item 
 void \hyperlink{classcheckpoint_afe0ae7b3a2b83b5e321f09e9cb70a374}{load} (\hyperlink{classsim_system}{sim\-System} \&sys, const bool override)
 \begin{DoxyCompactList}\small\item\em Read state of a system from a json file. \end{DoxyCompactList}\item 
-void \hyperlink{classcheckpoint_a797b53961f8cf53bc78762144a514357}{dump} (\hyperlink{classsim_system}{sim\-System} \&sys, const long long int \hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{move\-Counter}=0, const long long int \hyperlink{classcheckpoint_ad011ddbca1ea708321335b1b3ac67e07}{sweep\-Counter}=0, const bool refine=true)
+void \hyperlink{classcheckpoint_a77a601382b9ca02a63be7712aa7beb04}{dump} (\hyperlink{classsim_system}{sim\-System} \&sys, const long long int \hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{move\-Counter}=0, const long long int \hyperlink{classcheckpoint_ad011ddbca1ea708321335b1b3ac67e07}{sweep\-Counter}=0, const bool refine=false)
 \begin{DoxyCompactList}\small\item\em Save the state of a system to a json file. \end{DoxyCompactList}\item 
-bool \hyperlink{classcheckpoint_ab2f76253fde665ee149c1380e78f5c2f}{check} (\hyperlink{classsim_system}{sim\-System} \&sys, const long long int \hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{move\-Counter}=0, const long long int \hyperlink{classcheckpoint_ad011ddbca1ea708321335b1b3ac67e07}{sweep\-Counter}=0, const bool refine=true)
+bool \hyperlink{classcheckpoint_a66cc1e90f61d47baafb9564c5c40ef9a}{check} (\hyperlink{classsim_system}{sim\-System} \&sys, const long long int \hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{move\-Counter}=0, const long long int \hyperlink{classcheckpoint_ad011ddbca1ea708321335b1b3ac67e07}{sweep\-Counter}=0, const bool refine=false)
 \begin{DoxyCompactList}\small\item\em Check how long it has been since last checkpoint, and write new one if has exceeded frequency. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Data Fields}
 \begin{DoxyCompactItemize}
@@ -185,16 +185,16 @@ Definition at line 26 of file checkpoint.\-h.
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classcheckpoint_ab2f76253fde665ee149c1380e78f5c2f}{\index{checkpoint@{checkpoint}!check@{check}}
+\hypertarget{classcheckpoint_a66cc1e90f61d47baafb9564c5c40ef9a}{\index{checkpoint@{checkpoint}!check@{check}}
 \index{check@{check}!checkpoint@{checkpoint}}
 \subsubsection[{check}]{\setlength{\rightskip}{0pt plus 5cm}bool checkpoint\-::check (
 \begin{DoxyParamCaption}
 \item[{{\bf sim\-System} \&}]{sys, }
 \item[{const long long int}]{move\-Counter = {\ttfamily 0}, }
 \item[{const long long int}]{sweep\-Counter = {\ttfamily 0}, }
-\item[{const bool}]{refine = {\ttfamily true}}
+\item[{const bool}]{refine = {\ttfamily false}}
 \end{DoxyParamCaption}
-)}}\label{classcheckpoint_ab2f76253fde665ee149c1380e78f5c2f}
+)}}\label{classcheckpoint_a66cc1e90f61d47baafb9564c5c40ef9a}
 
 
 Check how long it has been since last checkpoint, and write new one if has exceeded frequency. 
@@ -207,7 +207,7 @@ Check how long it has been since last checkpoint, and write new one if has excee
 \hline
 \mbox{\tt in}  & {\em sweep\-Counter} & Number of loops/sweeps that have executed \\
 \hline
-\mbox{\tt in}  & {\em refine} & Refine the histogram boundaries before printing any? (default=true)\\
+\mbox{\tt in}  & {\em refine} & Refine the histogram boundaries before printing any? (default=false)\\
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
@@ -215,7 +215,7 @@ bool Is a checkpoint being generated or not
 \end{DoxyReturn}
 
 
-Definition at line 285 of file checkpoint.\-cpp.
+Definition at line 297 of file checkpoint.\-cpp.
 
 
 
@@ -227,27 +227,27 @@ Referenced by perform\-Crossover(), perform\-T\-M\-M\-C(), and perform\-W\-A\-L\
 
 
 \begin{DoxyCode}
-285                                                                                                            
+297                                                                                                            
                        \{
-286     \textcolor{keywordflow}{if} (\hyperlink{classcheckpoint_a11a2d78eb0bf6045b659a4d18b53da44}{freq} > 0) \{
-287         \textcolor{keywordflow}{if} (std::abs(difftime(time(&now\_), lastCheckPt\_)) >= \hyperlink{classcheckpoint_a11a2d78eb0bf6045b659a4d18b53da44}{freq}) \{
-288             \hyperlink{classcheckpoint_a797b53961f8cf53bc78762144a514357}{dump}(sys, \hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{moveCounter}, \hyperlink{classcheckpoint_ad011ddbca1ea708321335b1b3ac67e07}{sweepCounter}, refine);
-289             \textcolor{keywordflow}{return} \textcolor{keyword}{true};
-290         \}
-291     \}
-292     \textcolor{keywordflow}{return} \textcolor{keyword}{false};
-293 \}
+298     \textcolor{keywordflow}{if} (\hyperlink{classcheckpoint_a11a2d78eb0bf6045b659a4d18b53da44}{freq} > 0) \{
+299         \textcolor{keywordflow}{if} (std::abs(difftime(time(&now\_), lastCheckPt\_)) >= \hyperlink{classcheckpoint_a11a2d78eb0bf6045b659a4d18b53da44}{freq}) \{
+300             \hyperlink{classcheckpoint_a77a601382b9ca02a63be7712aa7beb04}{dump}(sys, \hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{moveCounter}, \hyperlink{classcheckpoint_ad011ddbca1ea708321335b1b3ac67e07}{sweepCounter}, refine);
+301             \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+302         \}
+303     \}
+304     \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+305 \}
 \end{DoxyCode}
-\hypertarget{classcheckpoint_a797b53961f8cf53bc78762144a514357}{\index{checkpoint@{checkpoint}!dump@{dump}}
+\hypertarget{classcheckpoint_a77a601382b9ca02a63be7712aa7beb04}{\index{checkpoint@{checkpoint}!dump@{dump}}
 \index{dump@{dump}!checkpoint@{checkpoint}}
 \subsubsection[{dump}]{\setlength{\rightskip}{0pt plus 5cm}void checkpoint\-::dump (
 \begin{DoxyParamCaption}
 \item[{{\bf sim\-System} \&}]{sys, }
 \item[{const long long int}]{move\-Counter = {\ttfamily 0}, }
 \item[{const long long int}]{sweep\-Counter = {\ttfamily 0}, }
-\item[{const bool}]{refine = {\ttfamily true}}
+\item[{const bool}]{refine = {\ttfamily false}}
 \end{DoxyParamCaption}
-)}}\label{classcheckpoint_a797b53961f8cf53bc78762144a514357}
+)}}\label{classcheckpoint_a77a601382b9ca02a63be7712aa7beb04}
 
 
 Save the state of a system to a json file. 
@@ -262,16 +262,16 @@ Creates the checkpoint directory if it doesn't exist.
 \hline
 \mbox{\tt in}  & {\em sweep\-Counter} & Number of loops/sweeps that have executed \\
 \hline
-\mbox{\tt in}  & {\em refine} & Refine the histogram boundaries before printing any? (default=true) \\
+\mbox{\tt in}  & {\em refine} & Refine the histogram boundaries before printing any? (default=false) \\
 \hline
 \end{DoxyParams}
 
 
-Definition at line 159 of file checkpoint.\-cpp.
+Definition at line 162 of file checkpoint.\-cpp.
 
 
 
-References chkpt\-Name, crossover\-Done, dir, elb, eub, sim\-System\-::ext\-Mom\-Counter(), file\-Exists(), freq, sim\-System\-::get\-E\-L\-B(), sim\-System\-::get\-E\-U\-B(), get\-Time\-Stamp(), sim\-System\-::get\-T\-M\-M\-C\-Bias(), sim\-System\-::get\-W\-A\-L\-A\-Bias(), has\-Checkpoint, wala\-::ln\-F(), tmmc\-::print(), wala\-::print(), sim\-System\-::print\-Energy\-Histogram(), sim\-System\-::print\-Ext\-Moments(), sim\-System\-::print\-Pk\-Histogram(), sim\-System\-::print\-Snapshot(), sim\-System\-::refine\-Energy\-Histogram\-Bounds(), sim\-System\-::refine\-Pk\-Histogram\-Bounds(), take\-Snaps, tmmc\-Done, and wala\-Done.
+References chkpt\-Name, crossover\-Done, sim\-System\-::crossover\-Total\-Step\-Counter, dir, elb, eub, sim\-System\-::ext\-Mom\-Counter(), file\-Exists(), freq, sim\-System\-::get\-E\-L\-B(), sim\-System\-::get\-E\-U\-B(), get\-Time\-Stamp(), sim\-System\-::get\-T\-M\-M\-C\-Bias(), sim\-System\-::get\-W\-A\-L\-A\-Bias(), has\-Checkpoint, wala\-::ln\-F(), tmmc\-::print(), wala\-::print(), sim\-System\-::print\-Energy\-Histogram(), sim\-System\-::print\-Ext\-Moments(), sim\-System\-::print\-Pk\-Histogram(), sim\-System\-::print\-Snapshot(), sim\-System\-::refine\-Energy\-Histogram\-Bounds(), sim\-System\-::refine\-Pk\-Histogram\-Bounds(), take\-Snaps, tmmc\-Done, sim\-System\-::tmmc\-Total\-Step\-Counter, wala\-Done, and sim\-System\-::wala\-Total\-Step\-Counter.
 
 
 
@@ -279,128 +279,137 @@ Referenced by check().
 
 
 \begin{DoxyCode}
-159                                                                                                            
+162                                                                                                            
                       \{
-160     \textcolor{keywordflow}{if} (!\hyperlink{utilities_8cpp_a9d1e3672fd331d4185c1763c80226307}{fileExists}(\hyperlink{classcheckpoint_a477eea21621f066889660ed426dc800f}{chkptName})) \{
-161         std::string command = \textcolor{stringliteral}{"mkdir -p "}+\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{" && touch "}+\hyperlink{classcheckpoint_a477eea21621f066889660ed426dc800f}{chkptName};
-162         \textcolor{keyword}{const} \textcolor{keywordtype}{int} succ = system(command.c\_str());
-163         \textcolor{keywordflow}{if} (succ != 0) \{
-164             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Unable to initialize checkpoint"});
-165         \}
-166     \}
-167 
-168     rapidjson::StringBuffer s;
-169     rapidjson::PrettyWriter < rapidjson::StringBuffer > writer(s);
-170     \hyperlink{classcheckpoint_aa75f306fcb0c2360d948fa3a61adfed5}{hasCheckpoint} = \textcolor{keyword}{true};
-171 
-172     \textcolor{comment}{// Write restart/checkpoint options}
-173     writer.StartObject();
-174     writer.String(\textcolor{stringliteral}{"tmmcDone"});
-175     writer.Bool(\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone});
-176 
-177     writer.String(\textcolor{stringliteral}{"crossoverDone"});
-178     writer.Bool(\hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone});
+163     \textcolor{keywordflow}{if} (!\hyperlink{utilities_8cpp_a9d1e3672fd331d4185c1763c80226307}{fileExists}(\hyperlink{classcheckpoint_a477eea21621f066889660ed426dc800f}{chkptName})) \{
+164         std::string command = \textcolor{stringliteral}{"mkdir -p "}+\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{" && touch "}+\hyperlink{classcheckpoint_a477eea21621f066889660ed426dc800f}{chkptName};
+165         \textcolor{keyword}{const} \textcolor{keywordtype}{int} succ = system(command.c\_str());
+166         \textcolor{keywordflow}{if} (succ != 0) \{
+167             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException}(\textcolor{stringliteral}{"Unable to initialize checkpoint"});
+168         \}
+169     \}
+170 
+171     rapidjson::StringBuffer s;
+172     rapidjson::PrettyWriter < rapidjson::StringBuffer > writer(s);
+173     \hyperlink{classcheckpoint_aa75f306fcb0c2360d948fa3a61adfed5}{hasCheckpoint} = \textcolor{keyword}{true};
+174 
+175     \textcolor{comment}{// Write restart/checkpoint options}
+176     writer.StartObject();
+177     writer.String(\textcolor{stringliteral}{"tmmcDone"});
+178     writer.Bool(\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone});
 179 
-180     writer.String(\textcolor{stringliteral}{"walaDone"});
-181     writer.Bool(\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone});
+180     writer.String(\textcolor{stringliteral}{"crossoverDone"});
+181     writer.Bool(\hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone});
 182 
-183     writer.String(\textcolor{stringliteral}{"hasCheckpoint"});
-184     writer.Bool(\hyperlink{classcheckpoint_aa75f306fcb0c2360d948fa3a61adfed5}{hasCheckpoint});
+183     writer.String(\textcolor{stringliteral}{"walaDone"});
+184     writer.Bool(\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone});
 185 
-186     writer.String(\textcolor{stringliteral}{"takeSnaps"});
-187     writer.Bool(\hyperlink{classcheckpoint_a685226e8bae8084937f73f65c326c362}{takeSnaps});
+186     writer.String(\textcolor{stringliteral}{"hasCheckpoint"});
+187     writer.Bool(\hyperlink{classcheckpoint_aa75f306fcb0c2360d948fa3a61adfed5}{hasCheckpoint});
 188 
-189     writer.String(\textcolor{stringliteral}{"freq"});
-190     writer.Int64(\hyperlink{classcheckpoint_a11a2d78eb0bf6045b659a4d18b53da44}{freq});
+189     writer.String(\textcolor{stringliteral}{"takeSnaps"});
+190     writer.Bool(\hyperlink{classcheckpoint_a685226e8bae8084937f73f65c326c362}{takeSnaps});
 191 
-192     writer.String(\textcolor{stringliteral}{"dir"});
-193     writer.String(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}.c\_str());
+192     writer.String(\textcolor{stringliteral}{"freq"});
+193     writer.Int64(\hyperlink{classcheckpoint_a11a2d78eb0bf6045b659a4d18b53da44}{freq});
 194 
-195     writer.String(\textcolor{stringliteral}{"moveCounter"});
-196     writer.Double(\hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{moveCounter});
+195     writer.String(\textcolor{stringliteral}{"dir"});
+196     writer.String(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}.c\_str());
 197 
-198     writer.String(\textcolor{stringliteral}{"sweepCounter"});
-199     writer.Double(\hyperlink{classcheckpoint_ad011ddbca1ea708321335b1b3ac67e07}{sweepCounter});
+198     writer.String(\textcolor{stringliteral}{"moveCounter"});
+199     writer.Double(\hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{moveCounter});
 200 
-201     \textcolor{keywordflow}{if} (\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} && \hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone}) \{ \textcolor{comment}{// In final TMMC stage or just finished the TMMC
+201     writer.String(\textcolor{stringliteral}{"sweepCounter"});
+202     writer.Double(\hyperlink{classcheckpoint_ad011ddbca1ea708321335b1b3ac67e07}{sweepCounter});
+203 
+204     writer.String(\textcolor{stringliteral}{"walaTotalStepCounter"});
+205     writer.Double(sys.\hyperlink{classsim_system_a46f5d3a8843821b45fd3f4d9234a177f}{walaTotalStepCounter});
+206 
+207     writer.String(\textcolor{stringliteral}{"crossoverTotalStepCounter"});
+208     writer.Double(sys.\hyperlink{classsim_system_a1d71d1df76bba70136853e30823d2db9}{crossoverTotalStepCounter});
+209 
+210     writer.String(\textcolor{stringliteral}{"tmmcTotalStepCounter"});
+211     writer.Double(sys.\hyperlink{classsim_system_a3ca5ff86766ab388bfd7a48605b10e17}{tmmcTotalStepCounter});
+212 
+213     \textcolor{keywordflow}{if} (\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} && \hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone}) \{ \textcolor{comment}{// In final TMMC stage or just finished the TMMC
        (end of simulation)}
-202         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ad49e147dc88b3e1c2975269598f94327}{print}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/tmmc"}, \textcolor{keyword}{true}, \textcolor{keyword}{true});
-203         \textcolor{keywordflow}{if} (refine) \{
-204             sys.\hyperlink{classsim_system_afe05cba714a032b445cfb1a529547833}{refineEnergyHistogramBounds}();
-205         \}
-206         sys.\hyperlink{classsim_system_a6ef1ba3e08ec44d865436e272cdebc9b}{printEnergyHistogram}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/eHist"}, \textcolor{keyword}{false}); \textcolor{comment}{// Un-normalized Energy
-       histogram}
-207         \textcolor{keywordflow}{if} (refine) \{
-208             sys.\hyperlink{classsim_system_a1e462fcb63389d59419ff6135b2d802e}{refinePkHistogramBounds}();
-209         \}
-210         sys.\hyperlink{classsim_system_ac29bdd6f7fa6f9526b7eafcf658d70d8}{printPkHistogram}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/pkHist"}, \textcolor{keyword}{false}); \textcolor{comment}{// Un-normalized Particle histogram}
-211         sys.\hyperlink{classsim_system_a2818b2f0ff79782d5443ca0f191564f8}{printExtMoments}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/extMom"}, \textcolor{keyword}{false}); \textcolor{comment}{// Un-normalized Extensive moments,
-       plus counter (number of times each recorded)}
-212         writer.String(\textcolor{stringliteral}{"extMomCounter"});
-213         std::vector < double > ctr = sys.\hyperlink{classsim_system_a1744c4c22603662081d75985bc30b754}{extMomCounter}();
-214         writer.StartArray();
-215         \textcolor{keywordflow}{for} (std::vector < double >::iterator it = ctr.begin(); it < ctr.end(); ++it) \{
-216             writer.Double(*it);
+214         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ad49e147dc88b3e1c2975269598f94327}{print}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/tmmc"}, \textcolor{keyword}{true}, \textcolor{keyword}{true});
+215         \textcolor{keywordflow}{if} (refine) \{
+216             sys.\hyperlink{classsim_system_afe05cba714a032b445cfb1a529547833}{refineEnergyHistogramBounds}();
 217         \}
-218         writer.EndArray();
-219     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} && !\hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone} && !\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone}) \{ \textcolor{comment}{// In crossover
+218         sys.\hyperlink{classsim_system_a6ef1ba3e08ec44d865436e272cdebc9b}{printEnergyHistogram}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/eHist"}, \textcolor{keyword}{false}); \textcolor{comment}{// Un-normalized Energy
+       histogram}
+219         \textcolor{keywordflow}{if} (refine) \{
+220             sys.\hyperlink{classsim_system_a1e462fcb63389d59419ff6135b2d802e}{refinePkHistogramBounds}();
+221         \}
+222         sys.\hyperlink{classsim_system_ac29bdd6f7fa6f9526b7eafcf658d70d8}{printPkHistogram}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/pkHist"}, \textcolor{keyword}{false}); \textcolor{comment}{// Un-normalized Particle histogram}
+223         sys.\hyperlink{classsim_system_a2818b2f0ff79782d5443ca0f191564f8}{printExtMoments}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/extMom"}, \textcolor{keyword}{false}); \textcolor{comment}{// Un-normalized Extensive moments,
+       plus counter (number of times each recorded)}
+224         writer.String(\textcolor{stringliteral}{"extMomCounter"});
+225         std::vector < double > ctr = sys.\hyperlink{classsim_system_a1744c4c22603662081d75985bc30b754}{extMomCounter}();
+226         writer.StartArray();
+227         \textcolor{keywordflow}{for} (std::vector < double >::iterator it = ctr.begin(); it < ctr.end(); ++it) \{
+228             writer.Double(*it);
+229         \}
+230         writer.EndArray();
+231     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} && !\hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone} && !\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone}) \{ \textcolor{comment}{// In crossover
        stage}
-220         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ad49e147dc88b3e1c2975269598f94327}{print}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/tmmc"}, \textcolor{keyword}{true}, \textcolor{keyword}{true});
-221         sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_a65569289fac85d0da9c336e17c9d809a}{print}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/wala"}, \textcolor{keyword}{true});
-222 
-223         writer.String(\textcolor{stringliteral}{"wala\_lnF"});
-224         writer.Double(sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF}());
-225 
-226         \textcolor{comment}{// Energy upper and lower bounds for histogram}
-227         std::vector < double > \hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb} = sys.\hyperlink{classsim_system_a610cbb1c6059151e420dbd42dd9da714}{getELB}(), \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub} = sys.\hyperlink{classsim_system_ae87e0ac03cc11259cd3b44c780a90a06}{getEUB}();
-228         writer.String(\textcolor{stringliteral}{"energyHistogramLB"});
-229         writer.StartArray();
-230         \textcolor{keywordflow}{for} (std::vector < double >::iterator it = elb.begin(); it < elb.end(); ++it) \{
-231             writer.Double(*it);
-232         \}
-233         writer.EndArray();
-234         writer.String(\textcolor{stringliteral}{"energyHistogramUB"});
-235         writer.StartArray();
-236         \textcolor{keywordflow}{for} (std::vector < double >::iterator it = \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}.begin(); it < \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}.end(); ++it) \{
-237             writer.Double(*it);
-238         \}
-239         writer.EndArray();
-240     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (!\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} && !\hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone} && !\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone}) \{ \textcolor{comment}{// In WALA stage}
-241         sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_a65569289fac85d0da9c336e17c9d809a}{print}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/wala"}, \textcolor{keyword}{true});
-242 
-243         writer.String(\textcolor{stringliteral}{"wala\_lnF"});
-244         writer.Double(sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF}());
-245 
-246         \textcolor{comment}{// Energy upper and lower bounds for histogram}
-247         std::vector < double > elb = sys.\hyperlink{classsim_system_a610cbb1c6059151e420dbd42dd9da714}{getELB}(), \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub} = sys.\hyperlink{classsim_system_ae87e0ac03cc11259cd3b44c780a90a06}{getEUB}();
-248         writer.String(\textcolor{stringliteral}{"energyHistogramLB"});
-249         writer.StartArray();
-250         \textcolor{keywordflow}{for} (std::vector < double >::iterator it = elb.begin(); it < elb.end(); ++it) \{
-251             writer.Double(*it);
-252         \}
-253         writer.EndArray();
-254         writer.String(\textcolor{stringliteral}{"energyHistogramUB"});
-255         writer.StartArray();
-256         \textcolor{keywordflow}{for} (std::vector < double >::iterator it = \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}.begin(); it < \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}.end(); ++it) \{
-257             writer.Double(*it);
-258         \}
-259         writer.EndArray();
-260     \} \textcolor{keywordflow}{else} \{
-261         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Uncertain which stage simulation is in, so cannot checkpoint
+232         sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ad49e147dc88b3e1c2975269598f94327}{print}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/tmmc"}, \textcolor{keyword}{true}, \textcolor{keyword}{true});
+233         sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_a65569289fac85d0da9c336e17c9d809a}{print}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/wala"}, \textcolor{keyword}{true});
+234 
+235         writer.String(\textcolor{stringliteral}{"wala\_lnF"});
+236         writer.Double(sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF}());
+237 
+238         \textcolor{comment}{// Energy upper and lower bounds for histogram}
+239         std::vector < double > \hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb} = sys.\hyperlink{classsim_system_a610cbb1c6059151e420dbd42dd9da714}{getELB}(), \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub} = sys.\hyperlink{classsim_system_ae87e0ac03cc11259cd3b44c780a90a06}{getEUB}();
+240         writer.String(\textcolor{stringliteral}{"energyHistogramLB"});
+241         writer.StartArray();
+242         \textcolor{keywordflow}{for} (std::vector < double >::iterator it = elb.begin(); it < elb.end(); ++it) \{
+243             writer.Double(*it);
+244         \}
+245         writer.EndArray();
+246         writer.String(\textcolor{stringliteral}{"energyHistogramUB"});
+247         writer.StartArray();
+248         \textcolor{keywordflow}{for} (std::vector < double >::iterator it = \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}.begin(); it < \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}.end(); ++it) \{
+249             writer.Double(*it);
+250         \}
+251         writer.EndArray();
+252     \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (!\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} && !\hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone} && !\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone}) \{ \textcolor{comment}{// In WALA stage}
+253         sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_a65569289fac85d0da9c336e17c9d809a}{print}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/wala"}, \textcolor{keyword}{true});
+254 
+255         writer.String(\textcolor{stringliteral}{"wala\_lnF"});
+256         writer.Double(sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_acb8e59580d97bc3c5b9b4ff45eb6bb9a}{lnF}());
+257 
+258         \textcolor{comment}{// Energy upper and lower bounds for histogram}
+259         std::vector < double > elb = sys.\hyperlink{classsim_system_a610cbb1c6059151e420dbd42dd9da714}{getELB}(), \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub} = sys.\hyperlink{classsim_system_ae87e0ac03cc11259cd3b44c780a90a06}{getEUB}();
+260         writer.String(\textcolor{stringliteral}{"energyHistogramLB"});
+261         writer.StartArray();
+262         \textcolor{keywordflow}{for} (std::vector < double >::iterator it = elb.begin(); it < elb.end(); ++it) \{
+263             writer.Double(*it);
+264         \}
+265         writer.EndArray();
+266         writer.String(\textcolor{stringliteral}{"energyHistogramUB"});
+267         writer.StartArray();
+268         \textcolor{keywordflow}{for} (std::vector < double >::iterator it = \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}.begin(); it < \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}.end(); ++it) \{
+269             writer.Double(*it);
+270         \}
+271         writer.EndArray();
+272     \} \textcolor{keywordflow}{else} \{
+273         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Uncertain which stage simulation is in, so cannot checkpoint
       "});
-262     \}
-263     writer.EndObject();
-264     std::ofstream outData(chkptName.c\_str());
-265     outData << s.GetString() << std::endl;
-266 
-267     sys.\hyperlink{classsim_system_ae3096dc65acdf38cc824e507cca33370}{printSnapshot}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/snap.xyz"}, \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}(), \textcolor{keyword}{true}); \textcolor{comment}{// Instantaneous
+274     \}
+275     writer.EndObject();
+276     std::ofstream outData(chkptName.c\_str());
+277     outData << s.GetString() << std::endl;
+278 
+279     sys.\hyperlink{classsim_system_ae3096dc65acdf38cc824e507cca33370}{printSnapshot}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/snap.xyz"}, \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}(), \textcolor{keyword}{true}); \textcolor{comment}{// Instantaneous
        snapshot}
-268     \textcolor{keywordflow}{if} (\hyperlink{classcheckpoint_a685226e8bae8084937f73f65c326c362}{takeSnaps}) \{ \textcolor{comment}{// This only prints M = 0 atoms (fully inserted) to create a movie}
-269         sys.\hyperlink{classsim_system_ae3096dc65acdf38cc824e507cca33370}{printSnapshot}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/movie.xyz"}, \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}(), \textcolor{keyword}{false});
-270     \}
-271 
-272     time(&lastCheckPt\_);
-273 \}
+280     \textcolor{keywordflow}{if} (\hyperlink{classcheckpoint_a685226e8bae8084937f73f65c326c362}{takeSnaps}) \{ \textcolor{comment}{// This only prints M = 0 atoms (fully inserted) to create a movie}
+281         sys.\hyperlink{classsim_system_ae3096dc65acdf38cc824e507cca33370}{printSnapshot}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/movie.xyz"}, \hyperlink{utilities_8cpp_aa6d910bf51f18a75deb20c6f0fbba285}{getTimeStamp}(), \textcolor{keyword}{false});
+282     \}
+283 
+284     time(&lastCheckPt\_);
+285 \}
 \end{DoxyCode}
 \hypertarget{classcheckpoint_afe0ae7b3a2b83b5e321f09e9cb70a374}{\index{checkpoint@{checkpoint}!load@{load}}
 \index{load@{load}!checkpoint@{checkpoint}}
@@ -427,7 +436,7 @@ Definition at line 54 of file checkpoint.\-cpp.
 
 
 
-References tmmc\-::calculate\-P\-I(), chkpt\-Name, crossover\-Done, dir, elb, eub, file\-Exists(), sim\-System\-::get\-T\-M\-M\-C\-Bias(), sim\-System\-::get\-Total\-M(), sim\-System\-::get\-W\-A\-L\-A\-Bias(), has\-Checkpoint, move\-Counter, parse\-Json(), tmmc\-::read\-C(), sim\-System\-::read\-Config(), wala\-::read\-H(), tmmc\-::read\-H\-C(), wala\-::readln\-P\-I(), res\-From\-Cross, res\-From\-T\-M\-M\-C, res\-From\-W\-A\-L\-A, sim\-System\-::restart\-Energy\-Histogram(), sim\-System\-::restart\-Ext\-Moments(), sim\-System\-::restart\-Pk\-Histogram(), send\-Err(), send\-Msg(), sim\-System\-::set\-E\-L\-B(), sim\-System\-::set\-E\-U\-B(), sim\-System\-::start\-T\-M\-M\-C(), sim\-System\-::start\-W\-A\-L\-A(), sweep\-Counter, S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, take\-Snaps, tmmc\-Done, sim\-System\-::tmmc\-Sweep\-Size, sim\-System\-::wala\-\_\-g, wala\-\_\-ln\-F, sim\-System\-::wala\-\_\-s, and wala\-Done.
+References tmmc\-::calculate\-P\-I(), chkpt\-Name, crossover\-Done, sim\-System\-::crossover\-Total\-Step\-Counter, dir, elb, eub, file\-Exists(), sim\-System\-::get\-T\-M\-M\-C\-Bias(), sim\-System\-::get\-Total\-M(), sim\-System\-::get\-W\-A\-L\-A\-Bias(), has\-Checkpoint, move\-Counter, parse\-Json(), tmmc\-::read\-C(), sim\-System\-::read\-Config(), wala\-::read\-H(), tmmc\-::read\-H\-C(), wala\-::readln\-P\-I(), res\-From\-Cross, res\-From\-T\-M\-M\-C, res\-From\-W\-A\-L\-A, sim\-System\-::restart\-Energy\-Histogram(), sim\-System\-::restart\-Ext\-Moments(), sim\-System\-::restart\-Pk\-Histogram(), send\-Err(), send\-Msg(), sim\-System\-::set\-E\-L\-B(), sim\-System\-::set\-E\-U\-B(), sim\-System\-::start\-T\-M\-M\-C(), sim\-System\-::start\-W\-A\-L\-A(), sweep\-Counter, S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, take\-Snaps, tmmc\-Done, sim\-System\-::tmmc\-Sweep\-Size, sim\-System\-::tmmc\-Total\-Step\-Counter, sim\-System\-::wala\-\_\-g, wala\-\_\-ln\-F, sim\-System\-::wala\-\_\-s, wala\-Done, and sim\-System\-::wala\-Total\-Step\-Counter.
 
 
 
@@ -453,90 +462,96 @@ Referenced by checkpoint().
 68         \hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir} = doc[\textcolor{stringliteral}{"dir"}].GetString();
 69         \hyperlink{classcheckpoint_a5ab49a355714da4874aba00eb03f701d}{moveCounter} = (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} int)doc[\textcolor{stringliteral}{"moveCounter"}].GetDouble();
 70         \hyperlink{classcheckpoint_ad011ddbca1ea708321335b1b3ac67e07}{sweepCounter} = (\textcolor{keywordtype}{long} \textcolor{keywordtype}{long} int)doc[\textcolor{stringliteral}{"sweepCounter"}].GetDouble();
-71 
-72         \textcolor{keywordflow}{if} (\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} && \hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone}) \{ \textcolor{comment}{// In final TMMC stage or just finished the
+71         sys.\hyperlink{classsim_system_a46f5d3a8843821b45fd3f4d9234a177f}{walaTotalStepCounter} = (\textcolor{keywordtype}{long} double)doc[\textcolor{stringliteral}{"walaTotalStepCounter"}].GetDouble()
+      ;
+72         sys.\hyperlink{classsim_system_a1d71d1df76bba70136853e30823d2db9}{crossoverTotalStepCounter} = (\textcolor{keywordtype}{long} double)doc[\textcolor{stringliteral}{"
+      crossoverTotalStepCounter"}].GetDouble();
+73         sys.\hyperlink{classsim_system_a3ca5ff86766ab388bfd7a48605b10e17}{tmmcTotalStepCounter} = (\textcolor{keywordtype}{long} double)doc[\textcolor{stringliteral}{"tmmcTotalStepCounter"}].GetDouble()
+      ;
+74 
+75         \textcolor{keywordflow}{if} (\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} && \hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone}) \{ \textcolor{comment}{// In final TMMC stage or just finished the
        TMMC (end of simulation)}
-73             \hyperlink{classcheckpoint_ab8f6081561b8c7871eea6743d4988d8a}{resFromTMMC} = \textcolor{keyword}{true};
-74             sys.\hyperlink{classsim_system_ac689245cd8e9ddfdcd94d3871a5a5d6b}{startTMMC}(sys.\hyperlink{classsim_system_a56e284a361964d0a9ce5c45f41d56ab1}{tmmcSweepSize}, sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}());
-75             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a7d9ee0505dc801cbff55bc35c3654a61}{readC}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/tmmc\_C.dat"});
-76             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ab51a593d041a65c4ca47e6c4e0c26992}{readHC}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/tmmc\_HC.dat"});
-77             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a8e065523e9cc3c9628f91d3804cd201e}{calculatePI}();
-78             std::vector < double > ctr (doc[\textcolor{stringliteral}{"extMomCounter"}].Size(), 0);
-79             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < doc[\textcolor{stringliteral}{"extMomCounter"}].Size(); ++i) \{
-80                 ctr[i] = doc[\textcolor{stringliteral}{"extMomCounter"}][i].GetDouble();
-81             \}
-82             sys.\hyperlink{classsim_system_ae073008ed44e551f0d008b2f5a0fc06f}{restartEnergyHistogram}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/eHist"});
-83             sys.\hyperlink{classsim_system_a3239a23e35f30e40eeecf8795386c164}{restartPkHistogram}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/pkHist"});
-84             sys.\hyperlink{classsim_system_a999556fea891765c5ed4d979706665af}{restartExtMoments}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/extMom"}, ctr);
-85         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} && !\hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone} && !\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone}) \{ \textcolor{comment}{// In crossover
+76             \hyperlink{classcheckpoint_ab8f6081561b8c7871eea6743d4988d8a}{resFromTMMC} = \textcolor{keyword}{true};
+77             sys.\hyperlink{classsim_system_ac689245cd8e9ddfdcd94d3871a5a5d6b}{startTMMC}(sys.\hyperlink{classsim_system_a56e284a361964d0a9ce5c45f41d56ab1}{tmmcSweepSize}, sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}());
+78             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a7d9ee0505dc801cbff55bc35c3654a61}{readC}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/tmmc\_C.dat"});
+79             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ab51a593d041a65c4ca47e6c4e0c26992}{readHC}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/tmmc\_HC.dat"});
+80             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a8e065523e9cc3c9628f91d3804cd201e}{calculatePI}();
+81             std::vector < double > ctr (doc[\textcolor{stringliteral}{"extMomCounter"}].Size(), 0);
+82             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < doc[\textcolor{stringliteral}{"extMomCounter"}].Size(); ++i) \{
+83                 ctr[i] = doc[\textcolor{stringliteral}{"extMomCounter"}][i].GetDouble();
+84             \}
+85             sys.\hyperlink{classsim_system_ae073008ed44e551f0d008b2f5a0fc06f}{restartEnergyHistogram}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/eHist"});
+86             sys.\hyperlink{classsim_system_a3239a23e35f30e40eeecf8795386c164}{restartPkHistogram}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/pkHist"});
+87             sys.\hyperlink{classsim_system_a999556fea891765c5ed4d979706665af}{restartExtMoments}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/extMom"}, ctr);
+88         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} && !\hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone} && !\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone}) \{ \textcolor{comment}{// In crossover
        stage}
-86             \hyperlink{classcheckpoint_ac3e65d26f2b8231ae9dd7e29c72ecf3b}{resFromCross} = \textcolor{keyword}{true};
-87             sys.\hyperlink{classsim_system_ac689245cd8e9ddfdcd94d3871a5a5d6b}{startTMMC}(sys.\hyperlink{classsim_system_a56e284a361964d0a9ce5c45f41d56ab1}{tmmcSweepSize}, sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}());
-88             \hyperlink{classcheckpoint_a34dc9c1711a8b4f9986a7a2c41b9dcd1}{wala\_lnF} = doc[\textcolor{stringliteral}{"wala\_lnF"}].GetDouble();
-89             sys.\hyperlink{classsim_system_a57af66c88ce4dc1aeb6a1cd3f14ff0bb}{startWALA} (\hyperlink{classcheckpoint_a34dc9c1711a8b4f9986a7a2c41b9dcd1}{wala\_lnF}, sys.\hyperlink{classsim_system_aa2e866e69ebe5fa0761894212592175a}{wala\_g}, sys.
+89             \hyperlink{classcheckpoint_ac3e65d26f2b8231ae9dd7e29c72ecf3b}{resFromCross} = \textcolor{keyword}{true};
+90             sys.\hyperlink{classsim_system_ac689245cd8e9ddfdcd94d3871a5a5d6b}{startTMMC}(sys.\hyperlink{classsim_system_a56e284a361964d0a9ce5c45f41d56ab1}{tmmcSweepSize}, sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}());
+91             \hyperlink{classcheckpoint_a34dc9c1711a8b4f9986a7a2c41b9dcd1}{wala\_lnF} = doc[\textcolor{stringliteral}{"wala\_lnF"}].GetDouble();
+92             sys.\hyperlink{classsim_system_a57af66c88ce4dc1aeb6a1cd3f14ff0bb}{startWALA} (\hyperlink{classcheckpoint_a34dc9c1711a8b4f9986a7a2c41b9dcd1}{wala\_lnF}, sys.\hyperlink{classsim_system_aa2e866e69ebe5fa0761894212592175a}{wala\_g}, sys.
       \hyperlink{classsim_system_a7cc3431bb59acca9165b044dbd07dcdc}{wala\_s}, sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}());
-90 
-91             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a7d9ee0505dc801cbff55bc35c3654a61}{readC}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/tmmc\_C.dat"});
-92             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ab51a593d041a65c4ca47e6c4e0c26992}{readHC}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/tmmc\_HC.dat"});
-93             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ae04916f49c11b0636e813787a3906570}{readlnPI}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/wala\_lnPI.dat"});
-94             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_a0b8df0fb2b7722fc4a458e527a478b6f}{readH}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/wala\_H.dat"});
-95 
-96             \textcolor{comment}{// Energy upper and lower bounds for histogram}
-97             \hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb}.resize(doc[\textcolor{stringliteral}{"energyHistogramLB"}].Size(), 0);
-98             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < doc[\textcolor{stringliteral}{"energyHistogramLB"}].Size(); ++i) \{
-99                 \hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb}[i] = doc[\textcolor{stringliteral}{"energyHistogramLB"}][i].GetDouble();
-100             \}
-101             sys.\hyperlink{classsim_system_a284cf6c00f572db12db0cb263974a78a}{setELB}(\hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb});
-102 
-103             \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}.resize(doc[\textcolor{stringliteral}{"energyHistogramUB"}].Size(), 0);
-104             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < doc[\textcolor{stringliteral}{"energyHistogramUB"}].Size(); ++i) \{
-105                 \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}[i] = doc[\textcolor{stringliteral}{"energyHistogramUB"}][i].GetDouble();
-106             \}
-107             sys.\hyperlink{classsim_system_ab894de5ccd37efa97ae799f1dc1875a1}{setEUB}(\hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub});
-108         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (!\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} && !\hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone} && !\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone}) \{ \textcolor{comment}{// In WALA
+93 
+94             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_a7d9ee0505dc801cbff55bc35c3654a61}{readC}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/tmmc\_C.dat"});
+95             sys.\hyperlink{classsim_system_aa31d40c91cb50f143a9613d362798887}{getTMMCBias}()->\hyperlink{classtmmc_ab51a593d041a65c4ca47e6c4e0c26992}{readHC}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/tmmc\_HC.dat"});
+96             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ae04916f49c11b0636e813787a3906570}{readlnPI}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/wala\_lnPI.dat"});
+97             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_a0b8df0fb2b7722fc4a458e527a478b6f}{readH}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/wala\_H.dat"});
+98 
+99             \textcolor{comment}{// Energy upper and lower bounds for histogram}
+100             \hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb}.resize(doc[\textcolor{stringliteral}{"energyHistogramLB"}].Size(), 0);
+101             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < doc[\textcolor{stringliteral}{"energyHistogramLB"}].Size(); ++i) \{
+102                 \hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb}[i] = doc[\textcolor{stringliteral}{"energyHistogramLB"}][i].GetDouble();
+103             \}
+104             sys.\hyperlink{classsim_system_a284cf6c00f572db12db0cb263974a78a}{setELB}(\hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb});
+105 
+106             \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}.resize(doc[\textcolor{stringliteral}{"energyHistogramUB"}].Size(), 0);
+107             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < doc[\textcolor{stringliteral}{"energyHistogramUB"}].Size(); ++i) \{
+108                 \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}[i] = doc[\textcolor{stringliteral}{"energyHistogramUB"}][i].GetDouble();
+109             \}
+110             sys.\hyperlink{classsim_system_ab894de5ccd37efa97ae799f1dc1875a1}{setEUB}(\hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub});
+111         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (!\hyperlink{classcheckpoint_aab066479e2ca6656d0031dd46a2fc1a5}{walaDone} && !\hyperlink{classcheckpoint_a4f13612ea6d376bb327295bfce3a70c5}{crossoverDone} && !\hyperlink{classcheckpoint_acbe0c62aa82735741a9f396827966823}{tmmcDone}) \{ \textcolor{comment}{// In WALA
        stage and printed 1st checkpoint already}
-109             \hyperlink{classcheckpoint_a46f1c17d03901292f642ccad0a325d9e}{resFromWALA} = \textcolor{keyword}{true};
-110             \hyperlink{classcheckpoint_a34dc9c1711a8b4f9986a7a2c41b9dcd1}{wala\_lnF} = doc[\textcolor{stringliteral}{"wala\_lnF"}].GetDouble();
-111             sys.\hyperlink{classsim_system_a57af66c88ce4dc1aeb6a1cd3f14ff0bb}{startWALA} (\hyperlink{classcheckpoint_a34dc9c1711a8b4f9986a7a2c41b9dcd1}{wala\_lnF}, sys.\hyperlink{classsim_system_aa2e866e69ebe5fa0761894212592175a}{wala\_g}, sys.
+112             \hyperlink{classcheckpoint_a46f1c17d03901292f642ccad0a325d9e}{resFromWALA} = \textcolor{keyword}{true};
+113             \hyperlink{classcheckpoint_a34dc9c1711a8b4f9986a7a2c41b9dcd1}{wala\_lnF} = doc[\textcolor{stringliteral}{"wala\_lnF"}].GetDouble();
+114             sys.\hyperlink{classsim_system_a57af66c88ce4dc1aeb6a1cd3f14ff0bb}{startWALA} (\hyperlink{classcheckpoint_a34dc9c1711a8b4f9986a7a2c41b9dcd1}{wala\_lnF}, sys.\hyperlink{classsim_system_aa2e866e69ebe5fa0761894212592175a}{wala\_g}, sys.
       \hyperlink{classsim_system_a7cc3431bb59acca9165b044dbd07dcdc}{wala\_s}, sys.\hyperlink{classsim_system_aa4ad1afff101bb530e1590df05035276}{getTotalM}());
-112 
-113             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ae04916f49c11b0636e813787a3906570}{readlnPI}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/wala\_lnPI.dat"});
-114             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_a0b8df0fb2b7722fc4a458e527a478b6f}{readH}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/wala\_H.dat"});
 115 
-116             \textcolor{comment}{// Energy upper and lower bounds for histogram}
-117             \hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb}.resize(doc[\textcolor{stringliteral}{"energyHistogramLB"}].Size(), 0);
-118             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < doc[\textcolor{stringliteral}{"energyHistogramLB"}].Size(); ++i) \{
-119                 \hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb}[i] = doc[\textcolor{stringliteral}{"energyHistogramLB"}][i].GetDouble();
-120             \}
-121             sys.\hyperlink{classsim_system_a284cf6c00f572db12db0cb263974a78a}{setELB}(\hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb});
-122 
-123             \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}.resize(doc[\textcolor{stringliteral}{"energyHistogramUB"}].Size(), 0);
-124             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < doc[\textcolor{stringliteral}{"energyHistogramUB"}].Size(); ++i) \{
-125                 \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}[i] = doc[\textcolor{stringliteral}{"energyHistogramUB"}][i].GetDouble();
-126             \}
-127             sys.\hyperlink{classsim_system_ab894de5ccd37efa97ae799f1dc1875a1}{setEUB}(\hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub});
-128         \} \textcolor{keywordflow}{else} \{
-129             \textcolor{keywordflow}{if} (!\textcolor{keyword}{override}) \{
-130                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Uncertain which stage simulation is in, so cannot checkpoint"});
-131                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-132             \}
-133         \}
-134 
-135         sys.\hyperlink{classsim_system_a3161d95bbb800d5d95a732ac5fc32b95}{readConfig}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/snap.xyz"});
-136         \hyperlink{classcheckpoint_aa75f306fcb0c2360d948fa3a61adfed5}{hasCheckpoint} = \textcolor{keyword}{true};
-137     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
-138         std::string msg = ex.what();
-139         \textcolor{keywordflow}{if} (!\textcolor{keyword}{override}) \{
-140             \hyperlink{classcheckpoint_aa75f306fcb0c2360d948fa3a61adfed5}{hasCheckpoint} = \textcolor{keyword}{false};
-141             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Unable to load checkpoint "}+msg);
-142             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
-143         \} \textcolor{keywordflow}{else} \{
-144             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Overriding the following errors to load checkpoint "}+msg);
-145         \}
-146     \}
-147 
-148     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Checkpoint loaded from "}+\hyperlink{classcheckpoint_a477eea21621f066889660ed426dc800f}{chkptName});
-149 \}
+116             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ae04916f49c11b0636e813787a3906570}{readlnPI}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/wala\_lnPI.dat"});
+117             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_a0b8df0fb2b7722fc4a458e527a478b6f}{readH}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/wala\_H.dat"});
+118 
+119             \textcolor{comment}{// Energy upper and lower bounds for histogram}
+120             \hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb}.resize(doc[\textcolor{stringliteral}{"energyHistogramLB"}].Size(), 0);
+121             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < doc[\textcolor{stringliteral}{"energyHistogramLB"}].Size(); ++i) \{
+122                 \hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb}[i] = doc[\textcolor{stringliteral}{"energyHistogramLB"}][i].GetDouble();
+123             \}
+124             sys.\hyperlink{classsim_system_a284cf6c00f572db12db0cb263974a78a}{setELB}(\hyperlink{classcheckpoint_a2338cb624f19eb6776c10f9bb83b2a5d}{elb});
+125 
+126             \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}.resize(doc[\textcolor{stringliteral}{"energyHistogramUB"}].Size(), 0);
+127             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < doc[\textcolor{stringliteral}{"energyHistogramUB"}].Size(); ++i) \{
+128                 \hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub}[i] = doc[\textcolor{stringliteral}{"energyHistogramUB"}][i].GetDouble();
+129             \}
+130             sys.\hyperlink{classsim_system_ab894de5ccd37efa97ae799f1dc1875a1}{setEUB}(\hyperlink{classcheckpoint_a7071b01d0936873321d0a706e761b6ac}{eub});
+131         \} \textcolor{keywordflow}{else} \{
+132             \textcolor{keywordflow}{if} (!\textcolor{keyword}{override}) \{
+133                 \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Uncertain which stage simulation is in, so cannot checkpoint"});
+134                 exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+135             \}
+136         \}
+137 
+138         sys.\hyperlink{classsim_system_a3161d95bbb800d5d95a732ac5fc32b95}{readConfig}(\hyperlink{classcheckpoint_a0e0f999ee8e0b09541e9131baa8a591d}{dir}+\textcolor{stringliteral}{"/snap.xyz"});
+139         \hyperlink{classcheckpoint_aa75f306fcb0c2360d948fa3a61adfed5}{hasCheckpoint} = \textcolor{keyword}{true};
+140     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
+141         std::string msg = ex.what();
+142         \textcolor{keywordflow}{if} (!\textcolor{keyword}{override}) \{
+143             \hyperlink{classcheckpoint_aa75f306fcb0c2360d948fa3a61adfed5}{hasCheckpoint} = \textcolor{keyword}{false};
+144             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Unable to load checkpoint "}+msg);
+145             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+146         \} \textcolor{keywordflow}{else} \{
+147             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(\textcolor{stringliteral}{"Overriding the following errors to load checkpoint "}+msg);
+148         \}
+149     \}
+150 
+151     \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg}(\textcolor{stringliteral}{"Checkpoint loaded from "}+\hyperlink{classcheckpoint_a477eea21621f066889660ed426dc800f}{chkptName});
+152 \}
 \end{DoxyCode}
 
 

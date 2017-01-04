@@ -1,4 +1,4 @@
-.TH "wala" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "wala" 3 "Wed Jan 4 2017" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -50,7 +50,7 @@ Wang-Landau biasing class\&.
 .br
 .RI "\fIEvaluate if the visited states histogram is approxiamtely 'flat'\&. \fP"
 .ti -1c
-.RI "const \fB__BIAS_INT_TYPE__\fP \fBgetAddress\fP (const int Nval, const int Mval)"
+.RI "const long long int \fBgetAddress\fP (const int Nval, const int Mval)"
 .br
 .RI "\fIFor multidimensional Wang-Landau biasing, get the 1D coordinate of the macrostate distribution estimate (bias) for multidimensional data\&. \fP"
 .ti -1c
@@ -72,16 +72,16 @@ Wang-Landau biasing class\&.
 .PP 
 Wang-Landau biasing class\&. 
 .PP
-Definition at line 59 of file bias\&.h\&.
+Definition at line 56 of file bias\&.h\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "wala::wala ()\fC [inline]\fP"
 
 .PP
-Definition at line 61 of file bias\&.h\&.
+Definition at line 58 of file bias\&.h\&.
 .PP
 .nf
-61 {};
+58 {};
 .fi
 .SS "wala::wala (const doublelnF, const doubleg, const doubles, const intNmax, const intNmin, const intMtot, const std::vector< double >box)"
 
@@ -107,70 +107,70 @@ Wang-Landau biasing constructor\&.
 .PP
 
 .PP
-Definition at line 407 of file bias\&.cpp\&.
+Definition at line 405 of file bias\&.cpp\&.
 .PP
-References __BIAS_INT_TYPE__, and lnF()\&.
+References lnF()\&.
 .PP
 .nf
-407                                                                                                                                           {
-408     if (lnF < 0) {
-409         throw customException ("lnF in Wang-Landau cannot be < 0");
-410     }
-411     lnF_ = lnF;
-412 
-413     if (g <= 0 || g >= 1) {
-414         throw customException ("In Wang-Landau 0 < g < 1");
-415     }
-416     g_ = g;
-417 
-418     if (s <= 0 || s >= 1) {
-419         throw customException ("In Wang-Landau 0 < s < 1");
-420     }
-421     s_ = s;
-422 
-423     if (Nmin > Nmax) {
-424         throw customException ("Nmin > Nmax in Wang-Landau object");
-425     }
-426 
-427     if (Nmin < 0) {
-428         throw customException ("Nmin < 0 in Wang-Landau object");
-429     }
-430 
-431     if (Mtot < 1) {
-432         throw customException ("Mtot < 1 in Wang-Landau object");
-433     }
-434     Mtot_ = Mtot;
-435 
-436     if (box\&.size() != 3) {
-437         throw customException ("Illegal number of box dimensions in Wang-Landau");
-438     }
-439     for (unsigned int i = 0; i < box\&.size(); ++i) {
-440         if (box[i] < 0) {
-441             throw customException ("Illegal box dimensions in Wang-Landau");
-442         }
-443     }
-444     box_\&.resize(3, 0);
-445     box_ = box;
+405                                                                                                                                           {
+406     if (lnF < 0) {
+407         throw customException ("lnF in Wang-Landau cannot be < 0");
+408     }
+409     lnF_ = lnF;
+410 
+411     if (g <= 0 || g >= 1) {
+412         throw customException ("In Wang-Landau 0 < g < 1");
+413     }
+414     g_ = g;
+415 
+416     if (s <= 0 || s >= 1) {
+417         throw customException ("In Wang-Landau 0 < s < 1");
+418     }
+419     s_ = s;
+420 
+421     if (Nmin > Nmax) {
+422         throw customException ("Nmin > Nmax in Wang-Landau object");
+423     }
+424 
+425     if (Nmin < 0) {
+426         throw customException ("Nmin < 0 in Wang-Landau object");
+427     }
+428 
+429     if (Mtot < 1) {
+430         throw customException ("Mtot < 1 in Wang-Landau object");
+431     }
+432     Mtot_ = Mtot;
+433 
+434     if (box\&.size() != 3) {
+435         throw customException ("Illegal number of box dimensions in Wang-Landau");
+436     }
+437     for (unsigned int i = 0; i < box\&.size(); ++i) {
+438         if (box[i] < 0) {
+439             throw customException ("Illegal box dimensions in Wang-Landau");
+440         }
+441     }
+442     box_\&.resize(3, 0);
+443     box_ = box;
+444 
+445     long long int size = (Nmax - Nmin + 1);
 446 
-447     __BIAS_INT_TYPE__ size = (Nmax - Nmin + 1);
-448 
-449     Nmin_ = Nmin;
-450     Nmax_ = Nmax;
-451 
-452     // attempt to allocate memory for macrostate distribution matrix and initializes it all to 0
-453     try {
-454         lnPI_\&.resize(size*Mtot_, 0\&.0);
-455     } catch (const std::bad_alloc &ce) {
-456         throw customException ("Out of memory, cannot allocate space for macrostate distribution matrix in wala");
-457     }
-458 
-459     // initialize the visited-states histogram
-460     try {
-461         H_\&.resize(size*Mtot_, 0\&.0);
-462     } catch (const std::bad_alloc &ce) {
-463         throw customException ("Out of memory, cannot allocate space for visited-states histogram in wala");
-464     }
-465 }
+447     Nmin_ = Nmin;
+448     Nmax_ = Nmax;
+449 
+450     // attempt to allocate memory for macrostate distribution matrix and initializes it all to 0
+451     try {
+452         lnPI_\&.resize(size*Mtot_, 0\&.0);
+453     } catch (const std::bad_alloc &ce) {
+454         throw customException ("Out of memory, cannot allocate space for macrostate distribution matrix in wala");
+455     }
+456 
+457     // initialize the visited-states histogram
+458     try {
+459         H_\&.resize(size*Mtot_, 0\&.0);
+460     } catch (const std::bad_alloc &ce) {
+461         throw customException ("Out of memory, cannot allocate space for visited-states histogram in wala");
+462     }
+463 }
 .fi
 .SH "Member Function Documentation"
 .PP 
@@ -186,32 +186,32 @@ Returns whether the histogram is flat or not\&.
 .PP
 
 .PP
-Definition at line 497 of file bias\&.cpp\&.
+Definition at line 495 of file bias\&.cpp\&.
 .PP
 References specExp\&.
 .PP
 Referenced by performCrossover(), and performWALA()\&.
 .PP
 .nf
-497                              {
-498     double min = H_[0], lnMean = -DBL_MAX;
-499     for (unsigned int i = 0; i < H_\&.size() - (Mtot_-1); ++i) { // insert routine prevents the sampling past N = Nmax, M = 0, so N = Nmax and M > 0 are validly empty
-500         if (H_[i] < min) {
-501             min = H_[i];
-502         }
-503 
-504         // summing so many doubles may overrun DBL_MAX, so instead track the lnMean
-505         lnMean = specExp(lnMean, log(H_[i]));
-506     }
-507     lnMean -= log(H_\&.size() - (Mtot_-1));
-508 
-509     if (log(min) - lnMean > log(s_)) {
-510         return true;
-511     }
-512     return false;
-513 }
+495                              {
+496     double min = H_[0], lnMean = -DBL_MAX;
+497     for (unsigned int i = 0; i < H_\&.size() - (Mtot_-1); ++i) { // insert routine prevents the sampling past N = Nmax, M = 0, so N = Nmax and M > 0 are validly empty
+498         if (H_[i] < min) {
+499             min = H_[i];
+500         }
+501 
+502         // summing so many doubles may overrun DBL_MAX, so instead track the lnMean
+503         lnMean = specExp(lnMean, log(H_[i]));
+504     }
+505     lnMean -= log(H_\&.size() - (Mtot_-1));
+506 
+507     if (log(min) - lnMean > log(s_)) {
+508         return true;
+509     }
+510     return false;
+511 }
 .fi
-.SS "const \fB__BIAS_INT_TYPE__\fP wala::getAddress (const intNval, const intMval)"
+.SS "const long long int wala::getAddress (const intNval, const intMval)"
 
 .PP
 For multidimensional Wang-Landau biasing, get the 1D coordinate of the macrostate distribution estimate (bias) for multidimensional data\&. 
@@ -225,64 +225,64 @@ For multidimensional Wang-Landau biasing, get the 1D coordinate of the macrostat
 .PP
 
 .PP
-Definition at line 473 of file bias\&.cpp\&.
+Definition at line 471 of file bias\&.cpp\&.
 .PP
 Referenced by calculateBias(), and update()\&.
 .PP
 .nf
-473                                                                         {
-474     if (Nval > Nmax_ || Nval < Nmin_ || Mval < 0 || Mval > Mtot_-1) {
-475         throw customException ("N, M out of bounds in Wang-Landau object, cannot retrieve address");
-476     }
-477     return (Nval - Nmin_)*Mtot_ + Mval;
-478 }
+471                                                                     {
+472     if (Nval > Nmax_ || Nval < Nmin_ || Mval < 0 || Mval > Mtot_-1) {
+473         throw customException ("N, M out of bounds in Wang-Landau object, cannot retrieve address");
+474     }
+475     return (Nval - Nmin_)*Mtot_ + Mval;
+476 }
 .fi
 .SS "const double wala::getBias (const intaddress)\fC [inline]\fP"
 
 .PP
-Definition at line 73 of file bias\&.h\&.
+Definition at line 70 of file bias\&.h\&.
 .PP
 Referenced by calculateBias()\&.
 .PP
 .nf
-73 { return -lnPI_[address]; }
+70 { return -lnPI_[address]; }
 .fi
 .SS "const std::vector<double> wala::getH ()\fC [inline]\fP"
 
 .PP
 Return the visited-states histogram\&. 
 .PP
-Definition at line 75 of file bias\&.h\&.
+Definition at line 72 of file bias\&.h\&.
 .SS "const std::vector<double> wala::getlnPI ()\fC [inline]\fP"
 
 .PP
 Return the current estimate of the macrostate distribution\&. 
 .PP
-Definition at line 74 of file bias\&.h\&.
+Definition at line 71 of file bias\&.h\&.
 .SS "void wala::iterateForward ()"
 
 .PP
 This should only be called when the 'flatness' criterion is met\&. This then resets the visited-states histogram H, and decrements lnF\&. 
 .PP
-Definition at line 518 of file bias\&.cpp\&.
+Definition at line 516 of file bias\&.cpp\&.
 .PP
 Referenced by performCrossover(), and performWALA()\&.
 .PP
 .nf
-518                            {
-519     lnF_ = lnF_*g_;
-520     std::fill(H_\&.begin(), H_\&.end(), 0);
-521 }
+516                            {
+517     lnF_ = lnF_*g_;
+518     std::fill(H_\&.begin(), H_\&.end(), 0);
+519 }
 .fi
 .SS "const double wala::lnF ()\fC [inline]\fP"
 
 .PP
-Definition at line 72 of file bias\&.h\&.
+Definition at line 69 of file bias\&.h\&.
 .PP
 Referenced by checkpoint::dump(), performCrossover(), performWALA(), and wala()\&.
 .PP
 .nf
-72 { return lnF_; }
+69 { return lnF_; }
 .fi
 .SS "void wala::print (const std::stringfileName, const boolprintH = \fCfalse\fP)"
 
@@ -298,49 +298,49 @@ Print the UN-NORMALIZED biasing function (lnPI) and possible the visted states h
 .PP
 
 .PP
-Definition at line 530 of file bias\&.cpp\&.
+Definition at line 528 of file bias\&.cpp\&.
 .PP
 Referenced by checkpoint::dump()\&.
 .PP
 .nf
-530                                                        {
-531     // Print visited-states histogram
-532     if (printH) {
-533         // print complete visited states histogram to restart / visualize progress
-534         std::ofstream of;
-535         std::string name = fileName+"_H\&.dat";
-536         of\&.open(name\&.c_str(), std::ofstream::out);
-537         if (!of\&.is_open()) {
-538             throw customException ("Unable to write Wang-Landau visited states histogram to "+name);
-539         }
-540         of << "# Visited states histogram in single row (vectorized) notation\&." << std::endl;
-541         of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-542         of << "# species_total_lower_bound: " << Nmin_ << std::endl;
-543         double V = box_[0]*box_[1]*box_[2];
-544         of << "# volume: " << std::setprecision(15) << V << std::endl;
-545         for (long long int i = 0; i < H_\&.size(); ++i) {
-546             of << std::setprecision(15) << H_[i] << std::endl;
-547         }
-548         of\&.close();
-549     }
-550 
-551     // Print lnPI (bias) matrix
-552     std::ofstream of;
-553     std::string name = fileName+"_lnPI\&.dat";
-554     of\&.open(name\&.c_str(), std::ofstream::out);
-555     if (!of\&.is_open()) {
-556         throw customException ("Unable to write Wang-Landau lnPI histogram to "+name);
-557     }
-558     of << "# lnPI (bias) matrix in single row (vectorized) notation\&." << std::endl;
-559     of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-560     of << "# species_total_lower_bound: " << Nmin_ << std::endl;
-561     double V = box_[0]*box_[1]*box_[2];
-562     of << "# volume: " << std::setprecision(15) << V << std::endl;
-563     for (long long int i = 0; i < lnPI_\&.size(); ++i) {
-564         of << std::setprecision(15) << lnPI_[i] << std::endl; // only ALL states for restarting purposes
-565     }
-566     of\&.close();
-567 }
+528                                                        {
+529     // Print visited-states histogram
+530     if (printH) {
+531         // print complete visited states histogram to restart / visualize progress
+532         std::ofstream of;
+533         std::string name = fileName+"_H\&.dat";
+534         of\&.open(name\&.c_str(), std::ofstream::out);
+535         if (!of\&.is_open()) {
+536             throw customException ("Unable to write Wang-Landau visited states histogram to "+name);
+537         }
+538         of << "# Visited states histogram in single row (vectorized) notation\&." << std::endl;
+539         of << "# species_total_upper_bound: " << Nmax_ << std::endl;
+540         of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+541         double V = box_[0]*box_[1]*box_[2];
+542         of << "# volume: " << std::setprecision(15) << V << std::endl;
+543         for (long long int i = 0; i < H_\&.size(); ++i) {
+544             of << std::setprecision(15) << H_[i] << std::endl;
+545         }
+546         of\&.close();
+547     }
+548 
+549     // Print lnPI (bias) matrix
+550     std::ofstream of;
+551     std::string name = fileName+"_lnPI\&.dat";
+552     of\&.open(name\&.c_str(), std::ofstream::out);
+553     if (!of\&.is_open()) {
+554         throw customException ("Unable to write Wang-Landau lnPI histogram to "+name);
+555     }
+556     of << "# lnPI (bias) matrix in single row (vectorized) notation\&." << std::endl;
+557     of << "# species_total_upper_bound: " << Nmax_ << std::endl;
+558     of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+559     double V = box_[0]*box_[1]*box_[2];
+560     of << "# volume: " << std::setprecision(15) << V << std::endl;
+561     for (long long int i = 0; i < lnPI_\&.size(); ++i) {
+562         of << std::setprecision(15) << lnPI_[i] << std::endl; // only ALL states for restarting purposes
+563     }
+564     of\&.close();
+565 }
 .fi
 .SS "void wala::readH (const std::stringfileName)"
 
@@ -354,27 +354,27 @@ Read the visited states histogram from a file\&. This assumes the user has alrea
 .PP
 
 .PP
-Definition at line 600 of file bias\&.cpp\&.
+Definition at line 598 of file bias\&.cpp\&.
 .PP
 Referenced by checkpoint::load()\&.
 .PP
 .nf
-600                                           {
-601     std::ifstream infile (fileName\&.c_str());
-602     if (!infile\&.is_open()) {
-603         throw customException ("Unable to read Wang-Landau visited states matrix  from "+fileName);
-604     }
-605     std::string line;
-606     int lineIndex = 0;
-607     while(std::getline(infile,line)) {
-608         std::stringstream lineStream(line);
-609         // skip any header information
-610         if (line\&.compare(0,1,"#",0,1) != 0) {
-611             H_[lineIndex] = atof(line\&.c_str());
-612             lineIndex++;
-613         }
-614     }
-615 }
+598                                           {
+599     std::ifstream infile (fileName\&.c_str());
+600     if (!infile\&.is_open()) {
+601         throw customException ("Unable to read Wang-Landau visited states matrix  from "+fileName);
+602     }
+603     std::string line;
+604     int lineIndex = 0;
+605     while(std::getline(infile,line)) {
+606         std::stringstream lineStream(line);
+607         // skip any header information
+608         if (line\&.compare(0,1,"#",0,1) != 0) {
+609             H_[lineIndex] = atof(line\&.c_str());
+610             lineIndex++;
+611         }
+612     }
+613 }
 .fi
 .SS "void wala::readlnPI (const std::stringfileName)"
 
@@ -388,34 +388,34 @@ Read the macrostate distribution (biasing function) from a file\&. This assumes 
 .PP
 
 .PP
-Definition at line 576 of file bias\&.cpp\&.
+Definition at line 574 of file bias\&.cpp\&.
 .PP
 Referenced by checkpoint::load(), and performWALA()\&.
 .PP
 .nf
-576                                              {
-577     std::ifstream infile (fileName\&.c_str());
-578     if (!infile\&.is_open()) {
-579         throw customException ("Unable to read Wang-Landau lnPI from "+fileName);
-580     }
-581     std::string line;
-582     int lineIndex = 0;
-583     while(std::getline(infile,line)) {
-584         std::stringstream lineStream(line);
-585         // skip any header information
-586         if (line\&.compare(0,1,"#",0,1) != 0) {
-587             lnPI_[lineIndex] = atof(line\&.c_str());
-588             lineIndex++;
-589         }
-590     }
-591 }
+574                                              {
+575     std::ifstream infile (fileName\&.c_str());
+576     if (!infile\&.is_open()) {
+577         throw customException ("Unable to read Wang-Landau lnPI from "+fileName);
+578     }
+579     std::string line;
+580     int lineIndex = 0;
+581     while(std::getline(infile,line)) {
+582         std::stringstream lineStream(line);
+583         // skip any header information
+584         if (line\&.compare(0,1,"#",0,1) != 0) {
+585             lnPI_[lineIndex] = atof(line\&.c_str());
+586             lineIndex++;
+587         }
+588     }
+589 }
 .fi
 .SS "void wala::setlnPI (const std::vector< double > &lnPIguess)\fC [inline]\fP"
 
 .PP
 Blindly assign a guess of the macrostate distribution\&. 
 .PP
-Definition at line 69 of file bias\&.h\&.
+Definition at line 66 of file bias\&.h\&.
 .SS "void wala::update (const intNval, const intMval)"
 
 .PP
@@ -430,18 +430,18 @@ Update the estimate of the macrostate distribution\&.
 .PP
 
 .PP
-Definition at line 486 of file bias\&.cpp\&.
+Definition at line 484 of file bias\&.cpp\&.
 .PP
-References __BIAS_INT_TYPE__, and getAddress()\&.
+References getAddress()\&.
 .PP
 Referenced by aggVolBias3::make(), translateParticle::make(), deleteParticle::make(), insertParticle::make(), and swapParticles::make()\&.
 .PP
 .nf
-486                                                  {
-487     __BIAS_INT_TYPE__ address = getAddress (Nval, Mval);
-488     lnPI_[address] += lnF_;
-489     H_[address] += 1\&.0;
-490 }
+484                                                  {
+485     long long int address = getAddress (Nval, Mval);
+486     lnPI_[address] += lnF_;
+487     H_[address] += 1\&.0;
+488 }
 .fi
 
 

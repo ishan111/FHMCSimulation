@@ -1,0 +1,157 @@
+\hypertarget{gcmc_8h}{\section{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/gcmc.h File Reference}
+\label{gcmc_8h}\index{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/gcmc.\-h@{/home/nam4/\-Desktop/sandbox/\-F\-H\-M\-C\-Simulation/src/gcmc.\-h}}
+}
+{\ttfamily \#include $<$string$>$}\\*
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include $<$fstream$>$}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$stdlib.\-h$>$}\\*
+{\ttfamily \#include $<$exception$>$}\\*
+{\ttfamily \#include $<$cmath$>$}\\*
+{\ttfamily \#include $<$iomanip$>$}\\*
+{\ttfamily \#include $<$memory$>$}\\*
+{\ttfamily \#include $<$algorithm$>$}\\*
+{\ttfamily \#include \char`\"{}system.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}utilities.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}mover.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}sanity.\-h\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}global.\-h\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{gcmc_8h_a868808b86eff7e27dc0b4af4757be23a}{perform\-G\-C\-M\-C} (\hyperlink{classsim_system}{sim\-System} \&sys, \hyperlink{classmoves}{moves} $\ast$used\-Moves\-Eq, \hyperlink{classmoves}{moves} $\ast$used\-Moves\-Pr)
+\begin{DoxyCompactList}\small\item\em Perform an unbiased G\-C\-M\-C simulation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\hypertarget{gcmc_8h_a868808b86eff7e27dc0b4af4757be23a}{\index{gcmc.\-h@{gcmc.\-h}!perform\-G\-C\-M\-C@{perform\-G\-C\-M\-C}}
+\index{perform\-G\-C\-M\-C@{perform\-G\-C\-M\-C}!gcmc.h@{gcmc.\-h}}
+\subsubsection[{perform\-G\-C\-M\-C}]{\setlength{\rightskip}{0pt plus 5cm}void perform\-G\-C\-M\-C (
+\begin{DoxyParamCaption}
+\item[{{\bf sim\-System} \&}]{sys, }
+\item[{{\bf moves} $\ast$}]{used\-Moves\-Eq, }
+\item[{{\bf moves} $\ast$}]{used\-Moves\-Pr}
+\end{DoxyParamCaption}
+)}}\label{gcmc_8h_a868808b86eff7e27dc0b4af4757be23a}
+
+
+Perform an unbiased G\-C\-M\-C simulation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em sys} & System to simulate \\
+\hline
+\mbox{\tt in}  & {\em used\-Moves\-Eq} & Move class to use for equilibration phase \\
+\hline
+\mbox{\tt in}  & {\em used\-Moves\-Pr} & Move class to use for production phase \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 10 of file gcmc.\-cpp.
+
+
+
+References sim\-System\-::energy(), sim\-System\-::gcmc\-Eq\-Steps, sim\-System\-::gcmc\-Pr\-Steps, sim\-System\-::gcmc\-Snap\-Freq, sim\-System\-::gcmc\-Thermo\-Freq, sim\-System\-::get\-Current\-M(), moves\-::make\-Move(), sim\-System\-::n\-Species(), sim\-System\-::num\-Species, num\-To\-Str(), moves\-::print(), sim\-System\-::print\-Snapshot(), sanity\-Checks(), send\-Err(), send\-Msg(), S\-Y\-S\-\_\-\-F\-A\-I\-L\-U\-R\-E, and custom\-Exception\-::what().
+
+
+\begin{DoxyCode}
+10                                                                           \{
+11     \textcolor{comment}{// Equilibration Phase}
+12     std::ofstream ofs;
+13     ofs.open (\textcolor{stringliteral}{"thermoEq.log"}, std::ofstream::out);
+14     \textcolor{keywordflow}{if} (!ofs.is\_open()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to open log file to record
+       equilibration GCMC thermodynamics"});
+15     ofs << \textcolor{stringliteral}{"# Step\(\backslash\)tU\(\backslash\)tN\_tot\(\backslash\)t"};
+16     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{
+17         ofs << \textcolor{stringliteral}{"N\_"}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{"\(\backslash\)t"};
+18     \}
+19     ofs << std::endl;
+20 
+21     \textcolor{keywordtype}{double} ctr = 0, thermo\_ctr = 0; \textcolor{comment}{// Count number of times system was in M = 0 state}
+22     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{double} move = 0; move < sys.\hyperlink{classsim_system_aa83fc40dca4aa56d890dbc978da1ea4e}{gcmcEqSteps}; move += 1.0) \{
+23         \textcolor{keywordflow}{try} \{
+24             usedMovesEq->\hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{makeMove}(sys);
+25         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+26             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
+27             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+28         \}
+29 
+30         \textcolor{comment}{// Only record properties of the system when it is NOT in an intermediate state}
+31         \textcolor{keywordflow}{if} (thermo\_ctr < sys.\hyperlink{classsim_system_a91d057904fa4d57543fef4133294899f}{gcmcThermoFreq} && sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
+32             thermo\_ctr += 1.0;
+33         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (thermo\_ctr >= sys.\hyperlink{classsim_system_a91d057904fa4d57543fef4133294899f}{gcmcThermoFreq} && sys.
+      \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
+34             \textcolor{keywordtype}{double} sys\_ntot = 0;
+35             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{ sys\_ntot += sys.
+      \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i]; \}
+36             ofs << move << \textcolor{stringliteral}{"\(\backslash\)t"} << sys.\hyperlink{classsim_system_a37b3d15faf56bf31349f5c2aaf02f858}{energy}() << \textcolor{stringliteral}{"\(\backslash\)t"} << sys\_ntot << \textcolor{stringliteral}{"\(\backslash\)t"};
+37             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{ ofs << sys.
+      \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i]/sys\_ntot << \textcolor{stringliteral}{"\(\backslash\)t"}; \}
+38             ofs << std::endl;
+39             thermo\_ctr = 0.0;
+40         \}
+41 
+42         \textcolor{keywordflow}{if} (ctr < sys.\hyperlink{classsim_system_ad899e42a50a3ae94ac18663bca5bd8b3}{gcmcSnapFreq}) \{
+43             ctr += 1.0;
+44         \} \textcolor{keywordflow}{else} \{
+45             ctr = 0.0;
+46             usedMovesEq->\hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print}(\textcolor{stringliteral}{"equilibration.stats"});
+47         \}
+48     \}
+49     ofs.close();
+50     usedMovesEq->\hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print}(\textcolor{stringliteral}{"equilibration.stats"});
+51     \hyperlink{sanity_8cpp_a73138cec3a48e4523004092dc0c2954b}{sanityChecks}(sys);
+52 
+53     \textcolor{comment}{// Production phase}
+54     ofs.open (\textcolor{stringliteral}{"thermoPr.log"}, std::ofstream::out);
+55     \textcolor{keywordflow}{if} (!ofs.is\_open()) \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Unable to open log file to record production
+       GCMC thermodynamics"});
+56     ofs << \textcolor{stringliteral}{"# Step\(\backslash\)tU\(\backslash\)tN\_tot\(\backslash\)t"};
+57     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{ ofs << \textcolor{stringliteral}{"N\_"}+
+      \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(i+1)+\textcolor{stringliteral}{"\(\backslash\)t"}; \}
+58     ofs << std::endl;
+59 
+60     ctr = 0;
+61     thermo\_ctr = 0;
+62     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{double} move = 0; move < sys.\hyperlink{classsim_system_ae477ed10d350665f6065774a12f884c8}{gcmcPrSteps}; move += 1.0) \{
+63         \textcolor{keywordflow}{try} \{
+64             usedMovesPr->\hyperlink{classmoves_a7f023913b80bb62604b99f4dbf005c37}{makeMove}(sys);
+65         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+66             \hyperlink{utilities_8cpp_a6dacf3c3c19aa1e13a4d5a148fe5114e}{sendErr}(ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}());
+67             exit(\hyperlink{global_8h_a428dfe1ef0a6ff4b1fdebf275f6aff2e}{SYS\_FAILURE});
+68         \}
+69 
+70         \textcolor{comment}{// Only record properties of the system when it is NOT in an intermediate state}
+71         \textcolor{keywordflow}{if} (thermo\_ctr < sys.\hyperlink{classsim_system_a91d057904fa4d57543fef4133294899f}{gcmcThermoFreq} && sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
+72             thermo\_ctr += 1.0;
+73         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (thermo\_ctr >= sys.\hyperlink{classsim_system_a91d057904fa4d57543fef4133294899f}{gcmcThermoFreq} && sys.
+      \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
+74             \textcolor{keywordtype}{double} sys\_ntot = 0;
+75             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{ sys\_ntot += sys.
+      \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i]; \}
+76             ofs << move << \textcolor{stringliteral}{"\(\backslash\)t"} << sys.\hyperlink{classsim_system_a37b3d15faf56bf31349f5c2aaf02f858}{energy}() << \textcolor{stringliteral}{"\(\backslash\)t"} << sys\_ntot << \textcolor{stringliteral}{"\(\backslash\)t"};
+77             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++i) \{ ofs << sys.
+      \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[i]/sys\_ntot << \textcolor{stringliteral}{"\(\backslash\)t"}; \}
+78             ofs << std::endl;
+79             thermo\_ctr = 0.0;
+80         \}
+81 
+82         \textcolor{comment}{// Can print snapshot regardless of M state, since partial atoms are neglected from printing
+       routine}
+83         \textcolor{keywordflow}{if} (ctr < sys.\hyperlink{classsim_system_ad899e42a50a3ae94ac18663bca5bd8b3}{gcmcSnapFreq}) \{
+84             ctr += 1.0;
+85         \} \textcolor{keywordflow}{else} \{
+86             ctr = 0.0;
+87             usedMovesPr->\hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print}(\textcolor{stringliteral}{"production.stats"});
+88             sys.\hyperlink{classsim_system_ae3096dc65acdf38cc824e507cca33370}{printSnapshot}(\textcolor{stringliteral}{"movie.xyz"}, \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(move), \textcolor{keyword}{false});
+89             \hyperlink{utilities_8cpp_a08974c73a5b36c28b8ad1ef47fca77b0}{sendMsg} (\textcolor{stringliteral}{"Completed "}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(move)+\textcolor{stringliteral}{"/"}+\hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.
+      \hyperlink{classsim_system_ae477ed10d350665f6065774a12f884c8}{gcmcPrSteps})+\textcolor{stringliteral}{" production steps"});
+90         \}
+91     \}
+92     ofs.close();
+93     usedMovesPr->\hyperlink{classmoves_acc6415d4000f01b93235d1a533aa6880}{print}(\textcolor{stringliteral}{"production.stats"});
+94     sys.\hyperlink{classsim_system_ae3096dc65acdf38cc824e507cca33370}{printSnapshot}(\textcolor{stringliteral}{"movie.xyz"}, \hyperlink{utilities_8h_ae6ed8fadf719af789711a7c0e99f44bc}{numToStr}(sys.\hyperlink{classsim_system_ae477ed10d350665f6065774a12f884c8}{gcmcPrSteps}), \textcolor{keyword}{false});
+95     \hyperlink{sanity_8cpp_a73138cec3a48e4523004092dc0c2954b}{sanityChecks}(sys);
+96 \}
+\end{DoxyCode}

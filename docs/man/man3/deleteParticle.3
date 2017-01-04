@@ -1,4 +1,4 @@
-.TH "deleteParticle" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "deleteParticle" 3 "Wed Jan 4 2017" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -78,37 +78,37 @@ References simSystem::addKECorrection(), simSystem::atoms, simSystem::beta(), si
 10                                         {
 11     bool earlyReject = false;
 12 
-13     // check if any can be deleted from this species
+13     // Check if any can be deleted from this species
 14     if (sys\&.numSpecies[typeIndex_] < sys\&.minSpecies(typeIndex_)) {
 15         earlyReject = true;
-16         }
-17         if (sys\&.numSpecies[typeIndex_] == sys\&.minSpecies(typeIndex_) && sys\&.getCurrentM() == 0) {
-18             earlyReject = true;
-19         }
+16     }
+17     if (sys\&.numSpecies[typeIndex_] == sys\&.minSpecies(typeIndex_) && sys\&.getCurrentM() == 0) {
+18         earlyReject = true;
+19     }
 20 
-21         // also check if at global bound on total number of particles
-22         if (sys\&.getTotN() < sys\&.totNMin()) {
-23             earlyReject = true;
-24         }
-25         if (sys\&.getTotN() == sys\&.totNMin() && sys\&.getCurrentM() == 0) { // move class guarantees only operating on the correct species already
-26             earlyReject = true;
-27         }
+21     // Also check if at global bound on total number of particles
+22     if (sys\&.getTotN() < sys\&.totNMin()) {
+23         earlyReject = true;
+24     }
+25     if (sys\&.getTotN() == sys\&.totNMin() && sys\&.getCurrentM() == 0) { // Move class guarantees only operating on the correct species already
+26         earlyReject = true;
+27     }
 28 
-29     // updates to biasing functions must be done even if at bounds
-30         if (earlyReject) {
-31             if (sys\&.useWALA) {
-32                     sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
-33             }
-34             if (sys\&.useTMMC) {
-35                     int nTotFinal = sys\&.getTotN(), mFinal = sys\&.getCurrentM() - 1;
-36                     if (sys\&.getCurrentM() == 0) {
-37                         nTotFinal--;
-38                         mFinal = sys\&.getTotalM() - 1;
-39                     }
-40                     sys\&.tmmcBias->updateC (sys\&.getTotN(), nTotFinal, sys\&.getCurrentM(), mFinal, 0\&.0);
-41             }
-42             return MOVE_FAILURE;
-43         }
+29     // Updates to biasing functions must be done even if at bounds
+30     if (earlyReject) {
+31         if (sys\&.useWALA) {
+32             sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+33         }
+34         if (sys\&.useTMMC) {
+35             int nTotFinal = sys\&.getTotN(), mFinal = sys\&.getCurrentM() - 1;
+36             if (sys\&.getCurrentM() == 0) {
+37                 nTotFinal--;
+38                 mFinal = sys\&.getTotalM() - 1;
+39             }
+40             sys\&.tmmcBias->updateC (sys\&.getTotN(), nTotFinal, sys\&.getCurrentM(), mFinal, 0\&.0);
+41         }
+42         return MOVE_FAILURE;
+43     }
 44 
 45     const std::vector < double > box = sys\&.box();
 46     double V = 1\&.0;
@@ -118,140 +118,140 @@ References simSystem::addKECorrection(), simSystem::atoms, simSystem::beta(), si
 50 
 51     double delEnergy = 0\&.0;
 52 
-53     // initial guess at the N state we are coming from
-54         long long int nHigh = sys\&.numSpecies[typeIndex_];
+53     // Initial guess at the N state we are coming from
+54     long long int nHigh = sys\&.numSpecies[typeIndex_];
 55 
 56     atom* chosenAtom;
-57         if (sys\&.getCurrentM() == 0) {
-58             // pick a brand new one to delete
-59             chosenAtom = &sys\&.atoms[typeIndex_][(int) floor(rng (&RNG_SEED) * sys\&.numSpecies[typeIndex_])];
-60             nHigh = sys\&.numSpecies[typeIndex_];
-61         } else {
-62             // continue to try to delete the partially deleted one
-63             chosenAtom = sys\&.getFractionalAtom(); // mcMove guarantees this move only being made if fractional atom of type typeIndex_
-64             nHigh = sys\&.numSpecies[typeIndex_] + 1; // again mcMove guarantees this species is the fractional one, reference has to be at the next fully inserted level
+57     if (sys\&.getCurrentM() == 0) {
+58         // Pick a brand new one to delete
+59         chosenAtom = &sys\&.atoms[typeIndex_][(int) floor(rng (&RNG_SEED) * sys\&.numSpecies[typeIndex_])];
+60         nHigh = sys\&.numSpecies[typeIndex_];
+61     } else {
+62         // Continue to try to delete the partially deleted one
+63         chosenAtom = sys\&.getFractionalAtom(); // mcMove guarantees this move only being made if fractional atom of type typeIndex_
+64         nHigh = sys\&.numSpecies[typeIndex_] + 1; // Again mcMove guarantees this species is the fractional one, reference has to be at the next fully inserted level
 65     }
 66 
-67         // get baseline as the particle currently is
-68         for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
-69             // get positions of neighboring atoms around chosenAtom
-70             std::vector < atom* > neighborAtoms = sys\&.getNeighborAtoms(spec, typeIndex_, chosenAtom);
-71             for (unsigned int i = 0; i < neighborAtoms\&.size(); ++i) {
-72                     try {
+67     // Get baseline as the particle currently is
+68     for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
+69         // Get positions of neighboring atoms around chosenAtom
+70         std::vector < atom* > neighborAtoms = sys\&.getNeighborAtoms(spec, typeIndex_, chosenAtom);
+71         for (unsigned int i = 0; i < neighborAtoms\&.size(); ++i) {
+72             try {
 73                 delEnergy -= sys\&.ppot[spec][typeIndex_]->energy(neighborAtoms[i], chosenAtom, box);
 74             } catch (customException& ce) {
 75                 std::string a = "Cannot delete because of energy error: ", b = ce\&.what();
 76                 throw customException (a+b);
 77             }
-78             }
-79             // add tail correction to potential energy -- only enable for fluid phase simulations
-80 #ifdef FLUID_PHASE_SIMULATIONS
-81             if (sys\&.ppot[spec][typeIndex_]->useTailCorrection) {
-82                 if (chosenAtom->mState == 0) {
-83                     // if current atom is a full atom right now, include tail corrections
-84                     if (spec == typeIndex_) {
-85                                 if (sys\&.numSpecies[spec]-1 > 0) {
-86                                     delEnergy -= sys\&.ppot[spec][typeIndex_]->tailCorrection((sys\&.numSpecies[spec]-1)/V);
-87                                 }
-88                     } else {
-89                                 if (sys\&.numSpecies[spec] > 0) {
-90                                     delEnergy -= sys\&.ppot[spec][typeIndex_]->tailCorrection(sys\&.numSpecies[spec]/V);
-91                                 }
-92                         }
+78         }
+79 
+80         // Add tail correction to potential energy -- only enable for fluid phase simulations
+81 #ifdef FLUID_PHASE_SIMULATIONS
+82         if (sys\&.ppot[spec][typeIndex_]->useTailCorrection) {
+83             if (chosenAtom->mState == 0) {
+84                 // If current atom is a full atom right now, include tail corrections
+85                 if (spec == typeIndex_) {
+86                     if (sys\&.numSpecies[spec]-1 > 0) {
+87                         delEnergy -= sys\&.ppot[spec][typeIndex_]->tailCorrection((sys\&.numSpecies[spec]-1)/V);
+88                     }
+89                 } else {
+90                     if (sys\&.numSpecies[spec] > 0) {
+91                         delEnergy -= sys\&.ppot[spec][typeIndex_]->tailCorrection(sys\&.numSpecies[spec]/V);
+92                     }
 93                 }
 94             }
-95 #endif
-96         }
-97 
-98         // also account for any wall or barrier interaction
-99     delEnergy -= sys\&.speciesBarriers[typeIndex_]\&.energy(chosenAtom, box);
-100 
-101         // if the particle is about to be completely removed, no further calculation is required
-102         if (chosenAtom->mState != 1 && sys\&.getTotalM() > 1) { // if 1, it is just completely removed - otherwise have to do calculation since in expanded ensemble if M > 1
-103             // temporarily decrement the expanded ensemble state on the atom
-104             int orig_state = chosenAtom->mState;
-105             chosenAtom->mState -= 1;
-106             if (chosenAtom->mState < 0) {
-107                 chosenAtom->mState = sys\&.getTotalM() - 1;
-108             }
-109 
-110             for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
-111                 // get positions of neighboring atoms around chosenAtom
-112                     std::vector < atom* > neighborAtoms = sys\&.getNeighborAtoms(spec, typeIndex_, chosenAtom);
-113                     for (unsigned int i = 0; i < neighborAtoms\&.size(); ++i) {
-114                         try {
-115                         delEnergy += sys\&.ppot[spec][typeIndex_]->energy(neighborAtoms[i], chosenAtom, box);
-116                     } catch (customException& ce) {
-117                         std::string a = "Cannot delete because of energy error: ", b = ce\&.what();
-118                         throw customException (a+b);
-119                     }
-120                     }
-121                     // no tail corrections for partially inserted particles
-122             }
-123 
-124             // also account for any wall or barrier interaction
-125             delEnergy += sys\&.speciesBarriers[typeIndex_]\&.energy(chosenAtom, box);
-126 
-127             // restore the expanded ensemble state
-128             chosenAtom->mState = orig_state;
-129         }
-130 
-131         // biasing
-132         double dN = 1\&.0/sys\&.getTotalM();
-133     double p_u = 1\&.0;
-134     if (sys\&.addKECorrection()) {
-135         const double Lambda3 = pow(H2_2PI*sys\&.beta()/sys\&.mass(typeIndex_), 1\&.5);
-136         p_u = pow(Lambda3*nHigh/V, dN)*exp(sys\&.beta()*(-sys\&.mu(typeIndex_)*dN - delEnergy));
-137     } else {
-138         p_u = pow(nHigh/V, dN)*exp(sys\&.beta()*(-sys\&.mu(typeIndex_)*dN - delEnergy));
-139     }
-140 
-141         int nTotFinal = sys\&.getTotN(), mFinal = sys\&.getCurrentM() - 1;
-142         if (sys\&.getCurrentM() == 0) {
-143             nTotFinal--;
-144             mFinal = sys\&.getTotalM() - 1;
-145             if (sys\&.addKECorrection()) {
-146                 delEnergy -= 1\&.5/sys\&.beta();
-147             }
+95         }
+96 #endif
+97     }
+98 
+99     // Also account for any wall or barrier interaction
+100     delEnergy -= sys\&.speciesBarriers[typeIndex_]\&.energy(chosenAtom, box);
+101 
+102     // If the particle is about to be completely removed, no further calculation is required
+103     if (chosenAtom->mState != 1 && sys\&.getTotalM() > 1) { // If 1, it is just completely removed - otherwise have to do calculation since in expanded ensemble if M > 1
+104         // Temporarily decrement the expanded ensemble state on the atom
+105         int orig_state = chosenAtom->mState;
+106         chosenAtom->mState -= 1;
+107         if (chosenAtom->mState < 0) {
+108             chosenAtom->mState = sys\&.getTotalM() - 1;
+109         }
+110 
+111         for (unsigned int spec = 0; spec < sys\&.nSpecies(); ++spec) {
+112             // Get positions of neighboring atoms around chosenAtom
+113             std::vector < atom* > neighborAtoms = sys\&.getNeighborAtoms(spec, typeIndex_, chosenAtom);
+114             for (unsigned int i = 0; i < neighborAtoms\&.size(); ++i) {
+115                 try {
+116                     delEnergy += sys\&.ppot[spec][typeIndex_]->energy(neighborAtoms[i], chosenAtom, box);
+117                 } catch (customException& ce) {
+118                     std::string a = "Cannot delete because of energy error: ", b = ce\&.what();
+119                     throw customException (a+b);
+120                 }
+121             }
+122             // No tail corrections for partially inserted particles
+123         }
+124 
+125         // Also account for any wall or barrier interaction
+126         delEnergy += sys\&.speciesBarriers[typeIndex_]\&.energy(chosenAtom, box);
+127 
+128         // Restore the expanded ensemble state
+129         chosenAtom->mState = orig_state;
+130     }
+131 
+132     // Biasing
+133     double dN = 1\&.0/sys\&.getTotalM();
+134     double p_u = 1\&.0;
+135     if (sys\&.addKECorrection()) {
+136         const double Lambda3 = pow(H2_2PI*sys\&.beta()/sys\&.mass(typeIndex_), 1\&.5);
+137         p_u = pow(Lambda3*nHigh/V, dN)*exp(sys\&.beta()*(-sys\&.mu(typeIndex_)*dN - delEnergy));
+138     } else {
+139         p_u = pow(nHigh/V, dN)*exp(sys\&.beta()*(-sys\&.mu(typeIndex_)*dN - delEnergy));
+140     }
+141 
+142     int nTotFinal = sys\&.getTotN(), mFinal = sys\&.getCurrentM() - 1;
+143     if (sys\&.getCurrentM() == 0) {
+144         nTotFinal--;
+145         mFinal = sys\&.getTotalM() - 1;
+146         if (sys\&.addKECorrection()) {
+147             delEnergy -= 1\&.5/sys\&.beta();
 148         }
-149         double bias = calculateBias(sys, nTotFinal, mFinal);
-150 
-151         // tmmc gets updated the same way, regardless of whether the move gets accepted
-152         if (sys\&.useTMMC) {
-153             sys\&.tmmcBias->updateC (sys\&.getTotN(), nTotFinal, sys\&.getCurrentM(), mFinal, std::min(1\&.0, p_u)); // also has to be function of N and M now
-154         }
-155 
-156     // metropolis criterion
-157     if (rng (&RNG_SEED) < p_u*bias) {
-158         int counter = 0;
-159         for (std::vector<atom>::iterator it = sys\&.atoms[typeIndex_]\&.begin(); it != sys\&.atoms[typeIndex_]\&.end(); ++it) {
-160             if (&(*it) == chosenAtom) {
-161                 break;
-162             } else {
-163                 counter++;
-164             }
-165         }
-166             try {
-167                     sys\&.deleteAtom(typeIndex_, counter);
-168             } catch (customException &ce) {
-169                     std::string a = "Failed to delete atom: ", b = ce\&.what();
-170                     throw customException (a+b);
-171             }
-172         sys\&.incrementEnergy(delEnergy);
-173 
-174         // update Wang-Landau bias, if used
-175         if (sys\&.useWALA) {
-176             sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
-177         }
-178 
-179             return MOVE_SUCCESS;
-180         }
-181 
-182     // update Wang-Landau bias (even if moved failed), if used
-183     if (sys\&.useWALA) {
-184         sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
-185     }
-186 
+149     }
+150     double bias = calculateBias(sys, nTotFinal, mFinal);
+151 
+152     // TMMC gets updated the same way, regardless of whether the move gets accepted
+153     if (sys\&.useTMMC) {
+154         sys\&.tmmcBias->updateC (sys\&.getTotN(), nTotFinal, sys\&.getCurrentM(), mFinal, std::min(1\&.0, p_u)); // Also has to be function of N and M now
+155     }
+156 
+157     // Metropolis criterion
+158     if (rng (&RNG_SEED) < p_u*bias) {
+159         int counter = 0;
+160         for (std::vector<atom>::iterator it = sys\&.atoms[typeIndex_]\&.begin(); it != sys\&.atoms[typeIndex_]\&.end(); ++it) {
+161             if (&(*it) == chosenAtom) {
+162                 break;
+163             } else {
+164                 counter++;
+165             }
+166         }
+167         try {
+168             sys\&.deleteAtom(typeIndex_, counter);
+169         } catch (customException &ce) {
+170             std::string a = "Failed to delete atom: ", b = ce\&.what();
+171             throw customException (a+b);
+172         }
+173         sys\&.incrementEnergy(delEnergy);
+174 
+175         // Update Wang-Landau bias, if used
+176         if (sys\&.useWALA) {
+177             sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+178         }
+179 
+180         return MOVE_SUCCESS;
+181     }
+182 
+183     // Update Wang-Landau bias (even if moved failed), if used
+184     if (sys\&.useWALA) {
+185         sys\&.getWALABias()->update(sys\&.getTotN(), sys\&.getCurrentM());
+186     }
 187     return MOVE_FAILURE;
 188 }
 .fi

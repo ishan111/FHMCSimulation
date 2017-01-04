@@ -179,10 +179,10 @@ Public Member Functions</h2></td></tr>
 
 <p>Free any system barriers present. </p>
 
-<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00741">741</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;                                     {</div>
-<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;    sysBarriers_.clear();</div>
-<div class="line"><a name="l00743"></a><span class="lineno">  743</span>&#160;}</div>
+<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00740">740</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00740"></a><span class="lineno">  740</span>&#160;                                     {</div>
+<div class="line"><a name="l00741"></a><span class="lineno">  741</span>&#160;    sysBarriers_.clear();</div>
+<div class="line"><a name="l00742"></a><span class="lineno">  742</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -255,17 +255,17 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00703">703</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;                                                                                                                                                               {</div>
-<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;    <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;        <span class="keyword">auto</span> barr = std::make_shared &lt; cylinderZ &gt; (x, y, radius, width, sigma, eps, M);</div>
-<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;        sysBarriers_.push_back(barr);</div>
-<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;    } <span class="keywordflow">catch</span> (std::exception &amp;ex) {</div>
-<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;        <span class="keyword">const</span> std::string msg = ex.what();</div>
-<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot add cylinderZ to composite barrier : &quot;</span>+msg);</div>
-<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;    }</div>
-<div class="line"><a name="l00711"></a><span class="lineno">  711</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00702">702</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00702"></a><span class="lineno">  702</span>&#160;                                                                                                                                                               {</div>
+<div class="line"><a name="l00703"></a><span class="lineno">  703</span>&#160;    <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00704"></a><span class="lineno">  704</span>&#160;        <span class="keyword">auto</span> barr = std::make_shared &lt; cylinderZ &gt; (x, y, radius, width, sigma, eps, M);</div>
+<div class="line"><a name="l00705"></a><span class="lineno">  705</span>&#160;        sysBarriers_.push_back(barr);</div>
+<div class="line"><a name="l00706"></a><span class="lineno">  706</span>&#160;    } <span class="keywordflow">catch</span> (std::exception &amp;ex) {</div>
+<div class="line"><a name="l00707"></a><span class="lineno">  707</span>&#160;        <span class="keyword">const</span> std::string msg = ex.what();</div>
+<div class="line"><a name="l00708"></a><span class="lineno">  708</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot add cylinderZ to composite barrier : &quot;</span>+msg);</div>
+<div class="line"><a name="l00709"></a><span class="lineno">  709</span>&#160;    }</div>
+<div class="line"><a name="l00710"></a><span class="lineno">  710</span>&#160;}</div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -316,17 +316,17 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00662">662</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;                                                                                                      {</div>
-<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;    <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;        <span class="keyword">auto</span> barr = std::make_shared &lt; hardWallZ &gt; (lb, ub, sigma, M);</div>
-<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;        sysBarriers_.push_back(barr);</div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;    } <span class="keywordflow">catch</span> (std::exception &amp;ex) {</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;        <span class="keyword">const</span> std::string msg = ex.what();</div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot add hardWallZ to composite barrier : &quot;</span>+msg);</div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;    }</div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00661">661</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;                                                                                                      {</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;    <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;        <span class="keyword">auto</span> barr = std::make_shared &lt; hardWallZ &gt; (lb, ub, sigma, M);</div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;        sysBarriers_.push_back(barr);</div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;    } <span class="keywordflow">catch</span> (std::exception &amp;ex) {</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;        <span class="keyword">const</span> std::string msg = ex.what();</div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot add hardWallZ to composite barrier : &quot;</span>+msg);</div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;    }</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;}</div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -426,17 +426,17 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00728">728</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;                                                                                                                                                                                                                                                             {</div>
-<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;    <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;        <span class="keyword">auto</span> barr = std::make_shared &lt; rightTriangleXZ &gt; (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);</div>
-<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;        sysBarriers_.push_back(barr);</div>
-<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;    } <span class="keywordflow">catch</span> (std::exception &amp;ex) {</div>
-<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;        <span class="keyword">const</span> std::string msg = ex.what();</div>
-<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot add rightTriangleXZ to composite barrier : &quot;</span>+msg);</div>
-<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;    }</div>
-<div class="line"><a name="l00736"></a><span class="lineno">  736</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00727">727</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00727"></a><span class="lineno">  727</span>&#160;                                                                                                                                                                                                                                                             {</div>
+<div class="line"><a name="l00728"></a><span class="lineno">  728</span>&#160;    <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00729"></a><span class="lineno">  729</span>&#160;        <span class="keyword">auto</span> barr = std::make_shared &lt; rightTriangleXZ &gt; (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);</div>
+<div class="line"><a name="l00730"></a><span class="lineno">  730</span>&#160;        sysBarriers_.push_back(barr);</div>
+<div class="line"><a name="l00731"></a><span class="lineno">  731</span>&#160;    } <span class="keywordflow">catch</span> (std::exception &amp;ex) {</div>
+<div class="line"><a name="l00732"></a><span class="lineno">  732</span>&#160;        <span class="keyword">const</span> std::string msg = ex.what();</div>
+<div class="line"><a name="l00733"></a><span class="lineno">  733</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot add rightTriangleXZ to composite barrier : &quot;</span>+msg);</div>
+<div class="line"><a name="l00734"></a><span class="lineno">  734</span>&#160;    }</div>
+<div class="line"><a name="l00735"></a><span class="lineno">  735</span>&#160;}</div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -501,17 +501,17 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00682">682</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;                                                                                                                                                  {</div>
-<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;    <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;        <span class="keyword">auto</span> barr = std::make_shared &lt; squareWellWallZ &gt; (lb, ub, sigma, range, eps, M);</div>
-<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;        sysBarriers_.push_back(barr);</div>
-<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;    } <span class="keywordflow">catch</span> (std::exception &amp;ex) {</div>
-<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;        <span class="keyword">const</span> std::string msg = ex.what();</div>
-<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot add squareWellWallZ to composite barrier : &quot;</span>+msg);</div>
-<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;    }</div>
-<div class="line"><a name="l00690"></a><span class="lineno">  690</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00681">681</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;                                                                                                                                                  {</div>
+<div class="line"><a name="l00682"></a><span class="lineno">  682</span>&#160;    <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00683"></a><span class="lineno">  683</span>&#160;        <span class="keyword">auto</span> barr = std::make_shared &lt; squareWellWallZ &gt; (lb, ub, sigma, range, eps, M);</div>
+<div class="line"><a name="l00684"></a><span class="lineno">  684</span>&#160;        sysBarriers_.push_back(barr);</div>
+<div class="line"><a name="l00685"></a><span class="lineno">  685</span>&#160;    } <span class="keywordflow">catch</span> (std::exception &amp;ex) {</div>
+<div class="line"><a name="l00686"></a><span class="lineno">  686</span>&#160;        <span class="keyword">const</span> std::string msg = ex.what();</div>
+<div class="line"><a name="l00687"></a><span class="lineno">  687</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot add squareWellWallZ to composite barrier : &quot;</span>+msg);</div>
+<div class="line"><a name="l00688"></a><span class="lineno">  688</span>&#160;    }</div>
+<div class="line"><a name="l00689"></a><span class="lineno">  689</span>&#160;}</div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -577,21 +577,21 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00766">766</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
+<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00765">765</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
 
 <p>References <a class="el" href="potentials_8h_source.html#l00014">NUM_INFINITY</a>.</p>
-<div class="fragment"><div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;                                                                                {</div>
-<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;    <span class="keywordtype">double</span> U = 0.0;</div>
-<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;    <span class="keywordflow">for</span> (std::vector &lt; std::shared_ptr &lt; barrier &gt; &gt;::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {</div>
-<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;        <span class="keywordtype">double</span> dU = (*it)-&gt;energy (a1, box);</div>
-<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;        <span class="keywordflow">if</span> (dU &lt; <a class="code" href="potentials_8h.html#ab94ab1d09e2291d03fe92a0e24a9d33b">NUM_INFINITY</a>) {</div>
-<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;            U += dU;</div>
-<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="potentials_8h.html#ab94ab1d09e2291d03fe92a0e24a9d33b">NUM_INFINITY</a>;</div>
-<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;        }</div>
-<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;    }</div>
-<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;    <span class="keywordflow">return</span> U;</div>
-<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;}</div>
+<div class="fragment"><div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160;                                                                                {</div>
+<div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;    <span class="keywordtype">double</span> U = 0.0;</div>
+<div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;    <span class="keywordflow">for</span> (std::vector &lt; std::shared_ptr &lt; barrier &gt; &gt;::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {</div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;        <span class="keywordtype">double</span> dU = (*it)-&gt;energy (a1, box);</div>
+<div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;        <span class="keywordflow">if</span> (dU &lt; <a class="code" href="potentials_8h.html#ab94ab1d09e2291d03fe92a0e24a9d33b">NUM_INFINITY</a>) {</div>
+<div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;            U += dU;</div>
+<div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00772"></a><span class="lineno">  772</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="potentials_8h.html#ab94ab1d09e2291d03fe92a0e24a9d33b">NUM_INFINITY</a>;</div>
+<div class="line"><a name="l00773"></a><span class="lineno">  773</span>&#160;        }</div>
+<div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;    }</div>
+<div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;    <span class="keywordflow">return</span> U;</div>
+<div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;}</div>
 <div class="ttc" id="potentials_8h_html_ab94ab1d09e2291d03fe92a0e24a9d33b"><div class="ttname"><a href="potentials_8h.html#ab94ab1d09e2291d03fe92a0e24a9d33b">NUM_INFINITY</a></div><div class="ttdeci">#define NUM_INFINITY</div><div class="ttdef"><b>Definition:</b> <a href="potentials_8h_source.html#l00014">potentials.h:14</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -630,15 +630,15 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00751">751</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;                                                                              {</div>
-<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;    <span class="keywordflow">for</span> (std::vector &lt; std::shared_ptr &lt; barrier &gt; &gt;::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {</div>
-<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;        <span class="keywordflow">if</span> (!(*it)-&gt;inside (a1, box)) {</div>
-<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;        }</div>
-<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;    }</div>
-<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160;}</div>
+<p>Definition at line <a class="el" href="barrier_8cpp_source.html#l00750">750</a> of file <a class="el" href="barrier_8cpp_source.html">barrier.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00750"></a><span class="lineno">  750</span>&#160;                                                                              {</div>
+<div class="line"><a name="l00751"></a><span class="lineno">  751</span>&#160;    <span class="keywordflow">for</span> (std::vector &lt; std::shared_ptr &lt; barrier &gt; &gt;::iterator it = sysBarriers_.begin(); it != sysBarriers_.end(); ++it) {</div>
+<div class="line"><a name="l00752"></a><span class="lineno">  752</span>&#160;        <span class="keywordflow">if</span> (!(*it)-&gt;inside (a1, box)) {</div>
+<div class="line"><a name="l00753"></a><span class="lineno">  753</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00754"></a><span class="lineno">  754</span>&#160;        }</div>
+<div class="line"><a name="l00755"></a><span class="lineno">  755</span>&#160;    }</div>
+<div class="line"><a name="l00756"></a><span class="lineno">  756</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00757"></a><span class="lineno">  757</span>&#160;}</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -649,7 +649,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 30 2016 14:21:50 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jan 4 2017 10:47:54 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

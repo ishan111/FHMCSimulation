@@ -1,4 +1,4 @@
-.TH "checkpoint" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "checkpoint" 3 "Wed Jan 4 2017" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -29,11 +29,11 @@ Information to restart/checkpoint the simulation\&.
 .br
 .RI "\fIRead state of a system from a json file\&. \fP"
 .ti -1c
-.RI "void \fBdump\fP (\fBsimSystem\fP &sys, const long long int \fBmoveCounter\fP=0, const long long int \fBsweepCounter\fP=0, const bool refine=true)"
+.RI "void \fBdump\fP (\fBsimSystem\fP &sys, const long long int \fBmoveCounter\fP=0, const long long int \fBsweepCounter\fP=0, const bool refine=false)"
 .br
 .RI "\fISave the state of a system to a json file\&. \fP"
 .ti -1c
-.RI "bool \fBcheck\fP (\fBsimSystem\fP &sys, const long long int \fBmoveCounter\fP=0, const long long int \fBsweepCounter\fP=0, const bool refine=true)"
+.RI "bool \fBcheck\fP (\fBsimSystem\fP &sys, const long long int \fBmoveCounter\fP=0, const long long int \fBsweepCounter\fP=0, const bool refine=false)"
 .br
 .RI "\fICheck how long it has been since last checkpoint, and write new one if has exceeded frequency\&. \fP"
 .in -1c
@@ -186,7 +186,7 @@ Definition at line 26 of file checkpoint\&.h\&.
 .fi
 .SH "Member Function Documentation"
 .PP 
-.SS "bool checkpoint::check (\fBsimSystem\fP &sys, const long long intmoveCounter = \fC0\fP, const long long intsweepCounter = \fC0\fP, const boolrefine = \fCtrue\fP)"
+.SS "bool checkpoint::check (\fBsimSystem\fP &sys, const long long intmoveCounter = \fC0\fP, const long long intsweepCounter = \fC0\fP, const boolrefine = \fCfalse\fP)"
 
 .PP
 Check how long it has been since last checkpoint, and write new one if has exceeded frequency\&. 
@@ -199,7 +199,7 @@ Check how long it has been since last checkpoint, and write new one if has excee
 .br
 \fIsweepCounter\fP Number of loops/sweeps that have executed 
 .br
-\fIrefine\fP Refine the histogram boundaries before printing any? (default=true)
+\fIrefine\fP Refine the histogram boundaries before printing any? (default=false)
 .RE
 .PP
 \fBReturns:\fP
@@ -209,24 +209,24 @@ bool Is a checkpoint being generated or not
 .PP
 
 .PP
-Definition at line 285 of file checkpoint\&.cpp\&.
+Definition at line 297 of file checkpoint\&.cpp\&.
 .PP
 References dump(), and freq\&.
 .PP
 Referenced by performCrossover(), performTMMC(), and performWALA()\&.
 .PP
 .nf
-285                                                                                                                             {
-286     if (freq > 0) {
-287         if (std::abs(difftime(time(&now_), lastCheckPt_)) >= freq) {
-288             dump(sys, moveCounter, sweepCounter, refine);
-289             return true;
-290         }
-291     }
-292     return false;
-293 }
+297                                                                                                                             {
+298     if (freq > 0) {
+299         if (std::abs(difftime(time(&now_), lastCheckPt_)) >= freq) {
+300             dump(sys, moveCounter, sweepCounter, refine);
+301             return true;
+302         }
+303     }
+304     return false;
+305 }
 .fi
-.SS "void checkpoint::dump (\fBsimSystem\fP &sys, const long long intmoveCounter = \fC0\fP, const long long intsweepCounter = \fC0\fP, const boolrefine = \fCtrue\fP)"
+.SS "void checkpoint::dump (\fBsimSystem\fP &sys, const long long intmoveCounter = \fC0\fP, const long long intsweepCounter = \fC0\fP, const boolrefine = \fCfalse\fP)"
 
 .PP
 Save the state of a system to a json file\&. Creates the checkpoint directory if it doesn't exist\&.
@@ -239,133 +239,142 @@ Save the state of a system to a json file\&. Creates the checkpoint directory if
 .br
 \fIsweepCounter\fP Number of loops/sweeps that have executed 
 .br
-\fIrefine\fP Refine the histogram boundaries before printing any? (default=true) 
+\fIrefine\fP Refine the histogram boundaries before printing any? (default=false) 
 .RE
 .PP
 
 .PP
-Definition at line 159 of file checkpoint\&.cpp\&.
+Definition at line 162 of file checkpoint\&.cpp\&.
 .PP
-References chkptName, crossoverDone, dir, elb, eub, simSystem::extMomCounter(), fileExists(), freq, simSystem::getELB(), simSystem::getEUB(), getTimeStamp(), simSystem::getTMMCBias(), simSystem::getWALABias(), hasCheckpoint, wala::lnF(), tmmc::print(), wala::print(), simSystem::printEnergyHistogram(), simSystem::printExtMoments(), simSystem::printPkHistogram(), simSystem::printSnapshot(), simSystem::refineEnergyHistogramBounds(), simSystem::refinePkHistogramBounds(), takeSnaps, tmmcDone, and walaDone\&.
+References chkptName, crossoverDone, simSystem::crossoverTotalStepCounter, dir, elb, eub, simSystem::extMomCounter(), fileExists(), freq, simSystem::getELB(), simSystem::getEUB(), getTimeStamp(), simSystem::getTMMCBias(), simSystem::getWALABias(), hasCheckpoint, wala::lnF(), tmmc::print(), wala::print(), simSystem::printEnergyHistogram(), simSystem::printExtMoments(), simSystem::printPkHistogram(), simSystem::printSnapshot(), simSystem::refineEnergyHistogramBounds(), simSystem::refinePkHistogramBounds(), takeSnaps, tmmcDone, simSystem::tmmcTotalStepCounter, walaDone, and simSystem::walaTotalStepCounter\&.
 .PP
 Referenced by check()\&.
 .PP
 .nf
-159                                                                                                                            {
-160     if (!fileExists(chkptName)) {
-161         std::string command = "mkdir -p "+dir+" && touch "+chkptName;
-162         const int succ = system(command\&.c_str());
-163         if (succ != 0) {
-164             throw customException("Unable to initialize checkpoint");
-165         }
-166     }
-167 
-168     rapidjson::StringBuffer s;
-169     rapidjson::PrettyWriter < rapidjson::StringBuffer > writer(s);
-170     hasCheckpoint = true;
-171 
-172     // Write restart/checkpoint options
-173     writer\&.StartObject();
-174     writer\&.String("tmmcDone");
-175     writer\&.Bool(tmmcDone);
-176 
-177     writer\&.String("crossoverDone");
-178     writer\&.Bool(crossoverDone);
+162                                                                                                                            {
+163     if (!fileExists(chkptName)) {
+164         std::string command = "mkdir -p "+dir+" && touch "+chkptName;
+165         const int succ = system(command\&.c_str());
+166         if (succ != 0) {
+167             throw customException("Unable to initialize checkpoint");
+168         }
+169     }
+170 
+171     rapidjson::StringBuffer s;
+172     rapidjson::PrettyWriter < rapidjson::StringBuffer > writer(s);
+173     hasCheckpoint = true;
+174 
+175     // Write restart/checkpoint options
+176     writer\&.StartObject();
+177     writer\&.String("tmmcDone");
+178     writer\&.Bool(tmmcDone);
 179 
-180     writer\&.String("walaDone");
-181     writer\&.Bool(walaDone);
+180     writer\&.String("crossoverDone");
+181     writer\&.Bool(crossoverDone);
 182 
-183     writer\&.String("hasCheckpoint");
-184     writer\&.Bool(hasCheckpoint);
+183     writer\&.String("walaDone");
+184     writer\&.Bool(walaDone);
 185 
-186     writer\&.String("takeSnaps");
-187     writer\&.Bool(takeSnaps);
+186     writer\&.String("hasCheckpoint");
+187     writer\&.Bool(hasCheckpoint);
 188 
-189     writer\&.String("freq");
-190     writer\&.Int64(freq);
+189     writer\&.String("takeSnaps");
+190     writer\&.Bool(takeSnaps);
 191 
-192     writer\&.String("dir");
-193     writer\&.String(dir\&.c_str());
+192     writer\&.String("freq");
+193     writer\&.Int64(freq);
 194 
-195     writer\&.String("moveCounter");
-196     writer\&.Double(moveCounter);
+195     writer\&.String("dir");
+196     writer\&.String(dir\&.c_str());
 197 
-198     writer\&.String("sweepCounter");
-199     writer\&.Double(sweepCounter);
+198     writer\&.String("moveCounter");
+199     writer\&.Double(moveCounter);
 200 
-201     if (walaDone && crossoverDone) { // In final TMMC stage or just finished the TMMC (end of simulation)
-202         sys\&.getTMMCBias()->print(dir+"/tmmc", true, true);
-203         if (refine) {
-204             sys\&.refineEnergyHistogramBounds();
-205         }
-206         sys\&.printEnergyHistogram(dir+"/eHist", false); // Un-normalized Energy histogram
-207         if (refine) {
-208             sys\&.refinePkHistogramBounds();
-209         }
-210         sys\&.printPkHistogram(dir+"/pkHist", false); // Un-normalized Particle histogram
-211         sys\&.printExtMoments(dir+"/extMom", false); // Un-normalized Extensive moments, plus counter (number of times each recorded)
-212         writer\&.String("extMomCounter");
-213         std::vector < double > ctr = sys\&.extMomCounter();
-214         writer\&.StartArray();
-215         for (std::vector < double >::iterator it = ctr\&.begin(); it < ctr\&.end(); ++it) {
-216             writer\&.Double(*it);
+201     writer\&.String("sweepCounter");
+202     writer\&.Double(sweepCounter);
+203 
+204     writer\&.String("walaTotalStepCounter");
+205     writer\&.Double(sys\&.walaTotalStepCounter);
+206 
+207     writer\&.String("crossoverTotalStepCounter");
+208     writer\&.Double(sys\&.crossoverTotalStepCounter);
+209 
+210     writer\&.String("tmmcTotalStepCounter");
+211     writer\&.Double(sys\&.tmmcTotalStepCounter);
+212 
+213     if (walaDone && crossoverDone) { // In final TMMC stage or just finished the TMMC (end of simulation)
+214         sys\&.getTMMCBias()->print(dir+"/tmmc", true, true);
+215         if (refine) {
+216             sys\&.refineEnergyHistogramBounds();
 217         }
-218         writer\&.EndArray();
-219     } else if (walaDone && !crossoverDone && !tmmcDone) { // In crossover stage
-220         sys\&.getTMMCBias()->print(dir+"/tmmc", true, true);
-221         sys\&.getWALABias()->print(dir+"/wala", true);
-222 
-223         writer\&.String("wala_lnF");
-224         writer\&.Double(sys\&.getWALABias()->lnF());
-225 
-226         // Energy upper and lower bounds for histogram
-227         std::vector < double > elb = sys\&.getELB(), eub = sys\&.getEUB();
-228         writer\&.String("energyHistogramLB");
-229         writer\&.StartArray();
-230         for (std::vector < double >::iterator it = elb\&.begin(); it < elb\&.end(); ++it) {
-231             writer\&.Double(*it);
-232         }
-233         writer\&.EndArray();
-234         writer\&.String("energyHistogramUB");
-235         writer\&.StartArray();
-236         for (std::vector < double >::iterator it = eub\&.begin(); it < eub\&.end(); ++it) {
-237             writer\&.Double(*it);
-238         }
-239         writer\&.EndArray();
-240     } else if (!walaDone && !crossoverDone && !tmmcDone) { // In WALA stage
-241         sys\&.getWALABias()->print(dir+"/wala", true);
-242 
-243         writer\&.String("wala_lnF");
-244         writer\&.Double(sys\&.getWALABias()->lnF());
-245 
-246         // Energy upper and lower bounds for histogram
-247         std::vector < double > elb = sys\&.getELB(), eub = sys\&.getEUB();
-248         writer\&.String("energyHistogramLB");
-249         writer\&.StartArray();
-250         for (std::vector < double >::iterator it = elb\&.begin(); it < elb\&.end(); ++it) {
-251             writer\&.Double(*it);
-252         }
-253         writer\&.EndArray();
-254         writer\&.String("energyHistogramUB");
-255         writer\&.StartArray();
-256         for (std::vector < double >::iterator it = eub\&.begin(); it < eub\&.end(); ++it) {
-257             writer\&.Double(*it);
-258         }
-259         writer\&.EndArray();
-260     } else {
-261         throw customException ("Uncertain which stage simulation is in, so cannot checkpoint");
-262     }
-263     writer\&.EndObject();
-264     std::ofstream outData(chkptName\&.c_str());
-265     outData << s\&.GetString() << std::endl;
-266 
-267     sys\&.printSnapshot(dir+"/snap\&.xyz", getTimeStamp(), true); // Instantaneous snapshot
-268     if (takeSnaps) { // This only prints M = 0 atoms (fully inserted) to create a movie
-269         sys\&.printSnapshot(dir+"/movie\&.xyz", getTimeStamp(), false);
-270     }
-271 
-272     time(&lastCheckPt_);
-273 }
+218         sys\&.printEnergyHistogram(dir+"/eHist", false); // Un-normalized Energy histogram
+219         if (refine) {
+220             sys\&.refinePkHistogramBounds();
+221         }
+222         sys\&.printPkHistogram(dir+"/pkHist", false); // Un-normalized Particle histogram
+223         sys\&.printExtMoments(dir+"/extMom", false); // Un-normalized Extensive moments, plus counter (number of times each recorded)
+224         writer\&.String("extMomCounter");
+225         std::vector < double > ctr = sys\&.extMomCounter();
+226         writer\&.StartArray();
+227         for (std::vector < double >::iterator it = ctr\&.begin(); it < ctr\&.end(); ++it) {
+228             writer\&.Double(*it);
+229         }
+230         writer\&.EndArray();
+231     } else if (walaDone && !crossoverDone && !tmmcDone) { // In crossover stage
+232         sys\&.getTMMCBias()->print(dir+"/tmmc", true, true);
+233         sys\&.getWALABias()->print(dir+"/wala", true);
+234 
+235         writer\&.String("wala_lnF");
+236         writer\&.Double(sys\&.getWALABias()->lnF());
+237 
+238         // Energy upper and lower bounds for histogram
+239         std::vector < double > elb = sys\&.getELB(), eub = sys\&.getEUB();
+240         writer\&.String("energyHistogramLB");
+241         writer\&.StartArray();
+242         for (std::vector < double >::iterator it = elb\&.begin(); it < elb\&.end(); ++it) {
+243             writer\&.Double(*it);
+244         }
+245         writer\&.EndArray();
+246         writer\&.String("energyHistogramUB");
+247         writer\&.StartArray();
+248         for (std::vector < double >::iterator it = eub\&.begin(); it < eub\&.end(); ++it) {
+249             writer\&.Double(*it);
+250         }
+251         writer\&.EndArray();
+252     } else if (!walaDone && !crossoverDone && !tmmcDone) { // In WALA stage
+253         sys\&.getWALABias()->print(dir+"/wala", true);
+254 
+255         writer\&.String("wala_lnF");
+256         writer\&.Double(sys\&.getWALABias()->lnF());
+257 
+258         // Energy upper and lower bounds for histogram
+259         std::vector < double > elb = sys\&.getELB(), eub = sys\&.getEUB();
+260         writer\&.String("energyHistogramLB");
+261         writer\&.StartArray();
+262         for (std::vector < double >::iterator it = elb\&.begin(); it < elb\&.end(); ++it) {
+263             writer\&.Double(*it);
+264         }
+265         writer\&.EndArray();
+266         writer\&.String("energyHistogramUB");
+267         writer\&.StartArray();
+268         for (std::vector < double >::iterator it = eub\&.begin(); it < eub\&.end(); ++it) {
+269             writer\&.Double(*it);
+270         }
+271         writer\&.EndArray();
+272     } else {
+273         throw customException ("Uncertain which stage simulation is in, so cannot checkpoint");
+274     }
+275     writer\&.EndObject();
+276     std::ofstream outData(chkptName\&.c_str());
+277     outData << s\&.GetString() << std::endl;
+278 
+279     sys\&.printSnapshot(dir+"/snap\&.xyz", getTimeStamp(), true); // Instantaneous snapshot
+280     if (takeSnaps) { // This only prints M = 0 atoms (fully inserted) to create a movie
+281         sys\&.printSnapshot(dir+"/movie\&.xyz", getTimeStamp(), false);
+282     }
+283 
+284     time(&lastCheckPt_);
+285 }
 .fi
 .SS "void checkpoint::load (\fBsimSystem\fP &sys, const booloverride)"
 
@@ -383,7 +392,7 @@ Read state of a system from a json file\&.
 .PP
 Definition at line 54 of file checkpoint\&.cpp\&.
 .PP
-References tmmc::calculatePI(), chkptName, crossoverDone, dir, elb, eub, fileExists(), simSystem::getTMMCBias(), simSystem::getTotalM(), simSystem::getWALABias(), hasCheckpoint, moveCounter, parseJson(), tmmc::readC(), simSystem::readConfig(), wala::readH(), tmmc::readHC(), wala::readlnPI(), resFromCross, resFromTMMC, resFromWALA, simSystem::restartEnergyHistogram(), simSystem::restartExtMoments(), simSystem::restartPkHistogram(), sendErr(), sendMsg(), simSystem::setELB(), simSystem::setEUB(), simSystem::startTMMC(), simSystem::startWALA(), sweepCounter, SYS_FAILURE, takeSnaps, tmmcDone, simSystem::tmmcSweepSize, simSystem::wala_g, wala_lnF, simSystem::wala_s, and walaDone\&.
+References tmmc::calculatePI(), chkptName, crossoverDone, simSystem::crossoverTotalStepCounter, dir, elb, eub, fileExists(), simSystem::getTMMCBias(), simSystem::getTotalM(), simSystem::getWALABias(), hasCheckpoint, moveCounter, parseJson(), tmmc::readC(), simSystem::readConfig(), wala::readH(), tmmc::readHC(), wala::readlnPI(), resFromCross, resFromTMMC, resFromWALA, simSystem::restartEnergyHistogram(), simSystem::restartExtMoments(), simSystem::restartPkHistogram(), sendErr(), sendMsg(), simSystem::setELB(), simSystem::setEUB(), simSystem::startTMMC(), simSystem::startWALA(), sweepCounter, SYS_FAILURE, takeSnaps, tmmcDone, simSystem::tmmcSweepSize, simSystem::tmmcTotalStepCounter, simSystem::wala_g, wala_lnF, simSystem::wala_s, walaDone, and simSystem::walaTotalStepCounter\&.
 .PP
 Referenced by checkpoint()\&.
 .PP
@@ -405,85 +414,88 @@ Referenced by checkpoint()\&.
 68         dir = doc["dir"]\&.GetString();
 69         moveCounter = (long long int)doc["moveCounter"]\&.GetDouble();
 70         sweepCounter = (long long int)doc["sweepCounter"]\&.GetDouble();
-71 
-72         if (walaDone && crossoverDone) { // In final TMMC stage or just finished the TMMC (end of simulation)
-73             resFromTMMC = true;
-74             sys\&.startTMMC(sys\&.tmmcSweepSize, sys\&.getTotalM());
-75             sys\&.getTMMCBias()->readC(dir+"/tmmc_C\&.dat");
-76             sys\&.getTMMCBias()->readHC(dir+"/tmmc_HC\&.dat");
-77             sys\&.getTMMCBias()->calculatePI();
-78             std::vector < double > ctr (doc["extMomCounter"]\&.Size(), 0);
-79             for (unsigned int i = 0; i < doc["extMomCounter"]\&.Size(); ++i) {
-80                 ctr[i] = doc["extMomCounter"][i]\&.GetDouble();
-81             }
-82             sys\&.restartEnergyHistogram(dir+"/eHist");
-83             sys\&.restartPkHistogram(dir+"/pkHist");
-84             sys\&.restartExtMoments(dir+"/extMom", ctr);
-85         } else if (walaDone && !crossoverDone && !tmmcDone) { // In crossover stage
-86             resFromCross = true;
-87             sys\&.startTMMC(sys\&.tmmcSweepSize, sys\&.getTotalM());
-88             wala_lnF = doc["wala_lnF"]\&.GetDouble();
-89             sys\&.startWALA (wala_lnF, sys\&.wala_g, sys\&.wala_s, sys\&.getTotalM());
-90 
-91             sys\&.getTMMCBias()->readC(dir+"/tmmc_C\&.dat");
-92             sys\&.getTMMCBias()->readHC(dir+"/tmmc_HC\&.dat");
-93             sys\&.getWALABias()->readlnPI(dir+"/wala_lnPI\&.dat");
-94             sys\&.getWALABias()->readH(dir+"/wala_H\&.dat");
-95 
-96             // Energy upper and lower bounds for histogram
-97             elb\&.resize(doc["energyHistogramLB"]\&.Size(), 0);
-98             for (unsigned int i = 0; i < doc["energyHistogramLB"]\&.Size(); ++i) {
-99                 elb[i] = doc["energyHistogramLB"][i]\&.GetDouble();
-100             }
-101             sys\&.setELB(elb);
-102 
-103             eub\&.resize(doc["energyHistogramUB"]\&.Size(), 0);
-104             for (unsigned int i = 0; i < doc["energyHistogramUB"]\&.Size(); ++i) {
-105                 eub[i] = doc["energyHistogramUB"][i]\&.GetDouble();
-106             }
-107             sys\&.setEUB(eub);
-108         } else if (!walaDone && !crossoverDone && !tmmcDone) { // In WALA stage and printed 1st checkpoint already
-109             resFromWALA = true;
-110             wala_lnF = doc["wala_lnF"]\&.GetDouble();
-111             sys\&.startWALA (wala_lnF, sys\&.wala_g, sys\&.wala_s, sys\&.getTotalM());
-112 
-113             sys\&.getWALABias()->readlnPI(dir+"/wala_lnPI\&.dat");
-114             sys\&.getWALABias()->readH(dir+"/wala_H\&.dat");
+71         sys\&.walaTotalStepCounter = (long double)doc["walaTotalStepCounter"]\&.GetDouble();
+72         sys\&.crossoverTotalStepCounter = (long double)doc["crossoverTotalStepCounter"]\&.GetDouble();
+73         sys\&.tmmcTotalStepCounter = (long double)doc["tmmcTotalStepCounter"]\&.GetDouble();
+74 
+75         if (walaDone && crossoverDone) { // In final TMMC stage or just finished the TMMC (end of simulation)
+76             resFromTMMC = true;
+77             sys\&.startTMMC(sys\&.tmmcSweepSize, sys\&.getTotalM());
+78             sys\&.getTMMCBias()->readC(dir+"/tmmc_C\&.dat");
+79             sys\&.getTMMCBias()->readHC(dir+"/tmmc_HC\&.dat");
+80             sys\&.getTMMCBias()->calculatePI();
+81             std::vector < double > ctr (doc["extMomCounter"]\&.Size(), 0);
+82             for (unsigned int i = 0; i < doc["extMomCounter"]\&.Size(); ++i) {
+83                 ctr[i] = doc["extMomCounter"][i]\&.GetDouble();
+84             }
+85             sys\&.restartEnergyHistogram(dir+"/eHist");
+86             sys\&.restartPkHistogram(dir+"/pkHist");
+87             sys\&.restartExtMoments(dir+"/extMom", ctr);
+88         } else if (walaDone && !crossoverDone && !tmmcDone) { // In crossover stage
+89             resFromCross = true;
+90             sys\&.startTMMC(sys\&.tmmcSweepSize, sys\&.getTotalM());
+91             wala_lnF = doc["wala_lnF"]\&.GetDouble();
+92             sys\&.startWALA (wala_lnF, sys\&.wala_g, sys\&.wala_s, sys\&.getTotalM());
+93 
+94             sys\&.getTMMCBias()->readC(dir+"/tmmc_C\&.dat");
+95             sys\&.getTMMCBias()->readHC(dir+"/tmmc_HC\&.dat");
+96             sys\&.getWALABias()->readlnPI(dir+"/wala_lnPI\&.dat");
+97             sys\&.getWALABias()->readH(dir+"/wala_H\&.dat");
+98 
+99             // Energy upper and lower bounds for histogram
+100             elb\&.resize(doc["energyHistogramLB"]\&.Size(), 0);
+101             for (unsigned int i = 0; i < doc["energyHistogramLB"]\&.Size(); ++i) {
+102                 elb[i] = doc["energyHistogramLB"][i]\&.GetDouble();
+103             }
+104             sys\&.setELB(elb);
+105 
+106             eub\&.resize(doc["energyHistogramUB"]\&.Size(), 0);
+107             for (unsigned int i = 0; i < doc["energyHistogramUB"]\&.Size(); ++i) {
+108                 eub[i] = doc["energyHistogramUB"][i]\&.GetDouble();
+109             }
+110             sys\&.setEUB(eub);
+111         } else if (!walaDone && !crossoverDone && !tmmcDone) { // In WALA stage and printed 1st checkpoint already
+112             resFromWALA = true;
+113             wala_lnF = doc["wala_lnF"]\&.GetDouble();
+114             sys\&.startWALA (wala_lnF, sys\&.wala_g, sys\&.wala_s, sys\&.getTotalM());
 115 
-116             // Energy upper and lower bounds for histogram
-117             elb\&.resize(doc["energyHistogramLB"]\&.Size(), 0);
-118             for (unsigned int i = 0; i < doc["energyHistogramLB"]\&.Size(); ++i) {
-119                 elb[i] = doc["energyHistogramLB"][i]\&.GetDouble();
-120             }
-121             sys\&.setELB(elb);
-122 
-123             eub\&.resize(doc["energyHistogramUB"]\&.Size(), 0);
-124             for (unsigned int i = 0; i < doc["energyHistogramUB"]\&.Size(); ++i) {
-125                 eub[i] = doc["energyHistogramUB"][i]\&.GetDouble();
-126             }
-127             sys\&.setEUB(eub);
-128         } else {
-129             if (!override) {
-130                 sendErr("Uncertain which stage simulation is in, so cannot checkpoint");
-131                 exit(SYS_FAILURE);
-132             }
-133         }
-134 
-135         sys\&.readConfig(dir+"/snap\&.xyz");
-136         hasCheckpoint = true;
-137     } catch (std::exception &ex) {
-138         std::string msg = ex\&.what();
-139         if (!override) {
-140             hasCheckpoint = false;
-141             sendErr("Unable to load checkpoint "+msg);
-142             exit(SYS_FAILURE);
-143         } else {
-144             sendErr("Overriding the following errors to load checkpoint "+msg);
-145         }
-146     }
-147 
-148     sendMsg("Checkpoint loaded from "+chkptName);
-149 }
+116             sys\&.getWALABias()->readlnPI(dir+"/wala_lnPI\&.dat");
+117             sys\&.getWALABias()->readH(dir+"/wala_H\&.dat");
+118 
+119             // Energy upper and lower bounds for histogram
+120             elb\&.resize(doc["energyHistogramLB"]\&.Size(), 0);
+121             for (unsigned int i = 0; i < doc["energyHistogramLB"]\&.Size(); ++i) {
+122                 elb[i] = doc["energyHistogramLB"][i]\&.GetDouble();
+123             }
+124             sys\&.setELB(elb);
+125 
+126             eub\&.resize(doc["energyHistogramUB"]\&.Size(), 0);
+127             for (unsigned int i = 0; i < doc["energyHistogramUB"]\&.Size(); ++i) {
+128                 eub[i] = doc["energyHistogramUB"][i]\&.GetDouble();
+129             }
+130             sys\&.setEUB(eub);
+131         } else {
+132             if (!override) {
+133                 sendErr("Uncertain which stage simulation is in, so cannot checkpoint");
+134                 exit(SYS_FAILURE);
+135             }
+136         }
+137 
+138         sys\&.readConfig(dir+"/snap\&.xyz");
+139         hasCheckpoint = true;
+140     } catch (std::exception &ex) {
+141         std::string msg = ex\&.what();
+142         if (!override) {
+143             hasCheckpoint = false;
+144             sendErr("Unable to load checkpoint "+msg);
+145             exit(SYS_FAILURE);
+146         } else {
+147             sendErr("Overriding the following errors to load checkpoint "+msg);
+148         }
+149     }
+150 
+151     sendMsg("Checkpoint loaded from "+chkptName);
+152 }
 .fi
 .SH "Field Documentation"
 .PP 

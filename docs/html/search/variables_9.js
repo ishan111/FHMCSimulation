@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['name_5f',['name_',['../classmc_move.html#ac18c307855e1cb5751bd6e079857a8c5',1,'mcMove']]],
-  ['ncrossovervisits',['nCrossoverVisits',['../classsim_system.html#aa748f651ddd9a2bf6d88bfcab9153905',1,'simSystem']]],
-  ['neighbours',['neighbours',['../classcell_list.html#ada607886d0e5a20d710dde694d6d989f',1,'cellList']]],
-  ['numspecies',['numSpecies',['../classsim_system.html#a9eea865e6dc1cff377b1e79c4d9c23f0',1,'simSystem']]]
+  ['m_5f',['M_',['../classbarrier.html#a274cf283ffc97c22ffa9a4258369c400',1,'barrier']]],
+  ['movecounter',['moveCounter',['../classcheckpoint.html#a5ab49a355714da4874aba00eb03f701d',1,'checkpoint']]],
+  ['mstate',['mState',['../classatom.html#a3cb00c0c5b7533657e05af6ff4a42740',1,'atom']]]
 ];

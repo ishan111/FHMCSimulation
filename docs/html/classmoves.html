@@ -173,7 +173,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="mover_8cpp_source.html#l00008">8</a> of file <a class="el" href="mover_8cpp_source.html">mover.cpp</a>.</p>
 
-<p>References <a class="el" href="utilities_8cpp_source.html#l00035">sendErr()</a>, <a class="el" href="mover_8cpp_source.html#l00040">setM()</a>, <a class="el" href="global_8h_source.html#l00158">SYS_FAILURE</a>, and <a class="el" href="global_8h_source.html#l00170">customException::what()</a>.</p>
+<p>References <a class="el" href="utilities_8cpp_source.html#l00035">sendErr()</a>, <a class="el" href="mover_8cpp_source.html#l00040">setM()</a>, <a class="el" href="global_8h_source.html#l00158">SYS_FAILURE</a>, and <a class="el" href="global_8h_source.html#l00169">customException::what()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;                         {</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keywordflow">try</span> {</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;        <a class="code" href="classmoves.html#ab603c6ce829075e3232ff41a7d5e2aab">setM</a> (M);</div>
@@ -182,10 +182,10 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        exit(<a class="code" href="global_8h.html#a428dfe1ef0a6ff4b1fdebf275f6aff2e">SYS_FAILURE</a>);</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    }</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html_aeb6ab5848b038adfc68fde86a512f691"><div class="ttname"><a href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">customException::what</a></div><div class="ttdeci">const char * what() const </div><div class="ttdoc">Return the user&#39;s message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00170">global.h:170</a></div></div>
+<div class="ttc" id="classcustom_exception_html_aeb6ab5848b038adfc68fde86a512f691"><div class="ttname"><a href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">customException::what</a></div><div class="ttdeci">const char * what() const </div><div class="ttdoc">Return the user&#39;s message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00169">global.h:169</a></div></div>
 <div class="ttc" id="global_8h_html_a428dfe1ef0a6ff4b1fdebf275f6aff2e"><div class="ttname"><a href="global_8h.html#a428dfe1ef0a6ff4b1fdebf275f6aff2e">SYS_FAILURE</a></div><div class="ttdeci">#define SYS_FAILURE</div><div class="ttdoc">Returned from main the simualtion encountered a major error. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00158">global.h:158</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a6dacf3c3c19aa1e13a4d5a148fe5114e"><div class="ttname"><a href="utilities_8cpp.html#a6dacf3c3c19aa1e13a4d5a148fe5114e">sendErr</a></div><div class="ttdeci">void sendErr(const std::string msg)</div><div class="ttdoc">Send a message to std::cerr. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00035">utilities.cpp:35</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 <div class="ttc" id="classmoves_html_ab603c6ce829075e3232ff41a7d5e2aab"><div class="ttname"><a href="classmoves.html#ab603c6ce829075e3232ff41a7d5e2aab">moves::setM</a></div><div class="ttdeci">void setM(const int M)</div><div class="ttdoc">Set the value of M. </div><div class="ttdef"><b>Definition:</b> <a href="mover_8cpp_source.html#l00040">mover.cpp:40</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -250,7 +250,7 @@ Public Member Functions</h2></td></tr>
 
 <p>References <a class="el" href="utilities_8h_source.html#l00044">numToStr()</a>.</p>
 
-<p>Referenced by <a class="el" href="input_8cpp_source.html#l00236">setMoves()</a>.</p>
+<p>Referenced by <a class="el" href="input_8cpp_source.html#l00285">setMoves()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                                                         {</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keyword">auto</span> om = std::make_shared &lt; deleteParticle &gt; (index, <span class="stringliteral">&quot;delete&quot;</span>);</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    ownedMoves_.push_back(om);</div>
@@ -261,7 +261,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot add deletion move for species &quot;</span>+<a class="code" href="utilities_8h.html#ae6ed8fadf719af789711a7c0e99f44bc">numToStr</a>(index+1)+<span class="stringliteral">&quot; : &quot;</span>+msg);</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    }</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 <div class="ttc" id="utilities_8h_html_ae6ed8fadf719af789711a7c0e99f44bc"><div class="ttname"><a href="utilities_8h.html#ae6ed8fadf719af789711a7c0e99f44bc">numToStr</a></div><div class="ttdeci">std::string numToStr(const T &amp;val)</div><div class="ttdoc">Convert a number to a string with 15 digits of precision. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00044">utilities.h:44</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -303,7 +303,7 @@ Public Member Functions</h2></td></tr>
 
 <p>References <a class="el" href="utilities_8h_source.html#l00044">numToStr()</a>.</p>
 
-<p>Referenced by <a class="el" href="input_8cpp_source.html#l00457">setConfig()</a>, and <a class="el" href="input_8cpp_source.html#l00236">setMoves()</a>.</p>
+<p>Referenced by <a class="el" href="input_8cpp_source.html#l00506">setConfig()</a>, and <a class="el" href="input_8cpp_source.html#l00285">setMoves()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                                                         {</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keyword">auto</span> om = std::make_shared &lt; insertParticle &gt; (index, <span class="stringliteral">&quot;insert&quot;</span>);</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    ownedMoves_.push_back(om);</div>
@@ -314,7 +314,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot add insertion move for species &quot;</span>+<a class="code" href="utilities_8h.html#ae6ed8fadf719af789711a7c0e99f44bc">numToStr</a>(index+1)+<span class="stringliteral">&quot; : &quot;</span>+msg);</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    }</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 <div class="ttc" id="utilities_8h_html_ae6ed8fadf719af789711a7c0e99f44bc"><div class="ttname"><a href="utilities_8h.html#ae6ed8fadf719af789711a7c0e99f44bc">numToStr</a></div><div class="ttdeci">std::string numToStr(const T &amp;val)</div><div class="ttdoc">Convert a number to a string with 15 digits of precision. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00044">utilities.h:44</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -363,7 +363,7 @@ Public Member Functions</h2></td></tr>
 
 <p>References <a class="el" href="utilities_8h_source.html#l00044">numToStr()</a>.</p>
 
-<p>Referenced by <a class="el" href="input_8cpp_source.html#l00236">setMoves()</a>.</p>
+<p>Referenced by <a class="el" href="input_8cpp_source.html#l00285">setMoves()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                                                                          {</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keyword">auto</span> om = std::make_shared &lt; swapParticles &gt; (index1, index2, <span class="stringliteral">&quot;swap&quot;</span>);</div>
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    ownedMoves_.push_back(om);</div>
@@ -374,7 +374,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot add swap move for species pair (&quot;</span>+<a class="code" href="utilities_8h.html#ae6ed8fadf719af789711a7c0e99f44bc">numToStr</a>(index1+1)+<span class="stringliteral">&quot;,&quot;</span>+<a class="code" href="utilities_8h.html#ae6ed8fadf719af789711a7c0e99f44bc">numToStr</a>(index2+1)+<span class="stringliteral">&quot;) : &quot;</span>+msg);</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    }</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 <div class="ttc" id="utilities_8h_html_ae6ed8fadf719af789711a7c0e99f44bc"><div class="ttname"><a href="utilities_8h.html#ae6ed8fadf719af789711a7c0e99f44bc">numToStr</a></div><div class="ttdeci">std::string numToStr(const T &amp;val)</div><div class="ttdoc">Convert a number to a string with 15 digits of precision. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00044">utilities.h:44</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -430,7 +430,7 @@ Public Member Functions</h2></td></tr>
 
 <p>References <a class="el" href="utilities_8h_source.html#l00044">numToStr()</a>.</p>
 
-<p>Referenced by <a class="el" href="input_8cpp_source.html#l00236">setMoves()</a>.</p>
+<p>Referenced by <a class="el" href="input_8cpp_source.html#l00285">setMoves()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                                                                                                                {</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keyword">auto</span> om = std::make_shared &lt; translateParticle &gt; (index, <span class="stringliteral">&quot;translate&quot;</span>);</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordflow">try</span> {</div>
@@ -442,7 +442,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot add translation move for species &quot;</span>+<a class="code" href="utilities_8h.html#ae6ed8fadf719af789711a7c0e99f44bc">numToStr</a>(index+1)+<span class="stringliteral">&quot; : &quot;</span>+msg);</div>
 <div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    }</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 <div class="ttc" id="utilities_8h_html_ae6ed8fadf719af789711a7c0e99f44bc"><div class="ttname"><a href="utilities_8h.html#ae6ed8fadf719af789711a7c0e99f44bc">numToStr</a></div><div class="ttdeci">std::string numToStr(const T &amp;val)</div><div class="ttdoc">Convert a number to a string with 15 digits of precision. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8h_source.html#l00044">utilities.h:44</a></div></div>
 </div><!-- fragment -->
 </div>
@@ -464,7 +464,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="mover_8cpp_source.html#l00027">27</a> of file <a class="el" href="mover_8cpp_source.html">mover.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="input_8cpp_source.html#l00236">setMoves()</a>.</p>
+<p>Referenced by <a class="el" href="input_8cpp_source.html#l00285">setMoves()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                      {</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    normProbabilities_.clear();</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    rawProbabilities_.clear();</div>
@@ -526,9 +526,9 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="mover_8cpp_source.html#l00191">191</a> of file <a class="el" href="mover_8cpp_source.html">mover.cpp</a>.</p>
 
-<p>References <a class="el" href="system_8h_source.html#l00080">simSystem::getCurrentM()</a>, <a class="el" href="system_8h_source.html#l00082">simSystem::getFractionalAtomType()</a>, <a class="el" href="system_8h_source.html#l00081">simSystem::getTotalM()</a>, <a class="el" href="utilities_8cpp_source.html#l00189">rng()</a>, <a class="el" href="utilities_8cpp_source.html#l00003">RNG_SEED</a>, and <a class="el" href="global_8h_source.html#l00170">customException::what()</a>.</p>
+<p>References <a class="el" href="system_8h_source.html#l00080">simSystem::getCurrentM()</a>, <a class="el" href="system_8h_source.html#l00082">simSystem::getFractionalAtomType()</a>, <a class="el" href="system_8h_source.html#l00081">simSystem::getTotalM()</a>, <a class="el" href="utilities_8cpp_source.html#l00189">rng()</a>, <a class="el" href="utilities_8cpp_source.html#l00003">RNG_SEED</a>, and <a class="el" href="global_8h_source.html#l00169">customException::what()</a>.</p>
 
-<p>Referenced by <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>, and <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>.</p>
+<p>Referenced by <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, <a class="el" href="gcmc_8cpp_source.html#l00010">performGCMC()</a>, <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>, and <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                                    {</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <span class="keywordflow">if</span> (sys.<a class="code" href="classsim_system.html#aa4ad1afff101bb530e1590df05035276">getTotalM</a>() != M_) {</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Error, M in system different from M in moves class operating on the system&quot;</span>);</div>
@@ -587,13 +587,13 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    attempted_[moveChosen][mIndex] += 1.0;</div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;    succeeded_[moveChosen][mIndex] += succ;</div>
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html_aeb6ab5848b038adfc68fde86a512f691"><div class="ttname"><a href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">customException::what</a></div><div class="ttdeci">const char * what() const </div><div class="ttdoc">Return the user&#39;s message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00170">global.h:170</a></div></div>
+<div class="ttc" id="classcustom_exception_html_aeb6ab5848b038adfc68fde86a512f691"><div class="ttname"><a href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">customException::what</a></div><div class="ttdeci">const char * what() const </div><div class="ttdoc">Return the user&#39;s message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00169">global.h:169</a></div></div>
 <div class="ttc" id="utilities_8cpp_html_a0f9542af4b475ac79cb679d7a8d14db0"><div class="ttname"><a href="utilities_8cpp.html#a0f9542af4b475ac79cb679d7a8d14db0">rng</a></div><div class="ttdeci">double rng(int *idum)</div><div class="ttdoc">Random number generator (from Numerical Recipes) </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00189">utilities.cpp:189</a></div></div>
 <div class="ttc" id="classsim_system_html_aa4ad1afff101bb530e1590df05035276"><div class="ttname"><a href="classsim_system.html#aa4ad1afff101bb530e1590df05035276">simSystem::getTotalM</a></div><div class="ttdeci">const int getTotalM()</div><div class="ttdoc">Return the total number of fractional states available to species in the expanded ensemble...</div><div class="ttdef"><b>Definition:</b> <a href="system_8h_source.html#l00081">system.h:81</a></div></div>
 <div class="ttc" id="classsim_system_html_a0500a9e84eecfbde7a98cf8a34f719d5"><div class="ttname"><a href="classsim_system.html#a0500a9e84eecfbde7a98cf8a34f719d5">simSystem::getFractionalAtomType</a></div><div class="ttdeci">const int getFractionalAtomType()</div><div class="ttdoc">Return the atom type of the fractional atom. </div><div class="ttdef"><b>Definition:</b> <a href="system_8h_source.html#l00082">system.h:82</a></div></div>
 <div class="ttc" id="global_8h_html_a3f4e4ea24d5a5c66feae55d1f329c884"><div class="ttname"><a href="global_8h.html#a3f4e4ea24d5a5c66feae55d1f329c884">RNG_SEED</a></div><div class="ttdeci">int RNG_SEED</div><div class="ttdoc">Default RNG seed. </div><div class="ttdef"><b>Definition:</b> <a href="utilities_8cpp_source.html#l00003">utilities.cpp:3</a></div></div>
 <div class="ttc" id="classsim_system_html_a299fe4372e610b554eaaf5f5957b2dbc"><div class="ttname"><a href="classsim_system.html#a299fe4372e610b554eaaf5f5957b2dbc">simSystem::getCurrentM</a></div><div class="ttdeci">const int getCurrentM()</div><div class="ttdoc">Return the system&#39;s current expanded ensemble fractional state. </div><div class="ttdef"><b>Definition:</b> <a href="system_8h_source.html#l00080">system.h:80</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -624,7 +624,7 @@ Public Member Functions</h2></td></tr>
 
 <p>References <a class="el" href="utilities_8cpp_source.html#l00091">getTimeStamp()</a>, and <a class="el" href="mover_8cpp_source.html#l00256">reportMoveStatistics()</a>.</p>
 
-<p>Referenced by <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>, and <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>.</p>
+<p>Referenced by <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, <a class="el" href="gcmc_8cpp_source.html#l00010">performGCMC()</a>, <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>, and <a class="el" href="wala_8cpp_source.html#l00010">performWALA()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                                           {</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    std::ofstream statFile (filename.c_str(), std::ofstream::out | std::ofstream::app);</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    std::vector &lt; std::vector &lt; double &gt; &gt; stats = <a class="code" href="classmoves.html#ad3e937628d85cdbbe02732648cb533e2">reportMoveStatistics</a>();</div>
@@ -680,7 +680,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    }</div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keywordflow">return</span> ans;</div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -735,7 +735,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="mover_8cpp_source.html#l00040">40</a> of file <a class="el" href="mover_8cpp_source.html">mover.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="mover_8cpp_source.html#l00008">moves()</a>, and <a class="el" href="input_8cpp_source.html#l00236">setMoves()</a>.</p>
+<p>Referenced by <a class="el" href="mover_8cpp_source.html#l00008">moves()</a>, and <a class="el" href="input_8cpp_source.html#l00285">setMoves()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                             {</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordflow">if</span> (M &gt; 0) {</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        M_ = M;</div>
@@ -743,7 +743,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Error, number of expanded ensemble stages must be &gt; 0&quot;</span>);</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    }</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -754,7 +754,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 30 2016 14:21:51 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jan 4 2017 10:47:55 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

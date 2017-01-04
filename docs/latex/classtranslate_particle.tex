@@ -123,64 +123,64 @@ Definition at line 10 of file translate.\-cpp.
 
 
 
-References sim\-System\-::atoms, sim\-System\-::beta(), sim\-System\-::box(), calculate\-Bias(), sim\-System\-::get\-Current\-M(), sim\-System\-::get\-Fractional\-Atom(), sim\-System\-::get\-Fractional\-Atom\-Type(), sim\-System\-::get\-Neighbor\-Atoms(), sim\-System\-::get\-Tot\-N(), sim\-System\-::get\-W\-A\-L\-A\-Bias(), sim\-System\-::increment\-Energy(), M\-O\-V\-E\-\_\-\-F\-A\-I\-L\-U\-R\-E, M\-O\-V\-E\-\_\-\-S\-U\-C\-C\-E\-S\-S, sim\-System\-::n\-Species(), sim\-System\-::num\-Species, sim\-System\-::ppot, rng(), R\-N\-G\-\_\-\-S\-E\-E\-D, sim\-System\-::species\-Barriers, sim\-System\-::tmmc\-Bias, sim\-System\-::translate\-Atom(), mc\-Move\-::type\-Index\-\_\-, wala\-::update(), tmmc\-::update\-C(), sim\-System\-::use\-T\-M\-M\-C, sim\-System\-::use\-W\-A\-L\-A, and custom\-Exception\-::what().
+References sim\-System\-::atoms, sim\-System\-::beta(), sim\-System\-::box(), calculate\-Bias(), sim\-System\-::get\-Current\-M(), sim\-System\-::get\-Fractional\-Atom(), sim\-System\-::get\-Fractional\-Atom\-Type(), sim\-System\-::get\-Neighbor\-Atoms(), sim\-System\-::get\-Tot\-N(), sim\-System\-::get\-W\-A\-L\-A\-Bias(), sim\-System\-::increment\-Energy(), M\-O\-V\-E\-\_\-\-F\-A\-I\-L\-U\-R\-E, M\-O\-V\-E\-\_\-\-S\-U\-C\-C\-E\-S\-S, sim\-System\-::n\-Species(), N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y, sim\-System\-::num\-Species, sim\-System\-::ppot, rng(), R\-N\-G\-\_\-\-S\-E\-E\-D, sim\-System\-::species\-Barriers, sim\-System\-::tmmc\-Bias, sim\-System\-::translate\-Atom(), mc\-Move\-::type\-Index\-\_\-, wala\-::update(), tmmc\-::update\-C(), sim\-System\-::use\-T\-M\-M\-C, sim\-System\-::use\-W\-A\-L\-A, and custom\-Exception\-::what().
 
 
 \begin{DoxyCode}
 10                                            \{
 11     \textcolor{keywordtype}{bool} earlyReject = \textcolor{keyword}{false};
 12 
-13     \textcolor{comment}{// check if any exist to be translated}
+13     \textcolor{comment}{// Check if any exist to be translated}
 14     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a0500a9e84eecfbde7a98cf8a34f719d5}{getFractionalAtomType}() == \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}) \{
 15         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}] == 0 && sys.
       \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() == 0) \{
-16                 earlyReject = \textcolor{keyword}{true};
-17             \}
+16             earlyReject = \textcolor{keyword}{true};
+17         \}
 18     \} \textcolor{keywordflow}{else} \{
 19         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}] == 0) \{
 20             earlyReject = \textcolor{keyword}{true};
 21         \}
 22     \}
 23 
-24     \textcolor{comment}{// updates to biasing functions must be done even if at bounds}
+24     \textcolor{comment}{// Updates to biasing functions must be done even if at bounds}
 25     \textcolor{keywordflow}{if} (earlyReject) \{
-26             \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
-27                     sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ab439e3f60bea6c54522a870b9ad67acf}{update}(sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
+26         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+27             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ab439e3f60bea6c54522a870b9ad67acf}{update}(sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
       \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}());
-28             \}
-29             \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC}) \{
-30                     sys.\hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias}->\hyperlink{classtmmc_ae067afc5b52af203b9d45f18d9737219}{updateC} (sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
+28         \}
+29         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC}) \{
+30             sys.\hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias}->\hyperlink{classtmmc_ae067afc5b52af203b9d45f18d9737219}{updateC} (sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
       \hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}(), sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}(), 0.0);
-31             \}
-32             \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
-33         \}
+31         \}
+32         \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
+33     \}
 34 
-35     \textcolor{comment}{// choose a random particle of that type}
+35     \textcolor{comment}{// Choose a random particle of that type}
 36     \textcolor{keywordtype}{int} chosenAtom = 0;
 37     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() > 0 && sys.\hyperlink{classsim_system_a0500a9e84eecfbde7a98cf8a34f719d5}{getFractionalAtomType}() == 
       \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}) \{
-38         \textcolor{comment}{// we are moving a species that has a partially inserted atom, so account for that in the choice}
+38         \textcolor{comment}{// We are moving a species that has a partially inserted atom, so account for that in the choice}
 39         chosenAtom = (int) floor(\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) * (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[
       \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]+1));
 40     \} \textcolor{keywordflow}{else} \{
-41         \textcolor{comment}{// all atoms of this type are fully inserted}
+41         \textcolor{comment}{// All atoms of this type are fully inserted}
 42         chosenAtom = (int) floor(\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) * sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[
       \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]);
 43     \}
 44 
-45     \textcolor{comment}{// attempt to translate that one}
+45     \textcolor{comment}{// Attempt to translate that one}
 46     \textcolor{keyword}{const} std::vector < double > box = sys.\hyperlink{classsim_system_a8bff9dfb95b1b09a0fab2c1c485ade07}{box}();
-47         \textcolor{keywordtype}{double} V = 1.0;
-48         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box.size(); ++i) \{
-49             V *= box[i];
-50         \}
+47     \textcolor{keywordtype}{double} V = 1.0;
+48     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box.size(); ++i) \{
+49         V *= box[i];
+50     \}
 51 
-52         \textcolor{keywordtype}{double} oldEnergy = 0.0;
-53         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
-54             \textcolor{comment}{// get positions of neighboring atoms around chosenAtom}
-55             std::vector < atom* > neighborAtoms = sys.\hyperlink{classsim_system_a9b3aeefa22c3b50b5913df6eea753bc6}{getNeighborAtoms}(spec, 
+52     \textcolor{keywordtype}{double} oldEnergy = 0.0;
+53     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
+54         \textcolor{comment}{// Get positions of neighboring atoms around chosenAtom}
+55         std::vector < atom* > neighborAtoms = sys.\hyperlink{classsim_system_a9b3aeefa22c3b50b5913df6eea753bc6}{getNeighborAtoms}(spec, 
       \hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}, &sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom]);
-56             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborAtoms.size(); ++i) \{
+56         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborAtoms.size(); ++i) \{
 57             \textcolor{keywordflow}{try} \{
 58                 oldEnergy += sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->energy(neighborAtoms[i], &sys.
       \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom], box);
@@ -189,134 +189,153 @@ References sim\-System\-::atoms, sim\-System\-::beta(), sim\-System\-::box(), ca
       \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
 61                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
 62             \}
-63             \}
-64             \textcolor{comment}{// add tail correction to potential energy}
-65 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
-66 \textcolor{preprocessor}{}            \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->useTailCorrection) \{
-67                 \textcolor{keywordflow}{if} (!(sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() > 0 && sys.\hyperlink{classsim_system_a2ab77377c60e0e3109a6e875690b0ab7}{getFractionalAtom} () == &sys
-      .\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom])) \{
-68                     \textcolor{comment}{// then chosenAtom is not a partially inserted particle and tail interactions must be
+63         \}
+64 
+65         \textcolor{comment}{// Add tail correction to potential energy}
+66 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
+67 \textcolor{preprocessor}{}        \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->useTailCorrection) \{
+68             \textcolor{keywordflow}{if} (!(sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() > 0 && sys.\hyperlink{classsim_system_a2ab77377c60e0e3109a6e875690b0ab7}{getFractionalAtom} () == &sys.
+      \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom])) \{
+69                 \textcolor{comment}{// Then chosenAtom is not a partially inserted particle and tail interactions must be
        included}
-69                     \textcolor{keywordflow}{if} (spec == typeIndex\_) \{
-70                                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]-1 > 0) \{
-71                                     oldEnergy += sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection((
-      sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]-1)/V);
-72                                 \}
-73                     \} \textcolor{keywordflow}{else} \{
-74                                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec] > 0) \{
-75                                     oldEnergy += sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection(
-      sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]/V);
-76                                 \}
+70                 \textcolor{keywordflow}{if} (spec == typeIndex\_) \{
+71                     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]-1 > 0) \{
+72                         oldEnergy += sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection((sys.
+      \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]-1)/V);
+73                     \}
+74                 \} \textcolor{keywordflow}{else} \{
+75                     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec] > 0) \{
+76                         oldEnergy += sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection(sys.
+      \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]/V);
 77                     \}
 78                 \}
 79             \}
-80 \textcolor{preprocessor}{#endif}
-81 \textcolor{preprocessor}{}        \}
-82 
-83         \textcolor{comment}{// account for wall or barrier interactions}
-84         oldEnergy += sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}].energy(&sys.
+80         \}
+81 \textcolor{preprocessor}{#endif}
+82 \textcolor{preprocessor}{}    \}
+83 
+84     \textcolor{comment}{// Account for wall or barrier interactions}
+85     oldEnergy += sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}].energy(&sys.
       \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom], box);
-85 
-86         \textcolor{comment}{// store old position and move particle along random direction in interval [-maxD\_:maxD\_]}
-87         std::vector<double> oldPos = sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos;
-88         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i< sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos.size(); ++i) \{
-89             sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos[i] += 2.0*maxD\_*(0.5-
+86 
+87     \textcolor{comment}{// Store old position and move particle along random direction in interval [-maxD\_:maxD\_]}
+88     std::vector<double> oldPos = sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos;
+89     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i< sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos.size(); ++i) \{
+90         sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos[i] += 2.0*maxD\_*(0.5-
       \hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}));
-90 
-91             \textcolor{comment}{// apply periodic boundary conditions}
-92             \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom].pos[i] >= box[i]) \{
-93                 sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos[i] -= box[i];
-94             \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom].pos[i] < 0) \{
-95                 sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos[i] += box[i];
-96             \}
+91 
+92         \textcolor{comment}{// Apply periodic boundary conditions}
+93         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom].pos[i] >= box[i]) \{
+94             sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos[i] -= box[i];
+95         \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom].pos[i] < 0) \{
+96             sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos[i] += box[i];
 97         \}
-98 
-99     \textcolor{comment}{// calculate energy at new position}
-100         \textcolor{keywordtype}{double} newEnergy = 0.0;
-101         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
-102             \textcolor{comment}{// get positions of neighboring atoms around chosenAtom}
-103             std::vector< atom* > neighborAtoms = sys.\hyperlink{classsim_system_a9b3aeefa22c3b50b5913df6eea753bc6}{getNeighborAtoms}(spec, typeIndex\_, &
+98     \}
+99 
+100     \textcolor{comment}{// Calculate energy at new position}
+101     \textcolor{keywordtype}{double} newEnergy = 0.0;
+102     \textcolor{keywordtype}{double} dU = 0.0;
+103 
+104     \textcolor{comment}{// Account for wall or barrier interactions first to be more efficient}
+105     dU = sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}].energy(&sys.
+      \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom], box);
+106     \textcolor{keywordflow}{if} (dU < \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \{
+107         newEnergy += dU;
+108     \} \textcolor{keywordflow}{else} \{
+109         newEnergy = \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
+110     \}
+111 
+112     \textcolor{keywordflow}{if} (newEnergy < \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \{
+113         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} spec = 0; spec < sys.\hyperlink{classsim_system_ab5e2e9b6204de15520302fe1d51688dd}{nSpecies}(); ++spec) \{
+114             \textcolor{comment}{// Get positions of neighboring atoms around chosenAtom}
+115             std::vector< atom* > neighborAtoms = sys.\hyperlink{classsim_system_a9b3aeefa22c3b50b5913df6eea753bc6}{getNeighborAtoms}(spec, typeIndex\_, &
       sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom]);
-104             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborAtoms.size(); ++i) \{
-105             \textcolor{keywordflow}{try} \{
-106                 newEnergy += sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->energy(neighborAtoms[i], &sys.
+116             \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < neighborAtoms.size(); ++i) \{
+117                 \textcolor{keywordflow}{try} \{
+118                     dU = sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->energy(neighborAtoms[i], &sys.
       \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom], box);
-107             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
-108                 std::string a = \textcolor{stringliteral}{"Cannot delete because of energy error: "}, b = ce.
+119                 \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException}& ce) \{
+120                     std::string a = \textcolor{stringliteral}{"Cannot delete because of energy error: "}, b = ce.
       \hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-109                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
-110             \}
-111             \}
-112             \textcolor{comment}{// add tail correction to potential energy}
-113 \textcolor{preprocessor}{#ifdef FLUID\_PHASE\_SIMULATIONS}
-114 \textcolor{preprocessor}{}            \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][typeIndex\_]->useTailCorrection) \{
-115                 \textcolor{keywordflow}{if} (!(sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() > 0 && sys.\hyperlink{classsim_system_a2ab77377c60e0e3109a6e875690b0ab7}{getFractionalAtom} () == &sys
+121                     \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+122                 \}
+123                 \textcolor{keywordflow}{if} (dU < \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \{
+124                     newEnergy += dU;
+125                 \} \textcolor{keywordflow}{else} \{
+126                     newEnergy = \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
+127                     \textcolor{keywordflow}{break};
+128                 \}
+129             \}
+130             \textcolor{keywordflow}{if} (newEnergy == \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \textcolor{keywordflow}{break}; \textcolor{comment}{// Don't add anything if "infinite" already}
+131 
+132             \textcolor{comment}{// Add tail correction to potential energy}
+133 \textcolor{preprocessor}{    #ifdef FLUID\_PHASE\_SIMULATIONS}
+134 \textcolor{preprocessor}{}            \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][typeIndex\_]->useTailCorrection) \{
+135                 \textcolor{keywordflow}{if} (!(sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}() > 0 && sys.\hyperlink{classsim_system_a2ab77377c60e0e3109a6e875690b0ab7}{getFractionalAtom} () == &sys
       .\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom])) \{
-116                     \textcolor{comment}{// then chosenAtom is not a partially inserted particle and tail interactions must be
+136                     \textcolor{comment}{// Then chosenAtom is not a partially inserted particle and tail interactions must be
        included}
-117                     \textcolor{keywordflow}{if} (spec == typeIndex\_) \{
-118                                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]-1 > 0) \{
-119                                     newEnergy += sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection((
-      sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]-1)/V);
-120                                 \}
-121                     \} \textcolor{keywordflow}{else} \{
-122                                 \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec] > 0) \{
-123                                     newEnergy += sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection(
-      sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]/V);
-124                                     \}
-125                     \}
-126                 \}
-127             \}
-128 \textcolor{preprocessor}{#endif}
-129 \textcolor{preprocessor}{}        \}
-130 
-131         \textcolor{comment}{// account for wall or barrier interactions}
-132     newEnergy += sys.\hyperlink{classsim_system_a5ae652ff4519f39c3862abae32a9581b}{speciesBarriers}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}].energy(&sys.
-      \hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[typeIndex\_][chosenAtom], box);
-133 
-134     \textcolor{comment}{// biasing}
-135     \textcolor{keyword}{const} \textcolor{keywordtype}{double} p\_u = exp(-sys.\hyperlink{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{beta}()*(newEnergy - oldEnergy));
-136     \textcolor{keywordtype}{double} bias = \hyperlink{system_8cpp_acfe185adf03db047fd3753c0d788e0e3}{calculateBias}(sys, sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
-      \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}()); \textcolor{comment}{// N\_tot doesn't change throughout this move}
-137 
-138     \textcolor{comment}{// tmmc gets updated the same way, regardless of whether the move gets accepted}
-139         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC}) \{
-140             sys.\hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias}->\hyperlink{classtmmc_ae067afc5b52af203b9d45f18d9737219}{updateC} (sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
-      \hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}(), sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}(), std::min(1.0, p\_u)); \textcolor{comment}{// since
-       the total number of atoms isn't changing, can use getTotN() as both initial and final states}
-141         \}
-142 
-143     \textcolor{keywordflow}{if} (\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) < p\_u*bias) \{
-144         \textcolor{keywordflow}{try} \{
-145                 sys.\hyperlink{classsim_system_a22fdaceea44abd6cd021bac1ecd11890}{translateAtom}(typeIndex\_, chosenAtom, oldPos);
-146             \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
-147                 std::string a = \textcolor{stringliteral}{"Failed to translate atom: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
-148                 \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
-149             \}
-150         sys.\hyperlink{classsim_system_a6ad31c08955b80873f865b3069618dcb}{incrementEnergy}(newEnergy - oldEnergy);
+137                     \textcolor{keywordflow}{if} (spec == typeIndex\_) \{
+138                         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]-1 > 0) \{
+139                             newEnergy += sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection((sys.
+      \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]-1)/V); \textcolor{comment}{// Never infinite}
+140                         \}
+141                     \} \textcolor{keywordflow}{else} \{
+142                         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec] > 0) \{
+143                             newEnergy += sys.\hyperlink{classsim_system_ad2e290b5963f132e6a3a56cee35c8e9f}{ppot}[spec][\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}]->tailCorrection(sys.
+      \hyperlink{classsim_system_a9eea865e6dc1cff377b1e79c4d9c23f0}{numSpecies}[spec]/V); \textcolor{comment}{// Never infinite}
+144                         \}
+145                     \}
+146                 \}
+147             \}
+148 \textcolor{preprocessor}{    #endif}
+149 \textcolor{preprocessor}{}        \}
+150     \}
 151 
-152         \textcolor{comment}{// update Wang-Landau bias, if used}
-153         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
-154             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ab439e3f60bea6c54522a870b9ad67acf}{update}(sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
+152     \textcolor{comment}{// Biasing}
+153     \textcolor{keywordtype}{double} p\_u = 0.0;
+154     \textcolor{keywordflow}{if} (newEnergy < \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \{
+155         p\_u = exp(-sys.\hyperlink{classsim_system_a3eeec9678902f8d7fce4dad6064aaf4c}{beta}()*(newEnergy - oldEnergy));
+156     \}
+157     \textcolor{keywordtype}{double} bias = \hyperlink{system_8cpp_acfe185adf03db047fd3753c0d788e0e3}{calculateBias}(sys, sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
+      \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}()); \textcolor{comment}{// N\_tot doesn't change throughout this move}
+158 
+159     \textcolor{comment}{// TMMC gets updated the same way, regardless of whether the move gets accepted}
+160     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa474a50b6353c8897331b1ab1ce53ab1}{useTMMC}) \{
+161         sys.\hyperlink{classsim_system_a13173f45a1e40a5f5a3552b0ebe15b54}{tmmcBias}->\hyperlink{classtmmc_ae067afc5b52af203b9d45f18d9737219}{updateC} (sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
+      \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}(), sys.\hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}(), std::min(1.0, p\_u)); \textcolor{comment}{// Since the total number of
+       atoms isn't changing, can use getTotN() as both initial and final states}
+162     \}
+163 
+164     \textcolor{keywordflow}{if} (\hyperlink{utilities_8cpp_a0f9542af4b475ac79cb679d7a8d14db0}{rng} (&\hyperlink{global_8h_a3f4e4ea24d5a5c66feae55d1f329c884}{RNG\_SEED}) < p\_u*bias) \{
+165         \textcolor{keywordflow}{try} \{
+166             sys.\hyperlink{classsim_system_a22fdaceea44abd6cd021bac1ecd11890}{translateAtom}(typeIndex\_, chosenAtom, oldPos);
+167         \} \textcolor{keywordflow}{catch} (\hyperlink{classcustom_exception}{customException} &ce) \{
+168             std::string a = \textcolor{stringliteral}{"Failed to translate atom: "}, b = ce.\hyperlink{classcustom_exception_aeb6ab5848b038adfc68fde86a512f691}{what}();
+169             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (a+b);
+170         \}
+171         sys.\hyperlink{classsim_system_a6ad31c08955b80873f865b3069618dcb}{incrementEnergy}(newEnergy - oldEnergy);
+172 
+173         \textcolor{comment}{// Update Wang-Landau bias, if used}
+174         \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+175             sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ab439e3f60bea6c54522a870b9ad67acf}{update}(sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
       \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}());
-155         \}
-156 
-157             \textcolor{keywordflow}{return} \hyperlink{moves_8h_ae8285cbddc5d21f73f49dcbad82a775a}{MOVE\_SUCCESS};
-158         \}
-159 
-160     \textcolor{comment}{// if move failed, reset position}
-161         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos.size(); ++i) \{
-162             sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos[i] = oldPos[i];
-163         \}
-164 
-165         \textcolor{comment}{// update Wang-Landau bias (even if moved failed), if used}
-166     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
-167         sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ab439e3f60bea6c54522a870b9ad67acf}{update}(sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
+176         \}
+177         \textcolor{keywordflow}{return} \hyperlink{moves_8h_ae8285cbddc5d21f73f49dcbad82a775a}{MOVE\_SUCCESS};
+178     \}
+179 
+180     \textcolor{comment}{// If move failed, reset position}
+181     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos.size(); ++i) \{
+182         sys.\hyperlink{classsim_system_a90421b19082f7fb8fc23b7264b1161e4}{atoms}[\hyperlink{classmc_move_acb731965547b0326ef318ec96da8b46a}{typeIndex\_}][chosenAtom].pos[i] = oldPos[i];
+183     \}
+184 
+185     \textcolor{comment}{// Update Wang-Landau bias (even if moved failed), if used}
+186     \textcolor{keywordflow}{if} (sys.\hyperlink{classsim_system_aa83b00006b3919fb6e13f1bdeadece6a}{useWALA}) \{
+187         sys.\hyperlink{classsim_system_a7cb5049de8b0988349e89e30e4000407}{getWALABias}()->\hyperlink{classwala_ab439e3f60bea6c54522a870b9ad67acf}{update}(sys.\hyperlink{classsim_system_a37dd827f4057049763351510147b9f1d}{getTotN}(), sys.
       \hyperlink{classsim_system_a299fe4372e610b554eaaf5f5957b2dbc}{getCurrentM}());
-168         \}
-169 
-170     \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
-171 \}
+188     \}
+189     \textcolor{keywordflow}{return} \hyperlink{moves_8h_a9832cf5fcfa8c0894545b591c9908e39}{MOVE\_FAILURE};
+190 \}
 \end{DoxyCode}
 \hypertarget{classtranslate_particle_a2018196eaabe3a5b76761951b2991c41}{\index{translate\-Particle@{translate\-Particle}!set\-Max\-Translation@{set\-Max\-Translation}}
 \index{set\-Max\-Translation@{set\-Max\-Translation}!translateParticle@{translate\-Particle}}
@@ -341,22 +360,22 @@ Should be postive number lss than half the box size.
 \end{DoxyParams}
 
 
-Definition at line 179 of file translate.\-cpp.
+Definition at line 198 of file translate.\-cpp.
 
 
 \begin{DoxyCode}
-179                                                                                              \{
-180     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box.size(); ++i) \{
-181         \textcolor{keywordflow}{if} (maxD >= box[i]/2.) \{
-182             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max translation too large"});
-183         \}
-184     \}
-185     \textcolor{keywordflow}{if} (maxD > 0) \{
-186         maxD\_ = maxD;
-187     \} \textcolor{keywordflow}{else} \{
-188         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max translation must be positive"});
-189     \}
-190 \}
+198                                                                                              \{
+199     \textcolor{keywordflow}{for} (\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{int} i = 0; i < box.size(); ++i) \{
+200         \textcolor{keywordflow}{if} (maxD >= box[i]/2.) \{
+201             \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max translation too large"});
+202         \}
+203     \}
+204     \textcolor{keywordflow}{if} (maxD > 0) \{
+205         maxD\_ = maxD;
+206     \} \textcolor{keywordflow}{else} \{
+207         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Max translation must be positive"});
+208     \}
+209 \}
 \end{DoxyCode}
 
 

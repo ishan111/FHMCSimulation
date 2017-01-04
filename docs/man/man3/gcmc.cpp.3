@@ -1,0 +1,133 @@
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/gcmc.cpp" 3 "Wed Jan 4 2017" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+/home/nam4/Desktop/sandbox/FHMCSimulation/src/gcmc.cpp \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include 'gcmc\&.h'\fP
+.br
+
+.SS "Functions"
+
+.in +1c
+.ti -1c
+.RI "void \fBperformGCMC\fP (\fBsimSystem\fP &sys, \fBmoves\fP *usedMovesEq, \fBmoves\fP *usedMovesPr)"
+.br
+.RI "\fIPerform an unbiased GCMC simulation\&. \fP"
+.in -1c
+.SH "Function Documentation"
+.PP 
+.SS "void performGCMC (\fBsimSystem\fP &sys, \fBmoves\fP *usedMovesEq, \fBmoves\fP *usedMovesPr)"
+
+.PP
+Perform an unbiased GCMC simulation\&. 
+.PP
+\fBParameters:\fP
+.RS 4
+\fIsys\fP System to simulate 
+.br
+\fIusedMovesEq\fP Move class to use for equilibration phase 
+.br
+\fIusedMovesPr\fP Move class to use for production phase 
+.RE
+.PP
+
+.PP
+Definition at line 10 of file gcmc\&.cpp\&.
+.PP
+References simSystem::energy(), simSystem::gcmcEqSteps, simSystem::gcmcPrSteps, simSystem::gcmcSnapFreq, simSystem::gcmcThermoFreq, simSystem::getCurrentM(), moves::makeMove(), simSystem::nSpecies(), simSystem::numSpecies, numToStr(), moves::print(), simSystem::printSnapshot(), sanityChecks(), sendErr(), sendMsg(), SYS_FAILURE, and customException::what()\&.
+.PP
+.nf
+10                                                                           {
+11     // Equilibration Phase
+12     std::ofstream ofs;
+13     ofs\&.open ("thermoEq\&.log", std::ofstream::out);
+14     if (!ofs\&.is_open()) throw customException ("Unable to open log file to record equilibration GCMC thermodynamics");
+15     ofs << "# Step\tU\tN_tot\t";
+16     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) {
+17         ofs << "N_"+numToStr(i+1)+"\t";
+18     }
+19     ofs << std::endl;
+20 
+21     double ctr = 0, thermo_ctr = 0; // Count number of times system was in M = 0 state
+22     for (double move = 0; move < sys\&.gcmcEqSteps; move += 1\&.0) {
+23         try {
+24             usedMovesEq->makeMove(sys);
+25         } catch (customException &ce) {
+26             sendErr(ce\&.what());
+27             exit(SYS_FAILURE);
+28         }
+29 
+30         // Only record properties of the system when it is NOT in an intermediate state
+31         if (thermo_ctr < sys\&.gcmcThermoFreq && sys\&.getCurrentM() == 0) {
+32             thermo_ctr += 1\&.0;
+33         } else if (thermo_ctr >= sys\&.gcmcThermoFreq && sys\&.getCurrentM() == 0) {
+34             double sys_ntot = 0;
+35             for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) { sys_ntot += sys\&.numSpecies[i]; }
+36             ofs << move << "\t" << sys\&.energy() << "\t" << sys_ntot << "\t";
+37             for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) { ofs << sys\&.numSpecies[i]/sys_ntot << "\t"; }
+38             ofs << std::endl;
+39             thermo_ctr = 0\&.0;
+40         }
+41 
+42         if (ctr < sys\&.gcmcSnapFreq) {
+43             ctr += 1\&.0;
+44         } else {
+45             ctr = 0\&.0;
+46             usedMovesEq->print("equilibration\&.stats");
+47         }
+48     }
+49     ofs\&.close();
+50     usedMovesEq->print("equilibration\&.stats");
+51     sanityChecks(sys);
+52 
+53     // Production phase
+54     ofs\&.open ("thermoPr\&.log", std::ofstream::out);
+55     if (!ofs\&.is_open()) throw customException ("Unable to open log file to record production GCMC thermodynamics");
+56     ofs << "# Step\tU\tN_tot\t";
+57     for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) { ofs << "N_"+numToStr(i+1)+"\t"; }
+58     ofs << std::endl;
+59 
+60     ctr = 0;
+61     thermo_ctr = 0;
+62     for (double move = 0; move < sys\&.gcmcPrSteps; move += 1\&.0) {
+63         try {
+64             usedMovesPr->makeMove(sys);
+65         } catch (customException &ce) {
+66             sendErr(ce\&.what());
+67             exit(SYS_FAILURE);
+68         }
+69 
+70         // Only record properties of the system when it is NOT in an intermediate state
+71         if (thermo_ctr < sys\&.gcmcThermoFreq && sys\&.getCurrentM() == 0) {
+72             thermo_ctr += 1\&.0;
+73         } else if (thermo_ctr >= sys\&.gcmcThermoFreq && sys\&.getCurrentM() == 0) {
+74             double sys_ntot = 0;
+75             for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) { sys_ntot += sys\&.numSpecies[i]; }
+76             ofs << move << "\t" << sys\&.energy() << "\t" << sys_ntot << "\t";
+77             for (unsigned int i = 0; i < sys\&.nSpecies(); ++i) { ofs << sys\&.numSpecies[i]/sys_ntot << "\t"; }
+78             ofs << std::endl;
+79             thermo_ctr = 0\&.0;
+80         }
+81 
+82         // Can print snapshot regardless of M state, since partial atoms are neglected from printing routine
+83         if (ctr < sys\&.gcmcSnapFreq) {
+84             ctr += 1\&.0;
+85         } else {
+86             ctr = 0\&.0;
+87             usedMovesPr->print("production\&.stats");
+88             sys\&.printSnapshot("movie\&.xyz", numToStr(move), false);
+89             sendMsg ("Completed "+numToStr(move)+"/"+numToStr(sys\&.gcmcPrSteps)+" production steps");
+90         }
+91     }
+92     ofs\&.close();
+93     usedMovesPr->print("production\&.stats");
+94     sys\&.printSnapshot("movie\&.xyz", numToStr(sys\&.gcmcPrSteps), false);
+95     sanityChecks(sys);
+96 }
+.fi
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for Flat-Histogram Monte Carlo Simulation from the source code\&.

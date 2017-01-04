@@ -122,32 +122,11 @@ Data Structures</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:a1ceb524363fcb94da0c64d297ea27438"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a>&#160;&#160;&#160;long long int</td></tr>
-<tr class="memdesc:a1ceb524363fcb94da0c64d297ea27438"><td class="mdescLeft">&#160;</td><td class="mdescRight">For biasing, need to address things with large indices.  <a href="#a1ceb524363fcb94da0c64d297ea27438">More...</a><br/></td></tr>
-<tr class="separator:a1ceb524363fcb94da0c64d297ea27438"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f1e113b6454173bd61677519ec34c3a"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="bias_8h.html#a9f1e113b6454173bd61677519ec34c3a">specExp</a>(a, b)&#160;&#160;&#160;std::max(a, b) + log(1.0 + exp(-std::fabs(a-b)))</td></tr>
 <tr class="memdesc:a9f1e113b6454173bd61677519ec34c3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Jacobi method for evaluating natural logarithm of a sum of exponentials E.g.  <a href="#a9f1e113b6454173bd61677519ec34c3a">More...</a><br/></td></tr>
 <tr class="separator:a9f1e113b6454173bd61677519ec34c3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
-<a class="anchor" id="a1ceb524363fcb94da0c64d297ea27438"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define __BIAS_INT_TYPE__&#160;&#160;&#160;long long int</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>For biasing, need to address things with large indices. </p>
-
-<p>Definition at line <a class="el" href="bias_8h_source.html#l00016">16</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
-
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l01755">calculateBias()</a>, <a class="el" href="bias_8cpp_source.html#l00239">tmmc::calculatePI()</a>, <a class="el" href="bias_8cpp_source.html#l00100">tmmc::checkFullyVisited()</a>, <a class="el" href="bias_8cpp_source.html#l00141">tmmc::getTransitionAddress()</a>, <a class="el" href="bias_8cpp_source.html#l00012">tmmc::tmmc()</a>, <a class="el" href="bias_8cpp_source.html#l00486">wala::update()</a>, and <a class="el" href="bias_8cpp_source.html#l00407">wala::wala()</a>.</p>
-
-</div>
-</div>
 <a class="anchor" id="a9f1e113b6454173bd61677519ec34c3a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -175,16 +154,16 @@ Macros</h2></td></tr>
 <p>Jacobi method for evaluating natural logarithm of a sum of exponentials E.g. </p>
 <p>ln( exp(a) + exp(b) ) = <a class="el" href="bias_8h.html#a9f1e113b6454173bd61677519ec34c3a" title="Jacobi method for evaluating natural logarithm of a sum of exponentials E.g. ">specExp(a, b)</a> </p>
 
-<p>Definition at line <a class="el" href="bias_8h_source.html#l00021">21</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
+<p>Definition at line <a class="el" href="bias_8h_source.html#l00018">18</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
 
-<p>Referenced by <a class="el" href="bias_8cpp_source.html#l00497">wala::evaluateFlatness()</a>.</p>
+<p>Referenced by <a class="el" href="bias_8cpp_source.html#l00495">wala::evaluateFlatness()</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 30 2016 14:21:50 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jan 4 2017 10:47:54 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

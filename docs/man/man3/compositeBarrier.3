@@ -1,4 +1,4 @@
-.TH "compositeBarrier" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "compositeBarrier" 3 "Wed Jan 4 2017" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -72,12 +72,12 @@ References clearAll()\&.
 .PP
 Free any system barriers present\&. 
 .PP
-Definition at line 741 of file barrier\&.cpp\&.
+Definition at line 740 of file barrier\&.cpp\&.
 .PP
 .nf
-741                                      {
-742     sysBarriers_\&.clear();
-743 }
+740                                      {
+741     sysBarriers_\&.clear();
+742 }
 .fi
 .SH "Member Function Documentation"
 .PP 
@@ -105,18 +105,18 @@ Add a cylinder along z = 0 axis wall to interact with\&.
 .PP
 
 .PP
-Definition at line 703 of file barrier\&.cpp\&.
+Definition at line 702 of file barrier\&.cpp\&.
 .PP
 .nf
-703                                                                                                                                                                {
-704     try {
-705         auto barr = std::make_shared < cylinderZ > (x, y, radius, width, sigma, eps, M);
-706         sysBarriers_\&.push_back(barr);
-707     } catch (std::exception &ex) {
-708         const std::string msg = ex\&.what();
-709         throw customException ("Cannot add cylinderZ to composite barrier : "+msg);
-710     }
-711 }
+702                                                                                                                                                                {
+703     try {
+704         auto barr = std::make_shared < cylinderZ > (x, y, radius, width, sigma, eps, M);
+705         sysBarriers_\&.push_back(barr);
+706     } catch (std::exception &ex) {
+707         const std::string msg = ex\&.what();
+708         throw customException ("Cannot add cylinderZ to composite barrier : "+msg);
+709     }
+710 }
 .fi
 .SS "void compositeBarrier::addHardWallZ (const doublelb, const doubleub, const doublesigma, const intM = \fC1\fP)"
 
@@ -136,18 +136,18 @@ Add a hard wall to interact with\&.
 .PP
 
 .PP
-Definition at line 662 of file barrier\&.cpp\&.
+Definition at line 661 of file barrier\&.cpp\&.
 .PP
 .nf
-662                                                                                                       {
-663     try {
-664         auto barr = std::make_shared < hardWallZ > (lb, ub, sigma, M);
-665         sysBarriers_\&.push_back(barr);
-666     } catch (std::exception &ex) {
-667         const std::string msg = ex\&.what();
-668         throw customException ("Cannot add hardWallZ to composite barrier : "+msg);
-669     }
-670 }
+661                                                                                                       {
+662     try {
+663         auto barr = std::make_shared < hardWallZ > (lb, ub, sigma, M);
+664         sysBarriers_\&.push_back(barr);
+665     } catch (std::exception &ex) {
+666         const std::string msg = ex\&.what();
+667         throw customException ("Cannot add hardWallZ to composite barrier : "+msg);
+668     }
+669 }
 .fi
 .SS "void compositeBarrier::addRightTriangleXZ (const doublewidth, const doubletheta, const doublelamW, const doubleeps, const doublesigma, const doublesep, const doubleoffset, const std::vector< double > &box, const doublezbase, booltop = \fCfalse\fP, const intM = \fC1\fP)"
 
@@ -181,18 +181,18 @@ Add a rightTriangleZ feature to interact with\&.
 .PP
 
 .PP
-Definition at line 728 of file barrier\&.cpp\&.
+Definition at line 727 of file barrier\&.cpp\&.
 .PP
 .nf
-728                                                                                                                                                                                                                                                              {
-729     try {
-730         auto barr = std::make_shared < rightTriangleXZ > (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
-731         sysBarriers_\&.push_back(barr);
-732     } catch (std::exception &ex) {
-733         const std::string msg = ex\&.what();
-734         throw customException ("Cannot add rightTriangleXZ to composite barrier : "+msg);
-735     }
-736 }
+727                                                                                                                                                                                                                                                              {
+728     try {
+729         auto barr = std::make_shared < rightTriangleXZ > (width, theta, lamW, eps, sigma, sep, offset, box, zbase, top, M);
+730         sysBarriers_\&.push_back(barr);
+731     } catch (std::exception &ex) {
+732         const std::string msg = ex\&.what();
+733         throw customException ("Cannot add rightTriangleXZ to composite barrier : "+msg);
+734     }
+735 }
 .fi
 .SS "void compositeBarrier::addSquareWellWallZ (const doublelb, const doubleub, const doublesigma, const doublerange, const doubleeps, const intM = \fC1\fP)"
 
@@ -216,18 +216,18 @@ Add a square well wall to interact with\&.
 .PP
 
 .PP
-Definition at line 682 of file barrier\&.cpp\&.
+Definition at line 681 of file barrier\&.cpp\&.
 .PP
 .nf
-682                                                                                                                                                   {
-683     try {
-684         auto barr = std::make_shared < squareWellWallZ > (lb, ub, sigma, range, eps, M);
-685         sysBarriers_\&.push_back(barr);
-686     } catch (std::exception &ex) {
-687         const std::string msg = ex\&.what();
-688         throw customException ("Cannot add squareWellWallZ to composite barrier : "+msg);
-689     }
-690 }
+681                                                                                                                                                   {
+682     try {
+683         auto barr = std::make_shared < squareWellWallZ > (lb, ub, sigma, range, eps, M);
+684         sysBarriers_\&.push_back(barr);
+685     } catch (std::exception &ex) {
+686         const std::string msg = ex\&.what();
+687         throw customException ("Cannot add squareWellWallZ to composite barrier : "+msg);
+688     }
+689 }
 .fi
 .SS "void compositeBarrier::clearAll ()\fC [inline]\fP"
 
@@ -251,23 +251,23 @@ Find the total energy of interaction from ALL the barriers\&.
 .PP
 
 .PP
-Definition at line 766 of file barrier\&.cpp\&.
+Definition at line 765 of file barrier\&.cpp\&.
 .PP
 References NUM_INFINITY\&.
 .PP
 .nf
-766                                                                                 {
-767     double U = 0\&.0;
-768     for (std::vector < std::shared_ptr < barrier > >::iterator it = sysBarriers_\&.begin(); it != sysBarriers_\&.end(); ++it) {
-769         double dU = (*it)->energy (a1, box);
-770         if (dU < NUM_INFINITY) {
-771             U += dU;
-772         } else {
-773             return NUM_INFINITY;
-774         }
-775     }
-776     return U;
-777 }
+765                                                                                 {
+766     double U = 0\&.0;
+767     for (std::vector < std::shared_ptr < barrier > >::iterator it = sysBarriers_\&.begin(); it != sysBarriers_\&.end(); ++it) {
+768         double dU = (*it)->energy (a1, box);
+769         if (dU < NUM_INFINITY) {
+770             U += dU;
+771         } else {
+772             return NUM_INFINITY;
+773         }
+774     }
+775     return U;
+776 }
 .fi
 .SS "bool compositeBarrier::inside (const \fBatom\fP *a1, const std::vector< double > &box)"
 
@@ -283,17 +283,17 @@ Test if inside ALL the barriers\&. Returns false if outside any single one, but 
 .PP
 
 .PP
-Definition at line 751 of file barrier\&.cpp\&.
+Definition at line 750 of file barrier\&.cpp\&.
 .PP
 .nf
-751                                                                               {
-752     for (std::vector < std::shared_ptr < barrier > >::iterator it = sysBarriers_\&.begin(); it != sysBarriers_\&.end(); ++it) {
-753         if (!(*it)->inside (a1, box)) {
-754             return false;
-755         }
-756     }
-757     return true;
-758 }
+750                                                                               {
+751     for (std::vector < std::shared_ptr < barrier > >::iterator it = sysBarriers_\&.begin(); it != sysBarriers_\&.end(); ++it) {
+752         if (!(*it)->inside (a1, box)) {
+753             return false;
+754         }
+755     }
+756     return true;
+757 }
 .fi
 
 

@@ -135,12 +135,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa51f03f958dabefcff97be4a7c3b336c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmmc.html#aa51f03f958dabefcff97be4a7c3b336c">checkFullyVisited</a> ()</td></tr>
 <tr class="memdesc:aa51f03f958dabefcff97be4a7c3b336c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the the collection matrix has been samples sufficiently, i.e., if each state and transition has been visited tmmcSweepSize_ times.  <a href="#aa51f03f958dabefcff97be4a7c3b336c">More...</a><br/></td></tr>
 <tr class="separator:aa51f03f958dabefcff97be4a7c3b336c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae296df3336ebf0fa1db7c34972c544eb"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmmc.html#ae296df3336ebf0fa1db7c34972c544eb">getTransitionAddress</a> (const int Nstart, const int Nend, const int Mstart, const int Mend)</td></tr>
-<tr class="memdesc:ae296df3336ebf0fa1db7c34972c544eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">For a given multidimensional array which has been cast into 1D, find the address that refers to a given transition.  <a href="#ae296df3336ebf0fa1db7c34972c544eb">More...</a><br/></td></tr>
-<tr class="separator:ae296df3336ebf0fa1db7c34972c544eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62acddd907713a4b2a8a142b209ddaad"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmmc.html#a62acddd907713a4b2a8a142b209ddaad">getAddress</a> (const int Nval, const int Mval)</td></tr>
-<tr class="memdesc:a62acddd907713a4b2a8a142b209ddaad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the address in lnPI that corresponds to a given macrostate.  <a href="#a62acddd907713a4b2a8a142b209ddaad">More...</a><br/></td></tr>
-<tr class="separator:a62acddd907713a4b2a8a142b209ddaad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8649336b47195c6ad50c437ff1f443e3"><td class="memItemLeft" align="right" valign="top">const long long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmmc.html#a8649336b47195c6ad50c437ff1f443e3">getTransitionAddress</a> (const int Nstart, const int Nend, const int Mstart, const int Mend)</td></tr>
+<tr class="memdesc:a8649336b47195c6ad50c437ff1f443e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">For a given multidimensional array which has been cast into 1D, find the address that refers to a given transition.  <a href="#a8649336b47195c6ad50c437ff1f443e3">More...</a><br/></td></tr>
+<tr class="separator:a8649336b47195c6ad50c437ff1f443e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e19bc0fd6a06aea2d1c23563c441eba"><td class="memItemLeft" align="right" valign="top">const long long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmmc.html#a3e19bc0fd6a06aea2d1c23563c441eba">getAddress</a> (const int Nval, const int Mval)</td></tr>
+<tr class="memdesc:a3e19bc0fd6a06aea2d1c23563c441eba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the address in lnPI that corresponds to a given macrostate.  <a href="#a3e19bc0fd6a06aea2d1c23563c441eba">More...</a><br/></td></tr>
+<tr class="separator:a3e19bc0fd6a06aea2d1c23563c441eba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbdc037dc9b941d71d7049855e18f4be"><td class="memItemLeft" align="right" valign="top">const long long int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmmc.html#afbdc037dc9b941d71d7049855e18f4be">numSweeps</a> ()</td></tr>
 <tr class="separator:afbdc037dc9b941d71d7049855e18f4be"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbcaaf974280aad6d78ca7e112438641"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtmmc.html#afbcaaf974280aad6d78ca7e112438641">getBias</a> (const int address)</td></tr>
@@ -154,7 +154,7 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Transition Matrix Monte Carlo biasing class. </p>
 
-<p>Definition at line <a class="el" href="bias_8h_source.html#l00024">24</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
+<p>Definition at line <a class="el" href="bias_8h_source.html#l00021">21</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a class="anchor" id="a2dd6a666daae3a9b7c3978d8ecff887e"></a>
 <div class="memitem">
@@ -177,8 +177,8 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="bias_8h_source.html#l00026">26</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{};</div>
+<p>Definition at line <a class="el" href="bias_8h_source.html#l00023">23</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;{};</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -237,8 +237,6 @@ Public Member Functions</h2></td></tr>
 </dl>
 
 <p>Definition at line <a class="el" href="bias_8cpp_source.html#l00012">12</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
-
-<p>References <a class="el" href="bias_8h_source.html#l00016">__BIAS_INT_TYPE__</a>.</p>
 <div class="fragment"><div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;                                                                                                                            {</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keywordflow">if</span> (Nmin &gt; Nmax) {</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Nmin (&quot;</span>+std::to_string(Nmin)+<span class="stringliteral">&quot;) &gt; Nmax (&quot;</span>+std::to_string(Nmax)+<span class="stringliteral">&quot; in TMMC bias&quot;</span>);</div>
@@ -250,7 +248,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Mtot &lt; 1 in TMMC bias&quot;</span>);</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    }</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a> size = (Nmax - Nmin + 1);</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> size = (Nmax - Nmin + 1);</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    Nmin_ = Nmin;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    Nmax_ = Nmax;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    Mtot_ = Mtot;</div>
@@ -300,8 +298,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Out of memory, cannot allocate space for macrostate distribution matrix in tmmc&quot;</span>);</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    }</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
-<div class="ttc" id="bias_8h_html_a1ceb524363fcb94da0c64d297ea27438"><div class="ttname"><a href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a></div><div class="ttdeci">#define __BIAS_INT_TYPE__</div><div class="ttdoc">For biasing, need to address things with large indices. </div><div class="ttdef"><b>Definition:</b> <a href="bias_8h_source.html#l00016">bias.h:16</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -323,12 +320,12 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="bias_8cpp_source.html#l00239">239</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
 
-<p>References <a class="el" href="bias_8h_source.html#l00016">__BIAS_INT_TYPE__</a>, and <a class="el" href="bias_8cpp_source.html#l00141">getTransitionAddress()</a>.</p>
+<p>References <a class="el" href="bias_8cpp_source.html#l00141">getTransitionAddress()</a>.</p>
 
 <p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00054">checkpoint::load()</a>, <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, and <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;                        {</div>
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> endPoint = C_.size() - (Mtot_-1)*3;</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a> i = 0; i &lt; endPoint; i += 3) {</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> i = 0; i &lt; endPoint; i += 3) {</div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        <span class="keywordtype">double</span> sum = 0.0;</div>
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> j = 0; j &lt; 3; ++j) {</div>
 <div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;            sum += C_[i+j];</div>
@@ -338,50 +335,47 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;                P_[i+j] = C_[i+j] / sum;</div>
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;            }</div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            <span class="comment">// This state has not been visited at all if sum = 0.  However, at high system densities this could be the &quot;correct&quot;</span></div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            <span class="comment">// result so this error may need to be discarded later in favor of:</span></div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            <span class="comment">// P_[i+j] = 0;</span></div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            <span class="comment">// However, having this throw an exception is also a good way to find that upper bound where the system is completely packed</span></div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            <span class="comment">// so I will keep it this way for now.</span></div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot compute TMMC macrostate distribution because probability matrix contains zeros&quot;</span>);</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        }</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    }</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="comment">// Reset first value to zero just to start fresh. Since only ratios matter this is perfectly fair.</span></div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    lnPI_[0] = 0.0;</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keywordtype">int</span> counter = 0;</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <a class="code" href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a> address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, nEndForward = 0, mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a> i = 0; i &lt; (Nmax_ - Nmin_); ++i) { <span class="comment">// don&#39;t calculate the last N = Nmax when M &gt; 0, stops initially at N = Nmax, M = 0</span></div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        nStartForward = Nmin_+i;</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        <span class="keywordflow">for</span> (<a class="code" href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a> j = 0; j &lt; Mtot_; ++j) {</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;            mStartForward = j;</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;            <span class="keywordflow">if</span> (j == Mtot_-1) {</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                nEndForward = nStartForward + 1;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                mEndForward = 0;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                nEndForward = nStartForward;</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;                mEndForward = j + 1;</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;            }</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            nStartBackward = nEndForward;</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;            nEndBackward = nStartForward;</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;            mStartBackward = mEndForward;</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;            mEndBackward = mStartForward;</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;            address1 = <a class="code" href="classtmmc.html#ae296df3336ebf0fa1db7c34972c544eb">getTransitionAddress</a>(nStartForward, nEndForward, mStartForward, mEndForward);</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;            address2 = <a class="code" href="classtmmc.html#ae296df3336ebf0fa1db7c34972c544eb">getTransitionAddress</a>(nStartBackward, nEndBackward, mStartBackward, mEndBackward);</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            <span class="keywordflow">if</span> (!(P_[address1] &gt; 0) || !(P_[address2] &gt; 0)) {</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot compute TMMC macrostate distribution because probability matrix contains zeros at address: P[&quot;</span>+std::to_string(address1)+<span class="stringliteral">&quot;] = &quot;</span>+std::to_string(P_[address1])+<span class="stringliteral">&quot;, P[&quot;</span>+std::to_string(address2)+<span class="stringliteral">&quot;] = &quot;</span>+std::to_string(P_[address2]));</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            }</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;            lnPI_[counter+1] = lnPI_[counter] + log(P_[address1]/P_[address2]); <span class="comment">// this is why P_ cannot be zero</span></div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            counter++;</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        }</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    }</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;}</div>
-<div class="ttc" id="classtmmc_html_ae296df3336ebf0fa1db7c34972c544eb"><div class="ttname"><a href="classtmmc.html#ae296df3336ebf0fa1db7c34972c544eb">tmmc::getTransitionAddress</a></div><div class="ttdeci">const __BIAS_INT_TYPE__ getTransitionAddress(const int Nstart, const int Nend, const int Mstart, const int Mend)</div><div class="ttdoc">For a given multidimensional array which has been cast into 1D, find the address that refers to a giv...</div><div class="ttdef"><b>Definition:</b> <a href="bias_8cpp_source.html#l00141">bias.cpp:141</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
-<div class="ttc" id="bias_8h_html_a1ceb524363fcb94da0c64d297ea27438"><div class="ttname"><a href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a></div><div class="ttdeci">#define __BIAS_INT_TYPE__</div><div class="ttdoc">For biasing, need to address things with large indices. </div><div class="ttdef"><b>Definition:</b> <a href="bias_8h_source.html#l00016">bias.h:16</a></div></div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            <span class="comment">// This state has not been visited at all if sum = 0.  However, at high system densities this could be the &quot;correct&quot; result so this error may need to be discarded later in favor of: P_[i+j] = 0;</span></div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            <span class="comment">// However, having this throw an exception is also a good way to find that upper bound where the system is completely packed so I will keep it this way for now.</span></div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            <span class="comment">// Under current philosophy of a &quot;sweep&quot; requiring all entries in C to be filled with finite values, this is acutally protected against.</span></div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot compute TMMC macrostate distribution because probability matrix contains zeros&quot;</span>);</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        }</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    }</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="comment">// Reset first value to zero just to start fresh. Since only ratios matter this is perfectly fair.</span></div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    lnPI_[0] = 0.0;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="keywordtype">int</span> counter = 0;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, nEndForward = 0, mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> i = 0; i &lt; (Nmax_ - Nmin_); ++i) { <span class="comment">// Don&#39;t calculate the last N = Nmax when M &gt; 0, stops initially at N = Nmax, M = 0</span></div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        nStartForward = Nmin_+i;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> j = 0; j &lt; Mtot_; ++j) {</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;            mStartForward = j;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;            <span class="keywordflow">if</span> (j == Mtot_-1) {</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;                nEndForward = nStartForward + 1;</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                mEndForward = 0;</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                nEndForward = nStartForward;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                mEndForward = j + 1;</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;            }</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;            nStartBackward = nEndForward;</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;            nEndBackward = nStartForward;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            mStartBackward = mEndForward;</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;            mEndBackward = mStartForward;</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;            address1 = <a class="code" href="classtmmc.html#a8649336b47195c6ad50c437ff1f443e3">getTransitionAddress</a>(nStartForward, nEndForward, mStartForward, mEndForward);</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;            address2 = <a class="code" href="classtmmc.html#a8649336b47195c6ad50c437ff1f443e3">getTransitionAddress</a>(nStartBackward, nEndBackward, mStartBackward, mEndBackward);</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;            <span class="keywordflow">if</span> (!(P_[address1] &gt; 0) || !(P_[address2] &gt; 0)) {</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot compute TMMC macrostate distribution because probability matrix contains zeros at address: P[&quot;</span>+std::to_string(address1)+<span class="stringliteral">&quot;] = &quot;</span>+std::to_string(P_[address1])+<span class="stringliteral">&quot;, P[&quot;</span>+std::to_string(address2)+<span class="stringliteral">&quot;] = &quot;</span>+std::to_string(P_[address2]));</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;            }</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;            lnPI_[counter+1] = lnPI_[counter] + log(P_[address1]/P_[address2]); <span class="comment">// This is why P_ cannot be zero</span></div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            counter++;</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        }</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    }</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;}</div>
+<div class="ttc" id="classtmmc_html_a8649336b47195c6ad50c437ff1f443e3"><div class="ttname"><a href="classtmmc.html#a8649336b47195c6ad50c437ff1f443e3">tmmc::getTransitionAddress</a></div><div class="ttdeci">const long long int getTransitionAddress(const int Nstart, const int Nend, const int Mstart, const int Mend)</div><div class="ttdoc">For a given multidimensional array which has been cast into 1D, find the address that refers to a giv...</div><div class="ttdef"><b>Definition:</b> <a href="bias_8cpp_source.html#l00141">bias.cpp:141</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -402,12 +396,10 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="bias_8cpp_source.html#l00100">100</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
 
-<p>References <a class="el" href="bias_8h_source.html#l00016">__BIAS_INT_TYPE__</a>.</p>
-
 <p>Referenced by <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, and <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                              {</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> endPoint = HC_.size() - (Mtot_-1)*3; <span class="comment">// we don&#39;t care about the last chunk where N = Nmax, but M &gt; 0 - stop at N = Nmax, M = 0</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordflow">for</span> (<a class="code" href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a> i = 0; i &lt; endPoint; i += 3) {</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> i = 0; i &lt; endPoint; i += 3) {</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="keywordflow">if</span> (i == 0) {</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            <span class="comment">// lower bound, so only +1 and 0 moves must be sampled</span></div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            <span class="keywordflow">if</span> ((HC_[i+1] &lt; tmmcSweepSize_) || (HC_[i] &lt; tmmcSweepSize_)) {</div>
@@ -428,7 +420,6 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;}</div>
-<div class="ttc" id="bias_8h_html_a1ceb524363fcb94da0c64d297ea27438"><div class="ttname"><a href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a></div><div class="ttdeci">#define __BIAS_INT_TYPE__</div><div class="ttdoc">For biasing, need to address things with large indices. </div><div class="ttdef"><b>Definition:</b> <a href="bias_8h_source.html#l00016">bias.h:16</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -456,7 +447,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="bias_8cpp_source.html#l00079">79</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, and <a class="el" href="bias_8cpp_source.html#l00301">print()</a>.</p>
+<p>Referenced by <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, and <a class="el" href="bias_8cpp_source.html#l00299">print()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                                                {</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    std::ofstream of;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    std::string name = fileName+<span class="stringliteral">&quot;.dat&quot;</span>;</div>
@@ -474,16 +465,16 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    }</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    of.close();</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
-<a class="anchor" id="a62acddd907713a4b2a8a142b209ddaad"></a>
+<a class="anchor" id="a3e19bc0fd6a06aea2d1c23563c441eba"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a> tmmc::getAddress </td>
+          <td class="memname">const long long int tmmc::getAddress </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>Nval</em>, </td>
@@ -513,14 +504,14 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="bias_8cpp_source.html#l00199">199</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
 
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l01755">calculateBias()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                                                                        {</div>
+<p>Referenced by <a class="el" href="system_8cpp_source.html#l01771">calculateBias()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                                                                    {</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="keywordflow">if</span> (Nval &gt; Nmax_ || Nval &lt; Nmin_ || Mval &lt; 0 || Mval &gt; Mtot_-1) {</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;N, M out of bounds in TMMC object, cannot retrieve address&quot;</span>);</div>
 <div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    }</div>
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="keywordflow">return</span> (Nval - Nmin_)*Mtot_ + Mval;</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -546,10 +537,10 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="bias_8h_source.html#l00041">41</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
+<p>Definition at line <a class="el" href="bias_8h_source.html#l00038">38</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
 
-<p>Referenced by <a class="el" href="system_8cpp_source.html#l01755">calculateBias()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;{ <span class="keywordflow">return</span> -lnPI_[address]; }</div>
+<p>Referenced by <a class="el" href="system_8cpp_source.html#l01771">calculateBias()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;{ <span class="keywordflow">return</span> -lnPI_[address]; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -576,7 +567,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Return the collection matrix as it is. </p>
 
-<p>Definition at line <a class="el" href="bias_8h_source.html#l00042">42</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
+<p>Definition at line <a class="el" href="bias_8h_source.html#l00039">39</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
 
 </div>
 </div>
@@ -601,17 +592,17 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="bias_8h_source.html#l00043">43</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;{ <span class="keywordflow">return</span> HC_; }</div>
+<p>Definition at line <a class="el" href="bias_8h_source.html#l00040">40</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;{ <span class="keywordflow">return</span> HC_; }</div>
 </div><!-- fragment -->
 </div>
 </div>
-<a class="anchor" id="ae296df3336ebf0fa1db7c34972c544eb"></a>
+<a class="anchor" id="a8649336b47195c6ad50c437ff1f443e3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const <a class="el" href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a> tmmc::getTransitionAddress </td>
+          <td class="memname">const long long int tmmc::getTransitionAddress </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>Nstart</em>, </td>
@@ -656,19 +647,17 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="bias_8cpp_source.html#l00141">141</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
 
-<p>References <a class="el" href="bias_8h_source.html#l00016">__BIAS_INT_TYPE__</a>.</p>
-
 <p>Referenced by <a class="el" href="bias_8cpp_source.html#l00239">calculatePI()</a>, and <a class="el" href="bias_8cpp_source.html#l00215">updateC()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                                                                                                                      {</div>
+<div class="fragment"><div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;                                                                                                                  {</div>
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    <span class="keywordflow">if</span> (Nstart &gt; Nmax_ || Nstart &lt; Nmin_ || Nend &gt; (Nmax_+1) || Nend &lt; (Nmin_-1) || Mstart &lt; 0 || Mstart &gt; Mtot_-1 || Mend &lt; 0 || Mend &gt; Mtot_-1) { <span class="comment">// Nend has array positions for going over end of bounds but are never used, still they are valid</span></div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;N, M out of bounds in TMMC object, cannot retrieve address&quot;</span>);</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;    }</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <span class="keywordflow">if</span> (Mtot_ &gt; 1) {</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        <span class="comment">// expanded ensemble</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        <span class="comment">// Expanded ensemble</span></div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        <span class="keywordtype">int</span> y = 0;</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;        <span class="keywordflow">if</span> (Nstart == Nend) {</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;            <span class="comment">// moving within an expanded set</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;            <span class="comment">// Moving within an expanded set</span></div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            <span class="keywordtype">int</span> addOrSubtract = Mend - Mstart;</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;            <span class="keywordflow">if</span> (addOrSubtract == 0) {</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                y = 0;</div>
@@ -680,7 +669,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Illegal addOrSubtract value&quot;</span>);</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;            }</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            <span class="comment">// crossing over</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;            <span class="comment">// Crossing over</span></div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            <span class="keywordflow">if</span> (Nend &gt; Nstart) {</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                y = 1;</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                <span class="keywordflow">if</span> (Mstart != Mtot_ - 1 || Mend != 0) {</div>
@@ -695,7 +684,7 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        }</div>
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        <span class="keywordflow">return</span> 3*((Nstart - Nmin_)*Mtot_ + Mstart) + y;</div>
 <div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        <span class="comment">// no expanded ensemble</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        <span class="comment">// No expanded ensemble</span></div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        <span class="keywordtype">int</span> addOrSubtract = (Nend - Nstart), y = 0;</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;        <span class="keywordflow">if</span> (addOrSubtract == 0) {</div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;            y = 0;</div>
@@ -706,12 +695,11 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Illegal addOrSubtract value&quot;</span>);</div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        }</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <a class="code" href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a> x = Nstart - Nmin_;</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        <span class="keywordflow">return</span> x*3 + y; <span class="comment">// equivalent to expanded ensemble because Mstart = 0 always, and Mtot_ = 1</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        <span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> x = Nstart - Nmin_;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        <span class="keywordflow">return</span> x*3 + y; <span class="comment">// Equivalent to expanded ensemble because Mstart = 0 always, and Mtot_ = 1</span></div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    }</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
-<div class="ttc" id="bias_8h_html_a1ceb524363fcb94da0c64d297ea27438"><div class="ttname"><a href="bias_8h.html#a1ceb524363fcb94da0c64d297ea27438">__BIAS_INT_TYPE__</a></div><div class="ttdeci">#define __BIAS_INT_TYPE__</div><div class="ttdoc">For biasing, need to address things with large indices. </div><div class="ttdef"><b>Definition:</b> <a href="bias_8h_source.html#l00016">bias.h:16</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -761,10 +749,10 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="bias_8h_source.html#l00040">40</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
+<p>Definition at line <a class="el" href="bias_8h_source.html#l00037">37</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
 
 <p>Referenced by <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;{ <span class="keywordflow">return</span> nSweeps_; }</div>
+<div class="fragment"><div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{ <span class="keywordflow">return</span> nSweeps_; }</div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -809,57 +797,57 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="bias_8cpp_source.html#l00301">301</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
+<p>Definition at line <a class="el" href="bias_8cpp_source.html#l00299">299</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
 
 <p>References <a class="el" href="bias_8cpp_source.html#l00079">dumpVisited()</a>.</p>
 
-<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00159">checkpoint::dump()</a>, <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, and <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;                                                                     {</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="comment">// Print collection matrix</span></div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="keywordflow">if</span> (printC) {</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;        <span class="comment">// print all states, including partial ones, so this can be used to restart from, etc.</span></div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        std::ofstream of;</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        std::string name = fileName+<span class="stringliteral">&quot;_C.dat&quot;</span>;</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        of.open(name.c_str(), std::ofstream::out);</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        <span class="keywordflow">if</span> (!of.is_open()) {</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Unable to write TMMC collection matrix to &quot;</span>+name);</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;        }</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        of &lt;&lt; <span class="stringliteral">&quot;# Collection matrix in single row (vectorized) notation.&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;        of &lt;&lt; <span class="stringliteral">&quot;# species_total_upper_bound: &quot;</span> &lt;&lt; Nmax_ &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        of &lt;&lt; <span class="stringliteral">&quot;# species_total_lower_bound: &quot;</span> &lt;&lt; Nmin_ &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        <span class="keywordtype">double</span> V = box_[0]*box_[1]*box_[2];</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        of &lt;&lt; <span class="stringliteral">&quot;# volume: &quot;</span> &lt;&lt; std::setprecision(15) &lt;&lt; V &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> i = 0; i &lt; C_.size(); ++i) {</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;            of &lt;&lt; std::setprecision(15) &lt;&lt; C_[i] &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        }</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        of.close();</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    }</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    <span class="comment">// Print visited states matrix</span></div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keywordflow">if</span> (printHC) {</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <span class="comment">// print all states, including partial ones, so this can be used to restart from, etc.</span></div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <a class="code" href="classtmmc.html#a295886d2f7a947a9de890bcb3adb51c7">dumpVisited</a>(fileName+<span class="stringliteral">&quot;_HC&quot;</span>);</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    }</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="comment">// Print lnPI (bias) matrix</span></div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    std::ofstream of;</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    std::string name = fileName+<span class="stringliteral">&quot;_lnPI.dat&quot;</span>;</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    of.open(name.c_str(), std::ofstream::out);</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <span class="keywordflow">if</span> (!of.is_open()) {</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Unable to write TMMC lnPI to &quot;</span>+name);</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    }</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    of &lt;&lt; <span class="stringliteral">&quot;# lnPI (bias) matrix in single row (vectorized) notation.&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    of &lt;&lt; <span class="stringliteral">&quot;# species_total_upper_bound: &quot;</span> &lt;&lt; Nmax_ &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    of &lt;&lt; <span class="stringliteral">&quot;# species_total_lower_bound: &quot;</span> &lt;&lt; Nmin_ &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="keywordtype">double</span> V = box_[0]*box_[1]*box_[2];</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    of &lt;&lt; <span class="stringliteral">&quot;# volume: &quot;</span> &lt;&lt; std::setprecision(15) &lt;&lt; V &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> i = 0; i &lt; lnPI_.size(); i += Mtot_) {</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        of &lt;&lt; std::setprecision(15) &lt;&lt; lnPI_[i] &lt;&lt; std::endl; <span class="comment">// only print the integral states</span></div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    }</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    of.close();</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;}</div>
+<p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00162">checkpoint::dump()</a>, <a class="el" href="crossover_8cpp_source.html#l00010">performCrossover()</a>, and <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>.</p>
+<div class="fragment"><div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                                                                     {</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <span class="comment">// Print collection matrix</span></div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="keywordflow">if</span> (printC) {</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        <span class="comment">// Print all states, including partial ones, so this can be used to restart from, etc.</span></div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;        std::ofstream of;</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;        std::string name = fileName+<span class="stringliteral">&quot;_C.dat&quot;</span>;</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;        of.open(name.c_str(), std::ofstream::out);</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        <span class="keywordflow">if</span> (!of.is_open()) {</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;            <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Unable to write TMMC collection matrix to &quot;</span>+name);</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        }</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;        of &lt;&lt; <span class="stringliteral">&quot;# Collection matrix in single row (vectorized) notation.&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;        of &lt;&lt; <span class="stringliteral">&quot;# species_total_upper_bound: &quot;</span> &lt;&lt; Nmax_ &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        of &lt;&lt; <span class="stringliteral">&quot;# species_total_lower_bound: &quot;</span> &lt;&lt; Nmin_ &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;        <span class="keywordtype">double</span> V = box_[0]*box_[1]*box_[2];</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        of &lt;&lt; <span class="stringliteral">&quot;# volume: &quot;</span> &lt;&lt; std::setprecision(15) &lt;&lt; V &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> i = 0; i &lt; C_.size(); ++i) {</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;            of &lt;&lt; std::setprecision(15) &lt;&lt; C_[i] &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        }</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;        of.close();</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    }</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="comment">// Print visited states matrix</span></div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keywordflow">if</span> (printHC) {</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        <span class="comment">// print all states, including partial ones, so this can be used to restart from, etc.</span></div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        <a class="code" href="classtmmc.html#a295886d2f7a947a9de890bcb3adb51c7">dumpVisited</a>(fileName+<span class="stringliteral">&quot;_HC&quot;</span>);</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    }</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <span class="comment">// Print lnPI (bias) matrix</span></div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    std::ofstream of;</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    std::string name = fileName+<span class="stringliteral">&quot;_lnPI.dat&quot;</span>;</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    of.open(name.c_str(), std::ofstream::out);</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="keywordflow">if</span> (!of.is_open()) {</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Unable to write TMMC lnPI to &quot;</span>+name);</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    }</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    of &lt;&lt; <span class="stringliteral">&quot;# lnPI (bias) matrix in single row (vectorized) notation.&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    of &lt;&lt; <span class="stringliteral">&quot;# species_total_upper_bound: &quot;</span> &lt;&lt; Nmax_ &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    of &lt;&lt; <span class="stringliteral">&quot;# species_total_lower_bound: &quot;</span> &lt;&lt; Nmin_ &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="keywordtype">double</span> V = box_[0]*box_[1]*box_[2];</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    of &lt;&lt; <span class="stringliteral">&quot;# volume: &quot;</span> &lt;&lt; std::setprecision(15) &lt;&lt; V &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">long</span> <span class="keywordtype">long</span> <span class="keywordtype">int</span> i = 0; i &lt; lnPI_.size(); i += Mtot_) {</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        of &lt;&lt; std::setprecision(15) &lt;&lt; lnPI_[i] &lt;&lt; std::endl; <span class="comment">// only print the integral states</span></div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    }</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    of.close();</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;}</div>
 <div class="ttc" id="classtmmc_html_a295886d2f7a947a9de890bcb3adb51c7"><div class="ttname"><a href="classtmmc.html#a295886d2f7a947a9de890bcb3adb51c7">tmmc::dumpVisited</a></div><div class="ttdeci">void dumpVisited(const std::string fileName)</div><div class="ttdoc">Dump the current visited states counter. </div><div class="ttdef"><b>Definition:</b> <a href="bias_8cpp_source.html#l00079">bias.cpp:79</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -886,27 +874,27 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="bias_8cpp_source.html#l00378">378</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
+<p>Definition at line <a class="el" href="bias_8cpp_source.html#l00376">376</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
 
 <p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00054">checkpoint::load()</a>, and <a class="el" href="tmmc_8cpp_source.html#l00010">performTMMC()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;                                          {</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    std::ifstream infile (fileName.c_str());</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    <span class="keywordflow">if</span> (!infile.is_open()) {</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a>(<span class="stringliteral">&quot;Unable to read collection matrix from ASCII file &quot;</span>+fileName);</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    }</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    std::string line;</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    <span class="keywordtype">int</span> lineIndex = 0;</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="keywordflow">while</span>(std::getline(infile,line)) {</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;        std::stringstream lineStream(line);</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;        <span class="comment">// skip any header information</span></div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;        <span class="keywordflow">if</span> (line.compare(0,1,<span class="stringliteral">&quot;#&quot;</span>,0,1) != 0) {</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;            C_[lineIndex] = atof(line.c_str());</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;            lineIndex++;</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;        }</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    }</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    infile.close();</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="fragment"><div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;                                          {</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    std::ifstream infile (fileName.c_str());</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    <span class="keywordflow">if</span> (!infile.is_open()) {</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a>(<span class="stringliteral">&quot;Unable to read collection matrix from ASCII file &quot;</span>+fileName);</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    }</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    std::string line;</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    <span class="keywordtype">int</span> lineIndex = 0;</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    <span class="keywordflow">while</span>(std::getline(infile,line)) {</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;        std::stringstream lineStream(line);</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;        <span class="comment">// skip any header information</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;        <span class="keywordflow">if</span> (line.compare(0,1,<span class="stringliteral">&quot;#&quot;</span>,0,1) != 0) {</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;            C_[lineIndex] = atof(line.c_str());</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;            lineIndex++;</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;        }</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    }</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    infile.close();</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;}</div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -933,27 +921,27 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="bias_8cpp_source.html#l00353">353</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
+<p>Definition at line <a class="el" href="bias_8cpp_source.html#l00351">351</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
 
 <p>Referenced by <a class="el" href="checkpoint_8cpp_source.html#l00054">checkpoint::load()</a>.</p>
-<div class="fragment"><div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;                                           {</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    std::ifstream infile (fileName.c_str());</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="keywordflow">if</span> (!infile.is_open()) {</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a>(<span class="stringliteral">&quot;Unable to read visited states matrix from ASCII file &quot;</span>+fileName);</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    }</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    std::string line;</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    <span class="keywordtype">int</span> lineIndex = 0;</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;    <span class="keywordflow">while</span>(std::getline(infile,line)) {</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        std::stringstream lineStream(line);</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;        <span class="comment">// skip any header information</span></div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        <span class="keywordflow">if</span> (line.compare(0,1,<span class="stringliteral">&quot;#&quot;</span>,0,1) != 0) {</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;            HC_[lineIndex] = atof(line.c_str());</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;            lineIndex++;</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;        }</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    }</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    infile.close();</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="fragment"><div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                                           {</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    std::ifstream infile (fileName.c_str());</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordflow">if</span> (!infile.is_open()) {</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a>(<span class="stringliteral">&quot;Unable to read visited states matrix from ASCII file &quot;</span>+fileName);</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    }</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    std::string line;</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    <span class="keywordtype">int</span> lineIndex = 0;</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    <span class="keywordflow">while</span>(std::getline(infile,line)) {</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        std::stringstream lineStream(line);</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;        <span class="comment">// skip any header information</span></div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        <span class="keywordflow">if</span> (line.compare(0,1,<span class="stringliteral">&quot;#&quot;</span>,0,1) != 0) {</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;            HC_[lineIndex] = atof(line.c_str());</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;            lineIndex++;</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        }</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    }</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    infile.close();</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;}</div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -981,7 +969,7 @@ Public Member Functions</h2></td></tr>
 
 <p>Blindly assign a guess of the macrostate distribution. </p>
 
-<p>Definition at line <a class="el" href="bias_8h_source.html#l00034">34</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
+<p>Definition at line <a class="el" href="bias_8h_source.html#l00031">31</a> of file <a class="el" href="bias_8h_source.html">bias.h</a>.</p>
 
 </div>
 </div>
@@ -1042,18 +1030,18 @@ Public Member Functions</h2></td></tr>
 
 <p>Definition at line <a class="el" href="bias_8cpp_source.html#l00215">215</a> of file <a class="el" href="bias_8cpp_source.html">bias.cpp</a>.</p>
 
-<p>References <a class="el" href="bias_8cpp_source.html#l00141">getTransitionAddress()</a>, and <a class="el" href="global_8h_source.html#l00170">customException::what()</a>.</p>
+<p>References <a class="el" href="bias_8cpp_source.html#l00141">getTransitionAddress()</a>, and <a class="el" href="global_8h_source.html#l00169">customException::what()</a>.</p>
 
 <p>Referenced by <a class="el" href="aggvolbias_8cpp_source.html#l00142">aggVolBias3::make()</a>, <a class="el" href="translate_8cpp_source.html#l00010">translateParticle::make()</a>, <a class="el" href="delete_8cpp_source.html#l00010">deleteParticle::make()</a>, <a class="el" href="insert_8cpp_source.html#l00010">insertParticle::make()</a>, and <a class="el" href="swap_8cpp_source.html#l00010">swapParticles::make()</a>.</p>
 <div class="fragment"><div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;                                                                                                       {</div>
 <div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="keywordtype">int</span> i = 0, j = 0;</div>
 <div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        i = <a class="code" href="classtmmc.html#ae296df3336ebf0fa1db7c34972c544eb">getTransitionAddress</a>(Nstart, Nend, Mstart, Mend);</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;        i = <a class="code" href="classtmmc.html#a8649336b47195c6ad50c437ff1f443e3">getTransitionAddress</a>(Nstart, Nend, Mstart, Mend);</div>
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;    } <span class="keywordflow">catch</span> (<a class="code" href="classcustom_exception.html">customException</a> &amp;ce) {</div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot update collection matrix: &quot;</span> + std::to_string(*ce.<a class="code" href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">what</a>()));</div>
 <div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;    }</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;    <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        j = <a class="code" href="classtmmc.html#ae296df3336ebf0fa1db7c34972c544eb">getTransitionAddress</a>(Nstart, Nstart, Mstart, Mstart);</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        j = <a class="code" href="classtmmc.html#a8649336b47195c6ad50c437ff1f443e3">getTransitionAddress</a>(Nstart, Nstart, Mstart, Mstart);</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    } <span class="keywordflow">catch</span> (<a class="code" href="classcustom_exception.html">customException</a> &amp;ce) {</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        <span class="keywordflow">throw</span> <a class="code" href="classcustom_exception.html">customException</a> (<span class="stringliteral">&quot;Cannot update collection matrix: &quot;</span> + std::to_string(*ce.<a class="code" href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">what</a>()));</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    }</div>
@@ -1065,9 +1053,9 @@ Public Member Functions</h2></td></tr>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        HC_[i] += 1.0; <span class="comment">// Translation move when 0 particles in system is &quot;early rejected&quot; (p = 0), but this is valid - if N_min of window is &gt; 0 checkVisited() works fine, but if includes 0, this state is detected as never being sampled otherwise, which is the incorrect response</span></div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    }</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;}</div>
-<div class="ttc" id="classcustom_exception_html_aeb6ab5848b038adfc68fde86a512f691"><div class="ttname"><a href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">customException::what</a></div><div class="ttdeci">const char * what() const </div><div class="ttdoc">Return the user&#39;s message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00170">global.h:170</a></div></div>
-<div class="ttc" id="classtmmc_html_ae296df3336ebf0fa1db7c34972c544eb"><div class="ttname"><a href="classtmmc.html#ae296df3336ebf0fa1db7c34972c544eb">tmmc::getTransitionAddress</a></div><div class="ttdeci">const __BIAS_INT_TYPE__ getTransitionAddress(const int Nstart, const int Nend, const int Mstart, const int Mend)</div><div class="ttdoc">For a given multidimensional array which has been cast into 1D, find the address that refers to a giv...</div><div class="ttdef"><b>Definition:</b> <a href="bias_8cpp_source.html#l00141">bias.cpp:141</a></div></div>
-<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00168">global.h:168</a></div></div>
+<div class="ttc" id="classcustom_exception_html_aeb6ab5848b038adfc68fde86a512f691"><div class="ttname"><a href="classcustom_exception.html#aeb6ab5848b038adfc68fde86a512f691">customException::what</a></div><div class="ttdeci">const char * what() const </div><div class="ttdoc">Return the user&#39;s message. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00169">global.h:169</a></div></div>
+<div class="ttc" id="classtmmc_html_a8649336b47195c6ad50c437ff1f443e3"><div class="ttname"><a href="classtmmc.html#a8649336b47195c6ad50c437ff1f443e3">tmmc::getTransitionAddress</a></div><div class="ttdeci">const long long int getTransitionAddress(const int Nstart, const int Nend, const int Mstart, const int Mend)</div><div class="ttdoc">For a given multidimensional array which has been cast into 1D, find the address that refers to a giv...</div><div class="ttdef"><b>Definition:</b> <a href="bias_8cpp_source.html#l00141">bias.cpp:141</a></div></div>
+<div class="ttc" id="classcustom_exception_html"><div class="ttname"><a href="classcustom_exception.html">customException</a></div><div class="ttdoc">Error handling via custom exceptions. </div><div class="ttdef"><b>Definition:</b> <a href="global_8h_source.html#l00167">global.h:167</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -1078,7 +1066,7 @@ Public Member Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 30 2016 14:21:52 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jan 4 2017 10:47:56 for Flat-Histogram Monte Carlo Simulation by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

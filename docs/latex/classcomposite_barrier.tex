@@ -73,13 +73,13 @@ Free any system barriers present.
 
 
 
-Definition at line 741 of file barrier.\-cpp.
+Definition at line 740 of file barrier.\-cpp.
 
 
 \begin{DoxyCode}
-741                                      \{
-742     sysBarriers\_.clear();
-743 \}
+740                                      \{
+741     sysBarriers\_.clear();
+742 \}
 \end{DoxyCode}
 
 
@@ -120,20 +120,20 @@ Add a cylinder along z = 0 axis wall to interact with.
 \end{DoxyParams}
 
 
-Definition at line 703 of file barrier.\-cpp.
+Definition at line 702 of file barrier.\-cpp.
 
 
 \begin{DoxyCode}
-703                                                                                                            
+702                                                                                                            
                                                           \{
-704     \textcolor{keywordflow}{try} \{
-705         \textcolor{keyword}{auto} barr = std::make\_shared < cylinderZ > (x, y, radius, width, sigma, eps, M);
-706         sysBarriers\_.push\_back(barr);
-707     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
-708         \textcolor{keyword}{const} std::string msg = ex.what();
-709         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add cylinderZ to composite barrier : "}+msg);
-710     \}
-711 \}
+703     \textcolor{keywordflow}{try} \{
+704         \textcolor{keyword}{auto} barr = std::make\_shared < cylinderZ > (x, y, radius, width, sigma, eps, M);
+705         sysBarriers\_.push\_back(barr);
+706     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
+707         \textcolor{keyword}{const} std::string msg = ex.what();
+708         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add cylinderZ to composite barrier : "}+msg);
+709     \}
+710 \}
 \end{DoxyCode}
 \hypertarget{classcomposite_barrier_a10e7f2561e3b5167b69ead011dde2e75}{\index{composite\-Barrier@{composite\-Barrier}!add\-Hard\-Wall\-Z@{add\-Hard\-Wall\-Z}}
 \index{add\-Hard\-Wall\-Z@{add\-Hard\-Wall\-Z}!compositeBarrier@{composite\-Barrier}}
@@ -162,19 +162,19 @@ Add a hard wall to interact with.
 \end{DoxyParams}
 
 
-Definition at line 662 of file barrier.\-cpp.
+Definition at line 661 of file barrier.\-cpp.
 
 
 \begin{DoxyCode}
-662                                                                                                       \{
-663     \textcolor{keywordflow}{try} \{
-664         \textcolor{keyword}{auto} barr = std::make\_shared < hardWallZ > (lb, ub, sigma, M);
-665         sysBarriers\_.push\_back(barr);
-666     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
-667         \textcolor{keyword}{const} std::string msg = ex.what();
-668         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add hardWallZ to composite barrier : "}+msg);
-669     \}
-670 \}
+661                                                                                                       \{
+662     \textcolor{keywordflow}{try} \{
+663         \textcolor{keyword}{auto} barr = std::make\_shared < hardWallZ > (lb, ub, sigma, M);
+664         sysBarriers\_.push\_back(barr);
+665     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
+666         \textcolor{keyword}{const} std::string msg = ex.what();
+667         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add hardWallZ to composite barrier : "}+msg);
+668     \}
+669 \}
 \end{DoxyCode}
 \hypertarget{classcomposite_barrier_aea879332cf03f00463b9c8ca4ca28680}{\index{composite\-Barrier@{composite\-Barrier}!add\-Right\-Triangle\-X\-Z@{add\-Right\-Triangle\-X\-Z}}
 \index{add\-Right\-Triangle\-X\-Z@{add\-Right\-Triangle\-X\-Z}!compositeBarrier@{composite\-Barrier}}
@@ -224,22 +224,22 @@ Add a right\-Triangle\-Z feature to interact with.
 \end{DoxyParams}
 
 
-Definition at line 728 of file barrier.\-cpp.
+Definition at line 727 of file barrier.\-cpp.
 
 
 \begin{DoxyCode}
-728                                                                                                            
+727                                                                                                            
                                                                                                                   
                                             \{
-729     \textcolor{keywordflow}{try} \{
-730         \textcolor{keyword}{auto} barr = std::make\_shared < rightTriangleXZ > (width, theta, lamW, eps, sigma, sep, offset, box,
+728     \textcolor{keywordflow}{try} \{
+729         \textcolor{keyword}{auto} barr = std::make\_shared < rightTriangleXZ > (width, theta, lamW, eps, sigma, sep, offset, box,
        zbase, top, M);
-731         sysBarriers\_.push\_back(barr);
-732     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
-733         \textcolor{keyword}{const} std::string msg = ex.what();
-734         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add rightTriangleXZ to composite barrier : "}+msg);
-735     \}
-736 \}
+730         sysBarriers\_.push\_back(barr);
+731     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
+732         \textcolor{keyword}{const} std::string msg = ex.what();
+733         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add rightTriangleXZ to composite barrier : "}+msg);
+734     \}
+735 \}
 \end{DoxyCode}
 \hypertarget{classcomposite_barrier_a3cb5df17c75d9ff8ccc44b806871b449}{\index{composite\-Barrier@{composite\-Barrier}!add\-Square\-Well\-Wall\-Z@{add\-Square\-Well\-Wall\-Z}}
 \index{add\-Square\-Well\-Wall\-Z@{add\-Square\-Well\-Wall\-Z}!compositeBarrier@{composite\-Barrier}}
@@ -274,20 +274,20 @@ Add a square well wall to interact with.
 \end{DoxyParams}
 
 
-Definition at line 682 of file barrier.\-cpp.
+Definition at line 681 of file barrier.\-cpp.
 
 
 \begin{DoxyCode}
-682                                                                                                            
+681                                                                                                            
                                              \{
-683     \textcolor{keywordflow}{try} \{
-684         \textcolor{keyword}{auto} barr = std::make\_shared < squareWellWallZ > (lb, ub, sigma, range, eps, M);
-685         sysBarriers\_.push\_back(barr);
-686     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
-687         \textcolor{keyword}{const} std::string msg = ex.what();
-688         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add squareWellWallZ to composite barrier : "}+msg);
-689     \}
-690 \}
+682     \textcolor{keywordflow}{try} \{
+683         \textcolor{keyword}{auto} barr = std::make\_shared < squareWellWallZ > (lb, ub, sigma, range, eps, M);
+684         sysBarriers\_.push\_back(barr);
+685     \} \textcolor{keywordflow}{catch} (std::exception &ex) \{
+686         \textcolor{keyword}{const} std::string msg = ex.what();
+687         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"Cannot add squareWellWallZ to composite barrier : "}+msg);
+688     \}
+689 \}
 \end{DoxyCode}
 \hypertarget{classcomposite_barrier_a9b40ae6dd65d5f92d8dc8b63301e14f6}{\index{composite\-Barrier@{composite\-Barrier}!clear\-All@{clear\-All}}
 \index{clear\-All@{clear\-All}!compositeBarrier@{composite\-Barrier}}
@@ -329,7 +329,7 @@ Find the total energy of interaction from A\-L\-L the barriers.
 \end{DoxyParams}
 
 
-Definition at line 766 of file barrier.\-cpp.
+Definition at line 765 of file barrier.\-cpp.
 
 
 
@@ -337,19 +337,19 @@ References N\-U\-M\-\_\-\-I\-N\-F\-I\-N\-I\-T\-Y.
 
 
 \begin{DoxyCode}
-766                                                                                 \{
-767     \textcolor{keywordtype}{double} U = 0.0;
-768     \textcolor{keywordflow}{for} (std::vector < std::shared\_ptr < barrier > >::iterator it = sysBarriers\_.begin(); it != 
+765                                                                                 \{
+766     \textcolor{keywordtype}{double} U = 0.0;
+767     \textcolor{keywordflow}{for} (std::vector < std::shared\_ptr < barrier > >::iterator it = sysBarriers\_.begin(); it != 
       sysBarriers\_.end(); ++it) \{
-769         \textcolor{keywordtype}{double} dU = (*it)->energy (a1, box);
-770         \textcolor{keywordflow}{if} (dU < \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \{
-771             U += dU;
-772         \} \textcolor{keywordflow}{else} \{
-773             \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
-774         \}
-775     \}
-776     \textcolor{keywordflow}{return} U;
-777 \}
+768         \textcolor{keywordtype}{double} dU = (*it)->energy (a1, box);
+769         \textcolor{keywordflow}{if} (dU < \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY}) \{
+770             U += dU;
+771         \} \textcolor{keywordflow}{else} \{
+772             \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
+773         \}
+774     \}
+775     \textcolor{keywordflow}{return} U;
+776 \}
 \end{DoxyCode}
 \hypertarget{classcomposite_barrier_a20989cccc8f4a14df710c2eb7cbd1e71}{\index{composite\-Barrier@{composite\-Barrier}!inside@{inside}}
 \index{inside@{inside}!compositeBarrier@{composite\-Barrier}}
@@ -374,19 +374,19 @@ Returns false if outside any single one, but defaults to true (infinitely far aw
 \end{DoxyParams}
 
 
-Definition at line 751 of file barrier.\-cpp.
+Definition at line 750 of file barrier.\-cpp.
 
 
 \begin{DoxyCode}
-751                                                                               \{
-752     \textcolor{keywordflow}{for} (std::vector < std::shared\_ptr < barrier > >::iterator it = sysBarriers\_.begin(); it != 
+750                                                                               \{
+751     \textcolor{keywordflow}{for} (std::vector < std::shared\_ptr < barrier > >::iterator it = sysBarriers\_.begin(); it != 
       sysBarriers\_.end(); ++it) \{
-753         \textcolor{keywordflow}{if} (!(*it)->inside (a1, box)) \{
-754             \textcolor{keywordflow}{return} \textcolor{keyword}{false};
-755         \}
-756     \}
-757     \textcolor{keywordflow}{return} \textcolor{keyword}{true};
-758 \}
+752         \textcolor{keywordflow}{if} (!(*it)->inside (a1, box)) \{
+753             \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+754         \}
+755     \}
+756     \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+757 \}
 \end{DoxyCode}
 
 

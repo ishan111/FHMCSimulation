@@ -1,4 +1,4 @@
-.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/system.h" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "/home/nam4/Desktop/sandbox/FHMCSimulation/src/system.h" 3 "Wed Jan 4 2017" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -84,38 +84,38 @@ rel_bias The value of the relative bias to apply in the metropolis criteria duri
 .PP
 
 .PP
-Definition at line 1755 of file system\&.cpp\&.
+Definition at line 1771 of file system\&.cpp\&.
 .PP
-References __BIAS_INT_TYPE__, tmmc::getAddress(), wala::getAddress(), tmmc::getBias(), wala::getBias(), simSystem::getCurrentM(), simSystem::getTotN(), simSystem::tmmcBias, simSystem::useTMMC, simSystem::useWALA, and simSystem::wlBias\&.
+References tmmc::getAddress(), wala::getAddress(), tmmc::getBias(), wala::getBias(), simSystem::getCurrentM(), simSystem::getTotN(), simSystem::tmmcBias, simSystem::useTMMC, simSystem::useWALA, and simSystem::wlBias\&.
 .PP
 Referenced by aggVolBias3::make(), translateParticle::make(), deleteParticle::make(), insertParticle::make(), and swapParticles::make()\&.
 .PP
 .nf
-1755                                                                                    {
-1756     double rel_bias = 1\&.0;
-1757 
-1758     if (sys\&.useTMMC && !sys\&.useWALA) {
-1759         // TMMC biasing
-1760         const __BIAS_INT_TYPE__ address1 = sys\&.tmmcBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.tmmcBias->getAddress(nTotFinal, mFinal);
-1761         const double b1 = sys\&.tmmcBias->getBias (address1), b2 = sys\&.tmmcBias->getBias (address2);
-1762         rel_bias = exp(b2-b1);
-1763     } else if (!sys\&.useTMMC && sys\&.useWALA) {
-1764         // Wang-Landau Biasing
-1765         const __BIAS_INT_TYPE__ address1 = sys\&.wlBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.wlBias->getAddress(nTotFinal, mFinal);
-1766         const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
-1767         rel_bias = exp(b2-b1);
-1768     } else if (sys\&.useTMMC && sys\&.useWALA) {
-1769         // Crossover phase where we use WL but update TMMC collection matrix
-1770         const int address1 = sys\&.wlBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.wlBias->getAddress(nTotFinal, mFinal);
-1771         const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
-1772         rel_bias = exp(b2-b1);
-1773     } else {
-1774         // No biasing
-1775         rel_bias = 1\&.0;
-1776     }
-1777 
-1778     return rel_bias;
-1779 }
+1771                                                                                    {
+1772     double rel_bias = 1\&.0;
+1773 
+1774     if (sys\&.useTMMC && !sys\&.useWALA) {
+1775         // TMMC biasing
+1776         const long long int address1 = sys\&.tmmcBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.tmmcBias->getAddress(nTotFinal, mFinal);
+1777         const double b1 = sys\&.tmmcBias->getBias (address1), b2 = sys\&.tmmcBias->getBias (address2);
+1778         rel_bias = exp(b2-b1);
+1779     } else if (!sys\&.useTMMC && sys\&.useWALA) {
+1780         // Wang-Landau Biasing
+1781         const long long int address1 = sys\&.wlBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.wlBias->getAddress(nTotFinal, mFinal);
+1782         const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
+1783         rel_bias = exp(b2-b1);
+1784     } else if (sys\&.useTMMC && sys\&.useWALA) {
+1785         // Crossover phase where we use WL but update TMMC collection matrix
+1786         const int address1 = sys\&.wlBias->getAddress(sys\&.getTotN(), sys\&.getCurrentM()), address2 = sys\&.wlBias->getAddress(nTotFinal, mFinal);
+1787         const double b1 = sys\&.wlBias->getBias (address1), b2 = sys\&.wlBias->getBias (address2);
+1788         rel_bias = exp(b2-b1);
+1789     } else {
+1790         // No biasing
+1791         rel_bias = 1\&.0;
+1792     }
+1793 
+1794     return rel_bias;
+1795 }
 .fi
 .SH "Author"
 .PP 

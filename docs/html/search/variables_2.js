@@ -9,5 +9,6 @@ var searchData=
   ['cellsize',['cellSize',['../classcell_list.html#ac920f36bcf43f79ab853921bb0b7c2f4',1,'cellList']]],
   ['changen_5f',['changeN_',['../classmc_move.html#add8d6d08be181274a61c7463159ad929',1,'mcMove']]],
   ['chkptname',['chkptName',['../classcheckpoint.html#a477eea21621f066889660ed426dc800f',1,'checkpoint']]],
-  ['crossoverdone',['crossoverDone',['../classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5',1,'checkpoint']]]
+  ['crossoverdone',['crossoverDone',['../classcheckpoint.html#a4f13612ea6d376bb327295bfce3a70c5',1,'checkpoint']]],
+  ['crossovertotalstepcounter',['crossoverTotalStepCounter',['../classsim_system.html#a1d71d1df76bba70136853e30823d2db9',1,'simSystem']]]
 ];

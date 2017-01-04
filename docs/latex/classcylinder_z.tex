@@ -91,7 +91,7 @@ Expanded ensembles primarily scale the magnitude of interaction. The repulsive b
 \end{DoxyParams}
 
 
-Definition at line 463 of file barrier.\-cpp.
+Definition at line 462 of file barrier.\-cpp.
 
 
 
@@ -99,39 +99,39 @@ References barrier\-::\-M\-\_\-.
 
 
 \begin{DoxyCode}
-463                                                                                                            
+462                                                                                                            
                                            \{
-464     \textcolor{keywordflow}{if} (radius <= sigma) \{
-465         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ radius <= sigma so practically no particles will
+463     \textcolor{keywordflow}{if} (radius <= sigma) \{
+464         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ radius <= sigma so practically no particles will
        fit"});
-466     \}
-467     \textcolor{keywordflow}{if} (sigma < 0) \{
-468         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have sigma >= 0"});
-469     \}
-470     \textcolor{keywordflow}{if} (width < 0) \{
-471         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have width >= 0"});
-472     \}
-473     \textcolor{keywordflow}{if} (eps < 0) \{
-474         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have epsilon >= 0"});
-475     \}
-476     \textcolor{keywordflow}{if} (sigma/2.0 >= width) \{
-477         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have sigma/2 < width to have a finite range
+465     \}
+466     \textcolor{keywordflow}{if} (sigma < 0) \{
+467         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have sigma >= 0"});
+468     \}
+469     \textcolor{keywordflow}{if} (width < 0) \{
+470         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have width >= 0"});
+471     \}
+472     \textcolor{keywordflow}{if} (eps < 0) \{
+473         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have epsilon >= 0"});
+474     \}
+475     \textcolor{keywordflow}{if} (sigma/2.0 >= width) \{
+476         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have sigma/2 < width to have a finite range
        of interaction"});
-478     \}
-479     \textcolor{keywordflow}{if} (M < 1) \{
-480         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have M >= 1"});
-481     \}
-482 
-483     eps\_ = eps;
-484     sigma\_ = sigma;
-485     width\_ = width;
-486     radius\_ = radius;
-487     \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_} = M;
-488 
-489     center\_.resize(3, 0);
-490     center\_[0] = x;
-491     center\_[1] = y;
-492 \}
+477     \}
+478     \textcolor{keywordflow}{if} (M < 1) \{
+479         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"cylinderZ must have M >= 1"});
+480     \}
+481 
+482     eps\_ = eps;
+483     sigma\_ = sigma;
+484     width\_ = width;
+485     radius\_ = radius;
+486     \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_} = M;
+487 
+488     center\_.resize(3, 0);
+489     center\_[0] = x;
+490     center\_[1] = y;
+491 \}
 \end{DoxyCode}
 
 
@@ -163,7 +163,7 @@ Implements \hyperlink{classbarrier_a2d308cfd5709aa479d0b37733f1a0db7}{barrier}.
 
 
 
-Definition at line 526 of file barrier.\-cpp.
+Definition at line 525 of file barrier.\-cpp.
 
 
 
@@ -171,32 +171,32 @@ References barrier\-::\-M\-\_\-, atom\-::m\-State, N\-U\-M\-\_\-\-I\-N\-F\-I\-N\
 
 
 \begin{DoxyCode}
-526                                                                          \{
-527     center\_[2] = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]; \textcolor{comment}{// same z-plane}
-528     \textcolor{keywordtype}{double} rv2 = \hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2} (a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, center\_, box);
-529     \textcolor{keywordtype}{double} U = 0.0, sig = sigma\_, eps = eps\_;
-530 
-531     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
-532         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-533         eps = (eps\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-534     \}
-535     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
-536         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for cylinderZ"});
-537     \}
-538 
-539     \textcolor{comment}{// Return infinity if out of bounds}
-540     \textcolor{keywordtype}{double} rc = radius\_ - sig/2.0, ri = radius\_ - width\_;
-541     \textcolor{keywordflow}{if} (rv2 >= rc*rc) \{
-542         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
-543     \}
-544 
-545     \textcolor{comment}{// Interaction with the wall - return infinity if it was out of bounds already}
-546     \textcolor{keywordflow}{if} (rv2 > ri*ri) \{
-547         U += -eps;
-548     \}
-549 
-550     \textcolor{keywordflow}{return} U;
-551 \}
+525                                                                          \{
+526     center\_[2] = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]; \textcolor{comment}{// same z-plane}
+527     \textcolor{keywordtype}{double} rv2 = \hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2} (a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, center\_, box);
+528     \textcolor{keywordtype}{double} U = 0.0, sig = sigma\_, eps = eps\_;
+529 
+530     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
+531         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+532         eps = (eps\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+533     \}
+534     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
+535         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for cylinderZ"});
+536     \}
+537 
+538     \textcolor{comment}{// Return infinity if out of bounds}
+539     \textcolor{keywordtype}{double} rc = radius\_ - sig/2.0, ri = radius\_ - width\_;
+540     \textcolor{keywordflow}{if} (rv2 >= rc*rc) \{
+541         \textcolor{keywordflow}{return} \hyperlink{potentials_8h_ab94ab1d09e2291d03fe92a0e24a9d33b}{NUM\_INFINITY};
+542     \}
+543 
+544     \textcolor{comment}{// Interaction with the wall - return infinity if it was out of bounds already}
+545     \textcolor{keywordflow}{if} (rv2 > ri*ri) \{
+546         U += -eps;
+547     \}
+548 
+549     \textcolor{keywordflow}{return} U;
+550 \}
 \end{DoxyCode}
 \hypertarget{classcylinder_z_aff84684096c1d04d73ee894b499a0a2f}{\index{cylinder\-Z@{cylinder\-Z}!inside@{inside}}
 \index{inside@{inside}!cylinderZ@{cylinder\-Z}}
@@ -225,7 +225,7 @@ Implements \hyperlink{classbarrier_a948ebdcfac501cb75d1a1f045a7d9125}{barrier}.
 
 
 
-Definition at line 500 of file barrier.\-cpp.
+Definition at line 499 of file barrier.\-cpp.
 
 
 
@@ -233,25 +233,25 @@ References barrier\-::\-M\-\_\-, atom\-::m\-State, pbc\-Dist2(), and atom\-::pos
 
 
 \begin{DoxyCode}
-500                                                                        \{
-501     center\_[2] = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]; \textcolor{comment}{// same z-plane}
-502     \textcolor{keywordtype}{double} rv2 = \hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2} (a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, center\_, box);
-503 
-504     \textcolor{keywordtype}{double} sig = sigma\_;
-505     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
-506         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
-507     \}
-508     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
-509         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for cylinderZ"});
-510     \}
-511 
-512     \textcolor{keywordtype}{double} rc = radius\_ - sig/2.0;
-513     \textcolor{keywordflow}{if} (rv2 >= rc*rc) \{
-514         \textcolor{keywordflow}{return} \textcolor{keyword}{false};
-515     \} \textcolor{keywordflow}{else} \{
-516         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
-517     \}
-518 \}
+499                                                                        \{
+500     center\_[2] = a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}[2]; \textcolor{comment}{// same z-plane}
+501     \textcolor{keywordtype}{double} rv2 = \hyperlink{utilities_8cpp_abb1db3a8a3ac46e044bbe7b2c5684c0a}{pbcDist2} (a1->\hyperlink{classatom_a3ae5f4880e7831d8b2c9fda72b4eb24a}{pos}, center\_, box);
+502 
+503     \textcolor{keywordtype}{double} sig = sigma\_;
+504     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > 0) \{
+505         sig = (sigma\_/\hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_})*a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState};
+506     \}
+507     \textcolor{keywordflow}{if} (a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} < 0 || a1->\hyperlink{classatom_a3cb00c0c5b7533657e05af6ff4a42740}{mState} > \hyperlink{classbarrier_a274cf283ffc97c22ffa9a4258369c400}{M\_}-1) \{
+508         \textcolor{keywordflow}{throw} \hyperlink{classcustom_exception}{customException} (\textcolor{stringliteral}{"mState out of bounds for cylinderZ"});
+509     \}
+510 
+511     \textcolor{keywordtype}{double} rc = radius\_ - sig/2.0;
+512     \textcolor{keywordflow}{if} (rv2 >= rc*rc) \{
+513         \textcolor{keywordflow}{return} \textcolor{keyword}{false};
+514     \} \textcolor{keywordflow}{else} \{
+515         \textcolor{keywordflow}{return} \textcolor{keyword}{true};
+516     \}
+517 \}
 \end{DoxyCode}
 
 

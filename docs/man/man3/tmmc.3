@@ -1,4 +1,4 @@
-.TH "tmmc" 3 "Fri Dec 30 2016" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
+.TH "tmmc" 3 "Wed Jan 4 2017" "Version v0.1.0" "Flat-Histogram Monte Carlo Simulation" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -58,11 +58,11 @@ Transition Matrix Monte Carlo biasing class\&.
 .br
 .RI "\fICheck if the the collection matrix has been samples sufficiently, i\&.e\&., if each state and transition has been visited tmmcSweepSize_ times\&. \fP"
 .ti -1c
-.RI "const \fB__BIAS_INT_TYPE__\fP \fBgetTransitionAddress\fP (const int Nstart, const int Nend, const int Mstart, const int Mend)"
+.RI "const long long int \fBgetTransitionAddress\fP (const int Nstart, const int Nend, const int Mstart, const int Mend)"
 .br
 .RI "\fIFor a given multidimensional array which has been cast into 1D, find the address that refers to a given transition\&. \fP"
 .ti -1c
-.RI "const \fB__BIAS_INT_TYPE__\fP \fBgetAddress\fP (const int Nval, const int Mval)"
+.RI "const long long int \fBgetAddress\fP (const int Nval, const int Mval)"
 .br
 .RI "\fIGet the address in lnPI that corresponds to a given macrostate\&. \fP"
 .ti -1c
@@ -83,16 +83,16 @@ Transition Matrix Monte Carlo biasing class\&.
 .PP 
 Transition Matrix Monte Carlo biasing class\&. 
 .PP
-Definition at line 24 of file bias\&.h\&.
+Definition at line 21 of file bias\&.h\&.
 .SH "Constructor & Destructor Documentation"
 .PP 
 .SS "tmmc::tmmc ()\fC [inline]\fP"
 
 .PP
-Definition at line 26 of file bias\&.h\&.
+Definition at line 23 of file bias\&.h\&.
 .PP
 .nf
-26 {};
+23 {};
 .fi
 .SS "tmmc::tmmc (const intNmax, const intNmin, const intMtot, const long long inttmmcSweepSize, const std::vector< double >box)"
 
@@ -116,8 +116,6 @@ Initialize the tmmc object\&.
 .PP
 Definition at line 12 of file bias\&.cpp\&.
 .PP
-References __BIAS_INT_TYPE__\&.
-.PP
 .nf
 12                                                                                                                             {
 13     if (Nmin > Nmax) {
@@ -130,7 +128,7 @@ References __BIAS_INT_TYPE__\&.
 20         throw customException ("Mtot < 1 in TMMC bias");
 21     }
 22 
-23     __BIAS_INT_TYPE__ size = (Nmax - Nmin + 1);
+23     long long int size = (Nmax - Nmin + 1);
 24     Nmin_ = Nmin;
 25     Nmax_ = Nmax;
 26     Mtot_ = Mtot;
@@ -190,14 +188,14 @@ Calculate the (natural logarithm of the) macrostate density matrix via the proba
 .PP
 Definition at line 239 of file bias\&.cpp\&.
 .PP
-References __BIAS_INT_TYPE__, and getTransitionAddress()\&.
+References getTransitionAddress()\&.
 .PP
 Referenced by checkpoint::load(), performCrossover(), and performTMMC()\&.
 .PP
 .nf
 239                         {
 240     const int endPoint = C_\&.size() - (Mtot_-1)*3;
-241     for (__BIAS_INT_TYPE__ i = 0; i < endPoint; i += 3) {
+241     for (long long int i = 0; i < endPoint; i += 3) {
 242         double sum = 0\&.0;
 243         for (unsigned int j = 0; j < 3; ++j) {
 244             sum += C_[i+j];
@@ -207,47 +205,45 @@ Referenced by checkpoint::load(), performCrossover(), and performTMMC()\&.
 248                 P_[i+j] = C_[i+j] / sum;
 249             }
 250         } else {
-251             // This state has not been visited at all if sum = 0\&.  However, at high system densities this could be the "correct"
-252             // result so this error may need to be discarded later in favor of:
-253             // P_[i+j] = 0;
-254             // However, having this throw an exception is also a good way to find that upper bound where the system is completely packed
-255             // so I will keep it this way for now\&.
-256             throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros");
-257         }
-258     }
-259 
-260     // Reset first value to zero just to start fresh\&. Since only ratios matter this is perfectly fair\&.
-261     lnPI_[0] = 0\&.0;
-262     int counter = 0;
-263     __BIAS_INT_TYPE__ address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, nEndForward = 0, mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;
-264     for (__BIAS_INT_TYPE__ i = 0; i < (Nmax_ - Nmin_); ++i) { // don't calculate the last N = Nmax when M > 0, stops initially at N = Nmax, M = 0
-265         nStartForward = Nmin_+i;
-266         for (__BIAS_INT_TYPE__ j = 0; j < Mtot_; ++j) {
-267             mStartForward = j;
-268             if (j == Mtot_-1) {
-269                 nEndForward = nStartForward + 1;
-270                 mEndForward = 0;
-271             } else {
-272                 nEndForward = nStartForward;
-273                 mEndForward = j + 1;
-274             }
-275 
-276             nStartBackward = nEndForward;
-277             nEndBackward = nStartForward;
-278             mStartBackward = mEndForward;
-279             mEndBackward = mStartForward;
-280 
-281             address1 = getTransitionAddress(nStartForward, nEndForward, mStartForward, mEndForward);
-282             address2 = getTransitionAddress(nStartBackward, nEndBackward, mStartBackward, mEndBackward);
-283 
-284             if (!(P_[address1] > 0) || !(P_[address2] > 0)) {
-285                 throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros at address: P["+std::to_string(address1)+"] = "+std::to_string(P_[address1])+", P["+std::to_string(address2)+"] = "+std::to_string(P_[address2]));
-286             }
-287             lnPI_[counter+1] = lnPI_[counter] + log(P_[address1]/P_[address2]); // this is why P_ cannot be zero
-288             counter++;
-289         }
-290     }
-291 }
+251             // This state has not been visited at all if sum = 0\&.  However, at high system densities this could be the "correct" result so this error may need to be discarded later in favor of: P_[i+j] = 0;
+252             // However, having this throw an exception is also a good way to find that upper bound where the system is completely packed so I will keep it this way for now\&.
+253             // Under current philosophy of a "sweep" requiring all entries in C to be filled with finite values, this is acutally protected against\&.
+254             throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros");
+255         }
+256     }
+257 
+258     // Reset first value to zero just to start fresh\&. Since only ratios matter this is perfectly fair\&.
+259     lnPI_[0] = 0\&.0;
+260     int counter = 0;
+261     long long int address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, nEndForward = 0, mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;
+262     for (long long int i = 0; i < (Nmax_ - Nmin_); ++i) { // Don't calculate the last N = Nmax when M > 0, stops initially at N = Nmax, M = 0
+263         nStartForward = Nmin_+i;
+264         for (long long int j = 0; j < Mtot_; ++j) {
+265             mStartForward = j;
+266             if (j == Mtot_-1) {
+267                 nEndForward = nStartForward + 1;
+268                 mEndForward = 0;
+269             } else {
+270                 nEndForward = nStartForward;
+271                 mEndForward = j + 1;
+272             }
+273 
+274             nStartBackward = nEndForward;
+275             nEndBackward = nStartForward;
+276             mStartBackward = mEndForward;
+277             mEndBackward = mStartForward;
+278 
+279             address1 = getTransitionAddress(nStartForward, nEndForward, mStartForward, mEndForward);
+280             address2 = getTransitionAddress(nStartBackward, nEndBackward, mStartBackward, mEndBackward);
+281 
+282             if (!(P_[address1] > 0) || !(P_[address2] > 0)) {
+283                 throw customException ("Cannot compute TMMC macrostate distribution because probability matrix contains zeros at address: P["+std::to_string(address1)+"] = "+std::to_string(P_[address1])+", P["+std::to_string(address2)+"] = "+std::to_string(P_[address2]));
+284             }
+285             lnPI_[counter+1] = lnPI_[counter] + log(P_[address1]/P_[address2]); // This is why P_ cannot be zero
+286             counter++;
+287         }
+288     }
+289 }
 .fi
 .SS "bool tmmc::checkFullyVisited ()"
 
@@ -256,14 +252,12 @@ Check if the the collection matrix has been samples sufficiently, i\&.e\&., if e
 .PP
 Definition at line 100 of file bias\&.cpp\&.
 .PP
-References __BIAS_INT_TYPE__\&.
-.PP
 Referenced by performCrossover(), and performTMMC()\&.
 .PP
 .nf
 100                               {
 101     const int endPoint = HC_\&.size() - (Mtot_-1)*3; // we don't care about the last chunk where N = Nmax, but M > 0 - stop at N = Nmax, M = 0
-102     for (__BIAS_INT_TYPE__ i = 0; i < endPoint; i += 3) {
+102     for (long long int i = 0; i < endPoint; i += 3) {
 103         if (i == 0) {
 104             // lower bound, so only +1 and 0 moves must be sampled
 105             if ((HC_[i+1] < tmmcSweepSize_) || (HC_[i] < tmmcSweepSize_)) {
@@ -320,7 +314,7 @@ Referenced by performCrossover(), and print()\&.
 94     of\&.close();
 95 }
 .fi
-.SS "const \fB__BIAS_INT_TYPE__\fP tmmc::getAddress (const intNval, const intMval)"
+.SS "const long long int tmmc::getAddress (const intNval, const intMval)"
 
 .PP
 Get the address in lnPI that corresponds to a given macrostate\&. 
@@ -339,7 +333,7 @@ Definition at line 199 of file bias\&.cpp\&.
 Referenced by calculateBias()\&.
 .PP
 .nf
-199                                                                         {
+199                                                                     {
 200     if (Nval > Nmax_ || Nval < Nmin_ || Mval < 0 || Mval > Mtot_-1) {
 201         throw customException ("N, M out of bounds in TMMC object, cannot retrieve address");
 202     }
@@ -349,28 +343,28 @@ Referenced by calculateBias()\&.
 .SS "const double tmmc::getBias (const intaddress)\fC [inline]\fP"
 
 .PP
-Definition at line 41 of file bias\&.h\&.
+Definition at line 38 of file bias\&.h\&.
 .PP
 Referenced by calculateBias()\&.
 .PP
 .nf
-41 { return -lnPI_[address]; }
+38 { return -lnPI_[address]; }
 .fi
 .SS "const std::vector< double > tmmc::getC ()\fC [inline]\fP"
 
 .PP
 Return the collection matrix as it is\&. 
 .PP
-Definition at line 42 of file bias\&.h\&.
+Definition at line 39 of file bias\&.h\&.
 .SS "const std::vector< double > tmmc::getHC ()\fC [inline]\fP"
 
 .PP
-Definition at line 43 of file bias\&.h\&.
+Definition at line 40 of file bias\&.h\&.
 .PP
 .nf
-43 { return HC_; }
+40 { return HC_; }
 .fi
-.SS "const \fB__BIAS_INT_TYPE__\fP tmmc::getTransitionAddress (const intNstart, const intNend, const intMstart, const intMend)"
+.SS "const long long int tmmc::getTransitionAddress (const intNstart, const intNend, const intMstart, const intMend)"
 
 .PP
 For a given multidimensional array which has been cast into 1D, find the address that refers to a given transition\&. Assumes only valid moves are moving by +/-1 M (and subsequently N), will throw exception if this is not met\&.
@@ -390,21 +384,19 @@ For a given multidimensional array which has been cast into 1D, find the address
 .PP
 Definition at line 141 of file bias\&.cpp\&.
 .PP
-References __BIAS_INT_TYPE__\&.
-.PP
 Referenced by calculatePI(), and updateC()\&.
 .PP
 .nf
-141                                                                                                                       {
+141                                                                                                                   {
 142     if (Nstart > Nmax_ || Nstart < Nmin_ || Nend > (Nmax_+1) || Nend < (Nmin_-1) || Mstart < 0 || Mstart > Mtot_-1 || Mend < 0 || Mend > Mtot_-1) { // Nend has array positions for going over end of bounds but are never used, still they are valid
 143         throw customException ("N, M out of bounds in TMMC object, cannot retrieve address");
 144     }
 145 
 146     if (Mtot_ > 1) {
-147         // expanded ensemble
+147         // Expanded ensemble
 148         int y = 0;
 149         if (Nstart == Nend) {
-150             // moving within an expanded set
+150             // Moving within an expanded set
 151             int addOrSubtract = Mend - Mstart;
 152             if (addOrSubtract == 0) {
 153                 y = 0;
@@ -416,7 +408,7 @@ Referenced by calculatePI(), and updateC()\&.
 159                 throw customException ("Illegal addOrSubtract value");
 160             }
 161         } else {
-162             // crossing over
+162             // Crossing over
 163             if (Nend > Nstart) {
 164                 y = 1;
 165                 if (Mstart != Mtot_ - 1 || Mend != 0) {
@@ -431,7 +423,7 @@ Referenced by calculatePI(), and updateC()\&.
 174         }
 175         return 3*((Nstart - Nmin_)*Mtot_ + Mstart) + y;
 176     } else {
-177         // no expanded ensemble
+177         // No expanded ensemble
 178         int addOrSubtract = (Nend - Nstart), y = 0;
 179         if (addOrSubtract == 0) {
 180             y = 0;
@@ -442,8 +434,8 @@ Referenced by calculatePI(), and updateC()\&.
 185         } else {
 186             throw customException ("Illegal addOrSubtract value");
 187         }
-188         __BIAS_INT_TYPE__ x = Nstart - Nmin_;
-189         return x*3 + y; // equivalent to expanded ensemble because Mstart = 0 always, and Mtot_ = 1
+188         long long int x = Nstart - Nmin_;
+189         return x*3 + y; // Equivalent to expanded ensemble because Mstart = 0 always, and Mtot_ = 1
 190     }
 191 }
 .fi
@@ -465,12 +457,12 @@ Referenced by performCrossover(), and performTMMC()\&.
 .SS "const long long int tmmc::numSweeps ()\fC [inline]\fP"
 
 .PP
-Definition at line 40 of file bias\&.h\&.
+Definition at line 37 of file bias\&.h\&.
 .PP
 Referenced by performCrossover()\&.
 .PP
 .nf
-40 { return nSweeps_; }
+37 { return nSweeps_; }
 .fi
 .SS "void tmmc::print (const std::stringfileName, boolprintC = \fCfalse\fP, boolprintHC = \fCfalse\fP)"
 
@@ -488,57 +480,57 @@ Print the UN-NORMALIZED biasing function (lnPI) and possibly collection matrix t
 .PP
 
 .PP
-Definition at line 301 of file bias\&.cpp\&.
+Definition at line 299 of file bias\&.cpp\&.
 .PP
 References dumpVisited()\&.
 .PP
 Referenced by checkpoint::dump(), performCrossover(), and performTMMC()\&.
 .PP
 .nf
-301                                                                      {
-302     // Print collection matrix
-303     if (printC) {
-304         // print all states, including partial ones, so this can be used to restart from, etc\&.
-305         std::ofstream of;
-306         std::string name = fileName+"_C\&.dat";
-307         of\&.open(name\&.c_str(), std::ofstream::out);
-308         if (!of\&.is_open()) {
-309             throw customException ("Unable to write TMMC collection matrix to "+name);
-310         }
-311         of << "# Collection matrix in single row (vectorized) notation\&." << std::endl;
-312         of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-313         of << "# species_total_lower_bound: " << Nmin_ << std::endl;
-314         double V = box_[0]*box_[1]*box_[2];
-315         of << "# volume: " << std::setprecision(15) << V << std::endl;
-316         for (long long int i = 0; i < C_\&.size(); ++i) {
-317             of << std::setprecision(15) << C_[i] << std::endl;
-318         }
-319         of\&.close();
-320     }
-321 
-322     // Print visited states matrix
-323     if (printHC) {
-324         // print all states, including partial ones, so this can be used to restart from, etc\&.
-325         dumpVisited(fileName+"_HC");
-326     }
-327 
-328     // Print lnPI (bias) matrix
-329     std::ofstream of;
-330     std::string name = fileName+"_lnPI\&.dat";
-331     of\&.open(name\&.c_str(), std::ofstream::out);
-332     if (!of\&.is_open()) {
-333         throw customException ("Unable to write TMMC lnPI to "+name);
-334     }
-335     of << "# lnPI (bias) matrix in single row (vectorized) notation\&." << std::endl;
-336     of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-337     of << "# species_total_lower_bound: " << Nmin_ << std::endl;
-338     double V = box_[0]*box_[1]*box_[2];
-339     of << "# volume: " << std::setprecision(15) << V << std::endl;
-340     for (long long int i = 0; i < lnPI_\&.size(); i += Mtot_) {
-341         of << std::setprecision(15) << lnPI_[i] << std::endl; // only print the integral states
-342     }
-343     of\&.close();
-344 }
+299                                                                      {
+300     // Print collection matrix
+301     if (printC) {
+302         // Print all states, including partial ones, so this can be used to restart from, etc\&.
+303         std::ofstream of;
+304         std::string name = fileName+"_C\&.dat";
+305         of\&.open(name\&.c_str(), std::ofstream::out);
+306         if (!of\&.is_open()) {
+307             throw customException ("Unable to write TMMC collection matrix to "+name);
+308         }
+309         of << "# Collection matrix in single row (vectorized) notation\&." << std::endl;
+310         of << "# species_total_upper_bound: " << Nmax_ << std::endl;
+311         of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+312         double V = box_[0]*box_[1]*box_[2];
+313         of << "# volume: " << std::setprecision(15) << V << std::endl;
+314         for (long long int i = 0; i < C_\&.size(); ++i) {
+315             of << std::setprecision(15) << C_[i] << std::endl;
+316         }
+317         of\&.close();
+318     }
+319 
+320     // Print visited states matrix
+321     if (printHC) {
+322         // print all states, including partial ones, so this can be used to restart from, etc\&.
+323         dumpVisited(fileName+"_HC");
+324     }
+325 
+326     // Print lnPI (bias) matrix
+327     std::ofstream of;
+328     std::string name = fileName+"_lnPI\&.dat";
+329     of\&.open(name\&.c_str(), std::ofstream::out);
+330     if (!of\&.is_open()) {
+331         throw customException ("Unable to write TMMC lnPI to "+name);
+332     }
+333     of << "# lnPI (bias) matrix in single row (vectorized) notation\&." << std::endl;
+334     of << "# species_total_upper_bound: " << Nmax_ << std::endl;
+335     of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+336     double V = box_[0]*box_[1]*box_[2];
+337     of << "# volume: " << std::setprecision(15) << V << std::endl;
+338     for (long long int i = 0; i < lnPI_\&.size(); i += Mtot_) {
+339         of << std::setprecision(15) << lnPI_[i] << std::endl; // only print the integral states
+340     }
+341     of\&.close();
+342 }
 .fi
 .SS "void tmmc::readC (const std::stringfileName)"
 
@@ -552,28 +544,28 @@ Read the collection matrix from a file\&. This assumes the user has already guar
 .PP
 
 .PP
-Definition at line 378 of file bias\&.cpp\&.
+Definition at line 376 of file bias\&.cpp\&.
 .PP
 Referenced by checkpoint::load(), and performTMMC()\&.
 .PP
 .nf
-378                                           {
-379     std::ifstream infile (fileName\&.c_str());
-380     if (!infile\&.is_open()) {
-381         throw customException("Unable to read collection matrix from ASCII file "+fileName);
-382     }
-383     std::string line;
-384     int lineIndex = 0;
-385     while(std::getline(infile,line)) {
-386         std::stringstream lineStream(line);
-387         // skip any header information
-388         if (line\&.compare(0,1,"#",0,1) != 0) {
-389             C_[lineIndex] = atof(line\&.c_str());
-390             lineIndex++;
-391         }
-392     }
-393     infile\&.close();
-394 }
+376                                           {
+377     std::ifstream infile (fileName\&.c_str());
+378     if (!infile\&.is_open()) {
+379         throw customException("Unable to read collection matrix from ASCII file "+fileName);
+380     }
+381     std::string line;
+382     int lineIndex = 0;
+383     while(std::getline(infile,line)) {
+384         std::stringstream lineStream(line);
+385         // skip any header information
+386         if (line\&.compare(0,1,"#",0,1) != 0) {
+387             C_[lineIndex] = atof(line\&.c_str());
+388             lineIndex++;
+389         }
+390     }
+391     infile\&.close();
+392 }
 .fi
 .SS "void tmmc::readHC (const std::stringfileName)"
 
@@ -587,35 +579,35 @@ Read the visited states matrix from a file\&. This assumes the user has already 
 .PP
 
 .PP
-Definition at line 353 of file bias\&.cpp\&.
+Definition at line 351 of file bias\&.cpp\&.
 .PP
 Referenced by checkpoint::load()\&.
 .PP
 .nf
-353                                            {
-354     std::ifstream infile (fileName\&.c_str());
-355     if (!infile\&.is_open()) {
-356         throw customException("Unable to read visited states matrix from ASCII file "+fileName);
-357     }
-358     std::string line;
-359     int lineIndex = 0;
-360     while(std::getline(infile,line)) {
-361         std::stringstream lineStream(line);
-362         // skip any header information
-363         if (line\&.compare(0,1,"#",0,1) != 0) {
-364             HC_[lineIndex] = atof(line\&.c_str());
-365             lineIndex++;
-366         }
-367     }
-368     infile\&.close();
-369 }
+351                                            {
+352     std::ifstream infile (fileName\&.c_str());
+353     if (!infile\&.is_open()) {
+354         throw customException("Unable to read visited states matrix from ASCII file "+fileName);
+355     }
+356     std::string line;
+357     int lineIndex = 0;
+358     while(std::getline(infile,line)) {
+359         std::stringstream lineStream(line);
+360         // skip any header information
+361         if (line\&.compare(0,1,"#",0,1) != 0) {
+362             HC_[lineIndex] = atof(line\&.c_str());
+363             lineIndex++;
+364         }
+365     }
+366     infile\&.close();
+367 }
 .fi
 .SS "void tmmc::setlnPI (const std::vector< double > &lnPIguess)\fC [inline]\fP"
 
 .PP
 Blindly assign a guess of the macrostate distribution\&. 
 .PP
-Definition at line 34 of file bias\&.h\&.
+Definition at line 31 of file bias\&.h\&.
 .SS "void tmmc::updateC (const intNstart, const intNend, const intMstart, const intMend, const doublepa)"
 
 .PP
