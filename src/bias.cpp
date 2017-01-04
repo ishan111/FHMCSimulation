@@ -20,7 +20,7 @@ tmmc::tmmc (const int Nmax, const int Nmin,  const int Mtot, const long long int
 		throw customException ("Mtot < 1 in TMMC bias");
 	}
 
-	__BIAS_INT_TYPE__ size = (Nmax - Nmin + 1);
+	long long int size = (Nmax - Nmin + 1);
 	Nmin_ = Nmin;
 	Nmax_ = Nmax;
 	Mtot_ = Mtot;
@@ -99,7 +99,7 @@ void tmmc::dumpVisited (const std::string fileName) {
  */
 bool tmmc::checkFullyVisited () {
 	const int endPoint = HC_.size() - (Mtot_-1)*3; // we don't care about the last chunk where N = Nmax, but M > 0 - stop at N = Nmax, M = 0
-	for (__BIAS_INT_TYPE__ i = 0; i < endPoint; i += 3) {
+	for (long long int i = 0; i < endPoint; i += 3) {
 		if (i == 0) {
 			// lower bound, so only +1 and 0 moves must be sampled
 			if ((HC_[i+1] < tmmcSweepSize_) || (HC_[i] < tmmcSweepSize_)) {
@@ -138,7 +138,7 @@ void tmmc::iterateForward () {
  * \param [in] Mstart Expanded ensemble state the system begins in
  * \param [in] Mend Expanded ensemble state the system ends in
  */
-const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const int Nstart, const int Nend, const int Mstart, const int Mend) {
+const long long int tmmc::getTransitionAddress (const int Nstart, const int Nend, const int Mstart, const int Mend) {
 	if (Nstart > Nmax_ || Nstart < Nmin_ || Nend > (Nmax_+1) || Nend < (Nmin_-1) || Mstart < 0 || Mstart > Mtot_-1 || Mend < 0 || Mend > Mtot_-1) { // Nend has array positions for going over end of bounds but are never used, still they are valid
 		throw customException ("N, M out of bounds in TMMC object, cannot retrieve address");
 	}
@@ -185,7 +185,7 @@ const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const int Nstart, const int 
 		} else {
 			throw customException ("Illegal addOrSubtract value");
 		}
-		__BIAS_INT_TYPE__ x = Nstart - Nmin_;
+		long long int x = Nstart - Nmin_;
 		return x*3 + y; // equivalent to expanded ensemble because Mstart = 0 always, and Mtot_ = 1
 	}
 }
@@ -196,7 +196,7 @@ const __BIAS_INT_TYPE__ tmmc::getTransitionAddress (const int Nstart, const int 
  * \param [in] Nval Number of total atoms
  * \param [in] Mval Value of expanded ensemble state
  */
-const __BIAS_INT_TYPE__ tmmc::getAddress (const int Nval, const int Mval) {
+const long long int tmmc::getAddress (const int Nval, const int Mval) {
 	if (Nval > Nmax_ || Nval < Nmin_ || Mval < 0 || Mval > Mtot_-1) {
 		throw customException ("N, M out of bounds in TMMC object, cannot retrieve address");
 	}
@@ -238,7 +238,7 @@ void tmmc::updateC (const int Nstart, const int Nend, const int Mstart, const in
  */
 void tmmc::calculatePI () {
 	const int endPoint = C_.size() - (Mtot_-1)*3;
-	for (__BIAS_INT_TYPE__ i = 0; i < endPoint; i += 3) {
+	for (long long int i = 0; i < endPoint; i += 3) {
 		double sum = 0.0;
 		for (unsigned int j = 0; j < 3; ++j) {
 			sum += C_[i+j];
@@ -260,10 +260,10 @@ void tmmc::calculatePI () {
 	// Reset first value to zero just to start fresh. Since only ratios matter this is perfectly fair.
 	lnPI_[0] = 0.0;
 	int counter = 0;
-	__BIAS_INT_TYPE__ address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, nEndForward = 0, mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;
-	for (__BIAS_INT_TYPE__ i = 0; i < (Nmax_ - Nmin_); ++i) { // don't calculate the last N = Nmax when M > 0, stops initially at N = Nmax, M = 0
+	long long int address1 = 0, address2 = 0, nStartForward = 0, mStartForward = 0, nEndForward = 0, mEndForward = 0, nStartBackward = 0, nEndBackward = 0, mStartBackward = 0, mEndBackward = 0;
+	for (long long int i = 0; i < (Nmax_ - Nmin_); ++i) { // don't calculate the last N = Nmax when M > 0, stops initially at N = Nmax, M = 0
 		nStartForward = Nmin_+i;
-		for (__BIAS_INT_TYPE__ j = 0; j < Mtot_; ++j) {
+		for (long long int j = 0; j < Mtot_; ++j) {
 			mStartForward = j;
 			if (j == Mtot_-1) {
 				nEndForward = nStartForward + 1;
@@ -444,7 +444,7 @@ wala::wala (const double lnF, const double g, const double s, const int Nmax, co
 	box_.resize(3, 0);
 	box_ = box;
 
-	__BIAS_INT_TYPE__ size = (Nmax - Nmin + 1);
+	long long int size = (Nmax - Nmin + 1);
 
 	Nmin_ = Nmin;
 	Nmax_ = Nmax;
@@ -470,7 +470,7 @@ wala::wala (const double lnF, const double g, const double s, const int Nmax, co
  * \param [in] Nval Total number of atoms in the system
  * \param [in] Mval Current value of the expanded ensemble state of the system
  */
-const __BIAS_INT_TYPE__ wala::getAddress (const int Nval, const int Mval) {
+const long long int wala::getAddress (const int Nval, const int Mval) {
 	if (Nval > Nmax_ || Nval < Nmin_ || Mval < 0 || Mval > Mtot_-1) {
 		throw customException ("N, M out of bounds in Wang-Landau object, cannot retrieve address");
 	}
@@ -484,7 +484,7 @@ const __BIAS_INT_TYPE__ wala::getAddress (const int Nval, const int Mval) {
  * \param [in] Mval Current value of the expanded ensemble state of the system
  */
 void wala::update (const int Nval, const int Mval) {
-	__BIAS_INT_TYPE__ address = getAddress (Nval, Mval);
+	long long int address = getAddress (Nval, Mval);
 	lnPI_[address] += lnF_;
 	H_[address] += 1.0;
 }

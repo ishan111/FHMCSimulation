@@ -13,7 +13,7 @@
 #include "utilities.h"
 
 //! For biasing, need to address things with large indices
-#define __BIAS_INT_TYPE__ long long int
+//#define __BIAS_INT_TYPE__ long long int
 
 /*! Jacobi method for evaluating natural logarithm of a sum of exponentials
  * E.g. ln( exp(a) + exp(b) ) = specExp(a, b)
@@ -35,8 +35,8 @@ public:
 	void iterateForward ();
 	void dumpVisited (const std::string fileName);
 	bool checkFullyVisited ();
-	const __BIAS_INT_TYPE__ getTransitionAddress (const int Nstart, const int Nend, const int Mstart, const int Mend);
-	const __BIAS_INT_TYPE__ getAddress (const int Nval, const int Mval);
+	const long long int getTransitionAddress (const int Nstart, const int Nend, const int Mstart, const int Mend);
+	const long long int getAddress (const int Nval, const int Mval);
 	const long long int numSweeps () { return nSweeps_; }
 	const double getBias (const int address) { return -lnPI_[address]; }
 	const std::vector < double > getC () { return C_; } //!< Return the collection matrix as it is
@@ -68,7 +68,7 @@ public:
 	void readH (const std::string fileName);
 	void setlnPI (const std::vector < double > &lnPIguess) { if (lnPIguess.size() == lnPI_.size()) lnPI_ = lnPIguess; } //!< Blindly assign a guess of the macrostate distribution
 	bool evaluateFlatness ();
-	const __BIAS_INT_TYPE__ getAddress (const int Nval, const int Mval);
+	const long long int getAddress (const int Nval, const int Mval);
 	const double lnF () { return lnF_; }
 	const double getBias (const int address) { return -lnPI_[address]; }
 	const std::vector <double> getlnPI () { return lnPI_; } //!< Return the current estimate of the macrostate distribution
