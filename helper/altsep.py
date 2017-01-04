@@ -173,7 +173,6 @@ if __name__ == "__main__":
 	scratch_dir = "/scratch/nam4/"
 	q = "mml"
 	hours = 72
-	tag = "altsep-"+altsep.random_word(6)
 
 	# Window settings
 	input_name = "input.json"
@@ -200,5 +199,6 @@ if __name__ == "__main__":
 			hP.make_input (dname+"/"+input_name, settings, altsep.binary_fslj_pore)
 			hP.make_sleeper (dname+"/sleeper.sh")
 
+		tag = "altsep-"+altsep.random_word(6)
 		hP.raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name, jobs_per, q, hours, scratch_dir)
 	"""
