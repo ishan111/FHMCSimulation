@@ -137,7 +137,7 @@ if __name__ == "__main__":
 
 	* Tutorial: Below is an example of a script to generate input for FHMCSimulation for the ALTSEP project
 
-	import os, sys, shutil
+	import os, sys, shutil, math
 	FHMCLIB = "/home/nam4/"
 	sys.path.append(FHMCLIB)
 	import FHMCAnalysis
@@ -147,8 +147,8 @@ if __name__ == "__main__":
 
 	# System settings - user defined
 	settings = {
-	"T_eps11" : 1.0,
-	"sig22_sig11" : 1.0,
+	"T_eps11" : 1.1,
+	"sig22_sig11" : 1.5,
 	"eps22_eps11" : 1.0,
 	"lam1w" : 1.5,
 	"lam2w" : 1.5,
@@ -169,7 +169,7 @@ if __name__ == "__main__":
 	install_dir = "/home/nam4/FHMCSimulation/"
 	binary = install_dir+"/bin/fhmc_tmmc"
 	git_head = install_dir+"/.git/logs/HEAD"
-	jobs_per = 12
+	jobs_per = 8
 	scratch_dir = "/scratch/nam4/"
 	q = "mml"
 	hours = 72
@@ -185,8 +185,14 @@ if __name__ == "__main__":
 		settings["bounds"] = [0, 0] # Dummy setting for now
 
 		info = altsep.binary_fslj_pore(settings)
-        x1_guess = 1.0/(1.0 + np.exp(dMu2/settings["T_eps11"])) # In ideal-gas limit
-        ntot_max = int(1.2*(info["__maxN1__"]*x1 + (1-x1)*info["__maxN2__"])) # 20% fudge factor
+        x1_guess = 1.0/(1.0 + math.exp(dMu2/settings["T_eps11"])) # In ideal-gas limit
+        ntot_max = int(math.ceil(1.2*(info["__maxN1__"]*x1_guess + (1-x1_guess)*info["__maxN2__"]))) # 20% fudge factor
+
+        # Establish bounds for windows
+        final_window_width = 0.03*ntot_max # 3% heuristic
+        num_windows = 20
+        num_overlap = 6 # Usually a robust number that always works
+
 		bounds = win.ntot_window_scaling (ntot_max, final_window_width, num_windows, num_overlap)
 
 		if (not os.path.isdir(prefix)):
