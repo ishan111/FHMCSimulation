@@ -181,8 +181,9 @@ if __name__ == "__main__":
 		settings["bounds"] = [0, 0] # Dummy setting for now
 
 		info = altsep.binary_fslj_pore(settings)
-        x1_guess = 1.0/(1.0 + math.exp(dMu2/settings["T_eps11"])) # In ideal-gas limit
-        ntot_max = int(math.ceil(1.2*(info["__maxN1__"]*x1_guess + (1-x1_guess)*info["__maxN2__"]))) # 20% fudge factor
+        #x1_guess = 1.0/(1.0 + math.exp(betaDMu2)) # In ideal-gas limit
+        #ntot_max = int(math.ceil(1.2*(info["__maxN1__"]*x1_guess + (1-x1_guess)*info["__maxN2__"]))) # 20% fudge factor
+        ntot_max = max(info["__maxN1__"],info["__maxN2__"])
 
         # Establish bounds for windows
         final_window_width = 0.03*ntot_max # 3% heuristic
