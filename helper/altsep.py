@@ -49,7 +49,7 @@ def binary_fslj_pore (settings):
 	info["restart_file"] = ""
 	info["num_expanded_states"] = int(1)
 	info["tmmc_sweep_size"] = int(200)
-	info["total_tmmc_sweeps"] = int(1e4) # Maybe only need 1e3 if num_crossover_visits is also 1e3
+	info["total_tmmc_sweeps"] = int(1e3) # Maybe only need 1e3 if num_crossover_visits is also 1e3
 	info["wala_sweep_size"] = int(1e6)
 	info["num_crossover_visits"] = int(1e3)
 	info["lnF_start"] = 1.0
@@ -174,8 +174,9 @@ if __name__ == "__main__":
 
 	remove = ["__maxN1__", "__maxN2__"]
 
-	for dMu2 in [-2.94, -1.1, 0.0, 1.1, 2.94]:
-		prefix = "./dMu2_"+str(dMu2)
+	for betaDMu2 in [-2.94, -1.1, 0.0, 1.1, 2.94]:
+        dMu2 = betaDMu2*settings["T_eps11"] # eps11 = 1.0
+		prefix = "./dMu2_%2.4f"%dMu2
 		settings["mu"] = [0.0, dMu2]
 		settings["bounds"] = [0, 0] # Dummy setting for now
 
