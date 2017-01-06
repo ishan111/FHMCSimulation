@@ -104,7 +104,7 @@ def binary_fslj (settings):
 	info["__maxN2__"] = maxN2
 
 	ff_range = np.max([info["ppot_1_1_params"]["r_cut"], info["ppot_1_2_params"]["r_cut"], info["ppot_2_2_params"]["r_cut"]])
-	if (np.min(info["box"])/2.0 >= ff_range): raise Exception ("Must increase box size, range > L/2")
+	if (np.min(info["box"])/2.0 <= ff_range): raise Exception ("Must increase box size, range > L/2")
 
 	return info
 
@@ -225,7 +225,7 @@ def binary_fslj_pore (settings):
 	info["barriers"]["cylindrical_pore2"]["x"] = Lxy/2.0
 	info["barriers"]["cylindrical_pore2"]["y"] = Lxy/2.0
 
-	if (np.min(info["box"])/2.0 >= ff_range): raise Exception ("Must increase box size, range > L/2")
+	if (np.min(info["box"])/2.0 <= ff_range): raise Exception ("Must increase box size, range > L/2")
 
 	return info
 
