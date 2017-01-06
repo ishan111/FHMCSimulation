@@ -73,7 +73,7 @@ def binary_fslj (settings):
 	info["ppot_1_1_params"]["epsilon"] = eps11
 	if (np.min(info["box"])/3.0 < info["ppot_1_1_params"]["r_cut"]):
 		info["ppot_1_1_params"]["cell_list"] = False
-    else:
+	else:
 		info["ppot_1_1_params"]["cell_list"] = True
 
 	info["ppot_2_2"] = "fs_lennard_jones"
@@ -96,8 +96,8 @@ def binary_fslj (settings):
 	else:
 		info["ppot_1_2_params"]["cell_list"] = True
 
-    # Determine global max particle bounds based on max packing efficiency stipulated
-    maxN1 = int(np.ceil(eta_p*info["box"][0]*info["box"][1]*info["box"][2]/(4./3.*np.pi*(info["ppot_1_1_params"]["sigma"]/2.0)**3)))
+	# Determine global max particle bounds based on max packing efficiency stipulated
+	maxN1 = int(np.ceil(eta_p*info["box"][0]*info["box"][1]*info["box"][2]/(4./3.*np.pi*(info["ppot_1_1_params"]["sigma"]/2.0)**3)))
 	maxN2 = int(np.ceil(eta_p*info["box"][0]*info["box"][1]*info["box"][2]/(4./3.*np.pi*(info["ppot_2_2_params"]["sigma"]/2.0)**3)))
 	info["max_N"] = [maxN1+maxN2, maxN1+maxN2] # Produce an overestimate of upper bound so that bounds on Ntot do not exceed either of these numbers
 	info["__maxN1__"] = maxN1
