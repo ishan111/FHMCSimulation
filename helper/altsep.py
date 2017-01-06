@@ -71,33 +71,30 @@ def binary_fslj (settings):
 	info["ppot_1_1_params"]["sigma"] = sig11
 	info["ppot_1_1_params"]["r_cut"] = 3.0*info["ppot_1_1_params"]["sigma"]
 	info["ppot_1_1_params"]["epsilon"] = eps11
-    if (np.min(info["box"])/3.0 < info["ppot_1_1_params"]["r_cut"]) {
-        info["ppot_1_1_params"]["cell_list"] = False
-    } else {
-        info["ppot_1_1_params"]["cell_list"] = True
-    }
+	if (np.min(info["box"])/3.0 < info["ppot_1_1_params"]["r_cut"]):
+		info["ppot_1_1_params"]["cell_list"] = False
+    else:
+		info["ppot_1_1_params"]["cell_list"] = True
 
 	info["ppot_2_2"] = "fs_lennard_jones"
 	info["ppot_2_2_params"] = {}
 	info["ppot_2_2_params"]["sigma"] = settings["sig22_sig11"]*sig11
 	info["ppot_2_2_params"]["r_cut"] = 3.0*info["ppot_2_2_params"]["sigma"]
 	info["ppot_2_2_params"]["epsilon"] = settings["eps22_eps11"]*eps11
-    if (np.min(info["box"])/3.0 < info["ppot_2_2_params"]["r_cut"]) {
-        info["ppot_2_2_params"]["cell_list"] = False
-    } else {
-        info["ppot_2_2_params"]["cell_list"] = True
-    }
+	if (np.min(info["box"])/3.0 < info["ppot_2_2_params"]["r_cut"]):
+		info["ppot_2_2_params"]["cell_list"] = False
+	else:
+		info["ppot_2_2_params"]["cell_list"] = True
 
 	info["ppot_1_2"] = "fs_lennard_jones"
 	info["ppot_1_2_params"] = {}
 	info["ppot_1_2_params"]["sigma"] = eta_s*(info["ppot_1_1_params"]["sigma"] + info["ppot_2_2_params"]["sigma"])/2.0
 	info["ppot_1_2_params"]["r_cut"] = 3.0*info["ppot_1_2_params"]["sigma"]
 	info["ppot_1_2_params"]["epsilon"] = eta_e*np.sqrt(info["ppot_1_1_params"]["epsilon"]*info["ppot_2_2_params"]["epsilon"])
-	if (np.min(info["box"])/3.0 < info["ppot_1_2_params"]["r_cut"]) {
-        info["ppot_1_2_params"]["cell_list"] = False
-    } else {
-        info["ppot_1_2_params"]["cell_list"] = True
-    }
+	if (np.min(info["box"])/3.0 < info["ppot_1_2_params"]["r_cut"]):
+		info["ppot_1_2_params"]["cell_list"] = False
+	else:
+		info["ppot_1_2_params"]["cell_list"] = True
 
     # Determine global max particle bounds based on max packing efficiency stipulated
     maxN1 = int(np.ceil(eta_p*info["box"][0]*info["box"][1]*info["box"][2]/(4./3.*np.pi*(info["ppot_1_1_params"]["sigma"]/2.0)**3)))
