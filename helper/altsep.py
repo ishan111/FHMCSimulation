@@ -37,7 +37,7 @@ def binary_fslj (settings):
 	info = {}
 
 	# Simulation information
-	info["box"] = [9.0, 9.0, 9.0]
+	info["box"] = [10.0, 10.0, 10.0]
 	info["num_species"] = 2
 	info["beta"] = 1.0/(settings["T_eps11"]*eps11)
 	info["mu"] = [settings["mu"][0], settings["mu"][1]]
@@ -222,6 +222,8 @@ def binary_fslj_pore (settings):
 	info["barriers"]["cylindrical_pore2"]["x"] = Lxy/2.0
 	info["barriers"]["cylindrical_pore2"]["y"] = Lxy/2.0
 
+	if (np.min(info["box"])/2.0 >= ff_range) raise Exception ("Must increase box size, range > L/2")
+	
 	return info
 
 if __name__ == "__main__":
