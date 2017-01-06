@@ -37,7 +37,7 @@ def binary_fslj (settings):
 	info = {}
 
 	# Simulation information
-    info["box"] = [9.0, 9.0, 9.0]
+	info["box"] = [9.0, 9.0, 9.0]
 	info["num_species"] = 2
 	info["beta"] = 1.0/(settings["T_eps11"]*eps11)
 	info["mu"] = [settings["mu"][0], settings["mu"][1]]
