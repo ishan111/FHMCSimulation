@@ -11,6 +11,103 @@ import random, string
 def random_word (length):
    return ''.join(random.choice(string.lowercase) for i in range(length))
 
+def binary_fslj (settings):
+	"""
+	Create settings for binary FS-LJ system in the bulk.
+	Basis of sigma_11 = epsilon_11 = 1.0 (Fluid-Fluid).
+
+	Parameters
+	----------
+	settings : dict
+		Settings continaining {"T_eps11", "sig22_sig11", "eps22_eps11", "bounds", "mu"}
+
+	"""
+
+	# Basis
+	sig11 = 1.0
+	eps11 = 1.0
+
+	# Mixing rules
+	eta_e = 1.0
+	eta_s = 1.0
+
+	# Estimated packing efficiency at max filling
+	eta_p = 0.63
+
+	info = {}
+
+	# Simulation information
+    info["box"] = [9.0, 9.0, 9.0]
+	info["num_species"] = 2
+	info["beta"] = 1.0/(settings["T_eps11"]*eps11)
+	info["mu"] = [settings["mu"][0], settings["mu"][1]]
+	info["seed"] = -10
+	info["min_N"] = [int(0), int(0)]
+	info["window"] = [settings["bounds"][0], settings["bounds"][1]]
+	info["restart_file"] = ""
+	info["num_expanded_states"] = int(1)
+	info["tmmc_sweep_size"] = int(200)
+	info["total_tmmc_sweeps"] = int(1e3) # Maybe only need 1e3 if num_crossover_visits is also 1e3
+	info["wala_sweep_size"] = int(1e6)
+	info["num_crossover_visits"] = int(1e3)
+	info["lnF_start"] = 1.0
+	info["lnF_end"] = 1.0e-8
+	info["wala_g"] = 0.5
+	info["wala_s"] = 0.8
+
+	# Monte Carlo moves
+	info["moves"] = {}
+	info["moves"]["ins_del_1"] = 0.6
+	info["moves"]["translate_1"] = 0.4
+	info["moves"]["max_translation_1"] = 0.2
+	info["moves"]["ins_del_2"] = 0.6
+	info["moves"]["translate_2"] = 0.4
+	info["moves"]["max_translation_2"] = 0.2
+	info["moves"]["swap_1_2"] = 0.2
+
+	# Pair potentials
+	info["ppot_1_1"] = "fs_lennard_jones"
+	info["ppot_1_1_params"] = {}
+	info["ppot_1_1_params"]["sigma"] = sig11
+	info["ppot_1_1_params"]["r_cut"] = 3.0*info["ppot_1_1_params"]["sigma"]
+	info["ppot_1_1_params"]["epsilon"] = eps11
+    if (np.min(info["box"])/3.0 < info["ppot_1_1_params"]["r_cut"]) {
+        info["ppot_1_1_params"]["cell_list"] = False
+    } else {
+        info["ppot_1_1_params"]["cell_list"] = True
+    }
+
+	info["ppot_2_2"] = "fs_lennard_jones"
+	info["ppot_2_2_params"] = {}
+	info["ppot_2_2_params"]["sigma"] = settings["sig22_sig11"]*sig11
+	info["ppot_2_2_params"]["r_cut"] = 3.0*info["ppot_2_2_params"]["sigma"]
+	info["ppot_2_2_params"]["epsilon"] = settings["eps22_eps11"]*eps11
+    if (np.min(info["box"])/3.0 < info["ppot_2_2_params"]["r_cut"]) {
+        info["ppot_2_2_params"]["cell_list"] = False
+    } else {
+        info["ppot_2_2_params"]["cell_list"] = True
+    }
+
+	info["ppot_1_2"] = "fs_lennard_jones"
+	info["ppot_1_2_params"] = {}
+	info["ppot_1_2_params"]["sigma"] = eta_s*(info["ppot_1_1_params"]["sigma"] + info["ppot_2_2_params"]["sigma"])/2.0
+	info["ppot_1_2_params"]["r_cut"] = 3.0*info["ppot_1_2_params"]["sigma"]
+	info["ppot_1_2_params"]["epsilon"] = eta_e*np.sqrt(info["ppot_1_1_params"]["epsilon"]*info["ppot_2_2_params"]["epsilon"])
+	if (np.min(info["box"])/3.0 < info["ppot_1_2_params"]["r_cut"]) {
+        info["ppot_1_2_params"]["cell_list"] = False
+    } else {
+        info["ppot_1_2_params"]["cell_list"] = True
+    }
+
+    # Determine global max particle bounds based on max packing efficiency stipulated
+    maxN1 = int(np.ceil(eta_p*info["box"][0]*info["box"][1]*info["box"][2]/(4./3.*np.pi*(info["ppot_1_1_params"]["sigma"]/2.0)**3)))
+	maxN2 = int(np.ceil(eta_p*info["box"][0]*info["box"][1]*info["box"][2]/(4./3.*np.pi*(info["ppot_2_2_params"]["sigma"]/2.0)**3)))
+	info["max_N"] = [maxN1+maxN2, maxN1+maxN2] # Produce an overestimate of upper bound so that bounds on Ntot do not exceed either of these numbers
+	info["__maxN1__"] = maxN1
+	info["__maxN2__"] = maxN2
+
+	return info
+
 def binary_fslj_pore (settings):
 	"""
 	Create settings for binary FS-LJ system inside a cylindrical pore.
