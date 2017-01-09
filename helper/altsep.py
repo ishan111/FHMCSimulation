@@ -54,6 +54,9 @@ def binary_fslj (settings):
 	info["lnF_end"] = 1.0e-8
 	info["wala_g"] = 0.5
 	info["wala_s"] = 0.8
+	info["delta_u_hist"] = 5.0
+	info["max_order"] = 5
+	info["use_ke"] = False
 
 	# Monte Carlo moves
 	info["moves"] = {}
@@ -153,6 +156,9 @@ def binary_fslj_pore (settings):
 	info["lnF_end"] = 1.0e-8
 	info["wala_g"] = 0.5
 	info["wala_s"] = 0.8
+	info["delta_u_hist"] = 5.0
+	info["max_order"] = 5
+	info["use_ke"] = False
 
 	# Barrier(s)
 	info["barriers"] = {}
