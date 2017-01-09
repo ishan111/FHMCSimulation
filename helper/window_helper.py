@@ -58,6 +58,10 @@ def sqw_pore_benchmark (settings):
 	info["lnF_end"] = 1.0e-8
 	info["wala_g"] = 0.5
 	info["wala_s"] = 0.8
+	info["delta_u_hist"] = 5.0
+	info["max_order"] = 5
+	info["use_ke"] = False
+
 	info["moves"] = {}
 	info["moves"]["ins_del_1"] = 0.7
 	info["moves"]["translate_1"] = 0.3
@@ -121,6 +125,10 @@ def fslj_benchmark (settings):
 	info["lnF_end"] = 1.0e-8
 	info["wala_g"] = 0.5
 	info["wala_s"] = 0.8
+	info["delta_u_hist"] = 5.0
+	info["max_order"] = 5
+	info["use_ke"] = False
+
 	info["moves"] = {}
 	info["moves"]["ins_del_1"] = 0.6
 	info["moves"]["translate_1"] = 0.4
@@ -173,6 +181,10 @@ def sqw_benchmark (settings):
 	info["lnF_end"] = 1.0e-8
 	info["wala_g"] = 0.5
 	info["wala_s"] = 0.8
+	info["delta_u_hist"] = 5.0
+	info["max_order"] = 5
+	info["use_ke"] = False
+	
 	info["moves"] = {}
 	info["moves"]["ins_del_1"] = 0.7
 	info["moves"]["translate_1"] = 0.3
