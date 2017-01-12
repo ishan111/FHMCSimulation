@@ -184,7 +184,7 @@ def sqw_benchmark (settings):
 	info["delta_u_hist"] = 5.0
 	info["max_order"] = 5
 	info["use_ke"] = False
-	
+
 	info["moves"] = {}
 	info["moves"]["ins_del_1"] = 0.7
 	info["moves"]["translate_1"] = 0.3
@@ -198,7 +198,7 @@ def sqw_benchmark (settings):
 
 	return info
 
-def make_input (filename, settings, generator, remove=[]):
+def make_input (filename, settings, generator, remove=None):
 	"""
 	Example production of input file for FHMCSimulation.
 
@@ -211,9 +211,11 @@ def make_input (filename, settings, generator, remove=[]):
 	generator : function
 		Takes settings tuple as only argument and returns json input as dictionary, e.g., sqw_benchmark()
 	remove : array
-		Any keys to remove/skip from generator output before printing to file (default=[])
+		Any keys to remove/skip from generator output before printing to file (default=None)
 
 	"""
+
+	remove = remove or []
 
 	info = generator(settings)
 	for key in remove:
