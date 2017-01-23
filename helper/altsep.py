@@ -32,7 +32,7 @@ def binary_fslj (settings):
 	eta_s = 1.0
 
 	# Estimated packing efficiency at max filling
-	eta_p = 0.63
+	eta_p = 0.53 # volume of sphere / volume of cube
 
 	info = {}
 
@@ -135,7 +135,7 @@ def binary_fslj_pore (settings):
 	Lz = 22.0
 
 	# Estimated packing efficiency at max filling
-	eta_p = 0.63
+	eta_p = 0.53 # volume of sphere / volume of cube
 
 	info = {}
 
