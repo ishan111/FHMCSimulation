@@ -32,7 +32,7 @@ def binary_fslj (settings):
 	eta_s = 1.0
 
 	# Estimated packing efficiency at max filling
-	eta_p = 0.53 # volume of sphere / volume of cube
+	eta_p = 0.50 # 0.53 = volume of sphere / volume of cube
 
 	info = {}
 
@@ -135,7 +135,7 @@ def binary_fslj_pore (settings):
 	Lz = 22.0
 
 	# Estimated packing efficiency at max filling
-	eta_p = 0.53 # volume of sphere / volume of cube
+	eta_p = 0.50 # 0.53 = volume of sphere / volume of cube
 
 	info = {}
 
@@ -281,18 +281,16 @@ if __name__ == "__main__":
 
 	for betaDMu2 in [-2.94, -1.1, 0.0, 1.1, 2.94]:
         dMu2 = betaDMu2*settings["T_eps11"] # eps11 = 1.0
-		prefix = "./dMu2_%2.4f"%dMu2
+		prefix = "./dMu2=%2.4f"%dMu2
 		settings["mu"] = [0.0, dMu2]
 		settings["bounds"] = [0, 0] # Dummy setting for now
 
 		info = altsep.binary_fslj_pore(settings)
-        #x1_guess = 1.0/(1.0 + math.exp(betaDMu2)) # In ideal-gas limit
-        #ntot_max = int(math.ceil(1.2*(info["__maxN1__"]*x1_guess + (1-x1_guess)*info["__maxN2__"]))) # 20% fudge factor
         ntot_max = max(info["__maxN1__"],info["__maxN2__"])
 
         # Establish bounds for windows
         final_window_width = 0.03*ntot_max # 3% heuristic
-        num_windows = 20
+        num_windows = 24
         num_overlap = 6 # Usually a robust number that always works
 
 		bounds = win.ntot_window_scaling (ntot_max, final_window_width, num_windows, num_overlap)
