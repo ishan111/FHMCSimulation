@@ -245,7 +245,7 @@ def make_sleeper (filename):
 	f.write('for ((i = 0; i < 100000; ++i)); do\n\tfor ((j = 0; j < 100000; ++j)); do\n\t\tsleep $((1*'+str(int(sync_every))+'*60));\n\t\trsync -a $1 $2;\n\tdone;\ndone;')
 	f.close()
 
-def gibbs_qsub (num_windows, binary, git_head, tag, prefix, input_name="input.json", jobs_per_node=12, q="medium", scratch_dir="/tmp/nam4/"):
+def gibbs_qsub (num_windows, binary, git_head, tag, prefix, input_name="input.json", jobs_per_node=12, q="medium", scratch_dir="/wrk/nam4/"):
 	"""
 	Example of submission script for PBS system, in this case, for gibbs.nist.gov.
 	This produces qsub_X.pbs files, for as many X are necessary.
@@ -269,7 +269,7 @@ def gibbs_qsub (num_windows, binary, git_head, tag, prefix, input_name="input.js
 	q : str
 		Name of the queue to submit to (default="medium")
 	scratch_dir : str
-		Absolute path to scratch space for user
+		Absolute path to scratch space for user (defaul="/wrk/nam4/")
 
 
 	"""
