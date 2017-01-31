@@ -34,5 +34,11 @@ set(CMAKE_CXX_FLAGS "-O3 -Wno-sign-compare -Wall -DFLUID_PHASE_SIMULATIONS")
 
 include_directories("../src/")
 include_directories("../driver/")
+
+# If you desire to compile statically, use the following 3 lines
+SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+SET(BUILD_SHARED_LIBRARIES OFF)
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+
 add_executable(fhmc_tmmc ${fhmc_SRC})
 set(EXECUTABLE_OUTPUT_PATH "../bin")
