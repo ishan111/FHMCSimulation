@@ -88,8 +88,10 @@ void checkpoint::load (simSystem &sys, const bool override) {
         } else if (walaDone && !crossoverDone && !tmmcDone) { // In crossover stage
             resFromCross = true;
             sys.startTMMC(sys.tmmcSweepSize, sys.getTotalM());
+			for (unsigned int i = 0; i < sweepCounter; ++i) sys.getTMMCBias()->iterateForward (); // Have to iterate forward to "catch up" the internal counter
+
             wala_lnF = doc["wala_lnF"].GetDouble();
-            sys.startWALA (wala_lnF, sys.wala_g, sys.wala_s, sys.getTotalM());
+            sys.startWALA (wala_lnF, sys.wala_g, sys.wala_s, sys.getTotalM()); // Starting WALA from wala_lnF is already "caught up" so no need to iterate forward
 
             sys.getTMMCBias()->readC(dir+"/tmmc_C.dat");
             sys.getTMMCBias()->readHC(dir+"/tmmc_HC.dat");
