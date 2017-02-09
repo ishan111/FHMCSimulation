@@ -146,7 +146,7 @@ void checkpoint::load (simSystem &sys, const bool override) {
             sendErr("Unable to load checkpoint "+msg);
             exit(SYS_FAILURE);
         } else {
-            sendErr("Overriding the following errors to load checkpoint "+msg);
+            sendErr("Overriding the following errors to load checkpoint : "+msg);
         }
     }
 
