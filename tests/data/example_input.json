@@ -1,0 +1,55 @@
+{
+    "num_species" : 2, 
+    "beta" : 0.89, 
+    "box" : [9.0,
+        9.0,
+        9.0], 
+    "mu" : [1.234,
+        2.345], 
+    "seed" : -10, 
+    "max_N" : [200,
+        200], 
+    "min_N" : [0,
+        0], 
+    "window" : [10,
+        30], 
+    "restart_file" : "", 
+    "num_crossover_visits" : 50, 
+    "tmmc_sweep_size" : 1e3, 
+    "total_tmmc_sweeps" : 300, 
+    "wala_sweep_size" : 10e4, 
+    "wala_g": 0.5, 
+    "wala_s" : 0.8, 
+    "lnF_start" : 1.0, 
+    "lnF_end" : 1.0e-5, 
+    "moves" : {
+        "ins_del_1" : 0.1, 
+        "swap_1_2" : 0.2, 
+	"translate_1" : 0.7, 
+	"ins_del_2" : 0.7, 
+        "translate_2" : 0.1, 
+        "max_translation_1" : 0.5, 
+        "max_translation_2" : 0.4 
+        },
+    "ppot_1_1" : "square_well", 
+    "ppot_1_1_params" : {
+        "sigma" : 1.0,
+        "width" : 0.3,
+        "epsilon" : 1.0,
+        "cell_list"  : true
+    },
+    "ppot_1_2" : "square_well", 
+    "ppot_1_2_params" : {
+        "sigma" : 1.1,
+        "width" : 0.4,
+        "epsilon" : 1.1,
+        "cell_list"  : true
+    },
+    "ppot_2_2" : "square_well", 
+    "ppot_2_2_params" : {
+        "sigma" : 1.2,
+        "width" : 0.5,
+        "epsilon" : 1.2,
+        "cell_list"  : true
+    }
+}
