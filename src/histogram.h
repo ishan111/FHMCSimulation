@@ -26,6 +26,7 @@ public:
     	std::vector < double > getRawHistogram () { return h_; } //!< Return the current histogram
     	std::vector < double > getCounter () { return counter_; } //!< Return the current histogram counter
 
+		std::vector < long long unsigned int > getWidths_() { return widths_; } //!< Returns the widths used for each dimension for the user to double check
 private:
     	unsigned int dim_; //!< Dimensionality of the histogram
     	long long unsigned int size_; //!< Total size of histogram

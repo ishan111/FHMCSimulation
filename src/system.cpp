@@ -627,8 +627,8 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
  * Record the extensive moment at a given Ntot.
  */
 void simSystem::recordExtMoments () {
-	// only record if in range (removes equilibration stage to get in this range, if there was any)
-	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+	// Only record if in range (removes equilibration stage to get in this range, if there was any)
+	/*if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
 		double val = 0.0;
 		std::vector < double > coords (6,0);
 		coords[5] = totN_-totNBounds_[0];
@@ -643,6 +643,38 @@ void simSystem::recordExtMoments () {
 						for (unsigned int p = 0; p <= max_order_; ++p) {
 							coords[4] = p;
 							val = pow(numSpecies[i], j)*pow(numSpecies[k], m)*pow(energy_, p);
+							extensive_moments_.increment (coords, val);
+						}
+					}
+				}
+			}
+		}
+	}*/
+
+	// In this specific, special case we know that the lower bounds on each
+	// dimension are 0, and bin widths are 1.  Here, it is much more efficient
+	// to manually do the direct calculation on the unrolled array location than
+	// to invoke the "rounding" operations necessary in the general case.
+	// The more general case is commented out above for reference, should this
+	// change.
+	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+		double val = 0.0, xx = 0.0, yy = 0.0;
+		long long unsigned int coords = 0;
+		std::vector < long long unsigned int > widths = extensive_moments_.getWidths_();
+		for (unsigned int i = 0; i < nSpecies_; ++i) {
+			for (unsigned int j = 0; j <= max_order_; ++j) {
+				xx = pow(numSpecies[i], j);
+				// Fill "upper triangle" of matrix, use symmetry to fill in the remainder
+				for (unsigned int k = i; k < nSpecies_; ++k) {
+					for (unsigned int m = 0; m <= max_order_; ++m) {
+						yy = pow(numSpecies[k], m);
+						for (unsigned int p = 0; p <= max_order_; ++p) {
+							val = xx*yy*pow(energy_, p);
+
+							coords = i*widths[0] + j*widths[1] + k*widths[2] + m*widths[3] + p*widths[4] + (totN_-totNBounds_[0])*widths[5];
+							extensive_moments_.increment (coords, val);
+
+							coords = k*widths[0] + m*widths[1] + i*widths[2] + j*widths[3] + p*widths[4] + (totN_-totNBounds_[0])*widths[5];
 							extensive_moments_.increment (coords, val);
 						}
 					}
