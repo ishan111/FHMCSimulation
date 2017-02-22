@@ -64,7 +64,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		duh = doc["delta_u_hist"].GetDouble();
 	}
 
-	int maxOrder = 2; // Default
+	int maxOrder = 3; // Default
 	if (doc.HasMember("max_order")) {
         if (!doc["max_order"].IsInt()) throw customException("\"max_order\" is not an integer in "+filename);
 		maxOrder = doc["max_order"].GetInt();
