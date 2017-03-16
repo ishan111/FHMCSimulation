@@ -51,7 +51,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
     sendMsg("Starting progress stage from "+numToStr(printCounter)+"/"+numToStr(std::min(numSweepSnaps, sys.totalTMMCSweeps)));
     sendMsg("Starting from "+numToStr(sweep)+"/"+numToStr(sys.totalTMMCSweeps)+" total TMMC sweeps");
 
-    unsigned long long int checkPoint = sys.tmmcSweepSize*(sys.totNMax() - sys.totNMin() + 1)*3; // how often to check full traversal of collection matrix
+    unsigned long long int checkPoint = sys.tmmcSweepSize*(sys.totNMax() - sys.totNMin() + 1)*3; // How often to check full traversal of collection matrix
 	while (sweep < sys.totalTMMCSweeps) {
 		bool done = false;
 
@@ -79,7 +79,10 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 			}
 
 			counter++;
-            res.check(sys, printCounter, sweep, false);
+            bool saved = res.check(sys, printCounter, sweep, false);
+			if (saved) {
+				usedMovesPr->print("tmmc.stats");
+			}
 		}
 
 		sys.getTMMCBias()->iterateForward(); // Reset the counting matrix and increment total sweep number
@@ -99,7 +102,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
                 sys.refinePkHistogramBounds();
                 sys.printPkHistogram("pkHist-Checkpoint-"+numToStr(printCounter));
                 sys.printExtMoments("extMom-Checkpoint-"+numToStr(printCounter));
-                usedMovesPr->print("tmmc.stats");
+                //usedMovesPr->print("tmmc.stats");
             } catch (std::exception &ex) {
                 const std::string msg = ex.what();
                 throw customException ("Unable to print checkpoint : "+msg);
