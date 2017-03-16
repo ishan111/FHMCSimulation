@@ -46,8 +46,8 @@ def binary_fslj (settings):
 	info["window"] = [settings["bounds"][0], settings["bounds"][1]]
 	info["restart_file"] = ""
 	info["num_expanded_states"] = int(1)
-	info["tmmc_sweep_size"] = int(300)
-	info["total_tmmc_sweeps"] = int(1e3)
+	info["tmmc_sweep_size"] = int(100)
+	info["total_tmmc_sweeps"] = int(1e8)  # essentially infinite (will patch based on checkpoints)
 	info["wala_sweep_size"] = int(1e6)
 	info["num_crossover_visits"] = int(100) # int(500) # int(1e3)
 	info["lnF_start"] = 1.0
@@ -148,8 +148,8 @@ def binary_fslj_pore (settings):
 	info["window"] = [settings["bounds"][0], settings["bounds"][1]]
 	info["restart_file"] = ""
 	info["num_expanded_states"] = int(1)
-	info["tmmc_sweep_size"] = int(300) # int(50) # int(100)
-	info["total_tmmc_sweeps"] = int(1e3)
+	info["tmmc_sweep_size"] = int(100) # int(50) # int(100)
+	info["total_tmmc_sweeps"] = int(1e8) # essentially infinite (will patch based on checkpoints)
 	info["wala_sweep_size"] = int(1e6)
 	info["num_crossover_visits"] = int(100) # int(500) # int(1e3)
 	info["lnF_start"] = 1.0
