@@ -657,24 +657,36 @@ void simSystem::recordExtMoments () {
 	// to invoke the "rounding" operations necessary in the general case.
 	// The more general case is commented out above for reference, should this
 	// change.
+
+	// NOTE: be careful if trying to use symmetry to fill in the matrix, it is
+	// currently simpler to just do entire loop and do coordinates calculation
+	// directly than more "clever" alternatives.
 	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
 		double val = 0.0, xx = 0.0, yy = 0.0;
 		long long unsigned int coords = 0;
 		std::vector < long long unsigned int > widths = extensive_moments_.getWidths_();
 		for (unsigned int i = 0; i < nSpecies_; ++i) {
 			for (unsigned int j = 0; j <= max_order_; ++j) {
-				xx = pow(numSpecies[i], j);
-				// Fill "upper triangle" of matrix, use symmetry to fill in the remainder
-				for (unsigned int k = i; k < nSpecies_; ++k) {
+				if (j > 0) {
+					xx = pow(numSpecies[i], j);
+				} else {
+					xx = 1.0;
+				}
+				for (unsigned int k = 0; k < nSpecies_; ++k) {
 					for (unsigned int m = 0; m <= max_order_; ++m) {
-						yy = pow(numSpecies[k], m);
+						if (m > 0) {
+							yy = pow(numSpecies[k], m);
+						} else {
+							yy = 1.0;
+						}
 						for (unsigned int p = 0; p <= max_order_; ++p) {
-							val = xx*yy*pow(energy_, p);
+							if (p > 0) {
+								val = xx*yy*pow(energy_, p);
+							} else {
+								val = xx*yy;
+							}
 
 							coords = i*widths[0] + j*widths[1] + k*widths[2] + m*widths[3] + p*widths[4] + (totN_-totNBounds_[0])*widths[5];
-							extensive_moments_.increment (coords, val);
-
-							coords = k*widths[0] + m*widths[1] + i*widths[2] + j*widths[3] + p*widths[4] + (totN_-totNBounds_[0])*widths[5];
 							extensive_moments_.increment (coords, val);
 						}
 					}
