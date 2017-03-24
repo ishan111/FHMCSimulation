@@ -22,10 +22,22 @@ int swapParticles::make (simSystem &sys) {
 	if (n1Avail < 1 || n2Avail < 1) {
 		// Updates to biasing functions must be done even if at bounds
         if (sys.useWALA) {
-            sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+			if (sys.getOP() == "N_{tot}") {
+				sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+			} else if (sys.getOP() == "N_{1}") {
+				sys.getWALABias()->update(sys.numSpecies[0], sys.getCurrentM());
+			} else {
+				throw customException ("Unknown order parameter, cannot perform swap");
+			}
         }
         if (sys.useTMMC) {
-            sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
+			if (sys.getOP() == "N_{tot}") {
+				sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
+			} else if (sys.getOP() == "N_{1}") {
+				sys.tmmcBias->updateC (sys.numSpecies[0], sys.numSpecies[0], sys.getCurrentM(), sys.getCurrentM(), 0.0);
+			} else {
+				throw customException ("Unknown order parameter, cannot perform swap");
+			}
         }
         return MOVE_FAILURE;
 	}
@@ -239,11 +251,20 @@ int swapParticles::make (simSystem &sys) {
 	if (insEnergy < NUM_INFINITY) {
 		p_u = exp(-sys.beta()*(insEnergy - delEnergy));
 	}
-    double bias = calculateBias(sys, sys.getTotN(), sys.getCurrentM());
+
+	int nFinal = -1;
+	if (sys.getOP() == "N_{tot}") {
+		nFinal = sys.getTotN();
+	} else if (sys.getOP() =="N_{1}") {
+		nFinal = sys.numSpecies[0];
+	} else {
+		throw customException ("Unrecognized order parameter, cannot perform swap");
+	}
+    double bias = calculateBias(sys, nFinal, sys.getCurrentM());
 
     // TMMC gets updated the same way, regardless of whether the move gets accepted
     if (sys.useTMMC) {
-    	sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), std::min(1.0, p_u));
+		sys.tmmcBias->updateC (nFinal, nFinal, sys.getCurrentM(), sys.getCurrentM(), std::min(1.0, p_u));
     }
 
 	if (rng (&RNG_SEED) < p_u*bias) { // Swap the particles by deleting/reinserting
@@ -283,14 +304,26 @@ int swapParticles::make (simSystem &sys) {
 
 		// Update Wang-Landau bias, if used
 		if (sys.useWALA) {
-			sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+			if (sys.getOP() == "N_{tot}") {
+				sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+			} else if (sys.getOP() == "N_{1}") {
+				sys.getWALABias()->update(sys.numSpecies[0], sys.getCurrentM());
+			} else {
+				throw customException ("Unrecognized order parameter, cannot perform swap");
+			}
 		}
 		return MOVE_SUCCESS;
     }
 
 	// Update Wang-Landau bias (even if moved failed), if used
 	if (sys.useWALA) {
-		sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+		if (sys.getOP() == "N_{tot}") {
+			sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+		} else if (sys.getOP() == "N_{1}") {
+			sys.getWALABias()->update(sys.numSpecies[0], sys.getCurrentM());
+		} else {
+			throw customException ("Unrecognized order parameter, cannot perform swap");
+		}
 	}
 
 	return MOVE_FAILURE;

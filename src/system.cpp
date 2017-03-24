@@ -26,6 +26,8 @@ void simSystem::decrementMState () {
  * unless otherwise set.  These bounds are intended to be used to create "windows" so that specific simulations can sample subregions
  * of [minSpecies(0), maxSpecies(0)] and be stitched together with histogram reweighting later.
  *
+ * ONLY TO BE USED WHEN ORDER_PARAMETER = N_{tot}.
+ *
  * However, this routine will ALSO cause the system to reevaluate its bounds.  If these total bounds are outside any individual
  * bound for each atom type, nothing will change.  However, if the upper bound for total atoms is less than an upper bound for
  * a specific species, that species will have its bounds changed to match the total maximum.  As a result sys.atoms can change so this
@@ -46,7 +48,7 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
 		throw customException ("Lower bound on total particles must be > 0");
 	}
 	if (bounds[0] > bounds[1]) {
-		throw customException ("Upper bound must be greater than lower bound for total number of particles in the system");
+		throw customException ("Upper bound must be greater than or equal to lower bound for total number of particles in the system");
 	}
 	totNBounds_ = bounds;
 
@@ -118,6 +120,106 @@ void simSystem::setTotNBounds (const std::vector < int > &bounds) {
 	ubn[3] = max_order_;
 	ubn[4] = max_order_;
 	ubn[5] = totNBounds_[1]-totNBounds_[0];
+
+	nbn[0] = nSpecies_;
+	nbn[1] = max_order_+1;
+	nbn[2] = nSpecies_;
+	nbn[3] = max_order_+1;
+	nbn[4] = max_order_+1;
+	nbn[5] = size;
+
+	histogram hnn (lbn, ubn, nbn);
+	extensive_moments_ = hnn;
+}
+
+/*!
+ * Set the bounds on the total number of particles of species 1 allowed in a system.
+ *
+ * ONLY TO BE USED WHEN ORDER_PARAMETER = N_{1}.
+ *
+ * These bounds are intended to be used to create "windows" so that specific simulations can sample subregions
+ * of [minSpecies(0), maxSpecies(0)] and be stitched together with histogram reweighting later.
+ *
+ * Be sure to initialize other objects, such as biases, AFTER this routine has been called since it will adjust the allowable number of
+ * particles in the system.
+ *
+ * \param [in] bounds Vector of [min, max]
+ */
+void simSystem::setN1Bounds (const std::vector < int > &bounds) {
+	if (bounds.size() != 2) {
+		throw customException ("Bounds on N_{1} must supplied as vector of <minN, maxN>");
+	}
+	if (bounds[0] < 0) {
+		throw customException ("Lower bound on N_{1} must be > 0");
+	}
+	if (bounds[0] > bounds[1]) {
+		throw customException ("Upper bound must be greater than or equal to lower bound for N_{1} in the system");
+	}
+
+	minSpecies_[0] = bounds[0];
+	maxSpecies_[0] = bounds[1];
+
+	// Re-compute Ntotal bounds
+	totNBounds_[0] = 0;
+	totNBounds_[1] = 0;
+	for (unsigned int i = 0; i < nSpecies_; ++i) {
+    	totNBounds_[0] += minSpecies_[i];
+    	totNBounds_[1] += maxSpecies_[i];
+    }
+
+	// Recheck bounds and possibly resize
+	int tmpTot = 0;
+    for (unsigned int i = 0; i < nSpecies_; ++i) {
+    	if (maxSpecies_[i] < minSpecies_[i]) {
+        	throw customException ("Max species < Min species");
+    	}
+		try {
+			atoms[i].resize(maxSpecies_[i], atom());
+		} catch (std::exception &e) {
+			throw customException (e.what());
+		}
+		// If numSpecies[i] above maxSpecies_[i] for some reason, destroy the atoms beyond bound
+		if (numSpecies[i] > (int)atoms[i].size()) {
+			numSpecies[i] = atoms[i].size();
+		}
+		tmpTot += numSpecies[i];
+	}
+    totN_ = tmpTot;
+
+    // Allocate space for energy matrix - this will only be recorded when the system is within the specific window we are looking for
+    long long int size = maxSpecies_[0] - minSpecies_[0] + 1;
+
+    energyHistogram_.resize(0);
+    energyHistogram_lb_.resize(size, -5.0);
+    energyHistogram_ub_.resize(size, 5.0);
+
+    for (unsigned int i = 0; i < size; ++i) {
+    	try {
+    		dynamic_one_dim_histogram dummyHist (energyHistogram_lb_[i], energyHistogram_ub_[i], energyHistDelta_);
+    		energyHistogram_.resize(i+1, dummyHist);
+    	} catch (std::bad_alloc &ba) {
+    		throw customException ("Out of memory for energy histogram for each Ntot");
+    	}
+    }
+
+    pkHistogram_.resize(0);
+    dynamic_one_dim_histogram dummyPkHist (0.0, totNBounds_[1], 1.0); // For simplicity, allow to record up to N_tot,max (will be trimmed later anyway)
+    try {
+    	std::vector < dynamic_one_dim_histogram > tmp (size, dummyPkHist);
+		pkHistogram_.resize(nSpecies_, tmp);
+	} catch (std::bad_alloc &ba) {
+		throw customException ("Out of memory for particle histogram for each Ntot");
+   	}
+
+   	// Initialize moments
+	std::vector < double > lbn (6,0), ubn(6,0);
+	std::vector < long long unsigned int > nbn (6,0);
+	ubn[0] = nSpecies_-1;
+	ubn[1] = max_order_;
+	ubn[2] = nSpecies_-1;
+	ubn[3] = max_order_;
+	ubn[4] = max_order_;
+	ubn[5] = maxSpecies_[0] - minSpecies_[0];
 
 	nbn[0] = nSpecies_;
 	nbn[1] = max_order_+1;
@@ -275,7 +377,7 @@ void simSystem::deleteAtom (const int typeIndex, const int atomIndex, bool overr
 						}
 					}
 
-					atoms[typeIndex][atomIndex] = atoms[typeIndex][end];    // "replacement" operation
+					atoms[typeIndex][atomIndex] = atoms[typeIndex][end]; // "replacement" operation
 
 					if (replace) {
 						fractionalAtom_ = &atoms[typeIndex][atomIndex];	// update the pointer if necessary
@@ -427,9 +529,10 @@ simSystem::~simSystem () {
  * \param [in] Mtot Total number of expanded ensemble states
  * \param [in] energyHistDelta Bin width of energy histogram at each Ntot (optional, default = 10.0)
  * \param [in] max_order Maximum order to record correlations to (default = 2)
+ * \param [in] op Order parameter to use for sampling (default="N_{tot}", also accepts "N_{1}")
  */
-simSystem::simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies, const int Mtot, const double energyHistDelta, const int max_order) {
-	if ((box.size() != 3) || (nSpecies != mu.size()) || (maxSpecies.size() != nSpecies)) {
+simSystem::simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies, const int Mtot, const double energyHistDelta, const int max_order, const std::string op) {
+	if ((box.size() != 3) || (nSpecies != mu.size()) || (maxSpecies.size() != nSpecies) || !(op == "N_{tot}" || op == "N_{1}")) {
 		throw customException ("Invalid system initialization parameters");
 		exit(SYS_FAILURE);
 	} else {
@@ -439,6 +542,7 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 		box_ = box;
 		mu_ = mu;
 		beta_ = beta;
+		order_param_ = op;
 	}
 
 	lnF_start = 1.0; // default for lnF_start
@@ -537,7 +641,7 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
 	}
 
 	totN_ = 0;
-    	try {
+	try {
 		numSpecies.resize(nSpecies, 0);
 	} catch (std::exception &e) {
 		throw customException (e.what());
@@ -573,54 +677,105 @@ simSystem::simSystem (const unsigned int nSpecies, const double beta, const std:
     	totNBounds_[1] += maxSpecies_[i];
     }
 
-    // allocate space for average U storage matrix - Shen and Errington method implies this size is always the same for
-    // both single and multicomponent mixtures
-    long long int size = totNBounds_[1] - totNBounds_[0] + 1;
-    energyHistogram_lb_.resize(size, -5.0);
-    energyHistogram_ub_.resize(size, 5.0);
-    for (unsigned int i = 0; i < size; ++i) {
-    	energyHistogram_lb_[i] = -5.0;
-    	energyHistogram_ub_[i] = 5.0;
-    	try {
-    		dynamic_one_dim_histogram dummyHist (energyHistogram_lb_[i], energyHistogram_ub_[i], energyHistDelta_);
-    		energyHistogram_.resize(i+1, dummyHist);
-    	} catch (std::bad_alloc &ba) {
-    		throw customException ("Out of memory for energy histogram for each Ntot");
-    	}
-    }
-    pkHistogram_.resize(0);
-    dynamic_one_dim_histogram dummyPkHist (0.0, totNBounds_[1], 1.0);
-	try {
-		std::vector < dynamic_one_dim_histogram > tmp (totNBounds_[1]-totNBounds_[0]+1, dummyPkHist);
-		pkHistogram_.resize(nSpecies_, tmp);
-	} catch (std::bad_alloc &ba) {
-    	throw customException ("Out of memory for particle histogram for each Ntot");
-    }
+	if (order_param_ == "N_{tot}") {
+		// allocate space for average U storage matrix - Shen and Errington method implies this size is always the same for
+	    // both single and multicomponent mixtures
+	    long long int size = totNBounds_[1] - totNBounds_[0] + 1;
+	    energyHistogram_lb_.resize(size, -5.0);
+	    energyHistogram_ub_.resize(size, 5.0);
+	    for (unsigned int i = 0; i < size; ++i) {
+	    	energyHistogram_lb_[i] = -5.0;
+	    	energyHistogram_ub_[i] = 5.0;
+	    	try {
+	    		dynamic_one_dim_histogram dummyHist (energyHistogram_lb_[i], energyHistogram_ub_[i], energyHistDelta_);
+	    		energyHistogram_.resize(i+1, dummyHist);
+	    	} catch (std::bad_alloc &ba) {
+	    		throw customException ("Out of memory for energy histogram for each Ntot");
+	    	}
+	    }
+	    pkHistogram_.resize(0);
+	    dynamic_one_dim_histogram dummyPkHist (0.0, totNBounds_[1], 1.0);
+		try {
+			std::vector < dynamic_one_dim_histogram > tmp (totNBounds_[1]-totNBounds_[0]+1, dummyPkHist);
+			pkHistogram_.resize(nSpecies_, tmp);
+		} catch (std::bad_alloc &ba) {
+	    	throw customException ("Out of memory for particle histogram for each Ntot");
+	    }
 
-	// initialize moments
-	std::vector < double > lbn (6,0), ubn(6,0);
-	std::vector < long long unsigned int > nbn (6,0);
-	ubn[0] = nSpecies_-1;
-	ubn[1] = max_order_;
-	ubn[2] = nSpecies_-1;
-	ubn[3] = max_order_;
-	ubn[4] = max_order_;
-	ubn[5] = totNBounds_[1]-totNBounds_[0];
+		// initialize moments
+		std::vector < double > lbn (6,0), ubn(6,0);
+		std::vector < long long unsigned int > nbn (6,0);
+		ubn[0] = nSpecies_-1;
+		ubn[1] = max_order_;
+		ubn[2] = nSpecies_-1;
+		ubn[3] = max_order_;
+		ubn[4] = max_order_;
+		ubn[5] = totNBounds_[1]-totNBounds_[0];
 
-	nbn[0] = nSpecies_;
-	nbn[1] = max_order_+1;
-	nbn[2] = nSpecies_;
-	nbn[3] = max_order_+1;
-	nbn[4] = max_order_+1;
-	nbn[5] = size;
+		nbn[0] = nSpecies_;
+		nbn[1] = max_order_+1;
+		nbn[2] = nSpecies_;
+		nbn[3] = max_order_+1;
+		nbn[4] = max_order_+1;
+		nbn[5] = size;
 
-	histogram hnn (lbn, ubn, nbn);
-	extensive_moments_ = hnn;
+		histogram hnn (lbn, ubn, nbn);
+		extensive_moments_ = hnn;
 
-	restartFromWALA = false;
-	restartFromTMMC = false;
-	restartFromWALAFile = "";
-	restartFromTMMCFile = "";
+		restartFromWALA = false;
+		restartFromTMMC = false;
+		restartFromWALAFile = "";
+		restartFromTMMCFile = "";
+	} else if (order_param_ == "N_{1}") {
+		long long int size = maxSpecies_[0] - minSpecies_[0] + 1;
+	    energyHistogram_lb_.resize(size, -5.0);
+	    energyHistogram_ub_.resize(size, 5.0);
+	    for (unsigned int i = 0; i < size; ++i) {
+	    	energyHistogram_lb_[i] = -5.0;
+	    	energyHistogram_ub_[i] = 5.0;
+	    	try {
+	    		dynamic_one_dim_histogram dummyHist (energyHistogram_lb_[i], energyHistogram_ub_[i], energyHistDelta_);
+	    		energyHistogram_.resize(i+1, dummyHist);
+	    	} catch (std::bad_alloc &ba) {
+	    		throw customException ("Out of memory for energy histogram for each Ntot");
+	    	}
+	    }
+	    pkHistogram_.resize(0);
+	    dynamic_one_dim_histogram dummyPkHist (0.0, totNBounds_[1], 1.0); // For simplicity, allow to record up to N_tot,max (will be trimmed later anyway)
+		try {
+			std::vector < dynamic_one_dim_histogram > tmp (size, dummyPkHist);
+			pkHistogram_.resize(nSpecies_, tmp);
+		} catch (std::bad_alloc &ba) {
+	    	throw customException ("Out of memory for particle histogram for each Ntot");
+	    }
+
+		// initialize moments
+		std::vector < double > lbn (6,0), ubn(6,0);
+		std::vector < long long unsigned int > nbn (6,0);
+		ubn[0] = nSpecies_-1;
+		ubn[1] = max_order_;
+		ubn[2] = nSpecies_-1;
+		ubn[3] = max_order_;
+		ubn[4] = max_order_;
+		ubn[5] = maxSpecies_[0]-minSpecies_[0];
+
+		nbn[0] = nSpecies_;
+		nbn[1] = max_order_+1;
+		nbn[2] = nSpecies_;
+		nbn[3] = max_order_+1;
+		nbn[4] = max_order_+1;
+		nbn[5] = size;
+
+		histogram hnn (lbn, ubn, nbn);
+		extensive_moments_ = hnn;
+
+		restartFromWALA = false;
+		restartFromTMMC = false;
+		restartFromWALAFile = "";
+		restartFromTMMCFile = "";
+	} else {
+		throw customException ("Unnknown order parameter, cannot initialize system");
+	}
 }
 
 /*!
@@ -661,38 +816,76 @@ void simSystem::recordExtMoments () {
 	// NOTE: be careful if trying to use symmetry to fill in the matrix, it is
 	// currently simpler to just do entire loop and do coordinates calculation
 	// directly than more "clever" alternatives.
-	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
-		double val = 0.0, xx = 0.0, yy = 0.0;
-		long long unsigned int coords = 0;
-		std::vector < long long unsigned int > widths = extensive_moments_.getWidths_();
-		for (unsigned int i = 0; i < nSpecies_; ++i) {
-			for (unsigned int j = 0; j <= max_order_; ++j) {
-				if (j > 0) {
-					xx = pow(numSpecies[i], j);
-				} else {
-					xx = 1.0;
-				}
-				for (unsigned int k = 0; k < nSpecies_; ++k) {
-					for (unsigned int m = 0; m <= max_order_; ++m) {
-						if (m > 0) {
-							yy = pow(numSpecies[k], m);
-						} else {
-							yy = 1.0;
-						}
-						for (unsigned int p = 0; p <= max_order_; ++p) {
-							if (p > 0) {
-								val = xx*yy*pow(energy_, p);
+	if (order_param_ == "N_{tot}") {
+		if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+			double val = 0.0, xx = 0.0, yy = 0.0;
+			long long unsigned int coords = 0;
+			std::vector < long long unsigned int > widths = extensive_moments_.getWidths_();
+			for (unsigned int i = 0; i < nSpecies_; ++i) {
+				for (unsigned int j = 0; j <= max_order_; ++j) {
+					if (j > 0) {
+						xx = pow(numSpecies[i], j);
+					} else {
+						xx = 1.0;
+					}
+					for (unsigned int k = 0; k < nSpecies_; ++k) {
+						for (unsigned int m = 0; m <= max_order_; ++m) {
+							if (m > 0) {
+								yy = pow(numSpecies[k], m);
 							} else {
-								val = xx*yy;
+								yy = 1.0;
 							}
+							for (unsigned int p = 0; p <= max_order_; ++p) {
+								if (p > 0) {
+									val = xx*yy*pow(energy_, p);
+								} else {
+									val = xx*yy;
+								}
 
-							coords = i*widths[0] + j*widths[1] + k*widths[2] + m*widths[3] + p*widths[4] + (totN_-totNBounds_[0])*widths[5];
-							extensive_moments_.increment (coords, val);
+								coords = i*widths[0] + j*widths[1] + k*widths[2] + m*widths[3] + p*widths[4] + (totN_-totNBounds_[0])*widths[5];
+								extensive_moments_.increment (coords, val);
+							}
 						}
 					}
 				}
 			}
 		}
+	} else if (order_param_ == "N_{1}") {
+		if (numSpecies[0] >= minSpecies_[0] && numSpecies[0] <= maxSpecies_[0]) {
+			double val = 0.0, xx = 0.0, yy = 0.0;
+			long long unsigned int coords = 0;
+			std::vector < long long unsigned int > widths = extensive_moments_.getWidths_();
+			for (unsigned int i = 0; i < nSpecies_; ++i) {
+				for (unsigned int j = 0; j <= max_order_; ++j) {
+					if (j > 0) {
+						xx = pow(numSpecies[i], j);
+					} else {
+						xx = 1.0;
+					}
+					for (unsigned int k = 0; k < nSpecies_; ++k) {
+						for (unsigned int m = 0; m <= max_order_; ++m) {
+							if (m > 0) {
+								yy = pow(numSpecies[k], m);
+							} else {
+								yy = 1.0;
+							}
+							for (unsigned int p = 0; p <= max_order_; ++p) {
+								if (p > 0) {
+									val = xx*yy*pow(energy_, p);
+								} else {
+									val = xx*yy;
+								}
+
+								coords = i*widths[0] + j*widths[1] + k*widths[2] + m*widths[3] + p*widths[4] + (numSpecies[0]-minSpecies_[0])*widths[5];
+								extensive_moments_.increment (coords, val);
+							}
+						}
+					}
+				}
+			}
+		}
+	} else {
+		throw customException ("Unrecognized order parameter, cannot record extensive moments");
 	}
 }
 
@@ -709,11 +902,24 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 	of << "# <N_i^j*N_k^m*U^p> as a function of N_tot." << std::endl;
 	of << "# number_of_species: " << nSpecies_ << std::endl;
 	of << "# max_order: " << max_order_ << std::endl;
-	of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
-	of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+	if (order_param_ == "N_{tot}") {
+		of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
+		of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+	} else if (order_param_ == "N_{1}") {
+		of << "# species_1_upper_bound: " << maxSpecies_[0] << std::endl;
+		of << "# species_1_lower_bound: " << minSpecies_[0] << std::endl;
+	} else {
+		throw customException ("Unrecognized order parameter, cannot print extensive moments");
+	}
 	double V = box_[0]*box_[1]*box_[2];
 	of << "# volume: " << std::setprecision(15) << V << std::endl;
-	of << "#\tN_tot\t";
+	if (order_param_ == "N_{tot}") {
+		of << "#\tN_tot\t";
+	} else if (order_param_ == "N_{1}") {
+		of << "#\tN_1\t";
+	} else {
+		throw customException ("Unrecognized order parameter, cannot print extensive moments");
+	}
 	for (unsigned int i = 0; i < nSpecies_; ++i) {
 		for (unsigned int j = 0; j <= max_order_; ++j) {
 			for (unsigned int k = 0; k < nSpecies_; ++k) {
@@ -731,50 +937,104 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 	std::vector <double> coords (6,0);
 	long unsigned int idx = 0;
 	if (normalize) {
-		for (unsigned int n = 0; n < totNBounds_[1]-totNBounds_[0]+1; ++n) {
-			of << n+totNBounds_[0] << "\t";
-			coords[5] = n;
-			for (unsigned int i = 0; i < nSpecies_; ++i) {
-				coords[0] = i;
-				for (unsigned int j = 0; j <= max_order_; ++j) {
-					coords[1] = j;
-					for (unsigned int k = 0; k < nSpecies_; ++k) {
-						coords[2] = k;
-						for (unsigned int m = 0; m <= max_order_; ++m) {
-							coords[3] = m;
-							for (unsigned int p = 0; p <= max_order_; ++p) {
-								coords[4] = p;
-								idx = extensive_moments_.getAddress(coords);
-								of << std::setprecision(15) << h[idx]/ctr[idx] << "\t";
+		if (order_param_ == "N_{tot}") {
+			for (unsigned int n = 0; n < totNBounds_[1]-totNBounds_[0]+1; ++n) {
+				of << n+totNBounds_[0] << "\t";
+				coords[5] = n;
+				for (unsigned int i = 0; i < nSpecies_; ++i) {
+					coords[0] = i;
+					for (unsigned int j = 0; j <= max_order_; ++j) {
+						coords[1] = j;
+						for (unsigned int k = 0; k < nSpecies_; ++k) {
+							coords[2] = k;
+							for (unsigned int m = 0; m <= max_order_; ++m) {
+								coords[3] = m;
+								for (unsigned int p = 0; p <= max_order_; ++p) {
+									coords[4] = p;
+									idx = extensive_moments_.getAddress(coords);
+									of << std::setprecision(15) << h[idx]/ctr[idx] << "\t";
+								}
 							}
 						}
 					}
 				}
+				of << std::endl;
 			}
-			of << std::endl;
+		} else if (order_param_ == "N_1") {
+			for (unsigned int n = 0; n < maxSpecies_[0]-minSpecies_[0]+1; ++n) {
+				of << n+minSpecies_[0] << "\t";
+				coords[5] = n;
+				for (unsigned int i = 0; i < nSpecies_; ++i) {
+					coords[0] = i;
+					for (unsigned int j = 0; j <= max_order_; ++j) {
+						coords[1] = j;
+						for (unsigned int k = 0; k < nSpecies_; ++k) {
+							coords[2] = k;
+							for (unsigned int m = 0; m <= max_order_; ++m) {
+								coords[3] = m;
+								for (unsigned int p = 0; p <= max_order_; ++p) {
+									coords[4] = p;
+									idx = extensive_moments_.getAddress(coords);
+									of << std::setprecision(15) << h[idx]/ctr[idx] << "\t";
+								}
+							}
+						}
+					}
+				}
+				of << std::endl;
+			}
+		} else {
+			throw customException ("Unrecognized order parameter, unable to print extensive moments");
 		}
 	} else {
-		for (unsigned int n = 0; n < totNBounds_[1]-totNBounds_[0]+1; ++n) {
-			of << n+totNBounds_[0] << "\t";
-			coords[5] = n;
-			for (unsigned int i = 0; i < nSpecies_; ++i) {
-				coords[0] = i;
-				for (unsigned int j = 0; j <= max_order_; ++j) {
-					coords[1] = j;
-					for (unsigned int k = 0; k < nSpecies_; ++k) {
-						coords[2] = k;
-						for (unsigned int m = 0; m <= max_order_; ++m) {
-							coords[3] = m;
-							for (unsigned int p = 0; p <= max_order_; ++p) {
-								coords[4] = p;
-								idx = extensive_moments_.getAddress(coords);
-								of << std::setprecision(15) << h[idx] << "\t";
+		if (order_param_ == "N_{tot}") {
+			for (unsigned int n = 0; n < totNBounds_[1]-totNBounds_[0]+1; ++n) {
+				of << n+totNBounds_[0] << "\t";
+				coords[5] = n;
+				for (unsigned int i = 0; i < nSpecies_; ++i) {
+					coords[0] = i;
+					for (unsigned int j = 0; j <= max_order_; ++j) {
+						coords[1] = j;
+						for (unsigned int k = 0; k < nSpecies_; ++k) {
+							coords[2] = k;
+							for (unsigned int m = 0; m <= max_order_; ++m) {
+								coords[3] = m;
+								for (unsigned int p = 0; p <= max_order_; ++p) {
+									coords[4] = p;
+									idx = extensive_moments_.getAddress(coords);
+									of << std::setprecision(15) << h[idx] << "\t";
+								}
 							}
 						}
 					}
 				}
+				of << std::endl;
 			}
-			of << std::endl;
+		} else if (order_param_ == "N_{1}") {
+			for (unsigned int n = 0; n < maxSpecies_[0]-minSpecies_[0]+1; ++n) {
+				of << n+minSpecies_[0] << "\t";
+				coords[5] = n;
+				for (unsigned int i = 0; i < nSpecies_; ++i) {
+					coords[0] = i;
+					for (unsigned int j = 0; j <= max_order_; ++j) {
+						coords[1] = j;
+						for (unsigned int k = 0; k < nSpecies_; ++k) {
+							coords[2] = k;
+							for (unsigned int m = 0; m <= max_order_; ++m) {
+								coords[3] = m;
+								for (unsigned int p = 0; p <= max_order_; ++p) {
+									coords[4] = p;
+									idx = extensive_moments_.getAddress(coords);
+									of << std::setprecision(15) << h[idx] << "\t";
+								}
+							}
+						}
+					}
+				}
+				of << std::endl;
+			}
+		} else {
+			throw customException ("Unrecognized order parameter, unable to print extensive moments");
 		}
 	}
 	of.close();
@@ -816,39 +1076,81 @@ void simSystem::restartExtMoments (const std::string prefix, const std::vector <
 				throw customException ("Max order ("+ std::to_string(mo)+") is not the same as provided in input ("+std::to_string(getMaxOrder())+"), cannot restart extMom from "+fileName);
 			}
 		} if (lineIndex == 3) {
-			std::getline(lineStream, tmp, ':');
-			std::getline(lineStream, tmp, ':');
-			int high = atoi(tmp.c_str());
-			if (high != totNMax()) {
-				throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax ("+std::to_string(totNMax())+"), cannot restart extMom from "+fileName);
+			if (order_param_ == "N_{tot}") {
+				std::getline(lineStream, tmp, ':');
+				std::getline(lineStream, tmp, ':');
+				int high = atoi(tmp.c_str());
+				if (high != totNMax()) {
+					throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax ("+std::to_string(totNMax())+"), cannot restart extMom from "+fileName);
+				}
+			} else if (order_param_ == "N_{1}") {
+				std::getline(lineStream, tmp, ':');
+				std::getline(lineStream, tmp, ':');
+				int high = atoi(tmp.c_str());
+				if (high != maxSpecies_[0]) {
+					throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax ("+std::to_string(maxSpecies_[0])+"), cannot restart extMom from "+fileName);
+				}
+			} else {
+				throw customException ("Unrecognized order parameter, cannot load extensive moments");
 			}
 		} else if (lineIndex == 4) {
-			std::getline(lineStream, tmp, ':');
-			std::getline(lineStream, tmp, ':');
-			int low = atoi(tmp.c_str());
-			if (low != totNMin()) {
-				throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin ("+std::to_string(totNMin())+"), cannot restart extMom from "+fileName);
+			if (order_param_ == "N_{tot}") {
+				std::getline(lineStream, tmp, ':');
+				std::getline(lineStream, tmp, ':');
+				int low = atoi(tmp.c_str());
+				if (low != totNMin()) {
+					throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin ("+std::to_string(totNMin())+"), cannot restart extMom from "+fileName);
+				}
+
+				// now reinstantiate the histogram
+				std::vector < double > lbn (6,0), ubn(6,0);
+				std::vector < long long unsigned int > nbn (6,0);
+				ubn[0] = nSpecies_-1;
+				ubn[1] = max_order_;
+				ubn[2] = nSpecies_-1;
+				ubn[3] = max_order_;
+				ubn[4] = max_order_;
+				ubn[5] = totNMax()-totNMin();
+
+				nbn[0] = nSpecies_;
+				nbn[1] = max_order_+1;
+				nbn[2] = nSpecies_;
+				nbn[3] = max_order_+1;
+				nbn[4] = max_order_+1;
+				nbn[5] = totNMax()-totNMin()+1;
+
+				histogram hnn (lbn, ubn, nbn);
+				extensive_moments_ = hnn;
+			} else if (order_param_ == "N_{1}") {
+				std::getline(lineStream, tmp, ':');
+				std::getline(lineStream, tmp, ':');
+				int low = atoi(tmp.c_str());
+				if (low != minSpecies_[0]) {
+					throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin ("+std::to_string(minSpecies_[0])+"), cannot restart extMom from "+fileName);
+				}
+
+				// now reinstantiate the histogram
+				std::vector < double > lbn (6,0), ubn(6,0);
+				std::vector < long long unsigned int > nbn (6,0);
+				ubn[0] = nSpecies_-1;
+				ubn[1] = max_order_;
+				ubn[2] = nSpecies_-1;
+				ubn[3] = max_order_;
+				ubn[4] = max_order_;
+				ubn[5] = maxSpecies_[0]-minSpecies_[0];
+
+				nbn[0] = nSpecies_;
+				nbn[1] = max_order_+1;
+				nbn[2] = nSpecies_;
+				nbn[3] = max_order_+1;
+				nbn[4] = max_order_+1;
+				nbn[5] = maxSpecies_[0]-minSpecies_[0]+1;
+
+				histogram hnn (lbn, ubn, nbn);
+				extensive_moments_ = hnn;
+			} else {
+				throw customException ("Unrecognized order parameter, cannot load extensive moments");
 			}
-
-			// now reinstantiate the histogram
-			std::vector < double > lbn (6,0), ubn(6,0);
-			std::vector < long long unsigned int > nbn (6,0);
-			ubn[0] = nSpecies_-1;
-			ubn[1] = max_order_;
-			ubn[2] = nSpecies_-1;
-			ubn[3] = max_order_;
-			ubn[4] = max_order_;
-			ubn[5] = totNMax()-totNMin();
-
-			nbn[0] = nSpecies_;
-			nbn[1] = max_order_+1;
-			nbn[2] = nSpecies_;
-			nbn[3] = max_order_+1;
-			nbn[4] = max_order_+1;
-			nbn[5] = totNMax()-totNMin()+1;
-
-			histogram hnn (lbn, ubn, nbn);
-			extensive_moments_ = hnn;
 		} else if (lineIndex >= 7) {
 			// histogram itself
 			lineStream >> dummy;
@@ -889,9 +1191,18 @@ void simSystem::restartExtMoments (const std::string prefix, const std::vector <
  */
 void simSystem::recordEnergyHistogram () {
 	// only record if in range (removes equilibration stage to get in this range, if there was any)
-	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
-		const int address = totN_-totNBounds_[0];
-		energyHistogram_[address].record(energy_);
+	if (order_param_ == "N_{tot}") {
+		if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+			const int address = totN_-totNBounds_[0];
+			energyHistogram_[address].record(energy_);
+		}
+	} else if (order_param_ == "N_{1}") {
+		if (numSpecies[0] >= minSpecies_[0] && numSpecies[0] <= maxSpecies_[0]) {
+			const int address = numSpecies[0]-minSpecies_[0];
+			energyHistogram_[address].record(energy_);
+		}
+	} else {
+		throw customException ("Unrecognized order parameter, unable to record energy histogram");
 	}
 }
 
@@ -899,10 +1210,20 @@ void simSystem::recordEnergyHistogram () {
  * Monitor the energy histogram bounds at each Ntot
  */
 void simSystem::checkEnergyHistogramBounds () {
-	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
-		const int address = totN_-totNBounds_[0];
-		energyHistogram_lb_[address] = std::min(energyHistogram_lb_[address], energy_);
-		energyHistogram_ub_[address] = std::max(energyHistogram_ub_[address], energy_);
+	if (order_param_ == "N_{tot}") {
+		if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+			const int address = totN_-totNBounds_[0];
+			energyHistogram_lb_[address] = std::min(energyHistogram_lb_[address], energy_);
+			energyHistogram_ub_[address] = std::max(energyHistogram_ub_[address], energy_);
+		}
+	} else if (order_param_ == "N_{1}") {
+		if (numSpecies[0] >= minSpecies_[0] && numSpecies[0] <= maxSpecies_[0]) {
+			const int address = numSpecies[0]-minSpecies_[0];
+			energyHistogram_lb_[address] = std::min(energyHistogram_lb_[address], energy_);
+			energyHistogram_ub_[address] = std::max(energyHistogram_ub_[address], energy_);
+		}
+	} else {
+		throw customException ("Unrecognized order parameter, unable to check energy histogram bounds");
 	}
 }
 
@@ -925,13 +1246,24 @@ void simSystem::refineEnergyHistogramBounds () {
  */
 void simSystem::reInitializeEnergyHistogram () {
 	double lb = 0.0, ub = 0.0;
+	int size = 0;
 	if (energyHistogram_lb_.size() != energyHistogram_ub_.size()) {
 		throw customException ("Bad energy histogram bound sizes");
 	}
-	if (energyHistogram_lb_.size() != totNMax() - totNMin() + 1) {
+
+	if (order_param_ == "N_{tot}") {
+		size = totNMax() - totNMin() + 1;
+	} else if (order_param_ == "N_{1}") {
+		size = maxSpecies_[0] - minSpecies_[0] + 1;
+	} else {
+		throw customException ("Unrecognized order parameter, unable to re-initialize energy histogram");
+	}
+
+	if (energyHistogram_lb_.size() != size) {
 		throw customException ("Bad energy histogram bound sizes");
 	}
-	for (unsigned int i = 0; i < totNMax() - totNMin() + 1; ++i) {
+
+	for (unsigned int i = 0; i < size; ++i) {
 		if (energyHistogram_lb_[i] > energyHistogram_ub_[i]) {
 			throw customException ("Bad energy histogram bound sizes");
 		}
@@ -962,8 +1294,15 @@ void simSystem::printEnergyHistogram (const std::string fileName, const bool nor
 	of.open(name.c_str(), std::ofstream::out);
 	of << "# <P(U)> as a function of N_tot." << std::endl;
 	of << "# number_of_species: " << nSpecies_ << std::endl;
-	of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
-	of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+	if (order_param_ == "N_{tot}") {
+		of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
+		of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+	} else if (order_param_ == "N_{1}") {
+		of << "# species_1_upper_bound: " << maxSpecies_[0] << std::endl;
+		of << "# species_1_lower_bound: " << minSpecies_[0] << std::endl;
+	} else {
+		throw customException ("Unrecognized order parameter, cannot print energy histogram");
+	}
 	double V = box_[0]*box_[1]*box_[2];
 	of << "# volume: " << std::setprecision(15) << V << std::endl;
 	of << "# Bin widths for each" << std::endl;
@@ -1014,7 +1353,16 @@ void simSystem::printEnergyHistogram (const std::string fileName, const bool nor
  * \param [in] prefix Prefix of the filename to load from
  */
 void simSystem::restartEnergyHistogram (const std::string prefix) {
-	int minBound = 0, maxBound = totNMax() - totNMin() + 1;
+	int minBound = 0, maxBound = 0;
+
+	if (order_param_ == "N_{tot}") {
+		maxBound = totNMax() - totNMin() + 1;
+	} else if (order_param_ == "N_{1}") {
+		maxBound = maxSpecies_[0] - minSpecies_[0] + 1;
+	} else {
+		throw customException ("Unrecognized order parameter, cannot restart enegry histogram");
+	}
+
 	std::vector < double > lb(maxBound - minBound, 0), ub(maxBound - minBound, 0), delta(maxBound - minBound, 0);
 	std::string fileName = prefix+".dat";
 
@@ -1029,19 +1377,41 @@ void simSystem::restartEnergyHistogram (const std::string prefix) {
 		std::stringstream lineStream(line);
 		if (lineIndex == 2) {
 			// get upper bound
-			std::getline(lineStream, tmp, ':');
-			std::getline(lineStream, tmp, ':');
-			int high = atoi(tmp.c_str());
-			if (high != totNMax()) {
-				throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax("+std::to_string(totNMax())+"), cannot restart energy histogram from "+fileName);
+			if (order_param_ == "N_{tot}") {
+				std::getline(lineStream, tmp, ':');
+				std::getline(lineStream, tmp, ':');
+				int high = atoi(tmp.c_str());
+				if (high != totNMax()) {
+					throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax("+std::to_string(totNMax())+"), cannot restart energy histogram from "+fileName);
+				}
+			} else if (order_param_ == "N_{1}") {
+				std::getline(lineStream, tmp, ':');
+				std::getline(lineStream, tmp, ':');
+				int high = atoi(tmp.c_str());
+				if (high != maxSpecies_[0]) {
+					throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax("+std::to_string(maxSpecies_[0])+"), cannot restart energy histogram from "+fileName);
+				}
+			} else {
+				throw customException ("Unrecognized order parameter, cannot restart energy histogram");
 			}
 		} else if (lineIndex == 3) {
 			// get lower bound
-			std::getline(lineStream, tmp, ':');
-			std::getline(lineStream, tmp, ':');
-			int low = atoi(tmp.c_str());
-			if (low != totNMin()) {
-				throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin("+std::to_string(totNMin())+"), cannot restart energy histogram from "+fileName);
+			if (order_param_ == "N_{tot}") {
+				std::getline(lineStream, tmp, ':');
+				std::getline(lineStream, tmp, ':');
+				int low = atoi(tmp.c_str());
+				if (low != totNMin()) {
+					throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin("+std::to_string(totNMin())+"), cannot restart energy histogram from "+fileName);
+				}
+			} else if (order_param_ == "N_{1}") {
+				std::getline(lineStream, tmp, ':');
+				std::getline(lineStream, tmp, ':');
+				int low = atoi(tmp.c_str());
+				if (low != minSpecies_[0]) {
+					throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin("+std::to_string(minSpecies_[0])+"), cannot restart energy histogram from "+fileName);
+				}
+			} else {
+				throw customException ("Unrecognized order parameter, cannot restart energy histogram");
 			}
 		} else if (lineIndex == 6) {
 			// delta
@@ -1093,11 +1463,22 @@ void simSystem::restartEnergyHistogram (const std::string prefix) {
  */
 void simSystem::recordPkHistogram () {
 	// only record if in range (removes equilibration stage to get in this range, if there was any)
-	if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
-		const int address = totN_-totNBounds_[0];
-		for (unsigned int i = 0; i < nSpecies_; ++i) {
-			pkHistogram_[i][address].record(numSpecies[i]);
+	if (order_param_ == "N_{tot}") {
+		if (totN_ >= totNBounds_[0] && totN_ <= totNBounds_[1]) {
+			const int address = totN_-totNBounds_[0];
+			for (unsigned int i = 0; i < nSpecies_; ++i) {
+				pkHistogram_[i][address].record(numSpecies[i]);
+			}
 		}
+	} else if (order_param_ == "N_{1}") {
+		if (numSpecies[0] >= minSpecies_[0] && numSpecies[0] <= maxSpecies_[0]) {
+			const int address = numSpecies[0]-minSpecies_[0];
+			for (unsigned int i = 0; i < nSpecies_; ++i) {
+				pkHistogram_[i][address].record(numSpecies[i]);
+			}
+		}
+	} else {
+		throw customException ("Unrecognized order parameter, unable to record particle histogram");
 	}
 }
 
@@ -1129,8 +1510,15 @@ void simSystem::printPkHistogram (const std::string fileName, const bool normali
 		of.open(name.c_str(), std::ofstream::out);
 		of << "# <P(N_" << i+1 << ")> as a function of N_tot." << std::endl;
 		of << "# number_of_species: " << nSpecies_ << std::endl;
-		of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
-		of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+		if (order_param_ == "N_{tot}") {
+			of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
+			of << "# species_total_lower_bound: " << totNBounds_[0] << std::endl;
+		} else if (order_param_ == "N_{1}") {
+			of << "# species_1_upper_bound: " << maxSpecies_[0] << std::endl;
+			of << "# species_1_lower_bound: " << minSpecies_[0] << std::endl;
+		} else {
+			throw customException ("Unrecognized order parameter, cannot print particle histogram");
+		}
 		double V = box_[0]*box_[1]*box_[2];
 		of << "# volume: " << std::setprecision(15) << V << std::endl;
 		of << "# Bin widths for each species index " << std::endl;
@@ -1182,7 +1570,16 @@ void simSystem::printPkHistogram (const std::string fileName, const bool normali
  */
 void simSystem::restartPkHistogram (const std::string prefix) {
 	for (unsigned int spec = 0; spec < nSpecies_; ++spec) {
-		int minBound = 0, maxBound = totNMax() - totNMin() + 1;
+		int minBound = 0, maxBound = 0;
+
+		if (order_param_ == "N_{tot}") {
+			maxBound = totNMax() - totNMin() + 1;
+		} else if (order_param_ == "N_{1}") {
+			maxBound = maxSpecies_[0] - minSpecies_[0] + 1;
+		} else {
+			throw customException ("Unrecognized order parameter, cannot restart particle histogram");
+		}
+
 		std::vector < double > lb(maxBound - minBound, 0), ub(maxBound - minBound, 0), delta(maxBound - minBound, 0);
 		std::string fileName = prefix+"_"+std::to_string(spec+1)+".dat";
 
@@ -1197,20 +1594,43 @@ void simSystem::restartPkHistogram (const std::string prefix) {
 			std::stringstream lineStream(line);
 			if (lineIndex == 2) {
 				// get upper bound
-				std::getline(lineStream, tmp, ':');
-				std::getline(lineStream, tmp, ':');
-				int high = atoi(tmp.c_str());
-				if (high != totNMax()) {
-					throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax("+std::to_string(totNMax())+"), cannot restart particle histogram from "+fileName);
+				if (order_param_ == "N_{tot}") {
+					std::getline(lineStream, tmp, ':');
+					std::getline(lineStream, tmp, ':');
+					int high = atoi(tmp.c_str());
+					if (high != totNMax()) {
+						throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax ("+std::to_string(totNMax())+"), cannot restart particle histogram from "+fileName);
+					}
+				} else if (order_param_ == "N_{1}") {
+					std::getline(lineStream, tmp, ':');
+					std::getline(lineStream, tmp, ':');
+					int high = atoi(tmp.c_str());
+					if (high != maxSpecies_[0]) {
+						throw customException ("Max bound ("+ std::to_string(high)+") is not Nmax ("+std::to_string(maxSpecies_[0])+"), cannot restart particle histogram from "+fileName);
+					}
+				} else {
+					throw customException ("Unrecognized order parameter, cannot restart particle histogram");
 				}
 			} else if (lineIndex == 3) {
 				// get lower bound
-				std::getline(lineStream, tmp, ':');
-				std::getline(lineStream, tmp, ':');
-				int low = atoi(tmp.c_str());
-				if (low != totNMin()) {
-					throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin("+std::to_string(totNMin())+"), cannot restart particle histogram from "+fileName);
+				if (order_param_ == "N_{tot}") {
+					std::getline(lineStream, tmp, ':');
+					std::getline(lineStream, tmp, ':');
+					int low = atoi(tmp.c_str());
+					if (low != totNMin()) {
+						throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin ("+std::to_string(totNMin())+"), cannot restart particle histogram from "+fileName);
+					}
+				} else if (order_param_ == "N_{1}") {
+					std::getline(lineStream, tmp, ':');
+					std::getline(lineStream, tmp, ':');
+					int low = atoi(tmp.c_str());
+					if (low != minSpecies_[0]) {
+						throw customException ("Min bound ("+ std::to_string(low)+") is not Nmin ("+std::to_string(minSpecies_[0])+"), cannot restart particle histogram from "+fileName);
+					}
+				} else {
+					throw customException ("Unrecognized order parameter, cannot restart particle histogram");
 				}
+
 			} else if (lineIndex == 1) {
 				// check the number of species is correct
 				std::getline(lineStream, tmp, ':');
@@ -1458,11 +1878,6 @@ void simSystem::readConfig (std::string filename) {
 	}
 	infile.close();
 
-	// check if within global bounds
-	if (sysatoms.size() > totNBounds_[1] || sysatoms.size() < totNBounds_[0]) {
-		throw customException ("Number of particles ("+std::to_string(sysatoms.size())+") in the restart file out of target range ["+std::to_string(totNBounds_[0])+", "+std::to_string(totNBounds_[1])+"]");
-	}
-
 	// sort by type
 	std::map < int, int > types;
 	for (unsigned int j = 0; j < natoms; ++j) {
@@ -1479,6 +1894,21 @@ void simSystem::readConfig (std::string filename) {
 		if (it->first < 0 || it->first >= nSpecies_) {
 			throw customException ("Restart file corrupted, types out of range");
 		}
+	}
+
+	// check if within global bounds
+	if (order_param_ == "N_{tot}") {
+		if (sysatoms.size() > totNBounds_[1] || sysatoms.size() < totNBounds_[0]) {
+			throw customException ("Number of particles ("+std::to_string(sysatoms.size())+") in the restart file out of target range ["+std::to_string(totNBounds_[0])+", "+std::to_string(totNBounds_[1])+"]");
+		}
+	} else if (order_param_ == "N_{1}") {
+		for (unsigned int i = 0; i < nSpecies_; ++i) {
+			if (types[i] < minSpecies_[i] || types[i] > maxSpecies_[i]) {
+				throw customException ("Number of species "+std::to_string(i+1)+" ("+std::to_string(types[i])+") in the restart file out of target range ["+std::to_string(minSpecies_[i])+", "+std::to_string(maxSpecies_[i])+"]");
+			}
+		}
+	} else {
+		throw customException ("Unrecognized order parameter, cannot read configuration from file");
 	}
 
 	// check that pair potentials exist so energy can be calculated
@@ -1713,13 +2143,13 @@ const double simSystem::scratchEnergy () {
  */
 const int simSystem::maxSpecies (const int index) {
 	if (maxSpecies_.begin() == maxSpecies_.end()) {
-        	throw customException ("No species in the system, cannot report a maximum");
-    	}
-    	if (maxSpecies_.size() <= index) {
-        	throw customException ("System does not contain that species, cannot report a maximum");
-    	} else  {
-        	return maxSpecies_[index];
-    	}
+        throw customException ("No species in the system, cannot report a maximum");
+    }
+    if (maxSpecies_.size() <= index) {
+    	throw customException ("System does not contain that species, cannot report a maximum");
+    } else  {
+    	return maxSpecies_[index];
+    }
 }
 
 /*!
@@ -1776,10 +2206,20 @@ wala* simSystem::getWALABias () {
  */
 void simSystem::startWALA (const double lnF, const double g, const double s, const int Mtot) {
 	// initialize the wala object
-	try {
-		wlBias = new wala (lnF, g, s, totNBounds_[1], totNBounds_[0], Mtot, box_);
-	} catch (customException& ce) {
-		throw customException ("Cannot start Wang-Landau biasing in system: "+std::to_string(*ce.what()));
+	if (order_param_ == "N_{tot}") {
+		try {
+			wlBias = new wala (lnF, g, s, totNBounds_[1], totNBounds_[0], Mtot, box_);
+		} catch (customException& ce) {
+			throw customException ("Cannot start Wang-Landau biasing in system: "+std::to_string(*ce.what()));
+		}
+	} else if (order_param_ == "N_{1}") {
+		try {
+			wlBias = new wala (lnF, g, s, maxSpecies_[0], minSpecies_[0], Mtot, box_);
+		} catch (customException& ce) {
+			throw customException ("Cannot start Wang-Landau biasing in system: "+std::to_string(*ce.what()));
+		}
+	} else {
+		throw customException ("Unrecognized order parameter, unable to start Wang-Landau");
 	}
 
 	useWALA = true;
@@ -1793,10 +2233,20 @@ void simSystem::startWALA (const double lnF, const double g, const double s, con
  */
 void simSystem::startTMMC (const long long int tmmcSweepSize, const int Mtot) {
 	// initialize the tmmc object
-	try {
-		tmmcBias = new tmmc (totNBounds_[1], totNBounds_[0], Mtot, tmmcSweepSize, box_);
-	} catch (customException& ce) {
-		throw customException ("Cannot start TMMC biasing in system: "+std::to_string(*ce.what()));
+	if (order_param_ == "N_{tot}") {
+		try {
+			tmmcBias = new tmmc (totNBounds_[1], totNBounds_[0], Mtot, tmmcSweepSize, box_);
+		} catch (customException& ce) {
+			throw customException ("Cannot start TMMC biasing in system: "+std::to_string(*ce.what()));
+		}
+	} else if (order_param_ == "N_{1}") {
+		try {
+			tmmcBias = new tmmc (maxSpecies_[0], minSpecies_[0], Mtot, tmmcSweepSize, box_);
+		} catch (customException& ce) {
+			throw customException ("Cannot start TMMC biasing in system: "+std::to_string(*ce.what()));
+		}
+	} else {
+		throw customException ("Unrecognized order parameter, unable to start TMMC");
 	}
 
 	useTMMC = true;
@@ -1806,30 +2256,54 @@ void simSystem::startTMMC (const long long int tmmcSweepSize, const int Mtot) {
  * Calculate the bias based on a systems current state and the next state being proposed.
  *
  * \param [in] sys System object containing the current state of the system.
- * \param [in] nTotFinal Total atoms in the proposed final state.
+ * \param [in] opFinal Final value of order parameter in proposed state (e.g., N_tot, or N_1 after a move would be accepted).
  * \param [in] mFinal Final value of the expanded ensemble state of the system.
  * \param [in] p_u Ratio of the system's partition in the final and initial state (e.g. unbiased p_acc = min(1, p_u)).
  *
  * \return rel_bias The value of the relative bias to apply in the metropolis criteria during sampling
  */
-const double calculateBias (simSystem &sys, const int nTotFinal, const int mFinal) {
+const double calculateBias (simSystem &sys, const int opFinal, const int mFinal) {
 	double rel_bias = 1.0;
 
 	if (sys.useTMMC && !sys.useWALA) {
 		// TMMC biasing
-		const long long int address1 = sys.tmmcBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.tmmcBias->getAddress(nTotFinal, mFinal);
-		const double b1 = sys.tmmcBias->getBias (address1), b2 = sys.tmmcBias->getBias (address2);
-		rel_bias = exp(b2-b1);
+		if (sys.getOP() == "N_{tot}") {
+			const long long int address1 = sys.tmmcBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.tmmcBias->getAddress(opFinal, mFinal);
+			const double b1 = sys.tmmcBias->getBias (address1), b2 = sys.tmmcBias->getBias (address2);
+			rel_bias = exp(b2-b1);
+		} else if (sys.getOP() == "N_{1}") {
+			const long long int address1 = sys.tmmcBias->getAddress(sys.numSpecies[0], sys.getCurrentM()), address2 = sys.tmmcBias->getAddress(opFinal, mFinal);
+			const double b1 = sys.tmmcBias->getBias (address1), b2 = sys.tmmcBias->getBias (address2);
+			rel_bias = exp(b2-b1);
+		} else {
+			throw customException ("Unrecognized order parameter, cannot compute bias");
+		}
     } else if (!sys.useTMMC && sys.useWALA) {
     	// Wang-Landau Biasing
-    	const long long int address1 = sys.wlBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.wlBias->getAddress(nTotFinal, mFinal);
-    	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
-    	rel_bias = exp(b2-b1);
+		if (sys.getOP() == "N_{tot}") {
+			const long long int address1 = sys.wlBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.wlBias->getAddress(opFinal, mFinal);
+	    	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
+	    	rel_bias = exp(b2-b1);
+		} else if (sys.getOP() == "N_{1}") {
+			const long long int address1 = sys.wlBias->getAddress(sys.numSpecies[0], sys.getCurrentM()), address2 = sys.wlBias->getAddress(opFinal, mFinal);
+	    	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
+	    	rel_bias = exp(b2-b1);
+		} else {
+			throw customException ("Unrecognized order parameter, cannot compute bias");
+		}
     } else if (sys.useTMMC && sys.useWALA) {
     	// Crossover phase where we use WL but update TMMC collection matrix
-		const int address1 = sys.wlBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.wlBias->getAddress(nTotFinal, mFinal);
-    	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
-    	rel_bias = exp(b2-b1);
+		if (sys.getOP() == "N_{tot}") {
+			const int address1 = sys.wlBias->getAddress(sys.getTotN(), sys.getCurrentM()), address2 = sys.wlBias->getAddress(opFinal, mFinal);
+	    	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
+	    	rel_bias = exp(b2-b1);
+		} else if (sys.getOP() == "N_{1}") {
+			const int address1 = sys.wlBias->getAddress(sys.numSpecies[0], sys.getCurrentM()), address2 = sys.wlBias->getAddress(opFinal, mFinal);
+	    	const double b1 = sys.wlBias->getBias (address1), b2 = sys.wlBias->getBias (address2);
+	    	rel_bias = exp(b2-b1);
+		} else {
+			throw customException ("Unrecognized order parameter, cannot compute bias");
+		}
     } else {
     	// No biasing
     	rel_bias = 1.0;

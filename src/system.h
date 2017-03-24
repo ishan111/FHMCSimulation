@@ -26,7 +26,7 @@
 class simSystem {
 public:
 	simSystem () {;}
-	simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies, const int Mtot, const double energyHistDelta = 10.0, const int max_order = 2);
+	simSystem (const unsigned int nSpecies, const double beta, const std::vector < double > box, const std::vector < double > mu, const std::vector < int > maxSpecies, const std::vector < int > minSpecies, const int Mtot, const double energyHistDelta = 10.0, const int max_order = 2, const std::string op = "N_{tot}");
 	~simSystem ();
 
     bool addKECorrection () { return toggleKE_; }
@@ -63,11 +63,14 @@ public:
    	void stopTMMC () { useTMMC = false; delete tmmcBias; } //!< Stop using TMMC and free the bias object
 
 	void setTotNBounds (const std::vector < int > &bounds);
+	void setN1Bounds (const std::vector < int > &bounds);
 
 	void incrementMState ();
    	void decrementMState ();
 
 	bool potentialIsSet (const int spec1, const int spec2) { return ppotSet_[spec1][spec2]; }	//!< Boolean which returns whether or not a pair has had its potential specified by the user yet
+
+	const std::string getOP () { return order_param_; } //!< Get the sampling order parameter
 
 	const int nSpecies () { return nSpecies_; } //!< Return the number of different species in the system
 	const int maxSpecies (const int index);
@@ -142,6 +145,8 @@ private:
 	double beta_; //!< Inverse temperature, really 1/kT
 	double energy_; //!< Instantaneous energy of the system
 	double energyHistDelta_; //!< Bin width for energy histograms at each Ntot
+
+	std::string order_param_; //!< Order parameter used for sampling
 
 	std::vector < int > totNBounds_; //!< For multicomponent mixtures, biases use Shen and Errington method which uses bounds on the total number of particles in the system
 	std::vector < int > maxSpecies_; //!< Maximum number of each species allowed in the simulation

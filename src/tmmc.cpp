@@ -33,7 +33,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
                 sys.startTMMC (sys.tmmcSweepSize, sys.getTotalM());
             }
     		try {
-    			sys.getTMMCBias()->readC(sys.restartFromTMMCFile); // read collection matrix
+    			sys.getTMMCBias()->readC(sys.restartFromTMMCFile); // Read collection matrix
     			sys.getTMMCBias()->calculatePI();
                 sendMsg("Restarted TMMC from collection matrix from "+sys.restartFromTMMCFile);
     		} catch (customException &ce) {
@@ -51,7 +51,15 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
     sendMsg("Starting progress stage from "+numToStr(printCounter)+"/"+numToStr(std::min(numSweepSnaps, sys.totalTMMCSweeps)));
     sendMsg("Starting from "+numToStr(sweep)+"/"+numToStr(sys.totalTMMCSweeps)+" total TMMC sweeps");
 
-    unsigned long long int checkPoint = sys.tmmcSweepSize*(sys.totNMax() - sys.totNMin() + 1)*3; // How often to check full traversal of collection matrix
+    unsigned long long int checkPoint = 0; // How often to check full traversal of collection matrix
+	if (sys.getOP() == "N_{tot}") {
+		checkPoint = sys.tmmcSweepSize*(sys.totNMax() - sys.totNMin() + 1)*3;
+	} else if (sys.getOP() == "N_{1}") {
+		checkPoint = sys.tmmcSweepSize*(sys.maxSpecies(0) - sys.minSpecies(0) + 1)*3;
+	} else {
+		throw customException ("Unrecognized order parameter, cannot proceed with TMMC");
+	}
+
 	while (sweep < sys.totalTMMCSweeps) {
 		bool done = false;
 
@@ -92,7 +100,7 @@ void performTMMC (simSystem &sys, checkpoint &res, moves *usedMovesPr) {
 
 		sys.getTMMCBias()->calculatePI(); // Update biasing function from collection matrix
 
-		// Periodically write out checkpoints to monitor convergence properties later - all are used in FHMCAnalysis at this point (12/22/16)
+		// Periodically write out checkpoints to monitor convergence properties later - can be used for block analysis or to check equilibration
 		if (sweep%sweepPrint == 0) {
             try {
                 printCounter++;

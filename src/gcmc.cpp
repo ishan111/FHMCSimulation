@@ -14,7 +14,7 @@ void performGCMC (simSystem &sys, moves *usedMovesEq, moves *usedMovesPr) {
     if (!ofs.is_open()) throw customException ("Unable to open log file to record equilibration GCMC thermodynamics");
     ofs << "# Step\tU\tN_tot\t";
     for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-        ofs << "N_"+numToStr(i+1)+"\t";
+        ofs << "x_"+numToStr(i+1)+"\t";
 	}
     ofs << std::endl;
 
@@ -54,7 +54,7 @@ void performGCMC (simSystem &sys, moves *usedMovesEq, moves *usedMovesPr) {
     ofs.open ("thermoPr.log", std::ofstream::out);
     if (!ofs.is_open()) throw customException ("Unable to open log file to record production GCMC thermodynamics");
     ofs << "# Step\tU\tN_tot\t";
-    for (unsigned int i = 0; i < sys.nSpecies(); ++i) { ofs << "N_"+numToStr(i+1)+"\t"; }
+    for (unsigned int i = 0; i < sys.nSpecies(); ++i) { ofs << "x_"+numToStr(i+1)+"\t"; }
     ofs << std::endl;
 
     ctr = 0;

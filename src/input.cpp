@@ -76,6 +76,12 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		useKe = doc["use_ke"].GetBool();
 	}
 
+	std::string oP = "N_{tot}"; // Default
+	if (doc.HasMember("order_parameter")) {
+        if (!doc["order_parameter"].IsString()) throw customException("\"order_parameter\" is not a string in "+filename);
+		oP = doc["order_parameter"].GetString();
+	}
+
     if (!doc.HasMember("mu")) throw customException("\"mu\" is not specified in "+filename);
     if (!doc["mu"].IsArray()) throw customException("\"mu\" is not an array in "+filename);
     if (doc["mu"].Size() != doc["num_species"].GetInt()) throw customException("\"mu\" is not specified for each species in "+filename);
@@ -115,7 +121,7 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		Mtot = doc["num_expanded_states"].GetInt();
 	}
 
-	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot, duh, maxOrder);
+	simSystem sys (doc["num_species"].GetInt(), doc["beta"].GetDouble(), sysBox, sysMu, sysMax, sysMin, Mtot, duh, maxOrder, oP);
 	if (useKe) {
 		sys.toggleKE();
 		if (sys.addKECorrection() == false) throw customException ("Unable to set KE flag");
@@ -132,7 +138,13 @@ simSystem initialize (const std::string filename, moves* usedMovesEq, moves* use
 		sysWindow[1] = doc["window"][1].GetInt();
 	}
 	if (sysWindow.begin() != sysWindow.end()) {
-		sys.setTotNBounds(sysWindow);
+		if (oP == "N_{tot}") {
+			sys.setTotNBounds(sysWindow);
+		} else if (oP == "N_{1}") {
+			sys.setN1Bounds(sysWindow);
+		} else {
+			throw customException ("Unrecognized order parameter, cannot initialize window");
+		}
 	}
 
     /* ---------- Begin exclusively WL-TMMC block ---------- */
@@ -522,7 +534,7 @@ void setConfig (simSystem &sys, const std::string filename) {
 		sysMin[i] = doc["min_N"][i].GetInt();
 	}
 
-    // Rest from existing system
+    // Get the rest from existing system
     const int Mtot = sys.getTotalM();
     const int maxOrder = sys.getMaxOrder();
     const bool useKe = sys.addKECorrection();
@@ -535,120 +547,212 @@ void setConfig (simSystem &sys, const std::string filename) {
 			sys.readConfig(restart_file);
 		} catch (customException &ce) {
             sendErr(ce.what());
+			exit(SYS_FAILURE);
 		}
-	} else if (restart_file == "" && sys.totNMin() > 0) {
-        sendMsg("Automatically generating the initial configuration");
+	} else if (restart_file == "") {
+		if (sys.totNMin() > 0 && sys.getOP() == "N_{tot}") {
+			sendMsg("Automatically generating the initial configuration");
 
-		// Have to generate initial configuration manually - start with mu = INF
-        std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
+			// Have to generate initial configuration manually - start with mu = INF
+	        std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
 
-		simSystem initSys (doc["num_species"].GetInt(), doc["beta"].GetDouble()/100.0, sysBox, initMu, sysMax, sysMin, Mtot, duh, maxOrder); // beta =  1/T, so low beta to have high T
-		if (useKe) {
-			initSys.toggleKE();
-			if (initSys.addKECorrection() == false) {
-				throw customException ("Unable to set KE flag");
-			}
-		}
-
-        // Add the same potentials
-        setPairPotentials (initSys, doc);
-		setBarriers (initSys, doc);
-
-        std::vector < int > initialization_order (sys.nSpecies(), 0), check_init (sys.nSpecies(), 0);
-    	std::vector < double > init_frac (sys.nSpecies(), 1.0);
-    	double sum = 0.0;
-    	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-    		initialization_order[i] = i;
-    		if (i > 0) init_frac[i] = 0.0;
-    		sum += init_frac[i];
-    	}
-    	if (doc.HasMember("init_order")) {
-            if (!doc["init_order"].IsArray()) throw customException("\"init_order\" is not an array in "+filename);
-            if (doc["init_order"].Size() != doc["num_species"].GetInt()) throw customException("\"init_order\" not specified for each species in "+filename);
-
-    		for (rapidjson::SizeType i = 0; i < doc["init_order"].Size(); ++i) {
-                if (!doc["init_order"][i].IsInt()) throw customException("\"init_order\" is not an integer for species "+numToStr(i+1)+" in "+filename);
-    			initialization_order[i] = doc["init_order"][i].GetInt();
-    			if (initialization_order[i] < 0 || initialization_order[i] >= sys.nSpecies()) {
-                    throw customException ("Order of initialization goes out of bounds, should include 0 <= i < nSpec");
-    			}
-    			if (check_init[initialization_order[i]] != 0) {
-                    throw customException ("Order of initialization repeats itself");
-    			} else {
-    				check_init[initialization_order[i]] = 1;
-    			}
-    		}
-    	}
-        if (doc.HasMember("init_frac")) {
-            if (!doc["init_frac"].IsArray()) throw customException("\"init_frac\" is not an array in "+filename);
-            if (doc["init_frac"].Size() != doc["num_species"].GetInt()) throw customException("\"init_frac\" not specified for each species in "+filename);
-
-    		sum = 0.0;
-    		for (rapidjson::SizeType i = 0; i < doc["init_frac"].Size(); ++i) {
-                if (!doc["init_frac"][i].IsNumber()) throw customException("\"init_frac\" is not a number for species "+numToStr(i+1)+" in "+filename);
-    			init_frac[i] = doc["init_frac"][i].GetDouble();
-    			if (init_frac[i] < 0 || init_frac[i] >= 1.0) {
-                    throw customException  ("Initialization fraction out of bounds");
-    			}
-    			sum += init_frac[i];
-    		}
-    	}
-    	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
-    		init_frac[i] /= sum;
-    	}
-
-		// Iteratively add each individual species, assume we want an equimolar mixture to start from
-		int added = 0;
-		for (unsigned int idx = 0; idx < sys.nSpecies(); ++idx) {
-			unsigned int i = initialization_order[idx];
-            sendMsg("Initializing species "+numToStr(i)+" configurations");
-
-			// Insert this species i
-			moves initMove (initSys.getTotalM());
-            initMove.addInsert(i, 1.0);
-
-			// Also add translation moves for all species present
-			for (unsigned int j = 0; j <= idx; ++j) {
-                sendMsg("Added translation moves for initialization of species "+numToStr(initialization_order[j]));
-                initMove.addTranslate(initialization_order[j], 2.0, 1.0, initSys.box());
-			}
-
-			// Now do simuation until within proper range
-			int targetNum = sys.totNMin()*init_frac[idx];
-			if (idx == sys.nSpecies() - 1) {
-				// To account for integer rounding
-				targetNum = sys.totNMin() - added;
-			}
-			added += targetNum;
-
-            sendMsg("Target number = "+numToStr(targetNum)+" for species "+numToStr(i+1));
-			int tmpCounter = 0, statusPrint = 10e6;
-			while (initSys.numSpecies[i] < targetNum) {
-				try {
-                    initMove.makeMove(initSys);
-                } catch (customException &ce) {
-                    std::string msg = ce.what();
-                    sendErr("Failed to create an initial configuration : "+msg);
-                    exit(SYS_FAILURE);
-                }
-				tmpCounter++;
-				if (tmpCounter%statusPrint == 0) {
-					tmpCounter = 0;
-                    sendMsg("Grew "+numToStr(initSys.numSpecies[i])+" atoms of type "+numToStr(i)+" so far");
+			simSystem initSys (doc["num_species"].GetInt(), doc["beta"].GetDouble()/100.0, sysBox, initMu, sysMax, sysMin, Mtot, duh, maxOrder, sys.getOP()); // beta =  1/T, so low beta to have high T
+			if (useKe) {
+				initSys.toggleKE();
+				if (initSys.addKECorrection() == false) {
+					throw customException ("Unable to set KE flag");
 				}
 			}
+
+	        // Add the same potentials
+	        setPairPotentials (initSys, doc);
+			setBarriers (initSys, doc);
+
+	        std::vector < int > initialization_order (sys.nSpecies(), 0), check_init (sys.nSpecies(), 0);
+	    	std::vector < double > init_frac (sys.nSpecies(), 1.0);
+	    	double sum = 0.0;
+	    	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+	    		initialization_order[i] = i;
+	    		if (i > 0) init_frac[i] = 0.0;
+	    		sum += init_frac[i];
+	    	}
+	    	if (doc.HasMember("init_order")) {
+	            if (!doc["init_order"].IsArray()) throw customException("\"init_order\" is not an array in "+filename);
+	            if (doc["init_order"].Size() != doc["num_species"].GetInt()) throw customException("\"init_order\" not specified for each species in "+filename);
+
+	    		for (rapidjson::SizeType i = 0; i < doc["init_order"].Size(); ++i) {
+	                if (!doc["init_order"][i].IsInt()) throw customException("\"init_order\" is not an integer for species "+numToStr(i+1)+" in "+filename);
+	    			initialization_order[i] = doc["init_order"][i].GetInt();
+	    			if (initialization_order[i] < 0 || initialization_order[i] >= sys.nSpecies()) {
+	                    throw customException ("Order of initialization goes out of bounds, should include 0 <= i < nSpec");
+	    			}
+	    			if (check_init[initialization_order[i]] != 0) {
+	                    throw customException ("Order of initialization repeats itself");
+	    			} else {
+	    				check_init[initialization_order[i]] = 1;
+	    			}
+	    		}
+	    	}
+	        if (doc.HasMember("init_frac")) {
+	            if (!doc["init_frac"].IsArray()) throw customException("\"init_frac\" is not an array in "+filename);
+	            if (doc["init_frac"].Size() != doc["num_species"].GetInt()) throw customException("\"init_frac\" not specified for each species in "+filename);
+
+	    		sum = 0.0;
+	    		for (rapidjson::SizeType i = 0; i < doc["init_frac"].Size(); ++i) {
+	                if (!doc["init_frac"][i].IsNumber()) throw customException("\"init_frac\" is not a number for species "+numToStr(i+1)+" in "+filename);
+	    			init_frac[i] = doc["init_frac"][i].GetDouble();
+	    			if (init_frac[i] < 0 || init_frac[i] >= 1.0) {
+	                    throw customException  ("Initialization fraction out of bounds");
+	    			}
+	    			sum += init_frac[i];
+	    		}
+	    	}
+	    	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+	    		init_frac[i] /= sum;
+	    	}
+
+			// Iteratively add each individual species, assume we want an equimolar mixture to start from
+			int added = 0;
+			for (unsigned int idx = 0; idx < sys.nSpecies(); ++idx) {
+				unsigned int i = initialization_order[idx];
+	            sendMsg("Initializing species "+numToStr(i)+" configurations");
+
+				// Insert this species i
+				moves initMove (initSys.getTotalM());
+	            initMove.addInsert(i, 1.0);
+
+				// Also add translation moves for all species present
+				for (unsigned int j = 0; j <= idx; ++j) {
+	                sendMsg("Added translation moves for initialization of species "+numToStr(initialization_order[j]));
+	                initMove.addTranslate(initialization_order[j], 2.0, 1.0, initSys.box());
+				}
+
+				// Now do simuation until within proper range
+				int targetNum = sys.totNMin()*init_frac[idx];
+				if (idx == sys.nSpecies() - 1) {
+					// To account for integer rounding
+					targetNum = sys.totNMin() - added;
+				}
+				added += targetNum;
+
+	            sendMsg("Target number = "+numToStr(targetNum)+" for species "+numToStr(i+1));
+				int tmpCounter = 0, statusPrint = 10e6;
+				while (initSys.numSpecies[i] < targetNum) {
+					try {
+	                    initMove.makeMove(initSys);
+	                } catch (customException &ce) {
+	                    std::string msg = ce.what();
+	                    sendErr("Failed to create an initial configuration : "+msg);
+	                    exit(SYS_FAILURE);
+	                }
+					tmpCounter++;
+					if (tmpCounter%statusPrint == 0) {
+						tmpCounter = 0;
+	                    sendMsg("Grew "+numToStr(initSys.numSpecies[i])+" atoms of type "+numToStr(i)+" so far");
+					}
+				}
+			}
+
+			// Print snapshot from Reading initial configuration
+			initSys.printSnapshot("auto-init.xyz", "auto-generated initial configuration");
+
+			// Read into sys
+			try {
+				sys.readConfig("auto-init.xyz");
+			} catch (customException &ce) {
+	            std::string msg = ce.what();
+	            throw customException ("Failed to read auto-generated initialization file : "+msg);
+	        }
+		} else if (sys.getOP() == "N_{1}") {
+			sendMsg("Automatically generating the initial configuration");
+
+			// Have to generate initial configuration manually - start with mu = INF
+	        std::vector < double > initMu (doc["num_species"].GetInt(), 1.0e2);
+
+			simSystem initSys (doc["num_species"].GetInt(), doc["beta"].GetDouble()/100.0, sysBox, initMu, sysMax, sysMin, Mtot, duh, maxOrder, sys.getOP()); // beta =  1/T, so low beta to have high T
+			if (useKe) {
+				initSys.toggleKE();
+				if (initSys.addKECorrection() == false) {
+					throw customException ("Unable to set KE flag");
+				}
+			}
+
+	        // Add the same potentials
+	        setPairPotentials (initSys, doc);
+			setBarriers (initSys, doc);
+
+	        std::vector < int > initialization_order (sys.nSpecies(), 0), check_init (sys.nSpecies(), 0);
+	    	for (unsigned int i = 0; i < sys.nSpecies(); ++i) {
+	    		initialization_order[i] = i;
+	    	}
+	    	if (doc.HasMember("init_order")) {
+	            if (!doc["init_order"].IsArray()) throw customException("\"init_order\" is not an array in "+filename);
+	            if (doc["init_order"].Size() != doc["num_species"].GetInt()) throw customException("\"init_order\" not specified for each species in "+filename);
+
+	    		for (rapidjson::SizeType i = 0; i < doc["init_order"].Size(); ++i) {
+	                if (!doc["init_order"][i].IsInt()) throw customException("\"init_order\" is not an integer for species "+numToStr(i+1)+" in "+filename);
+	    			initialization_order[i] = doc["init_order"][i].GetInt();
+	    			if (initialization_order[i] < 0 || initialization_order[i] >= sys.nSpecies()) {
+	                    throw customException ("Order of initialization goes out of bounds, should include 0 <= i < nSpec");
+	    			}
+	    			if (check_init[initialization_order[i]] != 0) {
+	                    throw customException ("Order of initialization repeats itself");
+	    			} else {
+	    				check_init[initialization_order[i]] = 1;
+	    			}
+	    		}
+	    	}
+	        if (doc.HasMember("init_frac")) {
+	            throw customException("\"init_frac\" should not be specified when order parameter = N_{1}, system will be initialized to minimum number of each components subject to window constraints");
+	    	}
+
+			// Iteratively add each individual species, assume we want an equimolar mixture to start from
+			for (unsigned int idx = 0; idx < sys.nSpecies(); ++idx) {
+				unsigned int i = initialization_order[idx];
+	            sendMsg("Initializing species "+numToStr(i)+" configurations");
+
+				// Insert this species i
+				moves initMove (initSys.getTotalM());
+	            initMove.addInsert(i, 1.0);
+
+				// Also add translation moves for all species present
+				for (unsigned int j = 0; j <= idx; ++j) {
+	                sendMsg("Added translation moves for initialization of species "+numToStr(initialization_order[j]));
+	                initMove.addTranslate(initialization_order[j], 2.0, 1.0, initSys.box());
+				}
+
+				// Now do simuation until within proper range
+				int targetNum = sys.minSpecies(i);
+
+	            sendMsg("Target number = "+numToStr(targetNum)+" for species "+numToStr(i+1));
+				int tmpCounter = 0, statusPrint = 10e6;
+				while (initSys.numSpecies[i] < targetNum) {
+					try {
+	                    initMove.makeMove(initSys);
+	                } catch (customException &ce) {
+	                    std::string msg = ce.what();
+	                    sendErr("Failed to create an initial configuration : "+msg);
+	                    exit(SYS_FAILURE);
+	                }
+					tmpCounter++;
+					if (tmpCounter%statusPrint == 0) {
+						tmpCounter = 0;
+	                    sendMsg("Grew "+numToStr(initSys.numSpecies[i])+" atoms of type "+numToStr(i)+" so far");
+					}
+				}
+			}
+
+			// Print snapshot from Reading initial configuration
+			initSys.printSnapshot("auto-init.xyz", "auto-generated initial configuration");
+
+			// Read into sys
+			try {
+				sys.readConfig("auto-init.xyz");
+			} catch (customException &ce) {
+	            std::string msg = ce.what();
+	            throw customException ("Failed to read auto-generated initialization file : "+msg);
+	        }
 		}
-
-		// Print snapshot from Reading initial configuration
-		initSys.printSnapshot("auto-init.xyz", "auto-generated initial configuration");
-
-		// Read into sys
-		try {
-			sys.readConfig("auto-init.xyz");
-		} catch (customException &ce) {
-            std::string msg = ce.what();
-            throw customException ("Failed to read auto-generated initialization file : "+msg);
-        }
    	}
 }
 

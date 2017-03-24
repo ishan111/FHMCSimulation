@@ -84,8 +84,8 @@ void tmmc::dumpVisited (const std::string fileName) {
     	throw customException ("Unable to write TMMC visited states matrix to "+name);
     }
     of << "# TMMC visited states counter in single row (vectorized) notation." << std::endl;
-    of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-    of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+    of << "# species_upper_bound: " << Nmax_ << std::endl;
+    of << "# species_lower_bound: " << Nmin_ << std::endl;
     double V = box_[0]*box_[1]*box_[2];
     of << "# volume: " << std::setprecision(15) << V << std::endl;
     for (long long int i = 0; i < HC_.size(); ++i) {
@@ -193,7 +193,7 @@ const long long int tmmc::getTransitionAddress (const int Nstart, const int Nend
 /*!
  * Get the address in lnPI that corresponds to a given macrostate.
  *
- * \param [in] Nval Number of total atoms
+ * \param [in] Nval Number of atoms
  * \param [in] Mval Value of expanded ensemble state
  */
 const long long int tmmc::getAddress (const int Nval, const int Mval) {
@@ -206,8 +206,8 @@ const long long int tmmc::getAddress (const int Nval, const int Mval) {
 /*!
  * Update the collection matrix. This records the number of times a transition probability is measured with a finite, non-zero probability.  This way, when checkFullyVisited() returns true, all the lnPI values can be calculated since all transition probabilities will be finite.  Otherwise, transitions could be "sampled" but if the dU = inf, then the collection matrix is updated with a value of 0.  This could theoretically remain zero until the end of a sweep which is later caught when it creates a problem for calculating lnPI in calculatePI().
  *
- * \param [in] Nstart Total number of atoms initially (before MC move)
- * \param [in] Nend Total number of atoms after the MC move
+ * \param [in] Nstart Number of atoms initially (before MC move)
+ * \param [in] Nend Number of atoms after the MC move
  * \param [in] Mstart Initial value of expanded ensemble state
  * \param [in] Mend Final value of expanded ensemble state
  * \param [in] pa Unbiased Metropolis criterion for making a MC move (i.e. pa = min(1, exp(...)))
@@ -307,8 +307,8 @@ void tmmc::print (const std::string fileName, bool printC, bool printHC) {
 			throw customException ("Unable to write TMMC collection matrix to "+name);
 		}
 		of << "# Collection matrix in single row (vectorized) notation." << std::endl;
-		of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-		of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+		of << "# species_upper_bound: " << Nmax_ << std::endl;
+		of << "# species_lower_bound: " << Nmin_ << std::endl;
 		double V = box_[0]*box_[1]*box_[2];
 		of << "# volume: " << std::setprecision(15) << V << std::endl;
 		for (long long int i = 0; i < C_.size(); ++i) {
@@ -331,8 +331,8 @@ void tmmc::print (const std::string fileName, bool printC, bool printHC) {
 		throw customException ("Unable to write TMMC lnPI to "+name);
 	}
 	of << "# lnPI (bias) matrix in single row (vectorized) notation." << std::endl;
-	of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-	of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+	of << "# species_upper_bound: " << Nmax_ << std::endl;
+	of << "# species_lower_bound: " << Nmin_ << std::endl;
 	double V = box_[0]*box_[1]*box_[2];
 	of << "# volume: " << std::setprecision(15) << V << std::endl;
 	for (long long int i = 0; i < lnPI_.size(); i += Mtot_) {
@@ -397,8 +397,8 @@ void tmmc::readC (const std::string fileName) {
  * \param [in] lnF Factor by which the estimate of the density of states in updated each time it is visited.
  * \param [in] g Factor by which lnF is reduced (multiplied) once "flatness" has been achieved.
  * \param [in] s Factor by which the min(H) must be within the mean of H to be considered "flat", e.g. 0.8 --> min is within 20% error of mean
- * \param [in] Nmax Upper bound for total number of particles.
- * \param [in] Nmin Lower bound for total number of particles.
+ * \param [in] Nmax Upper bound for number of particles.
+ * \param [in] Nmin Lower bound for number of particles.
  * \param [in] Mtot Total number of expanded ensemble states in a system.
  * \param [in] box Vector of simulation box size.
  */
@@ -465,7 +465,7 @@ wala::wala (const double lnF, const double g, const double s, const int Nmax, co
 /*!
  * For multidimensional Wang-Landau biasing, get the 1D coordinate of the macrostate distribution estimate (bias) for multidimensional data.
  *
- * \param [in] Nval Total number of atoms in the system
+ * \param [in] Nval Number of atoms in the system
  * \param [in] Mval Current value of the expanded ensemble state of the system
  */
 const long long int wala::getAddress (const int Nval, const int Mval) {
@@ -478,7 +478,7 @@ const long long int wala::getAddress (const int Nval, const int Mval) {
 /*!
  * Update the estimate of the macrostate distribution.
  *
- * \param [in] Nval Total current number of atoms in the system
+ * \param [in] Nval Current number of atoms in the system
  * \param [in] Mval Current value of the expanded ensemble state of the system
  */
 void wala::update (const int Nval, const int Mval) {
@@ -536,8 +536,8 @@ void wala::print (const std::string fileName, bool printH) {
 			throw customException ("Unable to write Wang-Landau visited states histogram to "+name);
 		}
 		of << "# Visited states histogram in single row (vectorized) notation." << std::endl;
-		of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-		of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+		of << "# species_upper_bound: " << Nmax_ << std::endl;
+		of << "# species_lower_bound: " << Nmin_ << std::endl;
 		double V = box_[0]*box_[1]*box_[2];
 		of << "# volume: " << std::setprecision(15) << V << std::endl;
 		for (long long int i = 0; i < H_.size(); ++i) {
@@ -554,8 +554,8 @@ void wala::print (const std::string fileName, bool printH) {
 		throw customException ("Unable to write Wang-Landau lnPI histogram to "+name);
 	}
 	of << "# lnPI (bias) matrix in single row (vectorized) notation." << std::endl;
-	of << "# species_total_upper_bound: " << Nmax_ << std::endl;
-	of << "# species_total_lower_bound: " << Nmin_ << std::endl;
+	of << "# species_upper_bound: " << Nmax_ << std::endl;
+	of << "# species_lower_bound: " << Nmin_ << std::endl;
 	double V = box_[0]*box_[1]*box_[2];
 	of << "# volume: " << std::setprecision(15) << V << std::endl;
 	for (long long int i = 0; i < lnPI_.size(); ++i) {

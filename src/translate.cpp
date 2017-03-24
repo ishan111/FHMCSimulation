@@ -24,10 +24,22 @@ int translateParticle::make (simSystem &sys) {
 	// Updates to biasing functions must be done even if at bounds
 	if (earlyReject) {
         if (sys.useWALA) {
-        	sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+			if (sys.getOP() == "N_{tot}") {
+				sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+			} else if (sys.getOP() == "N_{1}") {
+				sys.getWALABias()->update(sys.numSpecies[0], sys.getCurrentM());
+			} else {
+				throw customException ("Unknown order parameter, cannot perform translation");
+			}
         }
         if (sys.useTMMC) {
-        	sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
+			if (sys.getOP() == "N_{tot}") {
+				sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), 0.0);
+			} else if (sys.getOP() == "N_{1}") {
+				sys.tmmcBias->updateC (sys.numSpecies[0], sys.numSpecies[0], sys.getCurrentM(), sys.getCurrentM(), 0.0);
+			} else {
+				throw customException ("Unknown order parameter, cannot perform translation");
+			}
         }
         return MOVE_FAILURE;
     }
@@ -154,11 +166,20 @@ int translateParticle::make (simSystem &sys) {
 	if (newEnergy < NUM_INFINITY) {
 		p_u = exp(-sys.beta()*(newEnergy - oldEnergy));
 	}
-	double bias = calculateBias(sys, sys.getTotN(), sys.getCurrentM()); // N_tot doesn't change throughout this move
+
+	int nFinal = -1;
+	if (sys.getOP() == "N_{tot}") {
+		nFinal = sys.getTotN();
+	} else if (sys.getOP() == "N_{1}") {
+		nFinal = sys.numSpecies[0];
+	} else {
+		throw customException ("Unrecognized order parameter, cannot perform translation");
+	}
+	double bias = calculateBias(sys, nFinal, sys.getCurrentM()); // N_tot doesn't change throughout this move
 
 	// TMMC gets updated the same way, regardless of whether the move gets accepted
     if (sys.useTMMC) {
-    	sys.tmmcBias->updateC (sys.getTotN(), sys.getTotN(), sys.getCurrentM(), sys.getCurrentM(), std::min(1.0, p_u)); // Since the total number of atoms isn't changing, can use getTotN() as both initial and final states
+    	sys.tmmcBias->updateC (nFinal, nFinal, sys.getCurrentM(), sys.getCurrentM(), std::min(1.0, p_u)); // Since the total number of atoms isn't changing, can use getTotN() as both initial and final states
     }
 
 	if (rng (&RNG_SEED) < p_u*bias) {
@@ -172,7 +193,13 @@ int translateParticle::make (simSystem &sys) {
 
 		// Update Wang-Landau bias, if used
 		if (sys.useWALA) {
-			sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+			if (sys.getOP() == "N_{tot}") {
+				sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+			} else if (sys.getOP() == "N_{1}") {
+				sys.getWALABias()->update(sys.numSpecies[0], sys.getCurrentM());
+			} else {
+				throw customException ("Unrecognized order parameter, cannot perform translation");
+			}
 		}
 	    return MOVE_SUCCESS;
     }
@@ -184,7 +211,13 @@ int translateParticle::make (simSystem &sys) {
 
     // Update Wang-Landau bias (even if moved failed), if used
    	if (sys.useWALA) {
-   		sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+		if (sys.getOP() == "N_{tot}") {
+			sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+		} else if (sys.getOP() == "N_{1}") {
+			sys.getWALABias()->update(sys.numSpecies[0], sys.getCurrentM());
+		} else {
+			throw customException ("Unrecognized order parameter, cannot perform translation");
+		}
     }
 	return MOVE_FAILURE;
 }

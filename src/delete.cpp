@@ -19,25 +19,44 @@ int deleteParticle::make (simSystem &sys) {
     }
 
     // Also check if at global bound on total number of particles
-    if (sys.getTotN() < sys.totNMin()) {
-    	earlyReject = true;
-    }
-    if (sys.getTotN() == sys.totNMin() && sys.getCurrentM() == 0) { // Move class guarantees only operating on the correct species already
-    	earlyReject = true;
-    }
+	if (sys.getTotN() < sys.totNMin()) {
+		earlyReject = true;
+	}
+	if (sys.getTotN() == sys.totNMin() && sys.getCurrentM() == 0) { // Move class guarantees only operating on the correct species already
+		earlyReject = true;
+	}
 
 	// Updates to biasing functions must be done even if at bounds
     if (earlyReject) {
     	if (sys.useWALA) {
-        	sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+			if (sys.getOP() == "N_{tot}") {
+				sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+			} else if (sys.getOP() == "N_{1}") {
+				sys.getWALABias()->update(sys.numSpecies[0], sys.getCurrentM());
+			} else {
+				throw customException ("Unknown order parameter, cannot perform deletion");
+			}
     	}
         if (sys.useTMMC) {
-        	int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() - 1;
-        	if (sys.getCurrentM() == 0) {
-            	nTotFinal--;
-        		mFinal = sys.getTotalM() - 1;
-            }
-        	sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, sys.getCurrentM(), mFinal, 0.0);
+			if (sys.getOP() == "N_{tot}") {
+				int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() - 1;
+	        	if (sys.getCurrentM() == 0) {
+	            	nTotFinal--;
+	        		mFinal = sys.getTotalM() - 1;
+	            }
+	        	sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, sys.getCurrentM(), mFinal, 0.0);
+			} else if (sys.getOP() == "N_{1}") {
+				int nFinal = sys.numSpecies[0], mFinal = sys.getCurrentM() - 1;
+	        	if (sys.getCurrentM() == 0) {
+	        		mFinal = sys.getTotalM() - 1;
+					if (typeIndex_ == 0) { // If operating on species 1, then would be deleting one
+						nFinal--;
+					}
+	            }
+	        	sys.tmmcBias->updateC (sys.numSpecies[0], nFinal, sys.getCurrentM(), mFinal, 0.0);
+			} else {
+				throw customException ("Unknown order parameter, cannot perform deletion");
+			}
     	}
         return MOVE_FAILURE;
     }
@@ -139,19 +158,44 @@ int deleteParticle::make (simSystem &sys) {
         p_u = pow(nHigh/V, dN)*exp(sys.beta()*(-sys.mu(typeIndex_)*dN - delEnergy));
     }
 
-    int nTotFinal = sys.getTotN(), mFinal = sys.getCurrentM() - 1;
-    if (sys.getCurrentM() == 0) {
-    	nTotFinal--;
-    	mFinal = sys.getTotalM() - 1;
-    	if (sys.addKECorrection()) {
-    		delEnergy -= 1.5/sys.beta();
-    	}
-    }
-    double bias = calculateBias(sys, nTotFinal, mFinal);
+	int nFinal = -1, mFinal = -1;
+	if (sys.getOP() == "N_{tot}") {
+		nFinal = sys.getTotN();
+		mFinal = sys.getCurrentM() - 1;
+	    if (sys.getCurrentM() == 0) {
+	    	nFinal--;
+	    	mFinal = sys.getTotalM() - 1;
+	    	if (sys.addKECorrection()) {
+	    		delEnergy -= 1.5/sys.beta();
+	    	}
+	    }
+	} else if (sys.getOP() == "N_{1}") {
+		nFinal = sys.numSpecies[0];
+		mFinal = sys.getCurrentM() - 1;
+	    if (sys.getCurrentM() == 0) {
+	    	mFinal = sys.getTotalM() - 1;
+	    	if (sys.addKECorrection()) {
+	    		delEnergy -= 1.5/sys.beta();
+	    	}
+			if (typeIndex_ == 0) {
+				nFinal--;
+			}
+	    }
+	} else {
+		throw customException ("Unrecognized order parameter, cannot perform deletion");
+	}
+
+	double bias = calculateBias(sys, nFinal, mFinal);
 
     // TMMC gets updated the same way, regardless of whether the move gets accepted
     if (sys.useTMMC) {
-    	sys.tmmcBias->updateC (sys.getTotN(), nTotFinal, sys.getCurrentM(), mFinal, std::min(1.0, p_u)); // Also has to be function of N and M now
+		if (sys.getOP() == "N_{tot}") {
+			sys.tmmcBias->updateC (sys.getTotN(), nFinal, sys.getCurrentM(), mFinal, std::min(1.0, p_u)); // Also has to be function of N and M now
+		} else if (sys.getOP() == "N_{1}") {
+			sys.tmmcBias->updateC (sys.numSpecies[0], nFinal, sys.getCurrentM(), mFinal, std::min(1.0, p_u)); // Also has to be function of N and M now
+		} else {
+			throw customException ("Unrecognized order parameter, cannot perform deletion");
+		}
     }
 
 	// Metropolis criterion
@@ -174,7 +218,13 @@ int deleteParticle::make (simSystem &sys) {
 
 		// Update Wang-Landau bias, if used
 		if (sys.useWALA) {
-			sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+			if (sys.getOP() == "N_{tot}") {
+				sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+			} else if (sys.getOP() == "N_{1}") {
+				sys.getWALABias()->update(sys.numSpecies[0], sys.getCurrentM());
+			} else {
+				throw customException ("Unrecognized order parameter, cannot perform deletion");
+			}
 		}
 
         return MOVE_SUCCESS;
@@ -182,7 +232,13 @@ int deleteParticle::make (simSystem &sys) {
 
 	// Update Wang-Landau bias (even if moved failed), if used
 	if (sys.useWALA) {
-		sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+		if (sys.getOP() == "N_{tot}") {
+			sys.getWALABias()->update(sys.getTotN(), sys.getCurrentM());
+		} else if (sys.getOP() == "N_{1}") {
+			sys.getWALABias()->update(sys.numSpecies[0], sys.getCurrentM());
+		} else {
+			throw customException ("Unrecognized order parameter, cannot perform deletion");
+		}
 	}
 	return MOVE_FAILURE;
 }

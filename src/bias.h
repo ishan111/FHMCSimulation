@@ -40,8 +40,8 @@ public:
 	const std::vector < double > getHC () { return HC_; }
 
 private:
-	int Nmax_; //!< Maximum number of total species in a simulation
-	int Nmin_; //!< Minimum number of total species in a simulation
+	int Nmax_; //!< Maximum number of species in a simulation
+	int Nmin_; //!< Minimum number of species in a simulation
 	int Mtot_; //!< Total number of expanded ensemble states in a simulation
 	long long int nSweeps_; //!< Number of sweeps that have been completed
 	long long int tmmcSweepSize_; //!< Number of times the each point in the collection matrix must be visited for a "sweep" to be considered finished
@@ -76,8 +76,8 @@ private:
 	double lnF_; //!< Factor to add to the macrostate density matrix each time a state is visited
 	double g_; //!< Factor by which lnF_ is occasionally reduced by as the simulation progresses
 	double s_; //!< Ratio between minimum of the visited states histogram and its mean which determines "flatness"
-	long long int Nmax_; //!< Maximum total number of atoms in a simulation
-	long long int Nmin_; //!< Minimum total number of atoms in a simulation
+	long long int Nmax_; //!< Maximum number of atoms in a simulation
+	long long int Nmin_; //!< Minimum number of atoms in a simulation
 	std::vector <double> H_; //!< Histogram of visited states
 	std::vector <double> lnPI_; //!< Estimated (natural logarithm of) macrostate density used as bias
 	std::vector <double> box_; //!< Size of the simulation box this is originating from
