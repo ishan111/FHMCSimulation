@@ -38,6 +38,7 @@ public:
 	void deleteAtom (const int typeIndex, const int atomIndex, bool override=false);
 	void translateAtom (const int typeIndex, const int atomIndex, std::vector<double> oldPos);
    	void readConfig (std::string filename);
+	void loadTemplate (const int typeIndex, const std::string filename);
 
 	void setEUB (const std::vector < double > eub) { energyHistogram_ub_ = eub; } //!< Assign energy upper bound from restart
 	void setELB (const std::vector < double > elb) { energyHistogram_lb_ = elb; } //!< Assign energy lower bound from restart
@@ -120,6 +121,8 @@ public:
 	wala* getWALABias (); //!< Return pointer to the Wang-Landau bias
 	atom* getFractionalAtom () { return fractionalAtom_; } //!< Returns a pointer the atom in the system that is currently only fractionally inserted/deleted
 
+	atom makeFromTemplate (const int typeIndex);
+
 	tmmc* tmmcBias; //!< TMMC biasing function
 	wala* wlBias; //!< WALA biasing function
 
@@ -157,6 +160,8 @@ private:
 	std::vector < double > mu_; //!< Chemical potential of each species
 	std::vector < double > energyHistogram_lb_; //!< Lowest energy observed for each Ntot, is adjusted to become lb for energyHistogram_
 	std::vector < double > energyHistogram_ub_; //!< Highest energy observed for each Ntot, is adjusted in energyHistogram_
+
+	std::vector < atom > templates_; //!< Template for each species
 
 	std::vector < std::vector < bool > > ppotSet_; //!< Matrix of pair potentials between type i and j
 	std::vector < std::vector < bool > > useCellList_;  //!< Matrix of whether or not to use cell lists to calculate potentials for pair type (i,j)

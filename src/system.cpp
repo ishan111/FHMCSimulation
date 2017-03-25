@@ -1,6 +1,85 @@
 #include "system.h"
 
 /*!
+ * Load template atom from file.
+ * Template should be a JSON file containing "nCenters" (int) and a list of vecToCenters (3D each) called "vecToCenters" labelled from 1 to nCenters (as strings).
+ *
+ * \param [in] filename
+ */
+ void simSystem::loadTemplate (const int typeIndex, const std::string filename) {
+ 	if (typeIndex < 0 || typeIndex >= nSpecies_) {
+		throw customException ("Invalid type index ("+std::to_string(typeIndex)+"), cannot load template from "+filename);
+	}
+
+    rapidjson::Document doc;
+    try {
+        parseJson (filename, doc);
+    } catch (std::exception &ex) {
+        throw customException (ex.what());
+    }
+
+    // Check JSON contains correct members
+    if (!doc.HasMember("nCenters")) throw customException("\"nCenters\" is not specified in "+filename);
+    if (!doc.HasMember("vecToCenters")) throw customException("\"vecToCenters\" is not specified in "+filename);
+
+    int nCenters = 0;
+    if (!doc["nCenters"].IsInt()) {
+        throw customException("\"nCenters\" is not an integer in "+filename);
+    } else {
+        nCenters = doc["nCenters"].GetInt();
+    }
+
+    std::vector < double > dummy (3, 0.0);
+    std::vector < std::vector < double > > vecToCenters (nCenters, dummy);
+
+    for (unsigned int i = 0; i < nCenters; ++i) {
+        if (!doc["vecToCenters"].HasMember(std::to_string(i+1))) {
+            throw customException("\"vecToCenters\" does not specify vector for center number "+std::to_string(i+1)+" in "+filename);
+        } else {
+            if (doc["vecToCenters"][std::to_string(i+1)].Size() != 3) throw customException("\"vecToCenters\" for center "+std::to_string(i+1)+" is not 3D in "+filename);
+
+            for (unsigned int j = 0; j < 3; ++j) {
+                vecToCenters[i][j] = doc["vecToCenters"][std::to_string(i+1)][j].GetDouble();
+            }
+        }
+    }
+
+    // Create empty templates up to typeIndex if they don't already exists
+
+    // Instantiate template
+
+
+ }
+
+ /*!
+  * Load template atom from file, then place randomly in box with random orientation.
+  *
+  * \param [in] filename
+  *
+  * \return New, randomly placed and oriented atom
+  */
+  atom simSystem::makeFromTemplate (const int typeIndex) {
+  	if (typeIndex < 0 || typeIndex >= nSpecies_) {
+ 		throw customException ("Invalid type index ("+std::to_string(typeIndex)+"), cannot make template");
+ 	}
+
+ 	atom newAtom = templates_[typeIndex]; // Copy constructor creates a new instance
+
+	// Place randomly inside the box by default
+	for (unsigned int i = 0; i < box_.size(); ++i) {
+		newAtom.pos[i] = rng (&RNG_SEED) * box_[i];
+	}
+
+	// Rotate randomly if the atom has centers
+	if (newAtom.vecToCenters.begin() != newAtom.vecToCenters.end()) {
+		quaternion q; // A random orientation is picked on initialization
+		newAtom.rotateCenters(q);
+	}
+
+	return newAtom;
+  }
+
+/*!
  * Increase the expanded ensemble state of the system by 1.  Accounts for the periodicity of [0, M)
  */
 void simSystem::incrementMState () {
