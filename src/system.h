@@ -112,6 +112,8 @@ public:
 	long double crossoverTotalStepCounter; //!< Tracks the total MC steps taken during crossover stage
 	long double tmmcTotalStepCounter; //!< Tracks the total MC steps taken during TMMC stage
 
+	const histogram getExtensiveMom_ () { return extensive_moments_; } //!< Return the extensive moments histogram directly
+
 	const std::vector < double > extMomCounter () { return extensive_moments_.getCounter(); } //!< Get counter for extensive moments needed for restarting system from a checkpoint
 	const std::vector < double > box () { return box_; } //!< Return the system box dimensions
 	std::vector < double > getELB () { return energyHistogram_lb_; } //!< Returns current tally of energy min at each Ntot for checkpointing
@@ -174,6 +176,6 @@ private:
 	histogram extensive_moments_; //<! N_i^jN_k^mU^p[Ntot] matrix
 };
 
-const double calculateBias (simSystem &sys, const int nTotFinal, const int mFinal);
+const double calculateBias (simSystem &sys, const int opFinal, const int mFinal);
 
 #endif

@@ -12239,3 +12239,437 @@ TEST (testNone, cleanUp) {
 	res = system("rm extMom_test.dat");
 	EXPECT_EQ (res, 0);
 }
+
+/* Check the System with N_1 as order parameter */
+class InitializeN1System : public ::testing::Test {
+protected:
+	unsigned int nSpecies;
+	double beta, tol;
+	std::vector < double > box, mu;
+	std::vector < int > maxSpecies, minSpecies;
+	int tmmcSweepSize, order;
+	std::string op;
+
+	virtual void SetUp() {
+		nSpecies = 3;
+		order = 3;
+		maxSpecies.resize(nSpecies), mu.resize(nSpecies), box.resize(3), minSpecies.resize(nSpecies);
+		tol = 1.0e-9;
+		beta = 1.234;
+		tmmcSweepSize = 1;
+		for (unsigned int i = 0; i < nSpecies; ++i) {
+			box[i] = 2*i+1.0;
+			mu[i] = 2*i+2.0;
+			maxSpecies[i] = 10*i+10; // 10, 20, 30
+			minSpecies[i] = 0;
+		}
+		op = "N_{1}";
+	}
+};
+
+TEST_F (InitializeN1System, nSpecies) {
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1, 5.0, order, op);
+	EXPECT_EQ (mysys.nSpecies(), nSpecies);
+	EXPECT_EQ (mysys.totNMax(), 60);
+	EXPECT_EQ (mysys.totNMin(), 0);
+	EXPECT_EQ (mysys.getOP(), "N_{1}");
+
+	EXPECT_EQ (mysys.maxSpecies(0), 10);
+	EXPECT_EQ (mysys.maxSpecies(1), 20);
+	EXPECT_EQ (mysys.maxSpecies(2), 30);
+
+	EXPECT_EQ (mysys.minSpecies(0), 0);
+	EXPECT_EQ (mysys.minSpecies(1), 0);
+	EXPECT_EQ (mysys.minSpecies(2), 0);
+
+	std::vector < double > ctr = mysys.extMomCounter(); // should have a counter for each of the 11 possible states [0-10, inclusive]
+	int isize = nSpecies*(order+1)*nSpecies*(order+1)*(order+1)*11;
+	EXPECT_EQ (ctr.size(), isize);
+}
+
+TEST_F (InitializeN1System, fillMom) {
+	simSystem mysys (nSpecies, beta, box, mu, maxSpecies, minSpecies, 1, 5.0, order, op);
+
+	// Some arbitrary number of each species
+	mysys.numSpecies[0] = 3;
+	mysys.numSpecies[1] = 0;
+	mysys.numSpecies[2] = 2;
+
+	mysys.recordExtMoments();
+	histogram h = mysys.getExtensiveMom_();
+	std::vector < double > raw = h.getRawHistogram ();
+
+	std::vector < double > add (6, 0);
+	add[0] = 0;
+	add[1] = 1;
+	add[2] = 0;
+	add[3] = 0;
+	add[4] = 0;
+	add[5] = mysys.numSpecies[0];
+	long long unsigned int loc = h.getAddress(add);
+	EXPECT_EQ (raw[loc], mysys.numSpecies[0]); // N_1^1*N_1^0*U^0 at N1 = 3
+
+	add[0] = 0;
+	add[1] = 1;
+	add[2] = 0;
+	add[3] = 1;
+	add[4] = 0;
+	add[5] = mysys.numSpecies[0];
+	loc = h.getAddress(add);
+	EXPECT_EQ (raw[loc], mysys.numSpecies[0]*mysys.numSpecies[0]); // N_1^1*N_1^1*U^0 at N1 = 3
+
+	add[0] = 0;
+	add[1] = 1;
+	add[2] = 1;
+	add[3] = 1;
+	add[4] = 0;
+	add[5] = mysys.numSpecies[0];
+	loc = h.getAddress(add);
+	EXPECT_EQ (raw[loc], mysys.numSpecies[0]*mysys.numSpecies[1]); // N_1^1*N_2^1*U^0 at N1 = 3
+
+	add[0] = 0;
+	add[1] = 1;
+	add[2] = 2;
+	add[3] = 1;
+	add[4] = 0;
+	add[5] = mysys.numSpecies[0];
+	loc = h.getAddress(add);
+	EXPECT_EQ (raw[loc], mysys.numSpecies[0]*mysys.numSpecies[2]); // N_1^1*N_3^1*U^0 at N1 = 3
+
+	add[0] = 0;
+	add[1] = 2;
+	add[2] = 2;
+	add[3] = 2;
+	add[4] = 0;
+	add[5] = mysys.numSpecies[0];
+	loc = h.getAddress(add);
+	EXPECT_EQ (raw[loc], mysys.numSpecies[0]*mysys.numSpecies[2]*mysys.numSpecies[0]*mysys.numSpecies[2]); // N_1^2*N_3^2*U^0 at N1 = 3
+
+	add[0] = 0;
+	add[1] = 1;
+	add[2] = 2;
+	add[3] = 1;
+	add[4] = 0;
+	add[5] = mysys.numSpecies[0]+1;
+	loc = h.getAddress(add);
+	EXPECT_EQ (raw[loc], 0); // N_1^1*N_3^1*U^0 at N1 = 4 (not recorded, so should be 0)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class testComputeBiasN1 : public ::testing::Test {
+protected:
+	double s, g, lnF, pu;
+	std::vector < int > specNmax, specNmin, bounds;
+	int tmmcSweepSize;
+
+	virtual void SetUp() {
+		pu = 0.123;
+		s = 0.8;
+		g = 0.5;
+		lnF = 1.0;
+		tmmcSweepSize = 1;
+		specNmin.resize(2, 0);
+		specNmax.resize(2, 3);
+		bounds.resize(2, 0);
+		bounds[1] = 2;
+	}
+};
+
+TEST_F (testComputeBiasN1, setCalculateWALABias) {
+	std::vector < double > ib (3, 10), mu (2, 1.0);
+	simSystem mysys (2, 1.0, ib, mu, specNmax, specNmin, 1, 5.0, 2, "N_{1}");
+	mysys.setN1Bounds (bounds);
+	mysys.startWALA (1.0, 0.5, 0.8, 1);
+	EXPECT_TRUE (mysys.useWALA);
+
+	// some simple updates
+	mysys.getWALABias()->update(bounds[0], 0);
+	mysys.getWALABias()->update(bounds[0]+1, 0);
+	mysys.getWALABias()->update(bounds[0]+1, 0);
+	mysys.getWALABias()->update(bounds[0]+2, 0);
+
+	// WALA bias
+	atom a1;
+
+	// 0 atoms --> 1 atom of species 1
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 0) - exp(-1)) < 1.0e-9);
+	mysys.insertAtom(0, &a1);
+
+	// 1 atom --> 2 atoms (of species 1)
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - exp(1)) < 1.0e-9);
+
+	// delete, then move to 1 atom total --> +1 atom of another type
+	mysys.deleteAtom (0, 0);
+	mysys.insertAtom(1, &a1);
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 0) - exp(-1)) < 1.0e-9); // should be same result as when N1 = 0
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - exp(0)) < 1.0e-9); // should be same result as when N1 = 0 - cannot actually reach this final state (+2), but just for calculation purposes, check
+}
+
+TEST_F (testComputeBiasN1, setCalculateTMMCBias) {
+	std::vector < double > ib (3, 10), mu (2, 1.0);
+	simSystem mysys (2, 1.0, ib, mu, specNmax, specNmin, 1, 1.0, 2, "N_{1}");
+	mysys.setN1Bounds (bounds);
+	mysys.startTMMC (tmmcSweepSize, 1);
+	EXPECT_TRUE (mysys.useTMMC);
+
+	// some simple updates
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0], 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0], bounds[0]+1, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+1, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0]+2, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+1, bounds[0], 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+2, bounds[0]+2, 0, 0, std::min(1.0, pu));
+	mysys.getTMMCBias()->updateC(bounds[0]+2, bounds[0]+1, 0, 0, std::min(1.0, pu));
+	EXPECT_TRUE (mysys.getTMMCBias()->checkFullyVisited());
+	mysys.getTMMCBias()->calculatePI();
+
+	// TMMC bias
+	atom a1;
+
+	// 0 atoms --> 1 atom
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 0) - 2.0/3.0) < 1.0e-9); // 0 assigned as a references
+	mysys.insertAtom(0, &a1);
+
+	// 1 atom --> 2 atoms (same type)
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+2, 0) - 3.0/2.0) < 1.0e-9);
+
+	// delete, then move to 1 atom total --> +1 atom of another type
+	mysys.deleteAtom (0, 0);
+	mysys.insertAtom(1, &a1);
+	EXPECT_TRUE (fabs(calculateBias (mysys, bounds[0]+1, 0) - 2.0/3.0) < 1.0e-9); // should be same result as initially
+}
+
+TEST_F (testComputeBiasN1, testInSituWALASingleComponent) {
+	std::vector < double > mu (1, std::numeric_limits<double>::max()); // force an insertion to an empty system
+	std::vector < double > ib (3, 10);
+	std::vector <int> nmax (1, 3), nmin (1, 0);
+	lnF = 3.1; // something random this time
+	simSystem mysys (1, 1.0, ib, mu, nmax, nmin, 1, 10.0, 2, "N_{1}");
+	mysys.startWALA (lnF, 0.5, 0.8, 1);
+	EXPECT_TRUE (mysys.useWALA);
+
+	std::vector < double > params (2, 1.0);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
+
+	moves usedMoves;
+	usedMoves.addInsert(0, 1.0);
+
+	// will insert
+	usedMoves.makeMove(mysys);
+
+	// check WALA properties - should have incremented where the system ENDED (at N = 1)
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(1) - -lnF) < 1.0e-9);
+
+	// all the rest should be 0
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(0) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(2) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(3) - 0) < 1.0e-9);
+}
+
+TEST_F (testComputeBiasN1, testInSituWALAMultiComponent) {
+	std::vector < double > mu (2, std::numeric_limits<double>::max()); // force an insertion to an empty system
+	std::vector < double > ib (3, 10);
+	std::vector <int> nmax (2, 3), nmin (2, 0);
+	lnF = 3.1; // something random this time
+	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, 1, 10.0, 2, "N_{1}");
+	mysys.startWALA (lnF, 0.5, 0.8, 1);
+	EXPECT_TRUE (mysys.useWALA);
+
+	//hardCore hc11, hc12, hc22;
+	std::vector < double > params (2, 1.0);
+	//hc11.setParameters (params);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
+	params[0] = 0.0; // ergo 1 and 2 can sit on top of each other
+	//hc12.setParameters (params);
+	mysys.addPotential (0, 1, "hard_sphere", params, false);
+	params[1] = 2.0;
+	//hc22.setParameters (params);
+	mysys.addPotential (1, 1, "hard_sphere", params, false);
+
+	moves usedMoves;
+	usedMoves.addInsert(0, 1.0);
+
+	// will insert first species
+	usedMoves.makeMove(mysys);
+
+	// check WALA properties - should have incremented where the system ENDED (at N = 1)
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(1) - -lnF) < 1.0e-9);
+
+	// all the rest should be 0
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(0) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(2) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(3) - 0) < 1.0e-9);
+
+	// will insert the second species
+	moves usedMoves2;
+	usedMoves2.addInsert(1, 1.0);
+	usedMoves2.makeMove(mysys);
+
+	// check WALA properties - should have incremented where the system ENDED (at N_tot = 2, but N_1 = 1) so recorded at N1 = 1 twice
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(1) - -2*lnF) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(0) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(2) - 0) < 1.0e-9);
+	EXPECT_TRUE (fabs(mysys.getWALABias()->getBias(3) - 0) < 1.0e-9);
+}
+
+TEST_F (testComputeBiasN1, testInSituTMMCSingleComponent) {
+	std::vector < double > mu (1, std::numeric_limits<double>::max()); // force an insertion to an empty system
+	std::vector < double > ib (3, 10);
+	std::vector <int> nmax (1, 3), nmin (1, 0);
+	simSystem mysys (1, 1.0, ib, mu, nmax, nmin, 1, 10.0, 2, "N_{1}");
+	mysys.startTMMC (tmmcSweepSize, 1);
+	EXPECT_TRUE (mysys.useTMMC);
+
+	//hardCore hc;
+	std::vector < double > params (2, 1.0);
+	//hc.setParameters (params);
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
+
+	moves usedMoves;
+	usedMoves.addInsert(0, 1.0);
+
+	// will insert
+	usedMoves.makeMove(mysys);
+
+	// check TMMC properties - should have incremented where the system started from (N = 0)
+	std::vector < double > C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+
+	// all the rest should be 0
+	for (unsigned int i = 2; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+
+	// insert again
+	usedMoves.makeMove(mysys);
+	C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[2] - 0.0) < 1.0e-9);
+
+	EXPECT_TRUE (fabs(C[3] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[4] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[5] - 0.0) < 1.0e-9);
+
+	// all the rest should be 0
+	for (unsigned int i = 6; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+}
+
+TEST_F (testComputeBiasN1, testInSituTMMCMultiComponent) {
+	std::vector < double > mu (2, std::numeric_limits<double>::max()); // force an insertion to an empty system
+	std::vector < double > ib (3, 10);
+	std::vector <int> nmax (2, 3), nmin (2, 0);
+	simSystem mysys (2, 1.0, ib, mu, nmax, nmin, 1, 10.0, 2, "N_{1}");
+	mysys.startTMMC (tmmcSweepSize, 1);
+	EXPECT_TRUE (mysys.useTMMC);
+
+	//hardCore hc11, hc12, hc22;
+	std::vector < double > params (2, 1.0);
+	params[0] = 0.0;
+	mysys.addPotential (0, 0, "hard_sphere", params, false);
+	mysys.addPotential (0, 1, "hard_sphere", params, false);
+	mysys.addPotential (1, 1, "hard_sphere", params, false);
+
+	moves usedMoves;
+	usedMoves.addInsert(0, 1.0);
+
+	// will insert first species
+	usedMoves.makeMove(mysys);
+
+	// check TMMC properties - should have incremented where the system started from (N = 0)
+	std::vector < double > C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+
+	// all the rest should be 0
+	for (unsigned int i = 2; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+
+	// insert same species again
+	usedMoves.makeMove(mysys);
+	C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[2] - 0.0) < 1.0e-9);
+
+	EXPECT_TRUE (fabs(C[3] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[4] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[5] - 0.0) < 1.0e-9);
+
+	// all the rest should be 0
+	for (unsigned int i = 6; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+
+	// do insertions with the other species
+	moves usedMoves2;
+	usedMoves2.addInsert(1, 1.0);
+
+	// insert 1 atom from second species
+	usedMoves2.makeMove(mysys);
+
+	C = mysys.getTMMCBias()->getC();
+	EXPECT_TRUE (fabs(C[0] - 0.0) < 1.0e-9); // infinite mu, implies p_u = 1, so 1-1 = 0
+	EXPECT_TRUE (fabs(C[1] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[2] - 0.0) < 1.0e-9);
+
+	EXPECT_TRUE (fabs(C[3] - 0.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[4] - 1.0) < 1.0e-9);
+	EXPECT_TRUE (fabs(C[5] - 0.0) < 1.0e-9);
+
+	EXPECT_TRUE (fabs(C[6] - 1.0) < 1.0e-9); // Got to N_1 = 2, then stayed there
+
+	// all the rest should be 0
+	for (unsigned int i = 7; i < C.size(); ++i) {
+		EXPECT_TRUE (fabs(C[i] - 0.0) < 1.0e-9);
+	}
+}
