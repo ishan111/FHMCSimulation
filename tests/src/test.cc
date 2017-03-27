@@ -12355,52 +12355,6 @@ TEST_F (InitializeN1System, fillMom) {
 	EXPECT_EQ (raw[loc], 0); // N_1^1*N_3^1*U^0 at N1 = 4 (not recorded, so should be 0)
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class testComputeBiasN1 : public ::testing::Test {
 protected:
 	double s, g, lnF, pu;
