@@ -1372,7 +1372,7 @@ void simSystem::printEnergyHistogram (const std::string fileName, const bool nor
 	std::ofstream of;
 	std::string name = fileName+".dat";
 	of.open(name.c_str(), std::ofstream::out);
-	of << "# <P(U)> as a function of N_tot." << std::endl;
+	of << "# <P(U)> as a function of " << order_param_ << "." << std::endl;
 	of << "# number_of_species: " << nSpecies_ << std::endl;
 	if (order_param_ == "N_{tot}") {
 		of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
@@ -1588,7 +1588,7 @@ void simSystem::printPkHistogram (const std::string fileName, const bool normali
 		std::ofstream of;
 		std::string name = fileName+"_"+std::to_string(i+1)+".dat";
 		of.open(name.c_str(), std::ofstream::out);
-		of << "# <P(N_" << i+1 << ")> as a function of N_tot." << std::endl;
+		of << "# <P(N_" << i+1 << ")> as a function of " << order_param_ << "." << std::endl;
 		of << "# number_of_species: " << nSpecies_ << std::endl;
 		if (order_param_ == "N_{tot}") {
 			of << "# species_total_upper_bound: " << totNBounds_[1] << std::endl;
