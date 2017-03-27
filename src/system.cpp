@@ -1040,7 +1040,7 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 				}
 				of << std::endl;
 			}
-		} else if (order_param_ == "N_1") {
+		} else if (order_param_ == "N_{1}") {
 			for (unsigned int n = 0; n < maxSpecies_[0]-minSpecies_[0]+1; ++n) {
 				of << n+minSpecies_[0] << "\t";
 				coords[5] = n;
