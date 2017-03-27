@@ -33,13 +33,14 @@
     std::vector < std::vector < double > > vecToCenters (nCenters, dummy);
 
     for (unsigned int i = 0; i < nCenters; ++i) {
-        if (!doc["vecToCenters"].HasMember(std::to_string(i+1))) {
-            throw customException("\"vecToCenters\" does not specify vector for center number "+std::to_string(i+1)+" in "+filename);
+		std::string mem = std::to_string(i+1);
+        if (!doc["vecToCenters"].HasMember(mem.c_str())) {
+            throw customException("\"vecToCenters\" does not specify vector for center number "+mem+" in "+filename);
         } else {
-            if (doc["vecToCenters"][std::to_string(i+1)].Size() != 3) throw customException("\"vecToCenters\" for center "+std::to_string(i+1)+" is not 3D in "+filename);
+            if (doc["vecToCenters"][mem.c_str()].Size() != 3) throw customException("\"vecToCenters\" for center "+mem+" is not 3D in "+filename);
 
             for (unsigned int j = 0; j < 3; ++j) {
-                vecToCenters[i][j] = doc["vecToCenters"][std::to_string(i+1)][j].GetDouble();
+                vecToCenters[i][j] = doc["vecToCenters"][mem.c_str()][j].GetDouble();
             }
         }
     }
