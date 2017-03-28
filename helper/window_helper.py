@@ -412,7 +412,7 @@ if __name__ == "__main__":
 	for w in range(num_windows):
 		dname = prefix+"/"+str(w+1)
 		if ((str(w+1) in os.listdir(prefix)) and overwrite):
-			shutil.rmtree(dname, sqw_benchmark)
+			shutil.rmtree(dname)
 		os.makedirs(dname)
 
 		sett["bounds"] = bounds[w]
