@@ -6,7 +6,7 @@ Nathan A. Mahynski
 
 Status
 
-[![Build Status](https://travis-ci.org/mahynski/FHMCSimulation.svg?branch=master)](https://travis-ci.org/mahynski/FHMCSimulation) [![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badge/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f5b0edf4e77e4902b871d7f1faeabc6f)](https://www.codacy.com/app/nathan-mahynski/FHMCSimulation?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mahynski/FHMCSimulation&amp;utm_campaign=Badge_Grade) [![DOI](https://zenodo.org/badge/74161431.svg)](https://zenodo.org/badge/latestdoi/74161431)
+[![Build Status](https://travis-ci.org/mahynski/FHMCSimulation.svg?branch=master)](https://travis-ci.org/mahynski/FHMCSimulation) [![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badge/) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f5b0edf4e77e4902b871d7f1faeabc6f)](https://www.codacy.com/app/nathan-mahynski/FHMCSimulation?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mahynski/FHMCSimulation&amp;utm_campaign=Badge_Grade) [![CodeFactor](https://www.codefactor.io/repository/github/mahynski/fhmcsimulation/badge)](https://www.codefactor.io/repository/github/mahynski/fhmcsimulation) [![DOI](https://zenodo.org/badge/74161431.svg)](https://zenodo.org/badge/latestdoi/74161431)
 
 ---
 
