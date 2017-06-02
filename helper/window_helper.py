@@ -294,7 +294,7 @@ def gibbs_qsub (num_windows, binary, git_head, tag, prefix, input_name="input.js
 
 	return
 
-def cori_sbatch (num_windows, binary, git_head, tag, prefix, input_name="input.json", jobs_per_node=1, p="shared", hours=48, scratch_dir="/scratch/nam4/"):
+def cori_sbatch (num_windows, binary, git_head, tag, prefix, input_name="input.json", jobs_per_node=1, p="shared", hours=48, scratch_dir="/global/cscratch1/sd/nam4/"):
 	"""
 	Example of submission script for SLURM system, in this case, for cori.nersc.gov.
 	This produces sbatch_X.sb files, for as many X are necessary.
@@ -320,7 +320,7 @@ def cori_sbatch (num_windows, binary, git_head, tag, prefix, input_name="input.j
 	hours : int
 		Number of hours to submit the job for (default=48)
 	scratch_dir : str
-		Absolute path to scratch space for user (default="/scratch/nam4/")
+		Absolute path to scratch space for user (default="/global/cscratch1/sd/nam4/")
 
 	"""
 
