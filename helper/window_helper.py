@@ -294,6 +294,77 @@ def gibbs_qsub (num_windows, binary, git_head, tag, prefix, input_name="input.js
 
 	return
 
+def cori_sbatch (num_windows, binary, git_head, tag, prefix, input_name="input.json", jobs_per_node=1, p="shared", hours=48, scratch_dir="/scratch/nam4/"):
+	"""
+	Example of submission script for SLURM system, in this case, for cori.nersc.gov.
+	This produces sbatch_X.sb files, for as many X are necessary.
+
+	Parameters
+	----------
+	num_windows : int
+		Number of total windows
+	binary : str
+		Path to binary (FHMCSimulation) to execute
+	git_head : str
+		Path to git head log
+	tag : str
+		Name of this job
+	prefix : str
+		Directory to place sbatch files
+	input_name : str
+		Name of local input file inside window directory (default=input.json)
+	jobs_per_node : int
+		Number of jobs per node to allow (default=1)
+	p : str
+		Name of the partition to submit to (default="shared")
+	hours : int
+		Number of hours to submit the job for (default=48)
+	scratch_dir : str
+		Absolute path to scratch space for user (default="/scratch/nam4/")
+
+	"""
+
+	sdays = int(m.floor(float(hours)/24.))
+	shours = int(m.floor(float(hours-24*sdays)))
+	sminutes = int(m.floor(float(hours-24*sdays-shours)*60))
+
+	if (sdays > 14 or (sdays == 14 and (shours > 0 or sminutes > 0))):
+		raise Exception ("Cannot exceed 14 days on raritan queues")
+
+	base_string = "#!/bin/bash\n#\n#SBATCH -n __PPNVIS__\n#SBATCH -C haswell\n#SBATCH -N 1\n#SBATCH -p __QUEUE__\n#SBATCH -t __SDAYS__-__SHOURS__:__SMINUTES__\n#SBATCH --mem=__TOTMEM__\n#SBATCH -o hostname_%j.out\n#SBATCH -e hostname_%j.err\n#SBATCH -J __TAGNAME__\n#SBATCH --export=all\n\n# move to dir slurm was launched from\ncd $SLURM_SUBMIT_DIR;\n\n# report\necho \"Running on $(hostname)\";\necho \"Time: $(date)\";\necho \"Starting directory: $PWD\";\nheaddir=$PWD;\npids=\"\";\nfor i in {__MINWIN__..__MAXWIN__}; do\n\t# create and move to tmpdir\n\ttmpdir=__SCRATCHDIR__/$SLURM_JOBID/$i;\n\thomedir=$headdir/$i;\n\tmkdir -p $tmpdir;\n\techo \"Moving to temporary directory: $tmpdir\";\n\tcp -r $homedir/* $tmpdir/;\n\tcd $tmpdir;\n\n\t# get info about binary\n\ttail -1 __GITHEAD__ > binary.info;\n\n\t# run sleeper and binary\n\tsh sleeper.sh ./ $homedir &\n\t__BINARY__ __INPUTNAME__ 2>> err >> log &\n\tpids=\"$pids $!\"\ndone\n\n# wait for all process ids\nfor p in $pids; do\n\twait $p;\ndone\n\n# final sync and clean up\ncd $headdir;\nsids=\"\";\nfor i in {__MINWIN__..__MAXWIN__}; do\n\ttmpdir=__SCRATCHDIR__/$SLURM_JOBID/$i;\n\thomedir=$headdir/$i;\n\techo \"Final sync from $tmpdir to $homedir\";\n\trsync -a $tmpdir/ $homedir/;\n\techo \"Removing $tmpdir\";\n\trm -r $tmpdir;\n\tsids=\"$sids $!\"\ndone\n\n# wait for all syncs to finish\nfor s in $sids; do\n\twait $s;\ndone\n\necho \"Finished on $(date)\";"
+
+	if (p != ""):
+		new_string = re.sub('__QUEUE__', str(p), base_string)
+	else:
+		new_string = re.sub('#SBATCH\ -p\ __QUEUE__\\n', str(q), base_string)
+	new_string = re.sub('__SCRATCHDIR__', str(scratch_dir), new_string)
+	new_string = re.sub('__GITHEAD__', str(git_head), new_string)
+	new_string = re.sub('__BINARY__', str(binary), new_string)
+	new_string = re.sub('__INPUTNAME__', str(input_name), new_string)
+	new_string = re.sub('__SDAYS__', str(sdays), new_string)
+	new_string = re.sub('__SHOURS__', str(shours), new_string)
+	new_string = re.sub('__SMINUTES__', str(sminutes), new_string)
+
+	jobs_remaining = num_windows
+	for idx in xrange(0, int(m.ceil(num_windows/float(jobs_per_node)))):
+		start = idx*jobs_per_node+1
+		end = idx*jobs_per_node+min([jobs_remaining,jobs_per_node])
+		totmem = 100*(end-start+1) # MB/job, assuming 100MB per job
+		totmem = max(totmem, 2000) # Impose a 2GB min reservation on cori
+		i_string = re.sub('__MINWIN__', str(start), new_string)
+		i_string = re.sub('__MAXWIN__', str(end), i_string)
+		i_string = re.sub('__TAGNAME__', str(tag+"_"+str(idx+1)), i_string)
+		i_string = re.sub('__PPNVIS__', str(2*(end-start+1)), i_string) # double to deal with hyperthreading
+		i_string = re.sub('__TOTMEM__', str(totmem), i_string)
+		jobs_remaining -= jobs_per_node
+
+		f = open(prefix+"/sbatch_"+str(idx+1)+".sb", 'w')
+		f.write(i_string)
+		f.close()
+
+	return
+
+
 def raritan_sbatch (num_windows, binary, git_head, tag, prefix, input_name="input.json", jobs_per_node=12, q="mml", hours=72, scratch_dir="/scratch/nam4/"):
 	"""
 	Example of submission script for PBS system, in this case, for raritan.nist.gov.

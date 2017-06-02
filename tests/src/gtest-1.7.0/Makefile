@@ -38,19 +38,22 @@ RM = /usr/bin/cmake -E remove -f
 # Escaping for special characters.
 EQUALS = =
 
+# The program to use to edit the cache.
+CMAKE_EDIT_COMMAND = /usr/bin/ccmake
+
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src
+CMAKE_SOURCE_DIR = /global/homes/n/nam4/FHMCSimulation/tests/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src
+CMAKE_BINARY_DIR = /global/homes/n/nam4/FHMCSimulation/tests/src
 
 #=============================================================================
 # Targets provided globally by CMake.
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running interactive CMake command-line interface..."
-	/usr/bin/cmake -i .
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/ccmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -79,14 +82,14 @@ test/fast: test
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(CMAKE_COMMAND) -E cmake_progress_start /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src/CMakeFiles /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src/gtest-1.7.0/CMakeFiles/progress.marks
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f CMakeFiles/Makefile2 gtest-1.7.0/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src/CMakeFiles 0
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(CMAKE_COMMAND) -E cmake_progress_start /global/homes/n/nam4/FHMCSimulation/tests/src/CMakeFiles /global/homes/n/nam4/FHMCSimulation/tests/src/gtest-1.7.0/CMakeFiles/progress.marks
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f CMakeFiles/Makefile2 gtest-1.7.0/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /global/homes/n/nam4/FHMCSimulation/tests/src/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f CMakeFiles/Makefile2 gtest-1.7.0/clean
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f CMakeFiles/Makefile2 gtest-1.7.0/clean
 .PHONY : clean
 
 # The main clean target
@@ -95,22 +98,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f CMakeFiles/Makefile2 gtest-1.7.0/preinstall
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f CMakeFiles/Makefile2 gtest-1.7.0/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f CMakeFiles/Makefile2 gtest-1.7.0/preinstall
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f CMakeFiles/Makefile2 gtest-1.7.0/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 gtest-1.7.0/CMakeFiles/gtest.dir/rule:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f CMakeFiles/Makefile2 gtest-1.7.0/CMakeFiles/gtest.dir/rule
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f CMakeFiles/Makefile2 gtest-1.7.0/CMakeFiles/gtest.dir/rule
 .PHONY : gtest-1.7.0/CMakeFiles/gtest.dir/rule
 
 # Convenience name for target.
@@ -119,12 +122,12 @@ gtest: gtest-1.7.0/CMakeFiles/gtest.dir/rule
 
 # fast build rule for target.
 gtest/fast:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest.dir/build.make gtest-1.7.0/CMakeFiles/gtest.dir/build
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest.dir/build.make gtest-1.7.0/CMakeFiles/gtest.dir/build
 .PHONY : gtest/fast
 
 # Convenience name for target.
 gtest-1.7.0/CMakeFiles/gtest_main.dir/rule:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f CMakeFiles/Makefile2 gtest-1.7.0/CMakeFiles/gtest_main.dir/rule
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f CMakeFiles/Makefile2 gtest-1.7.0/CMakeFiles/gtest_main.dir/rule
 .PHONY : gtest-1.7.0/CMakeFiles/gtest_main.dir/rule
 
 # Convenience name for target.
@@ -133,7 +136,7 @@ gtest_main: gtest-1.7.0/CMakeFiles/gtest_main.dir/rule
 
 # fast build rule for target.
 gtest_main/fast:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest_main.dir/build.make gtest-1.7.0/CMakeFiles/gtest_main.dir/build
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest_main.dir/build.make gtest-1.7.0/CMakeFiles/gtest_main.dir/build
 .PHONY : gtest_main/fast
 
 src/gtest-all.o: src/gtest-all.cc.o
@@ -141,7 +144,7 @@ src/gtest-all.o: src/gtest-all.cc.o
 
 # target to build an object file
 src/gtest-all.cc.o:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest.dir/build.make gtest-1.7.0/CMakeFiles/gtest.dir/src/gtest-all.cc.o
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest.dir/build.make gtest-1.7.0/CMakeFiles/gtest.dir/src/gtest-all.cc.o
 .PHONY : src/gtest-all.cc.o
 
 src/gtest-all.i: src/gtest-all.cc.i
@@ -149,7 +152,7 @@ src/gtest-all.i: src/gtest-all.cc.i
 
 # target to preprocess a source file
 src/gtest-all.cc.i:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest.dir/build.make gtest-1.7.0/CMakeFiles/gtest.dir/src/gtest-all.cc.i
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest.dir/build.make gtest-1.7.0/CMakeFiles/gtest.dir/src/gtest-all.cc.i
 .PHONY : src/gtest-all.cc.i
 
 src/gtest-all.s: src/gtest-all.cc.s
@@ -157,7 +160,7 @@ src/gtest-all.s: src/gtest-all.cc.s
 
 # target to generate assembly for a file
 src/gtest-all.cc.s:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest.dir/build.make gtest-1.7.0/CMakeFiles/gtest.dir/src/gtest-all.cc.s
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest.dir/build.make gtest-1.7.0/CMakeFiles/gtest.dir/src/gtest-all.cc.s
 .PHONY : src/gtest-all.cc.s
 
 src/gtest_main.o: src/gtest_main.cc.o
@@ -165,7 +168,7 @@ src/gtest_main.o: src/gtest_main.cc.o
 
 # target to build an object file
 src/gtest_main.cc.o:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest_main.dir/build.make gtest-1.7.0/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest_main.dir/build.make gtest-1.7.0/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o
 .PHONY : src/gtest_main.cc.o
 
 src/gtest_main.i: src/gtest_main.cc.i
@@ -173,7 +176,7 @@ src/gtest_main.i: src/gtest_main.cc.i
 
 # target to preprocess a source file
 src/gtest_main.cc.i:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest_main.dir/build.make gtest-1.7.0/CMakeFiles/gtest_main.dir/src/gtest_main.cc.i
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest_main.dir/build.make gtest-1.7.0/CMakeFiles/gtest_main.dir/src/gtest_main.cc.i
 .PHONY : src/gtest_main.cc.i
 
 src/gtest_main.s: src/gtest_main.cc.s
@@ -181,7 +184,7 @@ src/gtest_main.s: src/gtest_main.cc.s
 
 # target to generate assembly for a file
 src/gtest_main.cc.s:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest_main.dir/build.make gtest-1.7.0/CMakeFiles/gtest_main.dir/src/gtest_main.cc.s
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(MAKE) -f gtest-1.7.0/CMakeFiles/gtest_main.dir/build.make gtest-1.7.0/CMakeFiles/gtest_main.dir/src/gtest_main.cc.s
 .PHONY : src/gtest_main.cc.s
 
 # Help Target
@@ -212,6 +215,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/nam4/Desktop/sandbox/FHMCSimulation/tests/src && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /global/homes/n/nam4/FHMCSimulation/tests/src && $(CMAKE_COMMAND) -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 
