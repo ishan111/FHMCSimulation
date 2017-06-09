@@ -168,7 +168,7 @@ def binary_fslj_pore (settings):
 	info["barriers"]["cylindrical_pore1"]["radius"] = settings["r_pore"]
 	info["barriers"]["cylindrical_pore1"]["sigma"] = sig11
 	info["barriers"]["cylindrical_pore1"]["epsilon"] = settings["eps1w_eps11"]*eps11
-	info["barriers"]["cylindrical_pore1"]["width"] = settings["lam1w"]*info["barriers"]["cylindrical_pore1"]["sigma"]
+	info["barriers"]["cylindrical_pore1"]["width"] = settings["lam1w_sig11"]*info["barriers"]["cylindrical_pore1"]["sigma"]
 
 	info["barriers"]["cylindrical_pore2"] = {}
 	info["barriers"]["cylindrical_pore2"]["type"] = "cylinder_z"
@@ -176,7 +176,7 @@ def binary_fslj_pore (settings):
 	info["barriers"]["cylindrical_pore2"]["radius"] = settings["r_pore"]
 	info["barriers"]["cylindrical_pore2"]["sigma"] = settings["sig22_sig11"]*sig11
 	info["barriers"]["cylindrical_pore2"]["epsilon"] = settings["eps2w_eps11"]*eps11
-	info["barriers"]["cylindrical_pore2"]["width"] = settings["lam2w"]*info["barriers"]["cylindrical_pore2"]["sigma"]
+	info["barriers"]["cylindrical_pore2"]["width"] = settings["lam2w_sig11"]*info["barriers"]["cylindrical_pore2"]["sigma"]
 
 	# Monte Carlo moves
 	info["moves"] = {}
