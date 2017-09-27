@@ -35,7 +35,7 @@ double pbcDist2 (const std::vector < double > &p1, const std::vector < double > 
 std::string getTimeStamp ();
 
 /*!
- * Convert a number to a string with 15 digits of precision.
+ * Convert a number to a string with 30 digits of precision.
  *
  * \param [in] val Double precision value
  *
@@ -43,7 +43,7 @@ std::string getTimeStamp ();
  */
 template < typename T > std::string numToStr(const T& val) {
    std::ostringstream os;
-   os << std::setprecision(15) << val;
+   os << std::setprecision(30) << val;
    return os.str();
 }
 

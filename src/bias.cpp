@@ -87,9 +87,9 @@ void tmmc::dumpVisited (const std::string fileName) {
     of << "# species_upper_bound: " << Nmax_ << std::endl;
     of << "# species_lower_bound: " << Nmin_ << std::endl;
     double V = box_[0]*box_[1]*box_[2];
-    of << "# volume: " << std::setprecision(15) << V << std::endl;
+    of << "# volume: " << std::setprecision(30) << V << std::endl;
     for (long long int i = 0; i < HC_.size(); ++i) {
-    	of << std::setprecision(15) << HC_[i] << std::endl;
+    	of << std::setprecision(30) << HC_[i] << std::endl;
     }
     of.close();
 }
@@ -310,9 +310,9 @@ void tmmc::print (const std::string fileName, bool printC, bool printHC) {
 		of << "# species_upper_bound: " << Nmax_ << std::endl;
 		of << "# species_lower_bound: " << Nmin_ << std::endl;
 		double V = box_[0]*box_[1]*box_[2];
-		of << "# volume: " << std::setprecision(15) << V << std::endl;
+		of << "# volume: " << std::setprecision(30) << V << std::endl;
 		for (long long int i = 0; i < C_.size(); ++i) {
-			of << std::setprecision(15) << C_[i] << std::endl;
+			of << std::setprecision(30) << C_[i] << std::endl;
 		}
 		of.close();
 	}
@@ -334,9 +334,9 @@ void tmmc::print (const std::string fileName, bool printC, bool printHC) {
 	of << "# species_upper_bound: " << Nmax_ << std::endl;
 	of << "# species_lower_bound: " << Nmin_ << std::endl;
 	double V = box_[0]*box_[1]*box_[2];
-	of << "# volume: " << std::setprecision(15) << V << std::endl;
+	of << "# volume: " << std::setprecision(30) << V << std::endl;
 	for (long long int i = 0; i < lnPI_.size(); i += Mtot_) {
-		of << std::setprecision(15) << lnPI_[i] << std::endl; // only print the integral states
+		of << std::setprecision(30) << lnPI_[i] << std::endl; // only print the integral states
 	}
 	of.close();
 }
@@ -539,9 +539,9 @@ void wala::print (const std::string fileName, bool printH) {
 		of << "# species_upper_bound: " << Nmax_ << std::endl;
 		of << "# species_lower_bound: " << Nmin_ << std::endl;
 		double V = box_[0]*box_[1]*box_[2];
-		of << "# volume: " << std::setprecision(15) << V << std::endl;
+		of << "# volume: " << std::setprecision(30) << V << std::endl;
 		for (long long int i = 0; i < H_.size(); ++i) {
-			of << std::setprecision(15) << H_[i] << std::endl;
+			of << std::setprecision(30) << H_[i] << std::endl;
 		}
 		of.close();
 	}
@@ -557,9 +557,9 @@ void wala::print (const std::string fileName, bool printH) {
 	of << "# species_upper_bound: " << Nmax_ << std::endl;
 	of << "# species_lower_bound: " << Nmin_ << std::endl;
 	double V = box_[0]*box_[1]*box_[2];
-	of << "# volume: " << std::setprecision(15) << V << std::endl;
+	of << "# volume: " << std::setprecision(30) << V << std::endl;
 	for (long long int i = 0; i < lnPI_.size(); ++i) {
-		of << std::setprecision(15) << lnPI_[i] << std::endl; // only ALL states for restarting purposes
+		of << std::setprecision(30) << lnPI_[i] << std::endl; // only ALL states for restarting purposes
 	}
 	of.close();
 }

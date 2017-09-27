@@ -992,7 +992,7 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 		throw customException ("Unrecognized order parameter, cannot print extensive moments");
 	}
 	double V = box_[0]*box_[1]*box_[2];
-	of << "# volume: " << std::setprecision(15) << V << std::endl;
+	of << "# volume: " << std::setprecision(30) << V << std::endl;
 	if (order_param_ == "N_{tot}") {
 		of << "#\tN_tot\t";
 	} else if (order_param_ == "N_{1}") {
@@ -1032,7 +1032,7 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 								for (unsigned int p = 0; p <= max_order_; ++p) {
 									coords[4] = p;
 									idx = extensive_moments_.getAddress(coords);
-									of << std::setprecision(15) << h[idx]/ctr[idx] << "\t";
+									of << std::setprecision(30) << h[idx]/ctr[idx] << "\t";
 								}
 							}
 						}
@@ -1055,7 +1055,7 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 								for (unsigned int p = 0; p <= max_order_; ++p) {
 									coords[4] = p;
 									idx = extensive_moments_.getAddress(coords);
-									of << std::setprecision(15) << h[idx]/ctr[idx] << "\t";
+									of << std::setprecision(30) << h[idx]/ctr[idx] << "\t";
 								}
 							}
 						}
@@ -1082,7 +1082,7 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 								for (unsigned int p = 0; p <= max_order_; ++p) {
 									coords[4] = p;
 									idx = extensive_moments_.getAddress(coords);
-									of << std::setprecision(15) << h[idx] << "\t";
+									of << std::setprecision(30) << h[idx] << "\t";
 								}
 							}
 						}
@@ -1105,7 +1105,7 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 								for (unsigned int p = 0; p <= max_order_; ++p) {
 									coords[4] = p;
 									idx = extensive_moments_.getAddress(coords);
-									of << std::setprecision(15) << h[idx] << "\t";
+									of << std::setprecision(30) << h[idx] << "\t";
 								}
 							}
 						}
@@ -1384,7 +1384,7 @@ void simSystem::printEnergyHistogram (const std::string fileName, const bool nor
 		throw customException ("Unrecognized order parameter, cannot print energy histogram");
 	}
 	double V = box_[0]*box_[1]*box_[2];
-	of << "# volume: " << std::setprecision(15) << V << std::endl;
+	of << "# volume: " << std::setprecision(30) << V << std::endl;
 	of << "# Bin widths for each" << std::endl;
 	for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_.begin(); it != energyHistogram_.end(); ++it) {
 		of << it->get_delta() << "\t";
@@ -1409,7 +1409,7 @@ void simSystem::printEnergyHistogram (const std::string fileName, const bool nor
 				sum += *it2;
 			}
 			for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
-				of << std::setprecision(15) << *it2/sum << "\t";
+				of << std::setprecision(30) << *it2/sum << "\t";
 			}
 			of << std::endl;
 		}
@@ -1418,7 +1418,7 @@ void simSystem::printEnergyHistogram (const std::string fileName, const bool nor
 		for (std::vector < dynamic_one_dim_histogram >::iterator it = energyHistogram_.begin(); it != energyHistogram_.end(); ++it) {
 			std::deque <double> h = it->get_hist();
 			for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
-				of << std::setprecision(15) << *it2 << "\t";
+				of << std::setprecision(30) << *it2 << "\t";
 			}
 			of << std::endl;
 		}
@@ -1600,7 +1600,7 @@ void simSystem::printPkHistogram (const std::string fileName, const bool normali
 			throw customException ("Unrecognized order parameter, cannot print particle histogram");
 		}
 		double V = box_[0]*box_[1]*box_[2];
-		of << "# volume: " << std::setprecision(15) << V << std::endl;
+		of << "# volume: " << std::setprecision(30) << V << std::endl;
 		of << "# Bin widths for each species index " << std::endl;
 		for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i].begin(); it != pkHistogram_[i].end(); ++it) {
 			of << it->get_delta() << "\t";
@@ -1625,7 +1625,7 @@ void simSystem::printPkHistogram (const std::string fileName, const bool normali
 					sum += *it2;
 				}
 				for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
-					of << std::setprecision(15) << *it2/sum << "\t";
+					of << std::setprecision(30) << *it2/sum << "\t";
 				}
 				of << std::endl;
 			}
@@ -1634,7 +1634,7 @@ void simSystem::printPkHistogram (const std::string fileName, const bool normali
 			for (std::vector < dynamic_one_dim_histogram >::iterator it = pkHistogram_[i].begin(); it != pkHistogram_[i].end(); ++it) {
 				std::deque <double> h = it->get_hist();
 				for (std::deque <double>::iterator it2 = h.begin(); it2 != h.end(); ++it2) {
-					of << std::setprecision(15) << *it2 << "\t";
+					of << std::setprecision(30) << *it2 << "\t";
 				}
 				of << std::endl;
 			}
