@@ -55,7 +55,7 @@ public:
 	void restartPkHistogram (const std::string prefix);
 
 	void recordExtMoments ();
-	void printExtMoments (const std::string fileName, const bool normalize=true);
+	void printExtMoments (const std::string fileName, const bool normalize=true, const int prec=30);
 	void restartExtMoments (const std::string prefix, const std::vector < double > &ctr);
 
 	void startWALA (const double lnF, const double g, const double s, const int Mtot); //!< Start using Wang-Landau and instantiate the bias object

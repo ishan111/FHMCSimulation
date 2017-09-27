@@ -974,8 +974,9 @@ void simSystem::recordExtMoments () {
  *
  * \param [in] fileName Name of the file to print to
  * \param [in] normalize Whether or not to normalize the histogram (default=true)
+ * \param [in] prec Digits of precision to print for mantissa (default=30)
  */
-void simSystem::printExtMoments (const std::string fileName, const bool normalize) {
+void simSystem::printExtMoments (const std::string fileName, const bool normalize, const int prec) {
 	std::ofstream of;
 	std::string name = fileName+".dat";
 	of.open(name.c_str(), std::ofstream::out);
@@ -992,7 +993,7 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 		throw customException ("Unrecognized order parameter, cannot print extensive moments");
 	}
 	double V = box_[0]*box_[1]*box_[2];
-	of << "# volume: " << std::setprecision(30) << V << std::endl;
+	of << "# volume: " << std::setprecision(prec) << V << std::endl;
 	if (order_param_ == "N_{tot}") {
 		of << "#\tN_tot\t";
 	} else if (order_param_ == "N_{1}") {
@@ -1032,7 +1033,7 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 								for (unsigned int p = 0; p <= max_order_; ++p) {
 									coords[4] = p;
 									idx = extensive_moments_.getAddress(coords);
-									of << std::setprecision(30) << h[idx]/ctr[idx] << "\t";
+									of << std::setprecision(prec) << h[idx]/ctr[idx] << "\t";
 								}
 							}
 						}
@@ -1055,7 +1056,7 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 								for (unsigned int p = 0; p <= max_order_; ++p) {
 									coords[4] = p;
 									idx = extensive_moments_.getAddress(coords);
-									of << std::setprecision(30) << h[idx]/ctr[idx] << "\t";
+									of << std::setprecision(prec) << h[idx]/ctr[idx] << "\t";
 								}
 							}
 						}
@@ -1082,7 +1083,7 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 								for (unsigned int p = 0; p <= max_order_; ++p) {
 									coords[4] = p;
 									idx = extensive_moments_.getAddress(coords);
-									of << std::setprecision(30) << h[idx] << "\t";
+									of << std::setprecision(prec) << h[idx] << "\t";
 								}
 							}
 						}
@@ -1105,7 +1106,7 @@ void simSystem::printExtMoments (const std::string fileName, const bool normaliz
 								for (unsigned int p = 0; p <= max_order_; ++p) {
 									coords[4] = p;
 									idx = extensive_moments_.getAddress(coords);
-									of << std::setprecision(30) << h[idx] << "\t";
+									of << std::setprecision(prec) << h[idx] << "\t";
 								}
 							}
 						}

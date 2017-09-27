@@ -11513,20 +11513,20 @@ TEST_F (checkpointTest, restartExtMoments) {
 
 	// compare the two files
 	sys.restartExtMoments("../data/extMom", ctr);
-	sys.printExtMoments("extMom_test", false);
+	sys.printExtMoments("extMom_test", false, 15);
 	int result = system("diff ../data/extMom.dat extMom_test.dat > dmp");
 	EXPECT_EQ (result, 0);
 
 	// normalization changes result, when ctr != 1 for all members of ctr
 	sys.restartExtMoments("../data/extMom", ctr);
-	sys.printExtMoments("extMom_test", true);
+	sys.printExtMoments("extMom_test", true, 15);
 	result = system("diff ../data/extMom.dat extMom_test.dat > dmp");
 	EXPECT_TRUE (result != 0);
 
 	// when ctr = 1 for all, normalization should not not changes
 	std::fill(ctr.begin(), ctr.end(), 1);
 	sys.restartExtMoments("../data/extMom", ctr);
-	sys.printExtMoments("extMom_test", false);
+	sys.printExtMoments("extMom_test", false, 15);
 	result = system("diff ../data/extMom.dat extMom_test.dat > dmp");
 	EXPECT_EQ (result, 0);
 }
