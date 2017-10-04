@@ -48,7 +48,6 @@
     // Create empty templates up to typeIndex if they don't already exists
 
     // Instantiate template
-
  }
 
  /*!
