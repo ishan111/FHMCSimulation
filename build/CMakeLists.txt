@@ -24,7 +24,7 @@ endif()
 file(GLOB fhmc_SRC
 	"../src/*.h"
 	"../src/*.cpp"
-	"../driver/main-tmmc.cpp"
+	"../driver/main-gcmc.cpp"
 )
 
 set (fhmc_VERSION_MAJOR 2)
@@ -41,5 +41,5 @@ include_directories("../driver/")
 #SET(BUILD_SHARED_LIBRARIES OFF)
 #set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
 
-add_executable(fhmc_tmmc ${fhmc_SRC})
+add_executable(gcmc ${fhmc_SRC})
 set(EXECUTABLE_OUTPUT_PATH "../bin")
