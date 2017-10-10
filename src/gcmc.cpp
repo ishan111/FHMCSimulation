@@ -28,9 +28,10 @@ void performGCMC (simSystem &sys, moves *usedMovesEq, moves *usedMovesPr) {
 		}
 
         // Only record properties of the system when it is NOT in an intermediate state
-        if (thermo_ctr < sys.gcmcThermoFreq && sys.getCurrentM() == 0) {
-            thermo_ctr += 1.0;
-        } else if (thermo_ctr >= sys.gcmcThermoFreq && sys.getCurrentM() == 0) {
+        if (sys.getCurrentM() == 0) {
+		thermo_ctr += 1.0;
+	}
+	if (thermo_ctr >= sys.gcmcThermoFreq && sys.getCurrentM() == 0) {
             double sys_ntot = 0;
             for (unsigned int i = 0; i < sys.nSpecies(); ++i) { sys_ntot += sys.numSpecies[i]; }
             ofs << move << "\t" << sys.energy() << "\t" << sys_ntot << "\t";
@@ -39,9 +40,8 @@ void performGCMC (simSystem &sys, moves *usedMovesEq, moves *usedMovesPr) {
             thermo_ctr = 0.0;
         }
 
-        if (ctr < sys.gcmcSnapFreq) {
-            ctr += 1.0;
-        } else {
+	ctr += 1.0;
+	if (ctr >= sys.gcmcSnapFreq) {
             ctr = 0.0;
             usedMovesEq->print("equilibration.stats");
         }
@@ -68,9 +68,10 @@ void performGCMC (simSystem &sys, moves *usedMovesEq, moves *usedMovesPr) {
 		}
 
         // Only record properties of the system when it is NOT in an intermediate state
-        if (thermo_ctr < sys.gcmcThermoFreq && sys.getCurrentM() == 0) {
+        if (sys.getCurrentM() == 0) {
             thermo_ctr += 1.0;
-        } else if (thermo_ctr >= sys.gcmcThermoFreq && sys.getCurrentM() == 0) {
+        }
+	if (thermo_ctr >= sys.gcmcThermoFreq && sys.getCurrentM() == 0) {
             double sys_ntot = 0;
             for (unsigned int i = 0; i < sys.nSpecies(); ++i) { sys_ntot += sys.numSpecies[i]; }
             ofs << move << "\t" << sys.energy() << "\t" << sys_ntot << "\t";
@@ -80,9 +81,8 @@ void performGCMC (simSystem &sys, moves *usedMovesEq, moves *usedMovesPr) {
         }
 
         // Can print snapshot regardless of M state, since partial atoms are neglected from printing routine
-        if (ctr < sys.gcmcSnapFreq) {
-            ctr += 1.0;
-        } else {
+        ctr += 1.0;
+	if (ctr >= sys.gcmcSnapFreq) {
             ctr = 0.0;
             usedMovesPr->print("production.stats");
             sys.printSnapshot("movie.xyz", numToStr(move), false);
