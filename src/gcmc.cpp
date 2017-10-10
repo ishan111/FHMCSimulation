@@ -34,7 +34,7 @@ void performGCMC (simSystem &sys, moves *usedMovesEq, moves *usedMovesPr) {
 	if (thermo_ctr >= sys.gcmcThermoFreq && sys.getCurrentM() == 0) {
             double sys_ntot = 0;
             for (unsigned int i = 0; i < sys.nSpecies(); ++i) { sys_ntot += sys.numSpecies[i]; }
-            ofs << move << "\t" << sys.energy() << "\t" << sys_ntot << "\t";
+            ofs << move+1 << "\t" << sys.energy() << "\t" << sys_ntot << "\t";
             for (unsigned int i = 0; i < sys.nSpecies(); ++i) { ofs << sys.numSpecies[i] << "\t"; }
             ofs << std::endl;
             thermo_ctr = 0.0;
@@ -74,7 +74,7 @@ void performGCMC (simSystem &sys, moves *usedMovesEq, moves *usedMovesPr) {
 	if (thermo_ctr >= sys.gcmcThermoFreq && sys.getCurrentM() == 0) {
             double sys_ntot = 0;
             for (unsigned int i = 0; i < sys.nSpecies(); ++i) { sys_ntot += sys.numSpecies[i]; }
-            ofs << move << "\t" << sys.energy() << "\t" << sys_ntot << "\t";
+            ofs << move+1 << "\t" << sys.energy() << "\t" << sys_ntot << "\t";
             for (unsigned int i = 0; i < sys.nSpecies(); ++i) { ofs << sys.numSpecies[i] << "\t"; }
             ofs << std::endl;
             thermo_ctr = 0.0;
